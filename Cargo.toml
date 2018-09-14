@@ -1,0 +1,6 @@
+[package]
+name = "onefetch"
+version = "0.1.0"
+authors = ["02sh <ossama-hjaji@live.fr>"]
+
+[dependencies]
