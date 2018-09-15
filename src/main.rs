@@ -1,4 +1,5 @@
 fn main() {
+
 let ascii="
            `:+ssssossossss+-`
         .oys///oyhddddhyo///sy+.
@@ -40,5 +41,10 @@ GPU: Intel HD Graphics 620
 Memory: 295MiB / 7743MiB 
 ";
 
-println!("{} {}", ascii, info);
+//println!("{} {}", ascii, info);
+
+let left_pad = ascii.lines().map(|l| l.len()).max().unwrap_or(0) + 5; 
+for (a,b) in ascii.lines().zip(info.lines()) {
+    println!("{:width$} {}", a, b, width = left_pad);
+}
 }
