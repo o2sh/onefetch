@@ -1,4 +1,66 @@
+use std::fmt;
+
+struct Info {
+    project_name: String,
+    language: Language,
+    author: String,
+    repo: String,
+    number_of_lines: usize,
+    license: String,
+}
+
+impl fmt::Display for Info {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "o2sh@arch\n---------\nProject: {}\nLanguage: {}\nAuthor: {}\nRepository: {}\nNumber of lines: {}\nLicense: {}", self.project_name, self.language, self.author, self.repo, self.number_of_lines, self.license)
+    }
+}
+
+enum Language {
+    Rust,
+    Go,
+    Java,
+    Cpp,
+    C,
+    Javascript,
+    Python,
+    Csharp,
+    Scala,
+    Shell,
+    Lisp,
+    Haskell,
+    Ruby,
+}
+
+impl fmt::Display for Language {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+       match *self {
+          Language::Rust => write!(f, "Rust"),
+          Language::Go => write!(f, "Rust"),
+          Language::Java => write!(f, "Rust"),
+          Language::Cpp => write!(f, "Rust"),
+          Language::C => write!(f, "Rust"),
+          Language::Javascript => write!(f, "Rust"),
+          Language::Python => write!(f, "Rust"),
+          Language::Csharp => write!(f, "Rust"),
+          Language::Scala => write!(f, "Rust"),
+          Language::Shell => write!(f, "Rust"),
+          Language::Lisp => write!(f, "Rust"),
+          Language::Haskell => write!(f, "Rust"),
+          Language::Ruby => write!(f, "Rust"),
+       }
+    }
+}
+
 fn main() {
+let info = Info { 
+    project_name: String::from("onefetch"),
+    language: Language::Rust,
+    author: String::from("Ossama Hjaji"),
+    repo: String::from("https://github.com/02sh/onefetch"),
+    number_of_lines: 15656, 
+    license: String::from("MIT"),
+};
+
 
 let ascii="
            `:+ssssossossss+-`
@@ -22,7 +84,7 @@ h//NNNNh  ossss` +h  md- .hm/ `sNNNNN:+y
         .+ys///osyhhhhys+///sy+.
             -/osssossossso/-";
 
-let info= " 
+let info22= " 
 o2sh@arch 
 --------- 
 OS: Arch Linux x86_64 
@@ -41,10 +103,10 @@ GPU: Intel HD Graphics 620
 Memory: 295MiB / 7743MiB 
 ";
 
-//println!("{} {}", ascii, info);
+println!("{}", info);
 
-let left_pad = ascii.lines().map(|l| l.len()).max().unwrap_or(0) + 5; 
-for (a,b) in ascii.lines().zip(info.lines()) {
-    println!("{:width$} {}", a, b, width = left_pad);
-}
+//let left_pad = ascii.lines().map(|l| l.len()).max().unwrap_or(0) + 5; 
+//for (a,b) in ascii.lines().zip(info.lines()) {
+//    println!("{:width$} {}", a, b, width = left_pad);
+//}
 }
