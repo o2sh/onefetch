@@ -1,3 +1,5 @@
+extern crate colored;
+use colored::*;
 use std::fmt;
 
 struct Info {
@@ -11,7 +13,14 @@ struct Info {
 
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "o2sh@arch\n---------\nProject: {}\nLanguage: {}\nAuthor: {}\nRepository: {}\nNumber of lines: {}\nLicense: {}", self.project_name, self.language, self.author, self.repo, self.number_of_lines, self.license)
+        let mut s = String::new();
+        s.push_str(&"Project: \n".blue().bold().to_string() + &format!("{}", self.project_name));
+        s.push_str(&"Language: \n".blue().bold().to_string());
+        s.push_str(&"Author: \n".blue().bold().to_string());
+        s.push_str(&"Repo: \n".blue().bold().to_string());
+        s.push_str(&"Number of lines: \n".blue().bold().to_string());
+        s.push_str(&"License: \n".blue().bold().to_string());
+        write!(f, "{}", s)
     }
 }
 
