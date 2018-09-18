@@ -14,12 +14,13 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut s = String::new();
-        s.push_str("Project: \n".blue().bold().to_string() + &format!("{}", self.project_name));
-        s.push_str(&"Language: \n".blue().bold().to_string());
-        s.push_str(&"Author: \n".blue().bold().to_string());
-        s.push_str(&"Repo: \n".blue().bold().to_string());
-        s.push_str(&"Number of lines: \n".blue().bold().to_string());
-        s.push_str(&"License: \n".blue().bold().to_string());
+        s.push_str(&("Project: ".blue().bold().to_string() + &format!("{}\n", self.project_name)));
+        s.push_str(&("Language: ".blue().bold().to_string() + &format!("{}\n", self.language)));
+        s.push_str(&("Author: ".blue().bold().to_string() + &format!("{}\n", self.author)));
+        s.push_str(&("Repo: ".blue().bold().to_string() + &format!("{}\n", self.repo)));
+        s.push_str(&("Number of lines: ".blue().bold().to_string() + &format!("{}\n", self.number_of_lines)));
+        s.push_str(&("License: ".blue().bold().to_string() + &format!("{}\n", self.license)));
+        s.push_str(&self.get_ascii().blue().bold().to_string());
         write!(f, "{}", s)
     }
 }
@@ -70,52 +71,55 @@ let info = Info {
     license: String::from("MIT"),
 };
 
-
-let ascii="
-           `:+ssssossossss+-`
-        .oys///oyhddddhyo///sy+.
-      /yo:+hNNNNNNNNNNNNNNNNh+:oy/
-    :h/:yNNNNNNNNNNNNNNNNNNNNNNy-+h:
-  `ys.yNNNNNNNNNNNNNNNNNNNNNNNNNNy.ys
- `h+-mNNNNNNNNNNNNNNNNNNNNNNNNNNNNm-oh
- h+-NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN.oy
-/d`mNNNNNNN/::mNNNd::m+:/dNNNo::dNNNd`m:
-h//NNNNNNN: . .NNNh  mNo  od. -dNNNNN:+y
-N.sNNNNNN+ -N/ -NNh  mNNd.   sNNNNNNNo-m
-N.sNNNNNs  +oo  /Nh  mNNs` ` /mNNNNNNo-m
-h//NNNNh  ossss` +h  md- .hm/ `sNNNNN:+y
-:d`mNNN+/yNNNNNd//y//h//oNNNNy//sNNNd`m-
- yo-NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNm.ss
- `h+-mNNNNNNNNNNNNNNNNNNNNNNNNNNNNm-oy
-   sy.yNNNNNNNNNNNNNNNNNNNNNNNNNNs.yo
-    :h+-yNNNNNNNNNNNNNNNNNNNNNNs-oh-
-      :ys:/yNNNNNNNNNNNNNNNmy/:sy:
-        .+ys///osyhhhhys+///sy+.
-            -/osssossossso/-";
-
-let info22= " 
-o2sh@arch 
---------- 
-OS: Arch Linux x86_64 
-Host: 20HN005NFR ThinkPad X270 
-Kernel: 4.18.5-arch1-1-ARCH 
-Uptime: 32 mins 
-Packages: 447 (pacman) 
-Shell: bash 4.4.23 
-Resolution: 1920x1080
-Theme: Adwaita [GTK3] 
-Icons: Adwaita [GTK3] 
-Terminal: termite 
-Terminal Font: inconsolata 12 
-CPU: Intel i7-7500U (4) @ 3.500GHz
-GPU: Intel HD Graphics 620 
-Memory: 295MiB / 7743MiB 
-";
-
 println!("{}", info);
 
 //let left_pad = ascii.lines().map(|l| l.len()).max().unwrap_or(0) + 5; 
 //for (a,b) in ascii.lines().zip(info.lines()) {
 //    println!("{:width$} {}", a, b, width = left_pad);
 //}
+}
+
+
+impl Info {
+    pub fn get_ascii(&self) -> &str {
+
+        let ascii="
+                   `:+ssssossossss+-`
+                .oys///oyhddddhyo///sy+.
+              /yo:+hNNNNNNNNNNNNNNNNh+:oy/
+            :h/:yNNNNNNNNNNNNNNNNNNNNNNy-+h:
+          `ys.yNNNNNNNNNNNNNNNNNNNNNNNNNNy.ys
+         `h+-mNNNNNNNNNNNNNNNNNNNNNNNNNNNNm-oh
+         h+-NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN.oy
+        /d`mNNNNNNN/::mNNNd::m+:/dNNNo::dNNNd`m:
+        h//NNNNNNN: . .NNNh  mNo  od. -dNNNNN:+y
+        N.sNNNNNN+ -N/ -NNh  mNNd.   sNNNNNNNo-m
+        N.sNNNNNs  +oo  /Nh  mNNs` ` /mNNNNNNo-m
+        h//NNNNh  ossss` +h  md- .hm/ `sNNNNN:+y
+        :d`mNNN+/yNNNNNd//y//h//oNNNNy//sNNNd`m-
+         yo-NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNm.ss
+         `h+-mNNNNNNNNNNNNNNNNNNNNNNNNNNNNm-oy
+           sy.yNNNNNNNNNNNNNNNNNNNNNNNNNNs.yo
+            :h+-yNNNNNNNNNNNNNNNNNNNNNNs-oh-
+              :ys:/yNNNNNNNNNNNNNNNmy/:sy:
+                .+ys///osyhhhhys+///sy+.
+                    -/osssossossso/-";
+
+            match self.language {
+                  Language::Rust => ascii,
+                  Language::Go => ascii, 
+                  Language::Java => ascii, 
+                  Language::Cpp => ascii, 
+                  Language::C => ascii, 
+                  Language::Javascript => ascii, 
+                  Language::Python => ascii, 
+                  Language::Csharp => ascii,
+                  Language::Scala => ascii,
+                  Language::Shell => ascii,
+                  Language::Lisp => ascii,
+                  Language::Haskell => ascii,
+                  Language::Ruby =>  ascii,
+                  _ => "none"
+            }
+    }
 }
