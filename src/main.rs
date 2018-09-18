@@ -31,7 +31,6 @@ enum Language {
     Java,
     Cpp,
     C,
-    Javascript,
     Python,
     Csharp,
     Scala,
@@ -45,18 +44,17 @@ impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
        match *self {
           Language::Rust => write!(f, "Rust"),
-          Language::Go => write!(f, "Rust"),
-          Language::Java => write!(f, "Rust"),
-          Language::Cpp => write!(f, "Rust"),
-          Language::C => write!(f, "Rust"),
-          Language::Javascript => write!(f, "Rust"),
-          Language::Python => write!(f, "Rust"),
-          Language::Csharp => write!(f, "Rust"),
-          Language::Scala => write!(f, "Rust"),
-          Language::Shell => write!(f, "Rust"),
-          Language::Lisp => write!(f, "Rust"),
-          Language::Haskell => write!(f, "Rust"),
-          Language::Ruby => write!(f, "Rust"),
+          Language::Go => write!(f, "Go"),
+          Language::Java => write!(f, "Java"),
+          Language::Cpp => write!(f, "C++"),
+          Language::C => write!(f, "C"),
+          Language::Python => write!(f, "Python"),
+          Language::Csharp => write!(f, "C#"),
+          Language::Scala => write!(f, "Scala"),
+          Language::Shell => write!(f, "Shell"),
+          Language::Lisp => write!(f, "Lisp"),
+          Language::Haskell => write!(f, "Haskell"),
+          Language::Ruby => write!(f, "Ruby"),
        }
     }
 }
@@ -64,7 +62,7 @@ impl fmt::Display for Language {
 fn main() {
 let info = Info { 
     project_name: String::from("onefetch"),
-    language: Language::Rust,
+    language: Language::Java,
     author: String::from("Ossama Hjaji"),
     repo: String::from("https://github.com/02sh/onefetch"),
     number_of_lines: 15656, 
@@ -83,43 +81,286 @@ println!("{}", info);
 impl Info {
     pub fn get_ascii(&self) -> &str {
 
-        let ascii="
-                   `:+ssssossossss+-`
-                .oys///oyhddddhyo///sy+.
-              /yo:+hNNNNNNNNNNNNNNNNh+:oy/
-            :h/:yNNNNNNNNNNNNNNNNNNNNNNy-+h:
-          `ys.yNNNNNNNNNNNNNNNNNNNNNNNNNNy.ys
-         `h+-mNNNNNNNNNNNNNNNNNNNNNNNNNNNNm-oh
-         h+-NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN.oy
-        /d`mNNNNNNN/::mNNNd::m+:/dNNNo::dNNNd`m:
-        h//NNNNNNN: . .NNNh  mNo  od. -dNNNNN:+y
-        N.sNNNNNN+ -N/ -NNh  mNNd.   sNNNNNNNo-m
-        N.sNNNNNs  +oo  /Nh  mNNs` ` /mNNNNNNo-m
-        h//NNNNh  ossss` +h  md- .hm/ `sNNNNN:+y
-        :d`mNNN+/yNNNNNd//y//h//oNNNNy//sNNNd`m-
-         yo-NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNm.ss
-         `h+-mNNNNNNNNNNNNNNNNNNNNNNNNNNNNm-oy
-           sy.yNNNNNNNNNNNNNNNNNNNNNNNNNNs.yo
-            :h+-yNNNNNNNNNNNNNNNNNNNNNNs-oh-
-              :ys:/yNNNNNNNNNNNNNNNmy/:sy:
-                .+ys///osyhhhhys+///sy+.
-                    -/osssossossso/-";
+        let rust="
+             `  :y.`yy`.y:  `            
+         -``MNsNMMNNNNMMNsNM``-         
+      ` -MMNMMMMNNm``NNNMMMMNMM- `      
+     `NNNMMMdo:` `+md/  `:odMMMNNN`     
+   -ssNMMNo.                .oNMMNss-   
+   `mMMMMNmmmmmmmmmmmmmmmdy+` `sMMMm`   
+ `mMMMMMMMMMMMMMMMMMMMMMMMMMN/  hMMMMm` 
+ -oMN-:Ny:mMMMMMm/////oNMMMMMm oN::MMo- 
+.yMMMhhh+ dMMMMMd:::::+mMMMMN/ odyhMMMy.
+-sNMMy    dMMMMMMMMMMMMMMMMs`    `yMMNs-
+-sNMMy    dMMMMMNyyyydMMMMMMy   .odMMNs-
+.yMMMm````dMMMMMh     +MMMMMM+``sMMMMMy.
+ -oMMMMMMMMMMMMMMMMM+  mMMMMMMMMMMMMMo- 
+ `mMMMMMMMMMMMMMMMMM+  :NMMMMMMMMMMMMm` 
+   `mMMMm//+o-------`   `-:o+:/mMMMm`   
+   -ssNMMMyomo            smohMMMNss-   
+     `NNNMs+mN/-`      `-/Nd/yMNNN`     
+      ` -MMNMMMMMNmmmmNMMMMMNMM- `      
+         -``MNsNMMNMMNMMNsNM``-         
+            `  :y.`yy`.y:  `";
 
-            match self.language {
-                  Language::Rust => ascii,
-                  Language::Go => ascii, 
-                  Language::Java => ascii, 
-                  Language::Cpp => ascii, 
-                  Language::C => ascii, 
-                  Language::Javascript => ascii, 
-                  Language::Python => ascii, 
-                  Language::Csharp => ascii,
-                  Language::Scala => ascii,
-                  Language::Shell => ascii,
-                  Language::Lisp => ascii,
-                  Language::Haskell => ascii,
-                  Language::Ruby =>  ascii,
-                  _ => "none"
-            }
+        let go="
+               `..-/::::.::--            
+           `..` --   os+.s+.`           
+         -+-... :    ://  `:`           
+       .-/   sho ---...`    -.          
+     -./ :   .:/yNs.:        /          
+    -:/o .....-/`.:-/         :`        
+     :./        .-.:-          +``      
+       ..                       +-/     
+        .`                      +.      
+         -.             :-.:    ./      
+          ./           `.`.`     /      
+           `:                    /      
+            +`                   /      
+            `:                  .-      
+             :                  /       
+            `:                 -:.-     
+             /               .-...`     
+             --`         ...-           
+               ./.:-..---`              
+               `/--";
+
+        let java="
+                       -`                
+                      ho                
+                    /mM:                
+                 `omMN/  .:/.           
+               -yMMNs-odNh/             
+             `yMMMs`oMMy.               
+             +MMN- .MMm                 
+             `mMh   dMMs                
+              `sMo   sMM+               
+                .s+   NN-               
+       :shmd+-`   `` /+.`.-``:sNd:      
+       /ydNMMMNNNNNNNmmdyo.    +Mm      
+          -sh-````    .-.     -mM+      
+          /hmMMNmmmNNMNmh+  .sdo.       
+           `+y+----::/++.  `.           
+     :oyy+-.ymMMMMMMMNmhs.     /`       
+    sMMM/`     `````        `:yM:       
+     :sdNMNdhyssooooossyyhmmds/` .+.    
+         `-::://+++///::-. `.:oyhs.     
+           `-://++ooosssyyyyo+:`";
+
+        let cpp="
+                                                                  
+                                                                
+      `/+ooooo:           
+     .oss:.`.-`    +s-      .ss         
+     /ss+       /++os+++-.+++ss+++      
+     :sso`      .--os/--``--:ss---      
+     `/sso///+-    /+.      `++         
+       .:////:`                         
+                                        
+                                        
+                                        ";
+
+        let c="
+                 `-/++/-`                
+            `.:++++++++++:.`            
+         .-/++++++++++++++++/-.         
+     `-:++++++++++++++++++++++++:-`     
+  .:/++++++++++++++++++++++++++++/:-.`  
+-++++++++++++++/:--...-:/++++++/:::::::.
+++++++++++++/.            ./+/::::::::::
++++++++++++.                `:::::::::::
+++++++++++`      -/+++:`     `::::::::::
++++++++++.      /++++++:``````-:::::::::
++++++++++      `++++/:::::::::::::::::::
++++++++++      `++/:::::::::::::::::::::
++++++++++`      ::::::::......::::::::::
++++++++++/       -:::::.     `::::::::::
+++++++++++/`       ``        -::::::::::
+++++++++++/:.`             .::::::::::::
+-+++++++/::::::-.``````..-:::::::::::::.
+ `-/++/:::::::::::::::::::::::::::::-.  
+     `.-::::::::::::::::::::::::-.`     
+         .-::::::::::::::::::-.         
+            `.-::::::::::-.`            
+                `-::::-`";
+        
+
+        let haskell="
+ -ssssss+``:+++++/`                      
+ `ossssso. -++++++-                     
+   /ssssss: ./+++++:`                   
+    -ssssss+``:+++++/.                  
+     `ossssso. -++++++- `ossssssssssssss
+       /ssssss: ./+++++:``+sssssssssssss
+        -ssssss+``:+++++/. -::::::::::::
+        -ssssss+``:+++++++-  .----------
+       /ssssss: `/+++++++++:``+sssssssss
+     `ossssso. -++++++/+++++/. :ssssssss
+    -ssssss+``:+++++/. -/+++++-         
+   /ssssss: ./+++++:`   `/+++++/`       
+ `ossssso. -++++++-       :+++++/.      
+-ssssss+``:+++++/`         ./+++++-";
+
+
+        let python="                                   
+              `.-::::::-.`              
+            :ososssssssssso-            
+           .ss` .ssssssssyyy.           
+           .sso+ssssssssyyyy-           
+           `::::::::syyyyyyy-           
+    `:ossssssssssssyyyyyyyyy-.----.`    
+   .ssssssssssssssyyyyyyyyyy-.------`   
+   +sssssssssssyyyyyyyyyyyys`.-------   
+   ssssssssssssssssssssso+:`.--------   
+   sssssssso-```...........----------   
+   osssssys`..-----------------------   
+   :sssyyy+`------------------------.   
+    :syyyy+`-----------------------`    
+      .-::-`--------`````````````       
+           `----------------`           
+           `-----------.  --`           
+            .-----------..--            
+              `..........``";
+
+
+        let lisp="
+              .------------`             
+         -oss+:-`         .---`         
+      `+dMMMMMMMMdo.          -:-       
+     /mMMMMMMMMMMMMNs` ````     .:.     
+   `yMMMMMMMMMMMMMMMMh :mNh.      -:    
+  `dh++dMMMMMMdooyMMMM: .dMm-      `/   
+  yMm` -NMMMMy` -mMMMM+  `NMN:      ./  
+ -MMMs  oMMMs` -NMMMMN.   NMMN:      +` 
+ oMMMM/  hMy  -NMMMMN/   :MMMMN-     .: 
+ sMMMMN- .y` `mMMMMy-   `mMM/mMm.    `+ 
+ oMMMMMm.    sMMMN/    `hMM+ -NMh`   .: 
+ .MMMMMMd`  `NMMM:    `yMMo   /MMs   +` 
+  oMMMMMMd`  dMMm    `hMN+     yMM- .:  
+   sMMMMMMd. .dMm    :oo:      .oo/./   
+    +NMMMMMN/`.yM+                -:    
+     -yMMMMMMNNNMMo`            ./.     
+       -sNMMMMMMMMMm+.       `-:.       
+         `:sdNMMMMMMMMmhsso/:-          
+              .:+oossoo/:.";
+
+
+        let scala="
+                              `/         
+                      `.-:+oyhh         
+        `..-:://+ossyhhhhhhhhhh         
+      +hhhhhhhhhhhhhhhhhhhhhhhh         
+      +hhhhhhhhhhhhhhhhhhhhhhhy         
+      +hhhhhhhhhhhhhhhhhhhhyo/.         
+      +hhhhhhhhhyyso++/:-`    -         
+      :+/::-..`        `.-:+oyh         
+          `..--:/++osyyhhhhhhhh         
+      /syhhhhhhhhhhhhhhhhhhhhhh         
+      +hhhhhhhhhhhhhhhhhhhhhhhh         
+      +hhhhhhhhhhhhhhhhhhhhhs+-         
+      +hhhhhhhhhhhyyso+/:-.   .         
+      /o++/::-..`        .-:+sh         
+            ``.--:/++osyhhhhhhh         
+      :osyyhhhhhhhhhhhhhhhhhhhh         
+      +hhhhhhhhhhhhhhhhhhhhhhhh         
+      +hhhhhhhhhhhhhhhhhhhhhyo:         
+      +hhhhhhhhhhhhhysoo/:-.            
+      +yso++//:--.`";
+
+
+        let csharp="
+                                         
+              `.-:::--.`                
+          ./oyhhhhhhhhhhyo/.            
+       `+yhhhhhhhhhhhhhhhhhhy/`         
+     `+hhhhhhhhhhhhhhhhhhhhhhhh+`       
+    -yhhhhhhhhhhhhhyhhhhhhhhhhhhy.      
+   :hhhhhhhhhy+-`    `-+yhhhhhs/.       
+  .hhhhhhhhh/           `+yo:` .`  .`   
+  ohhhhhhhh-                 -:ho-:ho:  
+  yhhhhhhhs                  :+hs//hs/  
+  hhhhhhhho                  -:ho-:ho-  
+  ohhhhhhhh.                 /+hs/+hs/  
+  .hhhhhhhhy-            :s/-  -.  -.   
+   /hhhhhhhhhs:.      ./shhhhyo:`       
+    :hhhhhhhhhhhhyssyhhhhhhhhhhhy.      
+     .shhhhhhhhhhhhhhhhhhhhhhhho`       
+       -ohhhhhhhhhhhhhhhhhhhho.         
+         `:+yhhhhhhhhhhhhy+:`           
+             `.-:////:-.`               
+                                        ";
+
+            
+        let shell="
+      -yyyyy     +yyyy+          +yyyy+ 
+      /MMMMM     yMMMMy          yMMMMy 
+      /MMMMM     yMMMMy          yMMMMy 
+ yMMMMMMMMMMMMMMMMMMMMMMMMMM     yMMMMy 
+ yMMMMMMMMMMMMMMMMMMMMMMMMMM     yMMMMy 
+ +yyyydMMMMMyyyyymMMMMmyyyyy     yMMMMy 
+      /MMMMM     yMMMMy          yMMMMy 
+      /MMMMM     yMMMMy          yMMMMy 
+ +yyyydMMMMMyyyyymMMMMmyyyyy     -////- 
+ yMMMMMMMMMMMMMMMMMMMMMMMMMM            
+ yMMMMMMMMMMMMMMMMMMMMMMMMMM            
+      /MMMMM     yMMMMy          yMMMMy 
+      /MMMMM     yMMMMy          yMMMMy 
+      -yyyyy     +yyyy+          +yyyy+ 
+                                        ";
+
+        let ruby="
+                   `-::::--/osyyyhhyo/.  
+              `:oyhhyyyyy+./yhhhddddddo 
+           `/shhhhhhhhyyyy. .ohhhddddddo
+         .ohhhhhhhhhhhhhyy-/++oyhhdddddd
+       .shhhhhhhhhhhhhhhh/syyyyyyhhddddd
+     `ohhhhhhhhhhhhhhhhh:ohhhhhhhhhhdddy
+    -hhhhhhhhhhhhhhhhhy-:hhhhhhhdddddddo
+   /ddddhhhhhhhhhhhhho` :dddddddddddddd+
+  /dddddddhhhhhhhhhs:-:::hddddddddddddd:
+ .hhddddddddhhhhhs++oooooyddddddddddddd.
+ :syhhddddddddh++syyyyyyyyddddddddddddd 
+`-/osyhhdddho:/yhhhhhhhhhhhdddddddddddh 
+/o.-/+oo+/. -hhhhhhhhhhhhhhddddddddddds 
+oyo....---::ydddddddddddddddddddddddhh+ 
+shhy++++oooshdddddddddddddddddddddddhh: 
+hhhhysssssshddddddddddddddddhhdddddddy. 
+hhhhhhyyyyhddddddddddddddhhhhhhhhddddy` 
+/hhdddhhhhhdddddddddddhhhhhhyyyyyyhddy  
+ +hhhhhddhddddddddddddhhhhhhhhyyyyysys  
+  `/osyhhhyyysssooo++///:::---..```     ";
+
+        let unknown="
+                                         
+                -/oooo+:`               
+              :dmmmmmmmmms`             
+             :mmmm/` -dmmmh             
+             ymmmh    ommmm.            
+             -----   `dmmmm`            
+                    /dmmmd-             
+                  .hmmmms`              
+                 `dmmmh.                
+                 -mmmm.                 
+                 `----                  
+                 :ssss.                 
+                 +mmmm-                 
+                 :oooo.                 
+                                        ";
+
+        match self.language {
+            Language::Rust => rust,
+            Language::Go => go, 
+            Language::Java => java, 
+            Language::Cpp => cpp, 
+            Language::C => c, 
+            Language::Python => python, 
+            Language::Csharp => csharp,
+            Language::Scala => scala,
+            Language::Shell => shell,
+            Language::Lisp => lisp,
+            Language::Haskell => haskell,
+            Language::Ruby =>  ruby,
+            _ => unknown
+        }
     }
 }
