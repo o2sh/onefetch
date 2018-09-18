@@ -14,7 +14,7 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut s = String::new();
-        s.push_str(&"Project: \n".blue().bold().to_string() + &format!("{}", self.project_name));
+        s.push_str("Project: \n".blue().bold().to_string() + &format!("{}", self.project_name));
         s.push_str(&"Language: \n".blue().bold().to_string());
         s.push_str(&"Author: \n".blue().bold().to_string());
         s.push_str(&"Repo: \n".blue().bold().to_string());
