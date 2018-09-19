@@ -21,7 +21,20 @@ impl fmt::Display for Info {
         s.push_str(&("Number of lines: ".blue().bold().to_string() + &format!("{}\n", self.number_of_lines)));
         s.push_str(&("License: ".blue().bold().to_string() + &format!("{}\n", self.license)));
         s.push_str(&self.get_ascii().blue().bold().to_string());
-        write!(f, "{}", s)
+                
+        let logo= self.get_ascii();
+        let mut lines = s.lines();
+        let left_pad = logo.lines().map(|l| l.len()).max().unwrap_or(0);
+        let mut o = String::new();
+        for a in logo.lines() {
+            let b = match lines.next() {
+                Some(line) => line,
+                None => "",
+            };
+            o.push_str(&format!("{:width$} {}\n", a, b, width = left_pad));
+        }
+        
+        write!(f, "{}", o)
     }
 }
 
