@@ -14,7 +14,7 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut s = String::new();
-        s.push_str(&("Project: ".blue().bold().to_string() + &format!("{}\n", self.project_name)));
+        s.push_str(&("\nProject: ".blue().bold().to_string() + &format!("{}\n", self.project_name)));
         s.push_str(&("Language: ".blue().bold().to_string() + &format!("{}\n", self.language)));
         s.push_str(&("Author: ".blue().bold().to_string() + &format!("{}\n", self.author)));
         s.push_str(&("Repo: ".blue().bold().to_string() + &format!("{}\n", self.repo)));
