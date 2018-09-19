@@ -13,14 +13,13 @@ struct Info {
 
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut s = String::new();
-        s.push_str(&("\nProject: ".blue().bold().to_string() + &format!("{}\n", self.project_name)));
+        let mut s = String::from("\n");
+        s.push_str(&("Project: ".blue().bold().to_string() + &format!("{}\n", self.project_name)));
         s.push_str(&("Language: ".blue().bold().to_string() + &format!("{}\n", self.language)));
         s.push_str(&("Author: ".blue().bold().to_string() + &format!("{}\n", self.author)));
         s.push_str(&("Repo: ".blue().bold().to_string() + &format!("{}\n", self.repo)));
         s.push_str(&("Number of lines: ".blue().bold().to_string() + &format!("{}\n", self.number_of_lines)));
         s.push_str(&("License: ".blue().bold().to_string() + &format!("{}\n", self.license)));
-        s.push_str(&self.get_ascii().blue().bold().to_string());
                 
         let logo= self.get_ascii();
         let mut lines = s.lines();
@@ -31,7 +30,7 @@ impl fmt::Display for Info {
                 Some(line) => line,
                 None => "",
             };
-            o.push_str(&format!("{:width$} {}\n", a, b, width = left_pad));
+            o.push_str(&format!("{:width$} {}\n", a.blue().bold(), b, width = left_pad));
         }
         
         write!(f, "{}", o)
