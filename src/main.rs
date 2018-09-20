@@ -14,12 +14,13 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut s = String::from("\n");
-        s.push_str(&("Project: ".blue().bold().to_string() + &format!("{}\n", self.project_name)));
-        s.push_str(&("Language: ".blue().bold().to_string() + &format!("{}\n", self.language)));
-        s.push_str(&("Author: ".blue().bold().to_string() + &format!("{}\n", self.author)));
-        s.push_str(&("Repo: ".blue().bold().to_string() + &format!("{}\n", self.repo)));
-        s.push_str(&("Number of lines: ".blue().bold().to_string() + &format!("{}\n", self.number_of_lines)));
-        s.push_str(&("License: ".blue().bold().to_string() + &format!("{}\n", self.license)));
+        let color = get_color(&self.language);
+        s.push_str(&("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)));
+        s.push_str(&("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)));
+        s.push_str(&("Author: ".color(color).bold().to_string() + &format!("{}\n", self.author)));
+        s.push_str(&("Repo: ".color(color).bold().to_string() + &format!("{}\n", self.repo)));
+        s.push_str(&("Number of lines: ".color(color).bold().to_string() + &format!("{}\n", self.number_of_lines)));
+        s.push_str(&("License: ".color(color).bold().to_string() + &format!("{}\n", self.license)));
                 
         let logo= self.get_ascii();
         let mut lines = s.lines();
@@ -30,7 +31,7 @@ impl fmt::Display for Info {
                 Some(line) => line,
                 None => "",
             };
-            o.push_str(&format!("{:width$} {}\n", a.blue().bold(), b, width = left_pad));
+            o.push_str(&format!("{:width$} {}\n", a.color(color).bold(), b, width = left_pad));
         }
         
         write!(f, "{}", o)
@@ -50,6 +51,24 @@ enum Language {
     Lisp,
     Haskell,
     Ruby,
+}
+
+fn get_color(l : &Language) -> &str {
+
+     match l {
+         Language::Rust => "white",
+         Language::Go => "blue",
+         Language::Java => "green",
+         Language::Cpp => "yellow",
+         Language::C => "cyan",
+         Language::Python => "magenta",
+         Language::Csharp => "white",
+         Language::Scala => "blue",
+         Language::Shell => "green",
+         Language::Lisp => "yellow",
+         Language::Haskell => "cyan",
+         Language::Ruby => "magenta",
+    }
 }
 
 impl fmt::Display for Language {
@@ -72,21 +91,17 @@ impl fmt::Display for Language {
 }
 
 fn main() {
-let info = Info { 
-    project_name: String::from("onefetch"),
-    language: Language::Java,
-    author: String::from("Ossama Hjaji"),
-    repo: String::from("https://github.com/02sh/onefetch"),
-    number_of_lines: 15656, 
-    license: String::from("MIT"),
-};
+    let info = Info { 
+        project_name: String::from("onefetch"),
+        language: Language::Python,
+        author: String::from("Ossama Hjaji"),
+        repo: String::from("https://github.com/02sh/onefetch"),
+        number_of_lines: 15656, 
+        license: String::from("MIT"),
+    };
 
-println!("{}", info);
+    println!("{}", info);
 
-//let left_pad = ascii.lines().map(|l| l.len()).max().unwrap_or(0) + 5; 
-//for (a,b) in ascii.lines().zip(info.lines()) {
-//    println!("{:width$} {}", a, b, width = left_pad);
-//}
 }
 
 
