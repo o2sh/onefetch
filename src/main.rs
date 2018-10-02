@@ -56,8 +56,8 @@ enum Language {
 fn get_color(l : &Language) -> &str {
 
      match l {
-         Language::Rust => "white",
-         Language::Go => "blue",
+         Language::Rust => "cyan",
+         Language::Go => "white",
          Language::Java => "green",
          Language::Cpp => "yellow",
          Language::C => "cyan",
@@ -93,7 +93,7 @@ impl fmt::Display for Language {
 fn main() {
     let info = Info { 
         project_name: String::from("onefetch"),
-        language: Language::Python,
+        language: Language::Rust,
         author: String::from("Ossama Hjaji"),
         repo: String::from("https://github.com/02sh/onefetch"),
         number_of_lines: 15656, 
@@ -116,14 +116,14 @@ impl Info {
    -ssNMMNo.                .oNMMNss-   
    `mMMMMNmmmmmmmmmmmmmmmdy+` `sMMMm`   
  `mMMMMMMMMMMMMMMMMMMMMMMMMMN/  hMMMMm` 
- -oMN-:Ny:mMMMMMm/////oNMMMMMm oN::MMo- 
+ -oMN-:Ny:mMMMMMm    oNMMMMMm oN::MMo- 
 .yMMMhhh+ dMMMMMd:::::+mMMMMN/ odyhMMMy.
 -sNMMy    dMMMMMMMMMMMMMMMMs`    `yMMNs-
 -sNMMy    dMMMMMNyyyydMMMMMMy   .odMMNs-
-.yMMMm````dMMMMMh     +MMMMMM+``sMMMMMy.
+.yMMMm   dMMMMMh     +MMMMMM+  sMMMMMy.
  -oMMMMMMMMMMMMMMMMM+  mMMMMMMMMMMMMMo- 
  `mMMMMMMMMMMMMMMMMM+  :NMMMMMMMMMMMMm` 
-   `mMMMm//+o-------`   `-:o+:/mMMMm`   
+   `mMMMm               `-:o+:/mMMMm`   
    -ssNMMMyomo            smohMMMNss-   
      `NNNMs+mN/-`      `-/Nd/yMNNN`     
       ` -MMNMMMMMNmmmmNMMMMMNMM- `      
