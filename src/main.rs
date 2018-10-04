@@ -51,7 +51,8 @@ enum Language {
     Lisp,
     Haskell,
     Ruby,
-    Coffeescript,
+      R,
+      Coffeescript,
 }
 
 fn get_color(l : &Language) -> &str {
@@ -69,6 +70,7 @@ fn get_color(l : &Language) -> &str {
          Language::Lisp => "yellow",
          Language::Haskell => "cyan",
          Language::Ruby => "magenta",
+         Language::R => "blue",
          Language::Coffeescript => "cyan",
     }
 }
@@ -88,6 +90,7 @@ impl fmt::Display for Language {
           Language::Lisp => write!(f, "Lisp"),
           Language::Haskell => write!(f, "Haskell"),
           Language::Ruby => write!(f, "Ruby"),
+          Language::R => write!(f, "R"),
           Language::Coffeescript => write!(f, "Coffeescript")
        }
     }
@@ -402,20 +405,20 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                                         ";
 
         match self.language {
-            Language::Rust => rust,
-            Language::Go => go,
-            Language::Java => java,
-            Language::Cpp => cpp,
-            Language::C => c,
-            Language::Python => python,
-            Language::Csharp => csharp,
-            Language::Scala => scala,
-            Language::Shell => shell,
-            Language::Lisp => lisp,
-            Language::Haskell => haskell,
-            Language::Ruby =>  ruby,
-            Language::Coffeescript => coffeescript,
-            _ => unknown
+            Language::Rust => include_str!("../resources/rust.ascii"),
+            Language::Go => include_str!("../resources/go.ascii"),
+            Language::Java => include_str!("../resources/java.ascii"),
+            Language::Cpp => include_str!("../resources/cpp.ascii"),
+            Language::C => include_str!("../resources/c.ascii"),
+            Language::Python => include_str!("../resources/python.ascii"),
+            Language::Csharp => include_str!("../resources/csharp.ascii"),
+            Language::Scala => include_str!("../resources/scala.ascii"),
+            Language::Shell => include_str!("../resources/shell.ascii"),
+            Language::Lisp => include_str!("../resources/lisp.ascii"),
+            Language::Haskell => include_str!("../resources/haskell.ascii"),
+            Language::Ruby => include_str!("../resources/ruby.ascii"),
+            Language::R => include_str!("../resources/r.ascii"),
+            _ => include_str!("../resources/unknown.ascii")
         }
     }
 }
