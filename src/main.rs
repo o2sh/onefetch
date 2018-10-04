@@ -111,6 +111,7 @@ fn main() {
     let info = Info {
         project_name: String::from("onefetch"),
         language: language,
+        //language: Language::Python,
         author: String::from("Ossama Hjaji"),
         repo: String::from("https://github.com/02sh/onefetch"),
         number_of_lines: 15656,
@@ -150,6 +151,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Haskell => Language::Haskell,
             tokei::LanguageType::Ruby => Language::Ruby,
             tokei::LanguageType::R => Language::R,
+            tokei::LanguageType::Clojure => Language::Clojure,
             _ => unimplemented!(),
         }
     }
@@ -170,6 +172,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Haskell,
         tokei::LanguageType::Ruby,
         tokei::LanguageType::R,
+        tokei::LanguageType::Clojure,
     ]
 }
 
@@ -190,7 +193,7 @@ impl Info {
             Language::Haskell => include_str!("../resources/haskell.ascii"),
             Language::Ruby => include_str!("../resources/ruby.ascii"),
             Language::R => include_str!("../resources/r.ascii"),
-            _ => include_str!("../resources/unknown.ascii")
+           // _ => include_str!("../resources/unknown.ascii"),
         }
     }
 }
