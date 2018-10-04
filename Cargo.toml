@@ -5,3 +5,4 @@ authors = ["o2sh <ossama-hjaji@live.fr>"]
 
 [dependencies]
 colored= "1.6.1"
+tokei = "8.0"

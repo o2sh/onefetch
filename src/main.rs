@@ -1,4 +1,6 @@
 extern crate colored;
+extern crate tokei;
+
 use colored::*;
 use std::fmt;
 
@@ -97,9 +99,18 @@ impl fmt::Display for Language {
 }
 
 fn main() {
+
+    let language = match get_dominant_language() {
+        Some(language) => language,
+        None => {
+            eprintln!("Could not find any source code in this directory.");
+            return;
+        }
+    };
+
     let info = Info {
         project_name: String::from("onefetch"),
-        language: Language::Rust,
+        language: language,
         author: String::from("Ossama Hjaji"),
         repo: String::from("https://github.com/02sh/onefetch"),
         number_of_lines: 15656,
@@ -110,6 +121,57 @@ fn main() {
 
 }
 
+/// Traverse current directory and search for dominant
+/// language using tokei.
+fn get_dominant_language() -> Option<Language> {
+    let mut languages = tokei::Languages::new();
+    let required_languages = get_all_language_types();
+    languages.get_statistics( &["."], vec![".git", "target"], Some(required_languages));
+
+    languages.remove_empty().iter()
+                            .max_by_key(|(_, v)| v.code)
+                            .map(|(k, _)| Language::from(**k))
+}
+
+/// Convert from tokei LanguageType to known Language type .
+impl From<tokei::LanguageType> for Language {
+    fn from(language: tokei::LanguageType) -> Self {
+        match language {
+            tokei::LanguageType::Rust => Language::Rust,
+            tokei::LanguageType::Go => Language::Go,
+            tokei::LanguageType::Java => Language::Java,
+            tokei::LanguageType::Cpp => Language::Cpp,
+            tokei::LanguageType::C => Language::C,
+            tokei::LanguageType::Python => Language::Python,
+            tokei::LanguageType::CSharp => Language::Csharp,
+            tokei::LanguageType::Scala => Language::Scala,
+            tokei::LanguageType::Sh => Language::Shell,
+            tokei::LanguageType::Lisp => Language::Lisp,
+            tokei::LanguageType::Haskell => Language::Haskell,
+            tokei::LanguageType::Ruby => Language::Ruby,
+            tokei::LanguageType::R => Language::R,
+            _ => unimplemented!(),
+        }
+    }
+}
+
+fn get_all_language_types() -> Vec<tokei::LanguageType> {
+    vec![
+        tokei::LanguageType::Rust,
+        tokei::LanguageType::Go,
+        tokei::LanguageType::Java,
+        tokei::LanguageType::Cpp,
+        tokei::LanguageType::C,
+        tokei::LanguageType::Python,
+        tokei::LanguageType::CSharp,
+        tokei::LanguageType::Scala,
+        tokei::LanguageType::Sh,
+        tokei::LanguageType::Lisp,
+        tokei::LanguageType::Haskell,
+        tokei::LanguageType::Ruby,
+        tokei::LanguageType::R,
+    ]
+}
 
 impl Info {
     pub fn get_ascii(&self) -> &str {
