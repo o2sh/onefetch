@@ -418,6 +418,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
             Language::Haskell => include_str!("../resources/haskell.ascii"),
             Language::Ruby => include_str!("../resources/ruby.ascii"),
             Language::R => include_str!("../resources/r.ascii"),
+            Language::Coffeescript => include_str!("../resources/coffeescript.ascii")
             _ => include_str!("../resources/unknown.ascii")
         }
     }
