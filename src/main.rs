@@ -113,7 +113,8 @@ impl fmt::Display for Language {
 }
 
 fn main() {
-    let language = match get_dominant_language() {
+    let tokei_langs = project_languages();
+    let language = match get_dominant_language(&tokei_langs) {
         Some(language) => language,
         None => {
             eprintln!("Could not find any source code in this directory.");
@@ -124,28 +125,38 @@ fn main() {
     let info = Info {
         project_name: String::from("onefetch"),
         language: language,
-        //language: Language::Python,
         author: String::from("Ossama Hjaji"),
         repo: String::from("https://github.com/02sh/onefetch"),
-        number_of_lines: 15656,
+        number_of_lines: get_total_loc(&tokei_langs),
         license: String::from("MIT"),
     };
 
     println!("{}", info);
 }
 
-/// Traverse current directory and search for dominant
-/// language using tokei.
-fn get_dominant_language() -> Option<Language> {
+fn project_languages() -> tokei::Languages {
     let mut languages = tokei::Languages::new();
     let required_languages = get_all_language_types();
     languages.get_statistics(&["."], vec![".git", "target"], Some(required_languages));
+    languages
+}
 
+/// Traverse current directory and search for dominant
+/// language using tokei.
+fn get_dominant_language(languages: &tokei::Languages) -> Option<Language> {
     languages
         .remove_empty()
         .iter()
         .max_by_key(|(_, v)| v.code)
         .map(|(k, _)| Language::from(**k))
+}
+
+fn get_total_loc(languages: &tokei::Languages) -> usize {
+    languages
+        .values()
+        .collect::<Vec<&tokei::Language>>()
+        .iter()
+        .fold(0, |sum, val| sum + val.code)
 }
 
 /// Convert from tokei LanguageType to known Language type .
