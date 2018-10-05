@@ -41,60 +41,62 @@ impl fmt::Display for Info {
 }
 
 enum Language {
-    Rust,
-    Go,
-    Java,
-    Cpp,
     C,
-    Python,
-    Csharp,
-    Scala,
     Clojure,
-    Shell,
-    Lisp,
+    Cpp,
+    Csharp,
+    Go,
     Haskell,
-    Ruby,
+    Java,
+    Lisp,
+    Python,
     R,
+    Ruby,
+    Rust,
+    Scala,
+    Shell,
+    TypeScript,
 }
 
 fn get_color(l : &Language) -> &str {
-
-     match l {
-         Language::Rust => "cyan",
-         Language::Go => "white",
-         Language::Java => "green",
-         Language::Cpp => "yellow",
-         Language::C => "cyan",
-         Language::Python => "magenta",
-         Language::Csharp => "white",
-         Language::Scala => "blue",
-         Language::Clojure => "cyan",
-         Language::Shell => "green",
-         Language::Lisp => "yellow",
-         Language::Haskell => "cyan",
-         Language::Ruby => "magenta",
-         Language::R => "blue",
+    match l {
+        Language::C => "cyan",
+        Language::Clojure => "cyan",
+        Language::Cpp => "yellow",
+        Language::Csharp => "white",
+        Language::Go => "white",
+        Language::Haskell => "cyan",
+        Language::Java => "green",
+        Language::Lisp => "yellow",
+        Language::Python => "magenta",
+        Language::R => "blue",
+        Language::Ruby => "magenta",
+        Language::Rust => "cyan",
+        Language::Scala => "blue",
+        Language::Shell => "green",
+        Language::TypeScript => "cyan",
     }
 }
 
 impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-          Language::Rust => write!(f, "Rust"),
-          Language::Go => write!(f, "Go"),
-          Language::Java => write!(f, "Java"),
-          Language::Cpp => write!(f, "C++"),
-          Language::C => write!(f, "C"),
-          Language::Python => write!(f, "Python"),
-          Language::Csharp => write!(f, "C#"),
-          Language::Scala => write!(f, "Scala"),
-          Language::Clojure => write!(f, "Clojure"),
-          Language::Shell => write!(f, "Shell"),
-          Language::Lisp => write!(f, "Lisp"),
-          Language::Haskell => write!(f, "Haskell"),
-          Language::Ruby => write!(f, "Ruby"),
-          Language::R => write!(f, "R"),
-       }
+        match *self {
+            Language::C => write!(f, "C"),
+            Language::Clojure => write!(f, "Clojure"),
+            Language::Cpp => write!(f, "C++"),
+            Language::Csharp => write!(f, "C#"),
+            Language::Go => write!(f, "Go"),
+            Language::Haskell => write!(f, "Haskell"),
+            Language::Java => write!(f, "Java"),
+            Language::Lisp => write!(f, "Lisp"),
+            Language::Python => write!(f, "Python"),
+            Language::R => write!(f, "R"),
+            Language::Ruby => write!(f, "Ruby"),
+            Language::Rust => write!(f, "Rust"),
+            Language::Scala => write!(f, "Scala"),
+            Language::Shell => write!(f, "Shell"),
+            Language::TypeScript => write!(f, "TypeScript"),
+        }
     }
 }
 
@@ -138,20 +140,21 @@ fn get_dominant_language() -> Option<Language> {
 impl From<tokei::LanguageType> for Language {
     fn from(language: tokei::LanguageType) -> Self {
         match language {
-            tokei::LanguageType::Rust => Language::Rust,
-            tokei::LanguageType::Go => Language::Go,
-            tokei::LanguageType::Java => Language::Java,
-            tokei::LanguageType::Cpp => Language::Cpp,
             tokei::LanguageType::C => Language::C,
-            tokei::LanguageType::Python => Language::Python,
+            tokei::LanguageType::Clojure => Language::Clojure,
+            tokei::LanguageType::Cpp => Language::Cpp,
             tokei::LanguageType::CSharp => Language::Csharp,
+            tokei::LanguageType::Go => Language::Go,
+            tokei::LanguageType::Haskell => Language::Haskell,
+            tokei::LanguageType::Java => Language::Java,
+            tokei::LanguageType::Lisp => Language::Lisp,
+            tokei::LanguageType::Python => Language::Python,
+            tokei::LanguageType::R => Language::R,
+            tokei::LanguageType::Ruby => Language::Ruby,
+            tokei::LanguageType::Rust => Language::Rust,
             tokei::LanguageType::Scala => Language::Scala,
             tokei::LanguageType::Sh => Language::Shell,
-            tokei::LanguageType::Lisp => Language::Lisp,
-            tokei::LanguageType::Haskell => Language::Haskell,
-            tokei::LanguageType::Ruby => Language::Ruby,
-            tokei::LanguageType::R => Language::R,
-            tokei::LanguageType::Clojure => Language::Clojure,
+            tokei::LanguageType::TypeScript => Language::TypeScript,
             _ => unimplemented!(),
         }
     }
@@ -159,41 +162,43 @@ impl From<tokei::LanguageType> for Language {
 
 fn get_all_language_types() -> Vec<tokei::LanguageType> {
     vec![
-        tokei::LanguageType::Rust,
-        tokei::LanguageType::Go,
-        tokei::LanguageType::Java,
-        tokei::LanguageType::Cpp,
         tokei::LanguageType::C,
-        tokei::LanguageType::Python,
+        tokei::LanguageType::Clojure,
+        tokei::LanguageType::Cpp,
         tokei::LanguageType::CSharp,
+        tokei::LanguageType::Go,
+        tokei::LanguageType::Haskell,
+        tokei::LanguageType::Java,
+        tokei::LanguageType::Lisp,
+        tokei::LanguageType::Python,
+        tokei::LanguageType::R,
+        tokei::LanguageType::Ruby,
+        tokei::LanguageType::Rust,
         tokei::LanguageType::Scala,
         tokei::LanguageType::Sh,
-        tokei::LanguageType::Lisp,
-        tokei::LanguageType::Haskell,
-        tokei::LanguageType::Ruby,
-        tokei::LanguageType::R,
-        tokei::LanguageType::Clojure,
+        tokei::LanguageType::TypeScript,
     ]
 }
 
 impl Info {
     pub fn get_ascii(&self) -> &str {
         match self.language {
-            Language::Rust => include_str!("../resources/rust.ascii"),
-            Language::Go => include_str!("../resources/go.ascii"),
-            Language::Java => include_str!("../resources/java.ascii"),
-            Language::Cpp => include_str!("../resources/cpp.ascii"),
             Language::C => include_str!("../resources/c.ascii"),
-            Language::Python => include_str!("../resources/python.ascii"),
-            Language::Csharp => include_str!("../resources/csharp.ascii"),
-            Language::Scala => include_str!("../resources/scala.ascii"),
             Language::Clojure => include_str!("../resources/clojure.ascii"),
-            Language::Shell => include_str!("../resources/shell.ascii"),
-            Language::Lisp => include_str!("../resources/lisp.ascii"),
+            Language::Cpp => include_str!("../resources/cpp.ascii"),
+            Language::Csharp => include_str!("../resources/csharp.ascii"),
+            Language::Go => include_str!("../resources/go.ascii"),
             Language::Haskell => include_str!("../resources/haskell.ascii"),
-            Language::Ruby => include_str!("../resources/ruby.ascii"),
+            Language::Java => include_str!("../resources/java.ascii"),
+            Language::Lisp => include_str!("../resources/lisp.ascii"),
+            Language::Python => include_str!("../resources/python.ascii"),
             Language::R => include_str!("../resources/r.ascii"),
-           // _ => include_str!("../resources/unknown.ascii"),
+            Language::Ruby => include_str!("../resources/ruby.ascii"),
+            Language::Rust => include_str!("../resources/rust.ascii"),
+            Language::Scala => include_str!("../resources/scala.ascii"),
+            Language::Shell => include_str!("../resources/shell.ascii"),
+            Language::TypeScript => include_str!("../resources/typescript.ascii"),
+            // _ => include_str!("../resources/unknown.ascii"),
         }
     }
 }
