@@ -17,14 +17,21 @@ impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut s = String::from("\n");
         let color = get_color(&self.language);
-        s.push_str(&("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)));
-        s.push_str(&("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)));
+        s.push_str(
+            &("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)),
+        );
+        s.push_str(
+            &("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)),
+        );
         s.push_str(&("Author: ".color(color).bold().to_string() + &format!("{}\n", self.author)));
         s.push_str(&("Repo: ".color(color).bold().to_string() + &format!("{}\n", self.repo)));
-        s.push_str(&("Number of lines: ".color(color).bold().to_string() + &format!("{}\n", self.number_of_lines)));
+        s.push_str(
+            &("Number of lines: ".color(color).bold().to_string()
+                + &format!("{}\n", self.number_of_lines)),
+        );
         s.push_str(&("License: ".color(color).bold().to_string() + &format!("{}\n", self.license)));
 
-        let logo= self.get_ascii();
+        let logo = self.get_ascii();
         let mut lines = s.lines();
         let left_pad = logo.lines().map(|l| l.len()).max().unwrap_or(0);
         let mut o = String::new();
@@ -33,7 +40,12 @@ impl fmt::Display for Info {
                 Some(line) => line,
                 None => "",
             };
-            o.push_str(&format!("{:width$} {}\n", a.color(color).bold(), b, width = left_pad));
+            o.push_str(&format!(
+                "{:width$} {}\n",
+                a.color(color).bold(),
+                b,
+                width = left_pad
+            ));
         }
 
         write!(f, "{}", o)
@@ -58,7 +70,7 @@ enum Language {
     TypeScript,
 }
 
-fn get_color(l : &Language) -> &str {
+fn get_color(l: &Language) -> &str {
     match l {
         Language::C => "cyan",
         Language::Clojure => "cyan",
@@ -101,8 +113,8 @@ impl fmt::Display for Language {
 }
 
 fn main() {
-
-    let language = match get_dominant_language() {
+    let tokei_langs = project_languages();
+    let language = match get_dominant_language(&tokei_langs) {
         Some(language) => language,
         None => {
             eprintln!("Could not find any source code in this directory.");
@@ -113,27 +125,38 @@ fn main() {
     let info = Info {
         project_name: String::from("onefetch"),
         language: language,
-        //language: Language::Python,
         author: String::from("Ossama Hjaji"),
         repo: String::from("https://github.com/02sh/onefetch"),
-        number_of_lines: 15656,
+        number_of_lines: get_total_loc(&tokei_langs),
         license: String::from("MIT"),
     };
 
     println!("{}", info);
+}
 
+fn project_languages() -> tokei::Languages {
+    let mut languages = tokei::Languages::new();
+    let required_languages = get_all_language_types();
+    languages.get_statistics(&["."], vec![".git", "target"], Some(required_languages));
+    languages
 }
 
 /// Traverse current directory and search for dominant
 /// language using tokei.
-fn get_dominant_language() -> Option<Language> {
-    let mut languages = tokei::Languages::new();
-    let required_languages = get_all_language_types();
-    languages.get_statistics( &["."], vec![".git", "target"], Some(required_languages));
+fn get_dominant_language(languages: &tokei::Languages) -> Option<Language> {
+    languages
+        .remove_empty()
+        .iter()
+        .max_by_key(|(_, v)| v.code)
+        .map(|(k, _)| Language::from(**k))
+}
 
-    languages.remove_empty().iter()
-                            .max_by_key(|(_, v)| v.code)
-                            .map(|(k, _)| Language::from(**k))
+fn get_total_loc(languages: &tokei::Languages) -> usize {
+    languages
+        .values()
+        .collect::<Vec<&tokei::Language>>()
+        .iter()
+        .fold(0, |sum, val| sum + val.code)
 }
 
 /// Convert from tokei LanguageType to known Language type .
