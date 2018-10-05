@@ -55,6 +55,7 @@ enum Language {
     Rust,
     Scala,
     Shell,
+    TypeScript,
 }
 
 fn get_color(l : &Language) -> &str {
@@ -73,6 +74,7 @@ fn get_color(l : &Language) -> &str {
         Language::Rust => "cyan",
         Language::Scala => "blue",
         Language::Shell => "green",
+        Language::TypeScript => "cyan",
     }
 }
 
@@ -93,6 +95,7 @@ impl fmt::Display for Language {
             Language::Rust => write!(f, "Rust"),
             Language::Scala => write!(f, "Scala"),
             Language::Shell => write!(f, "Shell"),
+            Language::TypeScript => write!(f, "TypeScript"),
         }
     }
 }
@@ -151,6 +154,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Rust => Language::Rust,
             tokei::LanguageType::Scala => Language::Scala,
             tokei::LanguageType::Sh => Language::Shell,
+            tokei::LanguageType::TypeScript => Language::TypeScript,
             _ => unimplemented!(),
         }
     }
@@ -172,6 +176,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Rust,
         tokei::LanguageType::Scala,
         tokei::LanguageType::Sh,
+        tokei::LanguageType::TypeScript,
     ]
 }
 
@@ -192,6 +197,7 @@ impl Info {
             Language::Rust => include_str!("../resources/rust.ascii"),
             Language::Scala => include_str!("../resources/scala.ascii"),
             Language::Shell => include_str!("../resources/shell.ascii"),
+            Language::TypeScript => include_str!("../resources/typescript.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
     }
