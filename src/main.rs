@@ -1,7 +1,10 @@
 extern crate colored;
+extern crate git2;
 extern crate tokei;
 
 use colored::*;
+use git2::Error;
+use git2::Repository;
 use std::fmt;
 use std::process::{Command, Stdio};
 
@@ -148,12 +151,16 @@ fn main() {
     }
 
     let authors = get_authors(3);
+    let config: Configuration = match get_configuration() {
+        Ok(config) => config,
+        Err(_) => panic!("Could not retrieve git configuration data"),
+    };
 
     let info = Info {
-        project_name: String::from("onefetch"),
+        project_name: config.repository_name,
         language: language,
         authors: authors,
-        repo: String::from("https://github.com/02sh/onefetch"),
+        repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
         license: String::from("MIT"),
     };
@@ -174,6 +181,52 @@ fn is_git_installed() -> bool {
         .stdout(Stdio::null())
         .status()
         .is_ok()
+}
+
+#[derive(Debug)]
+struct Configuration {
+    pub repository_name: String,
+    pub repository_url: String,
+}
+
+fn get_configuration() -> Result<Configuration, Error> {
+    let repo = Repository::open("./")?;
+    let config = repo.config()?;
+    let mut remote_url = String::new();
+    let mut repository_name = String::new();
+    let mut remote_upstream: Option<String> = None;
+
+    for entry in &config.entries(None).unwrap() {
+        let entry = entry.unwrap();
+        match entry.name().unwrap() {
+            "remote.origin.url" => remote_url = entry.value().unwrap().to_string(),
+            "remote.upstream.url" => remote_upstream = Some(entry.value().unwrap().to_string()),
+            _ => (),
+        }
+    }
+
+    match remote_upstream {
+        Some(url) => remote_url = url.clone(),
+        None => (),
+    };
+
+    let url = remote_url.clone();
+    let mut name_parts: Vec<&str> = url.split("/").collect();
+
+    for (i, part) in name_parts.clone().iter().enumerate() {
+        if part.contains(".git") {
+            let git_parts: Vec<&str> = part.split(".").collect();
+            repository_name = git_parts[0].to_string();
+            name_parts[i] = git_parts[0];
+
+            break;
+        }
+    }
+
+    Ok(Configuration {
+        repository_name: repository_name,
+        repository_url: name_parts.join("/"),
+    })
 }
 
 // Return first n most active commiters as authors within this project.
