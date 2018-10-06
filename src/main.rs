@@ -3,11 +3,12 @@ extern crate tokei;
 
 use colored::*;
 use std::fmt;
+use std::process::{Command, Stdio};
 
 struct Info {
     project_name: String,
     language: Language,
-    author: String,
+    authors: Vec<String>,
     repo: String,
     number_of_lines: usize,
     license: String,
@@ -17,13 +18,28 @@ impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut s = String::from("\n");
         let color = get_color(&self.language);
+
         s.push_str(
             &("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)),
         );
+        
         s.push_str(
             &("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)),
         );
-        s.push_str(&("Author: ".color(color).bold().to_string() + &format!("{}\n", self.author)));
+        
+        if self.authors.len() > 0 {
+            let title = if self.authors.len() > 1 { "Authors: " } else { "Author: " };
+
+            let first = self.authors.first().unwrap();
+            s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", first)));
+
+            let title = (0..title.len()).map(|_| " ").collect::<String>();
+
+            for author in self.authors.iter().skip(1) {
+                s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", author)));
+            }
+        }
+        
         s.push_str(&("Repo: ".color(color).bold().to_string() + &format!("{}\n", self.repo)));
         s.push_str(
             &("Number of lines: ".color(color).bold().to_string()
@@ -122,10 +138,17 @@ fn main() {
         }
     };
 
+    if !is_git_installed() {
+        eprintln!("Could not execute git for project information.");
+        return;
+    }
+
+    let authors = get_authors(3);
+
     let info = Info {
         project_name: String::from("onefetch"),
         language: language,
-        author: String::from("Ossama Hjaji"),
+        authors: authors,
         repo: String::from("https://github.com/02sh/onefetch"),
         number_of_lines: get_total_loc(&tokei_langs),
         license: String::from("MIT"),
@@ -139,6 +162,47 @@ fn project_languages() -> tokei::Languages {
     let required_languages = get_all_language_types();
     languages.get_statistics(&["."], vec![".git", "target"], Some(required_languages));
     languages
+}
+
+fn is_git_installed() -> bool {
+    Command::new("git")
+            .arg("--version")
+            .stdout(Stdio::null())
+            .status()
+            .is_ok()
+}
+
+// Return first n most active commiters as authors within this project.
+fn get_authors(n: usize) -> Vec<String> {
+    use std::collections::HashMap;
+    let output = Command::new("git")
+                         .arg("log")
+                         .arg("--format='%aN'")
+                         .output()
+                         .expect("Failed to execute git.");
+
+    // create map for storing author name as a key and their commit count as value
+    let mut authors = HashMap::new();
+    let output = String::from_utf8_lossy(&output.stdout);
+    for line in output.lines() {
+        let commit_count = authors.entry(line.to_string()).or_insert(0);
+        *commit_count += 1;
+    }
+
+    // sort authors by commit count where the one with most commit count is first
+    let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
+    authors.sort_by(|(_, count1), (_, count2)| count2.cmp(count1));
+
+    // truncate the vector so we only get the count of authors we specified as 'n'
+    authors.truncate(n);
+
+    // get only authors without their commit count
+    // and string "'" prefix and suffix
+    let authors: Vec<String> = authors.into_iter()
+                                      .map(|(author, _)| author.trim_matches('\'').to_string())
+                                      .collect();
+
+    authors
 }
 
 /// Traverse current directory and search for dominant
