@@ -22,13 +22,17 @@ impl fmt::Display for Info {
         s.push_str(
             &("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)),
         );
-        
+
         s.push_str(
             &("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)),
         );
-        
+
         if self.authors.len() > 0 {
-            let title = if self.authors.len() > 1 { "Authors: " } else { "Author: " };
+            let title = if self.authors.len() > 1 {
+                "Authors: "
+            } else {
+                "Author: "
+            };
 
             let first = self.authors.first().unwrap();
             s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", first)));
@@ -39,7 +43,7 @@ impl fmt::Display for Info {
                 s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", author)));
             }
         }
-        
+
         s.push_str(&("Repo: ".color(color).bold().to_string() + &format!("{}\n", self.repo)));
         s.push_str(
             &("Number of lines: ".color(color).bold().to_string()
@@ -166,20 +170,20 @@ fn project_languages() -> tokei::Languages {
 
 fn is_git_installed() -> bool {
     Command::new("git")
-            .arg("--version")
-            .stdout(Stdio::null())
-            .status()
-            .is_ok()
+        .arg("--version")
+        .stdout(Stdio::null())
+        .status()
+        .is_ok()
 }
 
 // Return first n most active commiters as authors within this project.
 fn get_authors(n: usize) -> Vec<String> {
     use std::collections::HashMap;
     let output = Command::new("git")
-                         .arg("log")
-                         .arg("--format='%aN'")
-                         .output()
-                         .expect("Failed to execute git.");
+        .arg("log")
+        .arg("--format='%aN'")
+        .output()
+        .expect("Failed to execute git.");
 
     // create map for storing author name as a key and their commit count as value
     let mut authors = HashMap::new();
@@ -198,9 +202,10 @@ fn get_authors(n: usize) -> Vec<String> {
 
     // get only authors without their commit count
     // and string "'" prefix and suffix
-    let authors: Vec<String> = authors.into_iter()
-                                      .map(|(author, _)| author.trim_matches('\'').to_string())
-                                      .collect();
+    let authors: Vec<String> = authors
+        .into_iter()
+        .map(|(author, _)| author.trim_matches('\'').to_string())
+        .collect();
 
     authors
 }
