@@ -1,7 +1,10 @@
 extern crate colored;
+extern crate git2;
 extern crate tokei;
 
 use colored::*;
+use git2::Error;
+use git2::Repository;
 use std::fmt;
 use std::process::{Command, Stdio};
 
@@ -22,13 +25,17 @@ impl fmt::Display for Info {
         s.push_str(
             &("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)),
         );
-        
+
         s.push_str(
             &("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)),
         );
-        
+
         if self.authors.len() > 0 {
-            let title = if self.authors.len() > 1 { "Authors: " } else { "Author: " };
+            let title = if self.authors.len() > 1 {
+                "Authors: "
+            } else {
+                "Author: "
+            };
 
             let first = self.authors.first().unwrap();
             s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", first)));
@@ -39,7 +46,7 @@ impl fmt::Display for Info {
                 s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", author)));
             }
         }
-        
+
         s.push_str(&("Repo: ".color(color).bold().to_string() + &format!("{}\n", self.repo)));
         s.push_str(
             &("Number of lines: ".color(color).bold().to_string()
@@ -144,12 +151,16 @@ fn main() {
     }
 
     let authors = get_authors(3);
+    let config: Configuration = match get_configuration() {
+        Ok(config) => config,
+        Err(_) => panic!("Could not retrieve git configuration data"),
+    };
 
     let info = Info {
-        project_name: String::from("onefetch"),
+        project_name: config.repository_name,
         language: language,
         authors: authors,
-        repo: String::from("https://github.com/02sh/onefetch"),
+        repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
         license: String::from("MIT"),
     };
@@ -166,20 +177,66 @@ fn project_languages() -> tokei::Languages {
 
 fn is_git_installed() -> bool {
     Command::new("git")
-            .arg("--version")
-            .stdout(Stdio::null())
-            .status()
-            .is_ok()
+        .arg("--version")
+        .stdout(Stdio::null())
+        .status()
+        .is_ok()
+}
+
+#[derive(Debug)]
+struct Configuration {
+    pub repository_name: String,
+    pub repository_url: String,
+}
+
+fn get_configuration() -> Result<Configuration, Error> {
+    let repo = Repository::open("./")?;
+    let config = repo.config()?;
+    let mut remote_url = String::new();
+    let mut repository_name = String::new();
+    let mut remote_upstream: Option<String> = None;
+
+    for entry in &config.entries(None).unwrap() {
+        let entry = entry.unwrap();
+        match entry.name().unwrap() {
+            "remote.origin.url" => remote_url = entry.value().unwrap().to_string(),
+            "remote.upstream.url" => remote_upstream = Some(entry.value().unwrap().to_string()),
+            _ => (),
+        }
+    }
+
+    match remote_upstream {
+        Some(url) => remote_url = url.clone(),
+        None => (),
+    };
+
+    let url = remote_url.clone();
+    let name_parts: Vec<&str> = url.split("/").collect();
+
+    if name_parts.len() > 0 {
+        repository_name = name_parts[name_parts.len() - 1].to_string();
+    }
+
+    if repository_name.contains(".git") {
+        let repo_name = repository_name.clone();
+        let parts: Vec<&str> = repo_name.split(".git").collect();
+        repository_name = parts[0].to_string();
+    }
+
+    Ok(Configuration {
+        repository_name: repository_name.clone(),
+        repository_url: name_parts.join("/"),
+    })
 }
 
 // Return first n most active commiters as authors within this project.
 fn get_authors(n: usize) -> Vec<String> {
     use std::collections::HashMap;
     let output = Command::new("git")
-                         .arg("log")
-                         .arg("--format='%aN'")
-                         .output()
-                         .expect("Failed to execute git.");
+        .arg("log")
+        .arg("--format='%aN'")
+        .output()
+        .expect("Failed to execute git.");
 
     // create map for storing author name as a key and their commit count as value
     let mut authors = HashMap::new();
@@ -198,9 +255,10 @@ fn get_authors(n: usize) -> Vec<String> {
 
     // get only authors without their commit count
     // and string "'" prefix and suffix
-    let authors: Vec<String> = authors.into_iter()
-                                      .map(|(author, _)| author.trim_matches('\'').to_string())
-                                      .collect();
+    let authors: Vec<String> = authors
+        .into_iter()
+        .map(|(author, _)| author.trim_matches('\'').to_string())
+        .collect();
 
     authors
 }
