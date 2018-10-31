@@ -7,5 +7,5 @@ Onefetch is a command-line system information tool that displays information abo
 
 <p align="center">
 <img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="205px">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/python.png" align="right" height="205px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/go.png" align="right" height="205px">
 </p>  
