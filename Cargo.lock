@@ -315,6 +315,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "license"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "aho-corasick 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "url 1.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "lock_api"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -370,6 +381,7 @@ version = "0.1.0"
 dependencies = [
  "colored 1.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "license 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokei 8.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -830,6 +842,7 @@ dependencies = [
 "checksum libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)" = "76e3a3ef172f1a0b9a9ff0dd1491ae5e6c948b94479a3021819ba7d860c8645d"
 "checksum libgit2-sys 0.7.10 (registry+https://github.com/rust-lang/crates.io-index)" = "4916b5addc78ec36cc309acfcdf0b9f9d97ab7b84083118b248709c5b7029356"
 "checksum libz-sys 1.0.23 (registry+https://github.com/rust-lang/crates.io-index)" = "c7bdca442aa002a930e6eb2a71916cabe46d91ffec8df66db0abfb1bc83469ab"
+"checksum license 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)" = "b460f21adc230d937eff5e3e8414898cc3a2556b01dd6daf02f44e43b81c0f65"
 "checksum lock_api 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)" = "775751a3e69bde4df9b38dd00a1b5d6ac13791e4223d4a0506577f0dd27cfb7a"
 "checksum log 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "d4fcce5fa49cc693c312001daf1d13411c4a5283796bac1084299ea3e567113f"
 "checksum matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "7ffc5c5338469d4d3ea17d269fa8ea3512ad247247c30bd2df69e68309ed0a08"

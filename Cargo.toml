@@ -7,4 +7,4 @@ authors = ["o2sh <ossama-hjaji@live.fr>"]
 colored= "1.6.1"
 git2 = {version = "0.7.5", default-features = false}
 tokei = "8.0"
-
+license = "0.7.1"
