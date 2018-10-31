@@ -1,6 +1,5 @@
 language: rust
 rust:
-  - 1.26.0
   - 1.27.0
   - 1.28.0
   - stable
