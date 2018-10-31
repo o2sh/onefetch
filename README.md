@@ -1,5 +1,5 @@
 # onefetch
-![minimum rustc 1.26](https://img.shields.io/badge/rustc-%2B1.26-red.svg)
+![minimum rustc 1.27](https://img.shields.io/badge/rustc-%2B1.27-orange.svg)
 [![Travis status](https://travis-ci.org/o2sh/onefetch.svg?branch=master)](https://travis-ci.org/o2sh/onefetch)
 <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 
