@@ -1,12 +1,17 @@
 extern crate colored;
 extern crate git2;
 extern crate tokei;
+extern crate license;
 
 use colored::*;
 use git2::Error;
 use git2::Repository;
 use std::fmt;
+use std::fs;
 use std::process::{Command, Stdio};
+use std::str::FromStr;
+use license::License;
+use std::ffi::OsStr;
 
 struct Info {
     project_name: String,
@@ -159,13 +164,15 @@ fn main() {
         Err(_) => panic!("Could not retrieve git configuration data"),
     };
 
+
+
     let info = Info {
         project_name: config.repository_name,
         language: language,
         authors: authors,
         repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
-        license: String::from("MIT"),
+        license: project_license(),
     };
 
     println!("{}", info);
@@ -176,6 +183,28 @@ fn project_languages() -> tokei::Languages {
     let required_languages = get_all_language_types();
     languages.get_statistics(&["."], vec![".git", "target"], Some(required_languages));
     languages
+}
+
+fn project_license() -> String {
+    let output = fs::read_dir(".").unwrap()
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|entry| entry.is_file()
+                     && entry.file_name()
+                        .map(OsStr::to_string_lossy)
+                        .unwrap_or("".into())
+                        .starts_with("LICENSE") // TODO: multiple prefixes, like COPYING?
+        )
+        .map(|entry| license::Kind::from_str(&fs::read_to_string(entry).unwrap_or("".into())))
+        .filter_map(Result::ok)
+        .map(|license| license.name().to_string())
+        .collect::<Vec<_>>().join(", ");
+
+    if output == "" {
+        "Unknown".into()
+    } else {
+        output
+    }
 }
 
 fn is_git_installed() -> bool {
