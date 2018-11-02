@@ -5,13 +5,12 @@
 
 Onefetch is a command-line system information tool that displays information about your project (language, author, license, etc) directly on your terminal.
 
-
 ## Usage
 
 You can either build the binary from the source code or get it from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH, then
 
 ```sh
-$ cp /path/of/your/repo
+$ cd /path/of/your/repo
 $ onefetch
 ```
 
