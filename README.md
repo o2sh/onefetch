@@ -8,4 +8,14 @@ Onefetch is a command-line system information tool that displays information abo
 <p align="center">
 <img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="205px">
 <img src="https://github.com/o2sh/onefetch/blob/master/assets/go.png" align="right" height="205px">
-</p>  
+</p>
+
+&nbsp;&nbsp;&nbsp;
+## Usage
+
+You can either build the binary from the source code or get it from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH, then
+
+```sh
+$ cp /path/of/your/repo
+$ onefetch
+```
