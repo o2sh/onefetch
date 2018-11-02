@@ -12,6 +12,7 @@ use std::process::{Command, Stdio};
 use std::str::FromStr;
 use license::License;
 use std::ffi::OsStr;
+use std::fmt::Write;
 
 struct Info {
     project_name: String,
@@ -24,59 +25,77 @@ struct Info {
 
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut s = String::from("\n");
+        let mut buffer = String::new();
         let color = get_color(&self.language);
 
-        s.push_str(
-            &("Project: ".color(color).bold().to_string() + &format!("{}\n", self.project_name)),
-        );
+        writeln!(
+            buffer,
+            "{}{}",
+            "Project: ".color(color).bold(),
+            self.project_name
+        )?;
+        writeln!(
+            buffer,
+            "{}{}",
+            "Language: ".color(color).bold(),
+            self.language
+        )?;
 
-        s.push_str(
-            &("Language: ".color(color).bold().to_string() + &format!("{}\n", self.language)),
-        );
-
-        if self.authors.len() > 0 {
+        if !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
                 "Authors: "
             } else {
                 "Author: "
             };
 
-            let first = self.authors.first().unwrap();
-            s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", first)));
+            writeln!(
+                buffer,
+                "{}{}",
+                title.color(color).bold(),
+                self.authors.first().unwrap()
+            )?;
 
-            let title = (0..title.len()).map(|_| " ").collect::<String>();
+            let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
-                s.push_str(&(title.color(color).bold().to_string() + &format!("{}\n", author)));
+                writeln!(buffer, "{}{}", title.color(color).bold(), author)?;
             }
         }
 
-        s.push_str(&("Repo: ".color(color).bold().to_string() + &format!("{}\n", self.repo)));
-        s.push_str(
-            &("Number of lines: ".color(color).bold().to_string()
-                + &format!("{}\n", self.number_of_lines)),
-        );
-        s.push_str(&("License: ".color(color).bold().to_string() + &format!("{}\n", self.license)));
+        writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
+        writeln!(
+            buffer,
+            "{}{}",
+            "Number of lines: ".color(color).bold(),
+            self.number_of_lines
+        )?;
+        writeln!(
+            buffer,
+            "{}{}",
+            "License: ".color(color).bold(),
+            self.license
+        )?;
 
         let logo = self.get_ascii();
-        let mut lines = s.lines();
+        let mut lines = buffer.lines();
         let left_pad = logo.lines().map(|l| l.len()).max().unwrap_or(0);
-        let mut o = String::new();
+
         for a in logo.lines() {
             let b = match lines.next() {
                 Some(line) => line,
                 None => "",
             };
-            o.push_str(&format!(
-                "{:width$} {}\n",
+
+            writeln!(
+                f,
+                "{:width$} {}",
                 a.color(color).bold(),
                 b,
                 width = left_pad
-            ));
+            )?;
         }
 
-        write!(f, "{}", o)
+        Ok(())
     }
 }
 
@@ -168,8 +187,8 @@ fn main() {
 
     let info = Info {
         project_name: config.repository_name,
-        language: language,
-        authors: authors,
+        language,
+        authors,
         repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
         license: project_license(),
@@ -243,7 +262,7 @@ fn get_configuration() -> Result<Configuration, Error> {
     };
 
     let url = remote_url.clone();
-    let name_parts: Vec<&str> = url.split("/").collect();
+    let name_parts: Vec<&str> = url.split('/').collect();
 
     if name_parts.len() > 0 {
         repository_name = name_parts[name_parts.len() - 1].to_string();
