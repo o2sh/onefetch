@@ -13,6 +13,7 @@ use std::str::FromStr;
 use license::License;
 use std::ffi::OsStr;
 use std::fmt::Write;
+use std::process::exit; 
 
 struct Info {
     project_name: String,
@@ -167,20 +168,23 @@ fn main() {
     let language = match get_dominant_language(&tokei_langs) {
         Some(language) => language,
         None => {
-            eprintln!("Could not find any source code in this directory.");
+            eprintln!("Error: Could not find any source code in this directory.");
             return;
         }
     };
 
     if !is_git_installed() {
-        eprintln!("Could not execute git for project information.");
+        eprintln!("Error: Could not execute git for project information.");
         return;
     }
 
     let authors = get_authors(3);
     let config: Configuration = match get_configuration() {
         Ok(config) => config,
-        Err(_) => panic!("Could not retrieve git configuration data"),
+        Err(_) => {
+            eprintln!("Error: Could not retrieve git configuration data");
+            exit(1);
+          }
     };
 
 
