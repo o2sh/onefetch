@@ -20,6 +20,6 @@ $ onefetch
 </p>
 
 
-## Compatibilty
+## Compatibility
 
 Only works with Git repositories.
