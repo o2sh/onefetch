@@ -169,13 +169,13 @@ fn main() {
         Some(language) => language,
         None => {
             eprintln!("Error: Could not find any source code in this directory.");
-            return;
+            exit(1);
         }
     };
 
     if !is_git_installed() {
         eprintln!("Error: Could not execute git for project information.");
-        return;
+        exit(1);
     }
 
     let authors = get_authors(3);
