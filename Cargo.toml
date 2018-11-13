@@ -3,6 +3,9 @@ name = "onefetch"
 description = "Neofetch for your source code"
 version = "1.0.0"
 authors = ["o2sh <ossama-hjaji@live.fr>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/o2sh/onefetch"
 
 [dependencies]
 colored= "1.6.1"
