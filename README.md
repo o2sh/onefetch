@@ -1,5 +1,5 @@
 # onefetch
-![minimum rustc 1.27](https://img.shields.io/badge/rustc-%2B1.27-orange.svg)
+[![crate](https://img.shields.io/badge/crates.io-1.0.0-red.svg)](https://crates.io/crates/onefetch)
 [![Travis status](https://travis-ci.org/o2sh/onefetch.svg?branch=master)](https://travis-ci.org/o2sh/onefetch)
 <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 
@@ -7,7 +7,7 @@ Onefetch is a command-line system information tool that displays information abo
 
 ## Usage
 
-You can either build the binary from the source code or get it from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH.
+You can either build the binary from the source code (tips: cargo install onefetch) or get it from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH.
 
 ```sh
 $ cd /path/of/your/repo

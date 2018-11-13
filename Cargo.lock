@@ -377,7 +377,7 @@ dependencies = [
 
 [[package]]
 name = "onefetch"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "colored 1.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
