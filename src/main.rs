@@ -29,7 +29,7 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
-        let color = self.language.color();
+        let color = self.color();
 
         writeln!(
             buffer,
@@ -119,29 +119,6 @@ enum Language {
     Scala,
     Shell,
     TypeScript,
-}
-
-impl Language {
-    fn color(&self) -> Color {
-        match self {
-            Language::C => Color::Cyan,
-            Language::Clojure => Color::Cyan,
-            Language::Cpp => Color::Yellow,
-            Language::Csharp => Color::White,
-            Language::Go => Color::White,
-            Language::Haskell => Color::Cyan,
-            Language::Java => Color::Green,
-            Language::Lisp => Color::Yellow,
-            Language::Lua => Color::Blue,
-            Language::Python => Color::Magenta,
-            Language::R => Color::Blue,
-            Language::Ruby => Color::Magenta,
-            Language::Rust => Color::Cyan,
-            Language::Scala => Color::Blue,
-            Language::Shell => Color::Green,
-            Language::TypeScript => Color::Cyan,
-        }
-    }
 }
 
 impl fmt::Display for Language {
@@ -410,6 +387,27 @@ impl Info {
             Language::Shell => include_str!("../resources/shell.ascii"),
             Language::TypeScript => include_str!("../resources/typescript.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
+        }
+    }
+
+    fn color(&self) -> Color {
+        match self.language {
+            Language::C => Color::Cyan,
+            Language::Clojure => Color::Cyan,
+            Language::Cpp => Color::Yellow,
+            Language::Csharp => Color::White,
+            Language::Go => Color::White,
+            Language::Haskell => Color::Cyan,
+            Language::Java => Color::Green,
+            Language::Lisp => Color::Yellow,
+            Language::Lua => Color::Blue,
+            Language::Python => Color::Magenta,
+            Language::R => Color::Blue,
+            Language::Ruby => Color::Magenta,
+            Language::Rust => Color::Cyan,
+            Language::Scala => Color::Blue,
+            Language::Shell => Color::Green,
+            Language::TypeScript => Color::Cyan,
         }
     }
 }
