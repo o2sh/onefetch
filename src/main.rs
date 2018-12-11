@@ -55,7 +55,7 @@ impl fmt::Display for Info {
                 buffer,
                 "{}{}",
                 title.color(color).bold(),
-                self.authors.first().unwrap()
+                self.authors[0]
             )?;
 
             let title = " ".repeat(title.len());
