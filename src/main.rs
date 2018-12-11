@@ -1,19 +1,24 @@
 extern crate colored;
 extern crate git2;
-extern crate tokei;
 extern crate license;
+extern crate tokei;
 
+use colored::Color;
 use colored::*;
-use git2::Error;
 use git2::Repository;
-use std::fmt;
-use std::fs;
-use std::process::{Command, Stdio};
-use std::str::FromStr;
 use license::License;
-use std::ffi::OsStr;
-use std::fmt::Write;
-use std::process::exit; 
+use std::{
+    convert::From,
+    ffi::OsStr,
+    fmt,
+    fmt::Write,
+    fs,
+    process::{Command, Stdio},
+    result,
+    str::FromStr,
+};
+
+type Result<T> = result::Result<T, Error>;
 
 struct Info {
     project_name: String,
@@ -27,7 +32,7 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
-        let color = get_color(&self.language);
+        let color = self.color();
 
         writeln!(
             buffer,
@@ -49,12 +54,7 @@ impl fmt::Display for Info {
                 "Author: "
             };
 
-            writeln!(
-                buffer,
-                "{}{}",
-                title.color(color).bold(),
-                self.authors.first().unwrap()
-            )?;
+            writeln!(buffer, "{}{}", title.color(color).bold(), self.authors[0])?;
 
             let title = " ".repeat(title.len());
 
@@ -119,27 +119,6 @@ enum Language {
     TypeScript,
 }
 
-fn get_color(l: &Language) -> &str {
-    match l {
-        Language::C => "cyan",
-        Language::Clojure => "cyan",
-        Language::Cpp => "yellow",
-        Language::Csharp => "white",
-        Language::Go => "white",
-        Language::Haskell => "cyan",
-        Language::Java => "green",
-        Language::Lisp => "yellow",
-        Language::Lua => "blue",
-        Language::Python => "magenta",
-        Language::R => "blue",
-        Language::Ruby => "magenta",
-        Language::Rust => "cyan",
-        Language::Scala => "blue",
-        Language::Shell => "green",
-        Language::TypeScript => "cyan",
-    }
-}
-
 impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
@@ -163,31 +142,16 @@ impl fmt::Display for Language {
     }
 }
 
-fn main() {
+fn main() -> Result<()> {
     let tokei_langs = project_languages();
-    let language = match get_dominant_language(&tokei_langs) {
-        Some(language) => language,
-        None => {
-            eprintln!("Error: Could not find any source code in this directory.");
-            exit(1);
-        }
-    };
+    let language = get_dominant_language(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
 
     if !is_git_installed() {
-        eprintln!("Error: Could not execute git for project information.");
-        exit(1);
+        return Err(Error::GitNotInstalled);
     }
 
     let authors = get_authors(3);
-    let config: Configuration = match get_configuration() {
-        Ok(config) => config,
-        Err(_) => {
-            eprintln!("Error: Could not retrieve git configuration data");
-            exit(1);
-          }
-    };
-
-
+    let config = get_configuration()?;
 
     let info = Info {
         project_name: config.repository_name,
@@ -195,10 +159,11 @@ fn main() {
         authors,
         repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
-        license: project_license(),
+        license: project_license()?,
     };
 
     println!("{}", info);
+    Ok(())
 }
 
 fn project_languages() -> tokei::Languages {
@@ -208,25 +173,31 @@ fn project_languages() -> tokei::Languages {
     languages
 }
 
-fn project_license() -> String {
-    let output = fs::read_dir(".").unwrap()
-        .filter_map(Result::ok)
+fn project_license() -> Result<String> {
+    let output = fs::read_dir(".")
+        .map_err(|_| Error::ReadDirectory)?
+        .filter_map(result::Result::ok)
         .map(|entry| entry.path())
-        .filter(|entry| entry.is_file()
-                     && entry.file_name()
+        .filter(
+            |entry| {
+                entry.is_file()
+                    && entry
+                        .file_name()
                         .map(OsStr::to_string_lossy)
                         .unwrap_or("".into())
-                        .starts_with("LICENSE") // TODO: multiple prefixes, like COPYING?
+                        .starts_with("LICENSE")
+            }, // TODO: multiple prefixes, like COPYING?
         )
         .map(|entry| license::Kind::from_str(&fs::read_to_string(entry).unwrap_or("".into())))
-        .filter_map(Result::ok)
+        .filter_map(result::Result::ok)
         .map(|license| license.name().to_string())
-        .collect::<Vec<_>>().join(", ");
+        .collect::<Vec<_>>()
+        .join(", ");
 
     if output == "" {
-        "Unknown".into()
+        Ok("Unknown".into())
     } else {
-        output
+        Ok(output)
     }
 }
 
@@ -244,9 +215,9 @@ struct Configuration {
     pub repository_url: String,
 }
 
-fn get_configuration() -> Result<Configuration, Error> {
-    let repo = Repository::open("./")?;
-    let config = repo.config()?;
+fn get_configuration() -> Result<Configuration> {
+    let repo = Repository::open("./").map_err(|_| Error::GitNotInstalled)?;
+    let config = repo.config().map_err(|_| Error::NoGitData)?;
     let mut remote_url = String::new();
     let mut repository_name = String::new();
     let mut remote_upstream: Option<String> = None;
@@ -303,7 +274,8 @@ fn get_authors(n: usize) -> Vec<String> {
 
     // sort authors by commit count where the one with most commit count is first
     let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
-    authors.sort_by(|(_, count1), (_, count2)| count2.cmp(count1));
+    authors.sort_by_key(|(_, c)| *c);
+    authors.reverse();
 
     // truncate the vector so we only get the count of authors we specified as 'n'
     authors.truncate(n);
@@ -403,5 +375,50 @@ impl Info {
             Language::TypeScript => include_str!("../resources/typescript.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
+    }
+
+    fn color(&self) -> Color {
+        match self.language {
+            Language::C => Color::Cyan,
+            Language::Clojure => Color::Cyan,
+            Language::Cpp => Color::Yellow,
+            Language::Csharp => Color::White,
+            Language::Go => Color::White,
+            Language::Haskell => Color::Cyan,
+            Language::Java => Color::Green,
+            Language::Lisp => Color::Yellow,
+            Language::Lua => Color::Blue,
+            Language::Python => Color::Magenta,
+            Language::R => Color::Blue,
+            Language::Ruby => Color::Magenta,
+            Language::Rust => Color::Cyan,
+            Language::Scala => Color::Blue,
+            Language::Shell => Color::Green,
+            Language::TypeScript => Color::Cyan,
+        }
+    }
+}
+
+/// Custom error type
+enum Error {
+    /// Sourcecode could be located
+    SourceCodeNotFound,
+    /// Git is not installed or did not function properly
+    GitNotInstalled,
+    /// Did not find any git data in the directory
+    NoGitData,
+    /// An IO error occoured while reading ./
+    ReadDirectory,
+}
+
+impl fmt::Debug for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let content = match self {
+            Error::SourceCodeNotFound => "Could not find any source code in this directory",
+            Error::GitNotInstalled => "Git failed to execute",
+            Error::NoGitData => "Could not retrieve git configuration data",
+            Error::ReadDirectory => "Could read directory ./",
+        };
+        write!(f, "{}", content)
     }
 }
