@@ -288,7 +288,7 @@ fn get_authors(n: usize) -> Vec<String> {
 
     // sort authors by commit count where the one with most commit count is first
     let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
-    authors.sort_by(|(_, count1), (_, count2)| count2.cmp(count1));
+    authors.sort_by_key(|(_, c)| *c);
 
     // truncate the vector so we only get the count of authors we specified as 'n'
     authors.truncate(n);
