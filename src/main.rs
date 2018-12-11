@@ -9,7 +9,6 @@ use git2::Repository;
 use license::License;
 use std::{
     convert::From,
-    error,
     ffi::OsStr,
     fmt,
     fmt::Write,
@@ -19,11 +18,7 @@ use std::{
     str::FromStr,
 };
 
-macro_rules! err {
-    ($($tt:tt)*) => { Err(Box::<error::Error>::from(format!($($tt)*))) }
-}
-
-type Result<T> = result::Result<T, Box<error::Error>>;
+type Result<T> = result::Result<T, Error>;
 
 struct Info {
     project_name: String,
@@ -149,29 +144,14 @@ impl fmt::Display for Language {
 
 fn main() -> Result<()> {
     let tokei_langs = project_languages();
-    let language = match get_dominant_language(&tokei_langs) {
-        Some(language) => language,
-        None => {
-            return err!("Could not find any source code in this directory.");
-        }
-    };
+    let language = get_dominant_language(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
 
     if !is_git_installed() {
-        return err!("Could not execute git for project information.");
+        return Err(Error::GitNotInstalled);
     }
 
     let authors = get_authors(3);
-    let config: Configuration = match get_configuration() {
-        Ok(config) => config,
-        Err(_) => {
-            return err!("Could not retrieve git configuration data");
-        }
-    };
-
-    let license = match project_license() {
-        Ok(l) => l,
-        Err(_) => return err!("Could read directory ./"),
-    };
+    let config = get_configuration()?;
 
     let info = Info {
         project_name: config.repository_name,
@@ -179,7 +159,7 @@ fn main() -> Result<()> {
         authors,
         repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
-        license,
+        license: project_license()?,
     };
 
     println!("{}", info);
@@ -194,7 +174,8 @@ fn project_languages() -> tokei::Languages {
 }
 
 fn project_license() -> Result<String> {
-    let output = fs::read_dir(".")?
+    let output = fs::read_dir(".")
+        .map_err(|_| Error::ReadDirectory)?
         .filter_map(result::Result::ok)
         .map(|entry| entry.path())
         .filter(
@@ -235,8 +216,8 @@ struct Configuration {
 }
 
 fn get_configuration() -> Result<Configuration> {
-    let repo = Repository::open("./")?;
-    let config = repo.config()?;
+    let repo = Repository::open("./").map_err(|_| Error::GitNotInstalled)?;
+    let config = repo.config().map_err(|_| Error::NoGitData)?;
     let mut remote_url = String::new();
     let mut repository_name = String::new();
     let mut remote_upstream: Option<String> = None;
@@ -294,6 +275,7 @@ fn get_authors(n: usize) -> Vec<String> {
     // sort authors by commit count where the one with most commit count is first
     let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
     authors.sort_by_key(|(_, c)| *c);
+    authors.reverse();
 
     // truncate the vector so we only get the count of authors we specified as 'n'
     authors.truncate(n);
@@ -414,5 +396,29 @@ impl Info {
             Language::Shell => Color::Green,
             Language::TypeScript => Color::Cyan,
         }
+    }
+}
+
+/// Custom error type
+enum Error {
+    /// Sourcecode could be located
+    SourceCodeNotFound,
+    /// Git is not installed or did not function properly
+    GitNotInstalled,
+    /// Did not find any git data in the directory
+    NoGitData,
+    /// An IO error occoured while reading ./
+    ReadDirectory,
+}
+
+impl fmt::Debug for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let content = match self {
+            Error::SourceCodeNotFound => "Could not find any source code in this directory",
+            Error::GitNotInstalled => "Git failed to execute",
+            Error::NoGitData => "Could not retrieve git configuration data",
+            Error::ReadDirectory => "Could read directory ./",
+        };
+        write!(f, "{}", content)
     }
 }
