@@ -5,17 +5,25 @@ extern crate tokei;
 
 use colored::Color;
 use colored::*;
-use git2::{Error, Repository};
+use git2::Repository;
 use license::License;
 use std::{
     convert::From,
+    error,
     ffi::OsStr,
     fmt,
     fmt::Write,
     fs,
-    process::{exit, Command, Stdio},
+    process::{Command, Stdio},
+    result,
     str::FromStr,
 };
+
+macro_rules! err {
+    ($($tt:tt)*) => { Err(Box::<error::Error>::from(format!($($tt)*))) }
+}
+
+type Result<T> = result::Result<T, Box<error::Error>>;
 
 struct Info {
     project_name: String,
@@ -51,12 +59,7 @@ impl fmt::Display for Info {
                 "Author: "
             };
 
-            writeln!(
-                buffer,
-                "{}{}",
-                title.color(color).bold(),
-                self.authors[0]
-            )?;
+            writeln!(buffer, "{}{}", title.color(color).bold(), self.authors[0])?;
 
             let title = " ".repeat(title.len());
 
@@ -144,28 +147,30 @@ impl fmt::Display for Language {
     }
 }
 
-fn main() {
+fn main() -> Result<()> {
     let tokei_langs = project_languages();
     let language = match get_dominant_language(&tokei_langs) {
         Some(language) => language,
         None => {
-            eprintln!("Error: Could not find any source code in this directory.");
-            exit(1);
+            return err!("Could not find any source code in this directory.");
         }
     };
 
     if !is_git_installed() {
-        eprintln!("Error: Could not execute git for project information.");
-        exit(1);
+        return err!("Could not execute git for project information.");
     }
 
     let authors = get_authors(3);
     let config: Configuration = match get_configuration() {
         Ok(config) => config,
         Err(_) => {
-            eprintln!("Error: Could not retrieve git configuration data");
-            exit(1);
+            return err!("Could not retrieve git configuration data");
         }
+    };
+
+    let license = match project_license() {
+        Ok(l) => l,
+        Err(_) => return err!("Could read directory ./"),
     };
 
     let info = Info {
@@ -174,10 +179,11 @@ fn main() {
         authors,
         repo: config.repository_url,
         number_of_lines: get_total_loc(&tokei_langs),
-        license: project_license(),
+        license,
     };
 
     println!("{}", info);
+    Ok(())
 }
 
 fn project_languages() -> tokei::Languages {
@@ -187,10 +193,9 @@ fn project_languages() -> tokei::Languages {
     languages
 }
 
-fn project_license() -> String {
-    let output = fs::read_dir(".")
-        .unwrap()
-        .filter_map(Result::ok)
+fn project_license() -> Result<String> {
+    let output = fs::read_dir(".")?
+        .filter_map(result::Result::ok)
         .map(|entry| entry.path())
         .filter(
             |entry| {
@@ -203,15 +208,15 @@ fn project_license() -> String {
             }, // TODO: multiple prefixes, like COPYING?
         )
         .map(|entry| license::Kind::from_str(&fs::read_to_string(entry).unwrap_or("".into())))
-        .filter_map(Result::ok)
+        .filter_map(result::Result::ok)
         .map(|license| license.name().to_string())
         .collect::<Vec<_>>()
         .join(", ");
 
     if output == "" {
-        "Unknown".into()
+        Ok("Unknown".into())
     } else {
-        output
+        Ok(output)
     }
 }
 
@@ -229,7 +234,7 @@ struct Configuration {
     pub repository_url: String,
 }
 
-fn get_configuration() -> Result<Configuration, Error> {
+fn get_configuration() -> Result<Configuration> {
     let repo = Repository::open("./")?;
     let config = repo.config()?;
     let mut remote_url = String::new();
