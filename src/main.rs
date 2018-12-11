@@ -216,7 +216,7 @@ struct Configuration {
 }
 
 fn get_configuration() -> Result<Configuration> {
-    let repo = Repository::open("./").map_err(|_| Error::GitNotInstalled)?;
+    let repo = Repository::open("./").map_err(|_| Error::NotGitRepo)?;
     let config = repo.config().map_err(|_| Error::NoGitData)?;
     let mut remote_url = String::new();
     let mut repository_name = String::new();
@@ -409,6 +409,8 @@ enum Error {
     NoGitData,
     /// An IO error occoured while reading ./
     ReadDirectory,
+    /// Not in a Git Repo
+    NotGitRepo,
 }
 
 impl fmt::Debug for Error {
@@ -417,7 +419,8 @@ impl fmt::Debug for Error {
             Error::SourceCodeNotFound => "Could not find any source code in this directory",
             Error::GitNotInstalled => "Git failed to execute",
             Error::NoGitData => "Could not retrieve git configuration data",
-            Error::ReadDirectory => "Could read directory ./",
+            Error::ReadDirectory => "Could not read directory ./",
+            Error::NotGitRepo => "You are not at the root of a Git Repo",
         };
         write!(f, "{}", content)
     }
