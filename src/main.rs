@@ -184,11 +184,13 @@ fn project_license() -> Result<String> {
                     && entry
                         .file_name()
                         .map(OsStr::to_string_lossy)
-                        .unwrap_or("".into())
+                        .unwrap_or_else(|| "".into())
                         .starts_with("LICENSE")
             }, // TODO: multiple prefixes, like COPYING?
         )
-        .map(|entry| license::Kind::from_str(&fs::read_to_string(entry).unwrap_or("".into())))
+        .map(|entry| {
+            license::Kind::from_str(&fs::read_to_string(entry).unwrap_or_else(|_| "".into()))
+        })
         .filter_map(result::Result::ok)
         .map(|license| license.name().to_string())
         .collect::<Vec<_>>()
@@ -231,15 +233,14 @@ fn get_configuration() -> Result<Configuration> {
         }
     }
 
-    match remote_upstream {
-        Some(url) => remote_url = url.clone(),
-        None => (),
-    };
+    if let Some(url) = remote_upstream {
+        remote_url = url.clone();
+    }
 
     let url = remote_url.clone();
     let name_parts: Vec<&str> = url.split('/').collect();
 
-    if name_parts.len() > 0 {
+    if !name_parts.is_empty() {
         repository_name = name_parts[name_parts.len() - 1].to_string();
     }
 
