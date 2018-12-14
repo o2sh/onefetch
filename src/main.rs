@@ -32,7 +32,10 @@ struct Info {
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
-        let color = self.color();
+        let color = match self.colors().get(0) {
+            Some(&c) => c,
+            None => Color::White,
+        };
 
         writeln!(
             buffer,
@@ -79,25 +82,83 @@ impl fmt::Display for Info {
 
         let logo = self.get_ascii();
         let mut lines = buffer.lines();
-        let left_pad = logo.lines().map(|l| l.len()).max().unwrap_or(0);
+        let left_pad = logo.lines().map(|l| true_len(l)).max().unwrap_or(0);
 
-        for a in logo.lines() {
-            let b = match lines.next() {
+        for logo_line in logo.lines() {
+            let info_line = match lines.next() {
                 Some(line) => line,
                 None => "",
             };
 
-            writeln!(
-                f,
-                "{:width$} {}",
-                a.color(color).bold(),
-                b,
-                width = left_pad
-            )?;
+            let (logo_line, extra_pad) = colorize_str(logo_line, self.colors());
+            // If the string is empty the extra padding should not be added
+            let pad = if logo_line.is_empty() {
+                left_pad
+            } else {
+                left_pad + extra_pad
+            };
+            writeln!(f, "{:<width$} {:^}", logo_line, info_line, width = pad,)?;
         }
 
         Ok(())
     }
+}
+
+/// Transforms a string with color format into one with proper
+/// escape characters for color display.
+///
+/// Colors are specified with {0}, {1}... where the number represents
+/// the nth element in the colors Vec provided to the function.  
+/// If there are more colors in the ascii than in the Vec it
+/// defaults to white.  
+/// The usize in the tuple refers to the extra padding needed
+/// which comes from the added escape characters.
+fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
+    // Extract colors from string coded with {n}
+    let mut colors_in_str: Vec<Color> = line.split("{").fold(Vec::new(), |mut acc, s| {
+        if s.len() > 2 {
+            let i = s.chars().nth(0).unwrap_or('0').to_digit(10).unwrap_or(0);
+            acc.push(*colors.iter().nth(i as usize).unwrap_or(&Color::White));
+        }
+        acc
+    });
+
+    if colors_in_str.is_empty() {
+        colors_in_str.push(match colors.get(0) {
+            Some(&c) => c,
+            None => Color::White,
+        });
+    }
+
+    let mut colors_iter = colors_in_str.iter();
+
+    let out_str = line.split("{").fold(String::new(), |mut acc, s| {
+        if s.len() > 2 {
+            let s: String = s.chars().skip(2).collect();
+            let c = match colors_iter.next() {
+                Some(&c) => c,
+                None => Color::White,
+            };
+            acc.push_str(&format!("{}", s.color(c)));
+        }
+        acc
+    });
+    (out_str, colors_in_str.len() * 9)
+}
+
+/// Returns the true length of a string after substracting the {n}
+/// color declarations.
+fn true_len(line: &str) -> usize {
+    line.split("{")
+        .fold(String::new(), |mut acc, s| {
+            if s.len() > 2 {
+                acc.push_str(&s.chars().skip(2).collect::<String>());
+            } else {
+                acc.push_str(s);
+            }
+            acc
+        })
+        .len()
 }
 
 enum Language {
@@ -378,24 +439,24 @@ impl Info {
         }
     }
 
-    fn color(&self) -> Color {
+    fn colors(&self) -> Vec<Color> {
         match self.language {
-            Language::C => Color::Cyan,
-            Language::Clojure => Color::Cyan,
-            Language::Cpp => Color::Yellow,
-            Language::Csharp => Color::White,
-            Language::Go => Color::White,
-            Language::Haskell => Color::Cyan,
-            Language::Java => Color::Green,
-            Language::Lisp => Color::Yellow,
-            Language::Lua => Color::Blue,
-            Language::Python => Color::Magenta,
-            Language::R => Color::Blue,
-            Language::Ruby => Color::Magenta,
-            Language::Rust => Color::Cyan,
-            Language::Scala => Color::Blue,
-            Language::Shell => Color::Green,
-            Language::TypeScript => Color::Cyan,
+            Language::C => vec![Color::BrightBlue, Color::Blue],
+            Language::Clojure => vec![Color::Cyan],
+            Language::Cpp => vec![Color::Yellow],
+            Language::Csharp => vec![Color::White],
+            Language::Go => vec![Color::White],
+            Language::Haskell => vec![Color::Cyan],
+            Language::Java => vec![Color::Green],
+            Language::Lisp => vec![Color::Yellow],
+            Language::Lua => vec![Color::Blue],
+            Language::Python => vec![Color::Magenta],
+            Language::R => vec![Color::Blue],
+            Language::Ruby => vec![Color::Magenta],
+            Language::Rust => vec![Color::White, Color::Red],
+            Language::Scala => vec![Color::Blue],
+            Language::Shell => vec![Color::Green],
+            Language::TypeScript => vec![Color::Cyan],
         }
     }
 }
