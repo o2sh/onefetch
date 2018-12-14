@@ -1,7 +1,7 @@
 [package]
 name = "onefetch"
 description = "Neofetch for your source code"
-version = "1.0.0"
+version = "1.0.5"
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 readme = "README.md"
 license = "MIT"
