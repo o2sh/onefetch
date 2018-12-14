@@ -447,7 +447,7 @@ impl Info {
             Language::Csharp => vec![Color::White],
             Language::Go => vec![Color::White],
             Language::Haskell => vec![Color::Cyan],
-            Language::Java => vec![Color::Green],
+            Language::Java => vec![Color::BrightBlue, Color::Red],
             Language::Lisp => vec![Color::Yellow],
             Language::Lua => vec![Color::Blue],
             Language::Python => vec![Color::Magenta],

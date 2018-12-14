@@ -16,7 +16,7 @@ $ onefetch
 
 <p align="center">
 <img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="212px">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/c.png" height="212px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" height="212px">
 </p>
 
 
