@@ -453,7 +453,7 @@ impl Info {
             Language::Python => vec![Color::Magenta],
             Language::R => vec![Color::Blue],
             Language::Ruby => vec![Color::Magenta],
-            Language::Rust => vec![Color::White, Color::Red],
+            Language::Rust => vec![Color::White, Color::BrightRed],
             Language::Scala => vec![Color::Blue],
             Language::Shell => vec![Color::Green],
             Language::TypeScript => vec![Color::Cyan],
