@@ -5,21 +5,21 @@
 
 Onefetch is a command-line system information tool that displays information about your project directly on your terminal.
 
+<p align="center">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="212px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" height="212px">
+</p>
+
 ## Usage
 
-Clone the repository and install to `/usr/local/bin` with `make install`. 
+Clone the repository and install to `/usr/local/bin` with `make install`.
+
 Or get the binary from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH.
 
 ```sh
 $ cd /path/of/your/repo
 $ onefetch
 ```
-
-<p align="center">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="212px">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" height="212px">
-</p>
-
 
 ## Compatibility
 
