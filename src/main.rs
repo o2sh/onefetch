@@ -178,6 +178,7 @@ enum Language {
     Scala,
     Shell,
     TypeScript,
+	JavaScript,
 }
 
 impl fmt::Display for Language {
@@ -199,6 +200,7 @@ impl fmt::Display for Language {
             Language::Scala => write!(f, "Scala"),
             Language::Shell => write!(f, "Shell"),
             Language::TypeScript => write!(f, "TypeScript"),
+			Language::JavaScript => write!(f, "JavaScript"),
         }
     }
 }
@@ -390,6 +392,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Scala => Language::Scala,
             tokei::LanguageType::Sh => Language::Shell,
             tokei::LanguageType::TypeScript => Language::TypeScript,
+			tokei::LanguageType::JavaScript => Language::JavaScript,
             _ => unimplemented!(),
         }
     }
@@ -413,6 +416,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Scala,
         tokei::LanguageType::Sh,
         tokei::LanguageType::TypeScript,
+		tokei::LanguageType::JavaScript,
     ]
 }
 
@@ -435,6 +439,7 @@ impl Info {
             Language::Scala => include_str!("../resources/scala.ascii"),
             Language::Shell => include_str!("../resources/shell.ascii"),
             Language::TypeScript => include_str!("../resources/typescript.ascii"),
+			Language::JavaScript => include_str!("../resources/javascript.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
     }
@@ -457,6 +462,7 @@ impl Info {
             Language::Scala => vec![Color::Blue],
             Language::Shell => vec![Color::Green],
             Language::TypeScript => vec![Color::Cyan],
+			Language::JavaScript => vec![Color::BrightYellow],
         }
     }
 }
