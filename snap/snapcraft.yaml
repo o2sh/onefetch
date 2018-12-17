@@ -1,0 +1,27 @@
+name: onefetch
+base: core18 # the base snap is the execution environment for this snap
+adopt-info: onefetch
+summary: Neofetch for your source code
+description: |
+  Onefetch is a command-line system information tool that displays information
+  about your Source Code directly on your terminal..
+
+grade: stable
+confinement: strict
+
+parts:
+  onefetch:
+    plugin: rust
+    source: .
+    stage-packages:
+      - git
+    override-build: |
+      snapcraftctl build 
+      snapcraftctl set-version $(git describe --tags)
+
+apps:
+  onefetch:
+    command: bin/onefetch
+    plugs: 
+      - home
+      - removable-media
