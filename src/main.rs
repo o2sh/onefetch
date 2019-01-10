@@ -178,7 +178,8 @@ enum Language {
     Scala,
     Shell,
     TypeScript,
-	JavaScript,
+    JavaScript,
+    Php,
 }
 
 impl fmt::Display for Language {
@@ -200,7 +201,8 @@ impl fmt::Display for Language {
             Language::Scala => write!(f, "Scala"),
             Language::Shell => write!(f, "Shell"),
             Language::TypeScript => write!(f, "TypeScript"),
-			Language::JavaScript => write!(f, "JavaScript"),
+            Language::JavaScript => write!(f, "JavaScript"),
+            Language::Php => write!(f, "Php"),
         }
     }
 }
@@ -392,7 +394,8 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Scala => Language::Scala,
             tokei::LanguageType::Sh => Language::Shell,
             tokei::LanguageType::TypeScript => Language::TypeScript,
-			tokei::LanguageType::JavaScript => Language::JavaScript,
+            tokei::LanguageType::JavaScript => Language::JavaScript,
+            tokei::LanguageType::Php => Language::Php,
             _ => unimplemented!(),
         }
     }
@@ -416,7 +419,8 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Scala,
         tokei::LanguageType::Sh,
         tokei::LanguageType::TypeScript,
-		tokei::LanguageType::JavaScript,
+        tokei::LanguageType::JavaScript,
+        tokei::LanguageType::Php,
     ]
 }
 
@@ -439,7 +443,8 @@ impl Info {
             Language::Scala => include_str!("../resources/scala.ascii"),
             Language::Shell => include_str!("../resources/shell.ascii"),
             Language::TypeScript => include_str!("../resources/typescript.ascii"),
-			Language::JavaScript => include_str!("../resources/javascript.ascii"),
+            Language::JavaScript => include_str!("../resources/javascript.ascii"),
+            Language::Php => include_str!("../resources/php.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
     }
@@ -447,22 +452,23 @@ impl Info {
     fn colors(&self) -> Vec<Color> {
         match self.language {
             Language::C => vec![Color::BrightBlue, Color::Blue],
-            Language::Clojure => vec![Color::Cyan],
+            Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
             Language::Cpp => vec![Color::Yellow],
             Language::Csharp => vec![Color::White],
             Language::Go => vec![Color::White],
-            Language::Haskell => vec![Color::Cyan],
+            Language::Haskell => vec![Color::BrightBlue, Color::BrightMagenta, Color::Blue],
             Language::Java => vec![Color::BrightBlue, Color::Red],
             Language::Lisp => vec![Color::Yellow],
             Language::Lua => vec![Color::Blue],
-            Language::Python => vec![Color::Magenta],
-            Language::R => vec![Color::Blue],
+            Language::Python => vec![Color::Blue, Color::Yellow],
+            Language::R => vec![Color::White, Color::Blue],
             Language::Ruby => vec![Color::Magenta],
             Language::Rust => vec![Color::White, Color::BrightRed],
             Language::Scala => vec![Color::Blue],
             Language::Shell => vec![Color::Green],
             Language::TypeScript => vec![Color::Cyan],
-			Language::JavaScript => vec![Color::BrightYellow],
+            Language::JavaScript => vec![Color::BrightYellow],
+            Language::Php => vec![Color::BrightWhite],
         }
     }
 }
