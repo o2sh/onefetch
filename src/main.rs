@@ -22,6 +22,7 @@ type Result<T> = result::Result<T, Error>;
 
 struct Info {
     project_name: String,
+    version: String,
     language: Language,
     authors: Vec<String>,
     repo: String,
@@ -42,6 +43,13 @@ impl fmt::Display for Info {
             "{}{}",
             "Project: ".color(color).bold(),
             self.project_name
+        )?;
+
+        writeln!(
+            buffer,
+            "{}{}",
+            "Version: ".color(color).bold(),
+            self.version
         )?;
         writeln!(
             buffer,
@@ -217,9 +225,11 @@ fn main() -> Result<()> {
 
     let authors = get_authors(3);
     let config = get_configuration()?;
+    let version = get_version()?;
 
     let info = Info {
         project_name: config.repository_name,
+        version,
         language,
         authors,
         repo: config.repository_url,
@@ -267,6 +277,24 @@ fn project_license() -> Result<String> {
         Ok(output)
     }
 }
+
+fn get_version() -> Result<String> {
+    let output = Command::new("git")
+        .arg("describe")
+        .arg("--abbrev=0")
+        .arg("--tags")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+
+    if output == "" {
+        Ok("??".into())
+    } else {
+        Ok(output.to_string().replace('\n', ""))
+    }
+}
+
 
 fn is_git_installed() -> bool {
     Command::new("git")
