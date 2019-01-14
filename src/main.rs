@@ -26,6 +26,7 @@ struct Info {
     language: Language,
     authors: Vec<String>,
     repo: String,
+    commits: String,
     number_of_lines: usize,
     license: String,
 }
@@ -75,6 +76,12 @@ impl fmt::Display for Info {
         }
 
         writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
+        writeln!(
+            buffer,
+            "{}{}",
+            "Commits: ".color(color).bold(),
+            self.commits
+        )?;
         writeln!(
             buffer,
             "{}{}",
@@ -226,6 +233,7 @@ fn main() -> Result<()> {
     let authors = get_authors(3);
     let config = get_configuration()?;
     let version = get_version()?;
+    let commits = get_commits()?;
 
     let info = Info {
         project_name: config.repository_name,
@@ -233,6 +241,7 @@ fn main() -> Result<()> {
         language,
         authors,
         repo: config.repository_url,
+        commits,
         number_of_lines: get_total_loc(&tokei_langs),
         license: project_license()?,
     };
@@ -295,6 +304,22 @@ fn get_version() -> Result<String> {
     }
 }
 
+fn get_commits() -> Result<String> {
+    let output = Command::new("git")
+        .arg("rev-list")
+        .arg("--count")
+        .arg("HEAD")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+
+    if output == "" {
+        Ok("0".into())
+    } else {
+        Ok(output.to_string().replace('\n', ""))
+    }
+}
 
 fn is_git_installed() -> bool {
     Command::new("git")
