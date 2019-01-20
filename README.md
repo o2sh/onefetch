@@ -1,4 +1,4 @@
-# onefetch
+<h3 align="center"><img src="https://github.com/o2sh/onefetch/blob/master/assets/onefetch.png" height="150px"></h3>
 [![crate](https://img.shields.io/badge/crates.io-1.0.5-red.svg)](https://crates.io/crates/onefetch)
 [![Travis status](https://travis-ci.org/o2sh/onefetch.svg?branch=master)](https://travis-ci.org/o2sh/onefetch)
 <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
