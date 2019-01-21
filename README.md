@@ -5,7 +5,7 @@
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
-Onefetch is a command-line system information tool that displays information about your Source Code directly on your terminal.
+Onefetch is a command line interface tool that displays information about your Source Code directly on your terminal.
 
 <p align="center">
 <img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="212px">
