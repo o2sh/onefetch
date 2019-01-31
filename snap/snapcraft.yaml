@@ -17,7 +17,7 @@ parts:
       - git
     override-build: |
       snapcraftctl build 
-      snapcraftctl set-version $(git describe --tags)
+      snapcraftctl set-version $(git describe --abbrev=0 --tags)
 
 apps:
   onefetch:
