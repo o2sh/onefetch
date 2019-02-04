@@ -61,7 +61,9 @@ impl fmt::Display for Info {
                 let mut s = String::from("");
                 for language in self.languages.iter() {
                     let formatted_number = format!("{:.*}", 1, language.1);
-                    s.push_str(&(language.0.to_string() + " " + &formatted_number.to_string() + "% "));
+                    s.push_str(
+                        &(language.0.to_string() + " (" + &formatted_number.to_string() + "%) "),
+                    );
                 }
                 writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
             } else {
@@ -146,10 +148,10 @@ impl fmt::Display for Info {
 /// which comes from the added escape characters.
 fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
     // Extract colors from string coded with {n}
-    let mut colors_in_str: Vec<Color> = line.split("{").fold(Vec::new(), |mut acc, s| {
+    let mut colors_in_str: Vec<Color> = line.split('{').fold(Vec::new(), |mut acc, s| {
         if s.len() > 2 {
             let i = s.chars().nth(0).unwrap_or('0').to_digit(10).unwrap_or(0);
-            acc.push(*colors.iter().nth(i as usize).unwrap_or(&Color::White));
+            acc.push(*colors.get(i as usize).unwrap_or(&Color::White));
         }
         acc
     });
@@ -163,7 +165,7 @@ fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
 
     let mut colors_iter = colors_in_str.iter();
 
-    let out_str = line.split("{").fold(String::new(), |mut acc, s| {
+    let out_str = line.split('{').fold(String::new(), |mut acc, s| {
         if s.len() > 2 {
             let s: String = s.chars().skip(2).collect();
             let c = match colors_iter.next() {
@@ -180,7 +182,7 @@ fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
 /// Returns the true length of a string after substracting the {n}
 /// color declarations.
 fn true_len(line: &str) -> usize {
-    line.split("{")
+    line.split('{')
         .fold(String::new(), |mut acc, s| {
             if s.len() > 2 {
                 acc.push_str(&s.chars().skip(2).collect::<String>());
@@ -245,7 +247,7 @@ fn main() -> Result<()> {
     }
 
     let tokei_langs = project_languages();
-    let languages_stat = get_languages_stat(&tokei_langs);
+    let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
     let mut languages_stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
     languages_stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
     let dominant_language = languages_stat_vec[0].0.clone();
@@ -278,22 +280,23 @@ fn project_languages() -> tokei::Languages {
     languages
 }
 
-fn get_languages_stat(languages: &tokei::Languages) -> HashMap<Language, f64> {
+fn get_languages_stat(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
     let mut stats = HashMap::new();
 
-    let sum_language_code: usize = languages
-        .remove_empty()
-        .iter()
-        .map(|(_, v)| v.code).sum();
+    let sum_language_code: usize = languages.remove_empty().iter().map(|(_, v)| v.code).sum();
 
-    for (k, v) in languages.remove_empty().iter() {
-        let code = v.code as f64;
-        stats.insert(
-            Language::from(**k),
-            (code / sum_language_code as f64) * 100.00,
-        );
+    if sum_language_code == 0 {
+        None
+    } else {
+        for (k, v) in languages.remove_empty().iter() {
+            let code = v.code as f64;
+            stats.insert(
+                Language::from(**k),
+                (code / sum_language_code as f64) * 100.00,
+            );
+        }
+        Some(stats)
     }
-    stats
 }
 
 fn project_license() -> Result<String> {
