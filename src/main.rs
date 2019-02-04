@@ -8,6 +8,7 @@ use colored::*;
 use git2::Repository;
 use license::License;
 use std::{
+    collections::HashMap,
     convert::From,
     ffi::OsStr,
     fmt,
@@ -23,7 +24,8 @@ type Result<T> = result::Result<T, Error>;
 struct Info {
     project_name: String,
     version: String,
-    language: Language,
+    dominant_language: Language,
+    languages: Vec<(Language, f64)>,
     authors: Vec<String>,
     repo: String,
     commits: String,
@@ -52,12 +54,26 @@ impl fmt::Display for Info {
             "Version: ".color(color).bold(),
             self.version
         )?;
-        writeln!(
-            buffer,
-            "{}{}",
-            "Language: ".color(color).bold(),
-            self.language
-        )?;
+
+        if !self.languages.is_empty() {
+            if self.languages.len() > 1 {
+                let title = "Languages: ";
+                let mut s = String::from("");
+                for language in self.languages.iter() {
+                    let formatted_number = format!("{:.*}", 1, language.1);
+                    s.push_str(&(language.0.to_string() + " " + &formatted_number.to_string() + "% "));
+                }
+                writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
+            } else {
+                let title = "Language: ";
+                writeln!(
+                    buffer,
+                    "{}{}",
+                    title.color(color).bold(),
+                    self.dominant_language
+                )?;
+            };
+        }
 
         if !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
@@ -176,6 +192,7 @@ fn true_len(line: &str) -> usize {
         .len()
 }
 
+#[derive(PartialEq, Eq, Hash, Clone)]
 enum Language {
     C,
     Clojure,
@@ -223,12 +240,15 @@ impl fmt::Display for Language {
 }
 
 fn main() -> Result<()> {
-    let tokei_langs = project_languages();
-    let language = get_dominant_language(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
-
     if !is_git_installed() {
         return Err(Error::GitNotInstalled);
     }
+
+    let tokei_langs = project_languages();
+    let languages_stat = get_languages_stat(&tokei_langs);
+    let mut languages_stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
+    languages_stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
+    let dominant_language = languages_stat_vec[0].0.clone();
 
     let authors = get_authors(3);
     let config = get_configuration()?;
@@ -238,7 +258,8 @@ fn main() -> Result<()> {
     let info = Info {
         project_name: config.repository_name,
         version,
-        language,
+        dominant_language,
+        languages: languages_stat_vec,
         authors,
         repo: config.repository_url,
         commits,
@@ -255,6 +276,24 @@ fn project_languages() -> tokei::Languages {
     let required_languages = get_all_language_types();
     languages.get_statistics(&["."], vec![".git", "target"], Some(required_languages));
     languages
+}
+
+fn get_languages_stat(languages: &tokei::Languages) -> HashMap<Language, f64> {
+    let mut stats = HashMap::new();
+
+    let sum_language_code: usize = languages
+        .remove_empty()
+        .iter()
+        .map(|(_, v)| v.code).sum();
+
+    for (k, v) in languages.remove_empty().iter() {
+        let code = v.code as f64;
+        stats.insert(
+            Language::from(**k),
+            (code / sum_language_code as f64) * 100.00,
+        );
+    }
+    stats
 }
 
 fn project_license() -> Result<String> {
@@ -409,16 +448,6 @@ fn get_authors(n: usize) -> Vec<String> {
     authors
 }
 
-/// Traverse current directory and search for dominant
-/// language using tokei.
-fn get_dominant_language(languages: &tokei::Languages) -> Option<Language> {
-    languages
-        .remove_empty()
-        .iter()
-        .max_by_key(|(_, v)| v.code)
-        .map(|(k, _)| Language::from(**k))
-}
-
 fn get_total_loc(languages: &tokei::Languages) -> usize {
     languages
         .values()
@@ -479,7 +508,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
 
 impl Info {
     pub fn get_ascii(&self) -> &str {
-        match self.language {
+        match self.dominant_language {
             Language::C => include_str!("../resources/c.ascii"),
             Language::Clojure => include_str!("../resources/clojure.ascii"),
             Language::Cpp => include_str!("../resources/cpp.ascii"),
@@ -503,7 +532,7 @@ impl Info {
     }
 
     fn colors(&self) -> Vec<Color> {
-        match self.language {
+        match self.dominant_language {
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
             Language::Cpp => vec![Color::Yellow],
