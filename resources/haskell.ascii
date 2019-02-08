@@ -1,15 +1,14 @@
 
-{0} -ssssss+{1}``:+++++/`
-{0} `ossssso.{1} -++++++-
-{0}   /ssssss:{1} ./+++++:`
-{0}    -ssssss+{1}``:+++++/.
-{0}     `ossssso.{1} -++++++- {2}`ossssssssssssss
-{0}       /ssssss:{1} ./+++++:{2}``+sssssssssssss
-{0}        -ssssss+{1}``:+++++/.
-{0}        -ssssss+{1}``:+++++++-
-{0}       /ssssss:{1} `/+++++++++:{2}``+sssssssss
-{0}     `ossssso.{1} -++++++/+++++/{2}. :ssssssss
-{0}    -ssssss+{1}``:+++++/. -/+++++-
-{0}   /ssssss:{1} ./+++++:`   `/+++++/`
-{0} `ossssso.{1} -++++++-       :+++++/.
-{0}-ssssss+{1}``:+++++/`         ./+++++-
+{0} yyyyyy{1} xxxxxx
+{0}  yyyyyy{1} xxxxxx
+{0}   yyyyyy{1} xxxxxx
+{0}    yyyyyy{1} xxxxxx
+{0}     yyyyyy{1} xxxxxx{2} yyyyyyyyyy
+{0}      yyyyyy{1} xxxxxx{2} yyyyyyyyy
+{0}       yyyyyy{1} xxxxxx
+{0}      yyyyyy{1} xxxxxxxx{2} yyyyyyy
+{0}     yyyyyy{1} xxxxxxxxxx{2} yyyyyy
+{0}    yyyyyy{1} xxxxxxxxxxxx
+{0}   yyyyyy{1} xxxxxx  xxxxxx
+{0}  yyyyyy{1} xxxxxx    xxxxxx
+{0} yyyyyy{1} xxxxxx      xxxxxx
