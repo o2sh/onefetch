@@ -8,6 +8,7 @@ use colored::*;
 use git2::Repository;
 use license::License;
 use std::{
+    cmp,
     collections::HashMap,
     convert::From,
     ffi::OsStr,
@@ -58,12 +59,17 @@ impl fmt::Display for Info {
         if !self.languages.is_empty() {
             if self.languages.len() > 1 {
                 let title = "Languages: ";
+                let pad = " ".repeat(title.len());
                 let mut s = String::from("");
+                let mut cnt = 0;
                 for language in self.languages.iter() {
-                    let formatted_number = format!("{:.*}", 1, language.1);
-                    s.push_str(
-                        &(language.0.to_string() + " (" + &formatted_number.to_string() + "%) "),
-                    );
+                    let formatted_number = format!("{:.*}", 2, language.1);
+                    if cnt != 0 && cnt % 3 == 0 {
+                        s = s + &format!("\n{}{} ({} %) ", pad, language.0, formatted_number);
+                    } else {
+                        s = s + &format!("{} ({} %) ", language.0, formatted_number);
+                    }
+                    cnt += 1;
                 }
                 writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
             } else {
@@ -114,11 +120,17 @@ impl fmt::Display for Info {
         )?;
 
         let logo = self.get_ascii();
-        let mut lines = buffer.lines();
+        let mut logo_lines = logo.lines();
+        let mut info_lines = buffer.lines();
         let left_pad = logo.lines().map(|l| true_len(l)).max().unwrap_or(0);
 
-        for logo_line in logo.lines() {
-            let info_line = match lines.next() {
+        for _ in 0..cmp::max(count_newlines(logo), count_newlines(&buffer)) {
+            let logo_line = match logo_lines.next() {
+                Some(line) => line,
+                None => "",
+            };
+
+            let info_line = match info_lines.next() {
                 Some(line) => line,
                 None => "",
             };
@@ -135,6 +147,10 @@ impl fmt::Display for Info {
 
         Ok(())
     }
+}
+
+fn count_newlines(s: &str) -> usize {
+    s.as_bytes().iter().filter(|&&c| c == b'\n').count()
 }
 
 /// Transforms a string with color format into one with proper
@@ -323,7 +339,7 @@ fn project_license() -> Result<String> {
         .join(", ");
 
     if output == "" {
-        Ok("Unknown".into())
+        Ok("??".into())
     } else {
         Ok(output)
     }
