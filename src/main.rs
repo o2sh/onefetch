@@ -2,6 +2,7 @@ extern crate colored;
 extern crate git2;
 extern crate license;
 extern crate tokei;
+extern crate bytecount;
 
 use colored::Color;
 use colored::*;
@@ -61,15 +62,13 @@ impl fmt::Display for Info {
                 let title = "Languages: ";
                 let pad = " ".repeat(title.len());
                 let mut s = String::from("");
-                let mut cnt = 0;
-                for language in self.languages.iter() {
+                for (cnt, language) in self.languages.iter().enumerate() {
                     let formatted_number = format!("{:.*}", 2, language.1);
                     if cnt != 0 && cnt % 3 == 0 {
                         s = s + &format!("\n{}{} ({} %) ", pad, language.0, formatted_number);
                     } else {
                         s = s + &format!("{} ({} %) ", language.0, formatted_number);
                     }
-                    cnt += 1;
                 }
                 writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
             } else {
@@ -150,7 +149,7 @@ impl fmt::Display for Info {
 }
 
 fn count_newlines(s: &str) -> usize {
-    s.as_bytes().iter().filter(|&&c| c == b'\n').count()
+    bytecount::count(s.as_bytes(), b'\n')
 }
 
 /// Transforms a string with color format into one with proper

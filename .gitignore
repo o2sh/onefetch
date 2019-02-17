@@ -6,3 +6,4 @@
 /parts
 /prime
 .gitignore.swp
+Cargo.lock
