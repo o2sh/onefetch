@@ -12,8 +12,8 @@
 Onefetch is a command line tool that displays information about your Source Code directly on your terminal.Onefetch supports almost 20 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
 
 <p align="center">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/rust.png" align="left" height="212px">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" height="212px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/cpp.png" align="left" width="405px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" width="405px">
 </p>
 
 ## Usage
