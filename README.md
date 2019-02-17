@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/o2sh/onefetch/blob/master/assets/onefetch.png" height="130px"></h3><br><br>
-  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-1.5.1-red.svg" alt="cargo"></a>
+  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-1.5.2-red.svg" alt="cargo"></a>
   <a href="https://travis-ci.org/o2sh/onefetch"><img src="https://travis-ci.org/o2sh/onefetch.svg?branch=master" alt="Build Status"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
@@ -12,8 +12,8 @@
 Onefetch is a command line tool that displays information about your Source Code directly on your terminal.Onefetch supports almost 20 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
 
 <p align="center">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/cpp.png" align="left" width="405px">
-<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" width="405px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/cpp.png" align="left" height="215px" width="420px">
+<img src="https://github.com/o2sh/onefetch/blob/master/assets/java.png" height="215px" width="420px">
 </p>
 
 ## Usage
