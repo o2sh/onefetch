@@ -620,8 +620,8 @@ impl fmt::Debug for Error {
             Error::SourceCodeNotFound => "Could not find any source code in this directory",
             Error::GitNotInstalled => "Git failed to execute",
             Error::NoGitData => "Could not retrieve git configuration data",
-            Error::ReadDirectory => "Could not read directory ./",
-            Error::NotGitRepo => "You are not at the root of a Git Repo",
+            Error::ReadDirectory => "Could not read directory",
+            Error::NotGitRepo => "This is not a Git Repo",
             Error::TooFewArgs => "Too few arguments. Expected program name and a single argument.",
             Error::TooManyArgs => "Too many arguments. Expected a single argument.",
         };
