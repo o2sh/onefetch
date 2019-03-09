@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/o2sh/onefetch/blob/master/assets/onefetch.png" height="130px"></h3><br><br>
-  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-1.5.2-red.svg" alt="cargo"></a>
+  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-1.5.3-red.svg" alt="cargo"></a>
   <a href="https://travis-ci.org/o2sh/onefetch"><img src="https://travis-ci.org/o2sh/onefetch.svg?branch=master" alt="Build Status"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
@@ -26,6 +26,11 @@ Or get the binary from [here](https://github.com/o2sh/onefetch/releases) and add
 $ cd /path/of/your/repo
 $ onefetch
 ```
+Or
+
+```sh
+ $ onefetch /some/incredible/project/sources/
+ ```
 
 ## Compatibility
 
