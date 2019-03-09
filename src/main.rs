@@ -1,8 +1,8 @@
+extern crate bytecount;
 extern crate colored;
 extern crate git2;
 extern crate license;
 extern crate tokei;
-extern crate bytecount;
 
 use colored::Color;
 use colored::*;
@@ -12,6 +12,7 @@ use std::{
     cmp,
     collections::HashMap,
     convert::From,
+    env,
     ffi::OsStr,
     fmt,
     fmt::Write,
@@ -261,16 +262,32 @@ fn main() -> Result<()> {
         return Err(Error::GitNotInstalled);
     }
 
-    let tokei_langs = project_languages();
+    let mut args = env::args();
+
+    if args.next().is_none() {
+        return Err(Error::TooFewArgs);
+    };
+
+    let dir = if let Some(arg) = args.next() {
+        arg
+    } else {
+        String::from(".")
+    };
+
+    if args.next().is_some() {
+        return Err(Error::TooManyArgs);
+    };
+
+    let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
     let mut languages_stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
     languages_stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
     let dominant_language = languages_stat_vec[0].0.clone();
 
-    let authors = get_authors(3);
-    let config = get_configuration()?;
-    let version = get_version()?;
-    let commits = get_commits()?;
+    let authors = get_authors(&dir, 3);
+    let config = get_configuration(&dir)?;
+    let version = get_version(&dir)?;
+    let commits = get_commits(&dir)?;
 
     let info = Info {
         project_name: config.repository_name,
@@ -281,17 +298,17 @@ fn main() -> Result<()> {
         repo: config.repository_url,
         commits,
         number_of_lines: get_total_loc(&tokei_langs),
-        license: project_license()?,
+        license: project_license(&dir)?,
     };
 
     println!("{}", info);
     Ok(())
 }
 
-fn project_languages() -> tokei::Languages {
+fn project_languages(dir: &str) -> tokei::Languages {
     let mut languages = tokei::Languages::new();
     let required_languages = get_all_language_types();
-    languages.get_statistics(&["."], vec![".git", "target"], Some(required_languages));
+    languages.get_statistics(&[&dir], vec![".git", "target"], Some(required_languages));
     languages
 }
 
@@ -314,8 +331,8 @@ fn get_languages_stat(languages: &tokei::Languages) -> Option<HashMap<Language, 
     }
 }
 
-fn project_license() -> Result<String> {
-    let output = fs::read_dir(".")
+fn project_license(dir: &str) -> Result<String> {
+    let output = fs::read_dir(dir)
         .map_err(|_| Error::ReadDirectory)?
         .filter_map(result::Result::ok)
         .map(|entry| entry.path())
@@ -344,8 +361,10 @@ fn project_license() -> Result<String> {
     }
 }
 
-fn get_version() -> Result<String> {
+fn get_version(dir: &str) -> Result<String> {
     let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
         .arg("describe")
         .arg("--abbrev=0")
         .arg("--tags")
@@ -361,8 +380,10 @@ fn get_version() -> Result<String> {
     }
 }
 
-fn get_commits() -> Result<String> {
+fn get_commits(dir: &str) -> Result<String> {
     let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
         .arg("rev-list")
         .arg("--count")
         .arg("HEAD")
@@ -392,8 +413,8 @@ struct Configuration {
     pub repository_url: String,
 }
 
-fn get_configuration() -> Result<Configuration> {
-    let repo = Repository::open("./").map_err(|_| Error::NotGitRepo)?;
+fn get_configuration(dir: &str) -> Result<Configuration> {
+    let repo = Repository::open(dir).map_err(|_| Error::NotGitRepo)?;
     let config = repo.config().map_err(|_| Error::NoGitData)?;
     let mut remote_url = String::new();
     let mut repository_name = String::new();
@@ -432,9 +453,11 @@ fn get_configuration() -> Result<Configuration> {
 }
 
 // Return first n most active commiters as authors within this project.
-fn get_authors(n: usize) -> Vec<String> {
+fn get_authors(dir: &str, n: usize) -> Vec<String> {
     use std::collections::HashMap;
     let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
         .arg("log")
         .arg("--format='%aN'")
         .output()
@@ -585,6 +608,10 @@ enum Error {
     ReadDirectory,
     /// Not in a Git Repo
     NotGitRepo,
+    /// Too few arguments
+    TooFewArgs,
+    /// Too many arguments
+    TooManyArgs,
 }
 
 impl fmt::Debug for Error {
@@ -595,6 +622,8 @@ impl fmt::Debug for Error {
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory ./",
             Error::NotGitRepo => "You are not at the root of a Git Repo",
+            Error::TooFewArgs => "Too few arguments. Expected program name and a single argument.",
+            Error::TooManyArgs => "Too many arguments. Expected a single argument.",
         };
         write!(f, "{}", content)
     }
