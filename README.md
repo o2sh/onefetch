@@ -23,14 +23,14 @@ Clone the repository and install to `/usr/local/bin` with `make install`.
 Or get the binary from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH.
 
 ```sh
+$ onefetch /path/of/your/repo
+ ```
+ Or
+ 
+```sh
 $ cd /path/of/your/repo
 $ onefetch
 ```
-Or
-
-```sh
- $ onefetch /some/incredible/project/sources/
- ```
 
 ## Compatibility
 
