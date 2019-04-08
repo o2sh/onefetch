@@ -30,6 +30,7 @@ struct Info {
     dominant_language: Language,
     languages: Vec<(Language, f64)>,
     authors: Vec<String>,
+    last_change: String,
     repo: String,
     commits: String,
     number_of_lines: usize,
@@ -99,6 +100,13 @@ impl fmt::Display for Info {
             }
         }
 
+        writeln!(
+            buffer,
+            "{}{}",
+            "Last change: ".color(color).bold(),
+            self.last_change
+        )?;
+
         writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
         writeln!(
             buffer,
@@ -109,7 +117,7 @@ impl fmt::Display for Info {
         writeln!(
             buffer,
             "{}{}",
-            "Number of lines: ".color(color).bold(),
+            "Lines of code: ".color(color).bold(),
             self.number_of_lines
         )?;
         writeln!(
@@ -288,6 +296,7 @@ fn main() -> Result<()> {
     let config = get_configuration(&dir)?;
     let version = get_version(&dir)?;
     let commits = get_commits(&dir)?;
+    let last_change = get_last_change(&dir)?;
 
     let info = Info {
         project_name: config.repository_name,
@@ -295,6 +304,7 @@ fn main() -> Result<()> {
         dominant_language,
         languages: languages_stat_vec,
         authors,
+        last_change,
         repo: config.repository_url,
         commits,
         number_of_lines: get_total_loc(&tokei_langs),
@@ -368,6 +378,25 @@ fn get_version(dir: &str) -> Result<String> {
         .arg("describe")
         .arg("--abbrev=0")
         .arg("--tags")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+
+    if output == "" {
+        Ok("??".into())
+    } else {
+        Ok(output.to_string().replace('\n', ""))
+    }
+}
+
+fn get_last_change(dir: &str) -> Result<String> {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("log")
+        .arg("-1")
+        .arg("--format=%cr")
         .output()
         .expect("Failed to execute git.");
 
@@ -576,7 +605,7 @@ impl Info {
         match self.dominant_language {
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
-            Language::Cpp => vec![Color::Yellow],
+            Language::Cpp => vec![Color::Yellow, Color::Cyan],
             Language::Csharp => vec![Color::White],
             Language::Go => vec![Color::White],
             Language::Haskell => vec![Color::BrightBlue, Color::BrightMagenta, Color::Blue],
