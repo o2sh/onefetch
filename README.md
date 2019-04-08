@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/o2sh/onefetch/blob/master/assets/onefetch.png" height="130px"></h3><br><br>
-  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-1.5.3-red.svg" alt="cargo"></a>
+  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-1.5.4-red.svg" alt="cargo"></a>
   <a href="https://travis-ci.org/o2sh/onefetch"><img src="https://travis-ci.org/o2sh/onefetch.svg?branch=master" alt="Build Status"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
@@ -9,7 +9,7 @@
   <a href="https://snapcraft.io/onefetch"><img src="https://raw.githubusercontent.com/snapcore/snap-store-badges/master/EN/%5BEN%5D-snap-store-black.png" alt="Get it from the Snap Store"></a>
 </p>
 
-Onefetch is a command line tool that displays information about your Source Code directly on your terminal.Onefetch supports almost 20 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
+Onefetch is a command line tool that displays information about your Git project directly on your terminal. Onefetch supports almost 20 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
 
 <p align="center">
 <img src="https://github.com/o2sh/onefetch/blob/master/assets/cpp.png" align="left" height="200px" width="420px">
