@@ -220,6 +220,7 @@ fn true_len(line: &str) -> usize {
 
 #[derive(PartialEq, Eq, Hash, Clone)]
 enum Language {
+    Assembly,
     C,
     Clojure,
     Cpp,
@@ -243,6 +244,7 @@ enum Language {
 impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
+            Language::Assembly => write!(f, "Assembly"),
             Language::C => write!(f, "C"),
             Language::Clojure => write!(f, "Clojure"),
             Language::Cpp => write!(f, "C++"),
@@ -530,6 +532,7 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
 impl From<tokei::LanguageType> for Language {
     fn from(language: tokei::LanguageType) -> Self {
         match language {
+            tokei::LanguageType::Assembly => Language::Assembly,
             tokei::LanguageType::C => Language::C,
             tokei::LanguageType::Clojure => Language::Clojure,
             tokei::LanguageType::Cpp => Language::Cpp,
@@ -555,6 +558,7 @@ impl From<tokei::LanguageType> for Language {
 
 fn get_all_language_types() -> Vec<tokei::LanguageType> {
     vec![
+        tokei::LanguageType::Assembly,
         tokei::LanguageType::C,
         tokei::LanguageType::Clojure,
         tokei::LanguageType::Cpp,
@@ -579,6 +583,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
 impl Info {
     pub fn get_ascii(&self) -> &str {
         match self.dominant_language {
+            Language::Assembly => include_str!("../resources/assembly.ascii"),
             Language::C => include_str!("../resources/c.ascii"),
             Language::Clojure => include_str!("../resources/clojure.ascii"),
             Language::Cpp => include_str!("../resources/cpp.ascii"),
@@ -603,6 +608,7 @@ impl Info {
 
     fn colors(&self) -> Vec<Color> {
         match self.dominant_language {
+            Language::Assembly => vec![Color::Cyan],
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
             Language::Cpp => vec![Color::Yellow, Color::Cyan],
