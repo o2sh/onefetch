@@ -471,6 +471,9 @@ fn get_configuration(dir: &str) -> Result<Configuration> {
 
     if !name_parts.is_empty() {
         repository_name = name_parts[name_parts.len() - 1].to_string();
+        if repository_name.is_empty() {
+            repository_name = name_parts[name_parts.len() - 2].to_string();
+        }
     }
 
     if repository_name.contains(".git") {
