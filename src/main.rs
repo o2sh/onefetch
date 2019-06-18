@@ -358,6 +358,11 @@ fn project_license(dir: &str) -> Result<String> {
                         .map(OsStr::to_string_lossy)
                         .unwrap_or_else(|| "".into())
                         .starts_with("LICENSE")
+                    || entry
+                        .file_name()
+                        .map(OsStr::to_string_lossy)
+                        .unwrap_or_else(|| "".into())
+                        .starts_with("LICENCE")
             }, // TODO: multiple prefixes, like COPYING?
         )
         .map(|entry| {
