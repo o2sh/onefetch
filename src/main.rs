@@ -242,6 +242,7 @@ enum Language {
     Swift,
     TypeScript,
     JavaScript,
+    Perl,
     Php,
 }
 
@@ -270,6 +271,7 @@ impl fmt::Display for Language {
             Language::Swift => write!(f, "Swift"),
             Language::TypeScript => write!(f, "TypeScript"),
             Language::JavaScript => write!(f, "JavaScript"),
+            Language::Perl => write!(f, "Perl"),
             Language::Php => write!(f, "Php"),
         }
     }
@@ -562,6 +564,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Swift => Language::Swift,
             tokei::LanguageType::TypeScript => Language::TypeScript,
             tokei::LanguageType::JavaScript => Language::JavaScript,
+            tokei::LanguageType::Perl => Language::Perl,
             tokei::LanguageType::Php => Language::Php,
             _ => unimplemented!(),
         }
@@ -592,6 +595,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Swift,
         tokei::LanguageType::TypeScript,
         tokei::LanguageType::JavaScript,
+        tokei::LanguageType::Perl,
         tokei::LanguageType::Php,
     ]
 }
@@ -621,6 +625,7 @@ impl Info {
             Language::Swift => include_str!("../resources/swift.ascii"),
             Language::TypeScript => include_str!("../resources/typescript.ascii"),
             Language::JavaScript => include_str!("../resources/javascript.ascii"),
+            Language::Perl => include_str!("../resources/perl.ascii"),
             Language::Php => include_str!("../resources/php.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
@@ -650,6 +655,7 @@ impl Info {
             Language::Swift => vec![Color::BrightRed],
             Language::TypeScript => vec![Color::Cyan],
             Language::JavaScript => vec![Color::BrightYellow],
+            Language::Perl => vec![Color::BrightBlue],
             Language::Php => vec![Color::BrightWhite],
         }
     }
