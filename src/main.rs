@@ -1,9 +1,11 @@
 extern crate bytecount;
+extern crate clap;
 extern crate colored;
 extern crate git2;
 extern crate license;
 extern crate tokei;
 
+use clap::{App, Arg};
 use colored::Color;
 use colored::*;
 use git2::Repository;
@@ -12,7 +14,6 @@ use std::{
     cmp,
     collections::HashMap,
     convert::From,
-    env,
     ffi::OsStr,
     fmt,
     fmt::Write,
@@ -165,9 +166,9 @@ fn count_newlines(s: &str) -> usize {
 /// escape characters for color display.
 ///
 /// Colors are specified with {0}, {1}... where the number represents
-/// the nth element in the colors Vec provided to the function.  
+/// the nth element in the colors Vec provided to the function.
 /// If there are more colors in the ascii than in the Vec it
-/// defaults to white.  
+/// defaults to white.
 /// The usize in the tuple refers to the extra padding needed
 /// which comes from the added escape characters.
 fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
@@ -255,7 +256,7 @@ impl fmt::Display for Language {
             Language::Cpp => write!(f, "C++"),
             Language::Csharp => write!(f, "C#"),
             Language::Dart => write!(f, "Dart"),
-	        Language::Forth => write!(f, "Forth"),
+            Language::Forth => write!(f, "Forth"),
             Language::Go => write!(f, "Go"),
             Language::Haskell => write!(f, "Haskell"),
             Language::Java => write!(f, "Java"),
@@ -278,25 +279,22 @@ impl fmt::Display for Language {
 }
 
 fn main() -> Result<()> {
+    let matches = App::new("onefetch")
+        .version("1.5.5")
+        .author("o2sh <ossama-hjaji@live.fr>")
+        .about("Git project summary on your terminal")
+        .arg(
+            Arg::with_name("DIR")
+                .help("Sets the directory to summarize")
+                .default_value("."),
+        )
+        .get_matches();
+
     if !is_git_installed() {
         return Err(Error::GitNotInstalled);
     }
 
-    let mut args = env::args();
-
-    if args.next().is_none() {
-        return Err(Error::TooFewArgs);
-    };
-
-    let dir = if let Some(arg) = args.next() {
-        arg
-    } else {
-        String::from(".")
-    };
-
-    if args.next().is_some() {
-        return Err(Error::TooManyArgs);
-    };
+    let dir = matches.value_of("DIR").unwrap();
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
@@ -495,7 +493,6 @@ fn get_configuration(dir: &str) -> Result<Configuration> {
 
 // Return first n most active commiters as authors within this project.
 fn get_authors(dir: &str, n: usize) -> Vec<String> {
-    use std::collections::HashMap;
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -548,7 +545,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Cpp => Language::Cpp,
             tokei::LanguageType::CSharp => Language::Csharp,
             tokei::LanguageType::Dart => Language::Dart,
-	        tokei::LanguageType::Forth => Language::Forth,
+            tokei::LanguageType::Forth => Language::Forth,
             tokei::LanguageType::Go => Language::Go,
             tokei::LanguageType::Haskell => Language::Haskell,
             tokei::LanguageType::Java => Language::Java,
@@ -579,7 +576,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Cpp,
         tokei::LanguageType::CSharp,
         tokei::LanguageType::Dart,
-	    tokei::LanguageType::Forth,
+        tokei::LanguageType::Forth,
         tokei::LanguageType::Go,
         tokei::LanguageType::Haskell,
         tokei::LanguageType::Java,
@@ -609,7 +606,7 @@ impl Info {
             Language::Cpp => include_str!("../resources/cpp.ascii"),
             Language::Csharp => include_str!("../resources/csharp.ascii"),
             Language::Dart => include_str!("../resources/dart.ascii"),
-	        Language::Forth => include_str!("../resources/forth.ascii"),
+            Language::Forth => include_str!("../resources/forth.ascii"),
             Language::Go => include_str!("../resources/go.ascii"),
             Language::Haskell => include_str!("../resources/haskell.ascii"),
             Language::Java => include_str!("../resources/java.ascii"),
@@ -639,7 +636,7 @@ impl Info {
             Language::Cpp => vec![Color::Yellow, Color::Cyan],
             Language::Csharp => vec![Color::White],
             Language::Dart => vec![Color::Blue, Color::Cyan],
-	        Language::Forth => vec![Color::BrightRed],
+            Language::Forth => vec![Color::BrightRed],
             Language::Go => vec![Color::White],
             Language::Haskell => vec![Color::BrightBlue, Color::BrightMagenta, Color::Blue],
             Language::Java => vec![Color::BrightBlue, Color::Red],
@@ -673,10 +670,6 @@ enum Error {
     ReadDirectory,
     /// Not in a Git Repo
     NotGitRepo,
-    /// Too few arguments
-    TooFewArgs,
-    /// Too many arguments
-    TooManyArgs,
 }
 
 impl fmt::Debug for Error {
@@ -687,8 +680,6 @@ impl fmt::Debug for Error {
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory",
             Error::NotGitRepo => "This is not a Git Repo",
-            Error::TooFewArgs => "Too few arguments. Expected program name and a single argument.",
-            Error::TooManyArgs => "Too many arguments. Expected a single argument.",
         };
         write!(f, "{}", content)
     }
