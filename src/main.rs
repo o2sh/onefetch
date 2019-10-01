@@ -36,6 +36,7 @@ struct Info {
     last_change: String,
     repo: String,
     commits: String,
+    repo_size: String,
     number_of_lines: usize,
     license: String,
 }
@@ -129,6 +130,12 @@ impl fmt::Display for Info {
             "{}{}",
             "Lines of code: ".color(color).bold(),
             self.number_of_lines
+        )?;
+        writeln!(
+            buffer,
+            "{}{}",
+            "Repository size: ".color(color).bold(),
+            self.repo_size
         )?;
         writeln!(
             buffer,
@@ -339,6 +346,7 @@ fn main() -> Result<()> {
     let config = get_configuration(&dir)?;
     let version = get_version(&dir)?;
     let commits = get_commits(&dir)?;
+    let repo_size = get_packed_size(&dir)?;
     let last_change = get_last_change(&dir)?;
 
     let info = Info {
@@ -351,6 +359,7 @@ fn main() -> Result<()> {
         last_change,
         repo: config.repository_url,
         commits,
+        repo_size,
         number_of_lines: get_total_loc(&tokei_langs),
         license: project_license(&dir)?,
     };
@@ -469,6 +478,26 @@ fn get_commits(dir: &str) -> Result<String> {
         Ok("0".into())
     } else {
         Ok(output.to_string().replace('\n', ""))
+    }
+}
+
+fn get_packed_size(dir: &str) -> Result<String> {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("count-objects")
+        .arg("-vH")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+    let lines = output.to_string();
+    let size_line = lines.split("\n").find(|line| {
+        line.starts_with("size-pack:")
+    });
+    match size_line {
+        None => Ok("??".into()),
+        Some(size_str) => Ok(size_str[11..].into())
     }
 }
 
