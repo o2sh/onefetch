@@ -3,11 +3,14 @@ extern crate colored;
 extern crate git2;
 extern crate license;
 extern crate tokei;
+#[macro_use]
+extern crate clap;
 
 use colored::Color;
 use colored::*;
 use git2::Repository;
 use license::License;
+use clap::{App, Arg};
 use std::{
     cmp,
     collections::HashMap,
@@ -282,21 +285,17 @@ fn main() -> Result<()> {
         return Err(Error::GitNotInstalled);
     }
 
-    let mut args = env::args();
-
-    if args.next().is_none() {
-        return Err(Error::TooFewArgs);
-    };
-
-    let dir = if let Some(arg) = args.next() {
-        arg
-    } else {
-        String::from(".")
-    };
-
-    if args.next().is_some() {
-        return Err(Error::TooManyArgs);
-    };
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!("\n"))
+        .about(crate_description!())
+        .arg(Arg::with_name("directory")
+            .short("d")
+            .long("dir")
+            .takes_value(true)
+            .default_value("."))
+        .get_matches();
+    let dir = String::from(matches.value_of("directory").unwrap());
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
