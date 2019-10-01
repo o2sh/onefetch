@@ -3,16 +3,18 @@ extern crate colored;
 extern crate git2;
 extern crate license;
 extern crate tokei;
+#[macro_use]
+extern crate clap;
 
 use colored::Color;
 use colored::*;
 use git2::Repository;
 use license::License;
+use clap::{App, Arg};
 use std::{
     cmp,
     collections::HashMap,
     convert::From,
-    env,
     ffi::OsStr,
     fmt,
     fmt::Write,
@@ -282,21 +284,17 @@ fn main() -> Result<()> {
         return Err(Error::GitNotInstalled);
     }
 
-    let mut args = env::args();
-
-    if args.next().is_none() {
-        return Err(Error::TooFewArgs);
-    };
-
-    let dir = if let Some(arg) = args.next() {
-        arg
-    } else {
-        String::from(".")
-    };
-
-    if args.next().is_some() {
-        return Err(Error::TooManyArgs);
-    };
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .author("o2sh <ossama-hjaji@live.fr>")
+        .about(crate_description!())
+        .arg(Arg::with_name("directory")
+            .short("d")
+            .long("dir")
+            .takes_value(true)
+            .default_value("."))
+        .get_matches();
+    let dir = String::from(matches.value_of("directory").unwrap());
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
@@ -495,7 +493,6 @@ fn get_configuration(dir: &str) -> Result<Configuration> {
 
 // Return first n most active commiters as authors within this project.
 fn get_authors(dir: &str, n: usize) -> Vec<String> {
-    use std::collections::HashMap;
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -673,10 +670,6 @@ enum Error {
     ReadDirectory,
     /// Not in a Git Repo
     NotGitRepo,
-    /// Too few arguments
-    TooFewArgs,
-    /// Too many arguments
-    TooManyArgs,
 }
 
 impl fmt::Debug for Error {
@@ -687,8 +680,6 @@ impl fmt::Debug for Error {
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory",
             Error::NotGitRepo => "This is not a Git Repo",
-            Error::TooFewArgs => "Too few arguments. Expected program name and a single argument.",
-            Error::TooManyArgs => "Too many arguments. Expected a single argument.",
         };
         write!(f, "{}", content)
     }
