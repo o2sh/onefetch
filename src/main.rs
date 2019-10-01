@@ -15,7 +15,6 @@ use std::{
     cmp,
     collections::HashMap,
     convert::From,
-    env,
     ffi::OsStr,
     fmt,
     fmt::Write,
@@ -287,7 +286,7 @@ fn main() -> Result<()> {
 
     let matches = App::new(crate_name!())
         .version(crate_version!())
-        .author(crate_authors!("\n"))
+        .author("o2sh <ossama-hjaji@live.fr>")
         .about(crate_description!())
         .arg(Arg::with_name("directory")
             .short("d")
@@ -494,7 +493,6 @@ fn get_configuration(dir: &str) -> Result<Configuration> {
 
 // Return first n most active commiters as authors within this project.
 fn get_authors(dir: &str, n: usize) -> Vec<String> {
-    use std::collections::HashMap;
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -672,10 +670,6 @@ enum Error {
     ReadDirectory,
     /// Not in a Git Repo
     NotGitRepo,
-    /// Too few arguments
-    TooFewArgs,
-    /// Too many arguments
-    TooManyArgs,
 }
 
 impl fmt::Debug for Error {
@@ -686,8 +680,6 @@ impl fmt::Debug for Error {
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory",
             Error::NotGitRepo => "This is not a Git Repo",
-            Error::TooFewArgs => "Too few arguments. Expected program name and a single argument.",
-            Error::TooManyArgs => "Too many arguments. Expected a single argument.",
         };
         write!(f, "{}", content)
     }
