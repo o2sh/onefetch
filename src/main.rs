@@ -8,7 +8,7 @@ extern crate clap;
 
 use colored::Color;
 use colored::*;
-use git2::Repository;
+use git2::{Repository, Oid};
 use license::License;
 use clap::{App, Arg};
 use std::{
@@ -28,6 +28,7 @@ type Result<T> = result::Result<T, Error>;
 
 struct Info {
     project_name: String,
+    current_commit: CommitInfo,
     version: String,
     dominant_language: Language,
     languages: Vec<(Language, f64)>,
@@ -35,6 +36,7 @@ struct Info {
     last_change: String,
     repo: String,
     commits: String,
+    repo_size: String,
     number_of_lines: usize,
     license: String,
 }
@@ -52,6 +54,13 @@ impl fmt::Display for Info {
             "{}{}",
             "Project: ".color(color).bold(),
             self.project_name
+        )?;
+
+        writeln!(
+            buffer,
+            "{}{}",
+            "HEAD: ".color(color).bold(),
+            self.current_commit
         )?;
 
         writeln!(
@@ -121,6 +130,12 @@ impl fmt::Display for Info {
             "{}{}",
             "Lines of code: ".color(color).bold(),
             self.number_of_lines
+        )?;
+        writeln!(
+            buffer,
+            "{}{}",
+            "Repository size: ".color(color).bold(),
+            self.repo_size
         )?;
         writeln!(
             buffer,
@@ -220,6 +235,30 @@ fn true_len(line: &str) -> usize {
         .len()
 }
 
+struct CommitInfo {
+    commit: Oid,
+    refs: Vec<String>,
+}
+
+impl CommitInfo {
+    fn new(commit: Oid, refs: Vec<String>) -> CommitInfo {
+        CommitInfo { commit, refs }
+    }
+}
+
+impl fmt::Display for CommitInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.refs.len() > 0 {
+            let refs_str = self.refs.iter().map(|ref_name| {
+                ref_name.as_str()
+            }).collect::<Vec<&str>>().join(", ");
+            write!(f, "{} ({})", self.commit, refs_str)
+        } else {
+            write!(f, "{}", self.commit)
+        }
+    }
+}
+
 #[derive(PartialEq, Eq, Hash, Clone)]
 enum Language {
     Assembly,
@@ -303,13 +342,16 @@ fn main() -> Result<()> {
     let dominant_language = languages_stat_vec[0].0.clone();
 
     let authors = get_authors(&dir, 3);
+    let current_commit_info = get_current_commit_info(&dir)?;
     let config = get_configuration(&dir)?;
     let version = get_version(&dir)?;
     let commits = get_commits(&dir)?;
+    let repo_size = get_packed_size(&dir)?;
     let last_change = get_last_change(&dir)?;
 
     let info = Info {
         project_name: config.repository_name,
+        current_commit: current_commit_info,
         version,
         dominant_language,
         languages: languages_stat_vec,
@@ -317,6 +359,7 @@ fn main() -> Result<()> {
         last_change,
         repo: config.repository_url,
         commits,
+        repo_size,
         number_of_lines: get_total_loc(&tokei_langs),
         license: project_license(&dir)?,
     };
@@ -438,6 +481,26 @@ fn get_commits(dir: &str) -> Result<String> {
     }
 }
 
+fn get_packed_size(dir: &str) -> Result<String> {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("count-objects")
+        .arg("-vH")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+    let lines = output.to_string();
+    let size_line = lines.split("\n").find(|line| {
+        line.starts_with("size-pack:")
+    });
+    match size_line {
+        None => Ok("??".into()),
+        Some(size_str) => Ok(size_str[11..].into())
+    }
+}
+
 fn is_git_installed() -> bool {
     Command::new("git")
         .arg("--version")
@@ -525,6 +588,31 @@ fn get_authors(dir: &str, n: usize) -> Vec<String> {
         .collect();
 
     authors
+}
+
+fn get_current_commit_info(dir: &str) -> Result<CommitInfo> {
+    let repo = Repository::open(dir).map_err(|_| Error::NotGitRepo)?;
+    let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
+    let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
+    let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
+    let refs_info = refs.into_iter().filter_map(|reference| {
+        match reference {
+            Ok(reference) => {
+                match (reference.target(), reference.shorthand()) {
+                    (Some(oid), Some(shorthand)) if oid == head_oid => {
+                        Some(if reference.is_tag() {
+                            String::from("tags/") + shorthand
+                        } else {
+                            String::from(shorthand)
+                        })
+                    },
+                    _ => None
+                }
+            },
+            Err(_) => None,
+        }
+    }).collect::<Vec<String>>();
+    Ok(CommitInfo::new(head_oid, refs_info))
 }
 
 fn get_total_loc(languages: &tokei::Languages) -> usize {
@@ -670,6 +758,8 @@ enum Error {
     ReadDirectory,
     /// Not in a Git Repo
     NotGitRepo,
+    /// Error while getting branch info
+    ReferenceInfoError,
 }
 
 impl fmt::Debug for Error {
@@ -680,6 +770,7 @@ impl fmt::Debug for Error {
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory",
             Error::NotGitRepo => "This is not a Git Repo",
+            Error::ReferenceInfoError => "Error while retrieving reference information",
         };
         write!(f, "{}", content)
     }
