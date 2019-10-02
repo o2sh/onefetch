@@ -1,0 +1,18 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = LF
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{yml,yaml,md}]
+indent_size = 2
+
+[*.ascii]
+trim_trailing_whitespace = false
+
+[{Makefile,.SRCINFO}]
+indent_style = tab
