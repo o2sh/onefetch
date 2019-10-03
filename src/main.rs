@@ -733,7 +733,7 @@ impl Info {
             Language::Go => vec![Color::White],
             Language::Haskell => vec![Color::BrightBlue, Color::BrightMagenta, Color::Blue],
             Language::Java => vec![Color::BrightBlue, Color::Red],
-            Language::Kotlin => vec![Color::Blue],
+            Language::Kotlin => vec![Color::Blue, Color::Yellow, Color::Magenta],
             Language::Lisp => vec![Color::Yellow],
             Language::Lua => vec![Color::Blue],
             Language::Nim => vec![Color::Yellow, Color::BrightWhite],
