@@ -371,24 +371,30 @@ fn main() -> Result<()> {
 }
 
 fn project_languages(dir: &str) -> tokei::Languages {
+    use tokei::Config;
+
     let mut languages = tokei::Languages::new();
     let required_languages = get_all_language_types();
-    languages.get_statistics(&[&dir], vec![".git", "target"], Some(required_languages));
+    let tokei_config = Config {
+        types: Some(required_languages),
+        ..Config::default()
+    };
+    languages.get_statistics(&[&dir], &[".git", "target"], &tokei_config);
     languages
 }
 
 fn get_languages_stat(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
     let mut stats = HashMap::new();
 
-    let sum_language_code: usize = languages.remove_empty().iter().map(|(_, v)| v.code).sum();
+    let sum_language_code: usize = languages.iter().map(|(_, v)| v.code).sum();
 
     if sum_language_code == 0 {
         None
     } else {
-        for (k, v) in languages.remove_empty().iter() {
+        for (k, v) in languages.iter() {
             let code = v.code as f64;
             stats.insert(
-                Language::from(**k),
+                Language::from(*k),
                 (code / sum_language_code as f64) * 100.00,
             );
         }

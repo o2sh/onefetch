@@ -10,7 +10,7 @@ repository = "https://github.com/o2sh/onefetch"
 [dependencies]
 colored= "1.6.1"
 git2 = {version = "0.7.5", default-features = false}
-tokei = "8.0"
+tokei = "10.0"
 license = "0.7.1"
 bytecount = "0.5.1"
 clap = "2.33.0"
