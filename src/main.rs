@@ -97,17 +97,17 @@ impl fmt::Display for Info {
 
         if !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
-                "Authors: "
+                "Contributors: "
             } else {
-                "Author: "
+                "Contributor: "
             };
 
-            writeln!(buffer, "{}{:3}% {:15} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
+            writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
 
             let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
-                writeln!(buffer, "{}{:3}% {:15} {}", title.color(color).bold(), author.2, author.0, author.1)?;
+                writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), author.2, author.0, author.1)?;
             }
         }
 
