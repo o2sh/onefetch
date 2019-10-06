@@ -508,10 +508,43 @@ fn get_packed_size(dir: &str) -> Result<String> {
     let size_line = lines.split("\n").find(|line| {
         line.starts_with("size-pack:")
     });
-    match size_line {
-        None => Ok("??".into()),
-        Some(size_str) => Ok(size_str[11..].into())
+
+    let repo_size = match size_line {
+        None => "??",
+        Some(size_str) => &(size_str[11..])
+    };
+    
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("ls-files")
+        .output()
+        .expect("Failed to execute git.");
+    // To check if command executed successfully or not
+    let error = &output.stderr;
+
+    if error.is_empty(){
+        let output = String::from_utf8_lossy(&output.stdout);
+
+        let lines = output.to_string();
+        let files_list = lines.split("\n");
+        let mut files_count:u128 = 0;
+        for file in files_list {
+            files_count+=1;
+        }
+        files_count-=1; // As splitting giving one line extra(blank).
+        let res = repo_size.to_owned() + &(" (") + &(files_count.to_string()) + &(" files)");
+        Ok(res.into())
     }
+    else{
+        let mut res:&str;
+        if repo_size == "??"{
+            res = "??";
+        }else{
+            res = repo_size;
+        }
+        Ok(res.into())
+    }   
 }
 
 fn is_git_installed() -> bool {
