@@ -97,9 +97,9 @@ impl fmt::Display for Info {
 
         if !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
-                "Contributors: "
+                "Authors: "
             } else {
-                "Contributor: "
+                "Author: "
             };
 
             writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
@@ -134,7 +134,7 @@ impl fmt::Display for Info {
         writeln!(
             buffer,
             "{}{}",
-            "Repository size: ".color(color).bold(),
+            "Size: ".color(color).bold(),
             self.repo_size
         )?;
         writeln!(
@@ -529,7 +529,7 @@ fn get_packed_size(dir: &str) -> Result<String> {
         let lines = output.to_string();
         let files_list = lines.split("\n");
         let mut files_count:u128 = 0;
-        for file in files_list {
+        for _file in files_list {
             files_count+=1;
         }
         files_count-=1; // As splitting giving one line extra(blank).
@@ -537,12 +537,7 @@ fn get_packed_size(dir: &str) -> Result<String> {
         Ok(res.into())
     }
     else{
-        let mut res:&str;
-        if repo_size == "??"{
-            res = "??";
-        }else{
-            res = repo_size;
-        }
+        let res =repo_size;
         Ok(res.into())
     }   
 }
