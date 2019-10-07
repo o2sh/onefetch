@@ -32,7 +32,7 @@ struct Info {
     version: String,
     dominant_language: Language,
     languages: Vec<(Language, f64)>,
-    authors: Vec<String>,
+    authors: Vec<(String, usize, usize)>,
     last_change: String,
     repo: String,
     commits: String,
@@ -102,12 +102,12 @@ impl fmt::Display for Info {
                 "Author: "
             };
 
-            writeln!(buffer, "{}{}", title.color(color).bold(), self.authors[0])?;
+            writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
 
             let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
-                writeln!(buffer, "{}{}", title.color(color).bold(), author)?;
+                writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), author.2, author.0, author.1)?;
             }
         }
 
@@ -134,7 +134,7 @@ impl fmt::Display for Info {
         writeln!(
             buffer,
             "{}{}",
-            "Repository size: ".color(color).bold(),
+            "Size: ".color(color).bold(),
             self.repo_size
         )?;
         writeln!(
@@ -531,7 +531,7 @@ fn get_packed_size(dir: &str) -> Result<String> {
         let lines = output.to_string();
         let files_list = lines.split("\n");
         let mut files_count:u128 = 0;
-        for file in files_list {
+        for _file in files_list {
             files_count+=1;
         }
         files_count-=1; // As splitting giving one line extra(blank).
@@ -539,12 +539,7 @@ fn get_packed_size(dir: &str) -> Result<String> {
         Ok(res.into())
     }
     else{
-        let mut res:&str;
-        if repo_size == "??"{
-            res = "??";
-        }else{
-            res = repo_size;
-        }
+        let res =repo_size;
         Ok(res.into())
     }   
 }
@@ -603,7 +598,7 @@ fn get_configuration(dir: &str) -> Result<Configuration> {
 }
 
 // Return first n most active commiters as authors within this project.
-fn get_authors(dir: &str, n: usize) -> Vec<String> {
+fn get_authors(dir: &str, n: usize) -> Vec<(String, usize, usize)> {
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -614,10 +609,12 @@ fn get_authors(dir: &str, n: usize) -> Vec<String> {
 
     // create map for storing author name as a key and their commit count as value
     let mut authors = HashMap::new();
+    let mut total_commits = 0;
     let output = String::from_utf8_lossy(&output.stdout);
     for line in output.lines() {
         let commit_count = authors.entry(line.to_string()).or_insert(0);
         *commit_count += 1;
+        total_commits += 1;
     }
 
     // sort authors by commit count where the one with most commit count is first
@@ -630,9 +627,9 @@ fn get_authors(dir: &str, n: usize) -> Vec<String> {
 
     // get only authors without their commit count
     // and string "'" prefix and suffix
-    let authors: Vec<String> = authors
+    let authors: Vec<(String, usize, usize)> = authors
         .into_iter()
-        .map(|(author, _)| author.trim_matches('\'').to_string())
+        .map(|(author, count)| (author.trim_matches('\'').to_string(), count, count*100/total_commits))
         .collect();
 
     authors
