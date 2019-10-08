@@ -290,6 +290,7 @@ enum Language {
     JavaScript,
     Perl,
     Php,
+    Zig,
 }
 
 impl fmt::Display for Language {
@@ -323,6 +324,7 @@ impl fmt::Display for Language {
             Language::JavaScript => write!(f, "JavaScript"),
             Language::Perl => write!(f, "Perl"),
             Language::Php => write!(f, "Php"),
+            Language::Zig => write!(f, "Zig"),
         }
     }
 }
@@ -700,6 +702,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::JavaScript => Language::JavaScript,
             tokei::LanguageType::Perl => Language::Perl,
             tokei::LanguageType::Php => Language::Php,
+            tokei::LanguageType::Zig => Language::Zig,
             _ => unimplemented!(),
         }
     }
@@ -735,6 +738,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::JavaScript,
         tokei::LanguageType::Perl,
         tokei::LanguageType::Php,
+        tokei::LanguageType::Zig,
     ]
 }
 
@@ -769,6 +773,7 @@ impl Info {
             Language::JavaScript => include_str!("../resources/javascript.ascii"),
             Language::Perl => include_str!("../resources/perl.ascii"),
             Language::Php => include_str!("../resources/php.ascii"),
+            Language::Zig => include_str!("../resources/zig.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
     }
@@ -803,6 +808,7 @@ impl Info {
             Language::JavaScript => vec![Color::BrightYellow],
             Language::Perl => vec![Color::BrightBlue],
             Language::Php => vec![Color::BrightWhite],
+            Language::Zig => vec![Color::Yellow],
         }
     }
 }
