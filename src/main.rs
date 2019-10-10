@@ -30,6 +30,7 @@ struct Info {
     project_name: String,
     current_commit: CommitInfo,
     version: String,
+    creation_date: String,
     dominant_language: Language,
     languages: Vec<(Language, f64)>,
     authors: Vec<(String, usize, usize)>,
@@ -69,6 +70,13 @@ impl fmt::Display for Info {
             "Version: ".color(color).bold(),
             self.version
         )?;
+
+        writeln!(
+            buffer,
+            "{}{}",
+            "Created: ".color(color).bold(),
+            self.creation_date
+        )?;        
 
         if !self.languages.is_empty() {
             if self.languages.len() > 1 {
@@ -363,15 +371,13 @@ fn main() -> Result<()> {
     let commits = get_commits(&dir)?;
     let repo_size = get_packed_size(&dir)?;
     let last_change = get_last_change(&dir)?;
-    let project_name = match get_creation_time() {
-        Some(creation_time) => format!("{}, {}", config.repository_name, creation_time),
-        None => config.repository_name
-    };
+    let creation_date = get_creation_time().unwrap();
 
     let info = Info {
-        project_name,
+        project_name: config.repository_name,
         current_commit: current_commit_info,
         version,
+        creation_date: creation_date,
         dominant_language,
         languages: languages_stat_vec,
         authors,
