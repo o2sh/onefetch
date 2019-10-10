@@ -182,9 +182,9 @@ fn count_newlines(s: &str) -> usize {
 /// escape characters for color display.
 ///
 /// Colors are specified with {0}, {1}... where the number represents
-/// the nth element in the colors Vec provided to the function.  
+/// the nth element in the colors Vec provided to the function.
 /// If there are more colors in the ascii than in the Vec it
-/// defaults to white.  
+/// defaults to white.
 /// The usize in the tuple refers to the extra padding needed
 /// which comes from the added escape characters.
 fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
@@ -363,9 +363,13 @@ fn main() -> Result<()> {
     let commits = get_commits(&dir)?;
     let repo_size = get_packed_size(&dir)?;
     let last_change = get_last_change(&dir)?;
+    let project_name = match get_creation_time() {
+        Some(creation_time) => format!("{}, {}", config.repository_name, creation_time),
+        None => config.repository_name
+    };
 
     let info = Info {
-        project_name: config.repository_name,
+        project_name,
         current_commit: current_commit_info,
         version,
         dominant_language,
@@ -521,7 +525,7 @@ fn get_packed_size(dir: &str) -> Result<String> {
         None => "??",
         Some(size_str) => &(size_str[11..])
     };
-    
+
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -547,7 +551,7 @@ fn get_packed_size(dir: &str) -> Result<String> {
     else{
         let res =repo_size;
         Ok(res.into())
-    }   
+    }
 }
 
 fn is_git_installed() -> bool {
@@ -672,6 +676,23 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
         .collect::<Vec<&tokei::Language>>()
         .iter()
         .fold(0, |sum, val| sum + val.code)
+}
+
+fn get_creation_time() -> Option<String> {
+    let output = Command::new("git")
+        .arg("log")
+        .arg("--reverse")
+        .arg("--pretty=oneline")
+        .arg("--format=\"%ar\"")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+
+    match output.lines().next() {
+        Some(val) => Some(val.to_string().replace('"', "")),
+        None => None
+    }
 }
 
 /// Convert from tokei LanguageType to known Language type .
