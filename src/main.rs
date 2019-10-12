@@ -298,7 +298,7 @@ enum Language {
     Tcl,
     TypeScript,
     JavaScript,
-    Vue
+    Vue,
     Perl,
     Php,
     Zig,
