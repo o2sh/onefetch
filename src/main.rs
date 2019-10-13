@@ -9,11 +9,11 @@ extern crate strum;
 #[macro_use]
 extern crate strum_macros;
 
+use clap::{App, Arg};
 use colored::Color;
 use colored::*;
-use git2::{Repository, Oid};
+use git2::{Oid, Repository};
 use license::License;
-use clap::{App, Arg};
 use std::{
     cmp,
     collections::HashMap,
@@ -30,19 +30,19 @@ use std::{
 type Result<T> = result::Result<T, Error>;
 
 struct Info {
-    project_name: String,
-    current_commit: CommitInfo,
-    version: String,
-    creation_date: String,
-    dominant_language: Language,
-    languages: Vec<(Language, f64)>,
-    authors: Vec<(String, usize, usize)>,
-    last_change: String,
-    repo: String,
-    commits: String,
-    repo_size: String,
-    number_of_lines: usize,
-    license: String,
+    project_name: Option<String>,
+    current_commit: Option<CommitInfo>,
+    version: Option<String>,
+    creation_date: Option<String>,
+    dominant_language: Option<Language>,
+    languages: Option<Vec<(Language, f64)>>,
+    authors: Option<Vec<(String, usize, usize)>>,
+    last_change: Option<String>,
+    repo: Option<String>,
+    commits: Option<String>,
+    repo_size: Option<String>,
+    number_of_lines: Option<usize>,
+    license: Option<String>,
     custom_logo: Language,
     custom_colors: Vec<String>,
 }
@@ -55,127 +55,170 @@ impl fmt::Display for Info {
             None => Color::White,
         };
 
-        writeln!(
-            buffer,
-            "{}{}",
-            "Project: ".color(color).bold(),
-            self.project_name
-        )?;
+        match &self.project_name {
+            Some(project_name) => writeln!(
+                buffer,
+                "{}{}",
+                "Project: ".color(color).bold(),
+                project_name
+            )?,
+            None => {}
+        }
 
-        writeln!(
-            buffer,
-            "{}{}",
-            "HEAD: ".color(color).bold(),
-            self.current_commit
-        )?;
+        match &self.current_commit {
+            Some(current_commit) => {
+                writeln!(buffer, "{}{}", "HEAD: ".color(color).bold(), current_commit)?
+            }
+            None => {}
+        }
 
-        writeln!(
-            buffer,
-            "{}{}",
-            "Version: ".color(color).bold(),
-            self.version
-        )?;
+        match &self.version {
+            Some(version) => writeln!(buffer, "{}{}", "Version: ".color(color).bold(), version)?,
+            None => {}
+        }
 
-        writeln!(
-            buffer,
-            "{}{}",
-            "Created: ".color(color).bold(),
-            self.creation_date
-        )?;        
+        match &self.creation_date {
+            Some(creation_date) => writeln!(
+                buffer,
+                "{}{}",
+                "Created: ".color(color).bold(),
+                creation_date
+            )?,
+            None => {}
+        }
 
-        if !self.languages.is_empty() {
-            if self.languages.len() > 1 {
-                let title = "Languages: ";
-                let pad = " ".repeat(title.len());
-                let mut s = String::from("");
-                for (cnt, language) in self.languages.iter().enumerate() {
-                    let formatted_number = format!("{:.*}", 2, language.1);
-                    if cnt != 0 && cnt % 3 == 0 {
-                        s = s + &format!("\n{}{} ({} %) ", pad, language.0, formatted_number);
+        match &self.languages {
+            Some(languages) => {
+                if !languages.is_empty() {
+                    if languages.len() > 1 {
+                        let title = "Languages: ";
+                        let pad = " ".repeat(title.len());
+                        let mut s = String::from("");
+                        for (cnt, language) in languages.iter().enumerate() {
+                            let formatted_number = format!("{:.*}", 2, language.1);
+                            if cnt != 0 && cnt % 3 == 0 {
+                                s = s + &format!(
+                                    "\n{}{} ({} %) ",
+                                    pad, language.0, formatted_number
+                                );
+                            } else {
+                                s = s + &format!("{} ({} %) ", language.0, formatted_number);
+                            }
+                        }
+                        writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
                     } else {
-                        s = s + &format!("{} ({} %) ", language.0, formatted_number);
+                        match &self.dominant_language {
+                            Some(dominant_language) => {
+                                let title = "Language: ";
+                                writeln!(
+                                    buffer,
+                                    "{}{}",
+                                    title.color(color).bold(),
+                                    dominant_language
+                                )?;
+                            }
+                            None => {}
+                        }
+                    };
+                }
+            }
+            None => {}
+        }
+
+        match &self.authors {
+            Some(authors) => {
+                if !authors.is_empty() {
+                    let title = if authors.len() > 1 {
+                        "Authors: "
+                    } else {
+                        "Author: "
+                    };
+
+                    writeln!(
+                        buffer,
+                        "{}{}% {} {}",
+                        title.color(color).bold(),
+                        authors[0].2,
+                        authors[0].0,
+                        authors[0].1
+                    )?;
+
+                    let title = " ".repeat(title.len());
+
+                    for author in authors.iter().skip(1) {
+                        writeln!(
+                            buffer,
+                            "{}{}% {} {}",
+                            title.color(color).bold(),
+                            author.2,
+                            author.0,
+                            author.1
+                        )?;
                     }
                 }
-                writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
-            } else {
-                let title = "Language: ";
-                writeln!(
-                    buffer,
-                    "{}{}",
-                    title.color(color).bold(),
-                    self.dominant_language
-                )?;
-            };
-        }
-
-        if !self.authors.is_empty() {
-            let title = if self.authors.len() > 1 {
-                "Authors: "
-            } else {
-                "Author: "
-            };
-
-            writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
-
-            let title = " ".repeat(title.len());
-
-            for author in self.authors.iter().skip(1) {
-                writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), author.2, author.0, author.1)?;
             }
+            None => {}
+        }
+
+        match &self.last_change {
+            Some(last_change) => writeln!(
+                buffer,
+                "{}{}",
+                "Last change: ".color(color).bold(),
+                last_change
+            )?,
+            None => {}
+        }
+
+        match &self.repo {
+            Some(repo) => writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), repo)?,
+            None => {}
+        }
+
+        match &self.commits {
+            Some(commits) => writeln!(buffer, "{}{}", "Commits: ".color(color).bold(), commits)?,
+            None => {}
+        }
+
+        match &self.number_of_lines {
+            Some(number_of_lines) => writeln!(
+                buffer,
+                "{}{}",
+                "Lines of code: ".color(color).bold(),
+                number_of_lines
+            )?,
+            None => {}
+        }
+
+        match &self.repo_size {
+            Some(repo_size) => writeln!(buffer, "{}{}", "Size: ".color(color).bold(), repo_size)?,
+            None => {}
+        }
+
+        match &self.license {
+            Some(license) => writeln!(buffer, "{}{}", "License: ".color(color).bold(), license)?,
+            None => {}
         }
 
         writeln!(
             buffer,
-            "{}{}",
-            "Last change: ".color(color).bold(),
-            self.last_change
-        )?;
-
-        writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
-        writeln!(
-            buffer,
-            "{}{}",
-            "Commits: ".color(color).bold(),
-            self.commits
-        )?;
-        writeln!(
-            buffer,
-            "{}{}",
-            "Lines of code: ".color(color).bold(),
-            self.number_of_lines
-        )?;
-        writeln!(
-            buffer,
-            "{}{}",
-            "Size: ".color(color).bold(),
-            self.repo_size
-        )?;
-        writeln!(
-            buffer,
-            "{}{}",
-            "License: ".color(color).bold(),
-            self.license
-        )?;
-
-        writeln!(
-           buffer,
-           "\n{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}",
-           "  ".on_black(),
-           "  ".on_red(),
-           "  ".on_green(),
-           "  ".on_yellow(),
-           "  ".on_blue(),
-           "  ".on_magenta(),
-           "  ".on_cyan(),
-           "  ".on_white(),
-           "  ".on_bright_black(),
-           "  ".on_bright_red(),
-           "  ".on_bright_green(),
-           "  ".on_bright_yellow(),
-           "  ".on_bright_blue(),
-           "  ".on_bright_magenta(),
-           "  ".on_bright_cyan(),
-           "  ".on_bright_white(),
+            "\n{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}",
+            "  ".on_black(),
+            "  ".on_red(),
+            "  ".on_green(),
+            "  ".on_yellow(),
+            "  ".on_blue(),
+            "  ".on_magenta(),
+            "  ".on_cyan(),
+            "  ".on_white(),
+            "  ".on_bright_black(),
+            "  ".on_bright_red(),
+            "  ".on_bright_green(),
+            "  ".on_bright_yellow(),
+            "  ".on_bright_blue(),
+            "  ".on_bright_magenta(),
+            "  ".on_bright_cyan(),
+            "  ".on_bright_white(),
         )?;
 
         let logo = self.get_ascii();
@@ -284,9 +327,12 @@ impl fmt::Display for CommitInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let short_commit = self.commit.to_string().chars().take(7).collect::<String>();
         if self.refs.len() > 0 {
-            let refs_str = self.refs.iter().map(|ref_name| {
-                ref_name.as_str()
-            }).collect::<Vec<&str>>().join(", ");
+            let refs_str = self
+                .refs
+                .iter()
+                .map(|ref_name| ref_name.as_str())
+                .collect::<Vec<&str>>()
+                .join(", ");
             write!(f, "{} ({})", short_commit, refs_str)
         } else {
             write!(f, "{}", short_commit)
@@ -333,7 +379,7 @@ enum Language {
     Perl,
     Php,
     Zig,
-    Unknown
+    Unknown,
 }
 
 impl fmt::Display for Language {
@@ -389,69 +435,66 @@ fn main() -> Result<()> {
         .version(crate_version!())
         .author("o2sh <ossama-hjaji@live.fr>")
         .about(crate_description!())
-        .arg(Arg::with_name("directory")
-            .short("d")
-            .long("dir")
-            .takes_value(true)
-            .default_value("."))
-        .arg(Arg::with_name("ascii_language")
-            .short("a")
-            .long("ascii_language")
-            .takes_value(true)
-            .default_value("")
-            .help("Overrides showing the dominant language ascii logo"))
-        .arg(Arg::with_name("colors")
-            .short("c")
-            .long("colors")
-            .multiple(true)
-            .takes_value(true)
-            .possible_values(&[
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
+        .arg(
+            Arg::with_name("directory")
+                .short("d")
+                .long("dir")
+                .takes_value(true)
+                .default_value("."),
+        )
+        .arg(
+            Arg::with_name("ascii_language")
+                .short("a")
+                .long("ascii_language")
+                .takes_value(true)
+                .default_value("")
+                .help("Overrides showing the dominant language ascii logo"),
+        )
+        .arg(
+            Arg::with_name("colors")
+                .short("c")
+                .long("colors")
+                .multiple(true)
+                .takes_value(true)
+                .possible_values(&[
+                    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+                    "15",
                 ])
-            .hide_possible_values(true)
-            .help(&format!(
-                "Specifies a preferred color set. Unspecified colors will remain as default.
+                .hide_possible_values(true)
+                .help(&format!(
+                    "Specifies a preferred color set. Unspecified colors will remain as default.
 Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
-                "0".black(),
-                "1".red(),
-                "2".green(),
-                "3".yellow(),
-                "4".blue(),
-                "5".magenta(),
-                "6".cyan(),
-                "7".white(),
-                "8".bright_black(),
-                "9".bright_red(),
-                "10".bright_green(),
-                "11".bright_yellow(),
-                "12".bright_blue(),
-                "13".bright_magenta(),
-                "14".bright_cyan(),
-                "15".bright_white(),
-            )))
+                    "0".black(),
+                    "1".red(),
+                    "2".green(),
+                    "3".yellow(),
+                    "4".blue(),
+                    "5".magenta(),
+                    "6".cyan(),
+                    "7".white(),
+                    "8".bright_black(),
+                    "9".bright_red(),
+                    "10".bright_green(),
+                    "11".bright_yellow(),
+                    "12".bright_blue(),
+                    "13".bright_magenta(),
+                    "14".bright_cyan(),
+                    "15".bright_white(),
+                )),
+        )
+        // TODO: Better arg pargsing
+        .arg(
+            Arg::with_name("disable")
+                .long("--disable")
+                .takes_value(true)
+                .default_value(""),
+        )
         .get_matches();
     let dir = String::from(matches.value_of("directory").unwrap());
-    let custom_logo: Language = Language::from_str(
-        &matches
-            .value_of("ascii_language")
-            .unwrap()
-            .to_lowercase())
-        .unwrap_or(Language::Unknown);
+    let custom_logo: Language =
+        Language::from_str(&matches.value_of("ascii_language").unwrap().to_lowercase())
+            .unwrap_or(Language::Unknown);
+    let disable = String::from(matches.value_of("disable").unwrap());
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
@@ -474,19 +517,71 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     };
 
     let info = Info {
-        project_name: config.repository_name,
-        current_commit: current_commit_info,
-        version,
-        creation_date: creation_date,
-        dominant_language,
-        languages: languages_stat_vec,
-        authors,
-        last_change,
-        repo: config.repository_url,
-        commits,
-        repo_size,
-        number_of_lines: get_total_loc(&tokei_langs),
-        license: project_license(&dir)?,
+        project_name: if disable != "project_name" {
+            Some(config.repository_name)
+        } else {
+            None
+        },
+        current_commit: if disable != "current_commit" {
+            Some(current_commit_info)
+        } else {
+            None
+        },
+        version: if disable != "version" {
+            Some(version)
+        } else {
+            None
+        },
+        creation_date: if disable != "creation_date" {
+            Some(creation_date)
+        } else {
+            None
+        },
+        dominant_language: if disable != "dominant_language" {
+            Some(dominant_language)
+        } else {
+            None
+        },
+        languages: if disable != "languages" {
+            Some(languages_stat_vec)
+        } else {
+            None
+        },
+        authors: if disable != "authors" {
+            Some(authors)
+        } else {
+            None
+        },
+        last_change: if disable != "last_change" {
+            Some(last_change)
+        } else {
+            None
+        },
+        repo: if disable != "repo" {
+            Some(config.repository_url)
+        } else {
+            None
+        },
+        commits: if disable != "commits" {
+            Some(commits)
+        } else {
+            None
+        },
+        repo_size: if disable != "size" {
+            Some(repo_size)
+        } else {
+            None
+        },
+        number_of_lines: if disable != "number_of_lines" {
+            Some(get_total_loc(&tokei_langs))
+        } else {
+            None
+        },
+        license: if disable != "license" {
+            Some(project_license(&dir)?)
+        } else {
+            None
+        },
         custom_logo,
         custom_colors,
     };
@@ -625,13 +720,13 @@ fn get_packed_size(dir: &str) -> Result<String> {
 
     let output = String::from_utf8_lossy(&output.stdout);
     let lines = output.to_string();
-    let size_line = lines.split("\n").find(|line| {
-        line.starts_with("size-pack:")
-    });
+    let size_line = lines
+        .split("\n")
+        .find(|line| line.starts_with("size-pack:"));
 
     let repo_size = match size_line {
         None => "??",
-        Some(size_str) => &(size_str[11..])
+        Some(size_str) => &(size_str[11..]),
     };
 
     let output = Command::new("git")
@@ -643,21 +738,20 @@ fn get_packed_size(dir: &str) -> Result<String> {
     // To check if command executed successfully or not
     let error = &output.stderr;
 
-    if error.is_empty(){
+    if error.is_empty() {
         let output = String::from_utf8_lossy(&output.stdout);
 
         let lines = output.to_string();
         let files_list = lines.split("\n");
-        let mut files_count:u128 = 0;
+        let mut files_count: u128 = 0;
         for _file in files_list {
-            files_count+=1;
+            files_count += 1;
         }
-        files_count-=1; // As splitting giving one line extra(blank).
+        files_count -= 1; // As splitting giving one line extra(blank).
         let res = repo_size.to_owned() + &(" (") + &(files_count.to_string()) + &(" files)");
         Ok(res.into())
-    }
-    else{
-        let res =repo_size;
+    } else {
+        let res = repo_size;
         Ok(res.into())
     }
 }
@@ -747,7 +841,13 @@ fn get_authors(dir: &str, n: usize) -> Vec<(String, usize, usize)> {
     // and string "'" prefix and suffix
     let authors: Vec<(String, usize, usize)> = authors
         .into_iter()
-        .map(|(author, count)| (author.trim_matches('\'').to_string(), count, count*100/total_commits))
+        .map(|(author, count)| {
+            (
+                author.trim_matches('\'').to_string(),
+                count,
+                count * 100 / total_commits,
+            )
+        })
         .collect();
 
     authors
@@ -758,23 +858,20 @@ fn get_current_commit_info(dir: &str) -> Result<CommitInfo> {
     let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
     let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
     let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
-    let refs_info = refs.into_iter().filter_map(|reference| {
-        match reference {
-            Ok(reference) => {
-                match (reference.target(), reference.shorthand()) {
-                    (Some(oid), Some(shorthand)) if oid == head_oid => {
-                        Some(if reference.is_tag() {
-                            String::from("tags/") + shorthand
-                        } else {
-                            String::from(shorthand)
-                        })
-                    },
-                    _ => None
-                }
+    let refs_info = refs
+        .into_iter()
+        .filter_map(|reference| match reference {
+            Ok(reference) => match (reference.target(), reference.shorthand()) {
+                (Some(oid), Some(shorthand)) if oid == head_oid => Some(if reference.is_tag() {
+                    String::from("tags/") + shorthand
+                } else {
+                    String::from(shorthand)
+                }),
+                _ => None,
             },
             Err(_) => None,
-        }
-    }).collect::<Vec<String>>();
+        })
+        .collect::<Vec<String>>();
     Ok(CommitInfo::new(head_oid, refs_info))
 }
 
@@ -799,7 +896,7 @@ fn get_creation_time() -> Option<String> {
 
     match output.lines().next() {
         Some(val) => Some(val.to_string().replace('"', "")),
-        None => None
+        None => None,
     }
 }
 
@@ -891,12 +988,14 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
 
 impl Info {
     pub fn get_ascii(&self) -> &str {
-        let language =
-            if let Language::Unknown = self.custom_logo {
-                &self.dominant_language
-            } else {
-                &self.custom_logo
-            };
+        let language = if let Language::Unknown = self.custom_logo {
+            match &self.dominant_language {
+                Some(dominant_language) => dominant_language,
+                None => &Language::Unknown,
+            }
+        } else {
+            &self.custom_logo
+        };
 
         match language {
             Language::Assembly => include_str!("../resources/assembly.ascii"),
@@ -936,19 +1035,20 @@ impl Info {
             Language::Php => include_str!("../resources/php.ascii"),
             Language::Zig => include_str!("../resources/zig.ascii"),
             Language::Unknown => include_str!("../resources/unknown.ascii"),
-            // _ => include_str!("../resources/unknown.ascii"),
         }
     }
 
     fn colors(&self) -> Vec<Color> {
-        let language =
-            if let Language::Unknown = self.custom_logo {
-                &self.dominant_language
-            } else {
-                &self.custom_logo
-            };
+        let language = if let Language::Unknown = self.custom_logo {
+            match &self.dominant_language {
+                Some(dominant_language) => dominant_language,
+                None => &Language::Unknown,
+            }
+        } else {
+            &self.custom_logo
+        };
 
-       let colors = match language {
+        let colors = match language {
             Language::Assembly => vec![Color::Cyan],
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
@@ -988,14 +1088,18 @@ impl Info {
             Language::Unknown => vec![Color::White],
         };
 
-        let colors: Vec<Color> = colors.iter().enumerate().map(|(index, default_color)| {
-            if let Some(color_num) = self.custom_colors.get(index) {
-                if let Some(color) = num_to_color(color_num) {
-                    return color;
+        let colors: Vec<Color> = colors
+            .iter()
+            .enumerate()
+            .map(|(index, default_color)| {
+                if let Some(color_num) = self.custom_colors.get(index) {
+                    if let Some(color) = num_to_color(color_num) {
+                        return color;
+                    }
                 }
-            }
-            *default_color
-        }).collect();
+                *default_color
+            })
+            .collect();
         colors
     }
 }
