@@ -431,6 +431,26 @@ fn main() -> Result<()> {
         return Err(Error::GitNotInstalled);
     }
 
+    let possible_disbaled_fields = [
+        "",
+        "project_name",
+        "current_commit",
+        "version",
+        "creation_date",
+        "dominant_language",
+        "languages",
+        "authors",
+        "last_change",
+        "repo",
+        "commits",
+        "size",
+        "number_of_lines",
+        "license",
+    ];
+
+    // TOOD: Use len of possible_disbaled_fields
+    let max_disabled_values: u64 = 12;
+
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author("o2sh <ossama-hjaji@live.fr>")
@@ -487,14 +507,26 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
             Arg::with_name("disable")
                 .long("--disable")
                 .takes_value(true)
-                .default_value(""),
+                .default_value("")
+                .multiple(true)
+                .max_values(max_disabled_values)
+                .possible_values(&possible_disbaled_fields)
+                .required(false),
         )
         .get_matches();
     let dir = String::from(matches.value_of("directory").unwrap());
     let custom_logo: Language =
         Language::from_str(&matches.value_of("ascii_language").unwrap().to_lowercase())
             .unwrap_or(Language::Unknown);
-    let disable = String::from(matches.value_of("disable").unwrap());
+    let mut disable: Vec<&str> = vec![];
+
+    if let Some(disabled) = matches.values_of("disable") {
+        for i in disabled {
+            if i != "" {
+                disable.push(i);
+            }
+        }
+    }
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
@@ -517,70 +549,70 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     };
 
     let info = Info {
-        project_name: if disable != "project_name" {
+        project_name: if disable.contains(&"project_name") {
+            None
+        } else {
             Some(config.repository_name)
-        } else {
-            None
         },
-        current_commit: if disable != "current_commit" {
+        current_commit: if disable.contains(&"current_commit") {
+            None
+        } else {
             Some(current_commit_info)
-        } else {
-            None
         },
-        version: if disable != "version" {
+        version: if disable.contains(&"version") {
+            None
+        } else {
             Some(version)
-        } else {
-            None
         },
-        creation_date: if disable != "creation_date" {
+        creation_date: if disable.contains(&"creation_date") {
+            None
+        } else {
             Some(creation_date)
-        } else {
-            None
         },
-        dominant_language: if disable != "dominant_language" {
+        dominant_language: if disable.contains(&"dominant_language") {
+            None
+        } else {
             Some(dominant_language)
-        } else {
-            None
         },
-        languages: if disable != "languages" {
+        languages: if disable.contains(&"languages") {
+            None
+        } else {
             Some(languages_stat_vec)
-        } else {
-            None
         },
-        authors: if disable != "authors" {
+        authors: if disable.contains(&"authors") {
+            None
+        } else {
             Some(authors)
-        } else {
-            None
         },
-        last_change: if disable != "last_change" {
+        last_change: if disable.contains(&"last_change") {
+            None
+        } else {
             Some(last_change)
-        } else {
-            None
         },
-        repo: if disable != "repo" {
+        repo: if disable.contains(&"repo") {
+            None
+        } else {
             Some(config.repository_url)
-        } else {
-            None
         },
-        commits: if disable != "commits" {
+        commits: if disable.contains(&"commits") {
+            None
+        } else {
             Some(commits)
-        } else {
-            None
         },
-        repo_size: if disable != "size" {
+        repo_size: if disable.contains(&"size") {
+            None
+        } else {
             Some(repo_size)
-        } else {
-            None
         },
-        number_of_lines: if disable != "number_of_lines" {
+        number_of_lines: if disable.contains(&"number_of_lines") {
+            None
+        } else {
             Some(get_total_loc(&tokei_langs))
-        } else {
-            None
         },
-        license: if disable != "license" {
-            Some(project_license(&dir)?)
-        } else {
+        license: if disable.contains(&"license") {
             None
+        } else {
+            Some(project_license(&dir)?)
         },
         custom_logo,
         custom_colors,
