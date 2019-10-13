@@ -471,7 +471,7 @@ fn main() -> Result<()> {
             .case_insensitive(true)
             .default_value("")
             .hide_default_value(true)
-            .help(&format!("Disable fields to show\nPossible values: {:?}", 
+            .help(&format!("Disable fields to show\nPossible values: {:?}",
                 &InfoFields::iter()
                     .take(InfoFields::count() - 1)
                     .map(|field| field.into())
@@ -530,14 +530,14 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
             .to_lowercase())
         .unwrap_or(Language::Unknown);
     let mut disable_fields = InfoFieldOn { ..Default::default() };
-    
+
     matches.values_of("disable_field")
         .unwrap()
         .map(String::from)
         .for_each(|field: String| {
             let item = InfoFields::from_str(field.to_lowercase().as_str())
                 .unwrap_or(InfoFields::UnrecognizedField);
-            
+
             match item {
                 InfoFields::Project => disable_fields.project = true,
                 InfoFields::HEAD => disable_fields.head = true,
