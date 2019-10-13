@@ -448,8 +448,7 @@ fn main() -> Result<()> {
         "license",
     ];
 
-    // TOOD: Use len of possible_disbaled_fields
-    let max_disabled_values: u64 = 12;
+    let max_disabled_values: u64 = possible_disbaled_fields.len() as u64;
 
     let matches = App::new(crate_name!())
         .version(crate_version!())
