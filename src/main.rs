@@ -80,7 +80,7 @@ impl fmt::Display for Info {
             "{}{}",
             "Created: ".color(color).bold(),
             self.creation_date
-        )?;        
+        )?;
 
         if !self.languages.is_empty() {
             if self.languages.len() > 1 {
