@@ -5,6 +5,9 @@ extern crate license;
 extern crate tokei;
 #[macro_use]
 extern crate clap;
+extern crate strum;
+#[macro_use]
+extern crate strum_macros;
 
 use colored::Color;
 use colored::*;
@@ -40,6 +43,7 @@ struct Info {
     repo_size: String,
     number_of_lines: usize,
     license: String,
+    custom_logo: Language,
 }
 
 impl fmt::Display for Info {
@@ -268,7 +272,8 @@ impl fmt::Display for CommitInfo {
     }
 }
 
-#[derive(PartialEq, Eq, Hash, Clone)]
+#[derive(PartialEq, Eq, Hash, Clone, EnumString)]
+#[strum(serialize_all = "lowercase")]
 enum Language {
     Assembly,
     C,
@@ -305,6 +310,7 @@ enum Language {
     Perl,
     Php,
     Zig,
+    Unknown
 }
 
 impl fmt::Display for Language {
@@ -345,6 +351,7 @@ impl fmt::Display for Language {
             Language::Perl => write!(f, "Perl"),
             Language::Php => write!(f, "Php"),
             Language::Zig => write!(f, "Zig"),
+            Language::Unknown => write!(f, "Unknown"),
         }
     }
 }
@@ -363,8 +370,20 @@ fn main() -> Result<()> {
             .long("dir")
             .takes_value(true)
             .default_value("."))
+        .arg(Arg::with_name("ascii_language")
+            .short("a")
+            .long("ascii_language")
+            .takes_value(true)
+            .default_value("")
+            .help("Overrides showing the dominant language ascii logo"))
         .get_matches();
     let dir = String::from(matches.value_of("directory").unwrap());
+    let custom_logo: Language = Language::from_str(
+        &matches
+            .value_of("ascii_language")
+            .unwrap()
+            .to_lowercase())
+        .unwrap_or(Language::Unknown);
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
@@ -395,6 +414,7 @@ fn main() -> Result<()> {
         repo_size,
         number_of_lines: get_total_loc(&tokei_langs),
         license: project_license(&dir)?,
+        custom_logo,
     };
 
     println!("{}", info);
@@ -795,7 +815,14 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
 
 impl Info {
     pub fn get_ascii(&self) -> &str {
-        match self.dominant_language {
+        let language =
+            if let Language::Unknown = self.custom_logo {
+                &self.dominant_language
+            } else {
+                &self.custom_logo
+            };
+
+        match language {
             Language::Assembly => include_str!("../resources/assembly.ascii"),
             Language::C => include_str!("../resources/c.ascii"),
             Language::Clojure => include_str!("../resources/clojure.ascii"),
@@ -831,12 +858,20 @@ impl Info {
             Language::Perl => include_str!("../resources/perl.ascii"),
             Language::Php => include_str!("../resources/php.ascii"),
             Language::Zig => include_str!("../resources/zig.ascii"),
+            Language::Unknown => include_str!("../resources/unknown.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
     }
 
     fn colors(&self) -> Vec<Color> {
-        match self.dominant_language {
+        let language =
+            if let Language::Unknown = self.custom_logo {
+                &self.dominant_language
+            } else {
+                &self.custom_logo
+            };
+
+        match language {
             Language::Assembly => vec![Color::Cyan],
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
@@ -872,6 +907,7 @@ impl Info {
             Language::Perl => vec![Color::BrightBlue],
             Language::Php => vec![Color::BrightWhite],
             Language::Zig => vec![Color::Yellow],
+            Language::Unknown => vec![Color::White],
         }
     }
 }
