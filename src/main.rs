@@ -433,19 +433,19 @@ fn main() -> Result<()> {
 
     let possible_disbaled_fields = [
         "",
-        "project_name",
-        "current_commit",
+        "project",
+        "head",
         "version",
-        "creation_date",
-        "dominant_language",
-        "languages",
+        "created",
         "authors",
-        "last_change",
+        "last_change", // What to do with this?
         "repo",
         "commits",
+        "lines_of_code", // What to do with this?
         "size",
-        "number_of_lines",
         "license",
+        "dominant_language", // What to do with this?
+        "language",
     ];
 
     let max_disabled_values: u64 = possible_disbaled_fields.len() as u64;
@@ -520,10 +520,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     let mut disable: Vec<&str> = vec![];
 
     if let Some(disabled) = matches.values_of("disable") {
-        for i in disabled {
-            if i != "" {
-                disable.push(i);
-            }
+        for i in disabled.clone() {
+            disable.push(i);
         }
     }
 
@@ -548,12 +546,12 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     };
 
     let info = Info {
-        project_name: if disable.contains(&"project_name") {
+        project_name: if disable.contains(&"project") {
             None
         } else {
             Some(config.repository_name)
         },
-        current_commit: if disable.contains(&"current_commit") {
+        current_commit: if disable.contains(&"head") {
             None
         } else {
             Some(current_commit_info)
@@ -563,7 +561,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         } else {
             Some(version)
         },
-        creation_date: if disable.contains(&"creation_date") {
+        creation_date: if disable.contains(&"created") {
             None
         } else {
             Some(creation_date)
@@ -573,7 +571,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         } else {
             Some(dominant_language)
         },
-        languages: if disable.contains(&"languages") {
+        languages: if disable.contains(&"language") {
             None
         } else {
             Some(languages_stat_vec)
@@ -603,7 +601,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         } else {
             Some(repo_size)
         },
-        number_of_lines: if disable.contains(&"number_of_lines") {
+        number_of_lines: if disable.contains(&"lines_of_code") {
             None
         } else {
             Some(get_total_loc(&tokei_langs))
