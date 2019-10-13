@@ -432,7 +432,6 @@ fn main() -> Result<()> {
     }
 
     let possible_disbaled_fields = [
-        "",
         "project",
         "head",
         "version",
@@ -506,11 +505,11 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
             Arg::with_name("disable")
                 .long("--disable")
                 .takes_value(true)
-                .default_value("")
                 .multiple(true)
                 .max_values(max_disabled_values)
                 .possible_values(&possible_disbaled_fields)
-                .required(false),
+                .required(false)
+                .help("Disables the output of given information"),
         )
         .get_matches();
     let dir = String::from(matches.value_of("directory").unwrap());
