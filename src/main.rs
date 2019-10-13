@@ -34,14 +34,14 @@ struct Info {
     current_commit: Option<CommitInfo>,
     version: Option<String>,
     creation_date: Option<String>,
-    dominant_language: Option<Language>,
+    language: Option<Language>,
     languages: Option<Vec<(Language, f64)>>,
     authors: Option<Vec<(String, usize, usize)>>,
-    last_change: Option<String>,
+    last: Option<String>,
     repo: Option<String>,
     commits: Option<String>,
     repo_size: Option<String>,
-    number_of_lines: Option<usize>,
+    loc: Option<usize>,
     license: Option<String>,
     custom_logo: Language,
     custom_colors: Vec<String>,
@@ -107,15 +107,10 @@ impl fmt::Display for Info {
                         }
                         writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
                     } else {
-                        match &self.dominant_language {
-                            Some(dominant_language) => {
+                        match &self.language {
+                            Some(language) => {
                                 let title = "Language: ";
-                                writeln!(
-                                    buffer,
-                                    "{}{}",
-                                    title.color(color).bold(),
-                                    dominant_language
-                                )?;
+                                writeln!(buffer, "{}{}", title.color(color).bold(), language)?;
                             }
                             None => {}
                         }
@@ -160,13 +155,8 @@ impl fmt::Display for Info {
             None => {}
         }
 
-        match &self.last_change {
-            Some(last_change) => writeln!(
-                buffer,
-                "{}{}",
-                "Last change: ".color(color).bold(),
-                last_change
-            )?,
+        match &self.last {
+            Some(last) => writeln!(buffer, "{}{}", "Last: ".color(color).bold(), last)?,
             None => {}
         }
 
@@ -180,13 +170,8 @@ impl fmt::Display for Info {
             None => {}
         }
 
-        match &self.number_of_lines {
-            Some(number_of_lines) => writeln!(
-                buffer,
-                "{}{}",
-                "Lines of code: ".color(color).bold(),
-                number_of_lines
-            )?,
+        match &self.loc {
+            Some(loc) => writeln!(buffer, "{}{}", "LOC: ".color(color).bold(), loc)?,
             None => {}
         }
 
@@ -437,14 +422,15 @@ fn main() -> Result<()> {
         "version",
         "created",
         "authors",
-        "last_change", // What to do with this?
+        "author",
+        "last",
         "repo",
         "commits",
-        "lines_of_code", // What to do with this?
+        "loc",
         "size",
         "license",
-        "dominant_language", // What to do with this?
         "language",
+        "languages",
     ];
 
     let max_disabled_values: u64 = possible_disbaled_fields.len() as u64;
@@ -466,7 +452,7 @@ fn main() -> Result<()> {
                 .long("ascii_language")
                 .takes_value(true)
                 .default_value("")
-                .help("Overrides showing the dominant language ascii logo"),
+                .help("Overrides showing the language ascii logo"),
         )
         .arg(
             Arg::with_name("colors")
@@ -529,7 +515,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
     let mut languages_stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
     languages_stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
-    let dominant_language = languages_stat_vec[0].0.clone();
+    let language = languages_stat_vec[0].0.clone();
 
     let authors = get_authors(&dir, 3);
     let current_commit_info = get_current_commit_info(&dir)?;
@@ -537,7 +523,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     let version = get_version(&dir)?;
     let commits = get_commits(&dir)?;
     let repo_size = get_packed_size(&dir)?;
-    let last_change = get_last_change(&dir)?;
+    let last = get_last(&dir)?;
     let creation_date = get_creation_time().unwrap();
     let custom_colors: Vec<String> = if let Some(values) = matches.values_of("colors") {
         values.map(String::from).collect()
@@ -566,25 +552,27 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         } else {
             Some(creation_date)
         },
-        dominant_language: if disable.contains(&String::from("dominant_language")) {
+        language: if disable.contains(&String::from("language")) {
             None
         } else {
-            Some(dominant_language)
+            Some(language)
         },
-        languages: if disable.contains(&String::from("language")) {
+        languages: if disable.contains(&String::from("languages")) {
             None
         } else {
             Some(languages_stat_vec)
         },
-        authors: if disable.contains(&String::from("authors")) {
+        authors: if disable.contains(&String::from("authors"))
+            || disable.contains(&String::from("author"))
+        {
             None
         } else {
             Some(authors)
         },
-        last_change: if disable.contains(&String::from("last_change")) {
+        last: if disable.contains(&String::from("last")) {
             None
         } else {
-            Some(last_change)
+            Some(last)
         },
         repo: if disable.contains(&String::from("repo")) {
             None
@@ -601,7 +589,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         } else {
             Some(repo_size)
         },
-        number_of_lines: if disable.contains(&String::from("lines_of_code")) {
+        loc: if disable.contains(&String::from("loc")) {
             None
         } else {
             Some(get_total_loc(&tokei_langs))
@@ -700,7 +688,7 @@ fn get_version(dir: &str) -> Result<String> {
     }
 }
 
-fn get_last_change(dir: &str) -> Result<String> {
+fn get_last(dir: &str) -> Result<String> {
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -1018,8 +1006,8 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
 impl Info {
     pub fn get_ascii(&self) -> &str {
         let language = if let Language::Unknown = self.custom_logo {
-            match &self.dominant_language {
-                Some(dominant_language) => dominant_language,
+            match &self.language {
+                Some(language) => language,
                 None => &Language::Unknown,
             }
         } else {
@@ -1069,8 +1057,8 @@ impl Info {
 
     fn colors(&self) -> Vec<Color> {
         let language = if let Language::Unknown = self.custom_logo {
-            match &self.dominant_language {
-                Some(dominant_language) => dominant_language,
+            match &self.language {
+                Some(language) => language,
                 None => &Language::Unknown,
             }
         } else {
