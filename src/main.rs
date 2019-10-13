@@ -506,6 +506,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .long("--disable")
                 .takes_value(true)
                 .multiple(true)
+                .case_insensitive(true)
                 .max_values(max_disabled_values)
                 .possible_values(&possible_disbaled_fields)
                 .required(false)
@@ -516,11 +517,11 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     let custom_logo: Language =
         Language::from_str(&matches.value_of("ascii_language").unwrap().to_lowercase())
             .unwrap_or(Language::Unknown);
-    let mut disable: Vec<&str> = vec![];
+    let mut disable: Vec<String> = vec![];
 
     if let Some(disabled) = matches.values_of("disable") {
-        for i in disabled.clone() {
-            disable.push(i);
+        for i in disabled {
+            disable.push(i.to_lowercase());
         }
     }
 
@@ -545,67 +546,67 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     };
 
     let info = Info {
-        project_name: if disable.contains(&"project") {
+        project_name: if disable.contains(&String::from("project")) {
             None
         } else {
             Some(config.repository_name)
         },
-        current_commit: if disable.contains(&"head") {
+        current_commit: if disable.contains(&String::from("head")) {
             None
         } else {
             Some(current_commit_info)
         },
-        version: if disable.contains(&"version") {
+        version: if disable.contains(&String::from("version")) {
             None
         } else {
             Some(version)
         },
-        creation_date: if disable.contains(&"created") {
+        creation_date: if disable.contains(&String::from("created")) {
             None
         } else {
             Some(creation_date)
         },
-        dominant_language: if disable.contains(&"dominant_language") {
+        dominant_language: if disable.contains(&String::from("dominant_language")) {
             None
         } else {
             Some(dominant_language)
         },
-        languages: if disable.contains(&"language") {
+        languages: if disable.contains(&String::from("language")) {
             None
         } else {
             Some(languages_stat_vec)
         },
-        authors: if disable.contains(&"authors") {
+        authors: if disable.contains(&String::from("authors")) {
             None
         } else {
             Some(authors)
         },
-        last_change: if disable.contains(&"last_change") {
+        last_change: if disable.contains(&String::from("last_change")) {
             None
         } else {
             Some(last_change)
         },
-        repo: if disable.contains(&"repo") {
+        repo: if disable.contains(&String::from("repo")) {
             None
         } else {
             Some(config.repository_url)
         },
-        commits: if disable.contains(&"commits") {
+        commits: if disable.contains(&String::from("commits")) {
             None
         } else {
             Some(commits)
         },
-        repo_size: if disable.contains(&"size") {
+        repo_size: if disable.contains(&String::from("size")) {
             None
         } else {
             Some(repo_size)
         },
-        number_of_lines: if disable.contains(&"lines_of_code") {
+        number_of_lines: if disable.contains(&String::from("lines_of_code")) {
             None
         } else {
             Some(get_total_loc(&tokei_langs))
         },
-        license: if disable.contains(&"license") {
+        license: if disable.contains(&String::from("license")) {
             None
         } else {
             Some(project_license(&dir)?)
