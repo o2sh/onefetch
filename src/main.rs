@@ -44,6 +44,7 @@ struct Info {
     number_of_lines: usize,
     license: String,
     custom_logo: Language,
+    custom_colors: Vec<String>,
 }
 
 impl fmt::Display for Info {
@@ -154,6 +155,27 @@ impl fmt::Display for Info {
             "{}{}",
             "License: ".color(color).bold(),
             self.license
+        )?;
+
+        writeln!(
+           buffer,
+           "\n{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}",
+           "  ".on_black(),
+           "  ".on_red(),
+           "  ".on_green(),
+           "  ".on_yellow(),
+           "  ".on_blue(),
+           "  ".on_magenta(),
+           "  ".on_cyan(),
+           "  ".on_white(),
+           "  ".on_bright_black(),
+           "  ".on_bright_red(),
+           "  ".on_bright_green(),
+           "  ".on_bright_yellow(),
+           "  ".on_bright_blue(),
+           "  ".on_bright_magenta(),
+           "  ".on_bright_cyan(),
+           "  ".on_bright_white(),
         )?;
 
         let logo = self.get_ascii();
@@ -378,6 +400,50 @@ fn main() -> Result<()> {
             .takes_value(true)
             .default_value("")
             .help("Overrides showing the dominant language ascii logo"))
+        .arg(Arg::with_name("colors")
+            .short("c")
+            .long("colors")
+            .multiple(true)
+            .takes_value(true)
+            .possible_values(&[
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                ])
+            .hide_possible_values(true)
+            .help(&format!(
+                "Specifies a preferred color set. Unspecified colors will remain as default.
+Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
+                "0".black(),
+                "1".red(),
+                "2".green(),
+                "3".yellow(),
+                "4".blue(),
+                "5".magenta(),
+                "6".cyan(),
+                "7".white(),
+                "8".bright_black(),
+                "9".bright_red(),
+                "10".bright_green(),
+                "11".bright_yellow(),
+                "12".bright_blue(),
+                "13".bright_magenta(),
+                "14".bright_cyan(),
+                "15".bright_white(),
+            )))
         .get_matches();
     let dir = String::from(matches.value_of("directory").unwrap());
     let custom_logo: Language = Language::from_str(
@@ -401,6 +467,11 @@ fn main() -> Result<()> {
     let repo_size = get_packed_size(&dir)?;
     let last_change = get_last_change(&dir)?;
     let creation_date = get_creation_time().unwrap();
+    let custom_colors: Vec<String> = if let Some(values) = matches.values_of("colors") {
+        values.map(String::from).collect()
+    } else {
+        Vec::new()
+    };
 
     let info = Info {
         project_name: config.repository_name,
@@ -417,6 +488,7 @@ fn main() -> Result<()> {
         number_of_lines: get_total_loc(&tokei_langs),
         license: project_license(&dir)?,
         custom_logo,
+        custom_colors,
     };
 
     println!("{}", info);
@@ -876,7 +948,7 @@ impl Info {
                 &self.custom_logo
             };
 
-        match language {
+       let colors = match language {
             Language::Assembly => vec![Color::Cyan],
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
@@ -914,7 +986,17 @@ impl Info {
             Language::Php => vec![Color::BrightWhite],
             Language::Zig => vec![Color::Yellow],
             Language::Unknown => vec![Color::White],
-        }
+        };
+
+        let colors: Vec<Color> = colors.iter().enumerate().map(|(index, default_color)| {
+            if let Some(color_num) = self.custom_colors.get(index) {
+                if let Some(color) = num_to_color(color_num) {
+                    return color;
+                }
+            }
+            *default_color
+        }).collect();
+        colors
     }
 }
 
@@ -946,4 +1028,27 @@ impl fmt::Debug for Error {
         };
         write!(f, "{}", content)
     }
+}
+
+fn num_to_color(num: &str) -> Option<Color> {
+    let color = match num {
+        "0" => Color::Black,
+        "1" => Color::Red,
+        "2" => Color::Green,
+        "3" => Color::Yellow,
+        "4" => Color::Blue,
+        "5" => Color::Magenta,
+        "6" => Color::Cyan,
+        "7" => Color::White,
+        "8" => Color::BrightBlack,
+        "9" => Color::BrightRed,
+        "10" => Color::BrightGreen,
+        "11" => Color::BrightYellow,
+        "12" => Color::BrightBlue,
+        "13" => Color::BrightMagenta,
+        "14" => Color::BrightCyan,
+        "15" => Color::BrightWhite,
+        _ => return None,
+    };
+    Some(color)
 }
