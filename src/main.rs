@@ -46,7 +46,7 @@ struct Info {
     license: String,
     custom_logo: Language,
     custom_colors: Vec<String>,
-    disable_fields: Vec<InfoFields>,
+    disable_fields: InfoFieldOn,
 }
 
 impl fmt::Display for Info {
@@ -57,7 +57,7 @@ impl fmt::Display for Info {
             None => Color::White,
         };
 
-        if !self.disable_fields.contains(&InfoFields::Project) {
+        if !self.disable_fields.project {
             writeln!(
                 buffer,
                 "{}{}",
@@ -66,7 +66,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::HEAD) {
+        if !self.disable_fields.head {
             writeln!(
                 buffer,
                 "{}{}",
@@ -75,7 +75,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::Version) {
+        if !self.disable_fields.version {
             writeln!(
                 buffer,
                 "{}{}",
@@ -84,7 +84,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::Created) {
+        if !self.disable_fields.created {
             writeln!(
                 buffer,
                 "{}{}",
@@ -93,7 +93,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::Languages) && !self.languages.is_empty() {
+        if !self.disable_fields.languages && !self.languages.is_empty() {
             if self.languages.len() > 1 {
                 let title = "Languages: ";
                 let pad = " ".repeat(title.len());
@@ -118,7 +118,7 @@ impl fmt::Display for Info {
             };
         }
 
-        if !self.disable_fields.contains(&InfoFields::Authors) && !self.authors.is_empty() {
+        if !self.disable_fields.authors && !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
                 "Authors: "
             } else {
@@ -134,7 +134,7 @@ impl fmt::Display for Info {
             }
         }
 
-        if !self.disable_fields.contains(&InfoFields::LastChange) {
+        if !self.disable_fields.last_change {
             writeln!(
                 buffer,
                 "{}{}",
@@ -143,11 +143,11 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::Repo) {
+        if !self.disable_fields.repo {
             writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::Commits) {
+        if !self.disable_fields.commits {
             writeln!(
                 buffer,
                 "{}{}",
@@ -156,7 +156,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::LinesOfCode) {
+        if !self.disable_fields.lines_of_code {
             writeln!(
                 buffer,
                 "{}{}",
@@ -165,7 +165,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::Size) {
+        if !self.disable_fields.size {
             writeln!(
                 buffer,
                 "{}{}",
@@ -174,7 +174,7 @@ impl fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.contains(&InfoFields::License) {
+        if !self.disable_fields.license {
             writeln!(
                 buffer,
                 "{}{}",
@@ -318,6 +318,22 @@ impl fmt::Display for CommitInfo {
             write!(f, "{}", short_commit)
         }
     }
+}
+
+#[derive(Default)]
+struct InfoFieldOn {
+    project: bool,
+    head: bool,
+    version: bool,
+    created: bool,
+    languages: bool,
+    authors: bool,
+    last_change: bool,
+    repo: bool,
+    commits: bool,
+    lines_of_code: bool,
+    size: bool,
+    license: bool,
 }
 
 #[derive(PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr)]
@@ -509,15 +525,31 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
             .unwrap()
             .to_lowercase())
         .unwrap_or(Language::Unknown);
-    let disable_fields: Vec<InfoFields> = matches.values_of("disable_field")
+    let mut disable_fields = InfoFieldOn { ..Default::default() };
+    
+    matches.values_of("disable_field")
         .unwrap()
         .map(String::from)
-        .filter_map(|field: String| {
+        .for_each(|field: String| {
             let item = InfoFields::from_str(field.to_lowercase().as_str())
                 .unwrap_or(InfoFields::UnrecognizedField);
-            if item == InfoFields::UnrecognizedField { None } else { Some(item) }
-        })
-        .collect();
+            
+            match item {
+                InfoFields::Project => disable_fields.project = true,
+                InfoFields::HEAD => disable_fields.head = true,
+                InfoFields::Version => disable_fields.version = true,
+                InfoFields::Created => disable_fields.created = true,
+                InfoFields::Languages => disable_fields.languages = true,
+                InfoFields::Authors => disable_fields.authors = true,
+                InfoFields::LastChange => disable_fields.last_change = true,
+                InfoFields::Repo => disable_fields.repo = true,
+                InfoFields::Commits => disable_fields.commits = true,
+                InfoFields::LinesOfCode => disable_fields.lines_of_code = true,
+                InfoFields::Size => disable_fields.size = true,
+                InfoFields::License => disable_fields.license = true,
+                _ => (),
+            }
+        });
 
     let tokei_langs = project_languages(&dir);
     let languages_stat = get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
