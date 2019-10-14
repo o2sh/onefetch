@@ -393,6 +393,7 @@ enum Language {
     Vue,
     Perl,
     Php,
+    XML,
     Zig,
     Unknown
 }
@@ -436,6 +437,7 @@ impl fmt::Display for Language {
             Language::Vue => write!(f, "Vue"),
             Language::Perl => write!(f, "Perl"),
             Language::Php => write!(f, "Php"),
+            Language::XML => write!(f, "XML"),
             Language::Zig => write!(f, "Zig"),
             Language::Unknown => write!(f, "Unknown"),
         }
@@ -944,6 +946,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::Vue => Language::Vue,
             tokei::LanguageType::Perl => Language::Perl,
             tokei::LanguageType::Php => Language::Php,
+            tokei::LanguageType::Xml => Language::XML,
             tokei::LanguageType::Zig => Language::Zig,
             _ => unimplemented!(),
         }
@@ -988,6 +991,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Vue,
         tokei::LanguageType::Perl,
         tokei::LanguageType::Php,
+        tokei::LanguageType::Xml,
         tokei::LanguageType::Zig,
     ]
 }
@@ -1038,6 +1042,7 @@ impl Info {
             Language::Vue => include_str!("../resources/vue.ascii"),
             Language::Perl => include_str!("../resources/perl.ascii"),
             Language::Php => include_str!("../resources/php.ascii"),
+            Language::XML => include_str!("../resources/xml.ascii"),
             Language::Zig => include_str!("../resources/zig.ascii"),
             Language::Unknown => include_str!("../resources/unknown.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
@@ -1089,6 +1094,7 @@ impl Info {
             Language::Vue => vec![Color::BrightGreen, Color::Blue],
             Language::Perl => vec![Color::BrightBlue],
             Language::Php => vec![Color::BrightWhite],
+            Language::XML => vec![Color::Yellow],
             Language::Zig => vec![Color::Yellow],
             Language::Unknown => vec![Color::White],
         };
