@@ -26,7 +26,6 @@ use std::{
     result,
     str::FromStr,
 };
-use strum::{IntoEnumIterator, EnumCount};
 
 type Result<T> = result::Result<T, Error>;
 
@@ -320,7 +319,7 @@ impl fmt::Display for CommitInfo {
     }
 }
 
-#[derive(PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr)]
+#[derive(PartialEq, Eq, EnumString, EnumVariantNames)]
 #[strum(serialize_all = "snake_case")]
 enum InfoFields {
     Project,
@@ -335,7 +334,6 @@ enum InfoFields {
     LinesOfCode,
     Size,
     License,
-    UnrecognizedField,
 }
 
 #[derive(PartialEq, Eq, Hash, Clone, EnumString)]
@@ -451,21 +449,8 @@ fn main() -> Result<()> {
             .multiple(true)
             .takes_value(true)
             .case_insensitive(true)
-            .possible_values(&InfoFields::iter()
-                .take(InfoFields::count() - 1)
-                .map(|field| field.into())
-                .collect::<Vec<&str>>()
-                .as_slice())
-            .possible_value("")
-            .hide_possible_values(true)
-            .default_value("")
-            .hide_default_value(true)
-            .help(&format!("Disable fields to show\nPossible values: {:?}",
-                &InfoFields::iter()
-                    .take(InfoFields::count() - 1)
-                    .map(|field| field.into())
-                    .collect::<Vec<&str>>()
-                    .as_slice())))
+            .possible_values(&InfoFields::variants())
+            .help("Disable fields to show"))
         .arg(Arg::with_name("colors")
             .short("c")
             .long("colors")
@@ -521,11 +506,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     let disable_fields: Vec<InfoFields> = if let Some(values) = matches.values_of("disable_field") {
             values
                 .map(String::from)
-                .filter_map(|field: String| {
-                    let item = InfoFields::from_str(field.to_lowercase().as_str())
-                        .unwrap_or(InfoFields::UnrecognizedField);
-                    if item == InfoFields::UnrecognizedField { None } else { Some(item) }
-                })
+                .map(|field: String| InfoFields::from_str(field.to_lowercase().as_str()).unwrap())
                 .collect()
         } else {
             Vec::new()
