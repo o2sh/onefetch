@@ -9,11 +9,11 @@
   <a href="https://snapcraft.io/onefetch"><img src="https://raw.githubusercontent.com/snapcore/snap-store-badges/master/EN/%5BEN%5D-snap-store-black.png" alt="Get it from the Snap Store"></a>
 </p>
 
-Onefetch is a command line tool that displays information about your Git project directly on your terminal. Onefetch supports almost 20 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
+Onefetch is a command line tool that displays information about your Git project directly on your terminal. Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/cpp.png" align="left" height="200px" width="420px">
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/dart.png" height="200px" width="420px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/cpp.png" align="left" height="217px" width="420px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/dart.png" height="217px" width="420px">
 </p>
 
 ## Usage
