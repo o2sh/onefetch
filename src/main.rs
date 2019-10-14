@@ -34,7 +34,7 @@ struct Info {
     current_commit: Option<CommitInfo>,
     version: Option<String>,
     creation_date: Option<String>,
-    language: Option<Language>,
+    language: Language,
     languages: Option<Vec<(Language, f64)>>,
     authors: Option<Vec<(String, usize, usize)>>,
     last: Option<String>,
@@ -107,13 +107,8 @@ impl fmt::Display for Info {
                         }
                         writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
                     } else {
-                        match &self.language {
-                            Some(language) => {
-                                let title = "Language: ";
-                                writeln!(buffer, "{}{}", title.color(color).bold(), language)?;
-                            }
-                            None => {}
-                        }
+                        let title = "Language: ";
+                        writeln!(buffer, "{}{}", title.color(color).bold(), self.language)?;
                     };
                 }
             }
@@ -429,7 +424,6 @@ fn main() -> Result<()> {
         "loc",
         "size",
         "license",
-        "language",
         "languages",
     ];
 
@@ -552,11 +546,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         } else {
             Some(creation_date)
         },
-        language: if disable.contains(&String::from("language")) {
-            None
-        } else {
-            Some(language)
-        },
+        language,
         languages: if disable.contains(&String::from("languages")) {
             None
         } else {
@@ -1006,10 +996,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
 impl Info {
     pub fn get_ascii(&self) -> &str {
         let language = if let Language::Unknown = self.custom_logo {
-            match &self.language {
-                Some(language) => language,
-                None => &Language::Unknown,
-            }
+            &self.language
         } else {
             &self.custom_logo
         };
@@ -1057,10 +1044,7 @@ impl Info {
 
     fn colors(&self) -> Vec<Color> {
         let language = if let Language::Unknown = self.custom_logo {
-            match &self.language {
-                Some(language) => language,
-                None => &Language::Unknown,
-            }
+            &self.language
         } else {
             &self.custom_logo
         };
