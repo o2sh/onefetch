@@ -365,6 +365,7 @@ enum Language {
     Csharp,
     CSS,
     Dart,
+    Elixir,
     Elm,
     Erlang,
     Forth,
@@ -408,6 +409,7 @@ impl fmt::Display for Language {
             Language::Csharp => write!(f, "C#"),
             Language::CSS => write!(f, "CSS"),
             Language::Dart => write!(f, "Dart"),
+            Language::Elixir => write!(f, "Elixir"),
             Language::Elm => write!(f, "Elm"),
             Language::Erlang => write!(f, "Erlang"),
             Language::Forth => write!(f, "Forth"),
@@ -469,7 +471,7 @@ fn main() -> Result<()> {
             .case_insensitive(true)
             .default_value("")
             .hide_default_value(true)
-            .help(&format!("Disable fields to show\nPossible values: {:?}", 
+            .help(&format!("Disable fields to show\nPossible values: {:?}",
                 &InfoFields::iter()
                     .take(InfoFields::count() - 1)
                     .map(|field| field.into())
@@ -528,14 +530,14 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
             .to_lowercase())
         .unwrap_or(Language::Unknown);
     let mut disable_fields = InfoFieldOn { ..Default::default() };
-    
+
     matches.values_of("disable_field")
         .unwrap()
         .map(String::from)
         .for_each(|field: String| {
             let item = InfoFields::from_str(field.to_lowercase().as_str())
                 .unwrap_or(InfoFields::UnrecognizedField);
-            
+
             match item {
                 InfoFields::Project => disable_fields.project = true,
                 InfoFields::HEAD => disable_fields.head = true,
@@ -916,6 +918,7 @@ impl From<tokei::LanguageType> for Language {
             tokei::LanguageType::CSharp => Language::Csharp,
             tokei::LanguageType::Css => Language::CSS,
             tokei::LanguageType::Dart => Language::Dart,
+            tokei::LanguageType::Elixir => Language::Elixir,
             tokei::LanguageType::Elm => Language::Elm,
             tokei::LanguageType::Erlang => Language::Erlang,
             tokei::LanguageType::Forth => Language::Forth,
@@ -960,6 +963,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::CSharp,
         tokei::LanguageType::Css,
         tokei::LanguageType::Dart,
+        tokei::LanguageType::Elixir,
         tokei::LanguageType::Elm,
         tokei::LanguageType::Erlang,
         tokei::LanguageType::Forth,
@@ -1010,6 +1014,7 @@ impl Info {
             Language::Csharp => include_str!("../resources/csharp.ascii"),
             Language::CSS => include_str!("../resources/css.ascii"),
             Language::Dart => include_str!("../resources/dart.ascii"),
+            Language::Elixir => include_str!("../resources/elixir.ascii"),
             Language::Elm => include_str!("../resources/elm.ascii"),
             Language::Erlang => include_str!("../resources/erlang.ascii"),
             Language::Forth => include_str!("../resources/forth.ascii"),
@@ -1061,6 +1066,7 @@ impl Info {
             Language::Csharp => vec![Color::White],
             Language::CSS => vec![Color::Blue, Color::White],
             Language::Dart => vec![Color::Blue, Color::Cyan],
+            Language::Elixir => vec![Color::Magenta],
             Language::Elm => vec![Color::BrightBlack, Color::Green, Color::Yellow, Color::Cyan],
             Language::Erlang => vec![Color::BrightRed],
             Language::Forth => vec![Color::BrightRed],
