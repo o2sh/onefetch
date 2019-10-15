@@ -1094,7 +1094,7 @@ impl Info {
             Language::Vue => vec![Color::BrightGreen, Color::Blue],
             Language::Perl => vec![Color::BrightBlue],
             Language::Php => vec![Color::BrightWhite],
-            Language::XML => vec![Color::Yellow],
+            Language::XML => vec![Color::Yellow, Color::BrightBlack],
             Language::Zig => vec![Color::Yellow],
             Language::Unknown => vec![Color::White],
         };
