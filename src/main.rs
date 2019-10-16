@@ -638,11 +638,13 @@ fn project_license(dir: &str) -> Result<String> {
         .filter(
             |entry| {
                 entry.is_file()
-                    && entry
+                    && !(entry
                         .file_name()
                         .map(OsStr::to_string_lossy)
-                        .unwrap_or_else(|| "".into())
-                        .starts_with("LICENSE")
+                        .iter()
+                        .filter(|x| x.starts_with("LICENSE") || x.starts_with("COPYING"))
+                        .collect::<Vec<_>>()
+                        .is_empty())
             }, // TODO: multiple prefixes, like COPYING?
         )
         .map(|entry| {
@@ -1065,7 +1067,7 @@ impl Info {
             Language::Cpp => vec![Color::Yellow, Color::Cyan],
             Language::Csharp => vec![Color::White],
             Language::CSS => vec![Color::Blue, Color::White],
-            Language::Dart => vec![Color::Blue, Color::Cyan],
+            Language::Dart => vec![Color::BrightBlue, Color::BrightCyan],
             Language::Elixir => vec![Color::Magenta],
             Language::Elm => vec![Color::BrightBlack, Color::Green, Color::Yellow, Color::Cyan],
             Language::Erlang => vec![Color::BrightRed],
