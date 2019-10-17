@@ -52,6 +52,7 @@ struct Info {
 
 impl fmt::Display for Info {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let center_spacing = "    "; //Currently set to 4 spaces, can be changed as needed
         let mut buffer = String::new();
         let color = match self.colors().get(0) {
             Some(&c) => c,
@@ -61,7 +62,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.project {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Project: ".color(color).bold(),
                 self.project_name
             )?;
@@ -70,7 +72,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.head {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "HEAD: ".color(color).bold(),
                 self.current_commit
             )?;
@@ -79,7 +82,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.version {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Version: ".color(color).bold(),
                 self.version
             )?;
@@ -88,7 +92,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.created {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Created: ".color(color).bold(),
                 self.creation_date
             )?;
@@ -96,7 +101,7 @@ impl fmt::Display for Info {
 
         if !self.disable_fields.languages && !self.languages.is_empty() {
             if self.languages.len() > 1 {
-                let title = "Languages: ";
+                let title = center_spacing.to_owned() + "Languages: ";
                 let pad = " ".repeat(title.len());
                 let mut s = String::from("");
                 for (cnt, language) in self.languages.iter().enumerate() {
@@ -112,7 +117,8 @@ impl fmt::Display for Info {
                 let title = "Language: ";
                 writeln!(
                     buffer,
-                    "{}{}",
+                    "{}{}{}",
+                    center_spacing,
                     title.color(color).bold(),
                     self.dominant_language
                 )?;
@@ -126,32 +132,34 @@ impl fmt::Display for Info {
                 "Author: "
             };
 
-            writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
+            writeln!(buffer, "{}{}{}% {} {}", center_spacing,title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
 
             let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
-                writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), author.2, author.0, author.1)?;
+                writeln!(buffer, "{}{}{}% {} {}", center_spacing,title.color(color).bold(), author.2, author.0, author.1)?;
             }
         }
 
         if !self.disable_fields.last_change {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Last change: ".color(color).bold(),
                 self.last_change
             )?;
         }
 
         if !self.disable_fields.repo {
-            writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
+            writeln!(buffer, "{}{}{}",center_spacing, "Repo: ".color(color).bold(), self.repo)?;
         }
 
         if !self.disable_fields.commits {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Commits: ".color(color).bold(),
                 self.commits
             )?;
@@ -160,7 +168,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.lines_of_code {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Lines of code: ".color(color).bold(),
                 self.number_of_lines
             )?;
@@ -169,7 +178,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.size {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "Size: ".color(color).bold(),
                 self.repo_size
             )?;
@@ -178,7 +188,8 @@ impl fmt::Display for Info {
         if !self.disable_fields.license {
             writeln!(
                 buffer,
-                "{}{}",
+                "{}{}{}",
+                center_spacing,
                 "License: ".color(color).bold(),
                 self.license
             )?;
@@ -186,7 +197,8 @@ impl fmt::Display for Info {
 
         writeln!(
            buffer,
-           "\n{0}{1}{2}{3}{4}{5}{6}{7}\n{8}{9}{10}{11}{12}{13}{14}{15}",
+           "\n{0}{1}{2}{3}{4}{5}{6}{7}{8}\n{9}{10}{11}{12}{13}{14}{15}{16}{17}",
+           center_spacing,
            "   ".on_black(),
            "   ".on_red(),
            "   ".on_green(),
@@ -195,6 +207,7 @@ impl fmt::Display for Info {
            "   ".on_magenta(),
            "   ".on_cyan(),
            "   ".on_white(),
+           center_spacing,
            "   ".on_bright_black(),
            "   ".on_bright_red(),
            "   ".on_bright_green(),
@@ -580,8 +593,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     };
 
     let info = Info {
-        project_name: config.repository_name,
-        current_commit: current_commit_info,
+            project_name: config.repository_name,
+            current_commit: current_commit_info,
         version,
         creation_date: creation_date,
         dominant_language,
