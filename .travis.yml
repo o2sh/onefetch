@@ -3,6 +3,10 @@ rust:
   - stable
   - beta
   - nightly
+os:
+  - linux
+  - windows
+  - osx
 sudo: false
 script:
   - cargo build --verbose
