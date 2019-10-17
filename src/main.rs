@@ -3,12 +3,14 @@ extern crate colored;
 extern crate git2;
 extern crate license;
 extern crate tokei;
-extern crate ansi_term;
 #[macro_use]
 extern crate clap;
 extern crate strum;
 #[macro_use]
 extern crate strum_macros;
+
+#[cfg(target = "windows")]
+extern crate ansi_term;
 
 use colored::Color;
 use colored::*;
@@ -446,9 +448,18 @@ impl fmt::Display for Language {
 }
 
 fn main() -> Result<()> {
-    if cfg!(windows) && !ansi_term::enable_ansi_support().is_ok() {
+
+    #[cfg(target = "windows")]
+    let enabled = ansi_term::enable_ansi_support().is_ok();
+
+    #[cfg(not(target = "windows"))]
+    let enabled = true;
+
+    if !enabled {
         colored::control::set_override(false);
     }
+
+
     if !is_git_installed() {
         return Err(Error::GitNotInstalled);
     }
