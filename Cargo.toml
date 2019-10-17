@@ -17,4 +17,6 @@ bytecount = "0.5.1"
 clap = "2.33.0"
 strum = "0.16.0"
 strum_macros = "0.16.0"
+
+[target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
