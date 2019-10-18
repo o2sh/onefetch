@@ -361,6 +361,7 @@ enum InfoFields {
 #[strum(serialize_all = "lowercase")]
 enum Language {
     Assembly,
+    Tex,
     C,
     Clojure,
     CoffeeScript,
@@ -405,6 +406,7 @@ impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Language::Assembly => write!(f, "Assembly"),
+            Language::Tex => write!(f, "Tex"),
             Language::C => write!(f, "C"),
             Language::Clojure => write!(f, "Clojure"),
             Language::CoffeeScript => write!(f, "CoffeeScript"),
@@ -928,6 +930,7 @@ impl From<tokei::LanguageType> for Language {
     fn from(language: tokei::LanguageType) -> Self {
         match language {
             tokei::LanguageType::Assembly => Language::Assembly,
+            tokei::LanguageType::Tex => Language::Tex,
             tokei::LanguageType::C => Language::C,
             tokei::LanguageType::Clojure => Language::Clojure,
             tokei::LanguageType::CoffeeScript => Language::CoffeeScript,
@@ -973,6 +976,7 @@ impl From<tokei::LanguageType> for Language {
 fn get_all_language_types() -> Vec<tokei::LanguageType> {
     vec![
         tokei::LanguageType::Assembly,
+        tokei::LanguageType::Tex,
         tokei::LanguageType::C,
         tokei::LanguageType::Clojure,
         tokei::LanguageType::CoffeeScript,
@@ -1024,6 +1028,7 @@ impl Info {
 
         match language {
             Language::Assembly => include_str!("../resources/assembly.ascii"),
+            Language::Tex => include_str!("../resources/tex.ascii"),
             Language::C => include_str!("../resources/c.ascii"),
             Language::Clojure => include_str!("../resources/clojure.ascii"),
             Language::CoffeeScript => include_str!("../resources/coffeescript.ascii"),
@@ -1076,6 +1081,7 @@ impl Info {
 
        let colors = match language {
             Language::Assembly => vec![Color::Cyan],
+            Language::Tex => vec![Color::Black, Color::White],
             Language::C => vec![Color::BrightBlue, Color::Blue],
             Language::Clojure => vec![Color::BrightBlue, Color::BrightGreen],
             Language::CoffeeScript => vec![Color::Red],
