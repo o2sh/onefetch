@@ -1,7 +1,7 @@
 use colored::Color;
 use std::{cmp, fmt, fmt::Write};
 
-use commitinfo::CommitInfo;
+use commit_info::CommitInfo;
 use language::Language;
 
 pub struct Info {

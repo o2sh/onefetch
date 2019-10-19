@@ -12,10 +12,10 @@ use std::{
     result,
 };
 
-mod commitinfo;
+mod commit_info;
 mod error;
 mod language;
-use commitinfo::CommitInfo;
+use commit_info::CommitInfo;
 use error::{Error, Result};
 use language::Language;
 
