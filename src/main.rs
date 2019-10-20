@@ -30,8 +30,8 @@ use std::{
 };
 use strum::{IntoEnumIterator, EnumCount};
 
-mod parse;
-use parse::AsciiArt;
+mod ascii_art;
+use ascii_art::AsciiArt;
 
 type Result<T> = result::Result<T, Error>;
 
