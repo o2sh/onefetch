@@ -166,7 +166,7 @@ impl<'a> Tokens<'a> {
                     colored_segment.push(chr);
                 }
                 Token::Color(col) => {
-                    whole_string.push_str(&format!("{}", colored_segment.color(*color)));
+                    add_colored_segment(&mut whole_string, &colored_segment, color);
                     colored_segment = String::new();
                     color = colors.get(col as usize).unwrap_or(&Color::White);
                 }
@@ -177,7 +177,7 @@ impl<'a> Tokens<'a> {
             };
         });
 
-        whole_string.push_str(&format!("{}", colored_segment.color(*color)));
+        add_colored_segment(&mut whole_string, &colored_segment, color);
         (0..width).for_each(|_| whole_string.push(' '));
         whole_string
     }
@@ -193,6 +193,10 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
             None
         }
     }
+}
+
+fn add_colored_segment(base: &mut String, segment: &String, color: &Color) {
+    base.push_str(&format!("{}", segment.color(*color).bold()))
 }
 
 // Basic combinators
