@@ -1,15 +1,23 @@
 use colored::{Color, Colorize};
 
 pub struct AsciiArt<'a> {
-    content: std::str::Lines<'a>,
+    content: Box<dyn 'a + Iterator<Item = &'a str>>,
     colors: Vec<Color>,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
     pub fn new(input: &'a str, colors: Vec<Color>) -> AsciiArt<'a> {
-        let (start, end) = input
-            .lines()
+        let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
+        while let Some(line) = lines.last() {
+            if Tokens(line).is_empty() {
+                lines.pop();
+            }
+            break;
+        }
+
+        let (start, end) = lines
+            .iter()
             .map(|line| {
                 let line_start = Tokens(line).leading_spaces();
                 let line_end = Tokens(line).true_length();
@@ -20,7 +28,7 @@ impl<'a> AsciiArt<'a> {
             });
 
         AsciiArt {
-            content: input.lines(),
+            content: Box::new(lines.into_iter()),
             colors: colors,
             start: start,
             end: end,
@@ -95,6 +103,14 @@ impl<'a> Iterator for Tokens<'a> {
 }
 
 impl<'a> Tokens<'a> {
+    fn is_empty(&mut self) -> bool {
+        for token in self {
+            if token.is_solid() {
+                return false;
+            }
+        }
+        true
+    }
     fn true_length(&mut self) -> usize {
         let mut last_non_space = 0;
         let mut last = 0;
