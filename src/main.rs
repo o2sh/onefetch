@@ -248,7 +248,7 @@ impl fmt::Display for Info {
                 None => "",
             };
 
-            let (logo_line, extra_pad) = colorize_str(logo_line, self.colors());
+            let (logo_line, extra_pad) = colorize_str(logo_line, self.colors(), self.bold_enabled);
             // If the string is empty the extra padding should not be added
             let pad = if logo_line.is_empty() {
                 left_pad
@@ -267,7 +267,10 @@ fn count_newlines(s: &str) -> usize {
 }
 
 /// Transforms a string with color format into one with proper
-/// escape characters for color display.
+/// escape characters for color display. This function is also 
+/// responsible for formatting the string as bold depending on 
+/// whether or not the user explicitly turned off boldness for 
+/// onefetch.
 ///
 /// Colors are specified with {0}, {1}... where the number represents
 /// the nth element in the colors Vec provided to the function.
@@ -275,7 +278,7 @@ fn count_newlines(s: &str) -> usize {
 /// defaults to white.
 /// The usize in the tuple refers to the extra padding needed
 /// which comes from the added escape characters.
-fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
+fn colorize_str(line: &str, colors: Vec<Color>, bold: bool) -> (String, usize) {
     // Extract colors from string coded with {n}
     let mut colors_in_str: Vec<Color> = line.split('{').fold(Vec::new(), |mut acc, s| {
         if s.len() > 2 {
@@ -301,11 +304,25 @@ fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
                 Some(&c) => c,
                 None => Color::White,
             };
-            acc.push_str(&format!("{}", s.color(c).bold()));
+
+            // Make the string bold if boldness flag is set to 'on'
+            if bold {
+                acc.push_str(&format!("{}", s.color(c).bold()));
+            } else {
+                acc.push_str(&format!("{}", s.color(c)));
+            }
+            
         }
         acc
     });
-    (out_str, colors_in_str.len() * 11 )
+
+    // Adjust the extra padding for the line. Use 2 less characters if not bold.
+    let padding_constant = if bold {
+        11
+    } else {
+        9
+    };
+    (out_str, colors_in_str.len() * padding_constant )
 }
 
 /// Returns the true length of a string after substracting the {n}
