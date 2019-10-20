@@ -234,7 +234,7 @@ impl fmt::Display for Info {
            "   ".on_bright_white(),
         )?;
 
-        let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors());
+        let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors(), self.bold_enabled);
         let mut info_lines = buffer.lines();
         let center_pad = "   ";
         loop {

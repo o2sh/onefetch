@@ -3,11 +3,12 @@ use colored::{Color, Colorize};
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
     colors: Vec<Color>,
+    bold: bool,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str, colors: Vec<Color>) -> AsciiArt<'a> {
+    pub fn new(input: &'a str, colors: Vec<Color>, bold: bool) -> AsciiArt<'a> {
         let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
@@ -30,6 +31,7 @@ impl<'a> AsciiArt<'a> {
         AsciiArt {
             content: Box::new(lines.into_iter()),
             colors: colors,
+            bold: bold,
             start: start,
             end: end,
         }
@@ -47,7 +49,7 @@ impl<'a> Iterator for AsciiArt<'a> {
     fn next(&mut self) -> Option<String> {
         self.content
             .next()
-            .map(|line| Tokens(line).render(&self.colors, self.start, self.end))
+            .map(|line| Tokens(line).render(&self.colors, self.start, self.end, self.bold))
     }
 }
 
@@ -152,7 +154,7 @@ impl<'a> Tokens<'a> {
         })
     }
     /// render a truncated line of tokens.
-    fn render(self, colors: &Vec<Color>, start: usize, end: usize) -> String {
+    fn render(self, colors: &Vec<Color>, start: usize, end: usize, bold: bool) -> String {
         assert!(start <= end);
         let mut width = end - start;
         let mut colored_segment = String::new();
@@ -166,7 +168,7 @@ impl<'a> Tokens<'a> {
                     colored_segment.push(chr);
                 }
                 Token::Color(col) => {
-                    add_colored_segment(&mut whole_string, &colored_segment, color);
+                    add_colored_segment(&mut whole_string, &colored_segment, color, bold);
                     colored_segment = String::new();
                     color = colors.get(col as usize).unwrap_or(&Color::White);
                 }
@@ -177,7 +179,7 @@ impl<'a> Tokens<'a> {
             };
         });
 
-        add_colored_segment(&mut whole_string, &colored_segment, color);
+        add_colored_segment(&mut whole_string, &colored_segment, color, bold);
         (0..width).for_each(|_| whole_string.push(' '));
         whole_string
     }
@@ -195,8 +197,12 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     }
 }
 
-fn add_colored_segment(base: &mut String, segment: &String, color: &Color) {
-    base.push_str(&format!("{}", segment.color(*color).bold()))
+fn add_colored_segment(base: &mut String, segment: &String, color: &Color, bold: bool) {
+    let mut colored_segment = segment.color(*color);
+    if bold {
+        colored_segment = colored_segment.bold();
+    }
+    base.push_str(&format!("{}", colored_segment));
 }
 
 // Basic combinators
