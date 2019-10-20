@@ -221,7 +221,7 @@ impl fmt::Display for Info {
                     writeln!(f, "{}", logo_line)?,
                 (None, Some(info_line)) =>
                     writeln!(f, "{:<width$}{}{:^}", "", center_pad, info_line, width = logo_lines.width())?,
-                (None, None) => break,
+                (None, None) => { writeln!(f, "\n")?; break },
             }
         };
 
