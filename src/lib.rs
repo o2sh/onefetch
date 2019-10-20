@@ -1,8 +1,9 @@
 extern crate colored;
 extern crate git2;
-extern crate license;
+extern crate strum;
+extern crate strum_macros;
 
-use colored::Color;
+use colored::*;
 use git2::Repository;
 use std::{
     collections::HashMap,

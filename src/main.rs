@@ -2,12 +2,9 @@ extern crate bytecount;
 extern crate colored;
 extern crate git2;
 extern crate license;
-extern crate strum;
 extern crate tokei;
 #[macro_use]
 extern crate clap;
-#[macro_use]
-extern crate strum_macros;
 
 use clap::{App, Arg};
 use colored::Color;

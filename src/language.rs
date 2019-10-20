@@ -1,6 +1,5 @@
-extern crate strum;
-
 use std::fmt;
+use strum_macros::EnumString;
 
 #[derive(PartialEq, Eq, Hash, Clone, EnumString)]
 #[strum(serialize_all = "lowercase")]
