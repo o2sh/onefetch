@@ -18,7 +18,6 @@ use git2::{Repository, Oid};
 use license::License;
 use clap::{App, Arg};
 use std::{
-    cmp,
     collections::HashMap,
     convert::From,
     ffi::OsStr,
@@ -30,6 +29,9 @@ use std::{
     str::FromStr,
 };
 use strum::{IntoEnumIterator, EnumCount};
+
+mod ascii_art;
+use ascii_art::AsciiArt;
 
 type Result<T> = result::Result<T, Error>;
 
@@ -232,112 +234,23 @@ impl fmt::Display for Info {
            "   ".on_bright_white(),
         )?;
 
-        let logo = self.get_ascii();
-        let mut logo_lines = logo.lines();
+        let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors());
         let mut info_lines = buffer.lines();
-        let left_pad = logo.lines().map(|l| true_len(l)).max().unwrap_or(0);
-
-        for _ in 0..cmp::max(count_newlines(logo), count_newlines(&buffer)) {
-            let logo_line = match logo_lines.next() {
-                Some(line) => line,
-                None => "",
-            };
-
-            let info_line = match info_lines.next() {
-                Some(line) => line,
-                None => "",
-            };
-
-            let (logo_line, extra_pad) = colorize_str(logo_line, self.colors(), self.bold_enabled);
-            // If the string is empty the extra padding should not be added
-            let pad = if logo_line.is_empty() {
-                left_pad
-            } else {
-                left_pad + extra_pad
-            };
-            writeln!(f, "{:<width$} {:^}", logo_line, info_line, width = pad,)?;
-        }
+        let center_pad = "   ";
+        loop {
+            match (logo_lines.next(), info_lines.next()) {
+                (Some(logo_line), Some(info_line)) => 
+                    writeln!(f, "{}{}{:^}", logo_line, center_pad, info_line)?,
+                (Some(logo_line), None) => 
+                    writeln!(f, "{}", logo_line)?,
+                (None, Some(info_line)) =>
+                    writeln!(f, "{:<width$}{}{:^}", "", center_pad, info_line, width = logo_lines.width())?,
+                (None, None) => { writeln!(f, "\n")?; break },
+            }
+        };
 
         Ok(())
     }
-}
-
-fn count_newlines(s: &str) -> usize {
-    bytecount::count(s.as_bytes(), b'\n')
-}
-
-/// Transforms a string with color format into one with proper
-/// escape characters for color display. This function is also 
-/// responsible for formatting the string as bold depending on 
-/// whether or not the user explicitly turned off boldness for 
-/// onefetch.
-///
-/// Colors are specified with {0}, {1}... where the number represents
-/// the nth element in the colors Vec provided to the function.
-/// If there are more colors in the ascii than in the Vec it
-/// defaults to white.
-/// The usize in the tuple refers to the extra padding needed
-/// which comes from the added escape characters.
-fn colorize_str(line: &str, colors: Vec<Color>, bold: bool) -> (String, usize) {
-    // Extract colors from string coded with {n}
-    let mut colors_in_str: Vec<Color> = line.split('{').fold(Vec::new(), |mut acc, s| {
-        if s.len() > 2 {
-            let i = s.chars().nth(0).unwrap_or('0').to_digit(10).unwrap_or(0);
-            acc.push(*colors.get(i as usize).unwrap_or(&Color::White));
-        }
-        acc
-    });
-
-    if colors_in_str.is_empty() {
-        colors_in_str.push(match colors.get(0) {
-            Some(&c) => c,
-            None => Color::White,
-        });
-    }
-
-    let mut colors_iter = colors_in_str.iter();
-
-    let out_str = line.split('{').fold(String::new(), |mut acc, s| {
-        if s.len() > 2 {
-            let s: String = s.chars().skip(2).collect();
-            let c = match colors_iter.next() {
-                Some(&c) => c,
-                None => Color::White,
-            };
-
-            // Make the string bold if boldness flag is set to 'on'
-            if bold {
-                acc.push_str(&format!("{}", s.color(c).bold()));
-            } else {
-                acc.push_str(&format!("{}", s.color(c)));
-            }
-            
-        }
-        acc
-    });
-
-    // Adjust the extra padding for the line. Use 2 less characters if not bold.
-    let padding_constant = if bold {
-        11
-    } else {
-        9
-    };
-    (out_str, colors_in_str.len() * padding_constant )
-}
-
-/// Returns the true length of a string after substracting the {n}
-/// color declarations.
-fn true_len(line: &str) -> usize {
-    line.split('{')
-        .fold(String::new(), |mut acc, s| {
-            if s.len() > 2 {
-                acc.push_str(&s.chars().skip(2).collect::<String>());
-            } else {
-                acc.push_str(s);
-            }
-            acc
-        })
-        .len()
 }
 
 struct CommitInfo {
@@ -673,7 +586,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         bold_enabled: bold_flag,
     };
 
-    println!("{}", info);
+    print!("{}", info);
     Ok(())
 }
 
