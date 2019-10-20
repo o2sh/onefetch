@@ -65,7 +65,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Project: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Project: ", color),
                 self.project_name
             )?;
         }
@@ -74,7 +74,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("HEAD: ", color, self.bold_enabled),
+                self.get_formatted_info_label("HEAD: ", color),
                 self.current_commit
             )?;
         }
@@ -83,7 +83,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Version: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Version: ", color),
                 self.version
             )?;
         }
@@ -92,7 +92,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Created: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Created: ", color),
                 self.creation_date
             )?;
         }
@@ -113,7 +113,7 @@ impl fmt::Display for Info {
                 writeln!(
                     buffer, 
                     "{}{}", 
-                    get_formatted_info_label(title, color, self.bold_enabled), 
+                    self.get_formatted_info_label(title, color), 
                     s
                 )?;
             } else {
@@ -121,7 +121,7 @@ impl fmt::Display for Info {
                 writeln!(
                     buffer,
                     "{}{}",
-                    get_formatted_info_label(title, color, self.bold_enabled),
+                    self.get_formatted_info_label(title, color),
                     self.dominant_language
                 )?;
             };
@@ -137,7 +137,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer, 
                 "{}{}% {} {}", 
-                get_formatted_info_label(title, color, self.bold_enabled), 
+                self.get_formatted_info_label(title, color), 
                 self.authors[0].2, 
                 self.authors[0].0, 
                 self.authors[0].1
@@ -149,7 +149,7 @@ impl fmt::Display for Info {
                 writeln!(
                     buffer, 
                     "{}{}% {} {}", 
-                    get_formatted_info_label(&title, color, self.bold_enabled), 
+                    self.get_formatted_info_label(&title, color), 
                     author.2, 
                     author.0, 
                     author.1
@@ -161,7 +161,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Last change: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Last change: ", color),
                 self.last_change
             )?;
         }
@@ -170,7 +170,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer, 
                 "{}{}",
-                get_formatted_info_label("Repo: ", color, self.bold_enabled), 
+                self.get_formatted_info_label("Repo: ", color), 
                 self.repo
             )?;
         }
@@ -179,7 +179,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Commits: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Commits: ", color),
                 self.commits
             )?;
         }
@@ -188,7 +188,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Lines of code: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Lines of code: ", color),
                 self.number_of_lines
             )?;
         }
@@ -197,7 +197,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("Size: ", color, self.bold_enabled),
+                self.get_formatted_info_label("Size: ", color),
                 self.repo_size
             )?;
         }
@@ -206,7 +206,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                get_formatted_info_label("License: ", color, self.bold_enabled),
+                self.get_formatted_info_label("License: ", color),
                 self.license
             )?;
         }
@@ -338,15 +338,6 @@ fn true_len(line: &str) -> usize {
             acc
         })
         .len()
-}
-
-// Returns a formatted label with the desired color and boldness
-fn get_formatted_info_label(label: &str, color: Color, bold: bool) -> ColoredString {
-    let mut formatted_label = label.color(color);
-    if bold {
-        formatted_label = formatted_label.bold();
-    }
-    formatted_label
 }
 
 struct CommitInfo {
@@ -1140,6 +1131,15 @@ impl Info {
             Language::Unknown => include_str!("../resources/unknown.ascii"),
             // _ => include_str!("../resources/unknown.ascii"),
         }
+    }
+
+    // Returns a formatted info label with the desired color and boldness
+    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
+        let mut formatted_label = label.color(color);
+        if self.bold_enabled {
+            formatted_label = formatted_label.bold();
+        }
+        formatted_label
     }
 
     fn colors(&self) -> Vec<Color> {
