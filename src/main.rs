@@ -276,11 +276,11 @@ fn colorize_str(line: &str, colors: Vec<Color>) -> (String, usize) {
                 Some(&c) => c,
                 None => Color::White,
             };
-            acc.push_str(&format!("{}", s.color(c)));
+            acc.push_str(&format!("{}", s.color(c).bold()));
         }
         acc
     });
-    (out_str, colors_in_str.len() * 9)
+    (out_str, colors_in_str.len() * 11 )
 }
 
 /// Returns the true length of a string after substracting the {n}
