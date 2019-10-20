@@ -50,6 +50,7 @@ struct Info {
     custom_logo: Language,
     custom_colors: Vec<String>,
     disable_fields: InfoFieldOn,
+    bold_enabled: bool
 }
 
 impl fmt::Display for Info {
@@ -64,7 +65,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "Project: ".color(color).bold(),
+                get_formatted_info_label("Project: ", color, self.bold_enabled),
                 self.project_name
             )?;
         }
@@ -73,7 +74,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "HEAD: ".color(color).bold(),
+                get_formatted_info_label("HEAD: ", color, self.bold_enabled),
                 self.current_commit
             )?;
         }
@@ -82,7 +83,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "Version: ".color(color).bold(),
+                get_formatted_info_label("Version: ", color, self.bold_enabled),
                 self.version
             )?;
         }
@@ -91,7 +92,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "Created: ".color(color).bold(),
+                get_formatted_info_label("Created: ", color, self.bold_enabled),
                 self.creation_date
             )?;
         }
@@ -109,13 +110,18 @@ impl fmt::Display for Info {
                         s = s + &format!("{} ({} %) ", language.0, formatted_number);
                     }
                 }
-                writeln!(buffer, "{}{}", title.color(color).bold(), s)?;
+                writeln!(
+                    buffer, 
+                    "{}{}", 
+                    get_formatted_info_label(title, color, self.bold_enabled), 
+                    s
+                )?;
             } else {
                 let title = "Language: ";
                 writeln!(
                     buffer,
                     "{}{}",
-                    title.color(color).bold(),
+                    get_formatted_info_label(title, color, self.bold_enabled),
                     self.dominant_language
                 )?;
             };
@@ -128,12 +134,26 @@ impl fmt::Display for Info {
                 "Author: "
             };
 
-            writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), self.authors[0].2, self.authors[0].0, self.authors[0].1)?;
+            writeln!(
+                buffer, 
+                "{}{}% {} {}", 
+                get_formatted_info_label(title, color, self.bold_enabled), 
+                self.authors[0].2, 
+                self.authors[0].0, 
+                self.authors[0].1
+            )?;
 
             let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
-                writeln!(buffer, "{}{}% {} {}", title.color(color).bold(), author.2, author.0, author.1)?;
+                writeln!(
+                    buffer, 
+                    "{}{}% {} {}", 
+                    get_formatted_info_label(&title, color, self.bold_enabled), 
+                    author.2, 
+                    author.0, 
+                    author.1
+                )?;
             }
         }
 
@@ -141,20 +161,25 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "Last change: ".color(color).bold(),
+                get_formatted_info_label("Last change: ", color, self.bold_enabled),
                 self.last_change
             )?;
         }
 
         if !self.disable_fields.repo {
-            writeln!(buffer, "{}{}", "Repo: ".color(color).bold(), self.repo)?;
+            writeln!(
+                buffer, 
+                "{}{}",
+                get_formatted_info_label("Repo: ", color, self.bold_enabled), 
+                self.repo
+            )?;
         }
 
         if !self.disable_fields.commits {
             writeln!(
                 buffer,
                 "{}{}",
-                "Commits: ".color(color).bold(),
+                get_formatted_info_label("Commits: ", color, self.bold_enabled),
                 self.commits
             )?;
         }
@@ -163,7 +188,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "Lines of code: ".color(color).bold(),
+                get_formatted_info_label("Lines of code: ", color, self.bold_enabled),
                 self.number_of_lines
             )?;
         }
@@ -172,7 +197,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "Size: ".color(color).bold(),
+                get_formatted_info_label("Size: ", color, self.bold_enabled),
                 self.repo_size
             )?;
         }
@@ -181,7 +206,7 @@ impl fmt::Display for Info {
             writeln!(
                 buffer,
                 "{}{}",
-                "License: ".color(color).bold(),
+                get_formatted_info_label("License: ", color, self.bold_enabled),
                 self.license
             )?;
         }
@@ -296,6 +321,15 @@ fn true_len(line: &str) -> usize {
             acc
         })
         .len()
+}
+
+// Returns a formatted label with the desired color and boldness
+fn get_formatted_info_label(label: &str, color: Color, bold: bool) -> ColoredString {
+    let mut formatted_label = label.color(color);
+    if bold {
+        formatted_label = formatted_label.bold();
+    }
+    formatted_label
 }
 
 struct CommitInfo {
@@ -538,6 +572,20 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 "14".bright_cyan(),
                 "15".bright_white(),
             )))
+        .arg(Arg::with_name("bold")
+            .short("b")
+            .long("bold")
+            .takes_value(true)
+            .default_value("on")
+            .hide_default_value(true)
+            .possible_values(&["on", "off"])
+            .hide_possible_values(true)
+            .help(&format!(
+                "{}{}{}",
+                "Specifies whether the logo and all info labels should be bold.",
+                "\nPossible values: [\"on\", \"off\"]",
+                "\nDefault value: [\"on\"]"
+            )))
         .get_matches();
     let dir = String::from(matches.value_of("directory").unwrap());
     let custom_logo: Language = Language::from_str(
@@ -592,6 +640,11 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         Vec::new()
     };
 
+    let mut bold_flag = true;
+    if matches.value_of("bold") == Some("off") {
+        bold_flag = false;
+    }
+
     let info = Info {
         project_name: config.repository_name,
         current_commit: current_commit_info,
@@ -609,6 +662,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         custom_logo,
         custom_colors,
         disable_fields,
+        bold_enabled: bold_flag,
     };
 
     println!("{}", info);
