@@ -254,4 +254,40 @@ mod test {
         assert_eq!(Tokens("     a;lksjf;a").leading_spaces(), 5);
         assert_eq!(Tokens("  {1} {5}  {9} a").leading_spaces(), 6);
     }
+  
+    #[test]
+    fn truncate() {
+        let colors_shim = Vec::new();
+        assert_eq!(Tokens("").render(&colors_shim, 0, 0), "\u{1b}[1;37m\u{1b}[0m");
+
+        assert_eq!(
+            Tokens("     ").render(&colors_shim, 0, 0),
+            "\u{1b}[1;37m\u{1b}[0m"
+        );
+        assert_eq!(
+            Tokens("     ").render(&colors_shim, 0, 5),
+            "\u{1b}[1;37m     \u{1b}[0m"
+        );
+        assert_eq!(
+            Tokens("     ").render(&colors_shim, 1, 5),
+            "\u{1b}[1;37m    \u{1b}[0m"
+        );
+        assert_eq!(
+            Tokens("     ").render(&colors_shim, 3, 5),
+            "\u{1b}[1;37m  \u{1b}[0m"
+        );
+        assert_eq!(
+            Tokens("     ").render(&colors_shim, 0, 4),
+            "\u{1b}[1;37m    \u{1b}[0m"
+        );
+        assert_eq!(
+            Tokens("     ").render(&colors_shim, 0, 3),
+            "\u{1b}[1;37m   \u{1b}[0m"
+        );
+
+        assert_eq!(
+            Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10),
+            "\u{1b}[1;37m\u{1b}[0m\u{1b}[1;37m\u{1b}[0m\u{1b}[1;37m \u{1b}[0m\u{1b}[1;37m a\u{1b}[0m   "
+        );
+    }
 }
