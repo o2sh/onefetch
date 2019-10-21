@@ -193,7 +193,7 @@ impl Info {
         let commits = Info::get_commits(&dir)?;
         let repo_size = Info::get_packed_size(&dir)?;
         let last_change = Info::get_last_change(&dir)?;
-        let creation_date = Info::get_creation_time().unwrap();
+        let creation_date = Info::get_creation_time(dir)?;
         let project_license = Info::get_project_license(&dir)?;
         let (languages_stats, number_of_lines) = Language::get_language_stats(&dir)?;
         let dominant_language = Language::get_dominant_language(languages_stats.clone());
@@ -429,8 +429,10 @@ impl Info {
         }
     }
 
-    fn get_creation_time() -> Option<String> {
+    fn get_creation_time(dir: &str) -> Result<String> {
         let output = Command::new("git")
+            .arg("-C")
+            .arg(dir)
             .arg("log")
             .arg("--reverse")
             .arg("--pretty=oneline")
@@ -440,10 +442,11 @@ impl Info {
 
         let output = String::from_utf8_lossy(&output.stdout);
 
-        match output.lines().next() {
-            Some(val) => Some(val.to_string().replace('"', "")),
-            None => None,
-        }
+        let output = match output.lines().next() {
+            Some(creation_time) => creation_time.replace('"', ""),
+            None => "??".into(),
+        };
+        Ok(output)
     }
 
     fn get_project_license(dir: &str) -> Result<String> {
