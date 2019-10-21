@@ -153,18 +153,25 @@ impl std::fmt::Display for Info {
         let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors());
         let mut info_lines = buf.lines();
 
+        let center_pad = "   ";
         loop {
             match (logo_lines.next(), info_lines.next()) {
-                (Some(logo_line), Some(info_line)) => writeln!(f, "{} {:^}", logo_line, info_line)?,
+                (Some(logo_line), Some(info_line)) => {
+                    writeln!(f, "{}{}{:^}", logo_line, center_pad, info_line)?
+                }
                 (Some(logo_line), None) => writeln!(f, "{}", logo_line)?,
                 (None, Some(info_line)) => writeln!(
                     f,
-                    "{:<width$} {:^}",
+                    "{:<width$}{}{:^}",
                     "",
+                    center_pad,
                     info_line,
                     width = logo_lines.width()
                 )?,
-                (None, None) => break,
+                (None, None) => {
+                    writeln!(f, "\n")?;
+                    break;
+                }
             }
         }
 
