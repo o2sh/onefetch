@@ -154,14 +154,14 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 )),
         )
         .arg(
-            Arg::with_name("list")
-                .short("l")
-                .long("list")
+            Arg::with_name("supported")
+                .short("s")
+                .long("supported")
                 .help("Prints a list of all supported languages"),
         )
         .get_matches();
 
-    if matches.is_present("list") {
+    if matches.is_present("supported") {
         let list = Language::iter()
             .filter(|x| *x != Language::Unknown)
             .map(|x| x.to_string().color(x.get_colors()[0]).to_string())
