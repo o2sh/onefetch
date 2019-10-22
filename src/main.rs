@@ -154,21 +154,20 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 )),
         )
         .arg(
-            Arg::with_name("supported")
-                .short("s")
-                .long("supported")
-                .help("Prints a list of all supported languages"),
+            Arg::with_name("languages")
+                .short("l")
+                .long("languages")
+                .help("Prints out supported languages"),
         )
         .get_matches();
 
-    if matches.is_present("supported") {
-        let list = Language::iter()
-            .filter(|x| *x != Language::Unknown)
-            .map(|x| x.to_string().color(x.get_colors()[0]).to_string())
-            .collect::<Vec<String>>()
-            .join(", ");
+    if matches.is_present("languages") {
+        let iterator = Language::iter()
+            .filter(|x| *x != Language::Unknown);
 
-        print!("Supported languages:\n\n{}\n", list);
+        for l in iterator {
+            println!("{}", l);
+        }
         std::process::exit(0);
     }
 
