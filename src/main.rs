@@ -153,7 +153,24 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                     "15".bright_white(),
                 )),
         )
+        .arg(
+            Arg::with_name("list")
+            .short("l")
+            .long("list")
+            .help("Prints a list of all supported languages")
+        )
         .get_matches();
+
+    if matches.is_present("list") {
+        let list = Language::iter()
+            .filter(|x| *x != Language::Unknown)
+            .map(|x| x.to_string().color(x.get_colors()[0]).to_string())
+            .collect::<Vec<String>>().join(", ");
+
+        print!("Supported languages:\n\n{}\n", list);
+        std::process::exit(0);
+    }
+
     let dir = String::from(matches.value_of("directory").unwrap());
     let custom_logo: Language =
         Language::from_str(&matches.value_of("ascii_language").unwrap().to_lowercase())

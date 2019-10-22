@@ -4,7 +4,7 @@ use colored::Color;
 
 use crate::{Error, Result};
 
-#[derive(PartialEq, Eq, Hash, Clone, EnumString)]
+#[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter)]
 #[strum(serialize_all = "lowercase")]
 pub enum Language {
     Assembly,
