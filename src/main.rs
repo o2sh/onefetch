@@ -38,6 +38,7 @@ type Result<T> = result::Result<T, Error>;
 
 #[derive(Default)]
 pub struct InfoFieldOn {
+    git_info:bool,
     project: bool,
     head: bool,
     version: bool,
@@ -55,6 +56,7 @@ pub struct InfoFieldOn {
 #[derive(PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr)]
 #[strum(serialize_all = "snake_case")]
 enum InfoFields {
+    GitInfo,
     Project,
     HEAD,
     Version,
@@ -188,6 +190,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .unwrap_or(InfoFields::UnrecognizedField);
 
             match item {
+                InfoFields::GitInfo => disable_fields.git_info = true,
                 InfoFields::Project => disable_fields.project = true,
                 InfoFields::HEAD => disable_fields.head = true,
                 InfoFields::Version => disable_fields.version = true,
