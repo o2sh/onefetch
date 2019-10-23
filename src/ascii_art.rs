@@ -262,30 +262,39 @@ mod test {
     }
 
     #[test]
-    fn truncate() {
+    fn render() {
         let colors_shim = Vec::new();
-        assert_eq!(Tokens("").render(&colors_shim, 0, 0, true), "\u{1b}[1;37m\u{1b}[0m");
+
+        assert_eq!(
+            Tokens("").render(&colors_shim, 0, 0, true), 
+            "\u{1b}[1;37m\u{1b}[0m"
+        );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 0, true),
             "\u{1b}[1;37m\u{1b}[0m"
         );
+
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 5, true),
             "\u{1b}[1;37m     \u{1b}[0m"
         );
+
         assert_eq!(
             Tokens("     ").render(&colors_shim, 1, 5, true),
             "\u{1b}[1;37m    \u{1b}[0m"
         );
+
         assert_eq!(
             Tokens("     ").render(&colors_shim, 3, 5, true),
             "\u{1b}[1;37m  \u{1b}[0m"
         );
+
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 4, true),
             "\u{1b}[1;37m    \u{1b}[0m"
         );
+
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 3, true),
             "\u{1b}[1;37m   \u{1b}[0m"
@@ -304,6 +313,44 @@ mod test {
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 5, false),
             "\u{1b}[37m     \u{1b}[0m"
+        );
+    }
+  
+    #[test]
+    fn truncate() {
+        assert_eq!(
+            Tokens("").truncate(0, 0).collect::<Vec<_>>(), 
+            Tokens("").collect::<Vec<_>>()
+        );
+
+        assert_eq!(
+            Tokens("     ").truncate(0, 0).collect::<Vec<_>>(),
+            Tokens("").collect::<Vec<_>>()
+        );
+        assert_eq!(
+            Tokens("     ").truncate(0, 5).collect::<Vec<_>>(),
+            Tokens("     ").collect::<Vec<_>>()
+        );
+        assert_eq!(
+            Tokens("     ").truncate(1, 5).collect::<Vec<_>>(),
+            Tokens("    ").collect::<Vec<_>>()
+        );
+        assert_eq!(
+            Tokens("     ").truncate(3, 5).collect::<Vec<_>>(),
+            Tokens("  ").collect::<Vec<_>>()
+        );
+        assert_eq!(
+            Tokens("     ").truncate(0, 4).collect::<Vec<_>>(),
+            Tokens("    ").collect::<Vec<_>>()
+        );
+        assert_eq!(
+            Tokens("     ").truncate(0, 3).collect::<Vec<_>>(),
+            Tokens("   ").collect::<Vec<_>>()
+        );
+
+        assert_eq!(
+            Tokens("  {1} {5}  {9} a").truncate(4, 10).collect::<Vec<_>>(),
+            Tokens("{1}{5} {9} a").collect::<Vec<_>>()
         );
     }
 }
