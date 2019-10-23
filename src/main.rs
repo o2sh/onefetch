@@ -135,24 +135,29 @@ fn main() -> Result<()> {
                 .help(&format!(
                     "Specifies a preferred color set. Unspecified colors will remain as default.
 Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
-                    "0".black(),
-                    "1".red(),
-                    "2".green(),
-                    "3".yellow(),
-                    "4".blue(),
-                    "5".magenta(),
-                    "6".cyan(),
-                    "7".white(),
-                    "8".bright_black(),
-                    "9".bright_red(),
-                    "10".bright_green(),
-                    "11".bright_yellow(),
-                    "12".bright_blue(),
-                    "13".bright_magenta(),
-                    "14".bright_cyan(),
-                    "15".bright_white(),
-                )),
-        )
+                "0".black(),
+                "1".red(),
+                "2".green(),
+                "3".yellow(),
+                "4".blue(),
+                "5".magenta(),
+                "6".cyan(),
+                "7".white(),
+                "8".bright_black(),
+                "9".bright_red(),
+                "10".bright_green(),
+                "11".bright_yellow(),
+                "12".bright_blue(),
+                "13".bright_magenta(),
+                "14".bright_cyan(),
+                "15".bright_white(),
+            )))
+        .arg(
+            Arg::with_name("no-bold")
+                .short("b")
+                .long("no-bold")
+                .help("Turns off bold formatting for the logo and all labels")
+            )
         .arg(
             Arg::with_name("languages")
                 .short("l")
@@ -210,7 +215,9 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         Vec::new()
     };
 
-    let info = Info::new(&dir, custom_logo, custom_colors, disable_fields)?;
+    let bold_flag = !matches.is_present("no-bold");
+
+    let info = Info::new(&dir, custom_logo, custom_colors, disable_fields, bold_flag)?;
 
     print!("{}", info);
     Ok(())
