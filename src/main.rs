@@ -153,19 +153,12 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 "15".bright_white(),
             )))
         .arg(
-            Arg::with_name("bold")
+            Arg::with_name("no-bold")
                 .short("b")
-                .long("bold")
-                .takes_value(true)
-                .default_value("on")
-                .hide_default_value(true)
-                .possible_values(&["on", "off"])
-                .hide_possible_values(true)
+                .long("no-bold")
                 .help(&format!(
-                    "{}{}{}",
-                    "Specifies whether the logo and all info labels should be bold.",
-                    "\nPossible values: [\"on\", \"off\"]",
-                    "\nDefault value: [\"on\"]"
+                    "{}",
+                    "Turns off bold formatting for the logo and all labels"
             )))
         .arg(
             Arg::with_name("languages")
@@ -224,7 +217,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         Vec::new()
     };
 
-    let bold_flag = if let Some("off") = matches.value_of("bold") {
+    let bold_flag = if matches.is_present("no-bold") {
         false
     } else {
         true
