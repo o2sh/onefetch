@@ -195,7 +195,7 @@ impl Info {
         disabled: InfoFieldOn,
     ) -> Result<Info> {
         let authors = Info::get_authors(&dir, 3);
-        let (git_v, git_user) = Info::get_git_info();
+        let (git_v, git_user) = Info::get_git_info(&dir);
         let current_commit_info = Info::get_current_commit_info(&dir)?;
         let config = Info::get_configuration(&dir)?;
         let version = Info::get_version(&dir)?;
@@ -273,7 +273,7 @@ impl Info {
         authors
     }
 
-    fn get_git_info() -> (String, String){
+    fn get_git_info(dir: &str) -> (String, String){
         let version = Command::new("git")
             .arg("--version")
             .output()
@@ -282,6 +282,8 @@ impl Info {
         let version = version.to_string().replace('\n',"");
 
         let username = Command::new("git")
+            .arg("-C")
+            .arg(dir)
             .arg("config")
             .arg("--get")
             .arg("user.name")
