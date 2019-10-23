@@ -156,10 +156,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
             Arg::with_name("no-bold")
                 .short("b")
                 .long("no-bold")
-                .help(&format!(
-                    "{}",
-                    "Turns off bold formatting for the logo and all labels"
-            )))
+                .help("Turns off bold formatting for the logo and all labels")
+            )
         .arg(
             Arg::with_name("languages")
                 .short("l")
@@ -217,11 +215,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         Vec::new()
     };
 
-    let bold_flag = if matches.is_present("no-bold") {
-        false
-    } else {
-        true
-    };
+    let bold_flag = !matches.is_present("no-bold");
 
     let info = Info::new(&dir, custom_logo, custom_colors, disable_fields, bold_flag)?;
 
