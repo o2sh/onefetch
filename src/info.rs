@@ -14,6 +14,8 @@ use crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn};
 type Result<T> = std::result::Result<T, crate::Error>;
 
 pub struct Info {
+    git_version: String,
+    git_username: String,
     project_name: String,
     current_commit: CommitInfo,
     version: String,
@@ -40,7 +42,18 @@ impl std::fmt::Display for Info {
             Some(&c) => c,
             None => Color::White,
         };
-
+        if !self.disable_fields.git_info{
+            let git_info;
+            if self.git_username != "" {
+                git_info = format!("{} : {}", self.git_username, self.git_version);
+                write!(&mut buf, "{}{}", &self.get_formatted_info_label(&self.git_username, color), " : ")?;
+            } else {
+                git_info = self.git_version.clone();
+            }
+            write_buf(&mut buf, &self.get_formatted_info_label(&self.git_version, color), "")?;
+            let separator = "-".repeat(git_info.len());
+            write_buf(&mut buf, &self.get_formatted_info_label("", color), &separator)?;
+        }
         if !self.disable_fields.project {
             write_buf(&mut buf, &self.get_formatted_info_label("Project: ", color), &self.project_name)?;
         }
@@ -190,6 +203,7 @@ impl Info {
         bold_flag: bool,
     ) -> Result<Info> {
         let authors = Info::get_authors(&dir, 3);
+        let (git_v, git_user) = Info::get_git_info(&dir);
         let current_commit_info = Info::get_current_commit_info(&dir)?;
         let config = Info::get_configuration(&dir)?;
         let version = Info::get_version(&dir)?;
@@ -202,6 +216,8 @@ impl Info {
         let dominant_language = Language::get_dominant_language(languages_stats.clone());
 
         Ok(Info {
+            git_version: git_v,
+            git_username: git_user,
             project_name: config.repository_name,
             current_commit: current_commit_info,
             version,
@@ -264,6 +280,25 @@ impl Info {
             .collect();
 
         authors
+    }
+
+    fn get_git_info(dir: &str) -> (String, String){
+        let version = Command::new("git")
+            .arg("--version")
+            .output()
+            .expect("Failed to execute git.");
+        let version = String::from_utf8_lossy(&version.stdout).replace('\n',"");
+
+        let username = Command::new("git")
+            .arg("-C")
+            .arg(dir)
+            .arg("config")
+            .arg("--get")
+            .arg("user.name")
+            .output()
+            .expect("Failed to execute git.");
+        let username = String::from_utf8_lossy(&username.stdout).replace('\n',"");
+        (version, username)
     }
 
     fn get_current_commit_info(dir: &str) -> Result<CommitInfo> {
