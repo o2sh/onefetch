@@ -45,11 +45,12 @@ impl std::fmt::Display for Info {
         if !self.disable_fields.git_info{
             let git_info;
             if self.git_username != "" {
-                git_info = format!("{} : {}", self.git_username, self.git_version);   
+                git_info = format!("{} : {}", self.git_username, self.git_version);
+                write!(&mut buf, "{}{}", &self.get_formatted_info_label(&self.git_username, color), " : ")?;
             } else {
                 git_info = self.git_version.clone();
             }
-            write_buf(&mut buf, &self.get_formatted_info_label(&git_info, color), "")?;
+            write_buf(&mut buf, &self.get_formatted_info_label(&self.git_version, color), "")?;
             let separator = "-".repeat(git_info.len());
             write_buf(&mut buf, &self.get_formatted_info_label("", color), &separator)?;
         }
