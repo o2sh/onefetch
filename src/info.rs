@@ -4,7 +4,7 @@ use std::fs;
 use std::process::Command;
 use std::str::FromStr;
 
-use colored::{Color, Colorize};
+use colored::{Color, Colorize, ColoredString};
 use git2::Repository;
 use license::License;
 
@@ -32,6 +32,7 @@ pub struct Info {
     custom_logo: Language,
     custom_colors: Vec<String>,
     disable_fields: InfoFieldOn,
+    bold_enabled: bool,
 }
 
 impl std::fmt::Display for Info {
@@ -55,19 +56,19 @@ impl std::fmt::Display for Info {
             write_buf(&mut buf, "", &separator, color)?;
         }
         if !self.disable_fields.project {
-            write_buf(&mut buf, "Project: ", &self.project_name, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Project: ", color), &self.project_name)?;
         }
 
         if !self.disable_fields.head {
-            write_buf(&mut buf, "HEAD: ", &self.current_commit, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("HEAD: ", color), &self.current_commit)?;
         }
 
         if !self.disable_fields.version {
-            write_buf(&mut buf, "Version: ", &self.version, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Version: ", color), &self.version)?;
         }
 
         if !self.disable_fields.created {
-            write_buf(&mut buf, "Created: ", &self.creation_date, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Created: ", color), &self.creation_date)?;
         }
 
         if !self.disable_fields.languages && !self.languages.is_empty() {
@@ -83,9 +84,9 @@ impl std::fmt::Display for Info {
                         s = s + &format!("{} ({} %) ", language.0, formatted_number);
                     }
                 }
-                writeln!(buf, "{}{}", title.color(color).bold(), s)?;
+                writeln!(buf, "{}{}", &self.get_formatted_info_label(title, color), s)?;
             } else {
-                write_buf(&mut buf, "Language: ", &self.dominant_language, color)?;
+                write_buf(&mut buf, &self.get_formatted_info_label("Language: ", color), &self.dominant_language)?;
             };
         }
 
@@ -99,7 +100,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 buf,
                 "{}{}% {} {}",
-                title.color(color).bold(),
+                &self.get_formatted_info_label(title, color),
                 self.authors[0].2,
                 self.authors[0].0,
                 self.authors[0].1
@@ -108,10 +109,11 @@ impl std::fmt::Display for Info {
             let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
+
                 writeln!(
                     buf,
                     "{}{}% {} {}",
-                    title.color(color).bold(),
+                    &self.get_formatted_info_label(&title, color),
                     author.2,
                     author.0,
                     author.1
@@ -120,27 +122,27 @@ impl std::fmt::Display for Info {
         }
 
         if !self.disable_fields.last_change {
-            write_buf(&mut buf, "Last change: ", &self.last_change, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Last change: ", color), &self.last_change)?;
         }
 
         if !self.disable_fields.repo {
-            write_buf(&mut buf, "Repo: ", &self.repo, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Repo: ", color), &self.repo)?;
         }
 
         if !self.disable_fields.commits {
-            write_buf(&mut buf, "Commits: ", &self.commits, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Commits: ", color), &self.commits)?;
         }
 
         if !self.disable_fields.lines_of_code {
-            write_buf(&mut buf, "Lines of code: ", &self.number_of_lines, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Lines of code: ", color), &self.number_of_lines)?;
         }
 
         if !self.disable_fields.size {
-            write_buf(&mut buf, "Size: ", &self.repo_size, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("Size: ", color), &self.repo_size)?;
         }
 
         if !self.disable_fields.license {
-            write_buf(&mut buf, "License: ", &self.license, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("License: ", color), &self.license)?;
         }
 
         writeln!(
@@ -164,7 +166,7 @@ impl std::fmt::Display for Info {
             "   ".on_bright_white(),
         )?;
 
-        let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors());
+        let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors(), self.bold_enabled);
         let mut info_lines = buf.lines();
 
         let center_pad = "   ";
@@ -199,6 +201,7 @@ impl Info {
         logo: Language,
         colors: Vec<String>,
         disabled: InfoFieldOn,
+        bold_flag: bool,
     ) -> Result<Info> {
         let authors = Info::get_authors(&dir, 3);
         let (git_v, git_user) = Info::get_git_info(&dir);
@@ -232,6 +235,7 @@ impl Info {
             custom_logo: logo,
             custom_colors: colors,
             disable_fields: disabled,
+            bold_enabled: bold_flag,
         })
     }
 
@@ -573,13 +577,21 @@ impl Info {
         };
         Some(color)
     }
+
+    /// Returns a formatted info label with the desired color and boldness
+    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
+        let mut formatted_label = label.color(color);
+        if self.bold_enabled {
+            formatted_label = formatted_label.bold();
+        }
+        formatted_label
+    }
 }
 
 fn write_buf<T: std::fmt::Display>(
     buffer: &mut String,
-    title: &str,
+    title: &ColoredString,
     content: T,
-    color: Color,
 ) -> std::fmt::Result {
-    writeln!(buffer, "{}{}", title.color(color).bold(), content)
+    writeln!(buffer, "{}{}", title, content)
 }

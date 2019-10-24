@@ -17,7 +17,3 @@ notifications:
 branches:
   only:
     - master
-cache:
-  cargo: true
-  directories:
-    - target
