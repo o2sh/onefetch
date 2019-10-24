@@ -1,19 +1,22 @@
+ 
+ 
+            ?- write("Hello ,   Prolog
+         "), n_factorial (0,1   ).n_facto
+      rial(N, F):-N #>0,N1#=N   -1,n_factori
+    al(N1,F1),F#=N *F1.bin_se   arch(Elt,List,R
+   esult):-length(List,N),bin   _search_inner(El
+  t, List,1,N,Result).bin_sea   rch_inner(Elt,Lis
+  t,J,J,J):- nth(J,List,Elt).   bin_search_inner (
+  Elt,List,B        egin,End,   Mid):-Begin<End,Mid
+ is(Begin+E  nd)div   2,nth(M   id,List,Elt).bin_sea
+ rch_inne    r(Elt,Li  st,Beg     in,End,Result):- B
+  egin<En    d,Mid is   (Begin    +End)div2,nth(Mid,
+   List,M     id,El    t),Mid,El                t<El
+    t,New           BeginisMid+1,bin_search_inner(E
+     lt,L   ist,NewBegin,End,Result). bin_search_
+      inn   er(Elt,List,Begin,End,Result):-Begin
+      <En   d,Mid is(Begin+End)div 2,nth( Mid,
+        L   ist,MidElt),Mid,Elt>Elt,NewEnd is
+            Mid-1,bin_search_inner(Elt,Lis
+              ,Begin, NewEnd, Result ).
 
-            -/oydmNNNNNNNmdh:  yh+
-         :smNNNNNNNNNNNNNNNN+  yhhhh+.
-      `+mNNNNNNNNNNNNNNNNNNN+  yNNNNNNy-
-     /mNNNNNNNNNNNNNNNNNNNNN+  yNNNNNNNNs`
-    sNNNNNNNNNNNNNNNNNNNNNNN+  yNNNNNNNNNd.
-   sNNNNNNNNNdso++oydNNNNNNN+  yNNNNNNNNNNd.
-  /NNNNNNNNs..+s+.   .sNNNNN+  yNNNNNNNNNNNy
-  hNNNNNNN/ smN+     . /NNNN+  yNNNNNNNNNNNN-
-  NNNNNNNd +NNNo     y+ hNNN+  yNNNNNNNNNNNN+
-  NNNNNNNs +mNNNds+sdN+ yNNNs  sNNNNNNNNNNNN+
-  hNNNNNNs `sNNNNNNNNs :NNNNm. `smNNNNNNNNNN-
-  :NNNNNNs   .+yhhs+.`omNNNNNm/  `.---oNNNNh
-   sNNNNNs  -++++ooshNNNNNNNNNNmyo++++yyyym.
-    sNNNNs  oNNNNNNNNNNNNNNNNNNNNNNNNNNNNd.
-     /ooos  oNNNNNNNNNNNNNNNNNNNNNNNNNNNs`
-       oos  oNNNNNNNNNNNNNNNNNNNNNNNNNy-
-        os -smNNNNNNNNNNNNNNNNNNNmh+.
-            -/oydmNNNNNNNmdhs+:`
