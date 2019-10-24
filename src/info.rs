@@ -43,17 +43,15 @@ impl std::fmt::Display for Info {
             None => Color::White,
         };
         if !self.disable_fields.git_info{
-            let username = if self.git_username == "" {
-                String::from("")
-            }else{
-                format!("{}:",self.git_username)        
-            };
-
-            let git_info = format!("{}{}", username, self.git_version);
-            write_buf(&mut buf, "", &git_info, color)?;
-
+            let git_info;
+            if self.git_username != "" {
+                git_info = format!("{} : {}", self.git_username, self.git_version);   
+            } else {
+                git_info = self.git_version.clone();
+            }
+            write_buf(&mut buf, &self.get_formatted_info_label(&git_info, color), "")?;
             let separator = "-".repeat(git_info.len());
-            write_buf(&mut buf, "", &separator, color)?;
+            write_buf(&mut buf, &self.get_formatted_info_label("", color), &separator)?;
         }
         if !self.disable_fields.project {
             write_buf(&mut buf, &self.get_formatted_info_label("Project: ", color), &self.project_name)?;
