@@ -45,7 +45,7 @@ impl std::fmt::Display for Info {
             let username = if self.git_username == "" {
                 String::from("")
             }else{
-                String::from(format!("{}:",self.git_username))          
+                format!("{}:",self.git_username)        
             };
 
             let git_info = format!("{}{}", username, self.git_version);
@@ -284,8 +284,7 @@ impl Info {
             .arg("--version")
             .output()
             .expect("Failed to execute git.");
-        let version = String::from_utf8_lossy(&version.stdout);
-        let version = version.to_string().replace('\n',"");
+        let version = String::from_utf8_lossy(&version.stdout).replace('\n',"");
 
         let username = Command::new("git")
             .arg("-C")
@@ -295,8 +294,7 @@ impl Info {
             .arg("user.name")
             .output()
             .expect("Failed to execute git.");
-        let username = String::from_utf8_lossy(&username.stdout);
-        let username = username.to_string().replace('\n',"");
+        let username = String::from_utf8_lossy(&username.stdout).replace('\n',"");
         (version, username)
     }
 
