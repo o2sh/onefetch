@@ -1,0 +1,18 @@
+{0}            bin_search(Elt,Li{1}st,{0}Re
+{0}         sult):-length(List,N{1}), {0}bin_se
+{0}      arch_inner(Elt,List,1,N{1},Re{0}sult).bi
+{0}     n_search_inner(Elt,List,{1}J,J{0},J):-nth(J
+{0}    ,List,Elt).bin_search_inn{1}er({0}Elt,List,Be
+{0}   gin,End,M{1}id):-Begin{0} < End,{1}Mid{0} is (Begin+E
+{0}  nd) div 2{1},n({0}thMid,L{1}is{0}t,Elt){1}.bi{0}n_search_inn
+{0}  er(Elt,L{1}is{0}t,B{1}egin,{0}End{1},R{0}esul{1}t):{0}-Begin < End,
+{0}  Mid is ({1}De{0}gi{1}n+En{0}d) {1}d{0}i{1}v{0} 2,nt{1}h(M{0}id,List,MidEl
+{0}  t),MidEl{1}t<{0}El{1}t,NewBeg{0}i{1}n i{0}s M{1}id+{0}1,bin_search_
+{0}  inner(El{1}t,L{0}ist{1},Ne{0}wBeg{1}in{0},End,{1}Result). bin{0}_se
+{0}  arch_inn{1}er(E{0}lt,List,{1}Be{0}gin,End{1},Result):-Be{0}gi
+{0}   n<End,M{1}id is (Begin{0}+End) div 2,nth(Mid,Li
+{0}    st,Mid{1}Elt{0}),MidElt>Elt,NewEnd is Mid-1,b
+{0}      in_s{1}ear{0}ch_inner(Elt,List,Begin,NewEn
+{0}       d,R{1}esu{0}lt).n_factorial(0,1).n_fact
+{0}         o{1}ria{0}l(N,F):-N #>0,N1#=N-1,n_f
+{0}           {1}ac{0}torial(N1,F1),F#=N *F1.
