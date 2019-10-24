@@ -6,4 +6,10 @@
 /parts
 /prime
 .gitignore.swp
-Cargo.lock
+
+
+# needed for nix
+# Cargo.lock
+
+# nix result from nix-build
+result
