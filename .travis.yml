@@ -1,25 +1,18 @@
-matrix:
+language: rust
+rust:
+  - stable
+  - beta
+  - nightly
+os:
+  - linux
+  - windows
+  - osx
+script:
+  - cargo test --verbose
+  - cargo build --verbose
+jobs:
   include:
-    - language: rust
-     rust:
-      - stable
-      - beta
-      - nightly
-    os:
-      - linux
-      - windows
-      - osx
-    sudo: false
-    script:
-      - cargo build --verbose
-      - cargo test --verbose
-    notifications:
-      email:
-        on_success: never
-    branches:
-      only:
-        - master
-    - language: nix
-      notifications:
-        email:
-          on_success: never
+  - language: nix
+    cache:
+      directories:
+      - $HOME/nix.store
