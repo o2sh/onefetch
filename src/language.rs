@@ -209,7 +209,7 @@ impl Language {
             Language::Elm => vec![Color::BrightBlack, Color::Green, Color::Yellow, Color::Cyan],
             Language::Erlang => vec![Color::BrightRed],
             Language::Forth => vec![Color::BrightRed],
-            Language::FSharp => vec![Color::White, Color::BrightBlue],
+            Language::FSharp => vec![Color::BrightBlue, Color::Cyan],
             Language::Go => vec![Color::White],
             Language::Haskell => vec![Color::BrightBlue, Color::BrightMagenta, Color::Blue],
             Language::HTML => vec![Color::Red, Color::White],
