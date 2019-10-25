@@ -16,3 +16,12 @@ jobs:
     cache:
       directories:
       - $HOME/nix.store
+    script:
+      - nix-build
+    before_install:
+      - sudo mkdir -p /etc/nix
+      - echo "substituters = https://cache.nixos.org/ file://$HOME/nix.store" | sudo tee -a /etc/nix/nix.conf > /dev/null
+      - echo 'require-sigs = false' | sudo tee -a /etc/nix/nix.conf > /dev/null
+    before_cache:
+      - mkdir -p $HOME/nix.store
+      - nix copy --to file://$HOME/nix.store -f default.nix buildInputs
