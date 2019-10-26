@@ -169,11 +169,11 @@ impl std::fmt::Display for Info {
         )?;
 
         let center_pad = "   ";
-        let mut info_lines = buf.lines().map(|s| format!("{}{}", center_pad, s));
+        let mut info_lines = buf.lines();
 
         if let Some(custom_image) = &self.custom_image {
             if let Some(backend) = image_backends::get_best_backend() {
-                writeln!(f, "{}", backend.add_image(info_lines.collect(), custom_image))?;
+                writeln!(f, "{}", backend.add_image(info_lines.map(|s| format!("{}{}", center_pad, s)).collect(), custom_image))?;
             } else {
                 panic!("No image backend found")
             }
