@@ -15,3 +15,8 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
         None
     }
 }
+
+#[cfg(not(target_os = "linux"))]
+pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
+    None
+}
