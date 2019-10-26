@@ -78,9 +78,10 @@ impl std::fmt::Display for Info {
                 let mut languages: Vec<(String, f64)> = {
                     let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
                     if self.languages.len() > 6 {
-                        let first_languages = iter.by_ref().take(6).collect::<Vec<_>>();
+                        let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
                         let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
-                        first_languages.into_iter().chain(std::iter::once(("Other".to_owned(), other_sum))).collect()
+                        languages.push(("Other".to_owned(), other_sum));
+                        languages
                     } else {
                         iter.collect()
                     }
