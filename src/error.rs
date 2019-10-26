@@ -12,6 +12,8 @@ pub enum Error {
     NotGitRepo,
     /// Error while getting branch info
     ReferenceInfoError,
+    /// Image probably doesn't exist or has wrong format
+    ImageLoadError,
 }
 
 impl std::fmt::Debug for Error {
@@ -23,6 +25,7 @@ impl std::fmt::Debug for Error {
             Error::ReadDirectory => "Could not read directory",
             Error::NotGitRepo => "This is not a Git Repo",
             Error::ReferenceInfoError => "Error while retrieving reference information",
+            Error::ImageLoadError => "Could not load the specified image",
         };
         write!(f, "{}", content)
     }

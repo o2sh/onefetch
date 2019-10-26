@@ -17,6 +17,11 @@ bytecount = "0.5.1"
 clap = "2.33.0"
 strum = "0.16.0"
 strum_macros = "0.16.0"
+image = "0.22.3"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2.65"
+base64 = "0.11.0"
