@@ -269,13 +269,13 @@ impl Language {
         let tokei_langs = project_languages(&dir);
         let languages_stat =
             Language::get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
-        let stat_vec = languages_stat.into_iter().collect();
+        let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
+        stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
         let loc = get_total_loc(&tokei_langs);
         Ok((stat_vec, loc))
     }
 
-    pub fn get_dominant_language(mut languages_stat_vec: Vec<(Language, f64)>) -> Language {
-        languages_stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
+    pub fn get_dominant_language(languages_stat_vec: Vec<(Language, f64)>) -> Language {
         languages_stat_vec[0].0.clone()
     }
 }
