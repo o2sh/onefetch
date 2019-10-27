@@ -86,7 +86,6 @@ impl std::fmt::Display for Info {
                         iter.collect()
                     }
                 };
-                languages.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
                 
                 for (cnt, language) in languages.iter().enumerate() {
                     let formatted_number = format!("{:.*}", 2, language.1);
