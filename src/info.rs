@@ -75,7 +75,19 @@ impl std::fmt::Display for Info {
                 let title = "Languages: ";
                 let pad = " ".repeat(title.len());
                 let mut s = String::from("");
-                for (cnt, language) in self.languages.iter().enumerate() {
+                let languages: Vec<(String, f64)> = {
+                    let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
+                    if self.languages.len() > 6 {
+                        let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
+                        let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
+                        languages.push(("Other".to_owned(), other_sum));
+                        languages
+                    } else {
+                        iter.collect()
+                    }
+                };
+                
+                for (cnt, language) in languages.iter().enumerate() {
                     let formatted_number = format!("{:.*}", 2, language.1);
                     if cnt != 0 && cnt % 3 == 0 {
                         s = s + &format!("\n{}{} ({} %) ", pad, language.0, formatted_number);
