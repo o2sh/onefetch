@@ -24,7 +24,6 @@ in
       homepage = https://github.com/o2sh/onefetch;
       description = ''displays information about your Git project directly on your terminal'';
       license = licenses.mit;
-      platforms = platforms.unix;
       # maintainers = with maintainers; [ kloenk ]; # I'm not a maintainer yet, but maybe I will submit this package, and then I will be a maintainer
     };
   }
