@@ -13,7 +13,7 @@ Onefetch is a command line tool that displays information about your Git project
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/cpp.png" align="left" height="217px" width="420px">
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/dart.png" height="217px" width="420px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/kitty.png" height="217px" width="420px">
 </p>
 
 ## Usage
