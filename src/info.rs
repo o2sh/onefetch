@@ -7,9 +7,11 @@ use std::str::FromStr;
 use colored::{Color, Colorize, ColoredString};
 use git2::Repository;
 use license::License;
+use image::DynamicImage;
 
 use crate::language::Language;
 use crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn};
+use crate::image_backends;
 
 type Result<T> = std::result::Result<T, crate::Error>;
 
@@ -33,6 +35,7 @@ pub struct Info {
     custom_colors: Vec<String>,
     disable_fields: InfoFieldOn,
     bold_enabled: bool,
+    custom_image: Option<DynamicImage>,
 }
 
 impl std::fmt::Display for Info {
@@ -177,27 +180,35 @@ impl std::fmt::Display for Info {
             "   ".on_bright_white(),
         )?;
 
-        let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors(), self.bold_enabled);
+        let center_pad = "   ";
         let mut info_lines = buf.lines();
 
-        let center_pad = "   ";
-        loop {
-            match (logo_lines.next(), info_lines.next()) {
-                (Some(logo_line), Some(info_line)) => {
-                    writeln!(f, "{}{}{:^}", logo_line, center_pad, info_line)?
-                }
-                (Some(logo_line), None) => writeln!(f, "{}", logo_line)?,
-                (None, Some(info_line)) => writeln!(
-                    f,
-                    "{:<width$}{}{:^}",
-                    "",
-                    center_pad,
-                    info_line,
-                    width = logo_lines.width()
-                )?,
-                (None, None) => {
-                    writeln!(f, "\n")?;
-                    break;
+        if let Some(custom_image) = &self.custom_image {
+            if let Some(backend) = image_backends::get_best_backend() {
+                writeln!(f, "{}", backend.add_image(info_lines.map(|s| format!("{}{}", center_pad, s)).collect(), custom_image))?;
+            } else {
+                panic!("No image backend found")
+            }
+        } else {
+            let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors(), self.bold_enabled);
+            loop {
+                match (logo_lines.next(), info_lines.next()) {
+                    (Some(logo_line), Some(info_line)) => {
+                        writeln!(f, "{}{}{:^}", logo_line, center_pad, info_line)?
+                    }
+                    (Some(logo_line), None) => writeln!(f, "{}", logo_line)?,
+                    (None, Some(info_line)) => writeln!(
+                        f,
+                        "{:<width$}{}{:^}",
+                        "",
+                        center_pad,
+                        info_line,
+                        width = logo_lines.width()
+                    )?,
+                    (None, None) => {
+                        writeln!(f, "\n")?;
+                        break;
+                    }
                 }
             }
         }
@@ -213,6 +224,7 @@ impl Info {
         colors: Vec<String>,
         disabled: InfoFieldOn,
         bold_flag: bool,
+        custom_image: Option<DynamicImage>
     ) -> Result<Info> {
         let authors = Info::get_authors(&dir, 3);
         let (git_v, git_user) = Info::get_git_info(&dir);
@@ -247,6 +259,7 @@ impl Info {
             custom_colors: colors,
             disable_fields: disabled,
             bold_enabled: bold_flag,
+            custom_image,
         })
     }
 

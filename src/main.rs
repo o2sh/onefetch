@@ -8,9 +8,13 @@ extern crate clap;
 extern crate strum;
 #[macro_use]
 extern crate strum_macros;
+extern crate image;
 
 #[cfg(target = "windows")]
 extern crate ansi_term;
+
+#[cfg(target_os = "linux")]
+extern crate libc;
 
 use clap::{App, Arg};
 use colored::*;
@@ -25,6 +29,7 @@ use strum::{EnumCount, IntoEnumIterator};
 mod ascii_art;
 mod commit_info;
 mod error;
+mod image_backends;
 mod info;
 mod language;
 
@@ -165,6 +170,12 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .short("l")
                 .long("languages")
                 .help("Prints out supported languages"),
+        ).arg(
+            Arg::with_name("image")
+                .short("i")
+                .long("image")
+                .takes_value(true)
+                .help("Sets a custom image to use instead of the ascii logo"),
         )
         .get_matches();
 
@@ -220,7 +231,13 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
 
     let bold_flag = !matches.is_present("no-bold");
 
-    let info = Info::new(&dir, custom_logo, custom_colors, disable_fields, bold_flag)?;
+    let custom_image = if let Some(image_path) = matches.value_of("image") {
+        Some(image::open(image_path).map_err(|_| Error::ImageLoadError)?)
+    } else {
+        None
+    };
+
+    let info = Info::new(&dir, custom_logo, custom_colors, disable_fields, bold_flag, custom_image)?;
 
     print!("{}", info);
     Ok(())
