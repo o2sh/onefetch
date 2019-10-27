@@ -75,7 +75,7 @@ impl std::fmt::Display for Info {
                 let title = "Languages: ";
                 let pad = " ".repeat(title.len());
                 let mut s = String::from("");
-                let mut languages: Vec<(String, f64)> = {
+                let languages: Vec<(String, f64)> = {
                     let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
                     if self.languages.len() > 6 {
                         let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
