@@ -10,7 +10,7 @@ extern crate strum;
 extern crate strum_macros;
 extern crate image;
 
-#[cfg(target = "windows")]
+#[cfg(target_os = "windows")]
 extern crate ansi_term;
 
 #[cfg(target_os = "linux")]
