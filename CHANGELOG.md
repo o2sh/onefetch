@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Split code into modules #98 @andymac-2 
 * Fixed spacing around Ascii logo #101 @andymac-2 
 * Limit shown languages to 6 #114 @CephalonRho 
-*Fix Output on Windows #86 @spenserblack 
+* Fix Output on Windows #86 @spenserblack 
 
 **Collaborator:**
 
