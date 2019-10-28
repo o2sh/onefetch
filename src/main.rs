@@ -84,8 +84,8 @@ fn main() -> Result<()> {
     #[cfg(not(target = "windows"))]
     let enabled = true;
 
-    if !enabled {
-        colored::control::set_override(false);
+    if enabled {
+        colored::control::set_override(true);
     }
 
     if !is_git_installed() {
