@@ -78,10 +78,10 @@ enum InfoFields {
 }
 
 fn main() -> Result<()> {
-    #[cfg(target = "windows")]
+    #[cfg(target_os = "windows")]
     let enabled = ansi_term::enable_ansi_support().is_ok();
 
-    #[cfg(not(target = "windows"))]
+    #[cfg(not(target_os = "windows"))]
     let enabled = true;
 
     if enabled {
