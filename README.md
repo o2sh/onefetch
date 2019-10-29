@@ -16,20 +16,28 @@ Onefetch is a command line tool that displays information about your Git project
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/kitty.png" height="217px" width="420px">
 </p>
 
-## Usage
+## Installation
+
+### Unix
 
 Clone the repository and install to `/usr/local/bin` with `make install`.
 
 Or get the binary from [here](https://github.com/o2sh/onefetch/releases) and add it to your $PATH.
 
+### Windows
+
+Clone the repository and build with `cargo build --release`. Add the resulting binary to your $PATH.
+
+## Usage
+
 ```sh
-$ onefetch -d /path/of/your/repo
+> onefetch -d /path/of/your/repo
  ```
  Or
  
 ```sh
-$ cd /path/of/your/repo
-$ onefetch
+> cd /path/of/your/repo
+> onefetch
 ```
 
 ## Compatibility
