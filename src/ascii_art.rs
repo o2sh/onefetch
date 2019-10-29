@@ -13,8 +13,9 @@ impl<'a> AsciiArt<'a> {
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
                 lines.pop();
+            } else {
+                break;
             }
-            break;
         }
 
         let (start, end) = lines
