@@ -2,11 +2,10 @@ use std::ffi::OsStr;
 use std::fmt::Write;
 use std::fs;
 use std::process::Command;
-use std::str::FromStr;
 
 use colored::{Color, Colorize, ColoredString};
 use git2::Repository;
-use license::License;
+use license;
 use image::DynamicImage;
 
 use crate::language::Language;
@@ -530,10 +529,9 @@ impl Info {
                             .is_empty())
                 }, // TODO: multiple prefixes, like COPYING?
             )
-            .map(|entry| {
-                license::Kind::from_str(&fs::read_to_string(entry).unwrap_or_else(|_| "".into()))
+            .filter_map(|entry| {
+                license::from_text_ext(&fs::read_to_string(entry).unwrap_or_else(|_| "".into()))
             })
-            .filter_map(std::result::Result::ok)
             .map(|license| license.name().to_string())
             .collect::<Vec<_>>()
             .join(", ");
