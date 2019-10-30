@@ -23,7 +23,7 @@ impl std::fmt::Debug for Error {
             Error::GitNotInstalled => "Git failed to execute",
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory",
-            Error::NotGitRepo => "This is not a Git Repo",
+            Error::NotGitRepo => "Could not find a valid git repo on the current path",
             Error::ReferenceInfoError => "Error while retrieving reference information",
             Error::ImageLoadError => "Could not load the specified image",
         };
