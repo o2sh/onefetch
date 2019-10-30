@@ -326,7 +326,7 @@ impl Info {
     }
 
     fn get_current_commit_info(dir: &str) -> Result<CommitInfo> {
-        let repo = Repository::open(dir).map_err(|_| Error::NotGitRepo)?;
+        let repo = Repository::discover(dir).map_err(|_| Error::NotGitRepo)?;
         let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
         let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
         let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
@@ -350,7 +350,7 @@ impl Info {
     }
 
     fn get_configuration(dir: &str) -> Result<Configuration> {
-        let repo = Repository::open(dir).map_err(|_| Error::NotGitRepo)?;
+        let repo = Repository::discover(dir).map_err(|_| Error::NotGitRepo)?;
         let config = repo.config().map_err(|_| Error::NoGitData)?;
         let mut remote_url = String::new();
         let mut repository_name = String::new();
