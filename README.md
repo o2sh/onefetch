@@ -26,7 +26,7 @@ Or get the binary from [here](https://github.com/o2sh/onefetch/releases) and add
 
 ### Windows
 
-Clone the repository and build with `cargo build --release`. Add the resulting binary to your $PATH.
+Clone the repository and install with `cargo install --path /path/of/onefetch/repo`.
 
 ## Usage
 
