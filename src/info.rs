@@ -438,7 +438,7 @@ impl Info {
         let output = String::from_utf8_lossy(&output.stdout);
         let lines = output.to_string();
         let size_line = lines
-            .split("\n")
+            .split('\n')
             .find(|line| line.starts_with("size-pack:"));
 
         let repo_size = match size_line {
@@ -459,7 +459,7 @@ impl Info {
             let output = String::from_utf8_lossy(&output.stdout);
 
             let lines = output.to_string();
-            let files_list = lines.split("\n");
+            let files_list = lines.split('\n');
             let mut files_count: u128 = 0;
             for _file in files_list {
                 files_count += 1;
