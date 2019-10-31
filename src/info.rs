@@ -288,17 +288,21 @@ impl Info {
         custom_image: Option<DynamicImage>,
         no_merges: bool,
     ) -> Result<Info> {
-        let authors = Info::get_authors(&dir, no_merges, 3);
-        let (git_v, git_user) = Info::get_git_info(&dir);
-        let current_commit_info = Info::get_current_commit_info(&dir)?;
-        let config = Info::get_configuration(&dir)?;
-        let version = Info::get_version(&dir)?;
-        let commits = Info::get_commits(&dir, no_merges)?;
-        let repo_size = Info::get_packed_size(&dir)?;
-        let last_change = Info::get_last_change(&dir)?;
-        let creation_date = Info::get_creation_time(dir)?;
-        let project_license = Info::get_project_license(&dir)?;
-        let (languages_stats, number_of_lines) = Language::get_language_stats(&dir)?;
+        let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
+        let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
+        let workdir_str = workdir.to_str().unwrap();
+
+        let authors = Info::get_authors(workdir_str, no_merges, 3);
+        let (git_v, git_user) = Info::get_git_info(workdir_str);
+        let current_commit_info = Info::get_current_commit_info(&repo)?;
+        let config = Info::get_configuration(&repo)?;
+        let version = Info::get_version(workdir_str)?;
+        let commits = Info::get_commits(workdir_str, no_merges)?;
+        let repo_size = Info::get_packed_size(workdir_str)?;
+        let last_change = Info::get_last_change(workdir_str)?;
+        let creation_date = Info::get_creation_time(workdir_str)?;
+        let project_license = Info::get_project_license(workdir_str)?;
+        let (languages_stats, number_of_lines) = Language::get_language_stats(workdir_str)?;
         let dominant_language = Language::get_dominant_language(languages_stats.clone());
 
         Ok(Info {
@@ -390,8 +394,7 @@ impl Info {
         (version, username)
     }
 
-    fn get_current_commit_info(dir: &str) -> Result<CommitInfo> {
-        let repo = Repository::discover(dir).map_err(|_| Error::NotGitRepo)?;
+    fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
         let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
         let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
         let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
@@ -413,8 +416,7 @@ impl Info {
         Ok(CommitInfo::new(head_oid, refs_info))
     }
 
-    fn get_configuration(dir: &str) -> Result<Configuration> {
-        let repo = Repository::discover(dir).map_err(|_| Error::NotGitRepo)?;
+    fn get_configuration(repo: &Repository) -> Result<Configuration> {
         let config = repo.config().map_err(|_| Error::NoGitData)?;
         let mut remote_url = String::new();
         let mut repository_name = String::new();
