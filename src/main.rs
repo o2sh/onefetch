@@ -181,6 +181,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .help("Sets a custom image to use instead of the ascii logo"),
         ).arg(
             Arg::with_name("no-merges")
+                .short("m")
                 .long("no-merges")
                 .help("Prevents merge commits from being counted"),
         )
