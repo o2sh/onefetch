@@ -86,8 +86,8 @@ impl super::ImageBackend for KittyBackend {
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
             tty_size
         };
-        let width_ratio = tty_size.ws_col as f64 / tty_size.ws_xpixel as f64;
-        let height_ratio = tty_size.ws_row as f64 / tty_size.ws_ypixel as f64;
+        let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
+        let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 
         // resize image to fit the text height with the Lanczos3 algorithm
         let image = image.resize(
@@ -95,8 +95,8 @@ impl super::ImageBackend for KittyBackend {
             (lines.len() as f64 / height_ratio) as u32,
             FilterType::Lanczos3,
         );
-        let _image_columns = width_ratio * image.width() as f64;
-        let image_rows = height_ratio * image.height() as f64;
+        let _image_columns = width_ratio * f64::from(image.width());
+        let image_rows = height_ratio * f64::from(image.height());
 
         // convert the image to rgba samples
         let rgba_image = image.to_rgba();
