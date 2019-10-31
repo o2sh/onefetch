@@ -20,7 +20,7 @@ impl KittyBackend {
             let mut old_attributes: termios = std::mem::zeroed();
             tcgetattr(STDIN_FILENO, &mut old_attributes);
 
-            let mut new_attributes = old_attributes.clone();
+            let mut new_attributes = old_attributes;
             new_attributes.c_lflag &= !ICANON;
             new_attributes.c_lflag &= !ECHO;
             tcsetattr(STDIN_FILENO, TCSANOW, &new_attributes);
