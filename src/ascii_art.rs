@@ -210,7 +210,7 @@ fn add_colored_segment(base: &mut String, segment: &str, color: Color, bold: boo
 
 type ParseResult<'a, R> = Option<(&'a str, R)>;
 
-fn token<'a, R>(s: &'a str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<'a, R> {
+fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R> {
     let token = s.chars().next()?;
     let result = predicate(token)?;
     Some((s.get(1..).unwrap(), result))
