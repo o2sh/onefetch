@@ -519,13 +519,11 @@ impl Info {
             .filter(
                 |entry| {
                     entry.is_file()
-                        && !(entry
+                        && entry
                             .file_name()
                             .map(OsStr::to_string_lossy)
                             .iter()
-                            .filter(|x| x.starts_with("LICENSE") || x.starts_with("COPYING"))
-                            .collect::<Vec<_>>()
-                            .is_empty())
+                            .any(|x| x.starts_with("LICENSE") || x.starts_with("COPYING"))
                 }, // TODO: multiple prefixes, like COPYING?
             )
             .filter_map(|entry| {
