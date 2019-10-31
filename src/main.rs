@@ -1,4 +1,5 @@
 extern crate bytecount;
+
 extern crate colored;
 extern crate git2;
 extern crate license;
@@ -43,7 +44,7 @@ type Result<T> = result::Result<T, Error>;
 
 #[derive(Default)]
 pub struct InfoFieldOn {
-    git_info:bool,
+    git_info: bool,
     project: bool,
     head: bool,
     version: bool,
@@ -142,35 +143,37 @@ fn main() -> Result<()> {
                 .help(&format!(
                     "Specifies a preferred color set. Unspecified colors will remain as default.
 Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
-                "0".black(),
-                "1".red(),
-                "2".green(),
-                "3".yellow(),
-                "4".blue(),
-                "5".magenta(),
-                "6".cyan(),
-                "7".white(),
-                "8".bright_black(),
-                "9".bright_red(),
-                "10".bright_green(),
-                "11".bright_yellow(),
-                "12".bright_blue(),
-                "13".bright_magenta(),
-                "14".bright_cyan(),
-                "15".bright_white(),
-            )))
+                    "0".black(),
+                    "1".red(),
+                    "2".green(),
+                    "3".yellow(),
+                    "4".blue(),
+                    "5".magenta(),
+                    "6".cyan(),
+                    "7".white(),
+                    "8".bright_black(),
+                    "9".bright_red(),
+                    "10".bright_green(),
+                    "11".bright_yellow(),
+                    "12".bright_blue(),
+                    "13".bright_magenta(),
+                    "14".bright_cyan(),
+                    "15".bright_white(),
+                )),
+        )
         .arg(
             Arg::with_name("no-bold")
                 .short("b")
                 .long("no-bold")
-                .help("Turns off bold formatting for the logo and all labels")
-            )
+                .help("Turns off bold formatting for the logo and all labels"),
+        )
         .arg(
             Arg::with_name("languages")
                 .short("l")
                 .long("languages")
                 .help("Prints out supported languages"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("image")
                 .short("i")
                 .long("image")
@@ -184,8 +187,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         .get_matches();
 
     if matches.is_present("languages") {
-        let iterator = Language::iter()
-            .filter(|x| *x != Language::Unknown);
+        let iterator = Language::iter().filter(|x| *x != Language::Unknown);
 
         for l in iterator {
             println!("{}", l);

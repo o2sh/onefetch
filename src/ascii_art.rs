@@ -31,10 +31,10 @@ impl<'a> AsciiArt<'a> {
 
         AsciiArt {
             content: Box::new(lines.into_iter()),
-            colors: colors,
-            bold: bold,
-            start: start,
-            end: end,
+            colors,
+            bold,
+            start,
+            end,
         }
     }
     pub fn width(&self) -> usize {
@@ -155,7 +155,7 @@ impl<'a> Tokens<'a> {
         })
     }
     /// render a truncated line of tokens.
-    fn render(self, colors: &Vec<Color>, start: usize, end: usize, bold: bool) -> String {
+    fn render(self, colors: &[Color], start: usize, end: usize, bold: bool) -> String {
         assert!(start <= end);
         let mut width = end - start;
         let mut colored_segment = String::new();
@@ -169,7 +169,7 @@ impl<'a> Tokens<'a> {
                     colored_segment.push(chr);
                 }
                 Token::Color(col) => {
-                    add_colored_segment(&mut whole_string, &colored_segment, color, bold);
+                    add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
                     colored_segment = String::new();
                     color = colors.get(col as usize).unwrap_or(&Color::White);
                 }
@@ -180,7 +180,7 @@ impl<'a> Tokens<'a> {
             };
         });
 
-        add_colored_segment(&mut whole_string, &colored_segment, color, bold);
+        add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
         (0..width).for_each(|_| whole_string.push(' '));
         whole_string
     }
@@ -198,8 +198,8 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     }
 }
 
-fn add_colored_segment(base: &mut String, segment: &String, color: &Color, bold: bool) {
-    let mut colored_segment = segment.color(*color);
+fn add_colored_segment(base: &mut String, segment: &str, color: Color, bold: bool) {
+    let mut colored_segment = segment.color(color);
     if bold {
         colored_segment = colored_segment.bold();
     }
@@ -210,7 +210,7 @@ fn add_colored_segment(base: &mut String, segment: &String, color: &Color, bold:
 
 type ParseResult<'a, R> = Option<(&'a str, R)>;
 
-fn token<'a, R>(s: &'a str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<'a, R> {
+fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R> {
     let token = s.chars().next()?;
     let result = predicate(token)?;
     Some((s.get(1..).unwrap(), result))
@@ -267,7 +267,7 @@ mod test {
         let colors_shim = Vec::new();
 
         assert_eq!(
-            Tokens("").render(&colors_shim, 0, 0, true), 
+            Tokens("").render(&colors_shim, 0, 0, true),
             "\u{1b}[1;37m\u{1b}[0m"
         );
 
@@ -316,11 +316,11 @@ mod test {
             "\u{1b}[37m     \u{1b}[0m"
         );
     }
-  
+
     #[test]
     fn truncate() {
         assert_eq!(
-            Tokens("").truncate(0, 0).collect::<Vec<_>>(), 
+            Tokens("").truncate(0, 0).collect::<Vec<_>>(),
             Tokens("").collect::<Vec<_>>()
         );
 
@@ -350,7 +350,9 @@ mod test {
         );
 
         assert_eq!(
-            Tokens("  {1} {5}  {9} a").truncate(4, 10).collect::<Vec<_>>(),
+            Tokens("  {1} {5}  {9} a")
+                .truncate(4, 10)
+                .collect::<Vec<_>>(),
             Tokens("{1}{5} {9} a").collect::<Vec<_>>()
         );
     }
