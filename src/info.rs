@@ -88,7 +88,7 @@ impl std::fmt::Display for Info {
                         iter.collect()
                     }
                 };
-                
+
                 for (cnt, language) in languages.iter().enumerate() {
                     let formatted_number = format!("{:.*}", 2, language.1);
                     if cnt != 0 && cnt % 3 == 0 {
@@ -223,14 +223,15 @@ impl Info {
         colors: Vec<String>,
         disabled: InfoFieldOn,
         bold_flag: bool,
-        custom_image: Option<DynamicImage>
+        custom_image: Option<DynamicImage>,
+        no_merges: bool,
     ) -> Result<Info> {
         let authors = Info::get_authors(&dir, 3);
         let (git_v, git_user) = Info::get_git_info(&dir);
         let current_commit_info = Info::get_current_commit_info(&dir)?;
         let config = Info::get_configuration(&dir)?;
         let version = Info::get_version(&dir)?;
-        let commits = Info::get_commits(&dir)?;
+        let commits = Info::get_commits(&dir, no_merges)?;
         let repo_size = Info::get_packed_size(&dir)?;
         let last_change = Info::get_last_change(&dir)?;
         let creation_date = Info::get_creation_time(dir)?;
@@ -407,13 +408,15 @@ impl Info {
         }
     }
 
-    fn get_commits(dir: &str) -> Result<String> {
+    fn get_commits(dir: &str, no_merges: bool) -> Result<String> {
+        let mut args = vec!["-C", dir, "rev-list", "--count"];
+        if no_merges {
+            args.push("--no-merges");
+        }
+        args.push("HEAD");
+
         let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("rev-list")
-            .arg("--count")
-            .arg("HEAD")
+            .args(args)
             .output()
             .expect("Failed to execute git.");
 

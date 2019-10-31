@@ -176,6 +176,10 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .long("image")
                 .takes_value(true)
                 .help("Sets a custom image to use instead of the ascii logo"),
+        ).arg(
+            Arg::with_name("no-merges")
+                .long("no-merges")
+                .help("Prevents merge commits from being counted"),
         )
         .get_matches();
 
@@ -237,7 +241,17 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         None
     };
 
-    let info = Info::new(&dir, custom_logo, custom_colors, disable_fields, bold_flag, custom_image)?;
+    let no_merges = matches.is_present("no-merges");
+
+    let info = Info::new(
+        &dir,
+        custom_logo,
+        custom_colors,
+        disable_fields,
+        bold_flag,
+        custom_image,
+        no_merges,
+    )?;
 
     print!("{}", info);
     Ok(())
