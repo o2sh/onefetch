@@ -244,7 +244,7 @@ impl Info {
             project_name: config.repository_name,
             current_commit: current_commit_info,
             version,
-            creation_date: creation_date,
+            creation_date,
             dominant_language,
             languages: languages_stats,
             authors,

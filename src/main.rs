@@ -1,4 +1,5 @@
 extern crate bytecount;
+
 extern crate colored;
 extern crate git2;
 extern crate license;

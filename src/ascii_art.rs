@@ -31,10 +31,10 @@ impl<'a> AsciiArt<'a> {
 
         AsciiArt {
             content: Box::new(lines.into_iter()),
-            colors: colors,
-            bold: bold,
-            start: start,
-            end: end,
+            colors,
+            bold,
+            start,
+            end,
         }
     }
     pub fn width(&self) -> usize {
