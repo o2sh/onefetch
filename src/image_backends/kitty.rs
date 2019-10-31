@@ -64,7 +64,7 @@ impl KittyBackend {
                 }
             }
         });
-        if let Ok(_) = receiver.recv_timeout(Duration::from_millis(50)) {
+        if receiver.recv_timeout(Duration::from_millis(50)).is_ok() {
             unsafe {
                 tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
             }
