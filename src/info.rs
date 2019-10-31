@@ -465,7 +465,7 @@ impl Info {
                 files_count += 1;
             }
             files_count -= 1; // As splitting giving one line extra(blank).
-            let res = repo_size.to_owned() + &(" (") + &(files_count.to_string()) + &(" files)");
+            let res = repo_size.to_owned() + (" (") + &(files_count.to_string()) + (" files)");
             Ok(res.into())
         } else {
             let res = repo_size;
