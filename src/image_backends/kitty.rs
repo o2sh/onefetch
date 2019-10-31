@@ -52,9 +52,7 @@ impl KittyBackend {
                 if allowed_bytes.contains(&byte) {
                     buf.push(byte);
                 }
-                if buf.starts_with(&[0x1B, b'_', b'G'])
-                    && buf.ends_with(&[0x1B, b'\\'])
-                {
+                if buf.starts_with(&[0x1B, b'_', b'G']) && buf.ends_with(&[0x1B, b'\\']) {
                     sender.send(()).unwrap();
                     return;
                 }
@@ -108,7 +106,7 @@ impl super::ImageBackend for KittyBackend {
             image.width() as usize * image.height() as usize * 4,
             raw_image.len()
         );
-        
+
         let encoded_image = base64::encode(&raw_image); // image data is base64 encoded
         let mut image_data = Vec::<u8>::new();
         for chunk in encoded_image.as_bytes().chunks(4096) {

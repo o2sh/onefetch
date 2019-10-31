@@ -3,14 +3,14 @@ use std::fmt::Write;
 use std::fs;
 use std::process::Command;
 
-use colored::{Color, Colorize, ColoredString};
+use colored::{Color, ColoredString, Colorize};
 use git2::Repository;
-use license;
 use image::DynamicImage;
+use license;
 
+use crate::image_backends;
 use crate::language::Language;
 use crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn};
-use crate::image_backends;
 
 type Result<T> = std::result::Result<T, crate::Error>;
 
@@ -44,32 +44,60 @@ impl std::fmt::Display for Info {
             Some(&c) => c,
             None => Color::White,
         };
-        if !self.disable_fields.git_info{
+        if !self.disable_fields.git_info {
             let git_info_length;
             if self.git_username != "" {
                 git_info_length = self.git_username.len() + self.git_version.len() + 3;
-                write!(&mut buf, "{} ~ ", &self.get_formatted_info_label(&self.git_username, color))?;
+                write!(
+                    &mut buf,
+                    "{} ~ ",
+                    &self.get_formatted_info_label(&self.git_username, color)
+                )?;
             } else {
                 git_info_length = self.git_version.len();
             }
-            write_buf(&mut buf, &self.get_formatted_info_label(&self.git_version, color), "")?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label(&self.git_version, color),
+                "",
+            )?;
             let separator = "-".repeat(git_info_length);
-            write_buf(&mut buf, &self.get_formatted_info_label("", color), &separator)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("", color),
+                &separator,
+            )?;
         }
         if !self.disable_fields.project {
-            write_buf(&mut buf, &self.get_formatted_info_label("Project: ", color), &self.project_name)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Project: ", color),
+                &self.project_name,
+            )?;
         }
 
         if !self.disable_fields.head {
-            write_buf(&mut buf, &self.get_formatted_info_label("HEAD: ", color), &self.current_commit)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("HEAD: ", color),
+                &self.current_commit,
+            )?;
         }
 
         if !self.disable_fields.version {
-            write_buf(&mut buf, &self.get_formatted_info_label("Version: ", color), &self.version)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Version: ", color),
+                &self.version,
+            )?;
         }
 
         if !self.disable_fields.created {
-            write_buf(&mut buf, &self.get_formatted_info_label("Created: ", color), &self.creation_date)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Created: ", color),
+                &self.creation_date,
+            )?;
         }
 
         if !self.disable_fields.languages && !self.languages.is_empty() {
@@ -88,7 +116,7 @@ impl std::fmt::Display for Info {
                         iter.collect()
                     }
                 };
-                
+
                 for (cnt, language) in languages.iter().enumerate() {
                     let formatted_number = format!("{:.*}", 2, language.1);
                     if cnt != 0 && cnt % 3 == 0 {
@@ -99,7 +127,11 @@ impl std::fmt::Display for Info {
                 }
                 writeln!(buf, "{}{}", &self.get_formatted_info_label(title, color), s)?;
             } else {
-                write_buf(&mut buf, &self.get_formatted_info_label("Language: ", color), &self.dominant_language)?;
+                write_buf(
+                    &mut buf,
+                    &self.get_formatted_info_label("Language: ", color),
+                    &self.dominant_language,
+                )?;
             };
         }
 
@@ -122,7 +154,6 @@ impl std::fmt::Display for Info {
             let title = " ".repeat(title.len());
 
             for author in self.authors.iter().skip(1) {
-
                 writeln!(
                     buf,
                     "{}{}% {} {}",
@@ -135,27 +166,51 @@ impl std::fmt::Display for Info {
         }
 
         if !self.disable_fields.last_change {
-            write_buf(&mut buf, &self.get_formatted_info_label("Last change: ", color), &self.last_change)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Last change: ", color),
+                &self.last_change,
+            )?;
         }
 
         if !self.disable_fields.repo {
-            write_buf(&mut buf, &self.get_formatted_info_label("Repo: ", color), &self.repo)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Repo: ", color),
+                &self.repo,
+            )?;
         }
 
         if !self.disable_fields.commits {
-            write_buf(&mut buf, &self.get_formatted_info_label("Commits: ", color), &self.commits)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Commits: ", color),
+                &self.commits,
+            )?;
         }
 
         if !self.disable_fields.lines_of_code {
-            write_buf(&mut buf, &self.get_formatted_info_label("Lines of code: ", color), &self.number_of_lines)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Lines of code: ", color),
+                &self.number_of_lines,
+            )?;
         }
 
         if !self.disable_fields.size {
-            write_buf(&mut buf, &self.get_formatted_info_label("Size: ", color), &self.repo_size)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Size: ", color),
+                &self.repo_size,
+            )?;
         }
 
         if !self.disable_fields.license {
-            write_buf(&mut buf, &self.get_formatted_info_label("License: ", color), &self.license)?;
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("License: ", color),
+                &self.license,
+            )?;
         }
 
         writeln!(
@@ -184,7 +239,14 @@ impl std::fmt::Display for Info {
 
         if let Some(custom_image) = &self.custom_image {
             if let Some(backend) = image_backends::get_best_backend() {
-                writeln!(f, "{}", backend.add_image(info_lines.map(|s| format!("{}{}", center_pad, s)).collect(), custom_image))?;
+                writeln!(
+                    f,
+                    "{}",
+                    backend.add_image(
+                        info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                        custom_image
+                    )
+                )?;
             } else {
                 panic!("No image backend found")
             }
@@ -223,7 +285,7 @@ impl Info {
         colors: Vec<String>,
         disabled: InfoFieldOn,
         bold_flag: bool,
-        custom_image: Option<DynamicImage>
+        custom_image: Option<DynamicImage>,
     ) -> Result<Info> {
         let authors = Info::get_authors(&dir, 3);
         let (git_v, git_user) = Info::get_git_info(&dir);
@@ -306,12 +368,12 @@ impl Info {
         authors
     }
 
-    fn get_git_info(dir: &str) -> (String, String){
+    fn get_git_info(dir: &str) -> (String, String) {
         let version = Command::new("git")
             .arg("--version")
             .output()
             .expect("Failed to execute git.");
-        let version = String::from_utf8_lossy(&version.stdout).replace('\n',"");
+        let version = String::from_utf8_lossy(&version.stdout).replace('\n', "");
 
         let username = Command::new("git")
             .arg("-C")
@@ -321,7 +383,7 @@ impl Info {
             .arg("user.name")
             .output()
             .expect("Failed to execute git.");
-        let username = String::from_utf8_lossy(&username.stdout).replace('\n',"");
+        let username = String::from_utf8_lossy(&username.stdout).replace('\n', "");
         (version, username)
     }
 

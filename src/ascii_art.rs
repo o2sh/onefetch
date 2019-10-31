@@ -267,7 +267,7 @@ mod test {
         let colors_shim = Vec::new();
 
         assert_eq!(
-            Tokens("").render(&colors_shim, 0, 0, true), 
+            Tokens("").render(&colors_shim, 0, 0, true),
             "\u{1b}[1;37m\u{1b}[0m"
         );
 
@@ -316,11 +316,11 @@ mod test {
             "\u{1b}[37m     \u{1b}[0m"
         );
     }
-  
+
     #[test]
     fn truncate() {
         assert_eq!(
-            Tokens("").truncate(0, 0).collect::<Vec<_>>(), 
+            Tokens("").truncate(0, 0).collect::<Vec<_>>(),
             Tokens("").collect::<Vec<_>>()
         );
 
@@ -350,7 +350,9 @@ mod test {
         );
 
         assert_eq!(
-            Tokens("  {1} {5}  {9} a").truncate(4, 10).collect::<Vec<_>>(),
+            Tokens("  {1} {5}  {9} a")
+                .truncate(4, 10)
+                .collect::<Vec<_>>(),
             Tokens("{1}{5} {9} a").collect::<Vec<_>>()
         );
     }
