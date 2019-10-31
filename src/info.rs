@@ -331,7 +331,6 @@ impl Info {
         let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
         let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
         let refs_info = refs
-            .into_iter()
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
                     (Some(oid), Some(shorthand)) if oid == head_oid => {
@@ -466,7 +465,7 @@ impl Info {
             }
             files_count -= 1; // As splitting giving one line extra(blank).
             let res = repo_size.to_owned() + (" (") + &(files_count.to_string()) + (" files)");
-            Ok(res.into())
+            Ok(res)
         } else {
             let res = repo_size;
             Ok(res.into())
