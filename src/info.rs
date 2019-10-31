@@ -286,13 +286,14 @@ impl Info {
         disabled: InfoFieldOn,
         bold_flag: bool,
         custom_image: Option<DynamicImage>,
+        no_merges: bool,
     ) -> Result<Info> {
-        let authors = Info::get_authors(&dir, 3);
+        let authors = Info::get_authors(&dir, no_merges, 3);
         let (git_v, git_user) = Info::get_git_info(&dir);
         let current_commit_info = Info::get_current_commit_info(&dir)?;
         let config = Info::get_configuration(&dir)?;
         let version = Info::get_version(&dir)?;
-        let commits = Info::get_commits(&dir)?;
+        let commits = Info::get_commits(&dir, no_merges)?;
         let repo_size = Info::get_packed_size(&dir)?;
         let last_change = Info::get_last_change(&dir)?;
         let creation_date = Info::get_creation_time(dir)?;
@@ -325,12 +326,14 @@ impl Info {
     }
 
     // Return first n most active commiters as authors within this project.
-    fn get_authors(dir: &str, n: usize) -> Vec<(String, usize, usize)> {
+    fn get_authors(dir: &str, no_merges: bool, n: usize) -> Vec<(String, usize, usize)> {
+        let mut args = vec!["-C", dir, "log", "--format='%aN'"];
+        if no_merges {
+            args.push("--no-merges");
+        }
+
         let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("log")
-            .arg("--format='%aN'")
+            .args(args)
             .output()
             .expect("Failed to execute git.");
 
@@ -468,13 +471,15 @@ impl Info {
         }
     }
 
-    fn get_commits(dir: &str) -> Result<String> {
+    fn get_commits(dir: &str, no_merges: bool) -> Result<String> {
+        let mut args = vec!["-C", dir, "rev-list", "--count"];
+        if no_merges {
+            args.push("--no-merges");
+        }
+        args.push("HEAD");
+
         let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("rev-list")
-            .arg("--count")
-            .arg("HEAD")
+            .args(args)
             .output()
             .expect("Failed to execute git.");
 
