@@ -110,7 +110,14 @@ fn main() -> Result<()> {
                 .long("ascii_language")
                 .takes_value(true)
                 .default_value("")
-                .help("Overrides showing the dominant language ascii logo"),
+                .help(&format!(
+                    "Overrides showing the dominant language ascii logo. Possible values: [{}]",
+                    Language::iter()
+                        .filter(|language| *language != Language::Unknown)
+                        .map(|language| language.to_string().to_lowercase())
+                        .collect::<Vec<String>>()
+                        .join(", ")
+                )),
         )
         .arg(
             Arg::with_name("disable_field")
@@ -179,7 +186,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .long("image")
                 .takes_value(true)
                 .help("Sets a custom image to use instead of the ascii logo"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("no-merges")
                 .short("m")
                 .long("no-merges")
