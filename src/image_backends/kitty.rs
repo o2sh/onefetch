@@ -46,14 +46,14 @@ impl KittyBackend {
         let (stop_sender, stop_receiver) = mpsc::channel::<()>();
         std::thread::spawn(move || {
             let mut buf = Vec::<u8>::new();
-            let allowed_bytes = [0x1B, '_' as u8, 'G' as u8, '\\' as u8];
+            let allowed_bytes = [0x1B, b'_', b'G', b'\\'];
             for byte in std::io::stdin().lock().bytes() {
                 let byte = byte.unwrap();
                 if allowed_bytes.contains(&byte) {
                     buf.push(byte);
                 }
-                if buf.starts_with(&[0x1B, '_' as u8, 'G' as u8])
-                    && buf.ends_with(&[0x1B, '\\' as u8])
+                if buf.starts_with(&[0x1B, b'_', b'G'])
+                    && buf.ends_with(&[0x1B, b'\\'])
                 {
                     sender.send(()).unwrap();
                     return;
