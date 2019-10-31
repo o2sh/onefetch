@@ -14,7 +14,7 @@ impl CommitInfo {
 impl std::fmt::Display for CommitInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let short_commit = self.commit.to_string().chars().take(7).collect::<String>();
-        if self.refs.len() > 0 {
+        if !self.refs.is_empty() {
             let refs_str = self
                 .refs
                 .iter()
