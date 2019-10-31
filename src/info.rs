@@ -226,7 +226,7 @@ impl Info {
         custom_image: Option<DynamicImage>,
         no_merges: bool,
     ) -> Result<Info> {
-        let authors = Info::get_authors(&dir, 3);
+        let authors = Info::get_authors(&dir, no_merges, 3);
         let (git_v, git_user) = Info::get_git_info(&dir);
         let current_commit_info = Info::get_current_commit_info(&dir)?;
         let config = Info::get_configuration(&dir)?;
@@ -264,12 +264,14 @@ impl Info {
     }
 
     // Return first n most active commiters as authors within this project.
-    fn get_authors(dir: &str, n: usize) -> Vec<(String, usize, usize)> {
+    fn get_authors(dir: &str, no_merges: bool, n: usize) -> Vec<(String, usize, usize)> {
+        let mut args = vec!["-C", dir, "log", "--format='%aN'"];
+        if no_merges {
+            args.push("--no-merges");
+        }
+
         let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("log")
-            .arg("--format='%aN'")
+            .args(args)
             .output()
             .expect("Failed to execute git.");
 
