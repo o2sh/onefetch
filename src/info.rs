@@ -48,7 +48,7 @@ impl std::fmt::Display for Info {
             let git_info_length;
             if self.git_username != "" {
                 git_info_length = self.git_username.len() + self.git_version.len() + 3;
-                write!(&mut buf, "{}{}", &self.get_formatted_info_label(&self.git_username, color), " ~ ")?;
+                write!(&mut buf, "{} ~ ", &self.get_formatted_info_label(&self.git_username, color))?;
             } else {
                 git_info_length = self.git_version.len();
             }
