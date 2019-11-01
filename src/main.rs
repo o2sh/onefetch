@@ -93,6 +93,11 @@ fn main() -> Result<()> {
         return Err(Error::GitNotInstalled);
     }
 
+    let possible_languages: Vec<String> = Language::iter()
+        .filter(|language| *language != Language::Unknown)
+        .map(|language| language.to_string().to_lowercase())
+        .collect();
+
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author("o2sh <ossama-hjaji@live.fr>")
@@ -110,14 +115,13 @@ fn main() -> Result<()> {
                 .long("ascii_language")
                 .takes_value(true)
                 .default_value("")
-                .help(&format!(
-                    "Overrides showing the dominant language ascii logo. Possible values: [{}]",
-                    Language::iter()
-                        .filter(|language| *language != Language::Unknown)
-                        .map(|language| language.to_string().to_lowercase())
-                        .collect::<Vec<String>>()
-                        .join(", ")
-                )),
+                .possible_values(
+                    &possible_languages
+                        .iter()
+                        .map(|l| l.as_str())
+                        .collect::<Vec<&str>>(),
+                )
+                .help("Overrides showing the dominant language ascii logo."),
         )
         .arg(
             Arg::with_name("disable_field")
