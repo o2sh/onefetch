@@ -11,6 +11,8 @@ pub enum Error {
     /// Not in a Git Repo
     NotGitRepo,
     /// Error while getting branch info
+    BareGitRepo,
+    /// Repository is a bare git repo
     ReferenceInfoError,
     /// Image probably doesn't exist or has wrong format
     ImageLoadError,
@@ -24,6 +26,7 @@ impl std::fmt::Debug for Error {
             Error::NoGitData => "Could not retrieve git configuration data",
             Error::ReadDirectory => "Could not read directory",
             Error::NotGitRepo => "Could not find a valid git repo on the current path",
+            Error::BareGitRepo => "Unable to run onefetch on bare git repos",
             Error::ReferenceInfoError => "Error while retrieving reference information",
             Error::ImageLoadError => "Could not load the specified image",
         };

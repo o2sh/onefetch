@@ -288,17 +288,21 @@ impl Info {
         custom_image: Option<DynamicImage>,
         no_merges: bool,
     ) -> Result<Info> {
-        let authors = Info::get_authors(&dir, no_merges, 3);
-        let (git_v, git_user) = Info::get_git_info(&dir);
-        let current_commit_info = Info::get_current_commit_info(&dir)?;
-        let config = Info::get_configuration(&dir)?;
-        let version = Info::get_version(&dir)?;
-        let commits = Info::get_commits(&dir, no_merges)?;
-        let repo_size = Info::get_packed_size(&dir)?;
-        let last_change = Info::get_last_change(&dir)?;
-        let creation_date = Info::get_creation_time(dir)?;
-        let project_license = Info::get_project_license(&dir)?;
-        let (languages_stats, number_of_lines) = Language::get_language_stats(&dir)?;
+        let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
+        let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
+        let workdir_str = workdir.to_str().unwrap();
+
+        let config = Info::get_configuration(&repo)?;
+        let current_commit_info = Info::get_current_commit_info(&repo)?;
+        let authors = Info::get_authors(workdir_str, no_merges, 3);
+        let (git_v, git_user) = Info::get_git_info(workdir_str);
+        let version = Info::get_version(workdir_str)?;
+        let commits = Info::get_commits(workdir_str, no_merges)?;
+        let repo_size = Info::get_packed_size(workdir_str)?;
+        let last_change = Info::get_last_change(workdir_str)?;
+        let creation_date = Info::get_creation_time(workdir_str)?;
+        let project_license = Info::get_project_license(workdir_str)?;
+        let (languages_stats, number_of_lines) = Language::get_language_stats(workdir_str)?;
         let dominant_language = Language::get_dominant_language(languages_stats.clone());
 
         Ok(Info {
@@ -323,6 +327,66 @@ impl Info {
             bold_enabled: bold_flag,
             custom_image,
         })
+    }
+
+    fn get_configuration(repo: &Repository) -> Result<Configuration> {
+        let config = repo.config().map_err(|_| Error::NoGitData)?;
+        let mut remote_url = String::new();
+        let mut repository_name = String::new();
+        let mut remote_upstream: Option<String> = None;
+
+        for entry in &config.entries(None).unwrap() {
+            let entry = entry.unwrap();
+            match entry.name().unwrap() {
+                "remote.origin.url" => remote_url = entry.value().unwrap().to_string(),
+                "remote.upstream.url" => remote_upstream = Some(entry.value().unwrap().to_string()),
+                _ => (),
+            }
+        }
+
+        if let Some(url) = remote_upstream {
+            remote_url = url.clone();
+        }
+
+        let url = remote_url.clone();
+        let name_parts: Vec<&str> = url.split('/').collect();
+
+        if !name_parts.is_empty() {
+            repository_name = name_parts[name_parts.len() - 1].to_string();
+        }
+
+        if repository_name.contains(".git") {
+            let repo_name = repository_name.clone();
+            let parts: Vec<&str> = repo_name.split(".git").collect();
+            repository_name = parts[0].to_string();
+        }
+
+        Ok(Configuration {
+            repository_name: repository_name.clone(),
+            repository_url: name_parts.join("/"),
+        })
+    }
+
+    fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
+        let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
+        let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
+        let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
+        let refs_info = refs
+            .filter_map(|reference| match reference {
+                Ok(reference) => match (reference.target(), reference.shorthand()) {
+                    (Some(oid), Some(shorthand)) if oid == head_oid => {
+                        Some(if reference.is_tag() {
+                            String::from("tags/") + shorthand
+                        } else {
+                            String::from(shorthand)
+                        })
+                    }
+                    _ => None,
+                },
+                Err(_) => None,
+            })
+            .collect::<Vec<String>>();
+        Ok(CommitInfo::new(head_oid, refs_info))
     }
 
     // Return first n most active commiters as authors within this project.
@@ -388,68 +452,6 @@ impl Info {
             .expect("Failed to execute git.");
         let username = String::from_utf8_lossy(&username.stdout).replace('\n', "");
         (version, username)
-    }
-
-    fn get_current_commit_info(dir: &str) -> Result<CommitInfo> {
-        let repo = Repository::discover(dir).map_err(|_| Error::NotGitRepo)?;
-        let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
-        let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
-        let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
-        let refs_info = refs
-            .filter_map(|reference| match reference {
-                Ok(reference) => match (reference.target(), reference.shorthand()) {
-                    (Some(oid), Some(shorthand)) if oid == head_oid => {
-                        Some(if reference.is_tag() {
-                            String::from("tags/") + shorthand
-                        } else {
-                            String::from(shorthand)
-                        })
-                    }
-                    _ => None,
-                },
-                Err(_) => None,
-            })
-            .collect::<Vec<String>>();
-        Ok(CommitInfo::new(head_oid, refs_info))
-    }
-
-    fn get_configuration(dir: &str) -> Result<Configuration> {
-        let repo = Repository::discover(dir).map_err(|_| Error::NotGitRepo)?;
-        let config = repo.config().map_err(|_| Error::NoGitData)?;
-        let mut remote_url = String::new();
-        let mut repository_name = String::new();
-        let mut remote_upstream: Option<String> = None;
-
-        for entry in &config.entries(None).unwrap() {
-            let entry = entry.unwrap();
-            match entry.name().unwrap() {
-                "remote.origin.url" => remote_url = entry.value().unwrap().to_string(),
-                "remote.upstream.url" => remote_upstream = Some(entry.value().unwrap().to_string()),
-                _ => (),
-            }
-        }
-
-        if let Some(url) = remote_upstream {
-            remote_url = url.clone();
-        }
-
-        let url = remote_url.clone();
-        let name_parts: Vec<&str> = url.split('/').collect();
-
-        if !name_parts.is_empty() {
-            repository_name = name_parts[name_parts.len() - 1].to_string();
-        }
-
-        if repository_name.contains(".git") {
-            let repo_name = repository_name.clone();
-            let parts: Vec<&str> = repo_name.split(".git").collect();
-            repository_name = parts[0].to_string();
-        }
-
-        Ok(Configuration {
-            repository_name: repository_name.clone(),
-            repository_url: name_parts.join("/"),
-        })
     }
 
     fn get_version(dir: &str) -> Result<String> {
