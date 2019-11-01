@@ -232,9 +232,10 @@ impl Language {
             Language::Forth => vec![Color::BrightRed],
             Language::FortranModern => vec![
                 Color::BrightWhite,
-                Color::BrightRed,
                 Color::BrightGreen,
-                Color::BrightBlue
+                Color::BrightBlue,
+                Color::BrightYellow,
+                Color::BrightRed
             ],
             Language::FSharp => vec![Color::BrightBlue, Color::Cyan],
             Language::Go => vec![Color::White],
