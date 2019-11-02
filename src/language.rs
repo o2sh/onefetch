@@ -365,6 +365,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::Kotlin,
         tokei::LanguageType::Lisp,
         tokei::LanguageType::Lua,
+        tokei::LanguageType::Markdown,
         tokei::LanguageType::Nim,
         tokei::LanguageType::ObjectiveC,
         tokei::LanguageType::Perl,
