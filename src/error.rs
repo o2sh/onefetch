@@ -16,6 +16,8 @@ pub enum Error {
     ReferenceInfoError,
     /// Image probably doesn't exist or has wrong format
     ImageLoadError,
+    /// Could not initialize the license detector
+    LicenseDetectorError,
 }
 
 impl std::fmt::Debug for Error {
@@ -29,6 +31,7 @@ impl std::fmt::Debug for Error {
             Error::BareGitRepo => "Unable to run onefetch on bare git repos",
             Error::ReferenceInfoError => "Error while retrieving reference information",
             Error::ImageLoadError => "Could not load the specified image",
+            Error::LicenseDetectorError => "Could not initialize the license detector",
         };
         write!(f, "{}", content)
     }
