@@ -596,9 +596,8 @@ impl Info {
                 }, // TODO: multiple prefixes, like COPYING?
             )
             .filter_map(|entry| {
-                license::from_text_ext(&fs::read_to_string(entry).unwrap_or_else(|_| "".into()))
+                license::from_text(&fs::read_to_string(entry).unwrap_or_else(|_| "".into()))
             })
-            .map(|license| license.name().to_string())
             .collect::<Vec<_>>()
             .join(", ");
 
