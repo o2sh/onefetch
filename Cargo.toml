@@ -19,6 +19,9 @@ strum = "0.16.0"
 strum_macros = "0.16.0"
 image = "0.22.3"
 
+[build-dependencies]
+askalono = "0.3.0"
+
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
 

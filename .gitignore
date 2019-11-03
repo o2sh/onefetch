@@ -13,3 +13,6 @@
 
 # nix result from nix-build
 result
+
+# generated license cache
+resources/licenses/cache.bin.gz

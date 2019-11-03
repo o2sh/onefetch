@@ -4,7 +4,7 @@ use crate::Error;
 
 type Result<T> = std::result::Result<T, Error>;
 
-static CACHE_DATA: &[u8] = include_bytes!("../resources/license-cache.bin.gz");
+static CACHE_DATA: &[u8] = include_bytes!("../resources/licenses/cache.bin.gz");
 
 pub struct Detector {
     store: Store,
