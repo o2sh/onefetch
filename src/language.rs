@@ -11,7 +11,9 @@ pub enum Language {
     C,
     Clojure,
     CoffeeScript,
+    #[strum(serialize = "c++")]
     Cpp,
+    #[strum(serialize = "c#")]
     Csharp,
     CSS,
     Dart,
@@ -31,6 +33,7 @@ pub enum Language {
     Lisp,
     Lua,
     Nim,
+    #[strum(serialize = "objective-c")]
     ObjectiveC,
     Perl,
     Php,
@@ -60,8 +63,8 @@ impl std::fmt::Display for Language {
             Language::C => write!(f, "C"),
             Language::Clojure => write!(f, "Clojure"),
             Language::CoffeeScript => write!(f, "CoffeeScript"),
-            Language::Cpp => write!(f, "Cpp"),
-            Language::Csharp => write!(f, "Csharp"),
+            Language::Cpp => write!(f, "C++"),
+            Language::Csharp => write!(f, "C#"),
             Language::CSS => write!(f, "CSS"),
             Language::Dart => write!(f, "Dart"),
             Language::Elixir => write!(f, "Elixir"),
@@ -80,7 +83,7 @@ impl std::fmt::Display for Language {
             Language::Lisp => write!(f, "Lisp"),
             Language::Lua => write!(f, "Lua"),
             Language::Nim => write!(f, "Nim"),
-            Language::ObjectiveC => write!(f, "ObjectiveC"),
+            Language::ObjectiveC => write!(f, "Objective-C"),
             Language::PureScript => write!(f, "PureScript"),
             Language::Python => write!(f, "Python"),
             Language::R => write!(f, "R"),

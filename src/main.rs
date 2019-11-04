@@ -114,13 +114,14 @@ fn main() -> Result<()> {
                 .short("a")
                 .long("ascii_language")
                 .takes_value(true)
-                .default_value("")
+                .default_value("rust")
                 .possible_values(
                     &possible_languages
                         .iter()
                         .map(|l| l.as_str())
                         .collect::<Vec<&str>>(),
                 )
+                .case_insensitive(true)
                 .help("Overrides showing the dominant language ascii logo."),
         )
         .arg(
