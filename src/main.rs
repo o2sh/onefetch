@@ -114,7 +114,6 @@ fn main() -> Result<()> {
                 .short("a")
                 .long("ascii_language")
                 .takes_value(true)
-                .default_value("rust")
                 .possible_values(
                     &possible_languages
                         .iter()
@@ -210,9 +209,11 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     }
 
     let dir = String::from(matches.value_of("directory").unwrap());
-    let custom_logo: Language =
-        Language::from_str(&matches.value_of("ascii_language").unwrap().to_lowercase())
-            .unwrap_or(Language::Unknown);
+    let custom_logo: Language = if let Some(ascii_language) = matches.value_of("ascii_language") {
+        Language::from_str(&ascii_language.to_lowercase()).unwrap()
+    } else {
+        Language::Unknown
+    };
     let mut disable_fields = InfoFieldOn {
         ..Default::default()
     };
