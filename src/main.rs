@@ -93,6 +93,11 @@ fn main() -> Result<()> {
         return Err(Error::GitNotInstalled);
     }
 
+    let possible_languages: Vec<String> = Language::iter()
+        .filter(|language| *language != Language::Unknown)
+        .map(|language| language.to_string().to_lowercase())
+        .collect();
+
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author("o2sh <ossama-hjaji@live.fr>")
@@ -109,8 +114,14 @@ fn main() -> Result<()> {
                 .short("a")
                 .long("ascii_language")
                 .takes_value(true)
-                .default_value("")
-                .help("Overrides showing the dominant language ascii logo"),
+                .possible_values(
+                    &possible_languages
+                        .iter()
+                        .map(|l| l.as_str())
+                        .collect::<Vec<&str>>(),
+                )
+                .case_insensitive(true)
+                .help("Overrides showing the dominant language ascii logo."),
         )
         .arg(
             Arg::with_name("disable_field")
@@ -179,7 +190,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .long("image")
                 .takes_value(true)
                 .help("Sets a custom image to use instead of the ascii logo"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("no-merges")
                 .short("m")
                 .long("no-merges")
@@ -197,9 +209,11 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     }
 
     let dir = String::from(matches.value_of("directory").unwrap());
-    let custom_logo: Language =
-        Language::from_str(&matches.value_of("ascii_language").unwrap().to_lowercase())
-            .unwrap_or(Language::Unknown);
+    let custom_logo: Language = if let Some(ascii_language) = matches.value_of("ascii_language") {
+        Language::from_str(&ascii_language.to_lowercase()).unwrap()
+    } else {
+        Language::Unknown
+    };
     let mut disable_fields = InfoFieldOn {
         ..Default::default()
     };

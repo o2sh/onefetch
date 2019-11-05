@@ -11,7 +11,9 @@ pub enum Language {
     C,
     Clojure,
     CoffeeScript,
+    #[strum(serialize = "c++")]
     Cpp,
+    #[strum(serialize = "c#")]
     Csharp,
     CSS,
     D,
@@ -34,6 +36,7 @@ pub enum Language {
     Lua,
     Markdown,
     Nim,
+    #[strum(serialize = "objective-c")]
     ObjectiveC,
     Perl,
     Php,
