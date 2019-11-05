@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2019-11-05
+
+<img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
+
+**Contributors:**
+
+@rockisch @spenserblack @ZapAnton @ebroto @KasraF @erikgaal
+
+**Languages:**
+* Add support for Julia @o2sh 
+* Add support for D @o2sh 
+* Add support for MarkDown @o2sh 
+* Add support for OCaml @KasraF
+
+**New feature:**
+* Allow command to run from subfolders #132 @rockisch 
+* Add --no-merges flag #131 @spenserblack 
+
+**Misc:**
+* Publish Onefetch to Homebrew @erikgaal
+* Clippy and fmt @ZapAnton 
+* Language name Match between tokei and dislay #125 @ZapAnton 
+* Replace license crate with askalono #147 @ebroto 
+
+**Collaborator:**
+
+I have given collaborator access to @ebroto.
 
 ## [1.7.0] - 2019-28-10
 

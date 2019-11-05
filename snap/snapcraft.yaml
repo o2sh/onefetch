@@ -1,7 +1,7 @@
 name: onefetch
 base: core18 # the base snap is the execution environment for this snap
 adopt-info: onefetch
-summary: Neofetch for your source code
+summary: Git repository summary on your terminal
 description: |
   Onefetch is a command-line system information tool that displays information
   about your Source Code directly on your terminal..
