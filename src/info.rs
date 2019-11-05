@@ -6,7 +6,7 @@ use std::process::Command;
 use colored::{Color, ColoredString, Colorize};
 use git2::Repository;
 use image::DynamicImage;
-use license;
+use license::Detector;
 
 use crate::image_backends;
 use crate::language::Language;
@@ -581,6 +581,8 @@ impl Info {
     }
 
     fn get_project_license(dir: &str) -> Result<String> {
+        let detector = Detector::new()?;
+
         let output = fs::read_dir(dir)
             .map_err(|_| Error::ReadDirectory)?
             .filter_map(std::result::Result::ok)
@@ -596,9 +598,9 @@ impl Info {
                 }, // TODO: multiple prefixes, like COPYING?
             )
             .filter_map(|entry| {
-                license::from_text_ext(&fs::read_to_string(entry).unwrap_or_else(|_| "".into()))
+                let contents = fs::read_to_string(entry).unwrap_or_default();
+                detector.analyze(&contents)
             })
-            .map(|license| license.name().to_string())
             .collect::<Vec<_>>()
             .join(", ");
 

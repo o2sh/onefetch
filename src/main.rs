@@ -1,8 +1,8 @@
 extern crate bytecount;
 
+extern crate askalono;
 extern crate colored;
 extern crate git2;
-extern crate license;
 extern crate tokei;
 #[macro_use]
 extern crate clap;
@@ -33,6 +33,7 @@ mod error;
 mod image_backends;
 mod info;
 mod language;
+mod license;
 
 use ascii_art::AsciiArt;
 use commit_info::CommitInfo;
