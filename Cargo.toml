@@ -12,12 +12,15 @@ exclude = ["assets/*.png"]
 colored= "1.8.0"
 git2 = {version = "0.7.5", default-features = false}
 tokei = "10.0"
-license = "0.8.1"
+askalono = "0.3.0"
 bytecount = "0.5.1"
 clap = "2.33.0"
 strum = "0.16.0"
 strum_macros = "0.16.0"
 image = "0.22.3"
+
+[build-dependencies]
+askalono = "0.3.0"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
