@@ -22,6 +22,7 @@ pub enum Language {
     Elm,
     Erlang,
     Forth,
+    #[strum(serialize = "fortran")]
     FortranModern,
     FSharp,
     Go,
