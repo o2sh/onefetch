@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/onefetch.png" height="130px"></h3><br><br>
-  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-2.0.0-orange.svg" alt="cargo"></a>
+  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/badge/crates.io-2.0.1-orange.svg" alt="cargo"></a>
   <a href="https://travis-ci.org/o2sh/onefetch"><img src="https://travis-ci.org/o2sh/onefetch.svg?branch=master" alt="Build Status"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>

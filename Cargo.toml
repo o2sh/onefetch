@@ -1,7 +1,7 @@
 [package]
 name = "onefetch"
 description = "Git repository summary on your terminal"
-version = "2.0.0"
+version = "2.0.1"
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 readme = "README.md"
 license = "MIT"
