@@ -4,7 +4,7 @@ use crate::Error;
 
 type Result<T> = std::result::Result<T, Error>;
 
-static CACHE_DATA: &[u8] = include_bytes!("../resources/licenses/cache.bin.gz");
+static CACHE_DATA: &[u8] = include_bytes!("../resources/licenses/cache.bin.zstd");
 
 pub struct Detector {
     store: Store,
@@ -18,9 +18,12 @@ impl Detector {
     }
 
     pub fn analyze(&self, text: &str) -> Option<String> {
-        self.store
-            .analyze(&TextData::from(text))
-            .ok()
-            .map(|license| license.name)
+        let matched = self.store.analyze(&TextData::from(text));
+
+        if matched.score > 0. {
+            Some(matched.name.into())
+        } else {
+            None
+        }
     }
 }

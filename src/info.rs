@@ -583,7 +583,7 @@ impl Info {
     fn get_project_license(dir: &str) -> Result<String> {
         let detector = Detector::new()?;
 
-        let output = fs::read_dir(dir)
+        let mut output = fs::read_dir(dir)
             .map_err(|_| Error::ReadDirectory)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
@@ -601,8 +601,11 @@ impl Info {
                 let contents = fs::read_to_string(entry).unwrap_or_default();
                 detector.analyze(&contents)
             })
-            .collect::<Vec<_>>()
-            .join(", ");
+            .collect::<Vec<_>>();
+
+        output.sort();
+        output.dedup();
+        let output = output.join(", ");
 
         if output == "" {
             Ok("??".into())
