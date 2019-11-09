@@ -38,6 +38,8 @@ mod license;
 use ascii_art::AsciiArt;
 use commit_info::CommitInfo;
 use error::Error;
+#[cfg(target_os = "linux")]
+use image_backends::ImageBackend;
 use info::Info;
 use language::Language;
 
@@ -98,6 +100,11 @@ fn main() -> Result<()> {
         .filter(|language| *language != Language::Unknown)
         .map(|language| language.to_string().to_lowercase())
         .collect();
+
+    #[cfg(target_os = "linux")]
+    let possible_backends = ["kitty", "sixel"];
+    #[cfg(not(target_os = "linux"))]
+    let possible_backends = [];
 
     let matches = App::new(crate_name!())
         .version(crate_version!())
@@ -194,6 +201,13 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .help("Sets a custom image to use instead of the ascii logo"),
         )
         .arg(
+            Arg::with_name("image-backend")
+                .long("image-backend")
+                .takes_value(true)
+                .possible_values(&possible_backends)
+                .help("Overrides image backend detection"),
+        )
+        .arg(
             Arg::with_name("no-merges")
                 .short("m")
                 .long("no-merges")
@@ -265,6 +279,23 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     } else {
         None
     };
+    let image_backend = if custom_image.is_some() {
+        if let Some(backend_name) = matches.value_of("image-backend") {
+            #[cfg(target_os = "linux")]
+            let backend = Some(match backend_name {
+                "kitty" => Box::new(image_backends::kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
+                "sixel" => Box::new(image_backends::sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
+                _ => unreachable!()
+            });
+            #[cfg(not(target_os = "linux"))]
+            let backend = None;
+            backend
+        } else {
+            crate::image_backends::get_best_backend()
+        }
+    } else {
+        None
+    };
 
     let no_merges = matches.is_present("no-merges");
 
@@ -277,6 +308,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         disable_fields,
         bold_flag,
         custom_image,
+        image_backend,
         no_merges,
         color_blocks_flag,
     )?;

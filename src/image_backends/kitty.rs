@@ -1,11 +1,9 @@
 use image::{imageops::FilterType, DynamicImage, GenericImageView};
 use libc::{
-    ioctl, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON, STDIN_FILENO, STDOUT_FILENO,
-    TCSANOW, TIOCGWINSZ,
+    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
+    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
 };
-use std::io::Read;
-use std::sync::mpsc::{self, TryRecvError};
-use std::time::Duration;
+use std::time::Instant;
 
 pub struct KittyBackend {}
 
@@ -41,38 +39,37 @@ impl KittyBackend {
             base64::encode(&test_image)
         );
 
-        // a new thread is required to avoid blocking the main thread if the terminal doesn't respond
-        let (sender, receiver) = mpsc::channel::<()>();
-        let (stop_sender, stop_receiver) = mpsc::channel::<()>();
-        std::thread::spawn(move || {
-            let mut buf = Vec::<u8>::new();
-            let allowed_bytes = [0x1B, b'_', b'G', b'\\'];
-            for byte in std::io::stdin().lock().bytes() {
-                let byte = byte.unwrap();
-                if allowed_bytes.contains(&byte) {
-                    buf.push(byte);
-                }
-                if buf.starts_with(&[0x1B, b'_', b'G']) && buf.ends_with(&[0x1B, b'\\']) {
-                    sender.send(()).unwrap();
-                    return;
-                }
-                match stop_receiver.try_recv() {
-                    Err(TryRecvError::Empty) => {}
-                    _ => return,
+        let start_time = Instant::now();
+        let mut stdin_pollfd = pollfd {
+            fd: STDIN_FILENO,
+            events: POLLIN,
+            revents: 0,
+        };
+        let allowed_bytes = [0x1B, b'_', b'G', b'\\'];
+        let mut buf = Vec::<u8>::new();
+        loop {
+            // check for timeout while polling to avoid blocking the main thread
+            while unsafe { poll(&mut stdin_pollfd, 1, 0) < 1 } {
+                if start_time.elapsed().as_millis() > 50 {
+                    unsafe {
+                        tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
+                    }
+                    return false;
                 }
             }
-        });
-        if receiver.recv_timeout(Duration::from_millis(50)).is_ok() {
+            let mut byte = 0;
             unsafe {
-                tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
+                read(STDIN_FILENO, &mut byte as *mut _ as *mut c_void, 1);
             }
-            true
-        } else {
-            unsafe {
-                tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
+            if allowed_bytes.contains(&byte) {
+                buf.push(byte);
             }
-            stop_sender.send(()).ok();
-            false
+            if buf.starts_with(&[0x1B, b'_', b'G']) && buf.ends_with(&[0x1B, b'\\']) {
+                unsafe {
+                    tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
+                }
+                return true;
+            }
         }
     }
 }
