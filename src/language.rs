@@ -96,7 +96,7 @@ impl std::fmt::Display for Language {
             Language::Nim => write!(f, "Nim"),
             Language::ObjectiveC => write!(f, "Objective-C"),
             Language::OCaml => write!(f, "OCaml"),
-            Language::Org => write!(f, "Org-mode"),
+            Language::Org => write!(f, "Org"),
             Language::PureScript => write!(f, "PureScript"),
             Language::Python => write!(f, "Python"),
             Language::R => write!(f, "R"),
