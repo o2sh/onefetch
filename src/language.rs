@@ -40,6 +40,7 @@ pub enum Language {
     #[strum(serialize = "objective-c")]
     ObjectiveC,
     OCaml,
+    #[strum(serialize = "org-mode")]
     Org,
     Perl,
     Php,
