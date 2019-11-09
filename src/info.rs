@@ -8,7 +8,7 @@ use git2::Repository;
 use image::DynamicImage;
 use license::Detector;
 
-use crate::image_backends;
+use crate::image_backends::ImageBackend;
 use crate::language::Language;
 use crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn};
 
@@ -35,6 +35,7 @@ pub struct Info {
     disable_fields: InfoFieldOn,
     bold_enabled: bool,
     custom_image: Option<DynamicImage>,
+    image_backend: Option<Box<dyn ImageBackend>>
 }
 
 impl std::fmt::Display for Info {
@@ -238,11 +239,11 @@ impl std::fmt::Display for Info {
         let mut info_lines = buf.lines();
 
         if let Some(custom_image) = &self.custom_image {
-            if let Some(backend) = image_backends::get_best_backend() {
+            if let Some(image_backend) = &self.image_backend {
                 writeln!(
                     f,
                     "{}",
-                    backend.add_image(
+                    image_backend.add_image(
                         info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
                         custom_image
                     )
@@ -286,6 +287,7 @@ impl Info {
         disabled: InfoFieldOn,
         bold_flag: bool,
         custom_image: Option<DynamicImage>,
+        image_backend: Option<Box<dyn ImageBackend>>,
         no_merges: bool,
     ) -> Result<Info> {
         let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
@@ -326,6 +328,7 @@ impl Info {
             disable_fields: disabled,
             bold_enabled: bold_flag,
             custom_image,
+            image_backend,
         })
     }
 

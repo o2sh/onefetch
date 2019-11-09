@@ -1,9 +1,9 @@
 use image::DynamicImage;
 
 #[cfg(target_os = "linux")]
-mod kitty;
+pub mod kitty;
 #[cfg(target_os = "linux")]
-mod sixel;
+pub mod sixel;
 
 pub trait ImageBackend {
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage) -> String;
