@@ -734,7 +734,7 @@ dependencies = [
 
 [[package]]
 name = "onefetch"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "ansi_term 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "askalono 0.3.0 (git+https://github.com/amzn/askalono.git?rev=39f6e228775e17266bcba46f48b26b01bbfb7698)",

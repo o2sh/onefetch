@@ -34,6 +34,7 @@ pub struct Info {
     custom_colors: Vec<String>,
     disable_fields: InfoFieldOn,
     bold_enabled: bool,
+    no_color_blocks: bool,
     custom_image: Option<DynamicImage>,
 }
 
@@ -213,26 +214,28 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        writeln!(
-            buf,
-            "\n{0}{1}{2}{3}{4}{5}{6}{7}\n{8}{9}{10}{11}{12}{13}{14}{15}",
-            "   ".on_black(),
-            "   ".on_red(),
-            "   ".on_green(),
-            "   ".on_yellow(),
-            "   ".on_blue(),
-            "   ".on_magenta(),
-            "   ".on_cyan(),
-            "   ".on_white(),
-            "   ".on_bright_black(),
-            "   ".on_bright_red(),
-            "   ".on_bright_green(),
-            "   ".on_bright_yellow(),
-            "   ".on_bright_blue(),
-            "   ".on_bright_magenta(),
-            "   ".on_bright_cyan(),
-            "   ".on_bright_white(),
-        )?;
+        if !self.no_color_blocks {
+            writeln!(
+                buf,
+                "\n{0}{1}{2}{3}{4}{5}{6}{7}\n{8}{9}{10}{11}{12}{13}{14}{15}",
+                "   ".on_black(),
+                "   ".on_red(),
+                "   ".on_green(),
+                "   ".on_yellow(),
+                "   ".on_blue(),
+                "   ".on_magenta(),
+                "   ".on_cyan(),
+                "   ".on_white(),
+                "   ".on_bright_black(),
+                "   ".on_bright_red(),
+                "   ".on_bright_green(),
+                "   ".on_bright_yellow(),
+                "   ".on_bright_blue(),
+                "   ".on_bright_magenta(),
+                "   ".on_bright_cyan(),
+                "   ".on_bright_white(),
+            )?;
+        }
 
         let center_pad = "   ";
         let mut info_lines = buf.lines();
@@ -287,6 +290,7 @@ impl Info {
         bold_flag: bool,
         custom_image: Option<DynamicImage>,
         no_merges: bool,
+        color_blocks_flag: bool,
     ) -> Result<Info> {
         let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
         let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
@@ -325,6 +329,7 @@ impl Info {
             custom_colors: colors,
             disable_fields: disabled,
             bold_enabled: bold_flag,
+            no_color_blocks: color_blocks_flag,
             custom_image,
         })
     }

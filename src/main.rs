@@ -111,9 +111,9 @@ fn main() -> Result<()> {
                 .default_value("."),
         )
         .arg(
-            Arg::with_name("ascii_language")
+            Arg::with_name("ascii-language")
                 .short("a")
-                .long("ascii_language")
+                .long("ascii-language")
                 .takes_value(true)
                 .possible_values(
                     &possible_languages
@@ -125,8 +125,9 @@ fn main() -> Result<()> {
                 .help("Overrides showing the dominant language ascii logo."),
         )
         .arg(
-            Arg::with_name("disable_field")
-                .long("disable")
+            Arg::with_name("disable-field")
+                .short("f")
+                .long("disable-field")
                 .multiple(true)
                 .takes_value(true)
                 .case_insensitive(true)
@@ -198,6 +199,12 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .long("no-merges")
                 .help("Prevents merge commits from being counted"),
         )
+        .arg(
+            Arg::with_name("no-color-blocks")
+                .short("k")
+                .long("no-color-blocks")
+                .help("Hide the color blocks"),
+        )
         .get_matches();
 
     if matches.is_present("languages") {
@@ -210,7 +217,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     }
 
     let dir = String::from(matches.value_of("directory").unwrap());
-    let custom_logo: Language = if let Some(ascii_language) = matches.value_of("ascii_language") {
+    let custom_logo: Language = if let Some(ascii_language) = matches.value_of("ascii-language") {
         Language::from_str(&ascii_language.to_lowercase()).unwrap()
     } else {
         Language::Unknown
@@ -220,7 +227,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     };
 
     matches
-        .values_of("disable_field")
+        .values_of("disable-field")
         .unwrap()
         .map(String::from)
         .for_each(|field: String| {
@@ -261,6 +268,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
 
     let no_merges = matches.is_present("no-merges");
 
+    let color_blocks_flag = matches.is_present("no-color-blocks");
+
     let info = Info::new(
         &dir,
         custom_logo,
@@ -269,6 +278,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         bold_flag,
         custom_image,
         no_merges,
+        color_blocks_flag,
     )?;
 
     print!("{}", info);
