@@ -119,7 +119,7 @@ impl super::ImageBackend for SixelBackend {
                     let color_multiplier = 100.0 / 255.0;
                     image_data.extend(
                         format!(
-                            "#{};2;{};{};{};",
+                            "#{};2;{};{};{}",
                             colors.len(),
                             (pixel[0] as f32 * color_multiplier) as u32,
                             (pixel[1] as f32 * color_multiplier) as u32,
