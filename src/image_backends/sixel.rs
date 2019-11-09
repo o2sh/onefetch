@@ -55,10 +55,14 @@ impl SixelBackend {
             }
             buf.push(byte);
             if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(&[b'c']) {
-                unsafe {
-                    tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
+                for attribute in buf[3..(buf.len() - 1)].split(|x| *x == b';') {
+                    if attribute == &[b'4'] {
+                        unsafe {
+                            tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
+                        }
+                        return true;
+                    }
                 }
-                return true;
             }
         }
     }
