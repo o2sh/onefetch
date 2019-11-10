@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2019-11-10
+
+<img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
+
+**Contributors:**
+@CephalonRho @ebroto @Phundrak 
+
+**Language**
+* Added support for Org @Phundrak 
+
+**New feature:**
+* Add --no-color-blocks flag #153 
+* Add suport for SIXEL image_backend @CephalonRho 
+
+**Misc**
+* Update to askalono 0.4.0 and use a more strict confidence threshold
+
 ## [2.0.1] - 2019-11-06
 
 <img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
