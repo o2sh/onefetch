@@ -1,28 +1,32 @@
 on:
   release:
-    types: [published, created, edited]
+    types: [published]
 
 name: release-assets
 
 jobs:
-  runs-on: ${{ matrix.os }}
-
-  strategy:
-    matrix:
-      os: [macos-latest]
-
   deploy:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest]
+
     steps:
       - uses: actions/checkout@v1
+      - name: Install Rust
+        run: brew install rust
+        if: matrix.os == 'macos-latest'
       - name: Build
-        run: carbo build --release
+        run: cargo build --release
       - name: Compress archive
         run: cd target/release && tar -czf onefetch.tar.gz onefetch
       - name: Generate asset name
-        run: echo ::set-output name=filename::onefetch_${TAG#v}_${OS%-latest}_x86_64.tar.gz
+        run: echo ::set-output name=filename::onefetch_${TAG_NAME#v}_${OS%-latest}_x86_64.tar.gz
         id: generate-name
         env:
-          TAG: ${{ github.event.release.tag_name }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
           OS: ${{ matrix.os }}
       - name: Upload release asset
         uses: actions/upload-release-asset@v1.0.1
@@ -31,5 +35,5 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./target/release/onefetch.tar.gz
-          asset_name: ${{ steps.generate-name.outputs.name }}
+          asset_name: ${{ steps.generate-name.outputs.filename }}
           asset_content_type: application/gzip
