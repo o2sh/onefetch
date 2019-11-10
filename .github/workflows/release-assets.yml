@@ -1,0 +1,35 @@
+on:
+  release:
+    types: [published, created, edited]
+
+name: release-assets
+
+jobs:
+  runs-on: ${{ matrix.os }}
+
+  strategy:
+    matrix:
+      os: [macos-latest]
+
+  deploy:
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: carbo build --release
+      - name: Compress archive
+        run: cd target/release && tar -czf onefetch.tar.gz onefetch
+      - name: Generate asset name
+        run: echo ::set-output name=filename::onefetch_${TAG#v}_${OS%-latest}_x86_64.tar.gz
+        id: generate-name
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          OS: ${{ matrix.os }}
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/release/onefetch.tar.gz
+          asset_name: ${{ steps.generate-name.outputs.name }}
+          asset_content_type: application/gzip
