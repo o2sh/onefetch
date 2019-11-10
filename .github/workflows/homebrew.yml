@@ -1,0 +1,19 @@
+name: homebrew-update-formula
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+
+    runs-on: macos-latest
+
+    env:
+      HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+
+    steps:
+    - name: Open Homebrew Formula PR
+      run: brew update-formula-pr --url=$TARBALL_URL
+      env:
+        TARBALL_URL: ${{ format('https://github.com/{0}/archive/{1}.tar.gz', github.repository, github.event.release.tag_name) }}
