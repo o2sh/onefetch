@@ -49,8 +49,8 @@ dependencies = [
 
 [[package]]
 name = "askalono"
-version = "0.3.0"
-source = "git+https://github.com/amzn/askalono.git?rev=39f6e228775e17266bcba46f48b26b01bbfb7698#39f6e228775e17266bcba46f48b26b01bbfb7698"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -734,10 +734,10 @@ dependencies = [
 
 [[package]]
 name = "onefetch"
-version = "2.0.1"
+version = "2.1.0"
 dependencies = [
  "ansi_term 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "askalono 0.3.0 (git+https://github.com/amzn/askalono.git?rev=39f6e228775e17266bcba46f48b26b01bbfb7698)",
+ "askalono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytecount 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1379,7 +1379,7 @@ dependencies = [
 "checksum approx 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "08abcc3b4e9339e33a3d0a5ed15d84a687350c05689d825e0f6655eef9e76a94"
 "checksum arrayref 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)" = "0d382e583f07208808f6b1249e60848879ba3543f57c32277bf52d69c2f0f0ee"
 "checksum arrayvec 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)" = "cd9fd44efafa8690358b7408d253adf110036b88f55672a933f01d616ad9b1b9"
-"checksum askalono 0.3.0 (git+https://github.com/amzn/askalono.git?rev=39f6e228775e17266bcba46f48b26b01bbfb7698)" = "<none>"
+"checksum askalono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0f772f9f245cb9d66ab3f8d1198ed73e8c29a21ed2c21d104157d2e7eb4fcf5d"
 "checksum atty 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)" = "1803c647a3ec87095e7ae7acfca019e98de5ec9a7d01343f611cf3152ed71a90"
 "checksum autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "1d49d90015b3c36167a20fe2810c5cd875ad504b39cff3d4eae7977e6b7c1cb2"
 "checksum backtrace 0.3.40 (registry+https://github.com/rust-lang/crates.io-index)" = "924c76597f0d9ca25d762c25a4d369d51267536465dc5064bdf0eb073ed477ea"
