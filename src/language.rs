@@ -260,7 +260,7 @@ impl Language {
                 Color::BrightBlack,
             ],
             Language::CoffeeScript => vec![Color::Red],
-            Language::Cpp => vec![Color::Yellow, Color::Cyan],
+            Language::Cpp => vec![Color::BrightBlue, Color::Cyan],
             Language::Csharp => vec![Color::White],
             Language::CSS => vec![Color::Blue, Color::White],
             Language::D => vec![Color::Red],
