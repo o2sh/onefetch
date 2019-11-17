@@ -87,6 +87,14 @@ impl std::fmt::Display for Info {
             )?;
         }
 
+        if !self.disable_fields.pending && self.pending != "" {
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Pending: ", color),
+                &self.pending,
+            )?;
+        }
+
         if !self.disable_fields.version {
             write_buf(
                 &mut buf,
@@ -189,14 +197,6 @@ impl std::fmt::Display for Info {
                 &mut buf,
                 &self.get_formatted_info_label("Commits: ", color),
                 &self.commits,
-            )?;
-        }
-
-        if !self.disable_fields.pending && self.pending != "" {
-            write_buf(
-                &mut buf,
-                &self.get_formatted_info_label("Pending: ", color),
-                &self.pending,
             )?;
         }
 
