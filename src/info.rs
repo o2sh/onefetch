@@ -27,7 +27,7 @@ pub struct Info {
     last_change: String,
     repo: String,
     commits: String,
-    changes: String,
+    pending: String,
     repo_size: String,
     number_of_lines: usize,
     license: String,
@@ -192,11 +192,11 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.changes && self.changes != "" {
+        if !self.disable_fields.pending && self.pending != "" {
             write_buf(
                 &mut buf,
-                &self.get_formatted_info_label("Changes: ", color),
-                &self.changes,
+                &self.get_formatted_info_label("Pending: ", color),
+                &self.pending,
             )?;
         }
 
@@ -313,7 +313,7 @@ impl Info {
         let (git_v, git_user) = Info::get_git_info(workdir_str);
         let version = Info::get_version(workdir_str)?;
         let commits = Info::get_commits(workdir_str, no_merges)?;
-        let changes = Info::get_pending_changes(workdir_str)?;
+        let pending = Info::get_pending_pending(workdir_str)?;
         let repo_size = Info::get_packed_size(workdir_str)?;
         let last_change = Info::get_last_change(workdir_str)?;
         let creation_date = Info::get_creation_time(workdir_str)?;
@@ -334,7 +334,7 @@ impl Info {
             last_change,
             repo: config.repository_url,
             commits,
-            changes,
+            pending,
             repo_size,
             number_of_lines,
             license: project_license,
@@ -513,7 +513,7 @@ impl Info {
         }
     }
 
-    fn get_pending_changes(dir: &str) -> Result<String> {
+    fn get_pending_pending(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
