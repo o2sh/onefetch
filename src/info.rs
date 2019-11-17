@@ -517,9 +517,8 @@ impl Info {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
-            .arg("diff")
-            .arg("--shortstat")
-            .arg("HEAD")
+            .arg("status")
+            .arg("--porcelain")
             .output()
             .expect("Failed to execute git.");
 
@@ -528,17 +527,26 @@ impl Info {
         if output == "" {
             Ok("".into())
         } else {
-            let result = String::from(output)
-                        .replace(",", &"")
-                        .replace("\n", &"")
-                        .replace(" files changed", &"+-")
-                        .replace(" file changed", &"+-")
-                        .replace(" insertions(+)", &"+")
-                        .replace(" insertion(+)", &"+")
-                        .replace(" deletions(-)", &"-")
-                        .replace(" deletion(-)", &"-");
+            let lines = output.lines();
 
-            Ok(result.trim().into())
+            let mut deleted = 0;
+            let mut added = 0;
+            let mut modified = 0;
+
+            for line in lines {
+                let prefix = &line[..2];
+
+                match prefix.trim() {
+                    "D" => deleted += 1,
+                    "A" | "??" => added += 1,
+                    "M" | "MM" => modified += 1,
+                    _ => {}
+                }
+            }
+
+            let result = format!("{}+- {}+ {}-", modified, added, deleted);
+
+            Ok(result.into())
         }
     }
 
