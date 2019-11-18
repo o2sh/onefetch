@@ -544,7 +544,18 @@ impl Info {
                 }
             }
 
-            let result = format!("{}+- {}+ {}-", modified, added, deleted);
+            let mut result = String::from("");
+            if modified > 0 {
+                result = format!("{}+-", modified)
+            }
+
+            if added > 0 {
+                result = format!("{} {}+", result, added);
+            }
+
+            if deleted > 0 {
+                result = format!("{} {}-", result, deleted);
+            }
 
             Ok(result.into())
         }
