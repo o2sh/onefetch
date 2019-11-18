@@ -538,7 +538,7 @@ impl Info {
 
                 match prefix.trim() {
                     "D" => deleted += 1,
-                    "A" | "??" => added += 1,
+                    "A" | "AM" | "??" => added += 1,
                     "M" | "MM" => modified += 1,
                     _ => {}
                 }
