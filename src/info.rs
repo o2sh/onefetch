@@ -557,7 +557,7 @@ impl Info {
                 result = format!("{} {}-", result, deleted);
             }
 
-            Ok(result.into())
+            Ok(result.trim().into())
         }
     }
 
