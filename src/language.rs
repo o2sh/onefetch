@@ -265,7 +265,7 @@ impl Language {
             ],
             Language::CoffeeScript => vec![Color::Red],
             Language::Cpp => vec![Color::BrightBlue, Color::Cyan],
-            Language::Csharp => vec![Color::White],
+            Language::Csharp => vec![Color::Magenta, Color::DarkMagenta],
             Language::CSS => vec![Color::Blue, Color::White],
             Language::D => vec![Color::Red],
             Language::Dart => vec![Color::BrightBlue, Color::BrightCyan],
