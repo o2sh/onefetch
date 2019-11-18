@@ -27,6 +27,7 @@ pub struct Info {
     last_change: String,
     repo: String,
     commits: String,
+    pending: String,
     repo_size: String,
     number_of_lines: usize,
     license: String,
@@ -83,6 +84,14 @@ impl std::fmt::Display for Info {
                 &mut buf,
                 &self.get_formatted_info_label("HEAD: ", color),
                 &self.current_commit,
+            )?;
+        }
+
+        if !self.disable_fields.pending && self.pending != "" {
+            write_buf(
+                &mut buf,
+                &self.get_formatted_info_label("Pending: ", color),
+                &self.pending,
             )?;
         }
 
@@ -304,6 +313,7 @@ impl Info {
         let (git_v, git_user) = Info::get_git_info(workdir_str);
         let version = Info::get_version(workdir_str)?;
         let commits = Info::get_commits(workdir_str, no_merges)?;
+        let pending = Info::get_pending_pending(workdir_str)?;
         let repo_size = Info::get_packed_size(workdir_str)?;
         let last_change = Info::get_last_change(workdir_str)?;
         let creation_date = Info::get_creation_time(workdir_str)?;
@@ -324,6 +334,7 @@ impl Info {
             last_change,
             repo: config.repository_url,
             commits,
+            pending,
             repo_size,
             number_of_lines,
             license: project_license,
@@ -499,6 +510,54 @@ impl Info {
             Ok("0".into())
         } else {
             Ok(output.to_string().replace('\n', ""))
+        }
+    }
+
+    fn get_pending_pending(dir: &str) -> Result<String> {
+        let output = Command::new("git")
+            .arg("-C")
+            .arg(dir)
+            .arg("status")
+            .arg("--porcelain")
+            .output()
+            .expect("Failed to execute git.");
+
+        let output = String::from_utf8_lossy(&output.stdout);
+
+        if output == "" {
+            Ok("".into())
+        } else {
+            let lines = output.lines();
+
+            let mut deleted = 0;
+            let mut added = 0;
+            let mut modified = 0;
+
+            for line in lines {
+                let prefix = &line[..2];
+
+                match prefix.trim() {
+                    "D" => deleted += 1,
+                    "A" | "AM" | "??" => added += 1,
+                    "M" | "MM" | "R" => modified += 1,
+                    _ => {}
+                }
+            }
+
+            let mut result = String::from("");
+            if modified > 0 {
+                result = format!("{}+-", modified)
+            }
+
+            if added > 0 {
+                result = format!("{} {}+", result, added);
+            }
+
+            if deleted > 0 {
+                result = format!("{} {}-", result, deleted);
+            }
+
+            Ok(result.into())
         }
     }
 
