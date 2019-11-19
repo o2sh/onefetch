@@ -302,7 +302,7 @@ impl Language {
             Language::OCaml => vec![Color::Yellow],
             Language::Org => vec![Color::Green, Color::Red, Color::White],
             Language::Perl => vec![Color::BrightBlue],
-            Language::Php => vec![Color::BrightWhite],
+            Language::Php => vec![Color::Magenta, Color::BrightBlack],
             Language::Prolog => vec![Color::Blue, Color::Red],
             Language::PureScript => vec![Color::White],
             Language::Python => vec![Color::Blue, Color::Yellow],
