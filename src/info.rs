@@ -293,6 +293,7 @@ impl Info {
         image_backend: Option<Box<dyn ImageBackend>>,
         no_merges: bool,
         color_blocks_flag: bool,
+        author_nb: usize,
     ) -> Result<Info> {
         let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
         let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
@@ -300,7 +301,7 @@ impl Info {
 
         let config = Info::get_configuration(&repo)?;
         let current_commit_info = Info::get_current_commit_info(&repo)?;
-        let authors = Info::get_authors(workdir_str, no_merges, 3);
+        let authors = Info::get_authors(workdir_str, no_merges, author_nb);
         let (git_v, git_user) = Info::get_git_info(workdir_str);
         let version = Info::get_version(workdir_str)?;
         let commits = Info::get_commits(workdir_str, no_merges)?;
