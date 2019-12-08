@@ -221,6 +221,13 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .long("no-color-blocks")
                 .help("Hide the color blocks"),
         )
+        .arg(
+            Arg::with_name("authors-number")
+                .short("A")
+                .long("authors-number")
+                .takes_value(true)
+                .help("Defines the number of authors to be shown"),
+        )
         .get_matches();
 
     if matches.is_present("languages") {
@@ -233,6 +240,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     }
 
     let dir = String::from(matches.value_of("directory").unwrap());
+
     let custom_logo: Language = if let Some(ascii_language) = matches.value_of("ascii-language") {
         Language::from_str(&ascii_language.to_lowercase()).unwrap()
     } else {
@@ -304,6 +312,12 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
 
     let color_blocks_flag = matches.is_present("no-color-blocks");
 
+    let author_number: usize = if let Some(value) = matches.value_of("authors-number") {
+        usize::from_str(value).unwrap()
+    } else {
+        3
+    };
+
     let info = Info::new(
         &dir,
         custom_logo,
@@ -314,6 +328,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         image_backend,
         no_merges,
         color_blocks_flag,
+        author_number,
     )?;
 
     print!("{}", info);
