@@ -1,5 +1,4 @@
-name: Continuous integration
-
+name: CI
 on: [push]
 
 jobs:
@@ -7,21 +6,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        rust: [stable, nightly]
-        include:
-          - os: macOS-latest
-            rust: 'stable'
-            components: 'rustfmt, clippy'
-            targets: 'x86_64-apple-darwin'
-          - os: windows-latest
-            rust: 'stable'
-            components: 'rustfmt, clippy'
-            targets: 'x86_64-pc-windows-msvc'
-          - os: ubuntu-latest
-            rust: 'stable'
-            components: 'rustfmt, clippy'
-            targets: 'x86_64-unknown-linux-musl'
+        os: [ubuntu-latest, windows-latest]
+        rust: [stable]
 
     steps:
     - uses: actions/checkout@v1
