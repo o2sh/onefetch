@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2020-04-01
+
+<img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
+
+**Contributors:**
+@Phundrak @Sh3mm @axdiamond 
+
+**Language**
+* Added support for Emacs Lisp @Phundrak
+* Added support for Fish Shell @Phundrak
+* Added support for Nix @Phundrak
+* Added support for CMake @Phundrak
+* Added support for Groovy @o2sh
+
+**New feature:**
+* Add pending changes info line #166 @axdiamond 
+* Add option to defines the number of contributors to be shown @Sh3mm   
+
+**Misc**
+* Update ASCII logos for C++, C# and PHP @Sh3mm
+ 
 ## [2.1.0] - 2019-11-10
 
 <img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
