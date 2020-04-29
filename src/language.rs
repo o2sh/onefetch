@@ -432,6 +432,7 @@ fn get_all_language_types() -> Vec<tokei::LanguageType> {
         tokei::LanguageType::PureScript,
         tokei::LanguageType::Python,
         tokei::LanguageType::R,
+        tokei::LanguageType::Racket,
         tokei::LanguageType::Ruby,
         tokei::LanguageType::Rust,
         tokei::LanguageType::Scala,
