@@ -14,6 +14,8 @@ use crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn};
 
 type Result<T> = std::result::Result<T, crate::Error>;
 
+const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
+
 pub struct Info {
     git_version: String,
     git_username: String,
@@ -649,22 +651,26 @@ impl Info {
     }
 
     fn get_project_license(dir: &str) -> Result<String> {
+        fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
+            LICENSE_FILES
+                .iter()
+                .any(|&name| file_name.as_ref().starts_with(name))
+        }
+
         let detector = Detector::new()?;
 
         let mut output = fs::read_dir(dir)
             .map_err(|_| Error::ReadDirectory)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
-            .filter(
-                |entry| {
-                    entry.is_file()
-                        && entry
-                            .file_name()
-                            .map(OsStr::to_string_lossy)
-                            .iter()
-                            .any(|x| x.starts_with("LICENSE") || x.starts_with("COPYING"))
-                }, // TODO: multiple prefixes, like COPYING?
-            )
+            .filter(|entry| {
+                entry.is_file()
+                    && entry
+                        .file_name()
+                        .map(OsStr::to_string_lossy)
+                        .map(is_license_file)
+                        .unwrap_or_default()
+            })
             .filter_map(|entry| {
                 let contents = fs::read_to_string(entry).unwrap_or_default();
                 detector.analyze(&contents)
