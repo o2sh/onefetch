@@ -156,6 +156,11 @@ fn main() -> Result<()> {
                 .long("ascii-colors")
                 .multiple(true)
                 .takes_value(true)
+                .possible_values(&[
+                    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+                    "15",
+                ])
+                .hide_possible_values(true)
                 .help(&format!(
                     "Colors to print the ascii art. Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                     "0".black(),
@@ -202,7 +207,7 @@ fn main() -> Result<()> {
                 .help("Which image backend to use."),
         )
         .arg(
-            Arg::with_name("no-merges-commits")
+            Arg::with_name("no-merge-commits")
                 .long("no-merge-commits")
                 .help("Ignore merge commits"),
         )
@@ -304,7 +309,7 @@ fn main() -> Result<()> {
         None
     };
 
-    let no_merges = matches.is_present("no-merges-commits");
+    let no_merges = matches.is_present("no-merge-commits");
 
     let color_blocks_flag = matches.is_present("no-color-blocks");
 
