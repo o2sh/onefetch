@@ -114,6 +114,7 @@ fn main() -> Result<()> {
         .about(crate_description!())
         .arg(
             Arg::with_name("directory")
+            .help("Run as if git was started in <directory> instead of the current working directory.")
                 .short("d")
                 .long("dir")
                 .takes_value(true)
@@ -131,40 +132,32 @@ fn main() -> Result<()> {
                         .collect::<Vec<&str>>(),
                 )
                 .case_insensitive(true)
-                .help("Overrides showing the dominant language ascii logo."),
+                .help("Which language's ascii art to print."),
         )
         .arg(
-            Arg::with_name("disable-field")
-                .short("f")
-                .long("disable-field")
+            Arg::with_name("disable-fields")
+                .long("disable-fields")
+                .short("D")
                 .multiple(true)
                 .takes_value(true)
                 .case_insensitive(true)
-                .default_value("")
-                .hide_default_value(true)
-                .help(&format!(
-                    "Disable fields to show\nPossible values: {:?}",
+                .help("Allows you to disable an info line from appearing in the output.")
+                .possible_values(
                     &InfoFields::iter()
                         .take(InfoFields::count() - 1)
                         .map(|field| field.into())
                         .collect::<Vec<&str>>()
                         .as_slice()
-                )),
+                ),
         )
         .arg(
-            Arg::with_name("colors")
+            Arg::with_name("ascii-colors")
                 .short("c")
-                .long("colors")
+                .long("ascii-colors")
                 .multiple(true)
                 .takes_value(true)
-                .possible_values(&[
-                    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-                    "15",
-                ])
-                .hide_possible_values(true)
                 .help(&format!(
-                    "Specifies a preferred color set. Unspecified colors will remain as default.
-Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
+                    "Colors to print the ascii art. Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                     "0".black(),
                     "1".red(),
                     "2".green(),
@@ -182,13 +175,12 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                     "14".bright_cyan(),
                     "15".bright_white(),
                 )),
-        )
-        .arg(
-            Arg::with_name("no-bold")
-                .short("b")
-                .long("no-bold")
-                .help("Turns off bold formatting for the logo and all labels"),
-        )
+            )
+            .arg(
+                Arg::with_name("no-bold")
+                    .long("no-bold")
+                    .help("Turns off bold formatting."),
+            )
         .arg(
             Arg::with_name("languages")
                 .short("l")
@@ -200,24 +192,22 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .short("i")
                 .long("image")
                 .takes_value(true)
-                .help("Sets a custom image to use instead of the ascii logo"),
+                .help("Which image to use. Possible values: [/path/to/img]"),
         )
         .arg(
             Arg::with_name("image-backend")
                 .long("image-backend")
                 .takes_value(true)
                 .possible_values(&possible_backends)
-                .help("Overrides image backend detection"),
+                .help("Which image backend to use."),
         )
         .arg(
-            Arg::with_name("no-merges")
-                .short("m")
-                .long("no-merges")
-                .help("Prevents merge commits from being counted"),
+            Arg::with_name("no-merges-commits")
+                .long("no-merge-commits")
+                .help("Ignore merge commits"),
         )
         .arg(
             Arg::with_name("no-color-blocks")
-                .short("k")
                 .long("no-color-blocks")
                 .help("Hide the color blocks"),
         )
@@ -226,7 +216,8 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
                 .short("A")
                 .long("authors-number")
                 .takes_value(true)
-                .help("Defines the number of authors to be shown"),
+                .default_value("3")
+                .help("Number of authors to be shown."),
         )
         .get_matches();
 
@@ -250,34 +241,36 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         ..Default::default()
     };
 
-    matches
-        .values_of("disable-field")
-        .unwrap()
-        .map(String::from)
-        .for_each(|field: String| {
-            let item = InfoFields::from_str(field.to_lowercase().as_str())
-                .unwrap_or(InfoFields::UnrecognizedField);
+    let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields") {
+        values.map(String::from).collect()
+    } else {
+        Vec::new()
+    };
 
-            match item {
-                InfoFields::GitInfo => disable_fields.git_info = true,
-                InfoFields::Project => disable_fields.project = true,
-                InfoFields::HEAD => disable_fields.head = true,
-                InfoFields::Version => disable_fields.version = true,
-                InfoFields::Created => disable_fields.created = true,
-                InfoFields::Languages => disable_fields.languages = true,
-                InfoFields::Authors => disable_fields.authors = true,
-                InfoFields::LastChange => disable_fields.last_change = true,
-                InfoFields::Repo => disable_fields.repo = true,
-                InfoFields::Pending => disable_fields.pending = true,
-                InfoFields::Commits => disable_fields.commits = true,
-                InfoFields::LinesOfCode => disable_fields.lines_of_code = true,
-                InfoFields::Size => disable_fields.size = true,
-                InfoFields::License => disable_fields.license = true,
-                _ => (),
-            }
-        });
+    for field in fields_to_hide.iter() {
+        let item = InfoFields::from_str(field.to_lowercase().as_str())
+            .unwrap_or(InfoFields::UnrecognizedField);
 
-    let custom_colors: Vec<String> = if let Some(values) = matches.values_of("colors") {
+        match item {
+            InfoFields::GitInfo => disable_fields.git_info = true,
+            InfoFields::Project => disable_fields.project = true,
+            InfoFields::HEAD => disable_fields.head = true,
+            InfoFields::Version => disable_fields.version = true,
+            InfoFields::Created => disable_fields.created = true,
+            InfoFields::Languages => disable_fields.languages = true,
+            InfoFields::Authors => disable_fields.authors = true,
+            InfoFields::LastChange => disable_fields.last_change = true,
+            InfoFields::Repo => disable_fields.repo = true,
+            InfoFields::Pending => disable_fields.pending = true,
+            InfoFields::Commits => disable_fields.commits = true,
+            InfoFields::LinesOfCode => disable_fields.lines_of_code = true,
+            InfoFields::Size => disable_fields.size = true,
+            InfoFields::License => disable_fields.license = true,
+            _ => (),
+        }
+    }
+
+    let custom_colors: Vec<String> = if let Some(values) = matches.values_of("ascii-colors") {
         values.map(String::from).collect()
     } else {
         Vec::new()
@@ -293,11 +286,14 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
     let image_backend = if custom_image.is_some() {
         if let Some(backend_name) = matches.value_of("image-backend") {
             #[cfg(target_os = "linux")]
-            let backend = Some(match backend_name {
-                "kitty" => Box::new(image_backends::kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
-                "sixel" => Box::new(image_backends::sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
-                _ => unreachable!()
-            });
+            let backend =
+                Some(match backend_name {
+                    "kitty" => Box::new(image_backends::kitty::KittyBackend::new())
+                        as Box<dyn ImageBackend>,
+                    "sixel" => Box::new(image_backends::sixel::SixelBackend::new())
+                        as Box<dyn ImageBackend>,
+                    _ => unreachable!(),
+                });
             #[cfg(not(target_os = "linux"))]
             let backend = None;
             backend
@@ -308,7 +304,7 @@ Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
         None
     };
 
-    let no_merges = matches.is_present("no-merges");
+    let no_merges = matches.is_present("no-merges-commits");
 
     let color_blocks_flag = matches.is_present("no-color-blocks");
 

@@ -37,7 +37,7 @@ pub struct Info {
     bold_enabled: bool,
     no_color_blocks: bool,
     custom_image: Option<DynamicImage>,
-    image_backend: Option<Box<dyn ImageBackend>>
+    image_backend: Option<Box<dyn ImageBackend>>,
 }
 
 impl std::fmt::Display for Info {
