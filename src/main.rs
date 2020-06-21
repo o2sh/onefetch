@@ -224,7 +224,21 @@ fn main() -> Result<()> {
                 .default_value("3")
                 .help("Number of authors to be shown."),
         )
+        .arg(
+            Arg::with_name("exclude")
+            .short("e")
+            .long("exclude")
+            .multiple(true)
+            .takes_value(true)
+            .help("Ignore all files & directories matching the pattern.")
+        )
         .get_matches();
+
+    let ignored_directories: Vec<&str> = if let Some(user_ignored) = matches.values_of("exclude") {
+        user_ignored.map(|s| s as &str).collect()
+    } else {
+        Vec::new()
+    };
 
     if matches.is_present("languages") {
         let iterator = Language::iter().filter(|x| *x != Language::Unknown);
@@ -288,6 +302,7 @@ fn main() -> Result<()> {
     } else {
         None
     };
+
     let image_backend = if custom_image.is_some() {
         if let Some(backend_name) = matches.value_of("image-backend") {
             #[cfg(target_os = "linux")]
@@ -330,6 +345,7 @@ fn main() -> Result<()> {
         no_merges,
         color_blocks_flag,
         author_number,
+        ignored_directories,
     )?;
 
     print!("{}", info);

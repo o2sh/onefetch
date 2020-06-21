@@ -352,8 +352,12 @@ impl Language {
         }
     }
 
-    pub fn get_language_stats(dir: &str) -> Result<(Vec<(Language, f64)>, usize)> {
-        let tokei_langs = project_languages(&dir);
+    pub fn get_language_stats(
+        dir: &str,
+        exclude: Vec<&str>,
+        is_root: bool,
+    ) -> Result<(Vec<(Language, f64)>, usize)> {
+        let tokei_langs = project_languages(&dir, exclude, is_root);
         let languages_stat =
             Language::get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
         let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
@@ -375,7 +379,7 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
         .fold(0, |sum, val| sum + val.code)
 }
 
-fn project_languages(dir: &str) -> tokei::Languages {
+fn project_languages(dir: &str, exclude: Vec<&str>, is_root: bool) -> tokei::Languages {
     use tokei::Config;
 
     let mut languages = tokei::Languages::new();
@@ -384,7 +388,10 @@ fn project_languages(dir: &str) -> tokei::Languages {
         types: Some(required_languages),
         ..Config::default()
     };
-    languages.get_statistics(&[&dir], &[".git", "target"], &tokei_config);
+
+    let d = if is_root { "." } else { dir };
+    languages.get_statistics(&[&d], &exclude, &tokei_config);
+
     languages
 }
 

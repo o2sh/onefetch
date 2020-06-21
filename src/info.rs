@@ -305,11 +305,12 @@ impl Info {
         no_merges: bool,
         color_blocks_flag: bool,
         author_nb: usize,
+        ignored_directories: Vec<&str>,
     ) -> Result<Info> {
+        let is_root_directory = dir == ".";
         let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
         let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
         let workdir_str = workdir.to_str().unwrap();
-
         let config = Info::get_configuration(&repo)?;
         let current_commit_info = Info::get_current_commit_info(&repo)?;
         let authors = Info::get_authors(workdir_str, no_merges, author_nb);
@@ -321,7 +322,8 @@ impl Info {
         let last_change = Info::get_last_change(workdir_str)?;
         let creation_date = Info::get_creation_time(workdir_str)?;
         let project_license = Info::get_project_license(workdir_str)?;
-        let (languages_stats, number_of_lines) = Language::get_language_stats(workdir_str)?;
+        let (languages_stats, number_of_lines) =
+            Language::get_language_stats(workdir_str, ignored_directories, is_root_directory)?;
         let dominant_language = Language::get_dominant_language(languages_stats.clone());
 
         Ok(Info {
