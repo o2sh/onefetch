@@ -11,7 +11,7 @@ exclude = ["assets/*.png"]
 [dependencies]
 colored= "1.8.0"
 git2 = {version = "0.7.5", default-features = false}
-tokei = "11.2.1"
+tokei = "12.0.0"
 askalono = "0.4.0"
 bytecount = "0.5.1"
 clap = "2.33.0"
