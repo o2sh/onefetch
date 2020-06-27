@@ -15,8 +15,8 @@ tokei = "12.0.0"
 askalono = "0.4.0"
 bytecount = "0.5.1"
 clap = "2.33.0"
-strum = "0.16.0"
-strum_macros = "0.16.0"
+strum = "0.18.0"
+strum_macros = "0.18.0"
 image = "0.22.3"
 
 [target.'cfg(windows)'.dependencies]
