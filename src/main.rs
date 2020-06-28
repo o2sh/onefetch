@@ -206,12 +206,12 @@ fn main() -> Result<()> {
         .arg(
             Arg::with_name("no-merge-commits")
                 .long("no-merge-commits")
-                .help("Ignore merge commits"),
+                .help("Ignores merge commits"),
         )
         .arg(
             Arg::with_name("no-color-blocks")
                 .long("no-color-blocks")
-                .help("Hide the color blocks"),
+                .help("Hides the color blocks"),
         )
         .arg(
             Arg::with_name("authors-number")
