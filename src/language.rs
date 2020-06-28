@@ -400,7 +400,12 @@ fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Langua
         let mut v = Vec::with_capacity(ignored_directories.len());
         for ignored in ignored_directories {
             if re.is_match(ignored) {
-                v.push(format!("{}{}", "**/", ignored));
+                let p = if ignored.starts_with("/") {
+                    "**"
+                } else {
+                    "**/"
+                };
+                v.push(format!("{}{}", p, ignored));
             } else {
                 v.push(String::from(ignored));
             }
