@@ -113,12 +113,9 @@ fn main() -> Result<()> {
         .author("o2sh <ossama-hjaji@live.fr>")
         .about(crate_description!())
         .arg(
-            Arg::with_name("directory")
-            .help("Run as if git was started in <directory> instead of the current working directory.")
-                .short("d")
-                .long("dir")
-                .takes_value(true)
-                .default_value("."),
+            Arg::with_name("input")
+            .default_value(".")
+            .help("Run as if onefetch was started in <input> instead of the current working directory.")
         )
         .arg(
             Arg::with_name("ascii-language")
@@ -137,7 +134,7 @@ fn main() -> Result<()> {
         .arg(
             Arg::with_name("disable-fields")
                 .long("disable-fields")
-                .short("D")
+                .short("d")
                 .multiple(true)
                 .takes_value(true)
                 .case_insensitive(true)
@@ -249,7 +246,7 @@ fn main() -> Result<()> {
         std::process::exit(0);
     }
 
-    let dir = String::from(matches.value_of("directory").unwrap());
+    let dir = String::from(matches.value_of("input").unwrap());
 
     let custom_logo: Language = if let Some(ascii_language) = matches.value_of("ascii-language") {
         Language::from_str(&ascii_language.to_lowercase()).unwrap()
