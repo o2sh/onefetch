@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::collections::HashMap;
 
 use colored::Color;
@@ -360,9 +361,9 @@ impl Language {
 
     pub fn get_language_stats(
         dir: &str,
-        exclude: Vec<&str>,
+        ignored_directories: Vec<&str>,
     ) -> Result<(Vec<(Language, f64)>, usize)> {
-        let tokei_langs = project_languages(&dir, exclude);
+        let tokei_langs = project_languages(&dir, ignored_directories);
         let languages_stat =
             Language::get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
         let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
@@ -384,7 +385,7 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
         .fold(0, |sum, val| sum + val.code)
 }
 
-fn project_languages(dir: &str, exclude: Vec<&str>) -> tokei::Languages {
+fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Languages {
     use tokei::Config;
 
     let mut languages = tokei::Languages::new();
@@ -394,7 +395,22 @@ fn project_languages(dir: &str, exclude: Vec<&str>) -> tokei::Languages {
         ..Config::default()
     };
 
-    languages.get_statistics(&[&dir], &exclude, &tokei_config);
+    if !ignored_directories.is_empty() {
+        let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
+        let mut v = Vec::with_capacity(ignored_directories.len());
+        for ignored in ignored_directories {
+            if re.is_match(ignored) {
+                v.push(format!("{}{}", "**/", ignored));
+            } else {
+                v.push(String::from(ignored));
+            }
+        }
+        let ignored_directories_for_ab: Vec<&str> = v.iter().map(|x| &**x).collect();
+        languages.get_statistics(&[&dir], &ignored_directories_for_ab, &tokei_config);
+    } else {
+        languages.get_statistics(&[&dir], &ignored_directories, &tokei_config);
+    }
+
     languages
 }
 

@@ -3,6 +3,7 @@ extern crate bytecount;
 extern crate askalono;
 extern crate colored;
 extern crate git2;
+extern crate regex;
 extern crate tokei;
 #[macro_use]
 extern crate clap;

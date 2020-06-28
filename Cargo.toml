@@ -18,6 +18,7 @@ clap = "2.33.0"
 strum = "0.18.0"
 strum_macros = "0.18.0"
 image = "0.22.3"
+regex = "1"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
