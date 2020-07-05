@@ -160,7 +160,7 @@ fn main() -> Result<()> {
                 ])
                 .hide_possible_values(true)
                 .help(&format!(
-                    "Colors to print the ascii art. Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}]",
+                    "Colors to print the ascii art. Possible values: [{0}{1}{2}{3}{4}{5}{6}{7}]",
                     "0".black(),
                     "1".red(),
                     "2".green(),
@@ -168,15 +168,7 @@ fn main() -> Result<()> {
                     "4".blue(),
                     "5".magenta(),
                     "6".cyan(),
-                    "7".white(),
-                    "8".bright_black(),
-                    "9".bright_red(),
-                    "10".bright_green(),
-                    "11".bright_yellow(),
-                    "12".bright_blue(),
-                    "13".bright_magenta(),
-                    "14".bright_cyan(),
-                    "15".bright_white(),
+                    "7".white()
                 )),
             )
             .arg(

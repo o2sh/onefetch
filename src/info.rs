@@ -229,7 +229,7 @@ impl std::fmt::Display for Info {
         if !self.no_color_blocks {
             writeln!(
                 buf,
-                "\n{0}{1}{2}{3}{4}{5}{6}{7}\n{8}{9}{10}{11}{12}{13}{14}{15}",
+                "\n{0}{1}{2}{3}{4}{5}{6}{7}",
                 "   ".on_black(),
                 "   ".on_red(),
                 "   ".on_green(),
@@ -237,15 +237,7 @@ impl std::fmt::Display for Info {
                 "   ".on_blue(),
                 "   ".on_magenta(),
                 "   ".on_cyan(),
-                "   ".on_white(),
-                "   ".on_bright_black(),
-                "   ".on_bright_red(),
-                "   ".on_bright_green(),
-                "   ".on_bright_yellow(),
-                "   ".on_bright_blue(),
-                "   ".on_bright_magenta(),
-                "   ".on_bright_cyan(),
-                "   ".on_bright_white(),
+                "   ".on_white()
             )?;
         }
 
