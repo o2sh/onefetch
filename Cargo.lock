@@ -832,7 +832,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "onefetch"
-version = "2.2.0"
+version = "2.3.0"
 dependencies = [
  "ansi_term 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "askalono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
