@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2020-08-02
+
+<img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
+
+**Contributors:**
+@ebroto 
+
+**Language**
+* Added support for Docker File @o2sh 
+* Added support for Jupyter Notebooks @o2sh
+
+**New feature:**
+* Add exclude OPTION #178 @o2sh 
+
+**Misc**
+* Accept LICENCE... as license file name @ebroto 
+* Better descriptions for flags and options @o2sh 
+
 ## [2.2.0] - 2020-04-01
 
 <img src="https://user-images.githubusercontent.com/13710835/66691603-23fc7b00-ec87-11e9-9280-8afb5b5a4cab.png" alt="logo" height="100px">
