@@ -8,6 +8,15 @@ license = "MIT"
 repository = "https://github.com/o2sh/onefetch"
 exclude = ["assets/*.png"]
 
+[package.metadata.deb]
+extended-description = """\
+Onefetch is a command line tool that displays information about your Git repository directly on your terminal. \
+Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. \
+"""
+depends = "$auto"
+section = "utility"
+priority = "optional"
+
 [dependencies]
 colored= "1.8.0"
 git2 = {version = "0.13.6", default-features = false}
