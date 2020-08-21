@@ -113,11 +113,9 @@ fn main() -> Result<()> {
         .version(crate_version!())
         .author("o2sh <ossama-hjaji@live.fr>")
         .about(crate_description!())
-        .arg(
-            Arg::with_name("input")
-            .default_value(".")
-            .help("Run as if onefetch was started in <input> instead of the current working directory.")
-        )
+        .arg(Arg::with_name("input").default_value(".").help(
+            "Run as if onefetch was started in <input> instead of the current working directory.",
+        ))
         .arg(
             Arg::with_name("ascii-language")
                 .short("a")
@@ -145,7 +143,7 @@ fn main() -> Result<()> {
                         .take(InfoFields::count() - 1)
                         .map(|field| field.into())
                         .collect::<Vec<&str>>()
-                        .as_slice()
+                        .as_slice(),
                 ),
         )
         .arg(
@@ -170,12 +168,12 @@ fn main() -> Result<()> {
                     "6".cyan(),
                     "7".white()
                 )),
-            )
-            .arg(
-                Arg::with_name("no-bold")
-                    .long("no-bold")
-                    .help("Turns off bold formatting."),
-            )
+        )
+        .arg(
+            Arg::with_name("no-bold")
+                .long("no-bold")
+                .help("Turns off bold formatting."),
+        )
         .arg(
             Arg::with_name("languages")
                 .short("l")
@@ -216,11 +214,11 @@ fn main() -> Result<()> {
         )
         .arg(
             Arg::with_name("exclude")
-            .short("e")
-            .long("exclude")
-            .multiple(true)
-            .takes_value(true)
-            .help("Ignore all files & directories matching the pattern.")
+                .short("e")
+                .long("exclude")
+                .multiple(true)
+                .takes_value(true)
+                .help("Ignore all files & directories matching the pattern."),
         )
         .get_matches();
 

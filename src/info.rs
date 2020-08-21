@@ -3,10 +3,10 @@ use std::fmt::Write;
 use std::fs;
 use std::process::Command;
 
+use crate::license::Detector;
 use colored::{Color, ColoredString, Colorize};
 use git2::Repository;
 use image::DynamicImage;
-use license::Detector;
 
 use crate::image_backends::ImageBackend;
 use crate::language::Language;

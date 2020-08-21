@@ -267,12 +267,7 @@ impl Language {
             Language::Assembly => vec![Color::Cyan],
             Language::C => vec![Color::Cyan, Color::Blue],
             Language::Clojure => vec![Color::Cyan, Color::Green],
-            Language::CMake => vec![
-                Color::Blue,
-                Color::Green,
-                Color::Red,
-                Color::Black,
-            ],
+            Language::CMake => vec![Color::Blue, Color::Green, Color::Red, Color::Black],
             Language::CoffeeScript => vec![Color::Red],
             Language::Cpp => vec![Color::Cyan, Color::Blue],
             Language::Csharp => vec![Color::Blue, Color::Magenta],
