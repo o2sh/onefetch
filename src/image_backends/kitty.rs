@@ -1,9 +1,11 @@
-use image::{imageops::FilterType, DynamicImage, GenericImageView};
-use libc::{
-    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
-    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
+use {
+    image::{imageops::FilterType, DynamicImage, GenericImageView},
+    libc::{
+        c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
+        POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
+    },
+    std::time::Instant,
 };
-use std::time::Instant;
 
 pub struct KittyBackend {}
 

@@ -1,17 +1,15 @@
 use {
-    crate::image_backends::ImageBackend,
-    crate::language::Language,
-    crate::license::Detector,
-    crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
+    crate::{
+        image_backends::ImageBackend,
+        language::Language,
+        license::Detector,
+        {AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
+    },
     colored::{Color, ColoredString, Colorize},
-    futures,
     futures::executor::block_on,
     git2::Repository,
     image::DynamicImage,
-    std::ffi::OsStr,
-    std::fmt::Write,
-    std::fs,
-    std::process::Command,
+    std::{ffi::OsStr, fmt::Write, fs, process::Command},
 };
 
 type Result<T> = std::result::Result<T, crate::Error>;
@@ -307,91 +305,65 @@ impl Info {
         let (languages_stats, number_of_lines) =
             Language::get_language_stats(workdir_str, ignored_directories)?;
 
-        let (
-            config,
-            current_commit_info,
-            authors,
-            (git_v, git_user),
-            version,
-            commits,
-            pending,
-            repo_size,
-            last_change,
-            creation_date,
-            project_license,
-            dominant_language,
-        ) = block_on(Info::get_info_lines(
-            no_merges,
-            author_nb,
-            &repo,
-            workdir_str,
-            &languages_stats,
-        ));
+        let info = async {
+            let (
+                config,
+                current_commit_info,
+                authors,
+                (git_v, git_user),
+                version,
+                commits,
+                pending,
+                repo_size,
+                last_change,
+                creation_date,
+                project_license,
+                dominant_language,
+            ) = futures::join!(
+                Info::get_configuration(&repo),
+                Info::get_current_commit_info(&repo),
+                Info::get_authors(workdir_str, no_merges, author_nb),
+                Info::get_git_info(workdir_str),
+                Info::get_version(workdir_str),
+                Info::get_commits(workdir_str, no_merges),
+                Info::get_pending_pending(workdir_str),
+                Info::get_packed_size(workdir_str),
+                Info::get_last_change(workdir_str),
+                Info::get_creation_time(workdir_str),
+                Info::get_project_license(workdir_str),
+                Language::get_dominant_language(languages_stats.clone())
+            );
 
-        let conf = config?;
-        let info = Info {
-            git_version: git_v,
-            git_username: git_user,
-            project_name: conf.repository_name,
-            current_commit: current_commit_info?,
-            version: version?,
-            creation_date: creation_date?,
-            dominant_language,
-            languages: languages_stats,
-            authors,
-            last_change: last_change?,
-            repo: conf.repository_url,
-            commits: commits?,
-            pending: pending?,
-            repo_size: repo_size?,
-            number_of_lines,
-            license: project_license?,
-            custom_logo: logo,
-            custom_colors: colors,
-            disable_fields: disabled,
-            bold_enabled: bold_flag,
-            no_color_blocks: color_blocks_flag,
-            custom_image,
-            image_backend,
+            let conf = config.unwrap();
+            Info {
+                git_version: git_v,
+                git_username: git_user,
+                project_name: conf.repository_name,
+                current_commit: current_commit_info.unwrap(),
+                version: version.unwrap(),
+                creation_date: creation_date.unwrap(),
+                dominant_language,
+                languages: languages_stats,
+                authors,
+                last_change: last_change.unwrap(),
+                repo: conf.repository_url,
+                commits: commits.unwrap(),
+                pending: pending.unwrap(),
+                repo_size: repo_size.unwrap(),
+                number_of_lines,
+                license: project_license.unwrap(),
+                custom_logo: logo,
+                custom_colors: colors,
+                disable_fields: disabled,
+                bold_enabled: bold_flag,
+                no_color_blocks: color_blocks_flag,
+                custom_image,
+                image_backend,
+            }
         };
 
+        let info = block_on(info);
         Ok(info)
-    }
-
-    async fn get_info_lines(
-        no_merges: bool,
-        author_nb: usize,
-        repo: &git2::Repository,
-        workdir_str: &str,
-        languages_stats: &Vec<(Language, f64)>,
-    ) -> (
-        Result<Configuration>,
-        Result<CommitInfo>,
-        Vec<(String, usize, usize)>,
-        (String, String),
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Language,
-    ) {
-        futures::join!(
-            Info::get_configuration(&repo),
-            Info::get_current_commit_info(&repo),
-            Info::get_authors(workdir_str, no_merges, author_nb),
-            Info::get_git_info(workdir_str),
-            Info::get_version(workdir_str),
-            Info::get_commits(workdir_str, no_merges),
-            Info::get_pending_pending(workdir_str),
-            Info::get_packed_size(workdir_str),
-            Info::get_last_change(workdir_str),
-            Info::get_creation_time(workdir_str),
-            Info::get_project_license(workdir_str),
-            Language::get_dominant_language(languages_stats.clone())
-        )
     }
 
     async fn get_configuration(repo: &Repository) -> Result<Configuration> {
