@@ -334,24 +334,24 @@ impl Info {
                 Language::get_dominant_language(languages_stats.clone())
             );
 
-            let conf = config.unwrap();
-            Info {
+            let conf = config?;
+            Ok(Info {
                 git_version: git_v,
                 git_username: git_user,
                 project_name: conf.repository_name,
-                current_commit: current_commit_info.unwrap(),
-                version: version.unwrap(),
-                creation_date: creation_date.unwrap(),
+                current_commit: current_commit_info?,
+                version: version?,
+                creation_date: creation_date?,
                 dominant_language,
                 languages: languages_stats,
                 authors,
-                last_change: last_change.unwrap(),
+                last_change: last_change?,
                 repo: conf.repository_url,
-                commits: commits.unwrap(),
-                pending: pending.unwrap(),
-                repo_size: repo_size.unwrap(),
+                commits: commits?,
+                pending: pending?,
+                repo_size: repo_size?,
                 number_of_lines,
-                license: project_license.unwrap(),
+                license: project_license?,
                 custom_logo: logo,
                 custom_colors: colors,
                 disable_fields: disabled,
@@ -359,10 +359,10 @@ impl Info {
                 no_color_blocks: color_blocks_flag,
                 custom_image,
                 image_backend,
-            }
+            })
         };
 
-        let info = block_on(info);
+        let info = block_on(info)?;
         Ok(info)
     }
 
