@@ -1,16 +1,18 @@
-use std::ffi::OsStr;
-use std::fmt::Write;
-use std::fs;
-use std::process::Command;
-
-use crate::license::Detector;
-use colored::{Color, ColoredString, Colorize};
-use git2::Repository;
-use image::DynamicImage;
-
-use crate::image_backends::ImageBackend;
-use crate::language::Language;
-use crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn};
+use {
+    crate::image_backends::ImageBackend,
+    crate::language::Language,
+    crate::license::Detector,
+    crate::{AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
+    colored::{Color, ColoredString, Colorize},
+    futures,
+    futures::executor::block_on,
+    git2::Repository,
+    image::DynamicImage,
+    std::ffi::OsStr,
+    std::fmt::Write,
+    std::fs,
+    std::process::Command,
+};
 
 type Result<T> = std::result::Result<T, crate::Error>;
 
@@ -302,38 +304,48 @@ impl Info {
         let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
         let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
         let workdir_str = workdir.to_str().unwrap();
-        let config = Info::get_configuration(&repo)?;
-        let current_commit_info = Info::get_current_commit_info(&repo)?;
-        let authors = Info::get_authors(workdir_str, no_merges, author_nb);
-        let (git_v, git_user) = Info::get_git_info(workdir_str);
-        let version = Info::get_version(workdir_str)?;
-        let commits = Info::get_commits(workdir_str, no_merges)?;
-        let pending = Info::get_pending_pending(workdir_str)?;
-        let repo_size = Info::get_packed_size(workdir_str)?;
-        let last_change = Info::get_last_change(workdir_str)?;
-        let creation_date = Info::get_creation_time(workdir_str)?;
-        let project_license = Info::get_project_license(workdir_str)?;
         let (languages_stats, number_of_lines) =
             Language::get_language_stats(workdir_str, ignored_directories)?;
-        let dominant_language = Language::get_dominant_language(languages_stats.clone());
 
-        Ok(Info {
-            git_version: git_v,
-            git_username: git_user,
-            project_name: config.repository_name,
-            current_commit: current_commit_info,
-            version,
-            creation_date,
-            dominant_language,
-            languages: languages_stats,
+        let (
+            config,
+            current_commit_info,
             authors,
-            last_change,
-            repo: config.repository_url,
+            (git_v, git_user),
+            version,
             commits,
             pending,
             repo_size,
+            last_change,
+            creation_date,
+            project_license,
+            dominant_language,
+        ) = block_on(Info::get_info_lines(
+            no_merges,
+            author_nb,
+            &repo,
+            workdir_str,
+            &languages_stats,
+        ));
+
+        let conf = config?;
+        let info = Info {
+            git_version: git_v,
+            git_username: git_user,
+            project_name: conf.repository_name,
+            current_commit: current_commit_info?,
+            version: version?,
+            creation_date: creation_date?,
+            dominant_language,
+            languages: languages_stats,
+            authors,
+            last_change: last_change?,
+            repo: conf.repository_url,
+            commits: commits?,
+            pending: pending?,
+            repo_size: repo_size?,
             number_of_lines,
-            license: project_license,
+            license: project_license?,
             custom_logo: logo,
             custom_colors: colors,
             disable_fields: disabled,
@@ -341,10 +353,48 @@ impl Info {
             no_color_blocks: color_blocks_flag,
             custom_image,
             image_backend,
-        })
+        };
+
+        Ok(info)
     }
 
-    fn get_configuration(repo: &Repository) -> Result<Configuration> {
+    async fn get_info_lines(
+        no_merges: bool,
+        author_nb: usize,
+        repo: &git2::Repository,
+        workdir_str: &str,
+        languages_stats: &Vec<(Language, f64)>,
+    ) -> (
+        Result<Configuration>,
+        Result<CommitInfo>,
+        Vec<(String, usize, usize)>,
+        (String, String),
+        Result<String>,
+        Result<String>,
+        Result<String>,
+        Result<String>,
+        Result<String>,
+        Result<String>,
+        Result<String>,
+        Language,
+    ) {
+        futures::join!(
+            Info::get_configuration(&repo),
+            Info::get_current_commit_info(&repo),
+            Info::get_authors(workdir_str, no_merges, author_nb),
+            Info::get_git_info(workdir_str),
+            Info::get_version(workdir_str),
+            Info::get_commits(workdir_str, no_merges),
+            Info::get_pending_pending(workdir_str),
+            Info::get_packed_size(workdir_str),
+            Info::get_last_change(workdir_str),
+            Info::get_creation_time(workdir_str),
+            Info::get_project_license(workdir_str),
+            Language::get_dominant_language(languages_stats.clone())
+        )
+    }
+
+    async fn get_configuration(repo: &Repository) -> Result<Configuration> {
         let config = repo.config().map_err(|_| Error::NoGitData)?;
         let mut remote_url = String::new();
         let mut repository_name = String::new();
@@ -382,7 +432,7 @@ impl Info {
         })
     }
 
-    fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
+    async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
         let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
         let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
         let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
@@ -405,7 +455,7 @@ impl Info {
     }
 
     // Return first n most active commiters as authors within this project.
-    fn get_authors(dir: &str, no_merges: bool, n: usize) -> Vec<(String, usize, usize)> {
+    async fn get_authors(dir: &str, no_merges: bool, n: usize) -> Vec<(String, usize, usize)> {
         let mut args = vec!["-C", dir, "log", "--format='%aN'"];
         if no_merges {
             args.push("--no-merges");
@@ -450,7 +500,7 @@ impl Info {
         authors
     }
 
-    fn get_git_info(dir: &str) -> (String, String) {
+    async fn get_git_info(dir: &str) -> (String, String) {
         let version = Command::new("git")
             .arg("--version")
             .output()
@@ -469,7 +519,7 @@ impl Info {
         (version, username)
     }
 
-    fn get_version(dir: &str) -> Result<String> {
+    async fn get_version(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
@@ -488,7 +538,7 @@ impl Info {
         }
     }
 
-    fn get_commits(dir: &str, no_merges: bool) -> Result<String> {
+    async fn get_commits(dir: &str, no_merges: bool) -> Result<String> {
         let mut args = vec!["-C", dir, "rev-list", "--count"];
         if no_merges {
             args.push("--no-merges");
@@ -509,7 +559,7 @@ impl Info {
         }
     }
 
-    fn get_pending_pending(dir: &str) -> Result<String> {
+    async fn get_pending_pending(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
@@ -557,7 +607,7 @@ impl Info {
         }
     }
 
-    fn get_packed_size(dir: &str) -> Result<String> {
+    async fn get_packed_size(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
@@ -604,7 +654,7 @@ impl Info {
         }
     }
 
-    fn get_last_change(dir: &str) -> Result<String> {
+    async fn get_last_change(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
@@ -623,7 +673,7 @@ impl Info {
         }
     }
 
-    fn get_creation_time(dir: &str) -> Result<String> {
+    async fn get_creation_time(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
@@ -643,7 +693,7 @@ impl Info {
         Ok(output)
     }
 
-    fn get_project_license(dir: &str) -> Result<String> {
+    async fn get_project_license(dir: &str) -> Result<String> {
         fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
             LICENSE_FILES
                 .iter()
