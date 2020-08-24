@@ -19,7 +19,7 @@ section = "utility"
 priority = "optional"
 
 [dependencies]
-colored= "1.8.0"
+colored= "2.0.0"
 git2 = {version = "0.13.10", default-features = false}
 tokei = "12.0.0"
 askalono = "0.4.2"
