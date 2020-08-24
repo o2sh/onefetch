@@ -3,6 +3,7 @@ use {
     colored::Color,
     regex::Regex,
     std::collections::HashMap,
+    strum::{EnumIter, EnumString},
 };
 
 #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter)]
