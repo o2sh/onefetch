@@ -1,32 +1,26 @@
-extern crate bytecount;
-
-extern crate askalono;
-extern crate colored;
-extern crate git2;
-extern crate regex;
-extern crate tokei;
 #[macro_use]
 extern crate clap;
-extern crate strum;
 #[macro_use]
 extern crate strum_macros;
-extern crate image;
-
-#[cfg(target_os = "windows")]
-extern crate ansi_term;
 
 #[cfg(target_os = "linux")]
-extern crate libc;
-
-use clap::{App, Arg};
-use colored::*;
-use std::{
-    convert::From,
-    process::{Command, Stdio},
-    result,
-    str::FromStr,
+use image_backends::ImageBackend;
+use {
+    ascii_art::AsciiArt,
+    clap::{App, Arg},
+    colored::*,
+    commit_info::CommitInfo,
+    error::Error,
+    info::Info,
+    language::Language,
+    std::{
+        convert::From,
+        process::{Command, Stdio},
+        result,
+        str::FromStr,
+    },
+    strum::{EnumCount, IntoEnumIterator},
 };
-use strum::{EnumCount, IntoEnumIterator};
 
 mod ascii_art;
 mod commit_info;
@@ -35,14 +29,6 @@ mod image_backends;
 mod info;
 mod language;
 mod license;
-
-use ascii_art::AsciiArt;
-use commit_info::CommitInfo;
-use error::Error;
-#[cfg(target_os = "linux")]
-use image_backends::ImageBackend;
-use info::Info;
-use language::Language;
 
 type Result<T> = result::Result<T, Error>;
 

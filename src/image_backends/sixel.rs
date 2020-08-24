@@ -1,13 +1,15 @@
-use image::{
-    imageops::{colorops, FilterType},
-    math::nq::NeuQuant,
-    DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
+use {
+    image::{
+        imageops::{colorops, FilterType},
+        math::nq::NeuQuant,
+        DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
+    },
+    libc::{
+        c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
+        POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
+    },
+    std::time::Instant,
 };
-use libc::{
-    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
-    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
-};
-use std::time::Instant;
 
 pub struct SixelBackend {}
 

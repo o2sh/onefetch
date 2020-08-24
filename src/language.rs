@@ -1,9 +1,9 @@
-use regex::Regex;
-use std::collections::HashMap;
-
-use colored::Color;
-
-use crate::{Error, Result};
+use {
+    crate::{Error, Result},
+    colored::Color,
+    regex::Regex,
+    std::collections::HashMap,
+};
 
 #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter)]
 #[strum(serialize_all = "lowercase")]
@@ -367,7 +367,7 @@ impl Language {
         Ok((stat_vec, loc))
     }
 
-    pub fn get_dominant_language(languages_stat_vec: Vec<(Language, f64)>) -> Language {
+    pub async fn get_dominant_language(languages_stat_vec: Vec<(Language, f64)>) -> Language {
         languages_stat_vec[0].0.clone()
     }
 }

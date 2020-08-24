@@ -29,6 +29,7 @@ strum = "0.18.0"
 strum_macros = "0.18.0"
 image = "0.22.3"
 regex = "1"
+futures = "0.3.5"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
