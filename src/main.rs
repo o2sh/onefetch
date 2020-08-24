@@ -1,7 +1,5 @@
 #[macro_use]
 extern crate clap;
-#[macro_use]
-extern crate strum_macros;
 
 #[cfg(target_os = "linux")]
 use image_backends::ImageBackend;
