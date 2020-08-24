@@ -27,7 +27,7 @@ bytecount = "0.6.0"
 clap = "2.33.3"
 strum = "0.18.0"
 strum_macros = "0.18.0"
-image = "0.22.3"
+image = "0.23.5"
 regex = "1"
 futures = "0.3.5"
 
