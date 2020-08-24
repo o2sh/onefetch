@@ -264,6 +264,9 @@ mod test {
 
     #[test]
     fn render() {
+        use colored::control::SHOULD_COLORIZE;
+        SHOULD_COLORIZE.set_override(true);
+
         let colors_shim = Vec::new();
 
         assert_eq!(
