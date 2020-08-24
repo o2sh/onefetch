@@ -1,7 +1,5 @@
 #[macro_use]
 extern crate clap;
-#[macro_use]
-extern crate strum_macros;
 
 #[cfg(target_os = "linux")]
 use image_backends::ImageBackend;
@@ -19,7 +17,7 @@ use {
         result,
         str::FromStr,
     },
-    strum::{EnumCount, IntoEnumIterator},
+    strum::{EnumCount, EnumIter, EnumString, IntoEnumIterator, IntoStaticStr},
 };
 
 mod ascii_art;
@@ -126,7 +124,7 @@ fn main() -> Result<()> {
                 .help("Allows you to disable an info line from appearing in the output.")
                 .possible_values(
                     &InfoFields::iter()
-                        .take(InfoFields::count() - 1)
+                        .take(InfoFields::COUNT - 1)
                         .map(|field| field.into())
                         .collect::<Vec<&str>>()
                         .as_slice(),
