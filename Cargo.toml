@@ -35,5 +35,5 @@ futures = "0.3.5"
 ansi_term = "0.12"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-libc = "0.2.65"
+libc = "0.2.76"
 base64 = "0.11.0"
