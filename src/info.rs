@@ -331,7 +331,7 @@ impl Info {
                 Info::get_last_change(workdir_str),
                 Info::get_creation_time(workdir_str),
                 Info::get_project_license(workdir_str),
-                Language::get_dominant_language(languages_stats.clone())
+                Language::get_dominant_language(&languages_stats)
             );
 
             let conf = config?;
@@ -382,10 +382,10 @@ impl Info {
         }
 
         if let Some(url) = remote_upstream {
-            remote_url = url.clone();
+            remote_url = url;
         }
 
-        let url = remote_url.clone();
+        let url = remote_url;
         let name_parts: Vec<&str> = url.split('/').collect();
 
         if !name_parts.is_empty() {
@@ -399,7 +399,7 @@ impl Info {
         }
 
         Ok(Configuration {
-            repository_name: repository_name.clone(),
+            repository_name,
             repository_url: name_parts.join("/"),
         })
     }

@@ -368,7 +368,7 @@ impl Language {
         Ok((stat_vec, loc))
     }
 
-    pub async fn get_dominant_language(languages_stat_vec: Vec<(Language, f64)>) -> Language {
+    pub async fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
         languages_stat_vec[0].0.clone()
     }
 }
@@ -396,7 +396,7 @@ fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Langua
         let mut v = Vec::with_capacity(ignored_directories.len());
         for ignored in ignored_directories {
             if re.is_match(ignored) {
-                let p = if ignored.starts_with("/") {
+                let p = if ignored.starts_with('/') {
                     "**"
                 } else {
                     "**/"
