@@ -27,6 +27,6 @@ You can further configure Onefetch to display exactly what you want it to. Throu
 
 Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. 
 
-Contributions are very welcome! See [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/master/LICENSE) for more info.
+Contributions are very welcome! See [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/master/CONTRIBUTING.md) for more info.
 
 ### More: \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\] \[[Wiki](https://github.com/o2sh/onefetch/wiki)\]
