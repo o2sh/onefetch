@@ -51,5 +51,5 @@ Looking at the existing issues is a great way to find something to contribute on
 
 ## Licensing
 
-See the [LICENSE](https://github.com/o2sh/onefetch/blob/master/LICENSE) file for our project's licensing. We will ask you confirm the licensing of your contribution.
+See the [LICENSE](https://github.com/o2sh/onefetch/blob/master/LICENSE.md) file for our project's licensing. We will ask you confirm the licensing of your contribution.
 
