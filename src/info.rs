@@ -6,6 +6,7 @@ use {
         {AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
     },
     colored::{Color, ColoredString, Colorize},
+    futures::executor::block_on,
     git2::Repository,
     image::DynamicImage,
     std::{ffi::OsStr, fmt::Write, fs},
@@ -286,7 +287,8 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(
+    #[tokio::main]
+    pub async fn new(
         dir: &str,
         logo: Language,
         colors: Vec<String>,
@@ -318,10 +320,23 @@ impl Info {
             creation_date,
             project_license,
             dominant_language,
-        ) = Info::get_info_lines(no_merges, author_nb, &repo, workdir_str, &languages_stats);
+        ) = futures::join!(
+            Info::get_configuration(&repo),
+            Info::get_current_commit_info(&repo),
+            Info::get_authors(workdir_str, no_merges, author_nb),
+            Info::get_git_info(workdir_str),
+            Info::get_version(workdir_str),
+            Info::get_commits(workdir_str, no_merges),
+            Info::get_pending_pending(workdir_str),
+            Info::get_packed_size(workdir_str),
+            Info::get_last_change(workdir_str),
+            Info::get_creation_time(workdir_str),
+            Info::get_project_license(workdir_str),
+            Language::get_dominant_language(&languages_stats)
+        );
 
         let conf = config?;
-        let info = Info {
+        Ok(Info {
             git_version: git_v,
             git_username: git_user,
             project_name: conf.repository_name,
@@ -345,46 +360,7 @@ impl Info {
             no_color_blocks: color_blocks_flag,
             custom_image,
             image_backend,
-        };
-
-        Ok(info)
-    }
-
-    #[tokio::main]
-    async fn get_info_lines(
-        no_merges: bool,
-        author_nb: usize,
-        repo: &git2::Repository,
-        workdir_str: &str,
-        languages_stats: &Vec<(Language, f64)>,
-    ) -> (
-        Result<Configuration>,
-        Result<CommitInfo>,
-        Vec<(String, usize, usize)>,
-        (String, String),
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Result<String>,
-        Language,
-    ) {
-        futures::join!(
-            Info::get_configuration(&repo),
-            Info::get_current_commit_info(&repo),
-            Info::get_authors(workdir_str, no_merges, author_nb),
-            Info::get_git_info(workdir_str),
-            Info::get_version(workdir_str),
-            Info::get_commits(workdir_str, no_merges),
-            Info::get_pending_pending(workdir_str),
-            Info::get_packed_size(workdir_str),
-            Info::get_last_change(workdir_str),
-            Info::get_creation_time(workdir_str),
-            Info::get_project_license(workdir_str),
-            Language::get_dominant_language(&languages_stats)
-        )
+        })
     }
 
     async fn get_configuration(repo: &Repository) -> Result<Configuration> {
