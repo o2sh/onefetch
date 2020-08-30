@@ -15,12 +15,14 @@
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/aesthetic.png" align="right" height="240px">
 
-Onefetch is a command line tool that displays information about your Git repository directly on your terminal. Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
+Onefetch is a command line tool that displays information about your Git repository directly on your terminal.
 
 The information by default is displayed alongside the dominant language's logo. You can further configure Onefetch to instead display an image.
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/julia.png" align="right" height="240px">
 
-You can further configure Neofetch to display exactly what you want it to. Through the use of command-line flags.
+You can further configure Onefetch to display exactly what you want it to. Through the use of command-line flags.
+
+Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added.
 
 ### More: \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\] \[[Wiki](https://github.com/o2sh/onefetch/wiki)\]
