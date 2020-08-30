@@ -19,7 +19,7 @@ Onefetch is a command line tool that displays information about your Git reposit
 
 The information by default is displayed alongside the dominant language's logo. You can further configure Onefetch to instead display an image.
 
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/julia.png" align="right" height="240px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/r.png" align="right" height="240px" width="527px">
 
 You can further configure Onefetch to display exactly what you want it to. Through the use of command-line flags.
 
