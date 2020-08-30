@@ -6,7 +6,6 @@ use {
         {AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
     },
     colored::{Color, ColoredString, Colorize},
-    futures::executor::block_on,
     git2::Repository,
     image::DynamicImage,
     std::{ffi::OsStr, fmt::Write, fs},
