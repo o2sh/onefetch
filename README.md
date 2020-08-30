@@ -25,6 +25,8 @@ Onefetch provides the user with code statistics and project information with fea
 
 You can further configure Onefetch to display exactly what you want it to. Through the use of command-line flags.
 
-Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. Contributions are very welcome! See CONTRIBUTING for more info.
+Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. 
+
+Contributions are very welcome! See CONTRIBUTING for more info.
 
 ### More: \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\] \[[Wiki](https://github.com/o2sh/onefetch/wiki)\]
