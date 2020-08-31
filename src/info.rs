@@ -6,10 +6,10 @@ use {
         {AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
     },
     colored::{Color, ColoredString, Colorize},
-    futures::executor::block_on,
     git2::Repository,
     image::DynamicImage,
-    std::{ffi::OsStr, fmt::Write, fs, process::Command},
+    std::{ffi::OsStr, fmt::Write, fs},
+    tokio::process::Command,
 };
 
 type Result<T> = std::result::Result<T, crate::Error>;
@@ -286,7 +286,8 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(
+    #[tokio::main]
+    pub async fn new(
         dir: &str,
         logo: Language,
         colors: Vec<String>,
@@ -305,65 +306,60 @@ impl Info {
         let (languages_stats, number_of_lines) =
             Language::get_language_stats(workdir_str, ignored_directories)?;
 
-        let info = async {
-            let (
-                config,
-                current_commit_info,
-                authors,
-                (git_v, git_user),
-                version,
-                commits,
-                pending,
-                repo_size,
-                last_change,
-                creation_date,
-                project_license,
-                dominant_language,
-            ) = futures::join!(
-                Info::get_configuration(&repo),
-                Info::get_current_commit_info(&repo),
-                Info::get_authors(workdir_str, no_merges, author_nb),
-                Info::get_git_info(workdir_str),
-                Info::get_version(workdir_str),
-                Info::get_commits(workdir_str, no_merges),
-                Info::get_pending_pending(workdir_str),
-                Info::get_packed_size(workdir_str),
-                Info::get_last_change(workdir_str),
-                Info::get_creation_time(workdir_str),
-                Info::get_project_license(workdir_str),
-                Language::get_dominant_language(&languages_stats)
-            );
+        let (
+            config,
+            current_commit_info,
+            authors,
+            (git_v, git_user),
+            version,
+            commits,
+            pending,
+            repo_size,
+            last_change,
+            creation_date,
+            project_license,
+            dominant_language,
+        ) = futures::join!(
+            Info::get_configuration(&repo),
+            Info::get_current_commit_info(&repo),
+            Info::get_authors(workdir_str, no_merges, author_nb),
+            Info::get_git_info(workdir_str),
+            Info::get_version(workdir_str),
+            Info::get_commits(workdir_str, no_merges),
+            Info::get_pending_pending(workdir_str),
+            Info::get_packed_size(workdir_str),
+            Info::get_last_change(workdir_str),
+            Info::get_creation_time(workdir_str),
+            Info::get_project_license(workdir_str),
+            Language::get_dominant_language(&languages_stats)
+        );
 
-            let conf = config?;
-            Ok(Info {
-                git_version: git_v,
-                git_username: git_user,
-                project_name: conf.repository_name,
-                current_commit: current_commit_info?,
-                version: version?,
-                creation_date: creation_date?,
-                dominant_language,
-                languages: languages_stats,
-                authors,
-                last_change: last_change?,
-                repo: conf.repository_url,
-                commits: commits?,
-                pending: pending?,
-                repo_size: repo_size?,
-                number_of_lines,
-                license: project_license?,
-                custom_logo: logo,
-                custom_colors: colors,
-                disable_fields: disabled,
-                bold_enabled: bold_flag,
-                no_color_blocks: color_blocks_flag,
-                custom_image,
-                image_backend,
-            })
-        };
-
-        let info = block_on(info)?;
-        Ok(info)
+        let conf = config?;
+        Ok(Info {
+            git_version: git_v,
+            git_username: git_user,
+            project_name: conf.repository_name,
+            current_commit: current_commit_info?,
+            version: version?,
+            creation_date: creation_date?,
+            dominant_language,
+            languages: languages_stats,
+            authors,
+            last_change: last_change?,
+            repo: conf.repository_url,
+            commits: commits?,
+            pending: pending?,
+            repo_size: repo_size?,
+            number_of_lines,
+            license: project_license?,
+            custom_logo: logo,
+            custom_colors: colors,
+            disable_fields: disabled,
+            bold_enabled: bold_flag,
+            no_color_blocks: color_blocks_flag,
+            custom_image,
+            image_backend,
+        })
     }
 
     async fn get_configuration(repo: &Repository) -> Result<Configuration> {
@@ -436,6 +432,7 @@ impl Info {
         let output = Command::new("git")
             .args(args)
             .output()
+            .await
             .expect("Failed to execute git.");
 
         // create map for storing author name as a key and their commit count as value
@@ -476,6 +473,7 @@ impl Info {
         let version = Command::new("git")
             .arg("--version")
             .output()
+            .await
             .expect("Failed to execute git.");
         let version = String::from_utf8_lossy(&version.stdout).replace('\n', "");
 
@@ -486,6 +484,7 @@ impl Info {
             .arg("--get")
             .arg("user.name")
             .output()
+            .await
             .expect("Failed to execute git.");
         let username = String::from_utf8_lossy(&username.stdout).replace('\n', "");
         (version, username)
@@ -499,6 +498,7 @@ impl Info {
             .arg("--abbrev=0")
             .arg("--tags")
             .output()
+            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -520,6 +520,7 @@ impl Info {
         let output = Command::new("git")
             .args(args)
             .output()
+            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -538,6 +539,7 @@ impl Info {
             .arg("status")
             .arg("--porcelain")
             .output()
+            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -586,6 +588,7 @@ impl Info {
             .arg("count-objects")
             .arg("-vH")
             .output()
+            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -604,6 +607,7 @@ impl Info {
             .arg(dir)
             .arg("ls-files")
             .output()
+            .await
             .expect("Failed to execute git.");
         // To check if command executed successfully or not
         let error = &output.stderr;
@@ -634,6 +638,7 @@ impl Info {
             .arg("-1")
             .arg("--format=%cr")
             .output()
+            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -654,6 +659,7 @@ impl Info {
             .arg("--pretty=oneline")
             .arg("--format=\"%ar\"")
             .output()
+            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
