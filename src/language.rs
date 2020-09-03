@@ -7,7 +7,7 @@ use {
 };
 
 macro_rules! define_languages {
-    ($( { $name:ident, $ascii:literal, $display:literal $(, $serialize:literal )? } ),*) => {
+    ($( { $name:ident, $ascii:literal, $display:literal $(, $serialize:literal )? } ),* ,) => {
 
         #[strum(serialize_all = "lowercase")]
         #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter)]
@@ -103,7 +103,7 @@ define_languages!{
     { TypeScript, "typescript.ascii", "TypeScript" },
     { Vue, "vue.ascii", "Vue" },
     { Xml, "xml.ascii", "XML" },
-    { Zig, "zig.ascii", "Zig" }
+    { Zig, "zig.ascii", "Zig" },
 }
 
 impl Language {
