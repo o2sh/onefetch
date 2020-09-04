@@ -100,7 +100,7 @@ macro_rules! define_languages {
     };
 }
 
-define_languages!{
+define_languages! {
     { Assembly, "assembly.ascii", "Assembly", vec![Color::Cyan] },
     { C, "c.ascii", "C", vec![Color::Cyan, Color::Blue] },
     { Clojure, "clojure.ascii", "Clojure", vec![Color::Cyan, Color::Green] },
