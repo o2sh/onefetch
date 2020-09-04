@@ -58,6 +58,43 @@ macro_rules! define_languages {
         fn get_all_language_types() -> Vec<tokei::LanguageType> {
             vec![ $( tokei::LanguageType::$name ,)* ]
         }
+
+        #[cfg(test)]
+        mod ascii_size {
+            use lazy_static::lazy_static;
+            use more_asserts::assert_le;
+            use paste::paste;
+            use regex::Regex;
+
+            const MAX_WIDTH: usize = 40;
+            const MAX_HEIGHT: usize = 25;
+
+            lazy_static! {
+                static ref COLOR_INTERPOLATION: Regex = Regex::new(r"\{\d+\}").unwrap();
+            }
+
+            $(
+                paste! {
+                    #[test]
+                    fn [<$name:lower _width>] () {
+                        const ASCII: &str = include_str!(concat!("../resources/", $ascii));
+
+                        for (line_number, line) in ASCII.lines().enumerate() {
+                            let line = COLOR_INTERPOLATION.replace_all(line, "");
+                            if (line.len() > MAX_WIDTH) {
+                                panic!("{} is too wide at line {}\n{:?}", $ascii, line_number + 1, line)
+                            }
+                        }
+                    }
+
+                    #[test]
+                    fn [<$name:lower _height>] () {
+                        const ASCII: &str = include_str!(concat!("../resources/", $ascii));
+                        assert_le!(ASCII.lines().count(), MAX_HEIGHT, concat!($ascii, " is too tall."));
+                    }
+                }
+            )*
+        }
     };
 }
 
