@@ -58,7 +58,7 @@ impl SixelBackend {
             buf.push(byte);
             if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(&[b'c']) {
                 for attribute in buf[3..(buf.len() - 1)].split(|x| *x == b';') {
-                    if attribute == &[b'4'] {
+                    if attribute == [b'4'] {
                         unsafe {
                             tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
                         }
@@ -107,7 +107,7 @@ impl super::ImageBackend for SixelBackend {
         });
 
         let mut image_data = Vec::<u8>::new();
-        image_data.extend("\x1BPq".as_bytes()); // start sixel data
+        image_data.extend(b"\x1BPq"); // start sixel data
         image_data.extend(format!("\"1;1;{};{}", image.width(), image.height()).as_bytes());
 
         let mut colors = std::collections::HashMap::<Rgb<u8>, u8>::new();
@@ -137,20 +137,20 @@ impl super::ImageBackend for SixelBackend {
                 }
             }
             for (color, color_index) in &colors {
-                let mut sixel_samples = Vec::<u8>::with_capacity(sixel_row.width() as usize);
+                let mut sixel_samples = vec![0; sixel_row.width() as usize];
                 sixel_samples.resize(sixel_row.width() as usize, 0);
                 for (x, y, pixel) in sixel_row.pixels() {
                     if color == &pixel {
-                        sixel_samples[x as usize] = sixel_samples[x as usize] | (1 << y);
+                        sixel_samples[x as usize] |= 1 << y;
                     }
                 }
                 image_data.extend(format!("#{}", color_index).bytes());
                 image_data.extend(sixel_samples.iter().map(|x| x + 0x3F));
-                image_data.push('$' as u8);
+                image_data.push(b'$');
             }
-            image_data.push('-' as u8);
+            image_data.push(b'-');
         }
-        image_data.extend("\x1B\\".as_bytes());
+        image_data.extend(b"\x1B\\");
 
         image_data.extend(format!("\x1B[{}A", image_rows as u32 + 2).as_bytes()); // move cursor to top-left corner
         image_data.extend(format!("\x1B[{}C", image_columns as u32 + 1).as_bytes()); // move cursor to top-right corner of image

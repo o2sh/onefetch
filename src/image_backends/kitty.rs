@@ -119,9 +119,9 @@ impl super::ImageBackend for KittyBackend {
                 .as_bytes(),
             );
             image_data.extend(chunk);
-            image_data.extend("\x1B\\".as_bytes());
+            image_data.extend(b"\x1B\\");
         }
-        image_data.extend("\x1B_Gm=0;\x1B\\".as_bytes()); // write empty last chunk
+        image_data.extend(b"\x1B_Gm=0;\x1B\\"); // write empty last chunk
         image_data.extend(format!("\x1B[{}A", image_rows as u32 - 1).as_bytes()); // move cursor to start of image
         let mut i = 0;
         for line in &lines {
