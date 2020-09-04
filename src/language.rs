@@ -54,6 +54,10 @@ macro_rules! define_languages {
                 }
             }
         }
+
+        fn get_all_language_types() -> Vec<tokei::LanguageType> {
+            vec![ $( tokei::LanguageType::$name ,)* ]
+        }
     };
 }
 
@@ -193,64 +197,4 @@ fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Langua
     }
 
     languages
-}
-
-fn get_all_language_types() -> Vec<tokei::LanguageType> {
-    vec![
-        tokei::LanguageType::Assembly,
-        tokei::LanguageType::C,
-        tokei::LanguageType::Clojure,
-        tokei::LanguageType::CMake,
-        tokei::LanguageType::CoffeeScript,
-        tokei::LanguageType::Cpp,
-        tokei::LanguageType::CSharp,
-        tokei::LanguageType::Css,
-        tokei::LanguageType::D,
-        tokei::LanguageType::Dart,
-        tokei::LanguageType::Dockerfile,
-        tokei::LanguageType::Elixir,
-        tokei::LanguageType::Elisp,
-        tokei::LanguageType::Elm,
-        tokei::LanguageType::Erlang,
-        tokei::LanguageType::Fish,
-        tokei::LanguageType::Forth,
-        tokei::LanguageType::FortranModern,
-        tokei::LanguageType::FSharp,
-        tokei::LanguageType::Go,
-        tokei::LanguageType::Groovy,
-        tokei::LanguageType::Haskell,
-        tokei::LanguageType::Html,
-        tokei::LanguageType::Idris,
-        tokei::LanguageType::Java,
-        tokei::LanguageType::JavaScript,
-        tokei::LanguageType::Julia,
-        tokei::LanguageType::Jupyter,
-        tokei::LanguageType::Kotlin,
-        tokei::LanguageType::Lisp,
-        tokei::LanguageType::Lua,
-        tokei::LanguageType::Markdown,
-        tokei::LanguageType::Nim,
-        tokei::LanguageType::Nix,
-        tokei::LanguageType::ObjectiveC,
-        tokei::LanguageType::OCaml,
-        tokei::LanguageType::Org,
-        tokei::LanguageType::Perl,
-        tokei::LanguageType::Php,
-        tokei::LanguageType::Prolog,
-        tokei::LanguageType::PureScript,
-        tokei::LanguageType::Python,
-        tokei::LanguageType::R,
-        tokei::LanguageType::Racket,
-        tokei::LanguageType::Ruby,
-        tokei::LanguageType::Rust,
-        tokei::LanguageType::Scala,
-        tokei::LanguageType::Sh,
-        tokei::LanguageType::Swift,
-        tokei::LanguageType::Tcl,
-        tokei::LanguageType::Tex,
-        tokei::LanguageType::TypeScript,
-        tokei::LanguageType::Vue,
-        tokei::LanguageType::Xml,
-        tokei::LanguageType::Zig,
-    ]
 }
