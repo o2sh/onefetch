@@ -37,3 +37,8 @@ ansi_term = "0.12"
 [target.'cfg(target_os = "linux")'.dependencies]
 libc = "0.2.76"
 base64 = "0.12.3"
+
+[dev-dependencies]
+lazy_static = "1.4"
+more-asserts = "0.2"
+paste = "1"
