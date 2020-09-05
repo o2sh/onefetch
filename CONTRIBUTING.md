@@ -1,16 +1,15 @@
-# Contributing Guidelines
-
 Thank you for your interest in contributing to onefetch! Whether it's a bug report, new feature, correction, or additional 
 documentation, we greatly value feedback and contributions from our community.
 
 Please read through this document before submitting any issues or pull requests to ensure we have all the necessary 
 information to effectively respond to your bug report or contribution.
 
+# Contributing Guidelines
 
-* [Reporting Bugs/Feature Requests](#reporting-bugs--feature-requests)
+* [Reporting Bugs / Feature Requests](#reporting-bugs--feature-requests)
 * [Contributing via Pull Requests](#contributing-via-pull-requests)
     * [Finding contributions to work on](#finding-contributions-to-work-on)
-    * [Adding support for a new Language](#adding-support-for-a-new-language)
+    * [Adding support for a new language](#adding-support-for-a-new-language)
       * [Ascii logo](#ascii-logo)
     * [Project-specific notes](#project-specific-notes)
 
@@ -50,7 +49,7 @@ GitHub provides additional document on [forking a repository](https://help.githu
 
 Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any ['help wanted'](https://github.com/o2sh/onefetch/labels/help%20wanted) issues is a great place to start.
 
-### Adding support for a new Language
+### Adding support for a new language
 
 First, you have to make sure that the language you want to add is supported by tokei ([supported languages](https://github.com/XAMPPRocky/tokei#supported-languages))
 
