@@ -6,7 +6,15 @@ documentation, we greatly value feedback and contributions from our community.
 Please read through this document before submitting any issues or pull requests to ensure we have all the necessary 
 information to effectively respond to your bug report or contribution.
 
-## Reporting Bugs/Feature Requests
+
+* [Reporting Bugs/Feature Requests](#reporting-bugs--feature-requests)
+* [Contributing via Pull Requests](#contributing-via-pull-requests)
+    * [Finding contributions to work on](#finding-contributions-to-work-on)
+    * [Adding support for a new Language](#adding-support-for-a-new-language)
+      * [Ascii logo](#ascii-logo)
+    * [Project-specific notes](#project-specific-notes)
+
+## Reporting Bugs / Feature Requests
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
 
@@ -38,18 +46,55 @@ To send us a pull request, please:
 GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and 
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
+### Finding contributions to work on
+
+Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any ['help wanted'](https://github.com/o2sh/onefetch/labels/help%20wanted) issues is a great place to start.
+
+### Adding support for a new Language
+
+First, you have to make sure that the language you want to add is supported by tokei ([supported languages](https://github.com/XAMPPRocky/tokei#supported-languages))
+
+Adding support for a new Language requires adding a new entry in the `define_language!` macro in [language.rs](https://raw.githubusercontent.com/o2sh/onefetch/master/src/language.rs).
+
+**Example**:
+
+`{ CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" }`
+
+The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors `vec![Color::Blue, Color::Magenta]` used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
+
+#### Ascii logo
+
+```
+{4}   _{1} _  _ 
+{4} _|_{1}(_|/ \
+{0} o{4}| {1} _|\_/
+
+{0}    /\
+{0}   /  \
+{0}  |    |
+{0}  |{2}NASA{0}|
+{0}  |    |
+{0}  |    |
+{0}  |    |
+{0} '      `
+{0} |      |
+{0} |      |
+{0} |______|
+{3}  '-`'-`   .
+{3}  / . \'\ . .'
+{3} ''( .'\.' ' .;'
+{3}'.;.;' ;'.;' ..;;'
+```
+
+Remarks:
+ - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
+ - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
+ - Make sure to trim any unnecessary trailing whitespaces
+
 ### Project-specific notes
 
 - Please ensure your changes are formatted according to `cargo fmt`.
 - Do check for linting errors with `cargo clippy`. If you're having trouble with this, feel free to ask for help.
 - Documenting your changes in `CHANGELOG.md` (in the Unreleased section) would be awesome, but is not required.
 - If you can, try to write some tests for your change (if it addresses a bug) or feature. Again, feel free to ask for help. Our CI will run these tests to ensure your code never breaks with future changes.
-
-## Finding contributions to work on
-
-Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any ['help wanted'](https://github.com/o2sh/onefetch/labels/help%20wanted) issues is a great place to start.
-
-## Licensing
-
-See the [LICENSE](https://github.com/o2sh/onefetch/blob/master/LICENSE.md) file for our project's licensing. We will ask you confirm the licensing of your contribution.
 
