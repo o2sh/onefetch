@@ -35,7 +35,7 @@ tokio = { version = "0.2.22", features = ["full"] }
 ansi_term = "0.12"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-libc = "0.2.76"
+libc = "0.2.77"
 base64 = "0.12.3"
 
 [dev-dependencies]
