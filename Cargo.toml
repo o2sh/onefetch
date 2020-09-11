@@ -20,7 +20,7 @@ priority = "optional"
 
 [dependencies]
 colored= "2.0.0"
-git2 = { version = "0.13.10", default-features = false }
+git2 = { version = "0.13.11", default-features = false }
 tokei = "12.0.0"
 askalono = "0.4.2"
 bytecount = "0.6.0"
