@@ -314,7 +314,6 @@ impl Info {
             version,
             pending,
             repo_size,
-            last_change,
             project_license,
             dominant_language,
         ) = futures::join!(
@@ -325,7 +324,6 @@ impl Info {
             Info::get_version(workdir_str),
             Info::get_pending_changes(workdir_str),
             Info::get_packed_size(workdir_str),
-            Info::get_last_change(workdir_str),
             Info::get_project_license(workdir_str),
             Language::get_dominant_language(&languages_stats)
         );
@@ -333,6 +331,7 @@ impl Info {
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, author_nb);
+        let last_change = Info::get_date_of_last_commit(&git_history);
 
         let conf = config?;
         Ok(Info {
@@ -614,24 +613,15 @@ impl Info {
         }
     }
 
-    async fn get_last_change(dir: &str) -> Result<String> {
-        let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("log")
-            .arg("-1")
-            .arg("--format=%cr")
-            .output()
-            .await
-            .expect("Failed to execute git.");
+    fn get_date_of_last_commit(git_history: &[String]) -> Result<String> {
+        let last_commit = git_history.first();
 
-        let output = String::from_utf8_lossy(&output.stdout);
+        let output = match last_commit {
+            Some(date) => date.split('\u{09}').collect::<Vec<_>>()[0].to_string(),
+            None => "??".into(),
+        };
 
-        if output == "" {
-            Ok("??".into())
-        } else {
-            Ok(output.to_string().replace('\n', ""))
-        }
+        Ok(output)
     }
 
     fn get_creation_date(git_history: &[String]) -> Result<String> {
