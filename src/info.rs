@@ -367,7 +367,7 @@ impl Info {
             args.push("--no-merges");
         }
 
-        args.push("--pretty=format:%cr%x09%an");
+        args.push("--pretty=\"format:%cr\t%an\"");
 
         let output = Command::new("git")
             .args(args)
@@ -443,15 +443,14 @@ impl Info {
         let mut authors = std::collections::HashMap::new();
         let mut total_commits = 0;
         for line in git_history {
-            let commit_author = line.split('\u{09}').collect::<Vec<_>>()[1].to_string();
+            let commit_author = line.split('\t').collect::<Vec<_>>()[1].to_string();
             let commit_count = authors.entry(commit_author.to_string()).or_insert(0);
             *commit_count += 1;
             total_commits += 1;
         }
 
         let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
-        authors.sort_by_key(|(_, c)| *c);
-        authors.reverse();
+        authors.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
 
         authors.truncate(n);
 
@@ -617,7 +616,7 @@ impl Info {
         let last_commit = git_history.first();
 
         let output = match last_commit {
-            Some(date) => date.split('\u{09}').collect::<Vec<_>>()[0].to_string(),
+            Some(date) => date.split('\t').collect::<Vec<_>>()[0].to_string(),
             None => "??".into(),
         };
 
@@ -628,7 +627,7 @@ impl Info {
         let first_commit = git_history.last();
 
         let output = match first_commit {
-            Some(creation_time) => creation_time.split('\u{09}').collect::<Vec<_>>()[0].to_string(),
+            Some(creation_time) => creation_time.split('\t').collect::<Vec<_>>()[0].to_string(),
             None => "??".into(),
         };
 
