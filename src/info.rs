@@ -3,7 +3,7 @@ use {
         image_backends::ImageBackend,
         language::Language,
         license::Detector,
-        {AsciiArt, CommitInfo, Configuration, Error, InfoFieldOn},
+        {AsciiArt, CommitInfo, Error, InfoFieldOn},
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
@@ -27,7 +27,7 @@ pub struct Info {
     languages: Vec<(Language, f64)>,
     authors: Vec<(String, usize, usize)>,
     last_change: String,
-    repo: String,
+    repo_url: String,
     commits: String,
     pending: String,
     repo_size: String,
@@ -190,7 +190,7 @@ impl std::fmt::Display for Info {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Repo: ", color),
-                &self.repo,
+                &self.repo_url,
             )?;
         }
 
@@ -307,7 +307,7 @@ impl Info {
             Language::get_language_stats(workdir_str, ignored_directories)?;
 
         let (
-            config,
+            (repository_name, repository_url),
             git_history,
             current_commit_info,
             (git_v, git_user),
@@ -317,10 +317,10 @@ impl Info {
             project_license,
             dominant_language,
         ) = futures::join!(
-            Info::get_configuration(&repo),
+            Info::get_repo_name_and_url(&repo),
             Info::get_git_history(workdir_str, no_merges),
             Info::get_current_commit_info(&repo),
-            Info::get_git_info(workdir_str),
+            Info::get_git_version_and_username(workdir_str),
             Info::get_version(workdir_str),
             Info::get_pending_changes(workdir_str),
             Info::get_packed_size(workdir_str),
@@ -333,11 +333,10 @@ impl Info {
         let authors = Info::get_authors(&git_history, author_nb);
         let last_change = Info::get_date_of_last_commit(&git_history);
 
-        let conf = config?;
         Ok(Info {
             git_version: git_v,
             git_username: git_user,
-            project_name: conf.repository_name,
+            project_name: repository_name,
             current_commit: current_commit_info?,
             version: version?,
             creation_date: creation_date?,
@@ -345,7 +344,7 @@ impl Info {
             languages: languages_stats,
             authors,
             last_change: last_change?,
-            repo: conf.repository_url,
+            repo_url: repository_url,
             commits: number_of_commits,
             pending: pending?,
             repo_size: repo_size?,
@@ -367,7 +366,7 @@ impl Info {
             args.push("--no-merges");
         }
 
-        args.push("--pretty=\"format:%cr\t%an\"");
+        args.push("--pretty=%cr\t%an");
 
         let output = Command::new("git")
             .args(args)
@@ -379,13 +378,13 @@ impl Info {
         output.lines().map(|x| x.to_string()).collect::<Vec<_>>()
     }
 
-    async fn get_configuration(repo: &Repository) -> Result<Configuration> {
-        let config = repo.config().map_err(|_| Error::NoGitData)?;
+    async fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
+        let config = repo.config().map_err(|_| Error::NoGitData);
         let mut remote_url = String::new();
         let mut repository_name = String::new();
         let mut remote_upstream: Option<String> = None;
 
-        for entry in &config.entries(None).unwrap() {
+        for entry in &config.unwrap().entries(None).unwrap() {
             let entry = entry.unwrap();
             match entry.name().unwrap() {
                 "remote.origin.url" => remote_url = entry.value().unwrap().to_string(),
@@ -411,10 +410,7 @@ impl Info {
             repository_name = parts[0].to_string();
         }
 
-        Ok(Configuration {
-            repository_name,
-            repository_url: name_parts.join("/"),
-        })
+        (repository_name, name_parts.join("/"))
     }
 
     async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
@@ -468,7 +464,7 @@ impl Info {
         authors
     }
 
-    async fn get_git_info(dir: &str) -> (String, String) {
+    async fn get_git_version_and_username(dir: &str) -> (String, String) {
         let version = Command::new("git")
             .arg("--version")
             .output()

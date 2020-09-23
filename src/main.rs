@@ -331,9 +331,3 @@ fn is_git_installed() -> bool {
         .status()
         .is_ok()
 }
-
-#[derive(Debug)]
-struct Configuration {
-    pub repository_name: String,
-    pub repository_url: String,
-}
