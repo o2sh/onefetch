@@ -1,8 +1,7 @@
+name: CD
 on:
   release:
     types: [published]
-
-name: release-assets
 
 jobs:
   deploy:

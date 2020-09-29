@@ -1,4 +1,4 @@
-name: build
+name: CI  
 on: [push]
 
 jobs:
@@ -10,9 +10,43 @@ jobs:
         rust: [stable, nightly]
 
     steps:
-    - uses: hecrj/setup-rust-action@v1
+    - uses: actions/checkout@v2
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
       with:
-        rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@master
+        toolchain: ${{ matrix.rust }}
+        default: true
+        profile: minimal
+        components: clippy
+
+    - name: Build Debug
+      run: |
+        rustc --version
+        cargo build
+
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test
+
+    - name: Run clippy
+      run: cargo clippy
+
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        components: rustfmt
+    - run: cargo fmt -- --check
+
+  sec:
+    name: Security audit
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/audit-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}

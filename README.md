@@ -17,7 +17,7 @@
 
 Onefetch is a command line information tool that displays information about your Git repository directly on your terminal.
 
-The information is by default displayed alongside the dominant language's logo. You can further configure Onefetch to display an image instead or another ascii logo. More information [here](https://github.com/o2sh/onefetch/wiki/image-Backends).
+The repo information is displayed alongside the dominant language's ASCII logo. You can further configure Onefetch to instead use an image (png, jpeg...) on supported terminals. More information [here](https://github.com/o2sh/onefetch/wiki/image-Backends).
 
 Onefetch provides the user with code statistics and project information with features like license detection. Onefetch will show the language distribution, LOC (lines of code), size on disk, Contributors, Version, etc.
 
@@ -25,7 +25,7 @@ Onefetch provides the user with code statistics and project information with fea
 
 You can further configure Onefetch to display exactly what you want it to. Through the use of command-line flags.
 
-Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. 
+Onefetch supports more than 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. 
 
 Contributions are very welcome! See [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/master/CONTRIBUTING.md) for more info.
 
