@@ -107,6 +107,7 @@ define_languages! {
     { CMake, "cmake.ascii", "CMake", vec![Color::Blue, Color::Green, Color::Red, Color::Black] },
     { CoffeeScript, "coffeescript.ascii", "CoffeeScript", vec![Color::Red] },
     { Cpp, "cpp.ascii", "C++", vec![Color::Cyan, Color::Blue], "c++" },
+    { Crystal, "crystal.ascii", "Crystal", vec![Color::White, Color::Black] },
     { CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" },
     { Css, "css.ascii", "CSS", vec![Color::Blue, Color::White] },
     { D, "d.ascii", "D", vec![Color::Red] },
