@@ -2,7 +2,7 @@
 edition = "2018"
 name = "onefetch"
 description = "Git repository summary on your terminal"
-version = "2.3.0"
+version = "2.4.0"
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 readme = "README.md"
 license = "MIT"
@@ -12,7 +12,7 @@ exclude = ["assets/*.png"]
 [package.metadata.deb]
 extended-description = """\
 Onefetch is a command line tool that displays information about your Git repository directly on your terminal. \
-Onefetch supports almost 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. \
+Onefetch supports more than 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. \
 """
 depends = "$auto"
 section = "utility"

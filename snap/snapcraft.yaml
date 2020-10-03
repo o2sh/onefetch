@@ -4,7 +4,7 @@ adopt-info: onefetch
 summary: Git repository summary on your terminal
 description: |
   Onefetch is a command-line system information tool that displays information
-  about your Source Code directly on your terminal..
+  about your Git repository directly on your terminal.
 
 grade: stable
 confinement: strict
