@@ -5,34 +5,42 @@ on:
 
 jobs:
   deploy:
-
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
-    strategy:
-      matrix:
-        os: [macos-latest]
-
     steps:
-      - uses: actions/checkout@v1
-      - name: Install Rust
-        run: brew install rust
-        if: matrix.os == 'macos-latest'
-      - name: Build
-        run: cargo build --release
-      - name: Compress archive
-        run: cd target/release && tar -czf onefetch.tar.gz onefetch
-      - name: Generate asset name
-        run: echo ::set-output name=filename::onefetch_${TAG_NAME#v}_${OS%-latest}_x86_64.tar.gz
-        id: generate-name
-        env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
-          OS: ${{ matrix.os }}
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./target/release/onefetch.tar.gz
-          asset_name: ${{ steps.generate-name.outputs.filename }}
-          asset_content_type: application/gzip
+    - uses: actions/checkout@v2
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        components: clippy
+
+    - name: Build
+      run: make build
+
+    - name: Build Release Mac
+      if: matrix.os == 'macos-latest'
+      run: make release-mac
+
+    - name: Build Release Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: make release-linux
+
+    - name: Build Release Win
+      if: matrix.os == 'windows-latest'
+      run: make release-win
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./release/*.tar.gz
+          ./release/*.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
