@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://snapcraft.io/onefetch"><img src="https://raw.githubusercontent.com/snapcore/snap-store-badges/master/EN/%5BEN%5D-snap-store-black.png" alt="Get it from the Snap Store"></a>
+  <a href="https://snapcraft.io/onefetch"><img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"></a>
 </p>
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/aesthetic.png" align="right" height="240px">
