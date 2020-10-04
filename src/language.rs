@@ -132,7 +132,7 @@ define_languages! {
     { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", vec![Color::White, Color::Yellow, Color::White], "jupyter-notebooks" },
     { Kotlin, "kotlin.ascii", "Kotlin", vec![Color::Blue, Color::Yellow, Color::Magenta] },
     { Lisp, "lisp.ascii", "Lisp", vec![Color::Yellow] },
-    { Lua, "lua.ascii", "Lua", vec![Color::Blue] },
+    { Lua, "lua.ascii", "Lua", vec![Color::Blue, Color::White] },
     { Markdown, "markdown.ascii", "Markdown", vec![Color::White, Color::Red] },
     { Nim, "nim.ascii", "Nim", vec![Color::Yellow, Color::White] },
     { Nix, "nix.ascii", "Nix", vec![Color::Cyan, Color::Blue] },
