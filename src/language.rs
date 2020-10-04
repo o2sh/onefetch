@@ -82,7 +82,7 @@ macro_rules! define_languages {
 
                         for (line_number, line) in ASCII.lines().enumerate() {
                             let line = COLOR_INTERPOLATION.replace_all(line, "");
-                            if (line.len() > MAX_WIDTH) {
+                            if (line.trim().len() > MAX_WIDTH) {
                                 panic!("{} is too wide at line {}\n{:?}", $ascii, line_number + 1, line)
                             }
                         }
@@ -120,7 +120,7 @@ define_languages! {
     { Fish, "fish.ascii", "Fish", vec![Color::Red, Color::Yellow] },
     { Forth, "forth.ascii", "Forth", vec![Color::Red] },
     { FortranModern, "f90.ascii", "Fortran", vec![Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red], "fortran" },
-    { FSharp, "fsharp.ascii", "FSharp", vec![Color::Cyan, Color::Cyan] },
+    { FSharp, "fsharp.ascii", "F#", vec![Color::Cyan, Color::Cyan], "f#" },
     { Go, "go.ascii", "Go", vec![Color::White] },
     { Groovy, "groovy.ascii", "Groovy", vec![Color::Cyan, Color::White] },
     { Haskell, "haskell.ascii", "Haskell", vec![Color::Cyan, Color::Magenta, Color::Blue] },
