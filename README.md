@@ -1,9 +1,9 @@
-
-<h1 align="center">
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/onefetch.png" height="130px">
+<p align="center"><img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/onefetch.png" height="130px"></p> 
 
 <h5 align="center">A command-line git information tool written in rust 1.44</h5>
 
+<p align="center">
+  
 [![CI][s0]][l0] [![crates][s1]][l1] ![MIT][s2] [![HELP WANTED][s3]][l3]
 
 </h1>
