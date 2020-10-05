@@ -89,6 +89,7 @@ Remarks:
  - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
  - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
  - Make sure to trim any unnecessary trailing whitespaces
+ - See example here [Ascii Art From Image File Using Python Image Library](https://github.com/o2sh/onefetch/wiki/ASCII-Art-From-Image-Using-Python-Image-Library)
 
 ### Project-specific notes
 
