@@ -2,6 +2,8 @@
 <h1 align="center">
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/onefetch.png" height="130px">
 
+<h5 align="center">A command-line git information tool written in rust 1.44</h5>
+
 [![CI][s0]][l0] [![crates][s1]][l1] ![MIT][s2] [![HELP WANTED][s3]][l3]
 
 </h1>
@@ -13,8 +15,6 @@
 [s2]: https://img.shields.io/badge/license-MIT-blue.svg
 [s3]: https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green
 [l3]: https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
-
-<h5 align="center">A command-line git information tool written in rust 1.44</h5>
 
 <p align="center">
   <a href="https://snapcraft.io/onefetch"><img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"></a>
