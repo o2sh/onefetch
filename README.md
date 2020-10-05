@@ -1,19 +1,13 @@
+<h3 align="center"><img src="assets/onefetch.png" height="130px"></h3>
+
+<h5 align="center">A command-line git information tool written in Rust</h5>
+
 <p align="center">
-<img src="assets/onefetch.png" height="130px" />
-
-<h5>A command-line git information tool written in rust 1.44</h5>
-  
-[![CI][s0]][l0] [![crates][s1]][l1] ![MIT][s2] [![HELP WANTED][s3]][l3]
-
+	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
+	<a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
+	<a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
+	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
-
-[s0]: https://github.com/o2sh/onefetch/workflows/CI/badge.svg
-[l0]: https://github.com/o2sh/onefetch/actions
-[s1]: https://img.shields.io/crates/v/onefetch.svg
-[l1]: https://crates.io/crates/onefetch
-[s2]: https://img.shields.io/badge/license-MIT-blue.svg
-[s3]: https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green
-[l3]: https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 
 <p align="center">
   <a href="https://snapcraft.io/onefetch"><img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"></a>
