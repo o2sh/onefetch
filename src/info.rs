@@ -382,26 +382,22 @@ impl Info {
         let config = repo.config().map_err(|_| Error::NoGitData);
         let mut remote_url = String::new();
         let mut repository_name = String::new();
-        let mut remote_upstream: Option<String> = None;
 
         for entry in &config.unwrap().entries(None).unwrap() {
             let entry = entry.unwrap();
-            match entry.name().unwrap() {
-                "remote.origin.url" => remote_url = entry.value().unwrap().to_string(),
-                "remote.upstream.url" => remote_upstream = Some(entry.value().unwrap().to_string()),
-                _ => (),
-            }
+            if let "remote.origin.url" = entry.name().unwrap() {
+                remote_url = entry.value().unwrap().to_string()
+            };
         }
 
-        if let Some(url) = remote_upstream {
-            remote_url = url;
-        }
-
-        let url = remote_url;
-        let name_parts: Vec<&str> = url.split('/').collect();
+        let name_parts: Vec<&str> = remote_url.split('/').collect();
 
         if !name_parts.is_empty() {
-            repository_name = name_parts[name_parts.len() - 1].to_string();
+            if remote_url.ends_with('/') {
+                repository_name = name_parts[name_parts.len() - 2].to_string();
+            } else {
+                repository_name = name_parts[name_parts.len() - 1].to_string();
+            }
         }
 
         if repository_name.contains(".git") {
