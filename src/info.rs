@@ -406,7 +406,7 @@ impl Info {
             repository_name = parts[0].to_string();
         }
 
-        (repository_name, name_parts.join("/"))
+        (repository_name, remote_url)
     }
 
     async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
