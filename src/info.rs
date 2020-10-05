@@ -393,10 +393,10 @@ impl Info {
         let name_parts: Vec<&str> = remote_url.split('/').collect();
 
         if !name_parts.is_empty() {
-            if remote_url.ends_with('/') {
-                repository_name = name_parts[name_parts.len() - 2].to_string();
-            } else {
-                repository_name = name_parts[name_parts.len() - 1].to_string();
+            let mut i = 1;
+            while repository_name.is_empty() && i <= name_parts.len() {
+                repository_name = name_parts[name_parts.len() - i].to_string();
+                i += 1;
             }
         }
 
