@@ -1,4 +1,4 @@
-<h3 align="center"><img src="assets/onefetch.png" height="130px"></h3>
+<h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
 
 <h5 align="center">A command-line Git information tool written in Rust</h5>
 
