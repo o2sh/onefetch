@@ -21,7 +21,7 @@ The repo's information is displayed alongside the dominant language's ASCII logo
 
 Onefetch provides the user with code statistics and project information with features like license detection. Onefetch will show the language distribution, LOC (lines of code), size on disk, Contributors, Version, etc.
 
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/r.png" align="right" height="240px" width="527px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/r.png" align="right" height="240px">
 
 You can further configure Onefetch to display exactly what you want it to. Through the use of command-line flags.
 
