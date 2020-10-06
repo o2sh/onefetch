@@ -140,7 +140,7 @@ define_languages! {
     { OCaml, "ocaml.ascii", "OCaml", vec![Color::Yellow] },
     { Org, "org.ascii", "Org", vec![Color::Green, Color::Red, Color::White] },
     { Perl, "perl.ascii", "Perl", vec![Color::Cyan] },
-    { Php, "php.ascii", "Php", vec![Color::Magenta, Color::Black] },
+    { Php, "php.ascii", "Php", vec![Color::Magenta, Color::Blue, Color::Cyan, Color::White] },
     { Prolog, "prolog.ascii", "Prolog", vec![Color::Blue, Color::Red] },
     { PureScript, "purescript.ascii", "PureScript", vec![Color::White] },
     { Python, "python.ascii", "Python", vec![Color::Blue, Color::Yellow] },
