@@ -129,7 +129,7 @@ define_languages! {
     { Java, "java.ascii", "Java", vec![Color::Cyan, Color::Red] },
     { JavaScript, "javascript.ascii", "JavaScript", vec![Color::Yellow] },
     { Julia, "julia.ascii", "Julia", vec![Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] },
-    { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", vec![Color::White, Color::Yellow, Color::Blue], "jupyter-notebooks" },
+    { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", vec![Color::White, Color::Yellow, Color::White], "jupyter-notebooks" },
     { Kotlin, "kotlin.ascii", "Kotlin", vec![Color::Blue, Color::Yellow, Color::Magenta] },
     { Lisp, "lisp.ascii", "Lisp", vec![Color::Yellow] },
     { Lua, "lua.ascii", "Lua", vec![Color::Blue, Color::White] },
