@@ -25,7 +25,7 @@ tokei = "12.0.0"
 askalono = "0.4.3"
 bytecount = "0.6.0"
 clap = "2.33.3"
-strum = { version = "0.19.2", features = ["derive"] }
+strum = { version = "0.19.5", features = ["derive"] }
 image = "0.23.10"
 regex = "1"
 futures = "0.3.6"
