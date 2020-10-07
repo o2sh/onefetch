@@ -23,7 +23,7 @@ Onefetch provides the user with code statistics and project information with fea
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/r.png" align="right" height="240px">
 
-You can further configure Onefetch to display exactly what you want it to. Through the use of command-line flags.
+You can further configure Onefetch to display exactly what you want it to, through the use of command-line flags.
 
 Onefetch supports more than 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. 
 
