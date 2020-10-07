@@ -76,30 +76,24 @@ impl std::fmt::Display for Info {
             )?;
         }
         if !self.disable_fields.project {
-            let branches_str = if self.number_of_branches == 1 {
-                String::from("1 branch")
-            } else if self.number_of_branches > 1 {
-                format!("{} branches", self.number_of_branches)
-            } else {
-                String::new()
+            let branches_str = match self.number_of_branches {
+                0 => String::new(),
+                1 => String::from("1 branch"),
+                _ => format!("{} branches", self.number_of_branches),
             };
 
-            let tags_str = if self.number_of_tags == 1 {
-                String::from("1 tag")
-            } else if self.number_of_tags > 1 {
-                format!("{} tags", self.number_of_tags)
-            } else {
-                String::new()
+            let tags_str = match self.number_of_tags {
+                0 => String::new(),
+                1 => String::from("1 tag"),
+                _ => format!("{} tags", self.number_of_tags),
             };
 
-            let branches_tags_str = if tags_str.is_empty() && !branches_str.is_empty() {
-                format!("( {} )", branches_str)
-            } else if branches_str.is_empty() && !tags_str.is_empty() {
-                format!("( {} )", tags_str)
-            } else if !branches_str.is_empty() {
-                format!("( {}, {} )", tags_str, branches_str)
-            } else {
+            let branches_tags_str = if tags_str.is_empty() && branches_str.is_empty() {
                 String::new()
+            } else if branches_str.is_empty() || tags_str.is_empty() {
+                format!("({})", format!("{}{}", tags_str, branches_str))
+            } else {
+                format!("({}, {})", tags_str, branches_str)
             };
 
             let project_str = &self.get_formatted_info_label("Project: ", color);
