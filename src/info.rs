@@ -32,6 +32,8 @@ pub struct Info {
     pending: String,
     repo_size: String,
     number_of_lines: usize,
+    number_of_tags: usize,
+    number_of_branches: usize,
     license: String,
     custom_logo: Language,
     custom_colors: Vec<String>,
@@ -74,10 +76,38 @@ impl std::fmt::Display for Info {
             )?;
         }
         if !self.disable_fields.project {
-            write_buf(
-                &mut buf,
-                &self.get_formatted_info_label("Project: ", color),
-                &self.project_name,
+            let branches_str = if self.number_of_branches == 1 {
+                String::from("1 branch")
+            } else if self.number_of_branches > 1 {
+                format!("{} branches", self.number_of_branches)
+            } else {
+                String::new()
+            };
+
+            let tags_str = if self.number_of_tags == 1 {
+                String::from("1 tag")
+            } else if self.number_of_tags > 1 {
+                format!("{} tags", self.number_of_tags)
+            } else {
+                String::new()
+            };
+
+            let branches_tags_str = if tags_str.is_empty() && !branches_str.is_empty() {
+                format!("( {} )", branches_str)
+            } else if branches_str.is_empty() && !tags_str.is_empty() {
+                format!("( {} )", tags_str)
+            } else if !branches_str.is_empty() {
+                format!("( {}, {} )", tags_str, branches_str)
+            } else {
+                String::new()
+            };
+
+            let project_str = &self.get_formatted_info_label("Project: ", color);
+
+            writeln!(
+                buf,
+                "{}{} {}",
+                project_str, self.project_name, branches_tags_str
             )?;
         }
 
@@ -309,6 +339,7 @@ impl Info {
         let (
             (repository_name, repository_url),
             git_history,
+            (number_of_tags, number_of_branches),
             current_commit_info,
             (git_v, git_user),
             version,
@@ -319,6 +350,7 @@ impl Info {
         ) = futures::join!(
             Info::get_repo_name_and_url(&repo),
             Info::get_git_history(workdir_str, no_merges),
+            Info::get_number_of_tags_branches(workdir_str),
             Info::get_current_commit_info(&repo),
             Info::get_git_version_and_username(workdir_str),
             Info::get_version(workdir_str),
@@ -349,6 +381,8 @@ impl Info {
             pending: pending?,
             repo_size: repo_size?,
             number_of_lines,
+            number_of_tags,
+            number_of_branches,
             license: project_license?,
             custom_logo: logo,
             custom_colors: colors,
@@ -376,6 +410,34 @@ impl Info {
 
         let output = String::from_utf8_lossy(&output.stdout);
         output.lines().map(|x| x.to_string()).collect::<Vec<_>>()
+    }
+
+    async fn get_number_of_tags_branches(dir: &str) -> (usize, usize) {
+        let tags = async {
+            let output = Command::new("git")
+                .args(vec!["-C", dir, "tag"])
+                .output()
+                .await
+                .expect("Failed to execute git.");
+
+            let tags = String::from_utf8_lossy(&output.stdout);
+
+            tags.lines().count()
+        };
+
+        let branches = async {
+            let output = Command::new("git")
+                .args(vec!["-C", dir, "branch", "-r"])
+                .output()
+                .await
+                .expect("Failed to execute git.");
+
+            let branches = String::from_utf8_lossy(&output.stdout);
+
+            branches.lines().count()
+        };
+
+        futures::join!(tags, branches)
     }
 
     async fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
