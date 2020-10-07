@@ -132,7 +132,7 @@ impl std::fmt::Display for Info {
 
                 for (cnt, language) in languages.iter().enumerate() {
                     let formatted_number = format!("{:.*}", 1, language.1);
-                    if cnt != 0 && cnt % 3 == 0 {
+                    if cnt != 0 && cnt % 2 == 0 {
                         s = s + &format!("\n{}{} ({} %) ", pad, language.0, formatted_number);
                     } else {
                         s = s + &format!("{} ({} %) ", language.0, formatted_number);
