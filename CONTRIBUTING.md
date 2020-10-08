@@ -57,9 +57,9 @@ Adding support for a new Language requires adding a new entry in the `define_lan
 
 **Example**:
 
-`{ CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" }`
+```{ CSharp, "csharp.ascii", "C#", Colors { basic_colors: vec![Color::Blue, Color::Magenta], true_colors: Some(vec![Color::TrueColor{ r:0, g:0, b:255 }, Color::TrueColor{ r:255, g:0, b:255 }]) }, "c#" },```
 
-The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors `vec![Color::Blue, Color::Magenta]` used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
+The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
 
 #### Ascii logo
 
@@ -89,7 +89,13 @@ Remarks:
  - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
  - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
  - Make sure to trim any unnecessary trailing whitespaces
+ - Make sure if you use true_colors that the number of true_colors matches the number of basic_colors
  - See example here [Ascii Art From Image File Using Python Image Library](https://github.com/o2sh/onefetch/wiki/ASCII-Art-From-Image-Using-Python-Image-Library)
+
+ - These are all equal statements:
+	```{ CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" },```
+	```{ CSharp, "csharp.ascii", "C#", Colors { basic_colors: vec![Color::Blue, Color::Magenta], true_colors: None, "c#" },```
+	```{ CSharp, "csharp.ascii", "C#", Colors { basic_colors: vec![Color::Blue, Color::Magenta], true_colors: Some(vec![Color::TrueColor{ r:0, g:0, b:255 }, Color::TrueColor{ r:255, g:0, b:255 }]) }, "c#" },```
 
 ### Project-specific notes
 

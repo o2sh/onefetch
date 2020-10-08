@@ -4,7 +4,29 @@ use {
     regex::Regex,
     std::collections::HashMap,
     strum::{EnumIter, EnumString},
+    std::env,
+    std::any::Any,
 };
+
+#[derive(Clone)]
+pub struct Colors {
+    basic_colors: Vec<Color>,
+    true_colors: Option<Vec<Color>>,
+}
+
+macro_rules! define_colors {
+    ( $color:expr ) => {
+        if let Some(vector) = (&$color as &dyn Any).downcast_ref::<Vec<Color>>() {
+            Colors { basic_colors: vector.clone(), true_colors: None }
+        }
+        else if let Some(colors) = (&$color as &dyn Any).downcast_ref::<Colors>() {
+            colors.clone()
+        }
+        else {
+            Colors { basic_colors: vec![ Color::White ], true_colors: None }
+        }
+    };
+}
 
 macro_rules! define_languages {
     ($( { $name:ident, $ascii:literal, $display:literal, $colors:expr $(, $serialize:literal )? } ),* ,) => {
@@ -46,12 +68,19 @@ macro_rules! define_languages {
             }
 
             pub fn get_colors(&self) -> Vec<Color> {
-                match *self {
-                    $(
-                        Language::$name => $colors,
-                    )*
-                    Language::Unknown => vec![Color::White],
-                }
+                let color_struct = match *self {
+                    $( Language::$name => define_colors ! ( $colors ), )*
+                    Language::Unknown => define_colors!( vec![Color::White] ),
+                };
+                let mut colors = color_struct.basic_colors;
+                match color_struct.true_colors {
+                    Some(true_colors) => match env::var("COLORTERM") {
+                        Ok(val) => if val.to_lowercase() == "truecolor" { colors = true_colors; },
+                        Err(_e) => { },
+                    },
+                    None => { },
+                };
+                colors
             }
         }
 
@@ -101,14 +130,14 @@ macro_rules! define_languages {
 }
 
 define_languages! {
-    { Assembly, "assembly.ascii", "Assembly", vec![Color::Cyan] },
+    { Assembly, "assembly.ascii", "Assembly", Colors{ basic_colors: vec![Color::Cyan], true_colors: None } },
     { C, "c.ascii", "C", vec![Color::Cyan, Color::Blue] },
     { Clojure, "clojure.ascii", "Clojure", vec![Color::Cyan, Color::Green] },
     { CMake, "cmake.ascii", "CMake", vec![Color::Blue, Color::Green, Color::Red, Color::Black] },
     { CoffeeScript, "coffeescript.ascii", "CoffeeScript", vec![Color::Red] },
     { Cpp, "cpp.ascii", "C++", vec![Color::Cyan, Color::Blue], "c++" },
     { Crystal, "crystal.ascii", "Crystal", vec![Color::White, Color::Black] },
-    { CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" },
+    { CSharp, "csharp.ascii", "C#", Colors { basic_colors: vec![Color::Blue, Color::Magenta], true_colors: Some(vec![Color::TrueColor{ r:0, g:0, b:255 }, Color::TrueColor{ r:255, g:0, b:255 }]) }, "c#" },
     { Css, "css.ascii", "CSS", vec![Color::Blue, Color::White] },
     { D, "d.ascii", "D", vec![Color::Red] },
     { Dart, "dart.ascii", "Dart", vec![Color::Cyan, Color::Blue] },
@@ -150,7 +179,37 @@ define_languages! {
     { Rust, "rust.ascii", "Rust", vec![Color::White, Color::Red] },
     { Scala, "scala.ascii", "Scala", vec![Color::Blue] },
     { Sh, "shell.ascii", "Shell", vec![Color::Green], "shell" },
-    { Swift, "swift.ascii", "Swift", vec![Color::Red] },
+    {
+        Swift,
+        "swift.ascii",
+        "Swift",
+        Colors { 
+            basic_colors: vec![
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+                Color::Red,
+            ],
+            true_colors: Some( vec![
+                Color::TrueColor{ r:248, g:129, b:052 },
+                Color::TrueColor{ r:249, g:119, b:050 },
+                Color::TrueColor{ r:249, g:109, b:048 },
+                Color::TrueColor{ r:250, g:099, b:046 },
+                Color::TrueColor{ r:250, g:089, b:044 },
+                Color::TrueColor{ r:251, g:080, b:042 },
+                Color::TrueColor{ r:251, g:070, b:040 },
+                Color::TrueColor{ r:252, g:060, b:038 },
+                Color::TrueColor{ r:252, g:050, b:036 },
+                Color::TrueColor{ r:253, g:040, b:034 },
+            ] ),
+        }
+    },
     { Tcl, "tcl.ascii", "Tcl", vec![Color::Blue, Color::White, Color::Cyan] },
     { Tex, "tex.ascii", "Tex", vec![Color::White, Color::Black] },
     { TypeScript, "typescript.ascii", "TypeScript", vec![Color::Cyan] },
