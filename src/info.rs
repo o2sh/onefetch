@@ -8,6 +8,7 @@ use {
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
     image::DynamicImage,
+    regex::Regex,
     std::{ffi::OsStr, fmt::Write, fs},
     tokio::process::Command,
 };
@@ -439,9 +440,11 @@ impl Info {
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
+        let remote_regex = Regex::new(r"remote.[a-zA-Z0-9]+.url").unwrap();
+
         for entry in &config.unwrap().entries(None).unwrap() {
             let entry = entry.unwrap();
-            if let "remote.origin.url" = entry.name().unwrap() {
+            if remote_regex.is_match(entry.name().unwrap()) {
                 remote_url = entry.value().unwrap().to_string()
             };
         }
