@@ -495,7 +495,9 @@ impl Info {
             let author_email = line.split('\t').collect::<Vec<_>>()[1].to_string();
             let author_name = line.split('\t').collect::<Vec<_>>()[2].to_string();
             let commit_count = authors.entry(author_email.to_string()).or_insert(0);
-            author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
+            author_name_by_email
+                .entry(author_email.to_string())
+                .or_insert(author_name);
             *commit_count += 1;
             total_commits += 1;
         }
@@ -509,7 +511,11 @@ impl Info {
             .into_iter()
             .map(|(author, count)| {
                 (
-                    author_name_by_email.get(&author).unwrap().trim_matches('\'').to_string(),
+                    author_name_by_email
+                        .get(&author)
+                        .unwrap()
+                        .trim_matches('\'')
+                        .to_string(),
                     count,
                     count * 100 / total_commits,
                 )
