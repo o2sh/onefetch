@@ -93,7 +93,7 @@ impl std::fmt::Display for Info {
             } else if branches_str.is_empty() || tags_str.is_empty() {
                 format!("({})", format!("{}{}", tags_str, branches_str))
             } else {
-                format!("({}, {})", tags_str, branches_str)
+                format!("({}, {})", branches_str, tags_str)
             };
 
             let project_str = &self.get_formatted_info_label("Project: ", color);
