@@ -428,7 +428,7 @@ impl Info {
 
             let branches = String::from_utf8_lossy(&output.stdout);
 
-            branches.lines().count()
+            branches.lines().count() - 1 //Exclude origin/HEAD -> origin/master
         };
 
         futures::join!(tags, branches)
