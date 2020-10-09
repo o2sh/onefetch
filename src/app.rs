@@ -52,7 +52,7 @@ pub fn build_app() -> App<'static, 'static> {
                     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
                     "15",
                 ])
-                .hide_possible_values(true),
+                .help("Colors to print the ascii art."),
         )
         .arg(
             Arg::with_name("no-bold")
