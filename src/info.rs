@@ -440,7 +440,7 @@ impl Info {
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
-        let remote_regex = Regex::new(r"remote.[a-zA-Z0-9]+.url").unwrap();
+        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url").unwrap();
 
         for entry in &config.unwrap().entries(None).unwrap() {
             let entry = entry.unwrap();
