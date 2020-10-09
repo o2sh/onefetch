@@ -1,15 +1,20 @@
-
-{1}                                     {0}#####{1}
-{1} {0}###########{1}   {0}#########################{1}  {0}#########{1}
-{1} {0}###########{1}   {0}#######################{1}    {0}#########{1}
-{1} {0}#######{1}                   {0}#########{1}        {0}#######{1}
-{1} {0}######{1}                   {0}#######{1}            {0}######{1}
-{1} {0}######{1}                 {0}#######{1}              {0}######{1}
-{1} {0}######{1}                {0}########{1}              {0}######{1}
-{1} {0}######{1}              {0}########{1}                {0}######{1}
-{1} {0}######{1}             {0}#######{1}                  {0}######{1}
-{1} {0}######{1}          {0}########{1}                    {0}######{1}
-{1} {0}#######{1}        {0}#########{1}                   {0}#######{1}
-{1} {0}#########{1}    {0}#######################{1}     {0}#########{1}
-{1} {0}#########{1}   {0}#########################{1}    {0}#########{1}
-{1}          {0}#####{1}
+{0}                                      ,
+{0}                                     z
+{0}                                 zzzz
+{0}                             zzzzzzz
+{0}zzzzzzzzzz  zzzzzzzzzzzzzzzzzzzzzzz  zz
+{0}zzzzzzzz  zzzzzzzzzzzzzzzzzzzzzzz  zzzz
+{0}zzzzzzz  zzzzzzzzzzzzzzzzzzzzzz  zzzzzz
+{0}zzzzz                zzzzzzzz     zzzzz
+{0}zzzzz              zzzzzzzz       zzzzz
+{0}zzzzz            zzzzzzzz         zzzzz
+{0}zzzzz          zzzzzzzz           zzzzz
+{0}zzzzz        zzzzzzzz             zzzzz
+{0}zzzzz      zzzzzzzz               zzzzz
+{0}zzzzzzz  zzzzzzzzzzzzzzzzzzz  zzzzzzzzz
+{0}zzzzz  zzzzzzzzzzzzzzzzzzz  zzzzzzzzzzz
+{0}zzz  zzzzzzzzzzzzzzzzzzz  zzzzzzzzzzzzz
+{0}   zzzzzz
+{0}  zzzz
+{0} z
+{0}'
