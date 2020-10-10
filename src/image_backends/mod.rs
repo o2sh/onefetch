@@ -20,27 +20,16 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     }
 }
 
-pub fn get_image_backend(
-    image: &Option<DynamicImage>,
-    backend_name: &str,
-) -> Option<Box<dyn ImageBackend>> {
-    if image.is_some() {
-        #[cfg(target_os = "linux")]
-        let backend = Some(match backend_name {
-            "kitty" => {
-                Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>
-            }
-            "sixel" => {
-                Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>
-            }
-            _ => unreachable!(),
-        });
-        #[cfg(not(target_os = "linux"))]
-        let backend = None;
-        backend
-    } else {
-        None
-    }
+pub fn get_image_backend(backend_name: &str) -> Option<Box<dyn ImageBackend>> {
+    #[cfg(target_os = "linux")]
+    let backend = Some(match backend_name {
+        "kitty" => Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
+        "sixel" => Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
+        _ => unreachable!(),
+    });
+    #[cfg(not(target_os = "linux"))]
+    let backend = None;
+    backend
 }
 
 #[cfg(not(target_os = "linux"))]

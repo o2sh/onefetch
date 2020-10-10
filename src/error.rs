@@ -1,4 +1,5 @@
 /// Custom error type
+#[derive(Debug)]
 pub enum Error {
     /// Sourcecode could be located
     SourceCodeNotFound,
@@ -20,7 +21,7 @@ pub enum Error {
     LicenseDetectorError,
 }
 
-impl std::fmt::Debug for Error {
+impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let content = match self {
             Error::SourceCodeNotFound => "Could not find any source code in this directory",

@@ -1,6 +1,6 @@
 use {
     crate::info::InfoFields,
-    clap::{App, AppSettings, Arg},
+    clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     strum::{EnumCount, IntoEnumIterator},
 };
 
