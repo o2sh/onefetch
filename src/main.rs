@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate clap;
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 use {
     ascii_art::AsciiArt,
     commit_info::CommitInfo,

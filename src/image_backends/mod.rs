@@ -1,15 +1,15 @@
 use image::DynamicImage;
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 pub mod kitty;
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 pub mod sixel;
 
 pub trait ImageBackend {
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage) -> String;
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     if kitty::KittyBackend::supported() {
         Some(Box::new(kitty::KittyBackend::new()))
@@ -25,7 +25,7 @@ pub fn get_image_backend(
     backend_name: &str,
 ) -> Option<Box<dyn ImageBackend>> {
     if image.is_some() {
-        #[cfg(unix)]
+        #[cfg(target_os = "linux")]
         let backend = Some(match backend_name {
             "kitty" => {
                 Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>
@@ -35,7 +35,7 @@ pub fn get_image_backend(
             }
             _ => unreachable!(),
         });
-        #[cfg(not(unix))]
+        #[cfg(not(target_os = "linux"))]
         let backend = None;
         backend
     } else {
@@ -43,7 +43,7 @@ pub fn get_image_backend(
     }
 }
 
-#[cfg(not(unix))]
+#[cfg(not(target_os = "linux"))]
 pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     None
 }
