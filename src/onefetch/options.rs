@@ -1,5 +1,5 @@
 use {
-    crate::{image_backends::ImageBackend, info::InfoFieldOn, language::Language},
+    crate::onefetch::{image_backends::ImageBackend, info::InfoFieldOn, language::Language},
     image::DynamicImage,
 };
 

@@ -1,26 +1,15 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
+use crate::onefetch::{clap_app, error::*, image_backends, info, language::Language, options};
+
 use {
-    ascii_art::AsciiArt,
-    commit_info::CommitInfo,
-    error::*,
-    info::Info,
-    language::Language,
     process::{Command, Stdio},
     std::{convert::From, env, process, str::FromStr},
     strum::IntoEnumIterator,
 };
 
-mod ascii_art;
-mod clap_app;
-mod commit_info;
-mod error;
-mod image_backends;
-mod info;
-mod language;
-mod license;
-mod options;
+mod onefetch;
 
 fn run() -> Result<()> {
     #[cfg(windows)]
@@ -88,7 +77,7 @@ fn run() -> Result<()> {
         },
     };
 
-    let info = Info::new(config)?;
+    let info = info::Info::new(config)?;
 
     print!("{}", info);
     Ok(())

@@ -1,10 +1,7 @@
 use {
-    crate::{
-        error::*,
-        language::Language,
-        license::Detector,
-        options::Options,
-        {AsciiArt, CommitInfo},
+    crate::onefetch::{
+        ascii_art::AsciiArt, commit_info::CommitInfo, error::*, language::Language,
+        license::Detector, options::Options,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,

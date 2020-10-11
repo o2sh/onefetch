@@ -1,8 +1,8 @@
 use askalono::{Store, TextData};
 
-use crate::error::*;
+use crate::onefetch::error::*;
 
-static CACHE_DATA: &[u8] = include_bytes!("../resources/licenses/cache.bin.zstd");
+static CACHE_DATA: &[u8] = include_bytes!("../../resources/licenses/cache.bin.zstd");
 const MIN_THRESHOLD: f32 = 0.8;
 
 pub struct Detector {
