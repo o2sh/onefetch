@@ -1,7 +1,7 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
-use crate::onefetch::{clap_app, error::*, image_backends, info, language::Language, options};
+use onefetch::{clap_app, error::*, image_backends, info, language::Language, options};
 
 use {
     process::{Command, Stdio},

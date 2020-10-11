@@ -3,14 +3,14 @@ use {
     colored::Color,
     regex::Regex,
     std::collections::HashMap,
-    strum::{EnumIter, EnumString},
+    strum::{EnumIter, EnumString, IntoStaticStr},
 };
 
 macro_rules! define_languages {
     ($( { $name:ident, $ascii:literal, $display:literal, $colors:expr $(, $serialize:literal )? } ),* ,) => {
 
         #[strum(serialize_all = "lowercase")]
-        #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter)]
+        #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter, IntoStaticStr)]
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
