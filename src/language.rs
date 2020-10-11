@@ -184,8 +184,8 @@ impl Language {
         ignored_directories: &[String],
     ) -> Result<(Vec<(Language, f64)>, usize)> {
         let tokei_langs = project_languages(&dir, ignored_directories);
-        let languages_stat =
-            Language::get_languages_stat(&tokei_langs).ok_or("ErrorKind::SourceCodeNotFound()")?;
+        let languages_stat = Language::get_languages_stat(&tokei_langs)
+            .ok_or("Could not find any source code in this directory")?;
         let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
         stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
         let loc = get_total_loc(&tokei_langs);

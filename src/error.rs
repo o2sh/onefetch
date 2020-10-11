@@ -10,6 +10,10 @@ error_chain! {
     }
 }
 
-pub fn default_error_handler(error: &Error, output: &mut dyn Write) {
-    writeln!(output, "{}: {}", "[onefetch error]".red(), error).ok();
+pub fn default_error_handler(e: &Error, output: &mut dyn Write) {
+    writeln!(output, "{}: {}", "[onefetch error]".red(), e).ok();
+
+    for e in e.iter().skip(1) {
+        writeln!(output, "caused by: {}", e).ok();
+    }
 }

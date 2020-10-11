@@ -376,8 +376,11 @@ impl std::fmt::Display for Info {
 impl Info {
     #[tokio::main]
     pub async fn new(config: Options) -> Result<Info> {
-        let repo = Repository::discover(&config.path).chain_err(||"Could not find a valid git repo on the current path")?;
-        let workdir = repo.workdir().chain_err(||"Unable to run onefetch on bare git repo")?;
+        let repo = Repository::discover(&config.path)
+            .chain_err(|| "Could not find a valid git repo on the current path")?;
+        let workdir = repo
+            .workdir()
+            .chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
             Language::get_language_stats(workdir_str, &config.excluded)?;
@@ -485,7 +488,9 @@ impl Info {
     }
 
     async fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
-        let config = repo.config().chain_err(|| "Could not retrieve git configuration data");
+        let config = repo
+            .config()
+            .chain_err(|| "Could not retrieve git configuration data");
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
@@ -518,9 +523,15 @@ impl Info {
     }
 
     async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-        let head = repo.head().chain_err(|| "Error while retrieving reference information")?;
-        let head_oid = head.target().ok_or("Error while retrieving reference information")?;
-        let refs = repo.references().chain_err(|| "Error while retrieving reference information")?;
+        let head = repo
+            .head()
+            .chain_err(|| "Error while retrieving reference information")?;
+        let head_oid = head
+            .target()
+            .ok_or("Error while retrieving reference information")?;
+        let refs = repo
+            .references()
+            .chain_err(|| "Error while retrieving reference information")?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
