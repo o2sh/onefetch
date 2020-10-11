@@ -1,7 +1,9 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
-use onefetch::{clap_app, error::*, image_backends, info, language::Language, options};
+use onefetch::{
+    clap_app, error::*, image_backends, info, info_fields, language::Language, options,
+};
 
 use {
     process::{Command, Stdio},
@@ -59,7 +61,7 @@ fn run() -> Result<()> {
         } else {
             Vec::new()
         },
-        disabled_fields: info::get_disabled_fields(fields_to_hide)?,
+        disabled_fields: info_fields::get_disabled_fields(fields_to_hide)?,
         no_bold: !matches.is_present("no-bold"),
         image,
         image_backend,

@@ -1,5 +1,5 @@
 use {
-    crate::onefetch::{info::InfoFields, language::Language},
+    crate::onefetch::{info_fields::InfoFields, language::Language},
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     strum::{EnumCount, IntoEnumIterator},
 };
