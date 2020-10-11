@@ -1,13 +1,14 @@
+// `error_chain!` can recurse deeply
+#![recursion_limit = "1024"]
+
 use {
     ascii_art::AsciiArt,
-    colored::Colorize,
     commit_info::CommitInfo,
-    error::Error,
-    exit_codes::ExitCode,
+    error::*,
     info::Info,
     language::Language,
     process::{Command, Stdio},
-    std::{convert::From, env, io::Write, process, result, str::FromStr},
+    std::{convert::From, env, process, str::FromStr},
     strum::IntoEnumIterator,
 };
 
@@ -15,21 +16,18 @@ mod ascii_art;
 mod clap_app;
 mod commit_info;
 mod error;
-mod exit_codes;
 mod image_backends;
 mod info;
 mod language;
 mod license;
 mod options;
 
-type Result<T> = result::Result<T, Error>;
-
 fn run() -> Result<()> {
     #[cfg(windows)]
     let _ = ansi_term::enable_ansi_support();
 
     if !is_git_installed() {
-        return Err(Error::GitNotInstalled);
+        return Err("Git failed to execute!".into());
     }
 
     let matches = clap_app::build_app().get_matches_from(env::args_os());
@@ -45,7 +43,7 @@ fn run() -> Result<()> {
     };
 
     let image = if let Some(image_path) = matches.value_of("image") {
-        Some(image::open(image_path).map_err(|_| Error::ImageLoadError)?)
+        Some(image::open(image_path).chain_err(|| "Could not load the specified image")?)
     } else {
         None
     };
@@ -110,18 +108,14 @@ fn main() {
     let result = run();
     match result {
         Ok(_) => {
-            process::exit(ExitCode::Success.into());
+            process::exit(0);
         }
         Err(error) => {
             let stderr = std::io::stderr();
             default_error_handler(&error, &mut stderr.lock());
-            process::exit(ExitCode::GeneralError.into());
+            process::exit(1);
         }
     }
-}
-
-pub fn default_error_handler(error: &Error, output: &mut dyn Write) {
-    writeln!(output, "{}: {}", "[onefetch error]".red(), error).ok();
 }
 
 fn is_git_installed() -> bool {

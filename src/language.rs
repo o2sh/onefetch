@@ -1,5 +1,5 @@
 use {
-    crate::{Error, Result},
+    crate::error::*,
     colored::Color,
     regex::Regex,
     std::collections::HashMap,
@@ -185,7 +185,7 @@ impl Language {
     ) -> Result<(Vec<(Language, f64)>, usize)> {
         let tokei_langs = project_languages(&dir, ignored_directories);
         let languages_stat =
-            Language::get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
+            Language::get_languages_stat(&tokei_langs).ok_or("ErrorKind::SourceCodeNotFound()")?;
         let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
         stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
         let loc = get_total_loc(&tokei_langs);

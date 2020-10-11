@@ -1,9 +1,10 @@
 use {
     crate::{
+        error::*,
         language::Language,
         license::Detector,
         options::Options,
-        {AsciiArt, CommitInfo, Error},
+        {AsciiArt, CommitInfo},
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
@@ -12,8 +13,6 @@ use {
     strum::{EnumCount, EnumIter, EnumString, IntoStaticStr},
     tokio::process::Command,
 };
-
-type Result<T> = std::result::Result<T, crate::Error>;
 
 const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
 
@@ -377,8 +376,8 @@ impl std::fmt::Display for Info {
 impl Info {
     #[tokio::main]
     pub async fn new(config: Options) -> Result<Info> {
-        let repo = Repository::discover(&config.path).map_err(|_| Error::NotGitRepo)?;
-        let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
+        let repo = Repository::discover(&config.path).chain_err(||"Could not find a valid git repo on the current path")?;
+        let workdir = repo.workdir().chain_err(||"Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
             Language::get_language_stats(workdir_str, &config.excluded)?;
@@ -486,7 +485,7 @@ impl Info {
     }
 
     async fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
-        let config = repo.config().map_err(|_| Error::NoGitData);
+        let config = repo.config().chain_err(|| "Could not retrieve git configuration data");
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
@@ -519,9 +518,9 @@ impl Info {
     }
 
     async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-        let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
-        let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
-        let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
+        let head = repo.head().chain_err(|| "Error while retrieving reference information")?;
+        let head_oid = head.target().ok_or("Error while retrieving reference information")?;
+        let refs = repo.references().chain_err(|| "Error while retrieving reference information")?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
@@ -754,7 +753,7 @@ impl Info {
         let detector = Detector::new()?;
 
         let mut output = fs::read_dir(dir)
-            .map_err(|_| Error::ReadDirectory)?
+            .chain_err(|| "Could not read directory")?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
             .filter(|entry| {
