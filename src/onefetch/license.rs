@@ -4,7 +4,10 @@ use crate::onefetch::error::*;
 
 pub const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
 
-static CACHE_DATA: &[u8] = include_bytes!("../../resources/licenses/cache.bin.zstd");
+static CACHE_DATA: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/resources/licenses/cache.bin.zstd"
+));
 const MIN_THRESHOLD: f32 = 0.8;
 
 pub struct Detector {

@@ -40,8 +40,8 @@ macro_rules! define_languages {
         impl Language {
             pub fn get_ascii_art(&self) -> &str {
                 match *self {
-                    $( Language::$name => include_str!(concat!("../../resources/", $ascii)), )*
-                    Language::Unknown => include_str!("../../resources/unknown.ascii"),
+                    $( Language::$name => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii)), )*
+                    Language::Unknown => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/unknown.ascii")),
                 }
             }
 
@@ -78,7 +78,7 @@ macro_rules! define_languages {
                     #[test]
                     #[ignore]
                     fn [<$name:lower _width>] () {
-                        const ASCII: &str = include_str!(concat!("../../resources/", $ascii));
+                        const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
 
                         for (line_number, line) in ASCII.lines().enumerate() {
                             let line = COLOR_INTERPOLATION.replace_all(line, "");
@@ -91,7 +91,7 @@ macro_rules! define_languages {
                     #[test]
                     #[ignore]
                     fn [<$name:lower _height>] () {
-                        const ASCII: &str = include_str!(concat!("../../resources/", $ascii));
+                        const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
                         assert_le!(ASCII.lines().count(), MAX_HEIGHT, concat!($ascii, " is too tall."));
                     }
                 }

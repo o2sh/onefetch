@@ -91,12 +91,6 @@ impl Options {
                 .help("Turns off bold formatting."),
         )
         .arg(
-            Arg::with_name("languages")
-                .short("l")
-                .long("languages")
-                .help("Prints out supported languages"),
-        )
-        .arg(
             Arg::with_name("image")
                 .short("i")
                 .long("image")
