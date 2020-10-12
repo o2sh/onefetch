@@ -30,6 +30,7 @@ image = "0.23.10"
 regex = "1"
 futures = "0.3.6"
 tokio = { version = "0.2.22", features = ["full"] }
+error-chain = "0.12"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"

@@ -1,16 +1,16 @@
 use {
-    crate::{Error, Result},
+    crate::onefetch::error::*,
     colored::Color,
     regex::Regex,
     std::collections::HashMap,
-    strum::{EnumIter, EnumString},
+    strum::{EnumIter, EnumString, IntoStaticStr},
 };
 
 macro_rules! define_languages {
     ($( { $name:ident, $ascii:literal, $display:literal, $colors:expr $(, $serialize:literal )? } ),* ,) => {
 
         #[strum(serialize_all = "lowercase")]
-        #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter)]
+        #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter, IntoStaticStr)]
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
@@ -40,8 +40,8 @@ macro_rules! define_languages {
         impl Language {
             pub fn get_ascii_art(&self) -> &str {
                 match *self {
-                    $( Language::$name => include_str!(concat!("../resources/", $ascii)), )*
-                    Language::Unknown => include_str!("../resources/unknown.ascii"),
+                    $( Language::$name => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii)), )*
+                    Language::Unknown => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/unknown.ascii")),
                 }
             }
 
@@ -78,7 +78,7 @@ macro_rules! define_languages {
                     #[test]
                     #[ignore]
                     fn [<$name:lower _width>] () {
-                        const ASCII: &str = include_str!(concat!("../resources/", $ascii));
+                        const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
 
                         for (line_number, line) in ASCII.lines().enumerate() {
                             let line = COLOR_INTERPOLATION.replace_all(line, "");
@@ -91,7 +91,7 @@ macro_rules! define_languages {
                     #[test]
                     #[ignore]
                     fn [<$name:lower _height>] () {
-                        const ASCII: &str = include_str!(concat!("../resources/", $ascii));
+                        const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
                         assert_le!(ASCII.lines().count(), MAX_HEIGHT, concat!($ascii, " is too tall."));
                     }
                 }
@@ -181,11 +181,11 @@ impl Language {
 
     pub fn get_language_stats(
         dir: &str,
-        ignored_directories: Vec<&str>,
+        ignored_directories: &[String],
     ) -> Result<(Vec<(Language, f64)>, usize)> {
         let tokei_langs = project_languages(&dir, ignored_directories);
-        let languages_stat =
-            Language::get_languages_stat(&tokei_langs).ok_or(Error::SourceCodeNotFound)?;
+        let languages_stat = Language::get_languages_stat(&tokei_langs)
+            .ok_or("Could not find any source code in this directory")?;
         let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
         stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
         let loc = get_total_loc(&tokei_langs);
@@ -205,7 +205,7 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
         .fold(0, |sum, val| sum + val.code)
 }
 
-fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Languages {
+fn project_languages(dir: &str, ignored_directories: &[String]) -> tokei::Languages {
     use tokei::Config;
 
     let mut languages = tokei::Languages::new();
@@ -219,7 +219,7 @@ fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Langua
         let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
         let mut v = Vec::with_capacity(ignored_directories.len());
         for ignored in ignored_directories {
-            if re.is_match(ignored) {
+            if re.is_match(&ignored) {
                 let p = if ignored.starts_with('/') {
                     "**"
                 } else {
@@ -233,7 +233,8 @@ fn project_languages(dir: &str, ignored_directories: Vec<&str>) -> tokei::Langua
         let ignored_directories_for_ab: Vec<&str> = v.iter().map(|x| &**x).collect();
         languages.get_statistics(&[&dir], &ignored_directories_for_ab, &tokei_config);
     } else {
-        languages.get_statistics(&[&dir], &ignored_directories, &tokei_config);
+        let ignored_directories_ref: Vec<&str> = ignored_directories.iter().map(|s| &**s).collect();
+        languages.get_statistics(&[&dir], &ignored_directories_ref, &tokei_config);
     }
 
     languages
