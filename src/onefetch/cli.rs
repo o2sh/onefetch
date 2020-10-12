@@ -1,16 +1,36 @@
 use {
-    crate::onefetch::{info_fields::InfoFields, language::Language},
+    crate::onefetch::{
+        error::*, image_backends, info_fields, info_fields::InfoFields, language::Language,
+    },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
+    image::DynamicImage,
+    std::{convert::From, env, str::FromStr},
     strum::{EnumCount, IntoEnumIterator},
 };
 
-pub fn build_app() -> App<'static, 'static> {
-    #[cfg(target_os = "linux")]
-    let possible_backends = ["kitty", "sixel"];
-    #[cfg(not(target_os = "linux"))]
-    let possible_backends = [];
+pub struct Options {
+    pub path: String,
+    pub ascii_language: Language,
+    pub ascii_colors: Vec<String>,
+    pub disabled_fields: info_fields::InfoFieldOn,
+    pub no_bold: bool,
+    pub image: Option<DynamicImage>,
+    pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
+    pub no_merges: bool,
+    pub no_color_blocks: bool,
+    pub number_of_authors: usize,
+    pub excluded: Vec<String>,
+}
 
-    App::new(crate_name!())
+impl Options {
+    /// Build `Options` from command line arguments.
+    pub fn new() -> Result<Self> {
+        #[cfg(target_os = "linux")]
+        let possible_backends = ["kitty", "sixel"];
+        #[cfg(not(target_os = "linux"))]
+        let possible_backends = [];
+
+        let matches = App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
         .setting(AppSettings::ColoredHelp)
@@ -122,5 +142,59 @@ pub fn build_app() -> App<'static, 'static> {
                 .multiple(true)
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
-        )
+        ).get_matches();
+
+        let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
+        {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
+
+        let image = if let Some(image_path) = matches.value_of("image") {
+            Some(image::open(image_path).chain_err(|| "Could not load the specified image")?)
+        } else {
+            None
+        };
+
+        let image_backend = if image.is_some() {
+            if let Some(backend_name) = matches.value_of("image-backend") {
+                image_backends::get_image_backend(backend_name)
+            } else {
+                image_backends::get_best_backend()
+            }
+        } else {
+            None
+        };
+
+        Ok(Options {
+            path: String::from(matches.value_of("input").unwrap()),
+            ascii_language: if let Some(ascii_language) = matches.value_of("ascii-language") {
+                Language::from_str(&ascii_language.to_lowercase()).unwrap()
+            } else {
+                Language::Unknown
+            },
+            ascii_colors: if let Some(values) = matches.values_of("ascii-colors") {
+                values.map(String::from).collect()
+            } else {
+                Vec::new()
+            },
+            disabled_fields: info_fields::get_disabled_fields(fields_to_hide)?,
+            no_bold: !matches.is_present("no-bold"),
+            image,
+            image_backend,
+            no_merges: matches.is_present("no-merge-commits"),
+            no_color_blocks: matches.is_present("no-color-blocks"),
+            number_of_authors: if let Some(value) = matches.value_of("authors-number") {
+                usize::from_str(value).unwrap()
+            } else {
+                3
+            },
+            excluded: if let Some(user_ignored) = matches.values_of("exclude") {
+                user_ignored.map(String::from).collect()
+            } else {
+                Vec::new()
+            },
+        })
+    }
 }

@@ -1,14 +1,11 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
-use onefetch::{
-    clap_app, error::*, image_backends, info, info_fields, language::Language, options,
-};
+use onefetch::{cli::Options, error::*, info};
 
 use {
     process::{Command, Stdio},
-    std::{convert::From, env, process, str::FromStr},
-    strum::IntoEnumIterator,
+    std::process,
 };
 
 mod onefetch;
@@ -21,77 +18,12 @@ fn run() -> Result<()> {
         return Err("Git failed to execute!".into());
     }
 
-    let matches = clap_app::build_app().get_matches_from(env::args_os());
+    // Load command line options.
+    let options = Options::new()?;
 
-    if matches.is_present("languages") {
-        return list_languages();
-    }
-
-    let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields") {
-        values.map(String::from).collect()
-    } else {
-        Vec::new()
-    };
-
-    let image = if let Some(image_path) = matches.value_of("image") {
-        Some(image::open(image_path).chain_err(|| "Could not load the specified image")?)
-    } else {
-        None
-    };
-
-    let image_backend = if image.is_some() {
-        if let Some(backend_name) = matches.value_of("image-backend") {
-            image_backends::get_image_backend(backend_name)
-        } else {
-            image_backends::get_best_backend()
-        }
-    } else {
-        None
-    };
-
-    let config = options::Options {
-        path: String::from(matches.value_of("input").unwrap()),
-        ascii_language: if let Some(ascii_language) = matches.value_of("ascii-language") {
-            Language::from_str(&ascii_language.to_lowercase()).unwrap()
-        } else {
-            Language::Unknown
-        },
-        ascii_colors: if let Some(values) = matches.values_of("ascii-colors") {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        },
-        disabled_fields: info_fields::get_disabled_fields(fields_to_hide)?,
-        no_bold: !matches.is_present("no-bold"),
-        image,
-        image_backend,
-        no_merges: matches.is_present("no-merge-commits"),
-        no_color_blocks: matches.is_present("no-color-blocks"),
-        number_of_authors: if let Some(value) = matches.value_of("authors-number") {
-            usize::from_str(value).unwrap()
-        } else {
-            3
-        },
-        excluded: if let Some(user_ignored) = matches.values_of("exclude") {
-            user_ignored.map(String::from).collect()
-        } else {
-            Vec::new()
-        },
-    };
-
-    let info = info::Info::new(config)?;
+    let info = info::Info::new(options)?;
 
     print!("{}", info);
-    Ok(())
-}
-
-pub fn list_languages() -> Result<()> {
-    let iterator = Language::iter().filter(|x| *x != Language::Unknown);
-
-    for l in iterator {
-        println!("{}", l);
-    }
-
     Ok(())
 }
 

@@ -1,11 +1,11 @@
 use {
     crate::onefetch::{
         ascii_art::AsciiArt,
+        cli::Options,
         commit_info::CommitInfo,
         error::*,
         language::Language,
         license::{Detector, LICENSE_FILES},
-        options::Options,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
