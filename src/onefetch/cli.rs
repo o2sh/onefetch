@@ -180,7 +180,7 @@ impl Options {
                 Vec::new()
             },
             disabled_fields: info_fields::get_disabled_fields(fields_to_hide)?,
-            no_bold: !matches.is_present("no-bold"),
+            no_bold: matches.is_present("no-bold"),
             image,
             image_backend,
             no_merges: matches.is_present("no-merge-commits"),

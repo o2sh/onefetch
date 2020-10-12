@@ -275,7 +275,7 @@ impl std::fmt::Display for Info {
             }
         } else {
             let mut logo_lines =
-                AsciiArt::new(self.get_ascii(), self.colors(), self.config.no_bold);
+                AsciiArt::new(self.get_ascii(), self.colors(), !self.config.no_bold);
             loop {
                 match (logo_lines.next(), info_lines.next()) {
                     (Some(logo_line), Some(info_line)) => {
@@ -780,11 +780,12 @@ impl Info {
 
     /// Returns a formatted info label with the desired color and boldness
     fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
-        let mut formatted_label = label.color(color);
+        let formatted_label = label.color(color);
         if self.config.no_bold {
-            formatted_label = formatted_label.bold();
+            formatted_label
+        } else {
+            formatted_label.bold()
         }
-        formatted_label
     }
 }
 
