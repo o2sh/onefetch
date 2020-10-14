@@ -147,7 +147,7 @@ define_languages! {
     { R, "r.ascii", "R", vec![Color::White, Color::Blue] },
     { Racket, "racket.ascii", "Racket", vec![Color::Red, Color::White, Color::Blue] },
     { Ruby, "ruby.ascii", "Ruby", vec![Color::Magenta] },
-    { Rust, "rust.ascii", "Rust", vec![Color::White, Color::Red] },
+    { Rust, "rust.ascii", "Rust", vec![Color::Red, Color::White] },
     { Scala, "scala.ascii", "Scala", vec![Color::Blue] },
     { Sh, "shell.ascii", "Shell", vec![Color::Green], "shell" },
     { Swift, "swift.ascii", "Swift", vec![Color::Red] },
