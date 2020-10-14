@@ -8,7 +8,7 @@ use {
     strum::{EnumCount, IntoEnumIterator},
 };
 
-pub struct Options {
+pub struct Cli {
     pub path: String,
     pub ascii_language: Language,
     pub ascii_colors: Vec<String>,
@@ -20,9 +20,10 @@ pub struct Options {
     pub no_color_blocks: bool,
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
+    pub print_languages: bool,
 }
 
-impl Options {
+impl Cli {
     /// Build `Options` from command line arguments.
     pub fn new() -> Result<Self> {
         #[cfg(target_os = "linux")]
@@ -91,6 +92,12 @@ impl Options {
                 .help("Turns off bold formatting."),
         )
         .arg(
+            Arg::with_name("languages")
+                .short("l")
+                .long("languages")
+                .help("Prints out supported languages"),
+        )
+        .arg(
             Arg::with_name("image")
                 .short("i")
                 .long("image")
@@ -136,7 +143,12 @@ impl Options {
                 .multiple(true)
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
-        ).get_matches();
+            ).get_matches();
+
+        let no_bold = matches.is_present("no-bold");
+        let no_merges = matches.is_present("no-merge-commits");
+        let no_color_blocks = matches.is_present("no-color-blocks");
+        let print_languages = matches.is_present("languages");
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -161,34 +173,56 @@ impl Options {
             None
         };
 
-        Ok(Options {
-            path: String::from(matches.value_of("input").unwrap()),
-            ascii_language: if let Some(ascii_language) = matches.value_of("ascii-language") {
-                Language::from_str(&ascii_language.to_lowercase()).unwrap()
-            } else {
-                Language::Unknown
-            },
-            ascii_colors: if let Some(values) = matches.values_of("ascii-colors") {
-                values.map(String::from).collect()
-            } else {
-                Vec::new()
-            },
-            disabled_fields: info_fields::get_disabled_fields(fields_to_hide)?,
-            no_bold: matches.is_present("no-bold"),
+        let path = String::from(matches.value_of("input").unwrap());
+        let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
+            Language::from_str(&ascii_language.to_lowercase()).unwrap()
+        } else {
+            Language::Unknown
+        };
+
+        let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
+
+        let disabled_fields = info_fields::get_disabled_fields(fields_to_hide)?;
+
+        let number_of_authors = if let Some(value) = matches.value_of("authors-number") {
+            usize::from_str(value).unwrap()
+        } else {
+            3
+        };
+
+        let excluded = if let Some(user_ignored) = matches.values_of("exclude") {
+            user_ignored.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
+
+        Ok(Cli {
+            path,
+            ascii_language,
+            ascii_colors,
+            disabled_fields,
+            no_bold,
             image,
             image_backend,
-            no_merges: matches.is_present("no-merge-commits"),
-            no_color_blocks: matches.is_present("no-color-blocks"),
-            number_of_authors: if let Some(value) = matches.value_of("authors-number") {
-                usize::from_str(value).unwrap()
-            } else {
-                3
-            },
-            excluded: if let Some(user_ignored) = matches.values_of("exclude") {
-                user_ignored.map(String::from).collect()
-            } else {
-                Vec::new()
-            },
+            no_merges,
+            no_color_blocks,
+            number_of_authors,
+            excluded,
+            print_languages,
         })
+    }
+
+    pub fn print_supported_languages() -> Result<()> {
+        let iterator = Language::iter().filter(|x| *x != Language::Unknown);
+
+        for l in iterator {
+            println!("{}", l);
+        }
+
+        Ok(())
     }
 }

@@ -1,7 +1,7 @@
 use {
     crate::onefetch::{
         ascii_art::AsciiArt,
-        cli::Options,
+        cli::Cli,
         commit_info::CommitInfo,
         error::*,
         language::Language,
@@ -33,7 +33,7 @@ pub struct Info {
     number_of_tags: usize,
     number_of_branches: usize,
     license: String,
-    config: Options,
+    config: Cli,
 }
 
 impl std::fmt::Display for Info {
@@ -304,7 +304,7 @@ impl std::fmt::Display for Info {
 
 impl Info {
     #[tokio::main]
-    pub async fn new(config: Options) -> Result<Info> {
+    pub async fn new(config: Cli) -> Result<Info> {
         let repo = Repository::discover(&config.path)
             .chain_err(|| "Could not find a valid git repo on the current path")?;
         let workdir = repo

@@ -115,7 +115,7 @@ define_languages! {
     { Dockerfile, "dockerfile.ascii", "Dockerfile", vec![Color::Cyan, Color::White, Color::Cyan] },
     { Elisp, "emacslisp.ascii", "EmacsLisp", vec![Color::Magenta, Color::White], "emacslisp" },
     { Elixir, "elixir.ascii", "Elixir", vec![Color::Magenta] },
-    { Elm, "elm.ascii", "Elm", vec![Color::Black, Color::Green, Color::Yellow, Color::Cyan] },
+    { Elm, "elm.ascii", "Elm", vec![Color::Blue, Color::Green, Color::Yellow, Color::Cyan] },
     { Erlang, "erlang.ascii", "Erlang", vec![Color::Red] },
     { Fish, "fish.ascii", "Fish", vec![Color::Red, Color::Yellow] },
     { Forth, "forth.ascii", "Forth", vec![Color::Red] },

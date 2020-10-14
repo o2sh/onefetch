@@ -1,7 +1,7 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
-use onefetch::{cli::Options, error::*, info};
+use onefetch::{cli::Cli, error::*, info};
 
 use {
     process::{Command, Stdio},
@@ -19,7 +19,11 @@ fn run() -> Result<()> {
     }
 
     // Load command line options.
-    let options = Options::new()?;
+    let options = Cli::new()?;
+
+    if options.print_languages {
+        return Cli::print_supported_languages();
+    }
 
     let info = info::Info::new(options)?;
 
