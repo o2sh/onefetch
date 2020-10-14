@@ -163,33 +163,38 @@ impl Language {
     fn get_languages_stat(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
         let mut stats = HashMap::new();
 
-        let sum_language_code: usize = languages.iter().map(|(_, v)| v.code).sum();
+        for (language_type, language) in languages.iter() {
+            let mut code = language.code;
 
-        if sum_language_code == 0 {
-            None
-        } else {
-            for (language_type, language) in languages.iter() {
-                let mut code = language.code as usize;
+            let has_children = !language.children.is_empty();
 
-                let has_children = !language.children.is_empty();
-
-                if has_children {
-                    for reports in language.children.values() {
-                        for stats in reports.iter().map(|r| r.stats.summarise()) {
-                            code += stats.code;
-                        }
+            if has_children {
+                for reports in language.children.values() {
+                    for stats in reports.iter().map(|r| r.stats.summarise()) {
+                        code += stats.code;
                     }
                 }
-
-                if code == 0 {
-                    continue;
-                }
-
-                stats.insert(
-                    Language::from(*language_type),
-                    (code as f64 / sum_language_code as f64) * 100.00,
-                );
             }
+
+            if code == 0 {
+                continue;
+            }
+
+            stats.insert(Language::from(*language_type), code as f64);
+        }
+
+        let total: f64 = stats.iter().map(|(_, v)| v).sum();
+
+        let error_margin = f64::EPSILON;
+
+        if (total - 0 as f64).abs() < error_margin {
+            None
+        } else {
+            for (_, val) in stats.iter_mut() {
+                *val /= total;
+                *val *= 100_f64;
+            }
+
             Some(stats)
         }
     }
