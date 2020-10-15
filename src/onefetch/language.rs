@@ -185,7 +185,7 @@ impl Language {
 
         let total: f64 = stats.iter().map(|(_, v)| v).sum();
 
-        if (total - 0 as f64).abs() < f64::EPSILON {
+        if total.abs() < f64::EPSILON {
             None
         } else {
             for (_, val) in stats.iter_mut() {
