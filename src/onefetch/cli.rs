@@ -26,9 +26,9 @@ pub struct Cli {
 impl Cli {
     /// Build `Options` from command line arguments.
     pub fn new() -> Result<Self> {
-        #[cfg(not(target_os = "windows"))]
+        #[cfg(not(windows))]
         let possible_backends = ["kitty", "sixel"];
-        #[cfg(target_os = "windows")]
+        #[cfg(windows)]
         let possible_backends = [];
 
         let matches = App::new(crate_name!())
