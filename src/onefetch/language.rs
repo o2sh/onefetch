@@ -76,7 +76,6 @@ macro_rules! define_languages {
             $(
                 paste! {
                     #[test]
-                    #[ignore]
                     fn [<$name:lower _width>] () {
                         const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
 
@@ -89,7 +88,6 @@ macro_rules! define_languages {
                     }
 
                     #[test]
-                    #[ignore]
                     fn [<$name:lower _height>] () {
                         const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
                         assert_le!(ASCII.lines().count(), MAX_HEIGHT, concat!($ascii, " is too tall."));
