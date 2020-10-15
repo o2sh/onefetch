@@ -121,7 +121,7 @@ define_languages! {
     { Forth, "forth.ascii", "Forth", vec![Color::Red] },
     { FortranModern, "f90.ascii", "Fortran", vec![Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red], "fortran" },
     { FSharp, "fsharp.ascii", "F#", vec![Color::Cyan, Color::Cyan], "f#" },
-    { Go, "go.ascii", "Go", vec![Color::White] },
+    { Go, "go.ascii", "Go", vec![Color::Cyan] },
     { Groovy, "groovy.ascii", "Groovy", vec![Color::Cyan, Color::White] },
     { Haskell, "haskell.ascii", "Haskell", vec![Color::Cyan, Color::Magenta, Color::Blue] },
     { Html, "html.ascii", "HTML", vec![Color::Red, Color::White] },
