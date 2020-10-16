@@ -1,20 +1,18 @@
 use {
-    crate::{
-        image_backends::ImageBackend,
+    crate::onefetch::{
+        ascii_art::AsciiArt,
+        cli::Cli,
+        commit_info::CommitInfo,
+        error::*,
         language::Language,
-        license::Detector,
-        {AsciiArt, CommitInfo, Error, InfoFieldOn},
+        license::{Detector, LICENSE_FILES},
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
-    image::DynamicImage,
+    regex::Regex,
     std::{ffi::OsStr, fmt::Write, fs},
     tokio::process::Command,
 };
-
-type Result<T> = std::result::Result<T, crate::Error>;
-
-const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
 
 pub struct Info {
     git_version: String,
@@ -35,13 +33,7 @@ pub struct Info {
     number_of_tags: usize,
     number_of_branches: usize,
     license: String,
-    custom_logo: Language,
-    custom_colors: Vec<String>,
-    disable_fields: InfoFieldOn,
-    bold_enabled: bool,
-    no_color_blocks: bool,
-    custom_image: Option<DynamicImage>,
-    image_backend: Option<Box<dyn ImageBackend>>,
+    config: Cli,
 }
 
 impl std::fmt::Display for Info {
@@ -51,7 +43,7 @@ impl std::fmt::Display for Info {
             Some(&c) => c,
             None => Color::White,
         };
-        if !self.disable_fields.git_info {
+        if !self.config.disabled_fields.git_info {
             let git_info_length;
             if self.git_username != "" {
                 git_info_length = self.git_username.len() + self.git_version.len() + 3;
@@ -75,7 +67,7 @@ impl std::fmt::Display for Info {
                 &separator,
             )?;
         }
-        if !self.disable_fields.project {
+        if !self.config.disabled_fields.project {
             let branches_str = match self.number_of_branches {
                 0 => String::new(),
                 1 => String::from("1 branch"),
@@ -93,7 +85,7 @@ impl std::fmt::Display for Info {
             } else if branches_str.is_empty() || tags_str.is_empty() {
                 format!("({})", format!("{}{}", tags_str, branches_str))
             } else {
-                format!("({}, {})", tags_str, branches_str)
+                format!("({}, {})", branches_str, tags_str)
             };
 
             let project_str = &self.get_formatted_info_label("Project: ", color);
@@ -105,7 +97,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.head {
+        if !self.config.disabled_fields.head {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("HEAD: ", color),
@@ -113,7 +105,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.pending && self.pending != "" {
+        if !self.config.disabled_fields.pending && self.pending != "" {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Pending: ", color),
@@ -121,7 +113,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.version {
+        if !self.config.disabled_fields.version {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Version: ", color),
@@ -129,7 +121,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.created {
+        if !self.config.disabled_fields.created {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Created: ", color),
@@ -137,7 +129,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.languages && !self.languages.is_empty() {
+        if !self.config.disabled_fields.languages && !self.languages.is_empty() {
             if self.languages.len() > 1 {
                 let title = "Languages: ";
                 let pad = " ".repeat(title.len());
@@ -172,7 +164,7 @@ impl std::fmt::Display for Info {
             };
         }
 
-        if !self.disable_fields.authors && !self.authors.is_empty() {
+        if !self.config.disabled_fields.authors && !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
                 "Authors: "
             } else {
@@ -202,7 +194,7 @@ impl std::fmt::Display for Info {
             }
         }
 
-        if !self.disable_fields.last_change {
+        if !self.config.disabled_fields.last_change {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Last change: ", color),
@@ -210,7 +202,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.repo {
+        if !self.config.disabled_fields.repo {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Repo: ", color),
@@ -218,7 +210,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.commits {
+        if !self.config.disabled_fields.commits {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Commits: ", color),
@@ -226,7 +218,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.lines_of_code {
+        if !self.config.disabled_fields.lines_of_code {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Lines of code: ", color),
@@ -234,7 +226,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.size {
+        if !self.config.disabled_fields.size {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("Size: ", color),
@@ -242,7 +234,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.disable_fields.license {
+        if !self.config.disabled_fields.license {
             write_buf(
                 &mut buf,
                 &self.get_formatted_info_label("License: ", color),
@@ -250,7 +242,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.no_color_blocks {
+        if !self.config.no_color_blocks {
             writeln!(
                 buf,
                 "\n{0}{1}{2}{3}{4}{5}{6}{7}",
@@ -268,8 +260,8 @@ impl std::fmt::Display for Info {
         let center_pad = "   ";
         let mut info_lines = buf.lines();
 
-        if let Some(custom_image) = &self.custom_image {
-            if let Some(image_backend) = &self.image_backend {
+        if let Some(custom_image) = &self.config.image {
+            if let Some(image_backend) = &self.config.image_backend {
                 writeln!(
                     f,
                     "{}",
@@ -282,7 +274,8 @@ impl std::fmt::Display for Info {
                 panic!("No image backend found")
             }
         } else {
-            let mut logo_lines = AsciiArt::new(self.get_ascii(), self.colors(), self.bold_enabled);
+            let mut logo_lines =
+                AsciiArt::new(self.get_ascii(), self.colors(), !self.config.no_bold);
             loop {
                 match (logo_lines.next(), info_lines.next()) {
                     (Some(logo_line), Some(info_line)) => {
@@ -311,24 +304,15 @@ impl std::fmt::Display for Info {
 
 impl Info {
     #[tokio::main]
-    pub async fn new(
-        dir: &str,
-        logo: Language,
-        colors: Vec<String>,
-        disabled: InfoFieldOn,
-        bold_flag: bool,
-        custom_image: Option<DynamicImage>,
-        image_backend: Option<Box<dyn ImageBackend>>,
-        no_merges: bool,
-        color_blocks_flag: bool,
-        author_nb: usize,
-        ignored_directories: Vec<&str>,
-    ) -> Result<Info> {
-        let repo = Repository::discover(&dir).map_err(|_| Error::NotGitRepo)?;
-        let workdir = repo.workdir().ok_or(Error::BareGitRepo)?;
+    pub async fn new(config: Cli) -> Result<Info> {
+        let repo = Repository::discover(&config.path)
+            .chain_err(|| "Could not find a valid git repo on the current path")?;
+        let workdir = repo
+            .workdir()
+            .chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
-            Language::get_language_stats(workdir_str, ignored_directories)?;
+            Language::get_language_stats(workdir_str, &config.excluded)?;
 
         let (
             (repository_name, repository_url),
@@ -343,7 +327,7 @@ impl Info {
             dominant_language,
         ) = futures::join!(
             Info::get_repo_name_and_url(&repo),
-            Info::get_git_history(workdir_str, no_merges),
+            Info::get_git_history(workdir_str, config.no_merges),
             Info::get_number_of_tags_branches(workdir_str),
             Info::get_current_commit_info(&repo),
             Info::get_git_version_and_username(workdir_str),
@@ -356,7 +340,7 @@ impl Info {
 
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
-        let authors = Info::get_authors(&git_history, author_nb);
+        let authors = Info::get_authors(&git_history, config.number_of_authors);
         let last_change = Info::get_date_of_last_commit(&git_history);
 
         Ok(Info {
@@ -378,13 +362,7 @@ impl Info {
             number_of_tags,
             number_of_branches,
             license: project_license?,
-            custom_logo: logo,
-            custom_colors: colors,
-            disable_fields: disabled,
-            bold_enabled: bold_flag,
-            no_color_blocks: color_blocks_flag,
-            custom_image,
-            image_backend,
+            config,
         })
     }
 
@@ -428,20 +406,28 @@ impl Info {
 
             let branches = String::from_utf8_lossy(&output.stdout);
 
-            branches.lines().count()
+            if branches.lines().count() > 0 {
+                branches.lines().count() - 1 //Exclude origin/HEAD -> origin/master
+            } else {
+                0
+            }
         };
 
         futures::join!(tags, branches)
     }
 
     async fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
-        let config = repo.config().map_err(|_| Error::NoGitData);
+        let config = repo
+            .config()
+            .chain_err(|| "Could not retrieve git configuration data");
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
+        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url").unwrap();
+
         for entry in &config.unwrap().entries(None).unwrap() {
             let entry = entry.unwrap();
-            if let "remote.origin.url" = entry.name().unwrap() {
+            if remote_regex.is_match(entry.name().unwrap()) {
                 remote_url = entry.value().unwrap().to_string()
             };
         }
@@ -466,9 +452,15 @@ impl Info {
     }
 
     async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-        let head = repo.head().map_err(|_| Error::ReferenceInfoError)?;
-        let head_oid = head.target().ok_or(Error::ReferenceInfoError)?;
-        let refs = repo.references().map_err(|_| Error::ReferenceInfoError)?;
+        let head = repo
+            .head()
+            .chain_err(|| "Error while retrieving reference information")?;
+        let head_oid = head
+            .target()
+            .ok_or("Error while retrieving reference information")?;
+        let refs = repo
+            .references()
+            .chain_err(|| "Error while retrieving reference information")?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
@@ -701,7 +693,7 @@ impl Info {
         let detector = Detector::new()?;
 
         let mut output = fs::read_dir(dir)
-            .map_err(|_| Error::ReadDirectory)?
+            .chain_err(|| "Could not read directory")?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
             .filter(|entry| {
@@ -730,20 +722,20 @@ impl Info {
     }
 
     fn get_ascii(&self) -> &str {
-        let language = if let Language::Unknown = self.custom_logo {
+        let language = if let Language::Unknown = self.config.ascii_language {
             &self.dominant_language
         } else {
-            &self.custom_logo
+            &self.config.ascii_language
         };
 
         language.get_ascii_art()
     }
 
     fn colors(&self) -> Vec<Color> {
-        let language = if let Language::Unknown = self.custom_logo {
+        let language = if let Language::Unknown = self.config.ascii_language {
             &self.dominant_language
         } else {
-            &self.custom_logo
+            &self.config.ascii_language
         };
 
         let colors = language.get_colors();
@@ -752,7 +744,7 @@ impl Info {
             .iter()
             .enumerate()
             .map(|(index, default_color)| {
-                if let Some(color_num) = self.custom_colors.get(index) {
+                if let Some(color_num) = self.config.ascii_colors.get(index) {
                     if let Some(color) = Info::num_to_color(color_num) {
                         return color;
                     }
@@ -788,11 +780,12 @@ impl Info {
 
     /// Returns a formatted info label with the desired color and boldness
     fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
-        let mut formatted_label = label.color(color);
-        if self.bold_enabled {
-            formatted_label = formatted_label.bold();
+        let formatted_label = label.color(color);
+        if self.config.no_bold {
+            formatted_label
+        } else {
+            formatted_label.bold()
         }
-        formatted_label
     }
 }
 

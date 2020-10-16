@@ -20,7 +20,7 @@ priority = "optional"
 
 [dependencies]
 colored= "2.0.0"
-git2 = { version = "0.13.11", default-features = false }
+git2 = { version = "0.13.12", default-features = false }
 tokei = "12.0.0"
 askalono = "0.4.3"
 bytecount = "0.6.0"
@@ -30,11 +30,12 @@ image = "0.23.10"
 regex = "1"
 futures = "0.3.6"
 tokio = { version = "0.2.22", features = ["full"] }
+error-chain = "0.12"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
 
-[target.'cfg(target_os = "linux")'.dependencies]
+[target.'cfg(not(windows))'.dependencies]
 libc = "0.2.79"
 base64 = "0.13.0"
 
