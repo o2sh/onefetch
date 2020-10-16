@@ -3,8 +3,8 @@ use {
     colored::Color,
     regex::Regex,
     std::collections::HashMap,
-    strum::{EnumIter, EnumString, IntoStaticStr},
     std::env,
+    strum::{EnumIter, EnumString, IntoStaticStr},
 };
 
 pub struct Colors {
