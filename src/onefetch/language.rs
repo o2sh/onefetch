@@ -208,7 +208,7 @@ impl Language {
         Ok((stat_vec, loc))
     }
 
-    pub async fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
+    pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
         languages_stat_vec[0].0.clone()
     }
 }
