@@ -62,13 +62,17 @@ macro_rules! define_languages {
                     $( Language::$name => $colors, )*
                     Language::Unknown => define_colors!( [Color::White] ),
                 };
-                let use_true_color = env::var("COLORTERM");
-                if use_true_color.is_ok() && use_true_color.unwrap().to_lowercase() == "truecolor" && colors.true_colors.is_some() {
-                    colors.true_colors.unwrap()
-                } else {
-                    colors.basic_colors
+                match colors.true_colors {
+                  Some( true_colors ) if is_truecolor_terminal() => true_colors,
+                  _ => colors.basic_colors,
                 }
             }
+        }
+
+        fn is_truecolor_terminal() -> bool {
+            env::var("COLORTERM")
+                .map( |colorterm| colorterm == "truecolor" || colorterm == "24bit" )
+                .unwrap_or(false)
         }
 
         fn get_all_language_types() -> Vec<tokei::LanguageType> {
