@@ -1,16 +1,12 @@
 use {
     crate::onefetch::{
-        ascii_art::AsciiArt,
-        cli::Cli,
-        commit_info::CommitInfo,
-        error::*,
-        language::Language,
-        license::{Detector, LICENSE_FILES},
+        ascii_art::AsciiArt, cli::Cli, commit_info::CommitInfo, error::*, language::Language,
+        license::Detector,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
     regex::Regex,
-    std::{ffi::OsStr, fmt::Write, fs},
+    std::fmt::Write,
     tokio::process::Command,
 };
 
@@ -312,7 +308,7 @@ impl Info {
             .chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
-            Language::get_language_stats(workdir_str, &config.excluded)?;
+            Language::get_language_statistics(workdir_str, &config.excluded)?;
 
         let (
             git_history,
@@ -336,7 +332,7 @@ impl Info {
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, config.number_of_authors);
         let last_change = Info::get_date_of_last_commit(&git_history);
-        let project_license = Info::get_project_license(workdir_str);
+        let project_license = Detector::new()?.get_project_license(workdir_str);
         let dominant_language = Language::get_dominant_language(&languages_stats);
 
         Ok(Info {
@@ -679,41 +675,12 @@ impl Info {
         Ok(output)
     }
 
-    fn get_project_license(dir: &str) -> Result<String> {
-        fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
-            LICENSE_FILES
-                .iter()
-                .any(|&name| file_name.as_ref().starts_with(name))
-        }
-
-        let detector = Detector::new()?;
-
-        let mut output = fs::read_dir(dir)
-            .chain_err(|| "Could not read directory")?
-            .filter_map(std::result::Result::ok)
-            .map(|entry| entry.path())
-            .filter(|entry| {
-                entry.is_file()
-                    && entry
-                        .file_name()
-                        .map(OsStr::to_string_lossy)
-                        .map(is_license_file)
-                        .unwrap_or_default()
-            })
-            .filter_map(|entry| {
-                let contents = fs::read_to_string(entry).unwrap_or_default();
-                detector.analyze(&contents)
-            })
-            .collect::<Vec<_>>();
-
-        output.sort();
-        output.dedup();
-        let output = output.join(", ");
-
-        if output == "" {
-            Ok("??".into())
+    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
+        let formatted_label = label.color(color);
+        if self.config.no_bold {
+            formatted_label
         } else {
-            Ok(output)
+            formatted_label.bold()
         }
     }
 
@@ -772,16 +739,6 @@ impl Info {
             _ => return None,
         };
         Some(color)
-    }
-
-    /// Returns a formatted info label with the desired color and boldness
-    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
-        let formatted_label = label.color(color);
-        if self.config.no_bold {
-            formatted_label
-        } else {
-            formatted_label.bold()
-        }
     }
 }
 
