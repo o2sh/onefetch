@@ -4,7 +4,6 @@ use {
     regex::Regex,
     std::collections::HashMap,
     std::env,
-    std::fmt,
     strum::{EnumIter, EnumString, IntoStaticStr},
 };
 
@@ -83,6 +82,10 @@ macro_rules! define_languages {
         #[cfg(test)]
         mod true_colors {
 
+            use std::fmt;
+            use super::*;
+            use paste::paste;
+
             impl fmt::Display for Colors {
                 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                     let mut output = String::new();
@@ -109,9 +112,6 @@ macro_rules! define_languages {
                     write!( f, "{}", output )
                 }
             }
-
-            use super::*;
-            use paste::paste;
 
             $(
                 paste! {
