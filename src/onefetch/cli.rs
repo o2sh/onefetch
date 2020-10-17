@@ -16,6 +16,7 @@ pub struct Cli {
     pub no_bold: bool,
     pub image: Option<DynamicImage>,
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
+    pub image_colors: usize,
     pub no_merges: bool,
     pub no_color_blocks: bool,
     pub number_of_authors: usize,
@@ -116,6 +117,15 @@ impl Cli {
                 .help("Which image BACKEND to use."),
         )
         .arg(
+            Arg::with_name("image-colors")
+                .long("image-colors")
+                .value_name("NUM")
+                .takes_value(true)
+                .max_values(1)
+                .default_value("16")
+                .help("NUM of colors (16-256) used in image backend."),
+        )
+        .arg(
             Arg::with_name("no-merge-commits")
                 .long("no-merge-commits")
                 .help("Ignores merge commits"),
@@ -173,6 +183,17 @@ impl Cli {
             None
         };
 
+        let image_colors = if let Some(value) = matches.value_of("image-colors") {
+            let colors = usize::from_str(value).unwrap();
+            if 16 <= colors && colors <= 256 {
+                colors
+            } else {
+                16
+            }
+        } else {
+            16
+        };
+
         let path = String::from(matches.value_of("input").unwrap());
         let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
             Language::from_str(&ascii_language.to_lowercase()).unwrap()
@@ -208,6 +229,7 @@ impl Cli {
             no_bold,
             image,
             image_backend,
+            image_colors,
             no_merges,
             no_color_blocks,
             number_of_authors,

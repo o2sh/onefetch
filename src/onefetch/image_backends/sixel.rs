@@ -71,7 +71,7 @@ impl SixelBackend {
 }
 
 impl super::ImageBackend for SixelBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage) -> String {
+    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> String {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
@@ -95,7 +95,7 @@ impl super::ImageBackend for SixelBackend {
         // reduce the amount of colors using dithering
         colorops::dither(
             &mut rgba_image,
-            &NeuQuant::new(10, 128, flat_samples.image_slice().unwrap()),
+            &NeuQuant::new(10, colors, flat_samples.image_slice().unwrap()),
         );
         let rgb_image = ImageBuffer::from_fn(rgba_image.width(), rgba_image.height(), |x, y| {
             let rgba_pixel = rgba_image.get_pixel(x, y);

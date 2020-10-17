@@ -263,7 +263,8 @@ impl std::fmt::Display for Info {
                     "{}",
                     image_backend.add_image(
                         info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
-                        custom_image
+                        custom_image,
+                        self.config.image_colors
                     )
                 )?;
             } else {
