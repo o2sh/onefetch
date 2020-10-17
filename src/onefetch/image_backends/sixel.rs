@@ -77,8 +77,10 @@ impl super::ImageBackend for SixelBackend {
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
             tty_size
         };
-        let width_ratio = tty_size.ws_col as f64 / tty_size.ws_xpixel as f64;
-        let height_ratio = tty_size.ws_row as f64 / tty_size.ws_ypixel as f64;
+        let cw = tty_size.ws_xpixel / tty_size.ws_col;
+        let lh = tty_size.ws_ypixel / tty_size.ws_row;
+        let width_ratio = 1.0 / cw as f64;
+        let height_ratio = 1.0 / lh as f64;
 
         // resize image to fit the text height with the Lanczos3 algorithm
         let image = image.resize(
