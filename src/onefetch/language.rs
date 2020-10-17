@@ -4,6 +4,7 @@ use {
     regex::Regex,
     std::collections::HashMap,
     std::env,
+    std::fmt,
     strum::{EnumIter, EnumString, IntoStaticStr},
 };
 
@@ -77,6 +78,65 @@ macro_rules! define_languages {
 
         fn get_all_language_types() -> Vec<tokei::LanguageType> {
             vec![ $( tokei::LanguageType::$name ,)* ]
+        }
+
+        #[cfg(test)]
+        mod true_colors {
+
+            impl fmt::Display for Colors {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    let mut output = String::new();
+                    output += "Colors {\n";
+                    output += "    basic_colors: vec![\n";
+                    let mut color_index = 0;
+                    for bc in self.basic_colors.iter() {
+                        output += &format!( "        Color::{:?}, // {}\n", bc, color_index );
+                        color_index = color_index + 1;
+                    }
+                    output += "    ], \n";
+                    if let Some(tcs) = &self.true_colors {
+                        output += "    true_colors: vec![\n";
+                        let mut color_index = 0;
+                        for tc in tcs.iter() {
+                            output += &format!( "        Color::{:?}, // {}\n", tc, color_index );
+                            color_index = color_index + 1;
+                        }
+                    } else {
+                        output += "    true_colors: None\n";
+                    };
+                    output += "    ], \n";
+                    output += "}\n";
+                    write!( f, "{}", output )
+                }
+            }
+
+            use super::*;
+            use paste::paste;
+
+            $(
+                paste! {
+                    #[test]
+                    #[ignore]
+                    fn [<$name:lower _basic_color_test>] () {
+                        let colors = $colors;
+                        let mut color_index = 0;
+                        for bc in colors.basic_colors.iter() {
+                            let color_str = &format!( "Color::{:?}", bc );
+                            assert!( !color_str.contains( "TrueColor" ), " language {} has true color {} in basic colors at index {} please change to a basic color: Black, Red, Green, Yellow, Blue, Magenta, Cyan, White, BrightBlack, BrightRed, BrightGreen, BrightYellow, BrightBlue, BrightMagenta, BrightCyan, BrightWhite", $display, color_str, color_index );
+                            color_index = color_index + 1;
+                        }
+                    }
+
+                    #[test]
+                    #[ignore]
+                    fn [<$name:lower _color_vector_length_test>] () {
+                        let colors = $colors;
+                        let bc_count = colors.basic_colors.len();
+                        let tc_count = if let Some(tcs) = &colors.true_colors { tcs.len() } else { bc_count };
+                        assert_eq!( bc_count, tc_count, " left (basic) color length do not match right (true) color length.\n{}", colors );
+                    }
+                }
+            )*
         }
 
         #[cfg(test)]
