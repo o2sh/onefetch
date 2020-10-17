@@ -57,22 +57,16 @@ macro_rules! define_languages {
                 }
             }
 
-            pub fn get_colors(&self) -> Vec<Color> {
+            pub fn get_colors(&self, true_color: bool) -> Vec<Color> {
                 let colors = match *self {
                     $( Language::$name => $colors, )*
                     Language::Unknown => define_colors!( [Color::White] ),
                 };
                 match colors.true_colors {
-                  Some( true_colors ) if is_truecolor_terminal() => true_colors,
+                  Some( true_colors ) if true_color => true_colors,
                   _ => colors.basic_colors,
                 }
             }
-        }
-
-        fn is_truecolor_terminal() -> bool {
-            env::var("COLORTERM")
-                .map( |colorterm| colorterm == "truecolor" || colorterm == "24bit" )
-                .unwrap_or(false)
         }
 
         fn get_all_language_types() -> Vec<tokei::LanguageType> {

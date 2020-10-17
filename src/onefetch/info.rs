@@ -738,7 +738,7 @@ impl Info {
             &self.config.ascii_language
         };
 
-        let colors = language.get_colors();
+        let colors = language.get_colors(self.config.true_color);
 
         let colors: Vec<Color> = colors
             .iter()

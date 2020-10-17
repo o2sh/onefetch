@@ -21,6 +21,7 @@ pub struct Cli {
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
     pub print_languages: bool,
+    pub true_color: bool,
 }
 
 impl Cli {
@@ -149,6 +150,7 @@ impl Cli {
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_blocks = matches.is_present("no-color-blocks");
         let print_languages = matches.is_present("languages");
+        let true_color = is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -213,6 +215,7 @@ impl Cli {
             number_of_authors,
             excluded,
             print_languages,
+            true_color,
         })
     }
 
@@ -225,4 +228,10 @@ impl Cli {
 
         Ok(())
     }
+}
+
+fn is_truecolor_terminal() -> bool {
+    env::var("COLORTERM")
+        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
+        .unwrap_or(false)
 }
