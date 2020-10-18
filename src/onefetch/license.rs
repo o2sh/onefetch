@@ -1,8 +1,10 @@
-use askalono::{Store, TextData};
+use {
+    crate::onefetch::error::*,
+    askalono::{Store, TextData},
+    std::{ffi::OsStr, fs},
+};
 
-use crate::onefetch::error::*;
-
-pub const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
+const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
 
 static CACHE_DATA: &[u8] = include_bytes!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -21,7 +23,43 @@ impl Detector {
             .map_err(|_| "Could not initialize the license detector".into())
     }
 
-    pub fn analyze(&self, text: &str) -> Option<String> {
+    pub fn get_project_license(&self, dir: &str) -> Result<String> {
+        fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
+            LICENSE_FILES
+                .iter()
+                .any(|&name| file_name.as_ref().starts_with(name))
+        }
+
+        let mut output = fs::read_dir(dir)
+            .chain_err(|| "Could not read directory")?
+            .filter_map(std::result::Result::ok)
+            .map(|entry| entry.path())
+            .filter(|entry| {
+                entry.is_file()
+                    && entry
+                        .file_name()
+                        .map(OsStr::to_string_lossy)
+                        .map(is_license_file)
+                        .unwrap_or_default()
+            })
+            .filter_map(|entry| {
+                let contents = fs::read_to_string(entry).unwrap_or_default();
+                self.analyze(&contents)
+            })
+            .collect::<Vec<_>>();
+
+        output.sort();
+        output.dedup();
+        let output = output.join(", ");
+
+        if output == "" {
+            Ok("??".into())
+        } else {
+            Ok(output)
+        }
+    }
+
+    fn analyze(&self, text: &str) -> Option<String> {
         let matched = self.store.analyze(&TextData::from(text));
 
         if matched.score >= MIN_THRESHOLD {
