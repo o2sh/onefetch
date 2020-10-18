@@ -138,7 +138,7 @@ impl Cli {
                     |t| {
                         t.parse::<u32>()
                             .map_err(|_t| "must be a number")
-                            .map(|_t| ()) 
+                            .map(|_t|())
                             .map_err(|e| e.to_string())
                     },
                 )
