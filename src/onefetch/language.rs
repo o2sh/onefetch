@@ -100,6 +100,7 @@ macro_rules! define_languages {
 
 define_languages! {
     { Assembly, "assembly.ascii", "Assembly", vec![Color::Cyan] },
+    { Bash, "shell.ascii", "Shell", vec![Color::Green], "shell" },
     { C, "c.ascii", "C", vec![Color::Cyan, Color::Blue] },
     { Clojure, "clojure.ascii", "Clojure", vec![Color::Cyan, Color::Green] },
     { CMake, "cmake.ascii", "CMake", vec![Color::Blue, Color::Green, Color::Red, Color::Black] },
@@ -154,6 +155,7 @@ define_languages! {
     { TypeScript, "typescript.ascii", "TypeScript", vec![Color::Cyan] },
     { Vue, "vue.ascii", "Vue", vec![Color::Green, Color::Blue] },
     { Xml, "xml.ascii", "XML", vec![Color::Yellow, Color::White, Color::Green] },
+    { Zsh, "shell.ascii", "Shell", vec![Color::Green], "shell" },
     { Zig, "zig.ascii", "Zig", vec![Color::Yellow] },
 }
 
