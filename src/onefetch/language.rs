@@ -106,7 +106,6 @@ macro_rules! define_languages {
             $(
                 paste! {
                     #[test]
-                    #[ignore]
                     fn [<$name:lower _basic_color_test>] () {
                         let colors = $colors;
                         for (color_index, bc) in colors.basic_colors.iter().enumerate() {
