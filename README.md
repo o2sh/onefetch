@@ -21,7 +21,7 @@ The repo's information by default is displayed alongside the dominant language's
 
 Onefetch provides the user with code statistics and automatically detects open source licenses from texts. Additionally, it will show the pending changes, LOC (lines of code), size on disk, contributors, version, HEAD, last change etc.
 
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/r.png" align="right" height="240px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/go.png" align="right" height="240px">
 
 You can further configure Onefetch to display exactly what you want it to, through the use of command-line flags.
 
