@@ -155,8 +155,8 @@ define_languages! {
     { TypeScript, "typescript.ascii", "TypeScript", vec![Color::Cyan] },
     { Vue, "vue.ascii", "Vue", vec![Color::Green, Color::Blue] },
     { Xml, "xml.ascii", "XML", vec![Color::Yellow, Color::White, Color::Green] },
-    { Zsh, "shell.ascii", "Shell", vec![Color::Green], "shell" },
     { Zig, "zig.ascii", "Zig", vec![Color::Yellow] },
+    { Zsh, "zsh.ascii", "Z Shell", vec![Color::White], "zsh" },
 }
 
 impl Language {
