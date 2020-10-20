@@ -15,17 +15,17 @@
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/aesthetic.png" align="right" height="240px">
 
-Onefetch is a command line information tool that displays information about your Git repository directly on your terminal.
+Onefetch is a command-line Git information tool written in `Rust`. Onefetch will display information about your Git repository directly on your terminal.
 
-The repo's information is displayed alongside the dominant language's ASCII logo. You can further configure Onefetch to instead use an image (png, jpeg...) on supported terminals. More information [here](https://github.com/o2sh/onefetch/wiki/image-Backends).
+The repo's information by default is displayed alongside the dominant language's ASCII logo. You can further configure Onefetch to instead use an image (png, jpeg...) on supported terminals: More information [here](https://github.com/o2sh/onefetch/wiki/Images-in-the-terminal).
 
-Onefetch provides the user with code statistics and project information with features like license detection. Onefetch will show the language distribution, LOC (lines of code), size on disk, Contributors, Version, etc.
+Onefetch provides the user with code statistics and automatically detects open source licenses from texts. Additionally, it will show the pending changes, LOC (lines of code), size on disk, contributors, version, HEAD, last change etc.
 
-<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/r.png" align="right" height="240px">
+<img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/go.png" align="right" height="240px">
 
 You can further configure Onefetch to display exactly what you want it to, through the use of command-line flags.
 
-Onefetch supports more than 50 different programming languages. If your language of choice isn't supported: Open up an issue and support will be added. 
+Onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added. 
 
 Contributions are very welcome! See [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/master/CONTRIBUTING.md) for more info.
 

@@ -1,16 +1,12 @@
 use {
     crate::onefetch::{
-        ascii_art::AsciiArt,
-        cli::Cli,
-        commit_info::CommitInfo,
-        error::*,
-        language::Language,
-        license::{Detector, LICENSE_FILES},
+        ascii_art::AsciiArt, cli::Cli, commit_info::CommitInfo, error::*, language::Language,
+        license::Detector,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
     regex::Regex,
-    std::{ffi::OsStr, fmt::Write, fs},
+    std::fmt::Write,
     tokio::process::Command,
 };
 
@@ -312,36 +308,32 @@ impl Info {
             .chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
-            Language::get_language_stats(workdir_str, &config.excluded)?;
+            Language::get_language_statistics(workdir_str, &config.excluded)?;
 
         let (
-            (repository_name, repository_url),
             git_history,
             (number_of_tags, number_of_branches),
-            current_commit_info,
             (git_v, git_user),
             version,
             pending,
             repo_size,
-            project_license,
-            dominant_language,
         ) = futures::join!(
-            Info::get_repo_name_and_url(&repo),
             Info::get_git_history(workdir_str, config.no_merges),
             Info::get_number_of_tags_branches(workdir_str),
-            Info::get_current_commit_info(&repo),
             Info::get_git_version_and_username(workdir_str),
             Info::get_version(workdir_str),
             Info::get_pending_changes(workdir_str),
-            Info::get_packed_size(workdir_str),
-            Info::get_project_license(workdir_str),
-            Language::get_dominant_language(&languages_stats)
+            Info::get_packed_size(workdir_str)
         );
 
+        let (repository_name, repository_url) = Info::get_repo_name_and_url(&repo);
+        let current_commit_info = Info::get_current_commit_info(&repo);
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, config.number_of_authors);
         let last_change = Info::get_date_of_last_commit(&git_history);
+        let project_license = Detector::new()?.get_project_license(workdir_str);
+        let dominant_language = Language::get_dominant_language(&languages_stats);
 
         Ok(Info {
             git_version: git_v,
@@ -385,7 +377,7 @@ impl Info {
     }
 
     async fn get_number_of_tags_branches(dir: &str) -> (usize, usize) {
-        let tags = async {
+        let tags = {
             let output = Command::new("git")
                 .args(vec!["-C", dir, "tag"])
                 .output()
@@ -397,7 +389,7 @@ impl Info {
             tags.lines().count()
         };
 
-        let branches = async {
+        let branches = {
             let output = Command::new("git")
                 .args(vec!["-C", dir, "branch", "-r"])
                 .output()
@@ -413,10 +405,10 @@ impl Info {
             }
         };
 
-        futures::join!(tags, branches)
+        (tags, branches)
     }
 
-    async fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
+    fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
         let config = repo
             .config()
             .chain_err(|| "Could not retrieve git configuration data");
@@ -451,7 +443,7 @@ impl Info {
         (repository_name, remote_url)
     }
 
-    async fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
+    fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
         let head = repo
             .head()
             .chain_err(|| "Error while retrieving reference information")?;
@@ -683,41 +675,12 @@ impl Info {
         Ok(output)
     }
 
-    async fn get_project_license(dir: &str) -> Result<String> {
-        fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
-            LICENSE_FILES
-                .iter()
-                .any(|&name| file_name.as_ref().starts_with(name))
-        }
-
-        let detector = Detector::new()?;
-
-        let mut output = fs::read_dir(dir)
-            .chain_err(|| "Could not read directory")?
-            .filter_map(std::result::Result::ok)
-            .map(|entry| entry.path())
-            .filter(|entry| {
-                entry.is_file()
-                    && entry
-                        .file_name()
-                        .map(OsStr::to_string_lossy)
-                        .map(is_license_file)
-                        .unwrap_or_default()
-            })
-            .filter_map(|entry| {
-                let contents = fs::read_to_string(entry).unwrap_or_default();
-                detector.analyze(&contents)
-            })
-            .collect::<Vec<_>>();
-
-        output.sort();
-        output.dedup();
-        let output = output.join(", ");
-
-        if output == "" {
-            Ok("??".into())
+    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
+        let formatted_label = label.color(color);
+        if self.config.no_bold {
+            formatted_label
         } else {
-            Ok(output)
+            formatted_label.bold()
         }
     }
 
@@ -776,16 +739,6 @@ impl Info {
             _ => return None,
         };
         Some(color)
-    }
-
-    /// Returns a formatted info label with the desired color and boldness
-    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
-        let formatted_label = label.color(color);
-        if self.config.no_bold {
-            formatted_label
-        } else {
-            formatted_label.bold()
-        }
     }
 }
 

@@ -134,7 +134,15 @@ impl Cli {
                 .takes_value(true)
                 .max_values(1)
                 .default_value("3")
-                .help("NUM of authors to be shown."),
+                .help("NUM of authors to be shown.")
+                .validator(
+                    |t| {
+                        t.parse::<u32>()
+                            .map_err(|_t| "must be a number")
+                            .map(|_t|())
+                            .map_err(|e| e.to_string())
+                    },
+                )
         )
         .arg(
             Arg::with_name("exclude")

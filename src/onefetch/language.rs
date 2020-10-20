@@ -145,7 +145,6 @@ macro_rules! define_languages {
             $(
                 paste! {
                     #[test]
-                    #[ignore]
                     fn [<$name:lower _width>] () {
                         const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
 
@@ -158,7 +157,6 @@ macro_rules! define_languages {
                     }
 
                     #[test]
-                    #[ignore]
                     fn [<$name:lower _height>] () {
                         const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
                         assert_le!(ASCII.lines().count(), MAX_HEIGHT, concat!($ascii, " is too tall."));
@@ -253,8 +251,26 @@ define_languages! {
 }
 
 impl Language {
-    fn get_languages_stat(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
-        let mut stats = HashMap::new();
+    pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
+        languages_stat_vec[0].0.clone()
+    }
+
+    pub fn get_language_statistics(
+        dir: &str,
+        ignored_directories: &[String],
+    ) -> Result<(Vec<(Language, f64)>, usize)> {
+        let stats = Language::get_statistics(&dir, ignored_directories);
+        let language_distribution = Language::get_language_distribution(&stats)
+            .ok_or("Could not find any source code in this directory")?;
+        let mut language_distribution_vec: Vec<(_, _)> =
+            language_distribution.into_iter().collect();
+        language_distribution_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
+        let loc = Language::get_total_loc(&stats);
+        Ok((language_distribution_vec, loc))
+    }
+
+    fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
+        let mut language_distribution = HashMap::new();
 
         for (language_type, language) in languages.iter() {
             let mut code = language.code;
@@ -273,80 +289,64 @@ impl Language {
                 continue;
             }
 
-            stats.insert(Language::from(*language_type), code as f64);
+            language_distribution.insert(Language::from(*language_type), code as f64);
         }
 
-        let total: f64 = stats.iter().map(|(_, v)| v).sum();
+        let total: f64 = language_distribution.iter().map(|(_, v)| v).sum();
 
         if total.abs() < f64::EPSILON {
             None
         } else {
-            for (_, val) in stats.iter_mut() {
+            for (_, val) in language_distribution.iter_mut() {
                 *val /= total;
                 *val *= 100_f64;
             }
 
-            Some(stats)
+            Some(language_distribution)
         }
     }
 
-    pub fn get_language_stats(
-        dir: &str,
-        ignored_directories: &[String],
-    ) -> Result<(Vec<(Language, f64)>, usize)> {
-        let tokei_langs = project_languages(&dir, ignored_directories);
-        let languages_stat = Language::get_languages_stat(&tokei_langs)
-            .ok_or("Could not find any source code in this directory")?;
-        let mut stat_vec: Vec<(_, _)> = languages_stat.into_iter().collect();
-        stat_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
-        let loc = get_total_loc(&tokei_langs);
-        Ok((stat_vec, loc))
+    fn get_total_loc(languages: &tokei::Languages) -> usize {
+        languages
+            .values()
+            .collect::<Vec<&tokei::Language>>()
+            .iter()
+            .fold(0, |sum, val| sum + val.code)
     }
 
-    pub async fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
-        languages_stat_vec[0].0.clone()
-    }
-}
+    fn get_statistics(dir: &str, ignored_directories: &[String]) -> tokei::Languages {
+        use tokei::Config;
 
-fn get_total_loc(languages: &tokei::Languages) -> usize {
-    languages
-        .values()
-        .collect::<Vec<&tokei::Language>>()
-        .iter()
-        .fold(0, |sum, val| sum + val.code)
-}
+        let mut languages = tokei::Languages::new();
+        let required_languages = get_all_language_types();
+        let tokei_config = Config {
+            types: Some(required_languages),
+            ..Config::default()
+        };
 
-fn project_languages(dir: &str, ignored_directories: &[String]) -> tokei::Languages {
-    use tokei::Config;
-
-    let mut languages = tokei::Languages::new();
-    let required_languages = get_all_language_types();
-    let tokei_config = Config {
-        types: Some(required_languages),
-        ..Config::default()
-    };
-
-    if !ignored_directories.is_empty() {
-        let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
-        let mut v = Vec::with_capacity(ignored_directories.len());
-        for ignored in ignored_directories {
-            if re.is_match(&ignored) {
-                let p = if ignored.starts_with('/') {
-                    "**"
+        if !ignored_directories.is_empty() {
+            let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
+            let mut v = Vec::with_capacity(ignored_directories.len());
+            for ignored in ignored_directories {
+                if re.is_match(&ignored) {
+                    let p = if ignored.starts_with('/') {
+                        "**"
+                    } else {
+                        "**/"
+                    };
+                    v.push(format!("{}{}", p, ignored));
                 } else {
-                    "**/"
-                };
-                v.push(format!("{}{}", p, ignored));
-            } else {
-                v.push(String::from(ignored));
+                    v.push(String::from(ignored));
+                }
             }
+            let ignored_directories_for_ab: Vec<&str> = v.iter().map(|x| &**x).collect();
+            languages.get_statistics(&[&dir], &ignored_directories_for_ab, &tokei_config);
+        } else {
+            let ignored_directories_ref: Vec<&str> =
+                ignored_directories.iter().map(|s| &**s).collect();
+            languages.get_statistics(&[&dir], &ignored_directories_ref, &tokei_config);
         }
-        let ignored_directories_for_ab: Vec<&str> = v.iter().map(|x| &**x).collect();
-        languages.get_statistics(&[&dir], &ignored_directories_for_ab, &tokei_config);
-    } else {
-        let ignored_directories_ref: Vec<&str> = ignored_directories.iter().map(|s| &**s).collect();
-        languages.get_statistics(&[&dir], &ignored_directories_ref, &tokei_config);
-    }
 
-    languages
+        languages
+    }
 }
