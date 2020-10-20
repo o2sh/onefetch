@@ -169,6 +169,7 @@ macro_rules! define_languages {
 
 define_languages! {
     { Assembly, "assembly.ascii", "Assembly", define_colors!( [Color::Cyan] ) },
+    { Bash, "bash.ascii", "Bash", define_colors!( [Color::White] ), "bash" },
     { C, "c.ascii", "C", define_colors!( [Color::Cyan, Color::Blue] ) },
     { Clojure, "clojure.ascii", "Clojure", define_colors!( [Color::Cyan, Color::Green] ) },
     { CMake, "cmake.ascii", "CMake", define_colors!( [Color::Blue, Color::Green, Color::Red, Color::Black] ) },
@@ -248,6 +249,7 @@ define_languages! {
     { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
+    { Zsh, "zsh.ascii", "Z-shell", define_colors!( [Color::White] ), "zsh" },
 }
 
 impl Language {
