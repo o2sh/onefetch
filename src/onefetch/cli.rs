@@ -10,6 +10,7 @@ use {
 
 pub struct Cli {
     pub path: String,
+    pub ascii_input: Option<String>,
     pub ascii_language: Language,
     pub ascii_colors: Vec<String>,
     pub disabled_fields: info_fields::InfoFieldOn,
@@ -72,6 +73,13 @@ impl Cli {
                         .map(|field| field.into())
                         .collect::<Vec<&str>>()
                 ),
+        )
+        .arg(
+            Arg::with_name("ascii-input")
+                .long("ascii")
+                .value_name("STRING")
+                .takes_value(true)
+                .help("Takes a STRING as input to replace the ASCII logo")
         )
         .arg(
             Arg::with_name("ascii-colors")
@@ -182,6 +190,9 @@ impl Cli {
         };
 
         let path = String::from(matches.value_of("input").unwrap());
+
+        let ascii_input = matches.value_of("ascii-input").map(String::from);
+
         let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
             Language::from_str(&ascii_language.to_lowercase()).unwrap()
         } else {
@@ -210,6 +221,7 @@ impl Cli {
 
         Ok(Cli {
             path,
+            ascii_input,
             ascii_language,
             ascii_colors,
             disabled_fields,

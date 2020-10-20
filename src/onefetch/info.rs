@@ -272,6 +272,11 @@ impl std::fmt::Display for Info {
         } else {
             let mut logo_lines =
                 AsciiArt::new(self.get_ascii(), self.colors(), !self.config.no_bold);
+
+            if let Some(custom_ascii) = &self.config.ascii_input {
+                logo_lines = AsciiArt::new(custom_ascii, Vec::new(), !self.config.no_bold);
+            }
+
             loop {
                 match (logo_lines.next(), info_lines.next()) {
                     (Some(logo_line), Some(info_line)) => {
