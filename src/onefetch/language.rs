@@ -100,7 +100,7 @@ macro_rules! define_languages {
 
 define_languages! {
     { Assembly, "assembly.ascii", "Assembly", vec![Color::Cyan] },
-    { Bash, "shell.ascii", "Shell", vec![Color::Green], "shell" },
+    { Bash, "bash.ascii", "Bash", vec![Color::White], "bash" },
     { C, "c.ascii", "C", vec![Color::Cyan, Color::Blue] },
     { Clojure, "clojure.ascii", "Clojure", vec![Color::Cyan, Color::Green] },
     { CMake, "cmake.ascii", "CMake", vec![Color::Blue, Color::Green, Color::Red, Color::Black] },
