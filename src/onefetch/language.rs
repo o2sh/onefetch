@@ -3,8 +3,20 @@ use {
     colored::Color,
     regex::Regex,
     std::collections::HashMap,
+    std::env,
     strum::{EnumIter, EnumString, IntoStaticStr},
 };
+
+pub struct Colors {
+    basic_colors: Vec<Color>,
+    true_colors: Option<Vec<Color>>,
+}
+
+macro_rules! define_colors {
+    ( [ $($color:expr),+ ] ) => { Colors { basic_colors: vec![$($color),+], true_colors: None } };
+    ( [ $($bc:expr),+ ] : [ $($tc:expr),+ ] ) => { Colors { basic_colors: vec![$($bc),+], true_colors: Some(vec![$($tc),+]) } };
+    (   $color:expr ) => { $color };
+}
 
 macro_rules! define_languages {
     ($( { $name:ident, $ascii:literal, $display:literal, $colors:expr $(, $serialize:literal )? } ),* ,) => {
@@ -45,18 +57,75 @@ macro_rules! define_languages {
                 }
             }
 
-            pub fn get_colors(&self) -> Vec<Color> {
-                match *self {
-                    $(
-                        Language::$name => $colors,
-                    )*
-                    Language::Unknown => vec![Color::White],
+            pub fn get_colors(&self, true_color: bool) -> Vec<Color> {
+                let colors = match *self {
+                    $( Language::$name => $colors, )*
+                    Language::Unknown => define_colors!( [Color::White] ),
+                };
+                match colors.true_colors {
+                  Some( true_colors ) if true_color => true_colors,
+                  _ => colors.basic_colors,
                 }
             }
         }
 
         fn get_all_language_types() -> Vec<tokei::LanguageType> {
             vec![ $( tokei::LanguageType::$name ,)* ]
+        }
+
+        #[cfg(test)]
+        mod true_colors {
+
+            use std::fmt;
+            use super::*;
+            use paste::paste;
+
+            impl fmt::Display for Colors {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    let mut output = String::new();
+                    output += "Colors {\n";
+                    output += "    basic_colors: vec![\n";
+                    for (color_index, bc) in self.basic_colors.iter().enumerate() {
+                        output += &format!( "        Color::{:?}, // {}\n", bc, color_index );
+                    }
+                    output += "    ], \n";
+                    if let Some(tcs) = &self.true_colors {
+                        output += "    true_colors: vec![\n";
+                        for (color_index,tc) in tcs.iter().enumerate() {
+                            output += &format!( "        Color::{:?}, // {}\n", tc, color_index );
+                        }
+                    } else {
+                        output += "    true_colors: None\n";
+                    };
+                    output += "    ], \n";
+                    output += "}\n";
+                    write!( f, "{}", output )
+                }
+            }
+
+            $(
+                paste! {
+                    #[test]
+                    fn [<$name:lower _basic_color_test>] () {
+                        let colors = $colors;
+                        for (color_index, bc) in colors.basic_colors.iter().enumerate() {
+                            let color_str = &format!( "Color::{:?}", bc );
+                            if let Color::TrueColor { .. } = bc {
+                                panic!( "TrueColor found in basic_colors for {} at index {} found {}", stringify!( $name ), color_index, color_str );
+                            }
+                        }
+                    }
+
+                    #[test]
+                    fn [<$name:lower _color_vector_length_test>] () {
+                        let colors = $colors;
+                        let bc_count = colors.basic_colors.len();
+                        if let Some(tcs) = &colors.true_colors {
+                            assert_eq!( bc_count, tcs.len(), " left (basic) color length do not match right (true) color length.\n{}", colors );
+                        }
+                    }
+                }
+            )*
         }
 
         #[cfg(test)]
@@ -99,62 +168,86 @@ macro_rules! define_languages {
 }
 
 define_languages! {
-    { Assembly, "assembly.ascii", "Assembly", vec![Color::Cyan] },
-    { C, "c.ascii", "C", vec![Color::Cyan, Color::Blue] },
-    { Clojure, "clojure.ascii", "Clojure", vec![Color::Cyan, Color::Green] },
-    { CMake, "cmake.ascii", "CMake", vec![Color::Blue, Color::Green, Color::Red, Color::Black] },
-    { CoffeeScript, "coffeescript.ascii", "CoffeeScript", vec![Color::Red] },
-    { Cpp, "cpp.ascii", "C++", vec![Color::Cyan, Color::Blue], "c++" },
-    { Crystal, "crystal.ascii", "Crystal", vec![Color::White, Color::Black] },
-    { CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" },
-    { Css, "css.ascii", "CSS", vec![Color::Blue, Color::White] },
-    { D, "d.ascii", "D", vec![Color::Red] },
-    { Dart, "dart.ascii", "Dart", vec![Color::Cyan, Color::Blue] },
-    { Dockerfile, "dockerfile.ascii", "Dockerfile", vec![Color::Cyan, Color::White, Color::Cyan] },
-    { Elisp, "emacslisp.ascii", "EmacsLisp", vec![Color::Magenta, Color::White], "emacslisp" },
-    { Elixir, "elixir.ascii", "Elixir", vec![Color::Magenta] },
-    { Elm, "elm.ascii", "Elm", vec![Color::Blue, Color::Green, Color::Yellow, Color::Cyan] },
-    { Erlang, "erlang.ascii", "Erlang", vec![Color::Red] },
-    { Fish, "fish.ascii", "Fish", vec![Color::Red, Color::Yellow] },
-    { Forth, "forth.ascii", "Forth", vec![Color::Red] },
-    { FortranModern, "f90.ascii", "Fortran", vec![Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red], "fortran" },
-    { FSharp, "fsharp.ascii", "F#", vec![Color::Cyan, Color::Cyan], "f#" },
-    { Go, "go.ascii", "Go", vec![Color::Cyan, Color::White, Color::Yellow] },
-    { Groovy, "groovy.ascii", "Groovy", vec![Color::Cyan, Color::White] },
-    { Haskell, "haskell.ascii", "Haskell", vec![Color::Cyan, Color::Magenta, Color::Blue] },
-    { Html, "html.ascii", "HTML", vec![Color::Red, Color::White] },
-    { Idris, "idris.ascii", "Idris", vec![Color::Red] },
-    { Java, "java.ascii", "Java", vec![Color::Cyan, Color::Red] },
-    { JavaScript, "javascript.ascii", "JavaScript", vec![Color::Yellow] },
-    { Julia, "julia.ascii", "Julia", vec![Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] },
-    { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", vec![Color::White, Color::Yellow, Color::White], "jupyter-notebooks" },
-    { Kotlin, "kotlin.ascii", "Kotlin", vec![Color::Blue, Color::Yellow, Color::Magenta] },
-    { Lisp, "lisp.ascii", "Lisp", vec![Color::White] },
-    { Lua, "lua.ascii", "Lua", vec![Color::Blue, Color::White] },
-    { Markdown, "markdown.ascii", "Markdown", vec![Color::White, Color::Red] },
-    { Nim, "nim.ascii", "Nim", vec![Color::Yellow, Color::White] },
-    { Nix, "nix.ascii", "Nix", vec![Color::Cyan, Color::Blue] },
-    { ObjectiveC, "objectivec.ascii", "Objective-C", vec![Color::Cyan, Color::Blue], "objective-c" },
-    { OCaml, "ocaml.ascii", "OCaml", vec![Color::Yellow] },
-    { Org, "org.ascii", "Org", vec![Color::Green, Color::Red, Color::White] },
-    { Perl, "perl.ascii", "Perl", vec![Color::Cyan] },
-    { Php, "php.ascii", "Php", vec![Color::Magenta, Color::Blue, Color::Cyan, Color::White] },
-    { Prolog, "prolog.ascii", "Prolog", vec![Color::White] },
-    { PureScript, "purescript.ascii", "PureScript", vec![Color::White] },
-    { Python, "python.ascii", "Python", vec![Color::Blue, Color::Yellow] },
-    { R, "r.ascii", "R", vec![Color::White, Color::Blue] },
-    { Racket, "racket.ascii", "Racket", vec![Color::Red, Color::White, Color::Blue] },
-    { Ruby, "ruby.ascii", "Ruby", vec![Color::Magenta] },
-    { Rust, "rust.ascii", "Rust", vec![Color::Red, Color::White] },
-    { Scala, "scala.ascii", "Scala", vec![Color::Blue] },
-    { Sh, "shell.ascii", "Shell", vec![Color::Green], "shell" },
-    { Swift, "swift.ascii", "Swift", vec![Color::Red] },
-    { Tcl, "tcl.ascii", "Tcl", vec![Color::Blue, Color::White, Color::Cyan] },
-    { Tex, "tex.ascii", "Tex", vec![Color::White, Color::Black] },
-    { TypeScript, "typescript.ascii", "TypeScript", vec![Color::Cyan] },
-    { Vue, "vue.ascii", "Vue", vec![Color::Green, Color::Blue] },
-    { Xml, "xml.ascii", "XML", vec![Color::Yellow, Color::White, Color::Green] },
-    { Zig, "zig.ascii", "Zig", vec![Color::Yellow] },
+    { Assembly, "assembly.ascii", "Assembly", define_colors!( [Color::Cyan] ) },
+    { C, "c.ascii", "C", define_colors!( [Color::Cyan, Color::Blue] ) },
+    { Clojure, "clojure.ascii", "Clojure", define_colors!( [Color::Cyan, Color::Green] ) },
+    { CMake, "cmake.ascii", "CMake", define_colors!( [Color::Blue, Color::Green, Color::Red, Color::Black] ) },
+    { CoffeeScript, "coffeescript.ascii", "CoffeeScript", define_colors!( [Color::Red] ) },
+    { Cpp, "cpp.ascii", "C++", define_colors!( [Color::Cyan, Color::Blue] ), "c++" },
+    { Crystal, "crystal.ascii", "Crystal", define_colors!( [Color::White, Color::Black] ) },
+    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },
+    { Css, "css.ascii", "CSS", define_colors!( [Color::Blue, Color::White] ) },
+    { D, "d.ascii", "D", define_colors!( [Color::Red] ) },
+    { Dart, "dart.ascii", "Dart", define_colors!( [Color::Cyan, Color::Blue] ) },
+    { Dockerfile, "dockerfile.ascii", "Dockerfile", define_colors!( [Color::Cyan, Color::White, Color::Cyan] ) },
+    { Elisp, "emacslisp.ascii", "EmacsLisp", define_colors!( [Color::Magenta, Color::White] ), "emacslisp" },
+    { Elixir, "elixir.ascii", "Elixir", define_colors!( [Color::Magenta] ) },
+    { Elm, "elm.ascii", "Elm", define_colors!( [Color::Blue, Color::Green, Color::Yellow, Color::Cyan] ) },
+    { Erlang, "erlang.ascii", "Erlang", define_colors!( [Color::Red] ) },
+    { Fish, "fish.ascii", "Fish", define_colors!( [Color::Red, Color::Yellow] ) },
+    { Forth, "forth.ascii", "Forth", define_colors!( [Color::Red] ) },
+    { FortranModern, "f90.ascii", "Fortran", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortran" },
+    { FSharp, "fsharp.ascii", "F#", define_colors!( [Color::Cyan, Color::Cyan] ), "f#" },
+    { Go, "go.ascii", "Go", define_colors!( [Color::White] ) },
+    { Groovy, "groovy.ascii", "Groovy", define_colors!( [Color::Cyan, Color::White] ) },
+    { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] ) },
+    { Html, "html.ascii", "HTML", define_colors!( [Color::Red, Color::White] ) },
+    { Idris, "idris.ascii", "Idris", define_colors!( [Color::Red] ) },
+    { Java, "java.ascii", "Java", define_colors!( [Color::Cyan, Color::Red] ) },
+    { JavaScript, "javascript.ascii", "JavaScript", define_colors!( [Color::Yellow] ) },
+    { Julia, "julia.ascii", "Julia", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },
+    { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", define_colors!( [Color::White, Color::Yellow, Color::White] ), "jupyter-notebooks" },
+    { Kotlin, "kotlin.ascii", "Kotlin", define_colors!( [Color::Blue, Color::Yellow, Color::Magenta] ) },
+    { Lisp, "lisp.ascii", "Lisp", define_colors!( [Color::White] ) },
+    { Lua, "lua.ascii", "Lua", define_colors!( [Color::Blue, Color::White] ) },
+    { Markdown, "markdown.ascii", "Markdown", define_colors!( [Color::White, Color::Red] ) },
+    { Nim, "nim.ascii", "Nim", define_colors!( [Color::Yellow, Color::White] ) },
+    { Nix, "nix.ascii", "Nix", define_colors!( [Color::Cyan, Color::Blue] ) },
+    { ObjectiveC, "objectivec.ascii", "Objective-C", define_colors!( [Color::Cyan, Color::Blue] ), "objective-c" },
+    { OCaml, "ocaml.ascii", "OCaml", define_colors!( [Color::Yellow] ) },
+    { Org, "org.ascii", "Org", define_colors!( [Color::Green, Color::Red, Color::White] ) },
+    { Perl, "perl.ascii", "Perl", define_colors!( [Color::Cyan] ) },
+    { Php, "php.ascii", "Php", define_colors!( [Color::Magenta, Color::Blue, Color::Cyan, Color::White] ) },
+    { Prolog, "prolog.ascii", "Prolog", define_colors!( [Color::White] ) },
+    { PureScript, "purescript.ascii", "PureScript", define_colors!( [Color::White] ) },
+    { Python, "python.ascii", "Python", define_colors!( [Color::Blue, Color::Yellow] ) },
+    { R, "r.ascii", "R", define_colors!( [Color::White, Color::Blue] ) },
+    { Racket, "racket.ascii", "Racket", define_colors!( [Color::Red, Color::White, Color::Blue] ) },
+    { Ruby, "ruby.ascii", "Ruby", define_colors!( [Color::Magenta] ) },
+    { Rust, "rust.ascii", "Rust", define_colors!( [Color::Red, Color::White] ) },
+    { Scala, "scala.ascii", "Scala", define_colors!( [Color::Blue] ) },
+    { Sh, "shell.ascii", "Shell", define_colors!( [Color::Green] ), "shell" },
+    {
+        Swift, "swift.ascii", "Swift", define_colors!( [
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red,
+            Color::Red
+        ] : [
+            Color::TrueColor{ r:248, g:129, b:052 },
+            Color::TrueColor{ r:249, g:119, b:050 },
+            Color::TrueColor{ r:249, g:109, b:048 },
+            Color::TrueColor{ r:250, g:099, b:046 },
+            Color::TrueColor{ r:250, g:089, b:044 },
+            Color::TrueColor{ r:251, g:080, b:042 },
+            Color::TrueColor{ r:251, g:070, b:040 },
+            Color::TrueColor{ r:252, g:060, b:038 },
+            Color::TrueColor{ r:252, g:050, b:036 },
+            Color::TrueColor{ r:253, g:040, b:034 }
+        ] )
+    },
+    { Tcl, "tcl.ascii", "Tcl", define_colors!( [Color::Blue, Color::White, Color::Cyan] ) },
+    { Tex, "tex.ascii", "Tex", define_colors!( [Color::White, Color::Black] ) },
+    { TypeScript, "typescript.ascii", "TypeScript", define_colors!( [Color::Cyan] ) },
+    { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
+    { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
+    { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
 }
 
 impl Language {
