@@ -122,8 +122,9 @@ impl Cli {
                 .value_name("NUM")
                 .takes_value(true)
                 .max_values(1)
+                .possible_values(&["16", "32", "64", "128", "256"])
                 .default_value("16")
-                .help("NUM of colors (16-256) used in image backend."),
+                .help("NUM of colors [16, 32, 64, 128, 256] used in image backend."),
         )
         .arg(
             Arg::with_name("no-merge-commits")
@@ -183,16 +184,7 @@ impl Cli {
             None
         };
 
-        let image_colors = if let Some(value) = matches.value_of("image-colors") {
-            let colors = usize::from_str(value).unwrap();
-            if 16 <= colors && colors <= 256 {
-                colors
-            } else {
-                16
-            }
-        } else {
-            16
-        };
+        let image_colors: usize = matches.value_of("image-colors").unwrap().parse().unwrap();
 
         let path = String::from(matches.value_of("input").unwrap());
         let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
