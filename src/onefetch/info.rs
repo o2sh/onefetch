@@ -270,13 +270,11 @@ impl std::fmt::Display for Info {
                 panic!("No image backend found")
             }
         } else {
-            let mut logo_lines;
-
-            if let Some(custom_ascii) = &self.config.ascii_input {
-                logo_lines = AsciiArt::new(custom_ascii, Vec::new(), !self.config.no_bold);
+            let mut logo_lines = if let Some(custom_ascii) = &self.config.ascii_input {
+                AsciiArt::new(custom_ascii, Vec::new(), !self.config.no_bold)
             } else {
-                logo_lines = AsciiArt::new(self.get_ascii(), self.colors(), !self.config.no_bold);
-            }
+                AsciiArt::new(self.get_ascii(), self.colors(), !self.config.no_bold)
+            };
 
             loop {
                 match (logo_lines.next(), info_lines.next()) {
