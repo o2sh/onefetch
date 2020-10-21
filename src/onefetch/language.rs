@@ -189,7 +189,7 @@ define_languages! {
     { Forth, "forth.ascii", "Forth", define_colors!( [Color::Red] ) },
     { FortranModern, "f90.ascii", "Fortran", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortran" },
     { FSharp, "fsharp.ascii", "F#", define_colors!( [Color::Cyan, Color::Cyan] ), "f#" },
-    { Go, "go.ascii", "Go", define_colors!( [Color::White] ) },
+    { Go, "go.ascii", "Go", define_colors!( [Color::Cyan, Color::White, Color::Yellow] : [Color::TrueColor{ r:116, g:205, b:221 }, Color::TrueColor{ r:255, g:255, b:255 }, Color::TrueColor{ r:246, g:210, b:162 }] ) },
     { Groovy, "groovy.ascii", "Groovy", define_colors!( [Color::Cyan, Color::White] ) },
     { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] ) },
     { Html, "html.ascii", "HTML", define_colors!( [Color::Red, Color::White] ) },
@@ -249,7 +249,7 @@ define_languages! {
     { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
-    { Zsh, "zsh.ascii", "Z-shell", define_colors!( [Color::White] ), "zsh" },
+    { Zsh, "zsh.ascii", "Z-shell", define_colors!( [Color::White] ) },
 }
 
 impl Language {
