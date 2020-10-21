@@ -79,7 +79,19 @@ impl Cli {
                 .long("ascii")
                 .value_name("STRING")
                 .takes_value(true)
-                .help("Takes a STRING as input to replace the ASCII logo")
+                .max_values(1)
+                .help("Takes a non-empty STRING as input to replace the ASCII logo.")
+                .long_help("Takes a non-empty STRING as input to replace the ASCII logo. \
+                It is possible to pass a generated STRING by command substitution. \
+                Example: onefetch --ascii \"$(fortune | cowsay -W 25)\"")
+                .validator(
+                    |t| {
+                        if t.is_empty() {
+                            return Err(String::from("must not be empty"));
+                        }
+                        Ok(())
+                    },
+                ),
         )
         .arg(
             Arg::with_name("ascii-colors")
