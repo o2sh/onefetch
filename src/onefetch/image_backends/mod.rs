@@ -23,8 +23,9 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
 
 pub fn check_if_supported(backend_name: &str) -> Result<()> {
     #[cfg(windows)]
-    return Err(format!("{} image backend is not supported", backend_name));
+    return Err(format!("{} image backend is not supported", backend_name).into());
 
+    #[cfg(not(windows))]
     match backend_name {
         "kitty" => {
             if !kitty::KittyBackend::supported() {
