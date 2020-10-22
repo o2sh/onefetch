@@ -10,6 +10,7 @@ use {
 
 pub struct Cli {
     pub path: String,
+    pub ascii_input: Option<String>,
     pub ascii_language: Language,
     pub ascii_colors: Vec<String>,
     pub disabled_fields: info_fields::InfoFieldOn,
@@ -72,6 +73,25 @@ impl Cli {
                         .take(InfoFields::COUNT - 1)
                         .map(|field| field.into())
                         .collect::<Vec<&str>>()
+                ),
+        )
+        .arg(
+            Arg::with_name("ascii-input")
+                .long("ascii")
+                .value_name("STRING")
+                .takes_value(true)
+                .max_values(1)
+                .help("Takes a non-empty STRING as input to replace the ASCII logo.")
+                .long_help("Takes a non-empty STRING as input to replace the ASCII logo. \
+                It is possible to pass a generated STRING by command substitution. \
+                Example: onefetch --ascii \"$(fortune | cowsay -W 25)\"")
+                .validator(
+                    |t| {
+                        if t.is_empty() {
+                            return Err(String::from("must not be empty"));
+                        }
+                        Ok(())
+                    },
                 ),
         )
         .arg(
@@ -184,6 +204,9 @@ impl Cli {
         };
 
         let path = String::from(matches.value_of("input").unwrap());
+
+        let ascii_input = matches.value_of("ascii-input").map(String::from);
+
         let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
             Language::from_str(&ascii_language.to_lowercase()).unwrap()
         } else {
@@ -212,6 +235,7 @@ impl Cli {
 
         Ok(Cli {
             path,
+            ascii_input,
             ascii_language,
             ascii_colors,
             disabled_fields,

@@ -1,7 +1,7 @@
 /target
 **/*.rs.bk
 /stage
-/snap/.snapcraft
+/snap/snapcraft.yaml
 *.snap
 /parts
 /prime
