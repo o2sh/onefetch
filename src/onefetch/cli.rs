@@ -124,7 +124,7 @@ impl Cli {
                 .max_values(1)
                 .possible_values(&["16", "32", "64", "128", "256"])
                 .default_value("16")
-                .help("NUM of colors [16, 32, 64, 128, 256] used in image backend."),
+                .help("NUM of colors [16, 32, 64, 128, 256] to use in image backend."),
         )
         .arg(
             Arg::with_name("no-merge-commits")
