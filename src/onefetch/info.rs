@@ -257,18 +257,14 @@ impl std::fmt::Display for Info {
         let mut info_lines = buf.lines();
 
         if let Some(custom_image) = &self.config.image {
-            if let Some(image_backend) = &self.config.image_backend {
-                writeln!(
-                    f,
-                    "{}",
-                    image_backend.add_image(
-                        info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
-                        custom_image
-                    )
-                )?;
-            } else {
-                panic!("No image backend found")
-            }
+            writeln!(
+                f,
+                "{}",
+                self.config.image_backend.as_ref().unwrap().add_image(
+                    info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                    custom_image
+                )
+            )?;
         } else {
             let mut logo_lines = if let Some(custom_ascii) = &self.config.ascii_input {
                 AsciiArt::new(custom_ascii, Vec::new(), !self.config.no_bold)

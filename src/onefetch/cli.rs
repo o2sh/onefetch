@@ -132,6 +132,7 @@ impl Cli {
                 .long("image-backend")
                 .value_name("BACKEND")
                 .takes_value(true)
+                .requires("image")
                 .max_values(1)
                 .possible_values(&possible_backends)
                 .help("Which image BACKEND to use."),
@@ -195,6 +196,7 @@ impl Cli {
 
         let image_backend = if image.is_some() {
             if let Some(backend_name) = matches.value_of("image-backend") {
+                image_backends::check_if_supported(backend_name)?;
                 image_backends::get_image_backend(backend_name)
             } else {
                 image_backends::get_best_backend()
@@ -202,6 +204,10 @@ impl Cli {
         } else {
             None
         };
+
+        if image.is_some() && image_backend.is_none() {
+            return Err("Could not detect a supported image backend".into());
+        }
 
         let path = String::from(matches.value_of("input").unwrap());
 
