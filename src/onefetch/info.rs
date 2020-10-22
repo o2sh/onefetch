@@ -256,7 +256,11 @@ impl std::fmt::Display for Info {
         let center_pad = "   ";
         let mut info_lines = buf.lines();
 
-        if let Some(custom_image) = &self.config.image {
+        if self.config.image_off {
+            while let Some(line) = info_lines.next() {
+                writeln!(f, "{}", line)?;
+            }
+        } else if let Some(custom_image) = &self.config.image {
             if let Some(image_backend) = &self.config.image_backend {
                 writeln!(
                     f,
