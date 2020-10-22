@@ -23,7 +23,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub true_color: bool,
-    pub image_off: bool,
+    pub art_off: bool,
 }
 
 impl Cli {
@@ -177,14 +177,15 @@ impl Cli {
         .arg(
             Arg::with_name("off")
                 .long("off")
-                .help("Prevents the ASCII art or image from displaying"), 
+                .help("Prevents the ASCII art or image from displaying")
+                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]), 
             ).get_matches();
 
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_blocks = matches.is_present("no-color-blocks");
         let print_languages = matches.is_present("languages");
-        let image_off = matches.is_present("off");
+        let art_off = matches.is_present("off");
         let true_color = is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
@@ -255,7 +256,7 @@ impl Cli {
             excluded,
             print_languages,
             true_color,
-            image_off,
+            art_off,
         })
     }
 
