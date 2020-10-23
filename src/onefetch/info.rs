@@ -1,12 +1,10 @@
 use {
     crate::onefetch::{
-        ascii_art::AsciiArt, cli::Cli, commit_info::CommitInfo, error::*, language::Language,
-        license::Detector,
+        cli::Cli, commit_info::CommitInfo, error::*, language::Language, license::Detector,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
     regex::Regex,
-    std::fmt::Write,
     tokio::process::Command,
 };
 
@@ -17,7 +15,7 @@ pub struct Info {
     current_commit: CommitInfo,
     version: String,
     creation_date: String,
-    dominant_language: Language,
+    pub dominant_language: Language,
     languages: Vec<(Language, f64)>,
     authors: Vec<(String, usize, usize)>,
     last_change: String,
@@ -29,13 +27,13 @@ pub struct Info {
     number_of_tags: usize,
     number_of_branches: usize,
     license: String,
-    config: Cli,
+    pub colors: Vec<Color>,
+    pub config: Cli,
 }
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut buf = String::new();
-        let color = match self.colors().get(0) {
+        let color = match self.colors.get(0) {
             Some(&c) => c,
             None => Color::White,
         };
@@ -44,7 +42,7 @@ impl std::fmt::Display for Info {
             if self.git_username != "" {
                 git_info_length = self.git_username.len() + self.git_version.len() + 3;
                 write!(
-                    &mut buf,
+                    f,
                     "{} ~ ",
                     &self.get_formatted_info_label(&self.git_username, color)
                 )?;
@@ -52,16 +50,12 @@ impl std::fmt::Display for Info {
                 git_info_length = self.git_version.len();
             }
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label(&self.git_version, color),
                 "",
             )?;
             let separator = "-".repeat(git_info_length);
-            write_buf(
-                &mut buf,
-                &self.get_formatted_info_label("", color),
-                &separator,
-            )?;
+            write_buf(f, &self.get_formatted_info_label("", color), &separator)?;
         }
         if !self.config.disabled_fields.project {
             let branches_str = match self.number_of_branches {
@@ -87,7 +81,7 @@ impl std::fmt::Display for Info {
             let project_str = &self.get_formatted_info_label("Project: ", color);
 
             writeln!(
-                buf,
+                f,
                 "{}{} {}",
                 project_str, self.project_name, branches_tags_str
             )?;
@@ -95,7 +89,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.head {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("HEAD: ", color),
                 &self.current_commit,
             )?;
@@ -103,7 +97,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.pending && self.pending != "" {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Pending: ", color),
                 &self.pending,
             )?;
@@ -111,7 +105,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.version {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Version: ", color),
                 &self.version,
             )?;
@@ -119,7 +113,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.created {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Created: ", color),
                 &self.creation_date,
             )?;
@@ -150,10 +144,10 @@ impl std::fmt::Display for Info {
                         s = s + &format!("{} ({} %) ", language.0, formatted_number);
                     }
                 }
-                writeln!(buf, "{}{}", &self.get_formatted_info_label(title, color), s)?;
+                writeln!(f, "{}{}", &self.get_formatted_info_label(title, color), s)?;
             } else {
                 write_buf(
-                    &mut buf,
+                    f,
                     &self.get_formatted_info_label("Language: ", color),
                     &self.dominant_language,
                 )?;
@@ -168,7 +162,7 @@ impl std::fmt::Display for Info {
             };
 
             writeln!(
-                buf,
+                f,
                 "{}{}% {} {}",
                 &self.get_formatted_info_label(title, color),
                 self.authors[0].2,
@@ -180,7 +174,7 @@ impl std::fmt::Display for Info {
 
             for author in self.authors.iter().skip(1) {
                 writeln!(
-                    buf,
+                    f,
                     "{}{}% {} {}",
                     &self.get_formatted_info_label(&title, color),
                     author.2,
@@ -192,7 +186,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.last_change {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Last change: ", color),
                 &self.last_change,
             )?;
@@ -200,7 +194,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.repo {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Repo: ", color),
                 &self.repo_url,
             )?;
@@ -208,7 +202,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.commits {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Commits: ", color),
                 &self.commits,
             )?;
@@ -216,7 +210,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.lines_of_code {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Lines of code: ", color),
                 &self.number_of_lines,
             )?;
@@ -224,7 +218,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.size {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("Size: ", color),
                 &self.repo_size,
             )?;
@@ -232,7 +226,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.license {
             write_buf(
-                &mut buf,
+                f,
                 &self.get_formatted_info_label("License: ", color),
                 &self.license,
             )?;
@@ -240,7 +234,7 @@ impl std::fmt::Display for Info {
 
         if !self.config.no_color_blocks {
             writeln!(
-                buf,
+                f,
                 "\n{0}{1}{2}{3}{4}{5}{6}{7}",
                 "   ".on_black(),
                 "   ".on_red(),
@@ -251,48 +245,6 @@ impl std::fmt::Display for Info {
                 "   ".on_cyan(),
                 "   ".on_white()
             )?;
-        }
-
-        let center_pad = "   ";
-        let mut info_lines = buf.lines();
-
-        if let Some(custom_image) = &self.config.image {
-            if let Some(image_backend) = &self.config.image_backend {
-                writeln!(
-                    f,
-                    "{}",
-                    image_backend.add_image(
-                        info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
-                        custom_image,
-                        self.config.image_colors
-                    )
-                )?;
-            } else {
-                panic!("No image backend found")
-            }
-        } else {
-            let mut logo_lines =
-                AsciiArt::new(self.get_ascii(), self.colors(), !self.config.no_bold);
-            loop {
-                match (logo_lines.next(), info_lines.next()) {
-                    (Some(logo_line), Some(info_line)) => {
-                        writeln!(f, "{}{}{:^}", logo_line, center_pad, info_line)?
-                    }
-                    (Some(logo_line), None) => writeln!(f, "{}", logo_line)?,
-                    (None, Some(info_line)) => writeln!(
-                        f,
-                        "{:<width$}{}{:^}",
-                        "",
-                        center_pad,
-                        info_line,
-                        width = logo_lines.width()
-                    )?,
-                    (None, None) => {
-                        writeln!(f, "\n")?;
-                        break;
-                    }
-                }
-            }
         }
 
         Ok(())
@@ -335,6 +287,12 @@ impl Info {
         let last_change = Info::get_date_of_last_commit(&git_history);
         let project_license = Detector::new()?.get_project_license(workdir_str);
         let dominant_language = Language::get_dominant_language(&languages_stats);
+        let colors = Info::get_colors(
+            &config.ascii_language,
+            &dominant_language,
+            &config.ascii_colors,
+            config.true_color,
+        );
 
         Ok(Info {
             git_version: git_v,
@@ -355,6 +313,7 @@ impl Info {
             number_of_tags,
             number_of_branches,
             license: project_license?,
+            colors,
             config,
         })
     }
@@ -685,30 +644,25 @@ impl Info {
         }
     }
 
-    fn get_ascii(&self) -> &str {
-        let language = if let Language::Unknown = self.config.ascii_language {
-            &self.dominant_language
+    fn get_colors(
+        ascii_language: &Language,
+        dominant_language: &Language,
+        ascii_colors: &[String],
+        true_color: bool,
+    ) -> Vec<Color> {
+        let language = if let Language::Unknown = ascii_language {
+            &dominant_language
         } else {
-            &self.config.ascii_language
+            &ascii_language
         };
 
-        language.get_ascii_art()
-    }
-
-    fn colors(&self) -> Vec<Color> {
-        let language = if let Language::Unknown = self.config.ascii_language {
-            &self.dominant_language
-        } else {
-            &self.config.ascii_language
-        };
-
-        let colors = language.get_colors();
+        let colors = language.get_colors(true_color);
 
         let colors: Vec<Color> = colors
             .iter()
             .enumerate()
             .map(|(index, default_color)| {
-                if let Some(color_num) = self.config.ascii_colors.get(index) {
+                if let Some(color_num) = ascii_colors.get(index) {
                     if let Some(color) = Info::num_to_color(color_num) {
                         return color;
                     }
@@ -744,7 +698,7 @@ impl Info {
 }
 
 fn write_buf<T: std::fmt::Display>(
-    buffer: &mut String,
+    buffer: &mut std::fmt::Formatter,
     title: &ColoredString,
     content: T,
 ) -> std::fmt::Result {

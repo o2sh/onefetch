@@ -2,7 +2,7 @@
 edition = "2018"
 name = "onefetch"
 description = "Git repository summary on your terminal"
-version = "2.4.0"
+version = "2.5.0"
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 readme = "README.md"
 license = "MIT"
@@ -29,7 +29,7 @@ strum = { version = "0.19.5", features = ["derive"] }
 image = "0.23.10"
 regex = "1"
 futures = "0.3.6"
-tokio = { version = "0.3.0", features = ["full"] }
+tokio = { version = "0.3.1", features = ["full"] }
 error-chain = "0.12"
 
 [target.'cfg(windows)'.dependencies]

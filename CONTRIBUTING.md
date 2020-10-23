@@ -57,9 +57,9 @@ Adding support for a new Language requires adding a new entry in the `define_lan
 
 **Example**:
 
-`{ CSharp, "csharp.ascii", "C#", vec![Color::Blue, Color::Magenta], "c#" }`
+` { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" }, `
 
-The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors `vec![Color::Blue, Color::Magenta]` used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
+The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
 
 #### Ascii logo
 
@@ -90,6 +90,16 @@ Remarks:
  - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
  - Make sure to trim any unnecessary trailing whitespaces
  - See example here [Ascii Art From Image File Using Python Image Library](https://github.com/o2sh/onefetch/wiki/ASCII-Art-From-Image-Using-Python-Image-Library)
+ - You must always provide an array of basic colors
+ - Optionally, you may provide true colors in a second array of colors separated from the first array by a colon
+ - One last approach allows you to define colors using the Colors structure itself
+ - Make sure if you use true colors that the number of true colors matches the number of basic colors
+ - For example, the following are equivalent:
+```
+    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },
+    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] : [Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ), "c#" },
+    { CSharp, "csharp.ascii", "C#", define_colors!( Colors { basic_colors: vec![Color::Blue, Color::Magenta] , true_colors: Some(vec![Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ) } ), "c#" },
+```
 
 ### Project-specific notes
 

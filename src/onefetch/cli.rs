@@ -1,6 +1,10 @@
 use {
     crate::onefetch::{
-        error::*, image_backends, info_fields, info_fields::InfoFields, language::Language,
+        cli_utils,
+        error::*,
+        image_backends,
+        info_fields::{self, InfoFields},
+        language::Language,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     image::DynamicImage,
@@ -10,6 +14,7 @@ use {
 
 pub struct Cli {
     pub path: String,
+    pub ascii_input: Option<String>,
     pub ascii_language: Language,
     pub ascii_colors: Vec<String>,
     pub disabled_fields: info_fields::InfoFieldOn,
@@ -22,6 +27,8 @@ pub struct Cli {
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
     pub print_languages: bool,
+    pub true_color: bool,
+    pub art_off: bool,
 }
 
 impl Cli {
@@ -75,6 +82,25 @@ impl Cli {
                 ),
         )
         .arg(
+            Arg::with_name("ascii-input")
+                .long("ascii")
+                .value_name("STRING")
+                .takes_value(true)
+                .max_values(1)
+                .help("Takes a non-empty STRING as input to replace the ASCII logo.")
+                .long_help("Takes a non-empty STRING as input to replace the ASCII logo. \
+                It is possible to pass a generated STRING by command substitution. \
+                Example: onefetch --ascii \"$(fortune | cowsay -W 25)\"")
+                .validator(
+                    |t| {
+                        if t.is_empty() {
+                            return Err(String::from("must not be empty"));
+                        }
+                        Ok(())
+                    },
+                ),
+        )
+        .arg(
             Arg::with_name("ascii-colors")
                 .short("c")
                 .long("ascii-colors")
@@ -96,7 +122,7 @@ impl Cli {
             Arg::with_name("languages")
                 .short("l")
                 .long("languages")
-                .help("Prints out supported languages"),
+                .help("Prints out supported languages."),
         )
         .arg(
             Arg::with_name("image")
@@ -105,7 +131,7 @@ impl Cli {
                 .value_name("IMAGE")
                 .takes_value(true)
                 .max_values(1)
-                .help("Path to the IMAGE file"),
+                .help("Path to the IMAGE file."),
         )
         .arg(
             Arg::with_name("image-backend")
@@ -129,12 +155,12 @@ impl Cli {
         .arg(
             Arg::with_name("no-merge-commits")
                 .long("no-merge-commits")
-                .help("Ignores merge commits"),
+                .help("Ignores merge commits."),
         )
         .arg(
             Arg::with_name("no-color-blocks")
                 .long("no-color-blocks")
-                .help("Hides the color blocks"),
+                .help("Hides the color blocks."),
         )
         .arg(
             Arg::with_name("authors-number")
@@ -144,7 +170,15 @@ impl Cli {
                 .takes_value(true)
                 .max_values(1)
                 .default_value("3")
-                .help("NUM of authors to be shown."),
+                .help("NUM of authors to be shown.")
+                .validator(
+                    |t| {
+                        t.parse::<u32>()
+                            .map_err(|_t| "must be a number")
+                            .map(|_t|())
+                            .map_err(|e| e.to_string())
+                    },
+                )
         )
         .arg(
             Arg::with_name("exclude")
@@ -154,12 +188,20 @@ impl Cli {
                 .multiple(true)
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
+            )
+        .arg(
+            Arg::with_name("off")
+                .long("off")
+                .help("Only shows the info lines.")
+                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]), 
             ).get_matches();
 
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_blocks = matches.is_present("no-color-blocks");
         let print_languages = matches.is_present("languages");
+        let art_off = matches.is_present("off");
+        let true_color = cli_utils::is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -187,6 +229,9 @@ impl Cli {
         let image_colors: usize = matches.value_of("image-colors").unwrap().parse().unwrap();
 
         let path = String::from(matches.value_of("input").unwrap());
+
+        let ascii_input = matches.value_of("ascii-input").map(String::from);
+
         let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
             Language::from_str(&ascii_language.to_lowercase()).unwrap()
         } else {
@@ -215,6 +260,7 @@ impl Cli {
 
         Ok(Cli {
             path,
+            ascii_input,
             ascii_language,
             ascii_colors,
             disabled_fields,
@@ -227,16 +273,8 @@ impl Cli {
             number_of_authors,
             excluded,
             print_languages,
+            true_color,
+            art_off,
         })
-    }
-
-    pub fn print_supported_languages() -> Result<()> {
-        let iterator = Language::iter().filter(|x| *x != Language::Unknown);
-
-        for l in iterator {
-            println!("{}", l);
-        }
-
-        Ok(())
     }
 }
