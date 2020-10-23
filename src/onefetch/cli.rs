@@ -27,6 +27,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub true_color: bool,
+    pub art_off: bool,
 }
 
 impl Cli {
@@ -176,12 +177,19 @@ impl Cli {
                 .multiple(true)
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
+            )
+        .arg(
+            Arg::with_name("off")
+                .long("off")
+                .help("Prevents the ASCII art or image from displaying")
+                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]), 
             ).get_matches();
 
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_blocks = matches.is_present("no-color-blocks");
         let print_languages = matches.is_present("languages");
+        let art_off = matches.is_present("off");
         let true_color = cli_utils::is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
@@ -252,6 +260,7 @@ impl Cli {
             excluded,
             print_languages,
             true_color,
+            art_off,
         })
     }
 }
