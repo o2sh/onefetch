@@ -249,7 +249,7 @@ define_languages! {
     { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
-    { Zsh, "zsh.ascii", "Z-shell", define_colors!( [Color::White] ) },
+    { Zsh, "zsh.ascii", "Zsh", define_colors!( [Color::White] ) },
 }
 
 impl Language {

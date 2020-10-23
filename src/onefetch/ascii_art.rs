@@ -2,13 +2,13 @@ use colored::{Color, Colorize};
 
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
-    colors: Vec<Color>,
+    colors: &'a [Color],
     bold: bool,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str, colors: Vec<Color>, bold: bool) -> AsciiArt<'a> {
+    pub fn new(input: &'a str, colors: &'a [Color], bold: bool) -> AsciiArt<'a> {
         let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
