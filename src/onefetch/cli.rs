@@ -226,7 +226,11 @@ impl Cli {
             None
         };
 
-        let image_colors: usize = matches.value_of("color-resolution").unwrap().parse().unwrap();
+        let image_colors: usize = matches
+            .value_of("color-resolution")
+            .unwrap()
+            .parse()
+            .unwrap();
 
         let path = String::from(matches.value_of("input").unwrap());
 
