@@ -54,7 +54,7 @@ impl<W: Write> Printer<W> {
                         width = logo_lines.width()
                     )),
                     (None, None) => {
-                        buf.push_str("\n");
+                        buf.push('\n');
                         break;
                     }
                 }
