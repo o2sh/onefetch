@@ -28,6 +28,7 @@ impl<W: Write> Printer<W> {
                 buf.push_str(&image_backend.add_image(
                     info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
                     custom_image,
+                    self.info.config.image_colors
                 ));
             } else {
                 panic!("No image backend found")
