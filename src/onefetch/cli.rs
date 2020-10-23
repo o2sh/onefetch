@@ -121,7 +121,7 @@ impl Cli {
             Arg::with_name("languages")
                 .short("l")
                 .long("languages")
-                .help("Prints out supported languages"),
+                .help("Prints out supported languages."),
         )
         .arg(
             Arg::with_name("image")
@@ -130,7 +130,7 @@ impl Cli {
                 .value_name("IMAGE")
                 .takes_value(true)
                 .max_values(1)
-                .help("Path to the IMAGE file"),
+                .help("Path to the IMAGE file."),
         )
         .arg(
             Arg::with_name("image-backend")
@@ -144,12 +144,12 @@ impl Cli {
         .arg(
             Arg::with_name("no-merge-commits")
                 .long("no-merge-commits")
-                .help("Ignores merge commits"),
+                .help("Ignores merge commits."),
         )
         .arg(
             Arg::with_name("no-color-blocks")
                 .long("no-color-blocks")
-                .help("Hides the color blocks"),
+                .help("Hides the color blocks."),
         )
         .arg(
             Arg::with_name("authors-number")
@@ -181,7 +181,7 @@ impl Cli {
         .arg(
             Arg::with_name("off")
                 .long("off")
-                .help("Prevents the ASCII art or image from displaying")
+                .help("Only shows the info lines.")
                 .conflicts_with_all(&["image", "ascii-language", "ascii-input"]), 
             ).get_matches();
 

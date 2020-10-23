@@ -21,48 +21,49 @@ impl<W: Write> Printer<W> {
         let colors: Vec<Color> = Vec::new();
         let mut buf = String::new();
 
-        if !self.info.config.art_off {
-            if let Some(custom_image) = &self.info.config.image {
-                if let Some(image_backend) = &self.info.config.image_backend {
-                    buf.push_str(&image_backend.add_image(
-                        info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
-                        custom_image,
-                    ));
-                } else {
-                    panic!("No image backend found")
-                }
+        if self.info.config.art_off {
+            buf.push_str(&info_str);
+        } else if let Some(custom_image) = &self.info.config.image {
+            if let Some(image_backend) = &self.info.config.image_backend {
+                buf.push_str(&image_backend.add_image(
+                    info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                    custom_image,
+                ));
             } else {
-                let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
-                    AsciiArt::new(custom_ascii, &colors, !self.info.config.no_bold)
-                } else {
-                    AsciiArt::new(
-                        self.get_ascii(),
-                        &self.info.colors,
-                        !self.info.config.no_bold,
-                    )
-                };
+                panic!("No image backend found")
+            }
+        } else {
+            let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
+                AsciiArt::new(custom_ascii, &colors, !self.info.config.no_bold)
+            } else {
+                AsciiArt::new(
+                    self.get_ascii(),
+                    &self.info.colors,
+                    !self.info.config.no_bold,
+                )
+            };
 
-                loop {
-                    match (logo_lines.next(), info_lines.next()) {
-                        (Some(logo_line), Some(info_line)) => {
-                            buf.push_str(&format!("{}{}{:^}\n", logo_line, center_pad, info_line))
-                        }
-                        (Some(logo_line), None) => buf.push_str(&format!("{}\n", logo_line)),
-                        (None, Some(info_line)) => buf.push_str(&format!(
-                            "{:<width$}{}{:^}\n",
-                            "",
-                            center_pad,
-                            info_line,
-                            width = logo_lines.width()
-                        )),
-                        (None, None) => {
-                            buf.push('\n');
-                            break;
-                        }
+            loop {
+                match (logo_lines.next(), info_lines.next()) {
+                    (Some(logo_line), Some(info_line)) => {
+                        buf.push_str(&format!("{}{}{:^}\n", logo_line, center_pad, info_line))
+                    }
+                    (Some(logo_line), None) => buf.push_str(&format!("{}\n", logo_line)),
+                    (None, Some(info_line)) => buf.push_str(&format!(
+                        "{:<width$}{}{:^}\n",
+                        "",
+                        center_pad,
+                        info_line,
+                        width = logo_lines.width()
+                    )),
+                    (None, None) => {
+                        buf.push('\n');
+                        break;
                     }
                 }
             }
         }
+
         writeln!(self.writer, "{}", buf)?;
 
         Ok(())
