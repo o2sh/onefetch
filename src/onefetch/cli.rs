@@ -143,14 +143,15 @@ impl Cli {
                 .help("Which image BACKEND to use."),
         )
         .arg(
-            Arg::with_name("image-colors")
-                .long("image-colors")
-                .value_name("NUM")
+            Arg::with_name("color-resolution")
+                .long("color-resolution")
+                .value_name("VALUE")
                 .takes_value(true)
+                .requires("image-backend")
                 .max_values(1)
                 .possible_values(&["16", "32", "64", "128", "256"])
                 .default_value("16")
-                .help("NUM of colors [16, 32, 64, 128, 256] to use in image backend."),
+                .help("VALUE of color resolution to use with SIXEL backend."),
         )
         .arg(
             Arg::with_name("no-merge-commits")
