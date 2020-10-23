@@ -65,7 +65,7 @@ impl<W: Write> Printer<W> {
             }
         }
 
-        writeln!(self.writer, "{}", buf)?;
+        write!(self.writer, "{}", buf)?;
 
         Ok(())
     }

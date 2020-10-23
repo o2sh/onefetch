@@ -147,7 +147,6 @@ impl Cli {
                 .long("color-resolution")
                 .value_name("VALUE")
                 .takes_value(true)
-                .requires("image-backend")
                 .max_values(1)
                 .possible_values(&["16", "32", "64", "128", "256"])
                 .default_value("16")
@@ -227,7 +226,7 @@ impl Cli {
             None
         };
 
-        let image_colors: usize = matches.value_of("image-colors").unwrap().parse().unwrap();
+        let image_colors: usize = matches.value_of("color-resolution").unwrap().parse().unwrap();
 
         let path = String::from(matches.value_of("input").unwrap());
 
