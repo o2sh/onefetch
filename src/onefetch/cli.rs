@@ -1,6 +1,10 @@
 use {
     crate::onefetch::{
-        error::*, image_backends, info_fields, info_fields::InfoFields, language::Language,
+        cli_utils,
+        error::*,
+        image_backends,
+        info_fields::{self, InfoFields},
+        language::Language,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     image::DynamicImage,
@@ -178,7 +182,7 @@ impl Cli {
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_blocks = matches.is_present("no-color-blocks");
         let print_languages = matches.is_present("languages");
-        let true_color = is_truecolor_terminal();
+        let true_color = cli_utils::is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -250,20 +254,4 @@ impl Cli {
             true_color,
         })
     }
-
-    pub fn print_supported_languages() -> Result<()> {
-        let iterator = Language::iter().filter(|x| *x != Language::Unknown);
-
-        for l in iterator {
-            println!("{}", l);
-        }
-
-        Ok(())
-    }
-}
-
-fn is_truecolor_terminal() -> bool {
-    env::var("COLORTERM")
-        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
-        .unwrap_or(false)
 }
