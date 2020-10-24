@@ -147,10 +147,10 @@ impl Cli {
             Arg::with_name("color-resolution")
                 .long("color-resolution")
                 .value_name("VALUE")
+                .requires("image")
                 .takes_value(true)
                 .max_values(1)
                 .possible_values(&["16", "32", "64", "128", "256"])
-                .default_value("16")
                 .help("VALUE of color resolution to use with SIXEL backend."),
         )
         .arg(
@@ -231,11 +231,12 @@ impl Cli {
         if image.is_some() && image_backend.is_none() {
             return Err("Could not detect a supported image backend".into());
         }
-        let image_colors: usize = matches
-            .value_of("color-resolution")
-            .unwrap()
-            .parse()
-            .unwrap();
+
+        let image_colors = if let Some(value) = matches.value_of("color-resolution") {
+            usize::from_str(value).unwrap()
+        } else {
+            16
+        };
 
         let path = String::from(matches.value_of("input").unwrap());
 
@@ -255,11 +256,7 @@ impl Cli {
 
         let disabled_fields = info_fields::get_disabled_fields(fields_to_hide)?;
 
-        let number_of_authors = if let Some(value) = matches.value_of("authors-number") {
-            usize::from_str(value).unwrap()
-        } else {
-            3
-        };
+        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
 
         let excluded = if let Some(user_ignored) = matches.values_of("exclude") {
             user_ignored.map(String::from).collect()
