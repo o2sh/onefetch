@@ -7,7 +7,7 @@ pub mod kitty;
 pub mod sixel;
 
 pub trait ImageBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage) -> String;
+    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> String;
 }
 
 #[cfg(not(windows))]

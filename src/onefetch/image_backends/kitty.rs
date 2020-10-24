@@ -77,7 +77,7 @@ impl KittyBackend {
 }
 
 impl super::ImageBackend for KittyBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage) -> String {
+    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, _colors: usize) -> String {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);

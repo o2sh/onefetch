@@ -1,11 +1,11 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
-use onefetch::{cli::Cli, error::*, info};
+use onefetch::{cli::Cli, cli_utils, error::*, info};
 
 use {
     process::{Command, Stdio},
-    std::process,
+    std::{io, process},
 };
 
 mod onefetch;
@@ -22,12 +22,15 @@ fn run() -> Result<()> {
     let options = Cli::new()?;
 
     if options.print_languages {
-        return Cli::print_supported_languages();
+        return cli_utils::print_supported_languages();
     }
 
     let info = info::Info::new(options)?;
 
-    print!("{}", info);
+    let mut printer = cli_utils::Printer::new(io::BufWriter::new(io::stdout()), info);
+
+    printer.print()?;
+
     Ok(())
 }
 
@@ -38,7 +41,7 @@ fn main() {
             process::exit(0);
         }
         Err(error) => {
-            let stderr = std::io::stderr();
+            let stderr = io::stderr();
             default_error_handler(&error, &mut stderr.lock());
             process::exit(1);
         }

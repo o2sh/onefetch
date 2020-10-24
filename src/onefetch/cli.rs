@@ -1,6 +1,10 @@
 use {
     crate::onefetch::{
-        error::*, image_backends, info_fields, info_fields::InfoFields, language::Language,
+        cli_utils,
+        error::*,
+        image_backends,
+        info_fields::{self, InfoFields},
+        language::Language,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     image::DynamicImage,
@@ -17,12 +21,14 @@ pub struct Cli {
     pub no_bold: bool,
     pub image: Option<DynamicImage>,
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
+    pub image_colors: usize,
     pub no_merges: bool,
     pub no_color_blocks: bool,
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub true_color: bool,
+    pub art_off: bool,
 }
 
 impl Cli {
@@ -116,7 +122,7 @@ impl Cli {
             Arg::with_name("languages")
                 .short("l")
                 .long("languages")
-                .help("Prints out supported languages"),
+                .help("Prints out supported languages."),
         )
         .arg(
             Arg::with_name("image")
@@ -125,7 +131,7 @@ impl Cli {
                 .value_name("IMAGE")
                 .takes_value(true)
                 .max_values(1)
-                .help("Path to the IMAGE file"),
+                .help("Path to the IMAGE file."),
         )
         .arg(
             Arg::with_name("image-backend")
@@ -138,14 +144,24 @@ impl Cli {
                 .help("Which image BACKEND to use."),
         )
         .arg(
+            Arg::with_name("color-resolution")
+                .long("color-resolution")
+                .value_name("VALUE")
+                .takes_value(true)
+                .max_values(1)
+                .possible_values(&["16", "32", "64", "128", "256"])
+                .default_value("16")
+                .help("VALUE of color resolution to use with SIXEL backend."),
+        )
+        .arg(
             Arg::with_name("no-merge-commits")
                 .long("no-merge-commits")
-                .help("Ignores merge commits"),
+                .help("Ignores merge commits."),
         )
         .arg(
             Arg::with_name("no-color-blocks")
                 .long("no-color-blocks")
-                .help("Hides the color blocks"),
+                .help("Hides the color blocks."),
         )
         .arg(
             Arg::with_name("authors-number")
@@ -173,13 +189,20 @@ impl Cli {
                 .multiple(true)
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
+            )
+        .arg(
+            Arg::with_name("off")
+                .long("off")
+                .help("Only shows the info lines.")
+                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]), 
             ).get_matches();
 
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_blocks = matches.is_present("no-color-blocks");
         let print_languages = matches.is_present("languages");
-        let true_color = is_truecolor_terminal();
+        let art_off = matches.is_present("off");
+        let true_color = cli_utils::is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -208,6 +231,11 @@ impl Cli {
         if image.is_some() && image_backend.is_none() {
             return Err("Could not detect a supported image backend".into());
         }
+        let image_colors: usize = matches
+            .value_of("color-resolution")
+            .unwrap()
+            .parse()
+            .unwrap();
 
         let path = String::from(matches.value_of("input").unwrap());
 
@@ -248,28 +276,14 @@ impl Cli {
             no_bold,
             image,
             image_backend,
+            image_colors,
             no_merges,
             no_color_blocks,
             number_of_authors,
             excluded,
             print_languages,
             true_color,
+            art_off,
         })
     }
-
-    pub fn print_supported_languages() -> Result<()> {
-        let iterator = Language::iter().filter(|x| *x != Language::Unknown);
-
-        for l in iterator {
-            println!("{}", l);
-        }
-
-        Ok(())
-    }
-}
-
-fn is_truecolor_terminal() -> bool {
-    env::var("COLORTERM")
-        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
-        .unwrap_or(false)
 }
