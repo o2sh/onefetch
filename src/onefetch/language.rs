@@ -232,16 +232,16 @@ define_languages! {
             Color::Red,
             Color::Red
         ] : [
-            Color::TrueColor{ r:248, g:129, b:052 },
-            Color::TrueColor{ r:249, g:119, b:050 },
-            Color::TrueColor{ r:249, g:109, b:048 },
-            Color::TrueColor{ r:250, g:099, b:046 },
-            Color::TrueColor{ r:250, g:089, b:044 },
-            Color::TrueColor{ r:251, g:080, b:042 },
-            Color::TrueColor{ r:251, g:070, b:040 },
-            Color::TrueColor{ r:252, g:060, b:038 },
-            Color::TrueColor{ r:252, g:050, b:036 },
-            Color::TrueColor{ r:253, g:040, b:034 }
+            Color::TrueColor{ r:248, g:129, b:52 },
+            Color::TrueColor{ r:249, g:119, b:50 },
+            Color::TrueColor{ r:249, g:109, b:48 },
+            Color::TrueColor{ r:250, g:99, b:46 },
+            Color::TrueColor{ r:250, g:89, b:44 },
+            Color::TrueColor{ r:251, g:80, b:42 },
+            Color::TrueColor{ r:251, g:70, b:40 },
+            Color::TrueColor{ r:252, g:60, b:38 },
+            Color::TrueColor{ r:252, g:50, b:36 },
+            Color::TrueColor{ r:253, g:40, b:34 }
         ] )
     },
     { Tcl, "tcl.ascii", "Tcl", define_colors!( [Color::Blue, Color::White, Color::Cyan] ) },
@@ -251,7 +251,7 @@ define_languages! {
     { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
-    { Zsh, "zsh.ascii", "Z-shell", define_colors!( [Color::White] ) },
+    { Zsh, "zsh.ascii", "Zsh", define_colors!( [Color::White] ) },
 }
 
 impl Language {
