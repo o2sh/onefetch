@@ -95,19 +95,29 @@ impl std::fmt::Display for Info {
                 format!("({}, {})", branches_str, tags_str)
             };
 
-            let project_str = &self.get_formatted_subtitle_label("Project", self.color_set.subtitle, self.color_set.colon);
+            let project_str = &self.get_formatted_subtitle_label(
+                "Project",
+                self.color_set.subtitle,
+                self.color_set.colon,
+            );
 
             writeln!(
                 f,
                 "{}{} {}",
-                project_str, self.project_name.color(self.color_set.info), branches_tags_str.color(self.color_set.info)
+                project_str,
+                self.project_name.color(self.color_set.info),
+                branches_tags_str.color(self.color_set.info)
             )?;
         }
 
         if !self.config.disabled_fields.head {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("HEAD", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "HEAD",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.current_commit.to_string().color(self.color_set.info),
             )?;
         }
@@ -115,7 +125,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.pending && self.pending != "" {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Pending", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Pending",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.pending.color(self.color_set.info),
             )?;
         }
@@ -123,7 +137,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.version {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Version", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Version",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.version.color(self.color_set.info),
             )?;
         }
@@ -131,14 +149,22 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.created {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Created", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Created",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.creation_date.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
             if self.languages.len() > 1 {
-                let title = &self.get_formatted_subtitle_label("Languages", self.color_set.subtitle, self.color_set.colon);
+                let title = &self.get_formatted_subtitle_label(
+                    "Languages",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                );
                 let pad = " ".repeat(title.len());
                 let mut s = String::from("");
                 let languages: Vec<(String, f64)> = {
@@ -165,8 +191,15 @@ impl std::fmt::Display for Info {
             } else {
                 write_buf(
                     f,
-                    &self.get_formatted_subtitle_label("Language", self.color_set.subtitle, self.color_set.colon),
-                    &self.dominant_language.to_string().color(self.color_set.info),
+                    &self.get_formatted_subtitle_label(
+                        "Language",
+                        self.color_set.subtitle,
+                        self.color_set.colon,
+                    ),
+                    &self
+                        .dominant_language
+                        .to_string()
+                        .color(self.color_set.info),
                 )?;
             };
         }
@@ -181,7 +214,11 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}{} {} {}",
-                &self.get_formatted_subtitle_label(title, self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    title,
+                    self.color_set.subtitle,
+                    self.color_set.colon
+                ),
                 self.authors[0].2.to_string().color(self.color_set.info),
                 "%".color(self.color_set.info),
                 self.authors[0].0.to_string().color(self.color_set.info),
@@ -206,7 +243,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.last_change {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Last change", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Last change",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.last_change.color(self.color_set.info),
             )?;
         }
@@ -214,7 +255,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.repo {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Repo", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Repo",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.repo_url.color(self.color_set.info),
             )?;
         }
@@ -222,7 +267,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.commits {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Commits", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Commits",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.commits.color(self.color_set.info),
             )?;
         }
@@ -230,7 +279,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.lines_of_code {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Lines of code", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Lines of code",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.number_of_lines.to_string().color(self.color_set.info),
             )?;
         }
@@ -238,7 +291,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.size {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("Size", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "Size",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.repo_size.color(self.color_set.info),
             )?;
         }
@@ -246,7 +303,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.license {
             write_buf(
                 f,
-                &self.get_formatted_subtitle_label("License", self.color_set.subtitle, self.color_set.colon),
+                &self.get_formatted_subtitle_label(
+                    "License",
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
                 &self.license.color(self.color_set.info),
             )?;
         }
@@ -717,7 +778,12 @@ impl Info {
         Some(color)
     }
 
-    fn get_formatted_subtitle_label(&self, label: &str, color: Color, colon_clr: Color) -> ColoredString {
+    fn get_formatted_subtitle_label(
+        &self,
+        label: &str,
+        color: Color,
+        colon_clr: Color,
+    ) -> ColoredString {
         let formatted_label = format!("{}{} ", label.color(color), ":".color(colon_clr));
         if self.config.no_bold {
             formatted_label.normal()
@@ -729,7 +795,7 @@ impl Info {
     fn get_color_set(text_colors: &[String]) -> TextColor {
         let mut custom_color: Vec<Color> = text_colors
             .iter()
-            .map(|color_num|{
+            .map(|color_num| {
                 let custom = Info::num_to_color(color_num);
                 match custom {
                     Some(custom) => custom,
@@ -746,7 +812,7 @@ impl Info {
             }
         }
 
-        let color_set: TextColor = TextColor { 
+        let color_set: TextColor = TextColor {
             title: custom_color[0],
             tilde: custom_color[1],
             underline: custom_color[2],
