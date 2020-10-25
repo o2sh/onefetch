@@ -29,6 +29,7 @@ pub struct Cli {
     pub print_languages: bool,
     pub true_color: bool,
     pub art_off: bool,
+    pub text_colors: Vec<String>,
 }
 
 impl Cli {
@@ -112,6 +113,23 @@ impl Cli {
                     "15",
                 ])
                 .help("Colors (X X X...) to print the ascii art."),
+        )
+        .arg(
+            Arg::with_name("text-colors")
+                .short("t")
+                .long("text-colors")
+                .value_name("X")
+                .multiple(true)
+                .takes_value(true)
+                .max_values(6)
+                .possible_values(&[
+                    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+                    "15",
+                ])
+                .help("Allows you to customize color of info lines (X X X...)")
+                .long_help("Allows you to customize color of info lines. \
+                Goes in order of title, ~, underline, title, colon, and info. \
+                Example: onefetch --text-color 9 10 11 12 13 14")
         )
         .arg(
             Arg::with_name("no-bold")
@@ -254,6 +272,12 @@ impl Cli {
             Vec::new()
         };
 
+        let text_colors = if let Some(values) = matches.values_of("text-colors") {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
+
         let disabled_fields = info_fields::get_disabled_fields(fields_to_hide)?;
 
         let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
@@ -280,6 +304,7 @@ impl Cli {
             excluded,
             print_languages,
             true_color,
+            text_colors,
             art_off,
         })
     }
