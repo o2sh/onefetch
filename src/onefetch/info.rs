@@ -31,31 +31,46 @@ pub struct Info {
     pub config: Cli,
 }
 
+pub struct TextColor {
+    title: Color,
+    tilde: Color,
+    underline: Color,
+    subtitle: Color,
+    colon: Color,
+    info: Color,
+}
+
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let color = match self.colors.get(0) {
             Some(&c) => c,
             None => Color::White,
         };
+        let text_color = &self.string_to_text_color("9 10 11 12 13 14", color);
         if !self.config.disabled_fields.git_info {
             let git_info_length;
             if self.git_username != "" {
                 git_info_length = self.git_username.len() + self.git_version.len() + 3;
                 write!(
                     f,
-                    "{} ~ ",
-                    &self.get_formatted_info_label(&self.git_username, color)
+                    "{} {} ",
+                    &self.get_formatted_info_label(&self.git_username, text_color.title),
+                    &self.get_formatted_info_label("~", text_color.tilde),
                 )?;
             } else {
                 git_info_length = self.git_version.len();
             }
             write_buf(
                 f,
-                &self.get_formatted_info_label(&self.git_version, color),
+                &self.get_formatted_info_label(&self.git_version, text_color.title),
                 "",
             )?;
             let separator = "-".repeat(git_info_length);
-            write_buf(f, &self.get_formatted_info_label("", color), &separator)?;
+            write_buf(
+                f,
+                &self.get_formatted_info_label("", color),
+                &self.get_formatted_info_label(&separator, text_color.underline),
+            )?;
         }
         if !self.config.disabled_fields.project {
             let branches_str = match self.number_of_branches {
@@ -78,50 +93,50 @@ impl std::fmt::Display for Info {
                 format!("({}, {})", branches_str, tags_str)
             };
 
-            let project_str = &self.get_formatted_info_label("Project: ", color);
+            let project_str = &self.get_formatted_subtitle_label("Project", text_color.subtitle, text_color.colon);
 
             writeln!(
                 f,
                 "{}{} {}",
-                project_str, self.project_name, branches_tags_str
+                project_str, self.project_name.color(text_color.info), branches_tags_str.color(text_color.info)
             )?;
         }
 
         if !self.config.disabled_fields.head {
             write_buf(
                 f,
-                &self.get_formatted_info_label("HEAD: ", color),
-                &self.current_commit,
+                &self.get_formatted_subtitle_label("HEAD", text_color.subtitle, text_color.colon),
+                &self.current_commit.to_string().color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.pending && self.pending != "" {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Pending: ", color),
-                &self.pending,
+                &self.get_formatted_subtitle_label("Pending", text_color.subtitle, text_color.colon),
+                &self.pending.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.version {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Version: ", color),
-                &self.version,
+                &self.get_formatted_subtitle_label("Version", text_color.subtitle, text_color.colon),
+                &self.version.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.created {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Created: ", color),
-                &self.creation_date,
+                &self.get_formatted_subtitle_label("Created", text_color.subtitle, text_color.colon),
+                &self.creation_date.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
             if self.languages.len() > 1 {
-                let title = "Languages: ";
+                let title = &self.get_formatted_subtitle_label("Languages", text_color.subtitle, text_color.colon);
                 let pad = " ".repeat(title.len());
                 let mut s = String::from("");
                 let languages: Vec<(String, f64)> = {
@@ -144,42 +159,44 @@ impl std::fmt::Display for Info {
                         s = s + &format!("{} ({} %) ", language.0, formatted_number);
                     }
                 }
-                writeln!(f, "{}{}", &self.get_formatted_info_label(title, color), s)?;
+                writeln!(f, "{}{}", title, s.color(text_color.info))?;
             } else {
                 write_buf(
                     f,
-                    &self.get_formatted_info_label("Language: ", color),
-                    &self.dominant_language,
+                    &self.get_formatted_subtitle_label("Language", text_color.subtitle, text_color.colon),
+                    &self.dominant_language.to_string().color(text_color.info),
                 )?;
             };
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
-                "Authors: "
+                "Authors"
             } else {
-                "Author: "
+                "Author"
             };
 
             writeln!(
                 f,
-                "{}{}% {} {}",
-                &self.get_formatted_info_label(title, color),
-                self.authors[0].2,
-                self.authors[0].0,
-                self.authors[0].1
+                "{}{}{} {} {}",
+                &self.get_formatted_subtitle_label(title, text_color.subtitle, text_color.colon),
+                self.authors[0].2.to_string().color(text_color.info),
+                "%".color(text_color.info),
+                self.authors[0].0.to_string().color(text_color.info),
+                self.authors[0].1.to_string().color(text_color.info)
             )?;
 
-            let title = " ".repeat(title.len());
+            let title = " ".repeat(title.len() + 2);
 
             for author in self.authors.iter().skip(1) {
                 writeln!(
                     f,
-                    "{}{}% {} {}",
-                    &self.get_formatted_info_label(&title, color),
-                    author.2,
-                    author.0,
-                    author.1
+                    "{}{}{} {} {}",
+                    self.get_formatted_info_label(&title, text_color.subtitle),
+                    author.2.to_string().color(text_color.info),
+                    "%".color(text_color.info),
+                    author.0.to_string().color(text_color.info),
+                    author.1.to_string().color(text_color.info)
                 )?;
             }
         }
@@ -187,48 +204,48 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.last_change {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Last change: ", color),
-                &self.last_change,
+                &self.get_formatted_subtitle_label("Last change", text_color.subtitle, text_color.colon),
+                &self.last_change.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.repo {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Repo: ", color),
-                &self.repo_url,
+                &self.get_formatted_subtitle_label("Repo", text_color.subtitle, text_color.colon),
+                &self.repo_url.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.commits {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Commits: ", color),
-                &self.commits,
+                &self.get_formatted_subtitle_label("Commits", text_color.subtitle, text_color.colon),
+                &self.commits.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.lines_of_code {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Lines of code: ", color),
-                &self.number_of_lines,
+                &self.get_formatted_subtitle_label("Lines of code", text_color.subtitle, text_color.colon),
+                &self.number_of_lines.to_string().color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.size {
             write_buf(
                 f,
-                &self.get_formatted_info_label("Size: ", color),
-                &self.repo_size,
+                &self.get_formatted_subtitle_label("Size", text_color.subtitle, text_color.colon),
+                &self.repo_size.color(text_color.info),
             )?;
         }
 
         if !self.config.disabled_fields.license {
             write_buf(
                 f,
-                &self.get_formatted_info_label("License: ", color),
-                &self.license,
+                &self.get_formatted_subtitle_label("License", text_color.subtitle, text_color.colon),
+                &self.license.color(text_color.info),
             )?;
         }
 
@@ -694,6 +711,38 @@ impl Info {
             _ => return None,
         };
         Some(color)
+    }
+
+    fn get_formatted_subtitle_label(&self, label: &str, color: Color, colon_clr: Color) -> ColoredString {
+        let formatted_label = format!("{}{} ", label.color(color), ":".color(colon_clr));
+        if self.config.no_bold {
+            formatted_label.normal()
+        } else {
+            formatted_label.bold()
+        }
+    }
+
+    fn string_to_text_color(&self, input: &str, default_color: Color) -> TextColor {
+        let color_key: Vec<&str> = input.split_whitespace().collect::<Vec<&str>>();
+        let custom_color: Vec<Color> = color_key
+            .iter()
+            .map(|color_num|{
+                let custom = Info::num_to_color(color_num);
+                match custom {
+                    Some(custom) => custom,
+                    None => default_color,
+                }
+            })
+            .collect();
+        let text_color: TextColor = TextColor { 
+            title: custom_color[0],
+            tilde: custom_color[1],
+            underline: custom_color[2],
+            subtitle: custom_color[3],
+            colon: custom_color[4],
+            info: custom_color[5],
+        };
+        text_color
     }
 }
 
