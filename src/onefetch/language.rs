@@ -196,7 +196,7 @@ define_languages! {
     { Idris, "idris.ascii", "Idris", define_colors!( [Color::Red] ) },
     { Java, "java.ascii", "Java", define_colors!( [Color::Cyan, Color::Red] ) },
     { JavaScript, "javascript.ascii", "JavaScript", define_colors!( [Color::Yellow] ) },
-    { Jsx, "jsx.ascii", "JSX", define_colors!( [Color::Blue] ) },
+    { Jsx, "jsx.ascii", "JSX", define_colors!( [Color::Yellow] ) },
     { Julia, "julia.ascii", "Julia", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },
     { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", define_colors!( [Color::White, Color::Yellow, Color::White] ), "jupyter-notebooks" },
     { Kotlin, "kotlin.ascii", "Kotlin", define_colors!( [Color::Blue, Color::Yellow, Color::Magenta] ) },
