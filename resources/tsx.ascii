@@ -1,19 +1,16 @@
-{0}         '::::::'         '::::::'
-{0}        ,ts' ',tsx:'   ':tsx,' ts,
-{0}        ts'      ':react:'      'ts
-{0}        ts        ,react'        ts
-{0}        ts'      tsx' 'tsx      'ts
-{0}        :tsx:::react:::react:::tsx:
-{0}    '::react:tsx:,'     '::react:tsx:,'
-{0} ':tsx,' tsx'tsx   ',:,'   tsx'tsx ',tsx:'
-{0}:tsx      :tsx,  'reactts'  ,tsx:      tsx:
-{0}'         'ts:   :reacttsx:   :ts'        '
-{0}:tsx      :tsx,  'reactts'  ,tsx:      tsx:
-{0} ':tsx,' tsx'tsx   ',:,'   tsx'tsx ',tsx:'
-{0}    '::react:tsx:,'     '::react:tsx:,'
-{0}        :tsx:::react:::react:::tsx:
-{0}        ts'      tsx' 'tsx      'ts
-{0}        ts        ,react,        ts
-{0}        ts'      ':react:'      'ts
-{0}        ,ts' ',:ts:'   ':ts:,' 'ts,
-{0}         '::::::'         '::::::'
+{0}           .REACT.    .REACT.
+{0}         TS     .TSXTSX.     TS
+{0}        TS       :TSTS:       TS
+{0}        TS     .REACTTSX'     TS
+{0}      'TSXTSXTSXTSXTSXTSXTSXTSXTS'
+{0}   'REACTTSREACT        REACTTSREACT'
+{0}  'TSX'  REACT'  :TSXJ:  'REACT  'TSX'
+{0} 'TS      TSX'  :TSXTSX:  'TSX      TS'
+{0} 'TS      TSX'  :TSXTSX:  'TSX      TS'
+{0}  'TSX'  REACT'  :TSXJ:  'REACT  'TSX'
+{0}   'REACTTSREACT        REACTTSREACT'
+{0}      'TSXTSXTSXTSXTSXTSXTSXTSXTS'
+{0}        TS     .REACTTSX'     TS
+{0}        TS       :TSTS:       TS
+{0}         TS     .TSXTSX.     TS
+{0}           .REACT.    .REACT.
