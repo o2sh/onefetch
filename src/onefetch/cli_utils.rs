@@ -24,15 +24,11 @@ impl<W: Write> Printer<W> {
         if self.info.config.art_off {
             buf.push_str(&info_str);
         } else if let Some(custom_image) = &self.info.config.image {
-            if let Some(image_backend) = &self.info.config.image_backend {
-                buf.push_str(&image_backend.add_image(
-                    info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
-                    custom_image,
-                    self.info.config.image_colors,
-                ));
-            } else {
-                panic!("No image backend found")
-            }
+            buf.push_str(&self.info.config.image_backend.as_ref().unwrap().add_image(
+                info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                custom_image,
+                self.info.config.image_colors,
+            ));
         } else {
             let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
                 AsciiArt::new(custom_ascii, &colors, !self.info.config.no_bold)
