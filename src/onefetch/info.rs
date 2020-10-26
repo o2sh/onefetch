@@ -817,7 +817,7 @@ impl Info {
             custom_color.insert(4, default_colors[0]);
             custom_color.insert(5, Color::White);
         } else {
-            let mut custom_color: Vec<Color> = text_colors
+            custom_color = text_colors
                 .iter()
                 .map(|color_num| {
                     let custom = Info::num_to_color(color_num);
