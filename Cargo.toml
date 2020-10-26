@@ -29,7 +29,7 @@ clap = "2.33.3"
 strum = { version = "0.19.5", features = ["derive"] }
 image = "0.23.11"
 regex = "1"
-futures = "0.3.6"
+futures = "0.3.7"
 tokio = { version = "0.3.1", features = ["full"] }
 error-chain = "0.12"
 
