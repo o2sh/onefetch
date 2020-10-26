@@ -1,6 +1,7 @@
 use {
     crate::onefetch::{
         cli::Cli, commit_info::CommitInfo, error::*, language::Language, license::Detector,
+        text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
@@ -32,22 +33,8 @@ pub struct Info {
     pub config: Cli,
 }
 
-pub struct TextColor {
-    title: Color,
-    tilde: Color,
-    underline: Color,
-    subtitle: Color,
-    colon: Color,
-    info: Color,
-}
-
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let color = match self.colors.get(0) {
-            Some(&c) => c,
-            None => Color::White,
-        };
-
         if !self.config.disabled_fields.git_info {
             let git_info_length;
             if self.git_username != "" {
@@ -69,7 +56,7 @@ impl std::fmt::Display for Info {
             let separator = "-".repeat(git_info_length);
             write_buf(
                 f,
-                &self.get_formatted_info_label("", color),
+                &self.get_formatted_info_label("", self.color_set.underline),
                 &self.get_formatted_info_label(&separator, self.color_set.underline),
             )?;
         }
@@ -388,7 +375,7 @@ impl Info {
             &config.ascii_colors,
             config.true_color,
         );
-        let color_set = Info::get_color_set(&config.text_colors, &colors);
+        let color_set = TextColor::get_text_color_set(&config.text_colors, &colors);
 
         Ok(Info {
             git_version: git_v,
@@ -770,7 +757,7 @@ impl Info {
         colors
     }
 
-    fn num_to_color(num: &str) -> Option<Color> {
+    pub fn num_to_color(num: &str) -> Option<Color> {
         let color = match num {
             "0" => Color::Black,
             "1" => Color::Red,
@@ -805,47 +792,6 @@ impl Info {
         } else {
             formatted_label.bold()
         }
-    }
-
-    fn get_color_set(text_colors: &[String], default_colors: &Vec<Color>) -> TextColor {
-        let mut custom_color: Vec<Color> = Vec::<Color>::new();
-        if text_colors.is_empty() {
-            custom_color.insert(0, default_colors[0]);
-            custom_color.insert(1, Color::White);
-            custom_color.insert(2, Color::White);
-            custom_color.insert(3, default_colors[0]);
-            custom_color.insert(4, default_colors[0]);
-            custom_color.insert(5, Color::White);
-        } else {
-            custom_color = text_colors
-                .iter()
-                .map(|color_num| {
-                    let custom = Info::num_to_color(color_num);
-                    match custom {
-                        Some(custom) => custom,
-                        None => Color::White,
-                    }
-                })
-                .collect();
-            if custom_color.len() < 6 {
-                for i in 0..6 {
-                    if i < custom_color.len() {
-                        continue;
-                    }
-                    custom_color.insert(i, Color::White);
-                }
-            }
-        }
-        
-        let color_set: TextColor = TextColor {
-            title: custom_color[0],
-            tilde: custom_color[1],
-            underline: custom_color[2],
-            subtitle: custom_color[3],
-            colon: custom_color[4],
-            info: custom_color[5],
-        };
-        color_set
     }
 }
 

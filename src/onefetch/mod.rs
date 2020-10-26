@@ -8,3 +8,4 @@ pub mod info;
 pub mod info_fields;
 pub mod language;
 pub mod license;
+pub mod text_color;
