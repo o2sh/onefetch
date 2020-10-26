@@ -388,7 +388,7 @@ impl Info {
             &config.ascii_colors,
             config.true_color,
         );
-        let color_set = Info::get_color_set(&config.text_colors);
+        let color_set = Info::get_color_set(&config.text_colors, &colors);
 
         Ok(Info {
             git_version: git_v,
@@ -807,26 +807,36 @@ impl Info {
         }
     }
 
-    fn get_color_set(text_colors: &[String]) -> TextColor {
-        let mut custom_color: Vec<Color> = text_colors
-            .iter()
-            .map(|color_num| {
-                let custom = Info::num_to_color(color_num);
-                match custom {
-                    Some(custom) => custom,
-                    None => Color::White,
+    fn get_color_set(text_colors: &[String], default_colors: &Vec<Color>) -> TextColor {
+        let mut custom_color: Vec<Color> = Vec::<Color>::new();
+        if text_colors.is_empty() {
+            custom_color.insert(0, default_colors[0]);
+            custom_color.insert(1, Color::White);
+            custom_color.insert(2, Color::White);
+            custom_color.insert(3, default_colors[0]);
+            custom_color.insert(4, default_colors[0]);
+            custom_color.insert(5, Color::White);
+        } else {
+            let mut custom_color: Vec<Color> = text_colors
+                .iter()
+                .map(|color_num| {
+                    let custom = Info::num_to_color(color_num);
+                    match custom {
+                        Some(custom) => custom,
+                        None => Color::White,
+                    }
+                })
+                .collect();
+            if custom_color.len() < 6 {
+                for i in 0..6 {
+                    if i < custom_color.len() {
+                        continue;
+                    }
+                    custom_color.insert(i, Color::White);
                 }
-            })
-            .collect();
-        if custom_color.len() < 6 {
-            for i in 0..6 {
-                if i < custom_color.len() {
-                    continue;
-                }
-                custom_color.insert(i, Color::White);
             }
         }
-
+        
         let color_set: TextColor = TextColor {
             title: custom_color[0],
             tilde: custom_color[1],
