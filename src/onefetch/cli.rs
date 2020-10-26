@@ -29,6 +29,7 @@ pub struct Cli {
     pub print_languages: bool,
     pub true_color: bool,
     pub art_off: bool,
+    pub text_colors: Vec<String>,
 }
 
 impl Cli {
@@ -38,7 +39,9 @@ impl Cli {
         let possible_backends = ["kitty", "sixel"];
         #[cfg(windows)]
         let possible_backends = [];
-
+        let color_values = &[
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+        ];
         let matches = App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
@@ -107,11 +110,22 @@ impl Cli {
                 .value_name("X")
                 .multiple(true)
                 .takes_value(true)
-                .possible_values(&[
-                    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-                    "15",
-                ])
+                .possible_values(color_values)
                 .help("Colors (X X X...) to print the ascii art."),
+        )
+        .arg(
+            Arg::with_name("text-colors")
+                .short("t")
+                .long("text-colors")
+                .value_name("X")
+                .multiple(true)
+                .takes_value(true)
+                .max_values(6)
+                .possible_values(color_values)
+                .help("Allows you to customize color of info lines (X X X...)")
+                .long_help("Allows you to customize color of info lines. \
+                Goes in order of title, ~, underline, subtitle, colon, and info. \
+                Example: onefetch --text-colors 9 10 11 12 13 14")
         )
         .arg(
             Arg::with_name("no-bold")
@@ -254,6 +268,12 @@ impl Cli {
             Vec::new()
         };
 
+        let text_colors = if let Some(values) = matches.values_of("text-colors") {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
+
         let disabled_fields = info_fields::get_disabled_fields(fields_to_hide)?;
 
         let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
@@ -280,6 +300,7 @@ impl Cli {
             excluded,
             print_languages,
             true_color,
+            text_colors,
             art_off,
         })
     }
