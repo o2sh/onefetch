@@ -26,7 +26,7 @@ askalono = "0.4.3"
 bytecount = "0.6.0"
 clap = "2.33.3"
 strum = { version = "0.19.5", features = ["derive"] }
-image = "0.23.10"
+image = "0.23.11"
 regex = "1"
 futures = "0.3.6"
 tokio = { version = "0.3.1", features = ["full"] }
