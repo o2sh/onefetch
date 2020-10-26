@@ -15,15 +15,15 @@
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/aesthetic.png" align="right" height="240px">
 
-Onefetch is a command-line Git information tool written in `Rust`. Onefetch will display information about your Git repository directly on your terminal.
+Onefetch is a command-line Git information tool written in `Rust` that will display information and code statistics about your Git repository directly on your terminal.
 
-By default, the repo's information is displayed alongside the dominant language's ASCII logo, but you can further configure Onefetch to display an image instead (png, jpeg...) on supported terminals: You can read more about it [here](https://github.com/o2sh/onefetch/wiki/Images-in-the-terminal).
+By default, the repo's information is displayed alongside the dominant language's ASCII logo, but you can further configure Onefetch to instead display an image - on supported terminals (more info [here](https://github.com/o2sh/onefetch/wiki/Images-in-the-terminal)) -, a text input or nothing at all.
 
-Onefetch provides the user with code statistics and automatically detects open source licenses from texts. Additionally, it will show the pending changes, LOC (lines of code), size on disk, contributors, version, HEAD, last change etc.
+Onefetch automatically detects open source licenses from texts and provide the user with various info like: code distribution, pending changes, LOC (lines of code), size on disk, contributors, version, HEAD, last change etc.
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/go.png" align="right" height="240px">
 
-Via the use of command-line flags: you can further configure Onefetch to display exactly what you want, the you want it to: More information [here](https://github.com/o2sh/onefetch/wiki/customizing-Info).
+Via the use of command-line flags, you can further configure Onefetch to display exactly what you want, the you want it to: customize ASCII/Text formating, disable info lines, ignore files & directories, etc.  More information [here](https://github.com/o2sh/onefetch/wiki/customizing-Info).
 
 Onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added. 
 
