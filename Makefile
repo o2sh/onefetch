@@ -1,5 +1,5 @@
 build:
-	cargo build --release
+	cargo build --release --features=fail-on-deprecated
 
 install: build
 	sudo cp target/release/onefetch /usr/local/bin

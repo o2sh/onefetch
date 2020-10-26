@@ -26,7 +26,7 @@ jobs:
     - name: Build Debug
       run: |
         rustc --version
-        cargo build
+        cargo build --features=fail-on-deprecated
 
     - name: Run tests
       run: cargo test

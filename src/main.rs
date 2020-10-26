@@ -1,5 +1,6 @@
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
+#![cfg_attr(feature="fail-on-deprecated", deny(deprecated))]
 
 use onefetch::{cli::Cli, cli_utils, error::*, info};
 

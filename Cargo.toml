@@ -43,3 +43,6 @@ base64 = "0.13.0"
 lazy_static = "1.4"
 more-asserts = "0.2"
 paste = "1"
+
+[features]
+fail-on-deprecated = []
