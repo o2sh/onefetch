@@ -37,7 +37,7 @@ error-chain = "0.12"
 ansi_term = "0.12"
 
 [target.'cfg(not(windows))'.dependencies]
-libc = "0.2.79"
+libc = "0.2.80"
 base64 = "0.13.0"
 
 [dev-dependencies]
