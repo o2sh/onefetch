@@ -160,12 +160,8 @@ impl std::fmt::Display for Info {
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
             if self.languages.len() > 1 {
-                let title = &self.get_formatted_subtitle_label(
-                    "Languages",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                );
-                let pad = " ".repeat(title.len());
+                let title = "Languages";
+                let pad = " ".repeat(title.len() + 2);
                 let mut s = String::from("");
                 let languages: Vec<(String, f64)> = {
                     let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
@@ -180,14 +176,33 @@ impl std::fmt::Display for Info {
                 };
 
                 for (cnt, language) in languages.iter().enumerate() {
-                    let formatted_number = format!("{:.*}", 1, language.1);
+                    let formatted_number =
+                        format!("{:.*}", 1, language.1).color(self.color_set.info);
                     if cnt != 0 && cnt % 2 == 0 {
-                        s = s + &format!("\n{}{} ({} %) ", pad, language.0, formatted_number);
+                        s = s + &format!(
+                            "\n{}{} ({} %) ",
+                            pad,
+                            language.0.color(self.color_set.info),
+                            formatted_number
+                        );
                     } else {
-                        s = s + &format!("{} ({} %) ", language.0, formatted_number);
+                        s = s + &format!(
+                            "{} ({} %) ",
+                            language.0.color(self.color_set.info),
+                            formatted_number
+                        );
                     }
                 }
-                writeln!(f, "{}{}", title, s.color(self.color_set.info))?;
+                writeln!(
+                    f,
+                    "{}{}",
+                    &self.get_formatted_subtitle_label(
+                        title,
+                        self.color_set.subtitle,
+                        self.color_set.colon,
+                    ),
+                    s.color(self.color_set.info)
+                )?;
             } else {
                 write_buf(
                     f,
