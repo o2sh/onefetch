@@ -23,7 +23,7 @@ Onefetch provides the user with code statistics and automatically detects open s
 
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/master/assets/go.png" align="right" height="240px">
 
-Via command-line flags, you can further configure Onefetch to display exactly what you want, the you want it to: More information [here](https://github.com/o2sh/onefetch/wiki/customizing-Info).
+Via the use of command-line flags: you can further configure Onefetch to display exactly what you want, the you want it to: More information [here](https://github.com/o2sh/onefetch/wiki/customizing-Info).
 
 Onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added. 
 
