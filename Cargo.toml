@@ -19,6 +19,7 @@ section = "utility"
 priority = "optional"
 
 [dependencies]
+color_quant = "1.1" # Use version required by image
 colored= "2.0.0"
 git2 = { version = "0.13.12", default-features = false }
 tokei = "12.0.0"

@@ -1,7 +1,7 @@
 use {
+    color_quant::NeuQuant,
     image::{
         imageops::{colorops, FilterType},
-        math::nq::NeuQuant,
         DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
     },
     libc::{
