@@ -122,34 +122,24 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
-            if self.languages.len() > 1 {
-                let languages_str = self.get_languages_field();
-
-                writeln!(
-                    f,
-                    "{}{}",
-                    &self.get_formatted_subtitle_label(
-                        "Languages",
-                        self.color_set.subtitle,
-                        self.color_set.colon,
-                    ),
-                    languages_str.color(self.color_set.info)
-                )?;
+            let title = if self.languages.len() > 1 {
+                "Languages"
             } else {
-                writeln!(
-                    f,
-                    "{}{}",
-                    &self.get_formatted_subtitle_label(
-                        "Language",
-                        self.color_set.subtitle,
-                        self.color_set.colon,
-                    ),
-                    &self
-                        .dominant_language
-                        .to_string()
-                        .color(self.color_set.info),
-                )?;
+                "Language"
             };
+
+            let languages_str = self.get_language_field(title);
+
+            writeln!(
+                f,
+                "{}{}",
+                &self.get_formatted_subtitle_label(
+                    title,
+                    self.color_set.subtitle,
+                    self.color_set.colon,
+                ),
+                languages_str.color(self.color_set.info)
+            )?;
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
@@ -727,13 +717,13 @@ impl Info {
     }
 
     fn get_author_field(&self, title: &str) -> String {
-        let mut authors_str = String::from("");
+        let mut author_field = String::from("");
 
         let pad = title.len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
             if i == 0 {
-                authors_str.push_str(&format!(
+                author_field.push_str(&format!(
                     "{}{} {} {}\n",
                     author.2.to_string().color(self.color_set.info),
                     "%".color(self.color_set.info),
@@ -741,7 +731,7 @@ impl Info {
                     author.1.to_string().color(self.color_set.info),
                 ));
             } else {
-                authors_str.push_str(&format!(
+                author_field.push_str(&format!(
                     "{:<width$}{}{} {} {}\n",
                     "",
                     author.2.to_string().color(self.color_set.info),
@@ -753,13 +743,14 @@ impl Info {
             }
         }
 
-        authors_str
+        author_field
     }
 
-    fn get_languages_field(&self) -> String {
-        let title = "Languages";
-        let pad = " ".repeat(title.len() + 2);
-        let mut languages_str = String::from("");
+    fn get_language_field(&self, title: &str) -> String {
+        let mut language_field = String::from("");
+
+        let pad = title.len() + 2;
+
         let languages: Vec<(String, f64)> = {
             let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
             if self.languages.len() > 6 {
@@ -775,21 +766,22 @@ impl Info {
         for (cnt, language) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language.1).color(self.color_set.info);
             if cnt != 0 && cnt % 2 == 0 {
-                languages_str.push_str(&format!(
-                    "\n{}{} ({} %) ",
-                    pad,
+                language_field.push_str(&format!(
+                    "\n{:<width$}{} ({} %) ",
+                    "",
                     language.0.color(self.color_set.info),
-                    formatted_number
+                    formatted_number,
+                    width = pad
                 ));
             } else {
-                languages_str.push_str(&format!(
+                language_field.push_str(&format!(
                     "{} ({} %) ",
                     language.0.color(self.color_set.info),
                     formatted_number
                 ));
             }
         }
-        languages_str
+        language_field
     }
 
     fn get_branches_and_tags_field(&self) -> String {
