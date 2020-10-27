@@ -314,7 +314,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.no_color_blocks {
+        if !self.config.no_color_palette {
             writeln!(
                 f,
                 "\n{0}{1}{2}{3}{4}{5}{6}{7}",

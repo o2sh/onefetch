@@ -23,7 +23,7 @@ pub struct Cli {
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
     pub image_colors: usize,
     pub no_merges: bool,
-    pub no_color_blocks: bool,
+    pub no_color_palette: bool,
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
     pub print_languages: bool,
@@ -122,10 +122,7 @@ impl Cli {
                 .takes_value(true)
                 .max_values(6)
                 .possible_values(color_values)
-                .help("Allows you to customize color of info lines (X X X...)")
-                .long_help("Allows you to customize color of info lines. \
-                Goes in order of title, ~, underline, subtitle, colon, and info. \
-                Example: onefetch --text-colors 9 10 11 12 13 14")
+                .help("Changes the text colors (X X X...) in this order: title, ~, underline, subtitle, colon, info.")
         )
         .arg(
             Arg::with_name("no-bold")
@@ -173,9 +170,9 @@ impl Cli {
                 .help("Ignores merge commits."),
         )
         .arg(
-            Arg::with_name("no-color-blocks")
-                .long("no-color-blocks")
-                .help("Hides the color blocks."),
+            Arg::with_name("no-color-palette")
+                .long("no-color-palette")
+                .help("Hides the color palette."),
         )
         .arg(
             Arg::with_name("authors-number")
@@ -213,7 +210,7 @@ impl Cli {
 
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
-        let no_color_blocks = matches.is_present("no-color-blocks");
+        let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let art_off = matches.is_present("off");
         let true_color = cli_utils::is_truecolor_terminal();
@@ -295,7 +292,7 @@ impl Cli {
             image_backend,
             image_colors,
             no_merges,
-            no_color_blocks,
+            no_color_palette,
             number_of_authors,
             excluded,
             print_languages,
