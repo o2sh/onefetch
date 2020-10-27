@@ -21,7 +21,7 @@ impl TextColor {
         }
     }
 
-    pub fn get_text_color_set(text_colors: &[String], default_colors: &Vec<Color>) -> TextColor {
+    pub fn get_text_color_set(text_colors: &[String], default_colors: &[Color]) -> TextColor {
         let mut text_color_set = TextColor::new(default_colors[0]);
         if !text_colors.is_empty() {
             let custom_color = text_colors

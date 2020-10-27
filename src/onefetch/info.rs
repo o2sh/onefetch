@@ -36,57 +36,25 @@ pub struct Info {
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if !self.config.disabled_fields.git_info {
-            let git_info_length;
-            if self.git_username != "" {
-                git_info_length = self.git_username.len() + self.git_version.len() + 3;
-                write!(
-                    f,
-                    "{} {} ",
-                    &self.get_formatted_info_label(&self.git_username, self.color_set.title),
-                    &self.get_formatted_info_label("~", self.color_set.tilde),
-                )?;
-            } else {
-                git_info_length = self.git_version.len();
-            }
-            write_buf(
+            let git_info_length = self.git_username.len() + self.git_version.len() + 3;
+
+            writeln!(
                 f,
-                &self.get_formatted_info_label(&self.git_version, self.color_set.title),
-                "",
+                "{} {} {}",
+                &self.bold(&self.git_username).color(self.color_set.title),
+                &self.bold("~").color(self.color_set.tilde),
+                &self.bold(&self.git_version).color(self.color_set.title)
             )?;
+
             let separator = "-".repeat(git_info_length);
-            write_buf(
-                f,
-                &self.get_formatted_info_label("", self.color_set.underline),
-                &self.get_formatted_info_label(&separator, self.color_set.underline),
-            )?;
+
+            writeln!(f, "{}", separator.color(self.color_set.underline),)?;
         }
 
         if !self.config.disabled_fields.project {
-            let branches_str = match self.number_of_branches {
-                0 => String::new(),
-                1 => String::from("1 branch"),
-                _ => format!("{} branches", self.number_of_branches),
-            };
+            let branches_tags_str = self.get_branches_and_tags_field();
 
-            let tags_str = match self.number_of_tags {
-                0 => String::new(),
-                1 => String::from("1 tag"),
-                _ => format!("{} tags", self.number_of_tags),
-            };
-
-            let branches_tags_str = if tags_str.is_empty() && branches_str.is_empty() {
-                String::new()
-            } else if branches_str.is_empty() || tags_str.is_empty() {
-                format!("({})", format!("{}{}", tags_str, branches_str))
-            } else {
-                format!("({}, {})", branches_str, tags_str)
-            };
-
-            let project_str = &self.get_formatted_subtitle_label(
-                "Project",
-                self.color_set.subtitle,
-                self.color_set.colon,
-            );
+            let project_str = &self.get_formatted_subtitle_label("Project");
 
             writeln!(
                 f,
@@ -98,112 +66,56 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.head {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "HEAD",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("HEAD"),
                 &self.current_commit.to_string().color(self.color_set.info),
             )?;
         }
 
-        if !self.config.disabled_fields.pending && self.pending != "" {
-            write_buf(
+        if !self.config.disabled_fields.pending && !self.pending.is_empty() {
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Pending",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Pending"),
                 &self.pending.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.version {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Version",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Version"),
                 &self.version.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.created {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Created",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Created"),
                 &self.creation_date.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
-            if self.languages.len() > 1 {
-                let title = "Languages";
-                let pad = " ".repeat(title.len() + 2);
-                let mut s = String::from("");
-                let languages: Vec<(String, f64)> = {
-                    let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
-                    if self.languages.len() > 6 {
-                        let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
-                        let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
-                        languages.push(("Other".to_owned(), other_sum));
-                        languages
-                    } else {
-                        iter.collect()
-                    }
-                };
-
-                for (cnt, language) in languages.iter().enumerate() {
-                    let formatted_number =
-                        format!("{:.*}", 1, language.1).color(self.color_set.info);
-                    if cnt != 0 && cnt % 2 == 0 {
-                        s = s + &format!(
-                            "\n{}{} ({} %) ",
-                            pad,
-                            language.0.color(self.color_set.info),
-                            formatted_number
-                        );
-                    } else {
-                        s = s + &format!(
-                            "{} ({} %) ",
-                            language.0.color(self.color_set.info),
-                            formatted_number
-                        );
-                    }
-                }
-                writeln!(
-                    f,
-                    "{}{}",
-                    &self.get_formatted_subtitle_label(
-                        title,
-                        self.color_set.subtitle,
-                        self.color_set.colon,
-                    ),
-                    s.color(self.color_set.info)
-                )?;
+            let title = if self.languages.len() > 1 {
+                "Languages"
             } else {
-                write_buf(
-                    f,
-                    &self.get_formatted_subtitle_label(
-                        "Language",
-                        self.color_set.subtitle,
-                        self.color_set.colon,
-                    ),
-                    &self
-                        .dominant_language
-                        .to_string()
-                        .color(self.color_set.info),
-                )?;
+                "Language"
             };
+
+            let languages_str = self.get_language_field(title);
+
+            writeln!(
+                f,
+                "{}{}",
+                &self.get_formatted_subtitle_label(title),
+                languages_str.color(self.color_set.info)
+            )?;
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
@@ -213,103 +125,66 @@ impl std::fmt::Display for Info {
                 "Author"
             };
 
-            writeln!(
+            let author_str = self.get_author_field(title);
+
+            write!(
                 f,
-                "{}{}{} {} {}",
-                &self.get_formatted_subtitle_label(
-                    title,
-                    self.color_set.subtitle,
-                    self.color_set.colon
-                ),
-                self.authors[0].2.to_string().color(self.color_set.info),
-                "%".color(self.color_set.info),
-                self.authors[0].0.to_string().color(self.color_set.info),
-                self.authors[0].1.to_string().color(self.color_set.info)
+                "{}{}",
+                &self.get_formatted_subtitle_label(title),
+                author_str.color(self.color_set.info),
             )?;
-
-            let title = " ".repeat(title.len() + 2);
-
-            for author in self.authors.iter().skip(1) {
-                writeln!(
-                    f,
-                    "{}{}{} {} {}",
-                    self.get_formatted_info_label(&title, self.color_set.subtitle),
-                    author.2.to_string().color(self.color_set.info),
-                    "%".color(self.color_set.info),
-                    author.0.to_string().color(self.color_set.info),
-                    author.1.to_string().color(self.color_set.info)
-                )?;
-            }
         }
 
         if !self.config.disabled_fields.last_change {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Last change",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Last change"),
                 &self.last_change.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.repo {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Repo",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Repo"),
                 &self.repo_url.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.commits {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Commits",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Commits"),
                 &self.commits.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.lines_of_code {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Lines of code",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{} {}",
+                &self.get_formatted_subtitle_label("Lines of code"),
                 &self.number_of_lines.to_string().color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.size {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "Size",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("Size"),
                 &self.repo_size.color(self.color_set.info),
             )?;
         }
 
         if !self.config.disabled_fields.license {
-            write_buf(
+            writeln!(
                 f,
-                &self.get_formatted_subtitle_label(
-                    "License",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                "{}{}",
+                &self.get_formatted_subtitle_label("License"),
                 &self.license.color(self.color_set.info),
             )?;
         }
@@ -719,15 +594,6 @@ impl Info {
         Ok(output)
     }
 
-    fn get_formatted_info_label(&self, label: &str, color: Color) -> ColoredString {
-        let formatted_label = label.color(color);
-        if self.config.no_bold {
-            formatted_label
-        } else {
-            formatted_label.bold()
-        }
-    }
-
     fn get_colors(
         ascii_language: &Language,
         dominant_language: &Language,
@@ -780,25 +646,112 @@ impl Info {
         Some(color)
     }
 
-    fn get_formatted_subtitle_label(
-        &self,
-        label: &str,
-        color: Color,
-        colon_clr: Color,
-    ) -> ColoredString {
-        let formatted_label = format!("{}{} ", label.color(color), ":".color(colon_clr));
+    fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
+        let formatted_label = format!(
+            "{}{} ",
+            label.color(self.color_set.subtitle),
+            ":".color(self.color_set.colon)
+        );
+        self.bold(&formatted_label)
+    }
+
+    fn bold(&self, label: &str) -> ColoredString {
         if self.config.no_bold {
-            formatted_label.normal()
+            label.normal()
         } else {
-            formatted_label.bold()
+            label.bold()
         }
     }
-}
 
-fn write_buf<T: std::fmt::Display>(
-    buffer: &mut std::fmt::Formatter,
-    title: &ColoredString,
-    content: T,
-) -> std::fmt::Result {
-    writeln!(buffer, "{}{}", title, content)
+    fn get_author_field(&self, title: &str) -> String {
+        let mut author_field = String::from("");
+
+        let pad = title.len() + 2;
+
+        for (i, (author_name, author_nbr_commits, autor_contribution)) in
+            self.authors.iter().enumerate()
+        {
+            if i == 0 {
+                author_field.push_str(&format!(
+                    "{}{} {} {}\n",
+                    autor_contribution.to_string().color(self.color_set.info),
+                    "%".color(self.color_set.info),
+                    author_name.to_string().color(self.color_set.info),
+                    author_nbr_commits.to_string().color(self.color_set.info),
+                ));
+            } else {
+                author_field.push_str(&format!(
+                    "{:<width$}{}{} {} {}\n",
+                    "",
+                    autor_contribution.to_string().color(self.color_set.info),
+                    "%".color(self.color_set.info),
+                    author_name.to_string().color(self.color_set.info),
+                    author_nbr_commits.to_string().color(self.color_set.info),
+                    width = pad
+                ));
+            }
+        }
+
+        author_field
+    }
+
+    fn get_language_field(&self, title: &str) -> String {
+        let mut language_field = String::from("");
+
+        let pad = title.len() + 2;
+
+        let languages: Vec<(String, f64)> = {
+            let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
+            if self.languages.len() > 6 {
+                let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
+                let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
+                languages.push(("Other".to_owned(), other_sum));
+                languages
+            } else {
+                iter.collect()
+            }
+        };
+
+        for (cnt, language) in languages.iter().enumerate() {
+            let formatted_number = format!("{:.*}", 1, language.1).color(self.color_set.info);
+            if cnt != 0 && cnt % 2 == 0 {
+                language_field.push_str(&format!(
+                    "\n{:<width$}{} ({} %) ",
+                    "",
+                    language.0.color(self.color_set.info),
+                    formatted_number,
+                    width = pad
+                ));
+            } else {
+                language_field.push_str(&format!(
+                    "{} ({} %) ",
+                    language.0.color(self.color_set.info),
+                    formatted_number
+                ));
+            }
+        }
+        language_field
+    }
+
+    fn get_branches_and_tags_field(&self) -> String {
+        let branches_str = match self.number_of_branches {
+            0 => String::new(),
+            1 => String::from("1 branch"),
+            _ => format!("{} branches", self.number_of_branches),
+        };
+
+        let tags_str = match self.number_of_tags {
+            0 => String::new(),
+            1 => String::from("1 tag"),
+            _ => format!("{} tags", self.number_of_tags),
+        };
+
+        if tags_str.is_empty() && branches_str.is_empty() {
+            String::new()
+        } else if branches_str.is_empty() || tags_str.is_empty() {
+            format!("({}{})", tags_str, branches_str)
+        } else {
+            format!("({}, {})", branches_str, tags_str)
+        }
+    }
 }
