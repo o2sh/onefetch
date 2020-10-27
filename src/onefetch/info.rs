@@ -668,23 +668,25 @@ impl Info {
 
         let pad = title.len() + 2;
 
-        for (i, author) in self.authors.iter().enumerate() {
+        for (i, (author_name, author_nbr_commits, autor_contribution)) in
+            self.authors.iter().enumerate()
+        {
             if i == 0 {
                 author_field.push_str(&format!(
                     "{}{} {} {}\n",
-                    author.2.to_string().color(self.color_set.info),
+                    autor_contribution.to_string().color(self.color_set.info),
                     "%".color(self.color_set.info),
-                    author.0.to_string().color(self.color_set.info),
-                    author.1.to_string().color(self.color_set.info),
+                    author_name.to_string().color(self.color_set.info),
+                    author_nbr_commits.to_string().color(self.color_set.info),
                 ));
             } else {
                 author_field.push_str(&format!(
                     "{:<width$}{}{} {} {}\n",
                     "",
-                    author.2.to_string().color(self.color_set.info),
+                    autor_contribution.to_string().color(self.color_set.info),
                     "%".color(self.color_set.info),
-                    author.0.to_string().color(self.color_set.info),
-                    author.1.to_string().color(self.color_set.info),
+                    author_name.to_string().color(self.color_set.info),
+                    author_nbr_commits.to_string().color(self.color_set.info),
                     width = pad
                 ));
             }
@@ -747,7 +749,7 @@ impl Info {
         if tags_str.is_empty() && branches_str.is_empty() {
             String::new()
         } else if branches_str.is_empty() || tags_str.is_empty() {
-            format!("({})", format!("{}{}", tags_str, branches_str))
+            format!("({}{})", tags_str, branches_str)
         } else {
             format!("({}, {})", branches_str, tags_str)
         }
