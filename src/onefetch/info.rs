@@ -54,11 +54,7 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.project {
             let branches_tags_str = self.get_branches_and_tags_field();
 
-            let project_str = &self.get_formatted_subtitle_label(
-                "Project",
-                self.color_set.subtitle,
-                self.color_set.colon,
-            );
+            let project_str = &self.get_formatted_subtitle_label("Project");
 
             writeln!(
                 f,
@@ -73,11 +69,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "HEAD",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("HEAD"),
                 &self.current_commit.to_string().color(self.color_set.info),
             )?;
         }
@@ -86,11 +78,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Pending",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Pending"),
                 &self.pending.color(self.color_set.info),
             )?;
         }
@@ -99,11 +87,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Version",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Version"),
                 &self.version.color(self.color_set.info),
             )?;
         }
@@ -112,11 +96,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Created",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Created"),
                 &self.creation_date.color(self.color_set.info),
             )?;
         }
@@ -133,11 +113,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    title,
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label(title),
                 languages_str.color(self.color_set.info)
             )?;
         }
@@ -154,11 +130,7 @@ impl std::fmt::Display for Info {
             write!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    title,
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label(title),
                 author_str.color(self.color_set.info),
             )?;
         }
@@ -167,11 +139,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Last change",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Last change"),
                 &self.last_change.color(self.color_set.info),
             )?;
         }
@@ -180,11 +148,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Repo",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Repo"),
                 &self.repo_url.color(self.color_set.info),
             )?;
         }
@@ -193,11 +157,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Commits",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Commits"),
                 &self.commits.color(self.color_set.info),
             )?;
         }
@@ -206,11 +166,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{} {}",
-                &self.get_formatted_subtitle_label(
-                    "Lines of code",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Lines of code"),
                 &self.number_of_lines.to_string().color(self.color_set.info),
             )?;
         }
@@ -219,11 +175,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "Size",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("Size"),
                 &self.repo_size.color(self.color_set.info),
             )?;
         }
@@ -232,11 +184,7 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{}{}",
-                &self.get_formatted_subtitle_label(
-                    "License",
-                    self.color_set.subtitle,
-                    self.color_set.colon,
-                ),
+                &self.get_formatted_subtitle_label("License"),
                 &self.license.color(self.color_set.info),
             )?;
         }
@@ -698,13 +646,12 @@ impl Info {
         Some(color)
     }
 
-    fn get_formatted_subtitle_label(
-        &self,
-        label: &str,
-        color: Color,
-        colon_clr: Color,
-    ) -> ColoredString {
-        let formatted_label = format!("{}{} ", label.color(color), ":".color(colon_clr));
+    fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
+        let formatted_label = format!(
+            "{}{} ",
+            label.color(self.color_set.subtitle),
+            ":".color(self.color_set.colon)
+        );
         self.bold(&formatted_label)
     }
 
