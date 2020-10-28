@@ -30,7 +30,7 @@ strum = { version = "0.19.5", features = ["derive"] }
 image = "0.23.11"
 regex = "1"
 futures = "0.3.7"
-tokio = { version = "0.3.1", features = ["full"] }
+tokio = { version = "0.3.2", features = ["full"] }
 error-chain = "0.12"
 
 [target.'cfg(windows)'.dependencies]
