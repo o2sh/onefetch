@@ -48,7 +48,7 @@ impl std::fmt::Display for Info {
 
             let separator = "-".repeat(git_info_length);
 
-            writeln!(f, "{}", separator.color(self.color_set.underline),)?;
+            writeln!(f, "{}", separator.color(self.color_set.underline))?;
         }
 
         if !self.config.disabled_fields.project {

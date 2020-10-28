@@ -86,14 +86,17 @@ impl Cli {
         )
         .arg(
             Arg::with_name("ascii-input")
-                .long("ascii")
+                .long("ascii-input")
                 .value_name("STRING")
                 .takes_value(true)
                 .max_values(1)
                 .help("Takes a non-empty STRING as input to replace the ASCII logo.")
-                .long_help("Takes a non-empty STRING as input to replace the ASCII logo. \
-                It is possible to pass a generated STRING by command substitution. \
-                Example: onefetch --ascii \"$(fortune | cowsay -W 25)\"")
+                .long_help(
+                    "Takes a non-empty STRING as input to replace the ASCII logo. \
+                     It is possible to pass a generated STRING by command substitution. \
+                     For example:\n \
+                     '--ascii-input \"$(fortune | cowsay -W 25)\"'"
+            )
                 .validator(
                     |t| {
                         if t.is_empty() {
@@ -122,7 +125,13 @@ impl Cli {
                 .takes_value(true)
                 .max_values(6)
                 .possible_values(color_values)
-                .help("Changes the text colors (X X X...) in this order: title, ~, underline, subtitle, colon, info.")
+                .help("Changes the text colors (X X X...).")
+                .long_help(
+                    "Changes the text colors (X X X...). \
+                     Goes in order of title, ~, underline, subtitle, colon, and info. \
+                     For example:\n \
+                     '--text-color 9 10 11 12 13 14'"
+            )
         )
         .arg(
             Arg::with_name("no-bold")

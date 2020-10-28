@@ -18,10 +18,12 @@ Which LANGUAGE's ascii art to print.
 .IP
 Allows you to disable FIELD(s) from appearing in the output.
 .HP
-\fB\-\-ascii\fR <STRING>
+\fB\-\-ascii\-input\fR <STRING>
 .IP
 Takes a non\-empty STRING as input to replace the ASCII logo. It is possible to pass a generated STRING by
-command substitution. Example: onefetch \fB\-\-ascii\fR "$(fortune | cowsay \fB\-W\fR 25)"
+command substitution. For example:
+.IP
+\&'\-\-ascii\-input "$(fortune | cowsay \fB\-W\fR 25)"'
 .HP
 \fB\-c\fR, \fB\-\-ascii\-colors\fR <X>...
 .IP
@@ -29,7 +31,10 @@ Colors (X X X...) to print the ascii art.
 .HP
 \fB\-t\fR, \fB\-\-text\-colors\fR <X>...
 .IP
-Changes the text colors (X X X...) in this order: title, ~, underline, subtitle, colon, info.
+Changes the text colors (X X X...). Goes in order of title, ~, underline, subtitle, colon, and info. For
+example:
+.IP
+\&'\-\-text\-color 9 10 11 12 13 14'
 .HP
 \fB\-\-no\-bold\fR
 .IP
