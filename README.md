@@ -13,7 +13,7 @@
   <a href="https://snapcraft.io/onefetch"><img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"></a>
 </p>
 
-<img src="assets/aesthetic.png" align="right" height="240px">
+<img src="assets/linux.png" align="right" height="240px">
 
 Onefetch is a command-line Git information tool written in `Rust` that will display project information and code statistics about your Git repository directly on your terminal.
 
