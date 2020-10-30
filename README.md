@@ -23,7 +23,7 @@ It automatically detects open source licenses from texts and provides the user w
 
 <img src="assets/go.png" align="right" height="240px">
 
-Onefetch can be configured via command-line flags to display exactly what you want, the you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, etc. Read more about it [here](https://github.com/o2sh/onefetch/wiki/command-line-flags).
+Onefetch can be configured via command-line flags to display exactly what you want, the you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, etc. Read more about it [here](https://github.com/o2sh/onefetch/wiki/command-line-options).
 
 As of now, onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added. 
 
