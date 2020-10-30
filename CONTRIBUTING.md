@@ -89,7 +89,7 @@ Remarks:
  - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
  - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
  - Make sure to trim any unnecessary trailing whitespaces
- - See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/convert-image-to-ascii-art)
+ - See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii)
  - You must always provide an array of basic colors
  - Optionally, you may provide true colors in a second array of colors separated from the first array by a colon
  - One last approach allows you to define colors using the Colors structure itself
