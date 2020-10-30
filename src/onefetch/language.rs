@@ -215,6 +215,22 @@ define_languages! {
     { Python, "python.ascii", "Python", define_colors!( [Color::Blue, Color::Yellow] ) },
     { R, "r.ascii", "R", define_colors!( [Color::White, Color::Blue] ) },
     { Racket, "racket.ascii", "Racket", define_colors!( [Color::Red, Color::White, Color::Blue] ) },
+    {
+        Perl6, "raku.ascii", "Raku", define_colors!( [
+            Color::Blue,
+            Color::Red,
+            Color::Yellow,
+            Color::White,
+            Color::Green
+        ] : [
+            Color::TrueColor{ r:91, g:0, b:253 },
+            Color::TrueColor{ r:255, g:0, b:94 },
+            Color::TrueColor{ r:243, g:255, b:39 },
+            Color::TrueColor{ r:255, g:255, b:255 },
+            Color::TrueColor{ r:0, g:255, b:57 }
+        ] ),
+        "raku"
+    },
     { Ruby, "ruby.ascii", "Ruby", define_colors!( [Color::Magenta] ) },
     { Rust, "rust.ascii", "Rust", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:228, g:55 ,b:23}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
     { Scala, "scala.ascii", "Scala", define_colors!( [Color::Red, Color::Red] : [Color::TrueColor{ r:223, g:63 ,b:61}, Color::TrueColor{ r:127, g:12 ,b:29} ] ) },
