@@ -194,7 +194,7 @@ define_languages! {
     { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] ) },
     { Html, "html.ascii", "HTML", define_colors!( [Color::Red, Color::White] ) },
     { Idris, "idris.ascii", "Idris", define_colors!( [Color::Red] ) },
-    { Java, "java.ascii", "Java", define_colors!( [Color::Cyan, Color::Red] ) },
+    { Java, "java.ascii", "Java", define_colors!( [Color::Blue, Color::Red] : [Color::TrueColor{ r:244, g:67 ,b:54}, Color::TrueColor{ r:22, g:101 ,b:192} ] ) },
     { JavaScript, "javascript.ascii", "JavaScript", define_colors!( [Color::Yellow] : [Color::TrueColor{ r:236, g:230 ,b:83} ]) },
     { Jsx, "jsx.ascii", "JSX", define_colors!( [Color::Yellow] ) },
     { Julia, "julia.ascii", "Julia", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },

@@ -7,7 +7,7 @@ authors = ["o2sh <ossama-hjaji@live.fr>"]
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/o2sh/onefetch"
-exclude = ["assets/*.png", "tools/*"]
+exclude = ["assets/*", "tools/*"]
 
 [package.metadata.deb]
 extended-description = """\
