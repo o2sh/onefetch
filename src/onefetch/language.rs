@@ -179,7 +179,7 @@ define_languages! {
     { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] : [Color::TrueColor{r:154, g:73, b:147}, Color::TrueColor{r:106, g:21, b:119}] ), "c#" },
     { Css, "css.ascii", "CSS", define_colors!( [Color::Blue, Color::White] ) },
     { D, "d.ascii", "D", define_colors!( [Color::Red] ) },
-    { Dart, "dart.ascii", "Dart", define_colors!( [Color::Cyan, Color::Blue] ) },
+    { Dart, "dart.ascii", "Dart", define_colors!( [Color::Blue, Color::Cyan, Color::Blue ] : [Color::TrueColor{ r:0, g:163, b:231 }, Color::TrueColor{ r:66, g:223, b:205 }, Color::TrueColor{ r:1, g:89, b:125 }] ) },
     { Dockerfile, "dockerfile.ascii", "Dockerfile", define_colors!( [Color::Cyan, Color::White, Color::Cyan] ) },
     { Elisp, "emacslisp.ascii", "EmacsLisp", define_colors!( [Color::Magenta, Color::White] ), "emacslisp" },
     { Elixir, "elixir.ascii", "Elixir", define_colors!( [Color::Magenta] ) },
@@ -191,7 +191,7 @@ define_languages! {
     { FSharp, "fsharp.ascii", "F#", define_colors!( [Color::Cyan, Color::Cyan] ), "f#" },
     { Go, "go.ascii", "Go", define_colors!( [Color::Cyan, Color::White, Color::Yellow] : [Color::TrueColor{ r:116, g:205, b:221 }, Color::TrueColor{ r:255, g:255, b:255 }, Color::TrueColor{ r:246, g:210, b:162 }] ) },
     { Groovy, "groovy.ascii", "Groovy", define_colors!( [Color::Cyan, Color::White] ) },
-    { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] ) },
+    { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] : [Color::TrueColor{ r:69, g:58, b:98 }, Color::TrueColor{ r:94, g:80, b:134 }, Color::TrueColor{ r:143, g:78, b:139 }] ) },
     { Html, "html.ascii", "HTML", define_colors!( [Color::Red, Color::White] ) },
     { Idris, "idris.ascii", "Idris", define_colors!( [Color::Red] ) },
     { Java, "java.ascii", "Java", define_colors!( [Color::Blue, Color::Red] : [Color::TrueColor{ r:244, g:67 ,b:54}, Color::TrueColor{ r:22, g:101 ,b:192} ] ) },
@@ -212,8 +212,8 @@ define_languages! {
     { Php, "php.ascii", "Php", define_colors!( [Color::Magenta, Color::Blue, Color::Cyan, Color::White] ) },
     { Prolog, "prolog.ascii", "Prolog", define_colors!( [Color::White] ) },
     { PureScript, "purescript.ascii", "PureScript", define_colors!( [Color::White] ) },
-    { Python, "python.ascii", "Python", define_colors!( [Color::Blue, Color::Yellow] ) },
-    { R, "r.ascii", "R", define_colors!( [Color::White, Color::Blue] ) },
+    { Python, "python.ascii", "Python", define_colors!( [Color::Blue, Color::Yellow] : [Color::TrueColor{ r:47, g:105 ,b:162}, Color::TrueColor{ r:255, g:217 ,b:64} ] ) },
+    { R, "r.ascii", "R", define_colors!( [Color::White, Color::Blue] )  },
     { Racket, "racket.ascii", "Racket", define_colors!( [Color::Red, Color::White, Color::Blue] ) },
     {
         Perl6, "raku.ascii", "Raku", define_colors!( [
