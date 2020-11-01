@@ -4,6 +4,7 @@ use {
         c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
         POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
     },
+    std::env,
     std::time::Instant,
 };
 
@@ -15,6 +16,13 @@ impl KittyBackend {
     }
 
     pub fn supported() -> bool {
+        if !env::var("KITTY_WINDOW_ID")
+            .unwrap_or("".to_string())
+            .is_empty()
+        {
+            return true;
+        }
+
         // save terminal attributes and disable canonical input processing mode
         let old_attributes = unsafe {
             let mut old_attributes: termios = std::mem::zeroed();
