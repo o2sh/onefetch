@@ -57,11 +57,17 @@ impl Detector {
                         .map(|s| is_package_file(&self, s.as_ref()))
                         .unwrap_or_default()
             })
-            .map(|entry| {
+            .filter_map(|entry| {
                 let (parser, package_manager) =
                     &self.package_managers[entry.file_name().unwrap().to_str().unwrap()];
                 let contents = fs::read_to_string(entry).unwrap_or_default();
-                format!("{} ({})", parser(&contents).unwrap(), package_manager)
+
+                match parser(&contents) {
+                    Some(number_of_deps) => {
+                        Some(format!("{} ({})", number_of_deps, package_manager))
+                    }
+                    None => None,
+                }
             })
             .collect::<Vec<_>>();
 
