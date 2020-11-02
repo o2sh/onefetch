@@ -36,8 +36,7 @@ pub fn check_if_supported(backend_name: &str) -> Result<()> {
                 return Err("Kitty image backend is not supported".into());
             }
         }
-        "iterm2" => {
-        }
+        "iterm2" => {}
         "sixel" => {
             if !sixel::SixelBackend::supported() {
                 return Err("Sixel image backend is not supported".into());
