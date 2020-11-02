@@ -2,9 +2,9 @@ use crate::onefetch::error::*;
 use image::DynamicImage;
 
 #[cfg(not(windows))]
-pub mod kitty;
-#[cfg(not(windows))]
 pub mod iterm2;
+#[cfg(not(windows))]
+pub mod kitty;
 #[cfg(not(windows))]
 pub mod sixel;
 
