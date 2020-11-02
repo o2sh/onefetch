@@ -16,7 +16,7 @@ impl KittyBackend {
     }
 
     pub fn supported() -> bool {
-        if !env::var("KITTY_WINDOW_ID").unwrap_or("".to_string()).is_empty() {
+        if !env::var("KITTY_WINDOW_ID").unwrap_or_else(|_| "".to_string()).is_empty() {
             return true;
         }
 

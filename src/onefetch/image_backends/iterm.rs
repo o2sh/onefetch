@@ -4,20 +4,20 @@ use {
     std::env,
 };
 
-pub struct ITerm2Backend {}
+pub struct ITermBackend {}
 
-impl ITerm2Backend {
+impl ITermBackend {
     pub fn new() -> Self {
-        Self {}
+        ITermBackend {}
     }
 
     pub fn supported() -> bool {
-        let term_program = env::var("TERM_PROGRAM").unwrap_or("".to_string());
+        let term_program = env::var("TERM_PROGRAM").unwrap_or_else(|_| "".to_string());
         term_program == "iTerm.app"
     }
 }
 
-impl super::ImageBackend for ITerm2Backend {
+impl super::ImageBackend for ITermBackend {
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, _colors: usize) -> String {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();

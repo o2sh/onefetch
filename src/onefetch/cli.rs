@@ -36,7 +36,7 @@ impl Cli {
     /// Build `Options` from command line arguments.
     pub fn new() -> Result<Self> {
         #[cfg(not(windows))]
-        let possible_backends = ["kitty", "iterm2", "sixel"];
+        let possible_backends = ["kitty", "iterm", "sixel"];
         #[cfg(windows)]
         let possible_backends = [];
         let color_values =
