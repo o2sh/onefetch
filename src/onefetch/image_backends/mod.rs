@@ -37,9 +37,6 @@ pub fn check_if_supported(backend_name: &str) -> Result<()> {
             }
         }
         "iterm2" => {
-            if !iterm2::ITerm2Backend::supported() {
-                return Err("iTerm2 image backend is not supported".into());
-            }
         }
         "sixel" => {
             if !sixel::SixelBackend::supported() {
