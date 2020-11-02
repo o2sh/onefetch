@@ -33,11 +33,7 @@ impl<W: Write> Printer<W> {
             let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
                 AsciiArt::new(custom_ascii, &colors, !self.info.config.no_bold)
             } else {
-                AsciiArt::new(
-                    self.get_ascii(),
-                    &self.info.colors,
-                    !self.info.config.no_bold,
-                )
+                AsciiArt::new(self.get_ascii(), &self.info.colors, !self.info.config.no_bold)
             };
 
             loop {

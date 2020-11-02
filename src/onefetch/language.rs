@@ -339,21 +339,14 @@ impl Language {
 
         let mut languages = tokei::Languages::new();
         let required_languages = get_all_language_types();
-        let tokei_config = Config {
-            types: Some(required_languages),
-            ..Config::default()
-        };
+        let tokei_config = Config { types: Some(required_languages), ..Config::default() };
 
         if !ignored_directories.is_empty() {
             let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
             let mut v = Vec::with_capacity(ignored_directories.len());
             for ignored in ignored_directories {
                 if re.is_match(&ignored) {
-                    let p = if ignored.starts_with('/') {
-                        "**"
-                    } else {
-                        "**/"
-                    };
+                    let p = if ignored.starts_with('/') { "**" } else { "**/" };
                     v.push(format!("{}{}", p, ignored));
                 } else {
                     v.push(String::from(ignored));

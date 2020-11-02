@@ -35,11 +35,7 @@ impl SixelBackend {
         println!("\x1B[c");
 
         let start_time = Instant::now();
-        let mut stdin_pollfd = pollfd {
-            fd: STDIN_FILENO,
-            events: POLLIN,
-            revents: 0,
-        };
+        let mut stdin_pollfd = pollfd { fd: STDIN_FILENO, events: POLLIN, revents: 0 };
         let mut buf = Vec::<u8>::new();
         loop {
             // check for timeout while polling to avoid blocking the main thread

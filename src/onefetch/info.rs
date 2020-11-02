@@ -102,11 +102,7 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
-            let title = if self.languages.len() > 1 {
-                "Languages"
-            } else {
-                "Language"
-            };
+            let title = if self.languages.len() > 1 { "Languages" } else { "Language" };
 
             let languages_str = self.get_language_field(title);
 
@@ -119,11 +115,7 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
-            let title = if self.authors.len() > 1 {
-                "Authors"
-            } else {
-                "Author"
-            };
+            let title = if self.authors.len() > 1 { "Authors" } else { "Author" };
 
             let author_str = self.get_author_field(title);
 
@@ -213,9 +205,7 @@ impl Info {
     pub async fn new(config: Cli) -> Result<Info> {
         let repo = Repository::discover(&config.path)
             .chain_err(|| "Could not find a valid git repo on the current path")?;
-        let workdir = repo
-            .workdir()
-            .chain_err(|| "Unable to run onefetch on bare git repo")?;
+        let workdir = repo.workdir().chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
             Language::get_language_statistics(workdir_str, &config.excluded)?;
@@ -285,11 +275,7 @@ impl Info {
 
         args.push("--pretty=%cr\t%ae\t%an");
 
-        let output = Command::new("git")
-            .args(args)
-            .output()
-            .await
-            .expect("Failed to execute git.");
+        let output = Command::new("git").args(args).output().await.expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
         output.lines().map(|x| x.to_string()).collect::<Vec<_>>()
@@ -328,9 +314,7 @@ impl Info {
     }
 
     fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
-        let config = repo
-            .config()
-            .chain_err(|| "Could not retrieve git configuration data");
+        let config = repo.config().chain_err(|| "Could not retrieve git configuration data");
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
@@ -363,15 +347,10 @@ impl Info {
     }
 
     fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-        let head = repo
-            .head()
-            .chain_err(|| "Error while retrieving reference information")?;
-        let head_oid = head
-            .target()
-            .ok_or("Error while retrieving reference information")?;
-        let refs = repo
-            .references()
-            .chain_err(|| "Error while retrieving reference information")?;
+        let head = repo.head().chain_err(|| "Error while retrieving reference information")?;
+        let head_oid = head.target().ok_or("Error while retrieving reference information")?;
+        let refs =
+            repo.references().chain_err(|| "Error while retrieving reference information")?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
@@ -398,9 +377,7 @@ impl Info {
             let author_email = line.split('\t').collect::<Vec<_>>()[1].to_string();
             let author_name = line.split('\t').collect::<Vec<_>>()[2].to_string();
             let commit_count = authors.entry(author_email.to_string()).or_insert(0);
-            author_name_by_email
-                .entry(author_email.to_string())
-                .or_insert(author_name);
+            author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
             *commit_count += 1;
             total_commits += 1;
         }
@@ -414,11 +391,7 @@ impl Info {
             .into_iter()
             .map(|(author, count)| {
                 (
-                    author_name_by_email
-                        .get(&author)
-                        .unwrap()
-                        .trim_matches('\'')
-                        .to_string(),
+                    author_name_by_email.get(&author).unwrap().trim_matches('\'').to_string(),
                     count,
                     count * 100 / total_commits,
                 )
@@ -429,11 +402,8 @@ impl Info {
     }
 
     async fn get_git_version_and_username(dir: &str) -> (String, String) {
-        let version = Command::new("git")
-            .arg("--version")
-            .output()
-            .await
-            .expect("Failed to execute git.");
+        let version =
+            Command::new("git").arg("--version").output().await.expect("Failed to execute git.");
         let version = String::from_utf8_lossy(&version.stdout).replace('\n', "");
 
         let username = Command::new("git")
@@ -535,9 +505,7 @@ impl Info {
 
         let output = String::from_utf8_lossy(&output.stdout);
         let lines = output.to_string();
-        let size_line = lines
-            .split('\n')
-            .find(|line| line.starts_with("size-pack:"));
+        let size_line = lines.split('\n').find(|line| line.starts_with("size-pack:"));
 
         let repo_size = match size_line {
             None => "??",
@@ -647,11 +615,8 @@ impl Info {
     }
 
     fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
-        let formatted_label = format!(
-            "{}{} ",
-            label.color(self.color_set.subtitle),
-            ":".color(self.color_set.colon)
-        );
+        let formatted_label =
+            format!("{}{} ", label.color(self.color_set.subtitle), ":".color(self.color_set.colon));
         self.bold(&formatted_label)
     }
 

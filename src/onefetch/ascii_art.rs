@@ -29,13 +29,7 @@ impl<'a> AsciiArt<'a> {
                 (acc_s.min(line_s), acc_e.max(line_e))
             });
 
-        AsciiArt {
-            content: Box::new(lines.into_iter()),
-            colors,
-            bold,
-            start,
-            end,
-        }
+        AsciiArt { content: Box::new(lines.into_iter()), colors, bold, start, end }
     }
     pub fn width(&self) -> usize {
         assert!(self.end >= self.start);
@@ -96,9 +90,8 @@ struct Tokens<'a>(&'a str);
 impl<'a> Iterator for Tokens<'a> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
-        let (s, tok) = color_token(self.0)
-            .or_else(|| space_token(self.0))
-            .or_else(|| char_token(self.0))?;
+        let (s, tok) =
+            color_token(self.0).or_else(|| space_token(self.0)).or_else(|| char_token(self.0))?;
 
         self.0 = s;
         Some(tok)
@@ -129,9 +122,7 @@ impl<'a> Tokens<'a> {
         last_non_space
     }
     fn leading_spaces(&mut self) -> usize {
-        self.take_while(|token| !token.is_solid())
-            .filter(|token| token.is_space())
-            .count()
+        self.take_while(|token| !token.is_solid()).filter(|token| token.is_space()).count()
     }
     fn truncate(self, mut start: usize, end: usize) -> impl 'a + Iterator<Item = Token> {
         assert!(start <= end);
@@ -269,40 +260,19 @@ mod test {
 
         let colors_shim = Vec::new();
 
-        assert_eq!(
-            Tokens("").render(&colors_shim, 0, 0, true),
-            "\u{1b}[1;37m\u{1b}[0m"
-        );
+        assert_eq!(Tokens("").render(&colors_shim, 0, 0, true), "\u{1b}[1;37m\u{1b}[0m");
 
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, true),
-            "\u{1b}[1;37m\u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 0, true), "\u{1b}[1;37m\u{1b}[0m");
 
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, true),
-            "\u{1b}[1;37m     \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 5, true), "\u{1b}[1;37m     \u{1b}[0m");
 
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 1, 5, true),
-            "\u{1b}[1;37m    \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 1, 5, true), "\u{1b}[1;37m    \u{1b}[0m");
 
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 3, 5, true),
-            "\u{1b}[1;37m  \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 3, 5, true), "\u{1b}[1;37m  \u{1b}[0m");
 
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 4, true),
-            "\u{1b}[1;37m    \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 4, true), "\u{1b}[1;37m    \u{1b}[0m");
 
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 3, true),
-            "\u{1b}[1;37m   \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 3, true), "\u{1b}[1;37m   \u{1b}[0m");
 
         assert_eq!(
             Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
@@ -310,22 +280,13 @@ mod test {
         );
 
         // Tests for bold disabled
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, false),
-            "\u{1b}[37m\u{1b}[0m"
-        );
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, false),
-            "\u{1b}[37m     \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 0, false), "\u{1b}[37m\u{1b}[0m");
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 5, false), "\u{1b}[37m     \u{1b}[0m");
     }
 
     #[test]
     fn truncate() {
-        assert_eq!(
-            Tokens("").truncate(0, 0).collect::<Vec<_>>(),
-            Tokens("").collect::<Vec<_>>()
-        );
+        assert_eq!(Tokens("").truncate(0, 0).collect::<Vec<_>>(), Tokens("").collect::<Vec<_>>());
 
         assert_eq!(
             Tokens("     ").truncate(0, 0).collect::<Vec<_>>(),
@@ -353,9 +314,7 @@ mod test {
         );
 
         assert_eq!(
-            Tokens("  {1} {5}  {9} a")
-                .truncate(4, 10)
-                .collect::<Vec<_>>(),
+            Tokens("  {1} {5}  {9} a").truncate(4, 10).collect::<Vec<_>>(),
             Tokens("{1}{5} {9} a").collect::<Vec<_>>()
         );
     }

@@ -37,9 +37,7 @@ impl super::ImageBackend for ITerm2Backend {
         let image_rows = height_ratio * f64::from(image.height());
 
         let mut bytes: Vec<u8> = Vec::new();
-        image
-            .write_to(&mut bytes, image::ImageOutputFormat::Png)
-            .unwrap();
+        image.write_to(&mut bytes, image::ImageOutputFormat::Png).unwrap();
         let encoded_image = base64::encode(bytes);
         let mut image_data = Vec::<u8>::new();
 
