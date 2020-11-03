@@ -995,9 +995,9 @@ dependencies = [
 
 [[package]]
 name = "mio"
-version = "0.7.3"
+version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e53a6ea5f38c0a48ca42159868c6d8e1bd56c0451238856cc08d58563643bdc3"
+checksum = "8962c171f57fcfffa53f4df1bb15ec4c8cf26a7569459c9ceb62d94aab0d9584"
 dependencies = [
  "libc",
  "log",
@@ -1750,12 +1750,12 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71f1b20504fd0aa9dab3ae17e8c4dd9431e5e08fd6921689f9745a4004883a17"
+checksum = "e5ca08accbcb46f11fd8d2d1c6158c348b7888009a1f39260bcad66f6a454250"
 dependencies = [
+ "autocfg",
  "bytes",
- "fnv",
  "futures-core",
  "lazy_static",
  "libc",
