@@ -9,14 +9,14 @@
 {0}          |||    |||           
 {0}            ||    ||           
 {0}              |   |            
-{1}   ssss               s    ss  
-{1}    ssssssssssssssss       ss  
-{1}       s                   ss  
-{1}      ssssssssssssssss   sss   
+{1}   ####               #    ##  
+{1}    ################       ##  
+{1}       #                   ##  
+{1}      ################   ###   
 {1}                               
-{1}       ssssssssssssss          
-{1}ssss      sssssss          s   
-{1}sssss                   ssss   
-{1}   sssssssssssssssssssss      s
-{1}                          sss  
-{1}          sssssssssssssss
+{1}       ##############          
+{1}####      #######          #   
+{1}#####                   ####   
+{1}   #####################      #
+{1}                          ###  
+{1}          ###############
