@@ -9,7 +9,7 @@ pub mod kitty;
 pub mod sixel;
 
 pub trait ImageBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> String;
+    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String>;
 }
 
 #[cfg(not(windows))]
@@ -23,33 +23,6 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     } else {
         None
     }
-}
-
-pub fn check_if_supported(backend_name: &str) -> Result<()> {
-    #[cfg(windows)]
-    return Err(format!("{} image backend is not supported", backend_name).into());
-
-    #[cfg(not(windows))]
-    match backend_name {
-        "kitty" => {
-            if !kitty::KittyBackend::supported() {
-                return Err("Kitty image backend is not supported".into());
-            }
-        }
-        "iterm" => {
-            if !iterm::ITermBackend::supported() {
-                return Err("iTerm image backend is not supported".into());
-            }
-        }
-        "sixel" => {
-            if !sixel::SixelBackend::supported() {
-                return Err("Sixel image backend is not supported".into());
-            }
-        }
-        _ => unreachable!(),
-    };
-
-    Ok(())
 }
 
 pub fn get_image_backend(backend_name: &str) -> Option<Box<dyn ImageBackend>> {

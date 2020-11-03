@@ -238,7 +238,6 @@ impl Cli {
 
         let image_backend = if image.is_some() {
             if let Some(backend_name) = matches.value_of("image-backend") {
-                image_backends::check_if_supported(backend_name)?;
                 image_backends::get_image_backend(backend_name)
             } else {
                 image_backends::get_best_backend()

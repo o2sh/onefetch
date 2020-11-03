@@ -1,4 +1,5 @@
 use {
+    crate::onefetch::error::*,
     image::{imageops::FilterType, DynamicImage, GenericImageView},
     libc::{
         c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
@@ -71,7 +72,12 @@ impl KittyBackend {
 }
 
 impl super::ImageBackend for KittyBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, _colors: usize) -> String {
+    fn add_image(
+        &self,
+        lines: Vec<String>,
+        image: &DynamicImage,
+        _colors: usize,
+    ) -> Result<String> {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
@@ -116,6 +122,6 @@ impl super::ImageBackend for KittyBackend {
         image_data
             .extend(format!("\n\x1B[{}B", lines.len().max(image_rows as usize) - i).as_bytes()); // move cursor to end of image
 
-        String::from_utf8(image_data).unwrap()
+        Ok(String::from_utf8(image_data)?)
     }
 }

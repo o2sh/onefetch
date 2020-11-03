@@ -1,4 +1,5 @@
 use {
+    crate::onefetch::error::*,
     image::{imageops::FilterType, DynamicImage, GenericImageView},
     libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ},
     std::env,
@@ -18,7 +19,12 @@ impl ITermBackend {
 }
 
 impl super::ImageBackend for ITermBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, _colors: usize) -> String {
+    fn add_image(
+        &self,
+        lines: Vec<String>,
+        image: &DynamicImage,
+        _colors: usize,
+    ) -> Result<String> {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
@@ -37,7 +43,7 @@ impl super::ImageBackend for ITermBackend {
         let image_rows = height_ratio * f64::from(image.height());
 
         let mut bytes: Vec<u8> = Vec::new();
-        image.write_to(&mut bytes, image::ImageOutputFormat::Png).unwrap();
+        image.write_to(&mut bytes, image::ImageOutputFormat::Png)?;
         let encoded_image = base64::encode(bytes);
         let mut image_data = Vec::<u8>::new();
 
@@ -54,6 +60,6 @@ impl super::ImageBackend for ITermBackend {
         image_data
             .extend(format!("\n\x1B[{}B", lines.len().max(image_rows as usize) - i).as_bytes()); // move cursor to end of image
 
-        String::from_utf8(image_data).unwrap()
+        Ok(String::from_utf8(image_data)?)
     }
 }
