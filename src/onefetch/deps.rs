@@ -43,10 +43,7 @@ mod package_parsers {
     }
 
     pub fn pip(contents: &str) -> Option<i32> {
-        let count = Regex::new(r"(^[A-z]+)|(\n[A-z]+)")
-            .unwrap()
-            .find_iter(contents)
-            .count();
+        let count = Regex::new(r"(^[A-z]+)|(\n[A-z]+)").unwrap().find_iter(contents).count();
 
         Some(count as i32)
     }
@@ -61,26 +58,19 @@ impl Detector {
             String::from("go.mod"),
             (package_parsers::gomodules, PackageManager::GoModules),
         );
-        package_managers.insert(
-            String::from("package.json"),
-            (package_parsers::npm, PackageManager::Npm),
-        );
-        package_managers.insert(
-            String::from("requirements.txt"),
-            (package_parsers::pip, PackageManager::Pip),
-        );
+        package_managers
+            .insert(String::from("package.json"), (package_parsers::npm, PackageManager::Npm));
+        package_managers
+            .insert(String::from("requirements.txt"), (package_parsers::pip, PackageManager::Pip));
 
         Self { package_managers }
     }
 
     pub fn get_deps_info(&self, dir: &str) -> Result<String> {
         fn is_package_file(detector: &Detector, file_name: &str) -> bool {
-            detector
-                .package_managers
-                .iter()
-                .any(|(package_manager_file_name, _)| {
-                    file_name.starts_with(package_manager_file_name)
-                })
+            detector.package_managers.iter().any(|(package_manager_file_name, _)| {
+                file_name.starts_with(package_manager_file_name)
+            })
         }
 
         let package_files = fs::read_dir(dir)
