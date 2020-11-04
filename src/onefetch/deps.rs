@@ -1,20 +1,21 @@
 use {
     crate::onefetch::error::*,
-    regex::Regex,
     std::collections::HashMap,
     std::{ffi::OsStr, fs},
 };
 
 pub enum PackageManager {
-    Npm,
     GoModules,
+    Npm,
+    Pip,
 }
 
 impl std::fmt::Display for PackageManager {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
-            PackageManager::Npm => write!(f, "Npm"),
             PackageManager::GoModules => write!(f, "Go Modules"),
+            PackageManager::Npm => write!(f, "Npm"),
+            PackageManager::Pip => write!(f, "Pip"),
         }
     }
 }
@@ -25,26 +26,45 @@ pub struct Detector {
     package_managers: HashMap<String, (DependencyParser, PackageManager)>,
 }
 
-fn npm(contents: &str) -> Option<i32> {
-    let parsed = json::parse(contents).unwrap();
+// Package parsers go here. Parsers should take stirng contents and output a i32
+mod package_parsers {
+    use regex::Regex;
 
-    Some(parsed["dependencies"].len() as i32)
-}
+    pub fn gomodules(contents: &str) -> Option<i32> {
+        let count = Regex::new(r"v[0-9]+").unwrap().find_iter(contents).count();
 
-fn gomodules(contents: &str) -> Option<i32> {
-    let count = Regex::new(r"v[0-9].").unwrap().find_iter(contents).count();
+        Some(count as i32)
+    }
 
-    Some(count as i32)
+    pub fn npm(contents: &str) -> Option<i32> {
+        let parsed = json::parse(contents).unwrap();
+
+        Some(parsed["dependencies"].len() as i32)
+    }
+
+    pub fn pip(contents: &str) -> Option<i32> {
+        let count = Regex::new(r"(^[A-z]+)|(\n[A-z]+)").unwrap().find_iter(contents).count();
+
+        Some(count as i32)
+    }
 }
 
 impl Detector {
     pub fn new() -> Self {
         let mut package_managers: HashMap<String, (DependencyParser, PackageManager)> =
             HashMap::new();
-        package_managers.insert(String::from("package.json"), (npm, PackageManager::Npm));
+
         package_managers.insert(
             String::from("go.mod"),
-            (gomodules, PackageManager::GoModules),
+            (package_parsers::gomodules, PackageManager::GoModules),
+        );
+        package_managers.insert(
+            String::from("package.json"),
+            (package_parsers::npm, PackageManager::Npm),
+        );
+        package_managers.insert(
+            String::from("requirements.txt"),
+            (package_parsers::pip, PackageManager::Pip),
         );
 
         Self { package_managers }
