@@ -5,6 +5,7 @@ use {
 };
 
 pub enum PackageManager {
+    Cargo,
     GoModules,
     Npm,
     Pip,
@@ -13,6 +14,7 @@ pub enum PackageManager {
 impl std::fmt::Display for PackageManager {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
+            PackageManager::Cargo => write!(f, "Cargo"),
             PackageManager::GoModules => write!(f, "Go Modules"),
             PackageManager::Npm => {
                 if std::path::Path::new("./yarn.lock").exists() {
@@ -34,7 +36,16 @@ pub struct Detector {
 
 // Package parsers go here. Parsers should take stirng contents and output a i32
 mod package_parsers {
-    use regex::Regex;
+    use {
+        regex::Regex,
+        toml::Value,
+    };
+
+    pub fn cargo(contents: &str) -> Option<i32> {
+        let parsed = contents.parse::<Value>().unwrap();
+
+        Some(parsed["dependencies"].as_table().unwrap().len() as i32)
+    }
 
     pub fn gomodules(contents: &str) -> Option<i32> {
         let count = Regex::new(r"v[0-9]+").unwrap().find_iter(contents).count();
@@ -60,6 +71,8 @@ impl Detector {
         let mut package_managers: HashMap<String, (DependencyParser, PackageManager)> =
             HashMap::new();
 
+        package_managers
+            .insert(String::from("Cargo.toml"), (package_parsers::cargo, PackageManager::Cargo));
         package_managers.insert(
             String::from("go.mod"),
             (package_parsers::gomodules, PackageManager::GoModules),

@@ -31,6 +31,7 @@ strum = { version = "0.19.5", features = ["derive"] }
 image = "0.23.11"
 regex = "1"
 error-chain = "0.12"
+toml = "0.5.7"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
