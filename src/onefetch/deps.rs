@@ -36,10 +36,7 @@ pub struct Detector {
 
 // Package parsers go here. Parsers should take stirng contents and output a i32
 mod package_parsers {
-    use {
-        regex::Regex,
-        toml::Value,
-    };
+    use {regex::Regex, toml::Value};
 
     pub fn cargo(contents: &str) -> Option<i32> {
         let parsed = contents.parse::<Value>().unwrap();
