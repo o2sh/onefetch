@@ -1,6 +1,6 @@
 use {
     crate::onefetch::{
-        cli::Cli, commit_info::CommitInfo, error::*, language::Language, license::Detector,
+        cli::Cli, commit_info::CommitInfo, deps, error::*, language::Language, license::Detector,
         text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
@@ -18,6 +18,7 @@ pub struct Info {
     creation_date: String,
     pub dominant_language: Language,
     languages: Vec<(Language, f64)>,
+    dependencies: String,
     authors: Vec<(String, usize, usize)>,
     last_change: String,
     repo_url: String,
@@ -115,6 +116,15 @@ impl std::fmt::Display for Info {
                 "{}{}",
                 &self.get_formatted_subtitle_label(title),
                 languages_str.color(self.color_set.info)
+            )?;
+        }
+
+        if !self.config.disabled_fields.dependencies && !self.dependencies.is_empty() {
+            writeln!(
+                f,
+                "{}{}",
+                &self.get_formatted_subtitle_label("Dependencies"),
+                &self.dependencies.color(self.color_set.info),
             )?;
         }
 
@@ -244,6 +254,7 @@ impl Info {
         let last_change = Info::get_date_of_last_commit(&git_history);
         let project_license = Detector::new()?.get_project_license(workdir_str);
         let dominant_language = Language::get_dominant_language(&languages_stats);
+        let dependencies = deps::Detector::new().get_deps_info(workdir_str).unwrap();
         let colors = Info::get_colors(
             &config.ascii_language,
             &dominant_language,
@@ -261,6 +272,7 @@ impl Info {
             creation_date: creation_date?,
             dominant_language,
             languages: languages_stats,
+            dependencies,
             authors,
             last_change: last_change?,
             repo_url: repository_url,

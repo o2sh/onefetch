@@ -18,24 +18,26 @@ impl std::fmt::Display for PackageManager {
 
 type DependencyParser = fn(&str) -> Option<i32>;
 
-struct Detector {
+pub struct Detector {
     package_managers: HashMap<String, (DependencyParser, PackageManager)>,
 }
 
 fn npm(contents: &str) -> Option<i32> {
-    Some(0)
+    let parsed = json::parse(contents).unwrap();
+
+    Some(parsed["dependencies"].len() as i32)
 }
 
 impl Detector {
-    pub fn new(&self) -> Detector {
+    pub fn new() -> Self {
         let mut package_managers: HashMap<String, (DependencyParser, PackageManager)> =
             HashMap::new();
         package_managers.insert(String::from("package.json"), (npm, PackageManager::Npm));
 
-        Detector { package_managers }
+        Self { package_managers }
     }
 
-    pub fn get_dep_count(&self, dir: &str) -> Result<String> {
+    pub fn get_deps_info(&self, dir: &str) -> Result<String> {
         fn is_package_file(detector: &Detector, file_name: &str) -> bool {
             detector
                 .package_managers
