@@ -9,6 +9,7 @@ use {
         c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
         POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
     },
+    std::io::{stdout, Write},
     std::time::Instant,
 };
 
@@ -33,7 +34,8 @@ impl SixelBackend {
         };
 
         // ask for the primary device attribute string
-        println!("\x1B[c");
+        print!("\x1B[c");
+        stdout().flush().unwrap();
 
         let start_time = Instant::now();
         let mut stdin_pollfd = pollfd { fd: STDIN_FILENO, events: POLLIN, revents: 0 };
