@@ -29,8 +29,6 @@ clap = "2.33.3"
 strum = { version = "0.19.5", features = ["derive"] }
 image = "0.23.11"
 regex = "1"
-futures = "0.3.7"
-tokio = { version = "0.3.3", features = ["full"] }
 error-chain = "0.12"
 
 [target.'cfg(windows)'.dependencies]
