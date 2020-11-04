@@ -6,7 +6,7 @@ use {
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
     regex::Regex,
-    tokio::process::Command,
+    std::process::Command,
 };
 
 pub struct Info {
@@ -103,11 +103,7 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
-            let title = if self.languages.len() > 1 {
-                "Languages"
-            } else {
-                "Language"
-            };
+            let title = if self.languages.len() > 1 { "Languages" } else { "Language" };
 
             let languages_str = self.get_language_field(title);
 
@@ -129,11 +125,7 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
-            let title = if self.authors.len() > 1 {
-                "Authors"
-            } else {
-                "Author"
-            };
+            let title = if self.authors.len() > 1 { "Authors" } else { "Author" };
 
             let author_str = self.get_author_field(title);
 
@@ -219,33 +211,19 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    #[tokio::main]
-    pub async fn new(config: Cli) -> Result<Info> {
+    pub fn new(config: Cli) -> Result<Info> {
         let repo = Repository::discover(&config.path)
             .chain_err(|| "Could not find a valid git repo on the current path")?;
-        let workdir = repo
-            .workdir()
-            .chain_err(|| "Unable to run onefetch on bare git repo")?;
+        let workdir = repo.workdir().chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, number_of_lines) =
             Language::get_language_statistics(workdir_str, &config.excluded)?;
-
-        let (
-            git_history,
-            (number_of_tags, number_of_branches),
-            (git_v, git_user),
-            version,
-            pending,
-            repo_size,
-        ) = futures::join!(
-            Info::get_git_history(workdir_str, config.no_merges),
-            Info::get_number_of_tags_branches(workdir_str),
-            Info::get_git_version_and_username(workdir_str),
-            Info::get_version(workdir_str),
-            Info::get_pending_changes(workdir_str),
-            Info::get_packed_size(workdir_str)
-        );
-
+        let git_history = Info::get_git_history(workdir_str, config.no_merges);
+        let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(workdir_str);
+        let (git_v, git_user) = Info::get_git_version_and_username(workdir_str);
+        let version = Info::get_version(workdir_str);
+        let pending = Info::get_pending_changes(workdir_str);
+        let repo_size = Info::get_packed_size(workdir_str);
         let (repository_name, repository_url) = Info::get_repo_name_and_url(&repo);
         let current_commit_info = Info::get_current_commit_info(&repo);
         let creation_date = Info::get_creation_date(&git_history);
@@ -289,7 +267,7 @@ impl Info {
         })
     }
 
-    async fn get_git_history(dir: &str, no_merges: bool) -> Vec<String> {
+    fn get_git_history(dir: &str, no_merges: bool) -> Vec<String> {
         let mut args = vec!["-C", dir, "log"];
         if no_merges {
             args.push("--no-merges");
@@ -297,22 +275,17 @@ impl Info {
 
         args.push("--pretty=%cr\t%ae\t%an");
 
-        let output = Command::new("git")
-            .args(args)
-            .output()
-            .await
-            .expect("Failed to execute git.");
+        let output = Command::new("git").args(args).output().expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
         output.lines().map(|x| x.to_string()).collect::<Vec<_>>()
     }
 
-    async fn get_number_of_tags_branches(dir: &str) -> (usize, usize) {
+    fn get_number_of_tags_branches(dir: &str) -> (usize, usize) {
         let tags = {
             let output = Command::new("git")
                 .args(vec!["-C", dir, "tag"])
                 .output()
-                .await
                 .expect("Failed to execute git.");
 
             let tags = String::from_utf8_lossy(&output.stdout);
@@ -324,7 +297,6 @@ impl Info {
             let output = Command::new("git")
                 .args(vec!["-C", dir, "branch", "-r"])
                 .output()
-                .await
                 .expect("Failed to execute git.");
 
             let branches = String::from_utf8_lossy(&output.stdout);
@@ -340,9 +312,7 @@ impl Info {
     }
 
     fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
-        let config = repo
-            .config()
-            .chain_err(|| "Could not retrieve git configuration data");
+        let config = repo.config().chain_err(|| "Could not retrieve git configuration data");
         let mut remote_url = String::new();
         let mut repository_name = String::new();
 
@@ -375,15 +345,10 @@ impl Info {
     }
 
     fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-        let head = repo
-            .head()
-            .chain_err(|| "Error while retrieving reference information")?;
-        let head_oid = head
-            .target()
-            .ok_or("Error while retrieving reference information")?;
-        let refs = repo
-            .references()
-            .chain_err(|| "Error while retrieving reference information")?;
+        let head = repo.head().chain_err(|| "Error while retrieving reference information")?;
+        let head_oid = head.target().ok_or("Error while retrieving reference information")?;
+        let refs =
+            repo.references().chain_err(|| "Error while retrieving reference information")?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
@@ -410,9 +375,7 @@ impl Info {
             let author_email = line.split('\t').collect::<Vec<_>>()[1].to_string();
             let author_name = line.split('\t').collect::<Vec<_>>()[2].to_string();
             let commit_count = authors.entry(author_email.to_string()).or_insert(0);
-            author_name_by_email
-                .entry(author_email.to_string())
-                .or_insert(author_name);
+            author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
             *commit_count += 1;
             total_commits += 1;
         }
@@ -426,11 +389,7 @@ impl Info {
             .into_iter()
             .map(|(author, count)| {
                 (
-                    author_name_by_email
-                        .get(&author)
-                        .unwrap()
-                        .trim_matches('\'')
-                        .to_string(),
+                    author_name_by_email.get(&author).unwrap().trim_matches('\'').to_string(),
                     count,
                     count * 100 / total_commits,
                 )
@@ -440,12 +399,9 @@ impl Info {
         authors
     }
 
-    async fn get_git_version_and_username(dir: &str) -> (String, String) {
-        let version = Command::new("git")
-            .arg("--version")
-            .output()
-            .await
-            .expect("Failed to execute git.");
+    fn get_git_version_and_username(dir: &str) -> (String, String) {
+        let version =
+            Command::new("git").arg("--version").output().expect("Failed to execute git.");
         let version = String::from_utf8_lossy(&version.stdout).replace('\n', "");
 
         let username = Command::new("git")
@@ -455,13 +411,12 @@ impl Info {
             .arg("--get")
             .arg("user.name")
             .output()
-            .await
             .expect("Failed to execute git.");
         let username = String::from_utf8_lossy(&username.stdout).replace('\n', "");
         (version, username)
     }
 
-    async fn get_version(dir: &str) -> Result<String> {
+    fn get_version(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
@@ -469,7 +424,6 @@ impl Info {
             .arg("--abbrev=0")
             .arg("--tags")
             .output()
-            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -486,14 +440,13 @@ impl Info {
         number_of_commits.to_string()
     }
 
-    async fn get_pending_changes(dir: &str) -> Result<String> {
+    fn get_pending_changes(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
             .arg("status")
             .arg("--porcelain")
             .output()
-            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
@@ -535,21 +488,18 @@ impl Info {
         }
     }
 
-    async fn get_packed_size(dir: &str) -> Result<String> {
+    fn get_packed_size(dir: &str) -> Result<String> {
         let output = Command::new("git")
             .arg("-C")
             .arg(dir)
             .arg("count-objects")
             .arg("-vH")
             .output()
-            .await
             .expect("Failed to execute git.");
 
         let output = String::from_utf8_lossy(&output.stdout);
         let lines = output.to_string();
-        let size_line = lines
-            .split('\n')
-            .find(|line| line.starts_with("size-pack:"));
+        let size_line = lines.split('\n').find(|line| line.starts_with("size-pack:"));
 
         let repo_size = match size_line {
             None => "??",
@@ -561,7 +511,6 @@ impl Info {
             .arg(dir)
             .arg("ls-files")
             .output()
-            .await
             .expect("Failed to execute git.");
         // To check if command executed successfully or not
         let error = &output.stderr;
@@ -659,11 +608,8 @@ impl Info {
     }
 
     fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
-        let formatted_label = format!(
-            "{}{} ",
-            label.color(self.color_set.subtitle),
-            ":".color(self.color_set.colon)
-        );
+        let formatted_label =
+            format!("{}{} ", label.color(self.color_set.subtitle), ":".color(self.color_set.colon));
         self.bold(&formatted_label)
     }
 

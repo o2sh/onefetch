@@ -194,11 +194,11 @@ define_languages! {
     { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] : [Color::TrueColor{ r:69, g:58, b:98 }, Color::TrueColor{ r:94, g:80, b:134 }, Color::TrueColor{ r:143, g:78, b:139 }] ) },
     { Html, "html.ascii", "HTML", define_colors!( [Color::Red, Color::White] ) },
     { Idris, "idris.ascii", "Idris", define_colors!( [Color::Red] ) },
-    { Java, "java.ascii", "Java", define_colors!( [Color::Blue, Color::Red] : [Color::TrueColor{ r:244, g:67 ,b:54}, Color::TrueColor{ r:22, g:101 ,b:192} ] ) },
+    { Java, "java.ascii", "Java", define_colors!( [Color::Red, Color::Blue] : [Color::TrueColor{ r:244, g:67 ,b:54}, Color::TrueColor{ r:22, g:101 ,b:192} ] ) },
     { JavaScript, "javascript.ascii", "JavaScript", define_colors!( [Color::Yellow] : [Color::TrueColor{ r:236, g:230 ,b:83} ]) },
     { Jsx, "jsx.ascii", "JSX", define_colors!( [Color::Yellow] ) },
     { Julia, "julia.ascii", "Julia", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },
-    { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", define_colors!( [Color::White, Color::Yellow, Color::White] ), "jupyter-notebooks" },
+    { Jupyter, "jupyter.ascii", "Jupyter-Notebooks", define_colors!( [Color::White, Color::Yellow, Color::White] : [Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:255, g:112 ,b:15}, Color::TrueColor{ r:158, g:158 ,b:158} ] ), "jupyter-notebooks" },
     { Kotlin, "kotlin.ascii", "Kotlin", define_colors!( [Color::Blue, Color::Yellow, Color::Magenta] ) },
     { Lisp, "lisp.ascii", "Lisp", define_colors!( [Color::White] ) },
     { Lua, "lua.ascii", "Lua", define_colors!( [Color::Blue, Color::White] ) },
@@ -339,21 +339,14 @@ impl Language {
 
         let mut languages = tokei::Languages::new();
         let required_languages = get_all_language_types();
-        let tokei_config = Config {
-            types: Some(required_languages),
-            ..Config::default()
-        };
+        let tokei_config = Config { types: Some(required_languages), ..Config::default() };
 
         if !ignored_directories.is_empty() {
             let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
             let mut v = Vec::with_capacity(ignored_directories.len());
             for ignored in ignored_directories {
                 if re.is_match(&ignored) {
-                    let p = if ignored.starts_with('/') {
-                        "**"
-                    } else {
-                        "**/"
-                    };
+                    let p = if ignored.starts_with('/') { "**" } else { "**/" };
                     v.push(format!("{}{}", p, ignored));
                 } else {
                     v.push(String::from(ignored));

@@ -7,6 +7,8 @@ error_chain! {
         Clap(::clap::Error) #[cfg(feature = "application")];
         Io(::std::io::Error);
         ParseIntError(::std::num::ParseIntError);
+        Image(image::error::ImageError);
+        Utf8(std::string::FromUtf8Error);
     }
 }
 

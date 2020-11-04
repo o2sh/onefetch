@@ -45,9 +45,7 @@ pub enum InfoFields {
 }
 
 pub fn get_disabled_fields(fields_to_hide: Vec<String>) -> Result<InfoFieldOn> {
-    let mut disabled_fields = InfoFieldOn {
-        ..Default::default()
-    };
+    let mut disabled_fields = InfoFieldOn { ..Default::default() };
 
     for field in fields_to_hide.iter() {
         let item = InfoFields::from_str(field.to_lowercase().as_str())

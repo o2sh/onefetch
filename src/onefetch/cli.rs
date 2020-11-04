@@ -36,12 +36,11 @@ impl Cli {
     /// Build `Options` from command line arguments.
     pub fn new() -> Result<Self> {
         #[cfg(not(windows))]
-        let possible_backends = ["kitty", "sixel"];
+        let possible_backends = ["kitty", "iterm", "sixel"];
         #[cfg(windows)]
         let possible_backends = [];
-        let color_values = &[
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-        ];
+        let color_values =
+            &["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"];
         let matches = App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
@@ -239,7 +238,6 @@ impl Cli {
 
         let image_backend = if image.is_some() {
             if let Some(backend_name) = matches.value_of("image-backend") {
-                image_backends::check_if_supported(backend_name)?;
                 image_backends::get_image_backend(backend_name)
             } else {
                 image_backends::get_best_backend()

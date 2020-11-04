@@ -2,18 +2,22 @@ use crate::onefetch::error::*;
 use image::DynamicImage;
 
 #[cfg(not(windows))]
+pub mod iterm;
+#[cfg(not(windows))]
 pub mod kitty;
 #[cfg(not(windows))]
 pub mod sixel;
 
 pub trait ImageBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> String;
+    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String>;
 }
 
 #[cfg(not(windows))]
 pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     if kitty::KittyBackend::supported() {
         Some(Box::new(kitty::KittyBackend::new()))
+    } else if iterm::ITermBackend::supported() {
+        Some(Box::new(iterm::ITermBackend::new()))
     } else if sixel::SixelBackend::supported() {
         Some(Box::new(sixel::SixelBackend::new()))
     } else {
@@ -21,32 +25,11 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     }
 }
 
-pub fn check_if_supported(backend_name: &str) -> Result<()> {
-    #[cfg(windows)]
-    return Err(format!("{} image backend is not supported", backend_name).into());
-
-    #[cfg(not(windows))]
-    match backend_name {
-        "kitty" => {
-            if !kitty::KittyBackend::supported() {
-                return Err("Kitty image backend is not supported".into());
-            }
-        }
-        "sixel" => {
-            if !sixel::SixelBackend::supported() {
-                return Err("Sixel image backend is not supported".into());
-            }
-        }
-        _ => unreachable!(),
-    };
-
-    Ok(())
-}
-
 pub fn get_image_backend(backend_name: &str) -> Option<Box<dyn ImageBackend>> {
     #[cfg(not(windows))]
     let backend = Some(match backend_name {
         "kitty" => Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
+        "iterm" => Box::new(iterm::ITermBackend::new()) as Box<dyn ImageBackend>,
         "sixel" => Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
         _ => unreachable!(),
     });

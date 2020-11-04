@@ -1,4 +1,5 @@
 use {
+    crate::onefetch::error::*,
     color_quant::NeuQuant,
     image::{
         imageops::{colorops, FilterType},
@@ -35,11 +36,7 @@ impl SixelBackend {
         println!("\x1B[c");
 
         let start_time = Instant::now();
-        let mut stdin_pollfd = pollfd {
-            fd: STDIN_FILENO,
-            events: POLLIN,
-            revents: 0,
-        };
+        let mut stdin_pollfd = pollfd { fd: STDIN_FILENO, events: POLLIN, revents: 0 };
         let mut buf = Vec::<u8>::new();
         loop {
             // check for timeout while polling to avoid blocking the main thread
@@ -71,7 +68,7 @@ impl SixelBackend {
 }
 
 impl super::ImageBackend for SixelBackend {
-    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> String {
+    fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String> {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();
             ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
@@ -97,7 +94,11 @@ impl super::ImageBackend for SixelBackend {
         // reduce the amount of colors using dithering
         colorops::dither(
             &mut rgba_image,
-            &NeuQuant::new(10, colors, flat_samples.image_slice().unwrap()),
+            &NeuQuant::new(
+                10,
+                colors,
+                flat_samples.image_slice().ok_or("Error while slicing the image")?,
+            ),
         );
         let rgb_image = ImageBuffer::from_fn(rgba_image.width(), rgba_image.height(), |x, y| {
             let rgba_pixel = rgba_image.get_pixel(x, y);
@@ -164,6 +165,6 @@ impl super::ImageBackend for SixelBackend {
         image_data
             .extend(format!("\n\x1B[{}B", lines.len().max(image_rows as usize) - i).as_bytes()); // move cursor to end of image
 
-        String::from_utf8(image_data).unwrap()
+        Ok(String::from_utf8(image_data)?)
     }
 }

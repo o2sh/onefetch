@@ -6,10 +6,8 @@ use {
 
 const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
 
-static CACHE_DATA: &[u8] = include_bytes!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/resources/licenses/cache.bin.zstd"
-));
+static CACHE_DATA: &[u8] =
+    include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/licenses/cache.bin.zstd"));
 const MIN_THRESHOLD: f32 = 0.8;
 
 pub struct Detector {
@@ -25,9 +23,7 @@ impl Detector {
 
     pub fn get_project_license(&self, dir: &str) -> Result<String> {
         fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
-            LICENSE_FILES
-                .iter()
-                .any(|&name| file_name.as_ref().starts_with(name))
+            LICENSE_FILES.iter().any(|&name| file_name.as_ref().starts_with(name))
         }
 
         let mut output = fs::read_dir(dir)

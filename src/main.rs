@@ -50,9 +50,5 @@ fn main() {
 }
 
 fn is_git_installed() -> bool {
-    Command::new("git")
-        .arg("--version")
-        .stdout(Stdio::null())
-        .status()
-        .is_ok()
+    Command::new("git").arg("--version").stdout(Stdio::null()).status().is_ok()
 }
