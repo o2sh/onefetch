@@ -43,7 +43,10 @@ mod package_parsers {
     }
 
     pub fn pip(contents: &str) -> Option<i32> {
-        let count = Regex::new(r"(^[A-z]+)|(\n[A-z]+)").unwrap().find_iter(contents).count();
+        let count = Regex::new(r"(^[A-z]+)|(\n[A-z]+)")
+            .unwrap()
+            .find_iter(contents)
+            .count();
 
         Some(count as i32)
     }
