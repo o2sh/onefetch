@@ -40,12 +40,6 @@ impl DependencyDetector {
         DependencyDetector { package_managers }
     }
 
-    fn is_package_file(&self, file_name: &str) -> bool {
-        self.package_managers.iter().any(|(package_manager_file_name, _)| {
-            file_name.starts_with(package_manager_file_name)
-        })
-    }
-
     pub fn get_deps_info(&self, dir: &str) -> Result<String> {
         let deps = fs::read_dir(dir)
             .chain_err(|| "Could not read directory")?
@@ -56,7 +50,7 @@ impl DependencyDetector {
                     && entry
                         .file_name()
                         .map(OsStr::to_string_lossy)
-                        .map(|s| self.is_package_file(s.as_ref()))
+                        .map(|s| self.package_managers.contains_key(s.as_ref()))
                         .unwrap_or_default()
             })
             .map(|entry| {
