@@ -16,7 +16,7 @@ impl TextColor {
             tilde: Color::White,
             underline: Color::White,
             subtitle: color,
-            colon: color,
+            colon: Color::White,
             info: Color::White,
         }
     }
@@ -39,7 +39,7 @@ impl TextColor {
             text_color_set.tilde = *custom_color.get(1).unwrap_or(&Color::White);
             text_color_set.underline = *custom_color.get(2).unwrap_or(&Color::White);
             text_color_set.subtitle = *custom_color.get(3).unwrap_or(&default_colors[0]);
-            text_color_set.colon = *custom_color.get(4).unwrap_or(&default_colors[0]);
+            text_color_set.colon = *custom_color.get(4).unwrap_or(&Color::White);
             text_color_set.info = *custom_color.get(5).unwrap_or(&Color::White);
         }
 

@@ -129,7 +129,7 @@ impl Cli {
                     "Changes the text colors (X X X...). \
                      Goes in order of title, ~, underline, subtitle, colon, and info. \
                      For example:\n \
-                     '--text-color 9 10 11 12 13 14'"
+                     '--text-colors 9 10 11 12 13 14'"
             )
         )
         .arg(
