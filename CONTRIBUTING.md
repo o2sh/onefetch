@@ -100,7 +100,7 @@ pub fn cargo(contents: &str) -> Result<usize> {
 package_managers.insert(
     String::from("Cargo.toml"), // File name
 
-    // Parser function, then writeln! macro
+    // Parser function, then the corresponding element from the PackageManager enum
     (package_parser::cargo, package_manager::PackageManager::Cargo),
 );
 ```
