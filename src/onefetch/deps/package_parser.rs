@@ -20,7 +20,7 @@ pub fn npm(contents: &str) -> Result<usize> {
 }
 
 pub fn pip(contents: &str) -> Result<usize> {
-    let count = Regex::new(r"(^[A-z]+)|(\n[A-z]+)")?.find_iter(contents).count();
+    let count = Regex::new(r"(^|\n)[A-z]+")?.find_iter(contents).count();
 
     Ok(count)
 }
