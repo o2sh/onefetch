@@ -60,6 +60,8 @@ impl DependencyDetector {
                 let number_of_deps = parser(&contents)?;
                 let used_package_manager;
 
+                // If a yarn.lock file is found and the current package manager
+                // is NPM, change the package manager to Yarn instead
                 if found_package_manager == &package_manager::PackageManager::Npm
                     && std::path::Path::new(&format!("{}yarn.lock", dir)).exists()
                 {
