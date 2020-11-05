@@ -60,11 +60,21 @@ impl DependencyDetector {
                         .unwrap_or_default()
             })
             .map(|entry| {
-                let (parser, package_manager) =
+                let (parser, found_package_manager) =
                     &self.package_managers[entry.file_name().unwrap().to_str().unwrap()];
                 let contents = fs::read_to_string(entry)?;
                 let number_of_deps = parser(&contents)?;
-                Ok(format!("{} ({})", number_of_deps, package_manager))
+                let used_package_manager;
+
+                if found_package_manager == &package_manager::PackageManager::Npm
+                    && std::path::Path::new(&format!("{}yarn.lock", dir)).exists()
+                {
+                    used_package_manager = &package_manager::PackageManager::Yarn;
+                } else {
+                    used_package_manager = found_package_manager;
+                }
+
+                Ok(format!("{} ({})", number_of_deps, used_package_manager))
             })
             .filter_map(Result::ok)
             .collect::<Vec<_>>();

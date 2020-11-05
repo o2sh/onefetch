@@ -1,8 +1,10 @@
+#[derive(PartialEq)]
 pub enum PackageManager {
     Cargo,
     GoModules,
     Npm,
     Pip,
+    Yarn,
 }
 
 impl std::fmt::Display for PackageManager {
@@ -10,14 +12,9 @@ impl std::fmt::Display for PackageManager {
         match *self {
             PackageManager::Cargo => write!(f, "Cargo"),
             PackageManager::GoModules => write!(f, "Go Modules"),
-            PackageManager::Npm => {
-                if std::path::Path::new("./yarn.lock").exists() {
-                    write!(f, "Yarn")
-                } else {
-                    write!(f, "Npm")
-                }
-            }
+            PackageManager::Npm => write!(f, "Npm"),
             PackageManager::Pip => write!(f, "Pip"),
+            PackageManager::Yarn => write!(f, "Yarn"),
         }
     }
 }
