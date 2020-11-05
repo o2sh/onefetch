@@ -86,12 +86,12 @@ fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
 }
 ```
 
-3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `i32` as the number of dependencies
+3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `usize` as the number of dependencies
 ```rust
-pub fn cargo(contents: &str) -> Result<i32> {
+pub fn cargo(contents: &str) -> Result<usize> {
     let parsed = contents.parse::<Value>()?;
 
-    Ok(parsed["dependencies"].as_table().unwrap().len() as i32)
+    Ok(parsed["dependencies"].as_table().unwrap().len())
 }
 ```
 

@@ -7,7 +7,7 @@ use {
 mod package_manager;
 mod package_parser;
 
-type DependencyParser = fn(&str) -> Result<i32>;
+type DependencyParser = fn(&str) -> Result<usize>;
 
 pub struct DependencyDetector {
     package_managers: HashMap<String, (DependencyParser, package_manager::PackageManager)>,
