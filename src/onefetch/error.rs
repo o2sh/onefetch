@@ -9,6 +9,9 @@ error_chain! {
         ParseIntError(::std::num::ParseIntError);
         Image(image::error::ImageError);
         Utf8(std::string::FromUtf8Error);
+        Json(json::Error);
+        Regex(regex::Error);
+        Toml(toml::de::Error);
     }
 }
 
