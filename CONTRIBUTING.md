@@ -1,7 +1,7 @@
-Thank you for your interest in contributing to onefetch! Whether it's a bug report, new feature, correction, or additional 
+Thank you for your interest in contributing to onefetch! Whether it's a bug report, new feature, correction, or additional
 documentation, we greatly value feedback and contributions from our community.
 
-Please read through this document before submitting any issues or pull requests to ensure we have all the necessary 
+Please read through this document before submitting any issues or pull requests to ensure we have all the necessary
 information to effectively respond to your bug report or contribution.
 
 # Contributing Guidelines
@@ -17,7 +17,7 @@ information to effectively respond to your bug report or contribution.
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
 
-When filing an issue, please check [existing open](https://github.com/o2sh/onefetch/issues), or [recently closed](https://github.com/o2sh/onefetch/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed%20), issues to make sure somebody else hasn't already 
+When filing an issue, please check [existing open](https://github.com/o2sh/onefetch/issues), or [recently closed](https://github.com/o2sh/onefetch/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed%20), issues to make sure somebody else hasn't already
 reported the issue. Please try to include as much information as you can. Details like these are incredibly useful:
 
 * A reproducible test case or series of steps
@@ -42,7 +42,7 @@ To send us a pull request, please:
 5. Send us a pull request, answering any default questions in the pull request interface.
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
-GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and 
+GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
 ### Finding contributions to work on
@@ -61,10 +61,54 @@ Adding support for a new Language requires adding a new entry in the `define_lan
 
 The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
 
+### Adding support for a new package manager
+
+Any package manager is supported, as long as there is a file you can get the dependencies from.
+
+To add a new package manager, make sure you follow these steps:
+1. in `src/onefetch/deps/package_manager.rs`, add the name of your package manager to the `PackageManager` enum
+```rust
+pub enum PackageManager {
+    // ...
+    Cargo,
+    // ...
+}
+```
+
+2. in `src/onefetch/deps/package_manager.rs`, add a `writeln` macro call to the `fmt` function
+```rust
+fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    match *self {
+        // ...
+        PackageManager::Cargo => write!(f, "Cargo"),
+        // ...
+    }
+}
+```
+
+3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `i32` as the number of dependencies
+```rust
+pub fn cargo(contents: &str) -> Result<i32> {
+    let parsed = contents.parse::<Value>()?;
+
+    Ok(parsed["dependencies"].as_table().unwrap().len() as i32)
+}
+```
+
+4. in `src/onefetch/deps/mod.rs`, in the `new` method of the `DependencyDetector` impl, insert your new package managers information
+```rust
+package_managers.insert(
+    String::from("Cargo.toml"), // File name
+
+    // Parser function, then writeln! macro
+    (package_parser::cargo, package_manager::PackageManager::Cargo),
+);
+```
+
 #### Ascii logo
 
 ```
-{4}   _{1} _  _ 
+{4}   _{1} _  _
 {4} _|_{1}(_|/ \
 {0} o{4}| {1} _|\_/
 
