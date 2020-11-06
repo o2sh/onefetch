@@ -11,7 +11,7 @@ information to effectively respond to your bug report or contribution.
     * [Finding contributions to work on](#finding-contributions-to-work-on)
     * [Adding support for a new language](#adding-support-for-a-new-language)
       * [Ascii logo](#ascii-logo)
-    * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)   
+    * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
     * [Project-specific notes](#project-specific-notes)
 
 ## Reporting Bugs / Feature Requests
@@ -127,12 +127,16 @@ fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
 }
 ```
 
-3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `usize` as the number of dependencies
+3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `usize` as the number of dependencies. You should also make sure you catch any edge cases, such as the absence of a `dependencies` field.
 ```rust
 pub fn cargo(contents: &str) -> Result<usize> {
     let parsed = contents.parse::<Value>()?;
+    let count = parsed.get("dependencies");
 
-    Ok(parsed["dependencies"].as_table().unwrap().len())
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
 }
 ```
 
