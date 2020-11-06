@@ -3,8 +3,12 @@ use {regex::Regex, toml::Value};
 
 pub fn cargo(contents: &str) -> Result<usize> {
     let parsed = contents.parse::<Value>()?;
+    let count = parsed.get("dependencies");
 
-    Ok(parsed["dependencies"].as_table().unwrap().len())
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
 }
 
 pub fn go_modules(contents: &str) -> Result<usize> {
