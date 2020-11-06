@@ -6,6 +6,7 @@ use {
         POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
     },
     std::env,
+    std::io::{stdout, Write},
     std::time::Instant,
 };
 
@@ -38,7 +39,8 @@ impl KittyBackend {
         test_image.extend(std::iter::repeat([255, 0, 0, 255].iter()).take(32 * 32).flatten());
 
         // print the test image with the action set to query
-        println!("\x1B_Gi=1,f=32,s=32,v=32,a=q;{}\x1B\\", base64::encode(&test_image));
+        print!("\x1B_Gi=1,f=32,s=32,v=32,a=q;{}\x1B\\", base64::encode(&test_image));
+        stdout().flush().unwrap();
 
         let start_time = Instant::now();
         let mut stdin_pollfd = pollfd { fd: STDIN_FILENO, events: POLLIN, revents: 0 };
