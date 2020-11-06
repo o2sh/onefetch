@@ -11,6 +11,7 @@ information to effectively respond to your bug report or contribution.
     * [Finding contributions to work on](#finding-contributions-to-work-on)
     * [Adding support for a new language](#adding-support-for-a-new-language)
       * [Ascii logo](#ascii-logo)
+    * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)   
     * [Project-specific notes](#project-specific-notes)
 
 ## Reporting Bugs / Feature Requests
@@ -61,6 +62,46 @@ Adding support for a new Language requires adding a new entry in the `define_lan
 
 The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo, this file has to be placed in the _./resources_ folder (more info below). The third item `C#` is the display name. Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is required only if the Enum name  `CSharp` doesn't match the display name `C#`.
 
+#### Ascii logo
+
+```
+{4}   _{1} _  _
+{4} _|_{1}(_|/ \
+{0} o{4}| {1} _|\_/
+
+{0}    /\
+{0}   /  \
+{0}  |    |
+{0}  |{2}NASA{0}|
+{0}  |    |
+{0}  |    |
+{0}  |    |
+{0} '      `
+{0} |      |
+{0} |      |
+{0} |______|
+{3}  '-`'-`   .
+{3}  / . \'\ . .'
+{3} ''( .'\.' ' .;'
+{3}'.;.;' ;'.;' ..;;'
+```
+
+Remarks:
+ - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
+ - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
+ - Make sure to trim any unnecessary trailing whitespaces
+ - See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii)
+ - You must always provide an array of basic colors
+ - Optionally, you may provide true colors in a second array of colors separated from the first array by a colon
+ - One last approach allows you to define colors using the Colors structure itself
+ - Make sure if you use true colors that the number of true colors matches the number of basic colors
+ - For example, the following are equivalent:
+```
+    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },
+    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] : [Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ), "c#" },
+    { CSharp, "csharp.ascii", "C#", define_colors!( Colors { basic_colors: vec![Color::Blue, Color::Magenta] , true_colors: Some(vec![Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ) } ), "c#" },
+```
+
 ### Adding support for a new package manager
 
 Any package manager is supported, as long as there is a file you can get the dependencies from.
@@ -103,46 +144,6 @@ package_managers.insert(
     // Parser function, then the corresponding element from the PackageManager enum
     (package_parser::cargo, package_manager::PackageManager::Cargo),
 );
-```
-
-#### Ascii logo
-
-```
-{4}   _{1} _  _
-{4} _|_{1}(_|/ \
-{0} o{4}| {1} _|\_/
-
-{0}    /\
-{0}   /  \
-{0}  |    |
-{0}  |{2}NASA{0}|
-{0}  |    |
-{0}  |    |
-{0}  |    |
-{0} '      `
-{0} |      |
-{0} |      |
-{0} |______|
-{3}  '-`'-`   .
-{3}  / . \'\ . .'
-{3} ''( .'\.' ' .;'
-{3}'.;.;' ;'.;' ..;;'
-```
-
-Remarks:
- - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
- - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
- - Make sure to trim any unnecessary trailing whitespaces
- - See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii)
- - You must always provide an array of basic colors
- - Optionally, you may provide true colors in a second array of colors separated from the first array by a colon
- - One last approach allows you to define colors using the Colors structure itself
- - Make sure if you use true colors that the number of true colors matches the number of basic colors
- - For example, the following are equivalent:
-```
-    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },
-    { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] : [Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ), "c#" },
-    { CSharp, "csharp.ascii", "C#", define_colors!( Colors { basic_colors: vec![Color::Blue, Color::Magenta] , true_colors: Some(vec![Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ) } ), "c#" },
 ```
 
 ### Project-specific notes
