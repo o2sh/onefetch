@@ -25,7 +25,7 @@ pub struct Info {
     commits: String,
     pending: String,
     repo_size: String,
-    number_of_lines: usize,
+    lines_of_code: usize,
     number_of_tags: usize,
     number_of_branches: usize,
     license: String,
@@ -167,9 +167,9 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.lines_of_code {
             writeln!(
                 f,
-                "{} {}",
+                "{}{}",
                 &self.get_formatted_subtitle_label("Lines of code"),
-                &self.number_of_lines.to_string().color(self.color_set.info),
+                &self.lines_of_code.to_string().color(self.color_set.info),
             )?;
         }
 
@@ -216,7 +216,7 @@ impl Info {
             .chain_err(|| "Could not find a valid git repo on the current path")?;
         let workdir = repo.workdir().chain_err(|| "Unable to run onefetch on bare git repo")?;
         let workdir_str = workdir.to_str().unwrap();
-        let (languages_stats, number_of_lines) =
+        let (languages_stats, lines_of_code) =
             Language::get_language_statistics(workdir_str, &config.excluded)?;
         let git_history = Info::get_git_history(workdir_str, config.no_merges);
         let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(workdir_str);
@@ -257,7 +257,7 @@ impl Info {
             commits: number_of_commits,
             pending: pending?,
             repo_size: repo_size?,
-            number_of_lines,
+            lines_of_code,
             number_of_tags,
             number_of_branches,
             license: project_license?,
