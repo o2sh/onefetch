@@ -37,7 +37,7 @@ impl<W: Write> Printer<W> {
                     .add_image(
                         info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
                         custom_image,
-                        self.info.config.image_colors,
+                        self.info.config.image_color_resolution,
                     )
                     .chain_err(|| "Error while drawing image")?,
             );
@@ -45,7 +45,7 @@ impl<W: Write> Printer<W> {
             let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
                 AsciiArt::new(custom_ascii, &colors, !self.info.config.no_bold)
             } else {
-                AsciiArt::new(self.get_ascii(), &self.info.colors, !self.info.config.no_bold)
+                AsciiArt::new(self.get_ascii(), &self.info.ascii_colors, !self.info.config.no_bold)
             };
 
             loop {

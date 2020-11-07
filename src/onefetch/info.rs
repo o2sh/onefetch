@@ -29,8 +29,8 @@ pub struct Info {
     number_of_tags: usize,
     number_of_branches: usize,
     license: String,
-    pub colors: Vec<Color>,
-    pub color_set: TextColor,
+    pub ascii_colors: Vec<Color>,
+    pub text_colors: TextColor,
     pub config: Cli,
 }
 
@@ -42,14 +42,14 @@ impl std::fmt::Display for Info {
             writeln!(
                 f,
                 "{} {} {}",
-                &self.bold(&self.git_username).color(self.color_set.title),
-                &self.bold("~").color(self.color_set.tilde),
-                &self.bold(&self.git_version).color(self.color_set.title)
+                &self.bold(&self.git_username).color(self.text_colors.title),
+                &self.bold("~").color(self.text_colors.tilde),
+                &self.bold(&self.git_version).color(self.text_colors.title)
             )?;
 
             let separator = "-".repeat(git_info_length);
 
-            writeln!(f, "{}", separator.color(self.color_set.underline))?;
+            writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
 
         if !self.config.disabled_fields.project {
@@ -61,8 +61,8 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{} {}",
                 project_str,
-                self.project_name.color(self.color_set.info),
-                branches_tags_str.color(self.color_set.info)
+                self.project_name.color(self.text_colors.info),
+                branches_tags_str.color(self.text_colors.info)
             )?;
         }
 
@@ -71,7 +71,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("HEAD"),
-                &self.current_commit.to_string().color(self.color_set.info),
+                &self.current_commit.to_string().color(self.text_colors.info),
             )?;
         }
 
@@ -80,7 +80,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Pending"),
-                &self.pending.color(self.color_set.info),
+                &self.pending.color(self.text_colors.info),
             )?;
         }
 
@@ -89,7 +89,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Version"),
-                &self.version.color(self.color_set.info),
+                &self.version.color(self.text_colors.info),
             )?;
         }
 
@@ -98,7 +98,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Created"),
-                &self.creation_date.color(self.color_set.info),
+                &self.creation_date.color(self.text_colors.info),
             )?;
         }
 
@@ -111,7 +111,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label(title),
-                languages_str.color(self.color_set.info)
+                languages_str.color(self.text_colors.info)
             )?;
         }
 
@@ -120,7 +120,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Dependencies"),
-                &self.dependencies.color(self.color_set.info),
+                &self.dependencies.color(self.text_colors.info),
             )?;
         }
 
@@ -133,7 +133,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label(title),
-                author_str.color(self.color_set.info),
+                author_str.color(self.text_colors.info),
             )?;
         }
 
@@ -142,7 +142,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Last change"),
-                &self.last_change.color(self.color_set.info),
+                &self.last_change.color(self.text_colors.info),
             )?;
         }
 
@@ -151,7 +151,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Repo"),
-                &self.repo_url.color(self.color_set.info),
+                &self.repo_url.color(self.text_colors.info),
             )?;
         }
 
@@ -160,7 +160,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Commits"),
-                &self.commits.color(self.color_set.info),
+                &self.commits.color(self.text_colors.info),
             )?;
         }
 
@@ -169,7 +169,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Lines of code"),
-                &self.lines_of_code.to_string().color(self.color_set.info),
+                &self.lines_of_code.to_string().color(self.text_colors.info),
             )?;
         }
 
@@ -178,7 +178,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Size"),
-                &self.repo_size.color(self.color_set.info),
+                &self.repo_size.color(self.text_colors.info),
             )?;
         }
 
@@ -187,7 +187,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("License"),
-                &self.license.color(self.color_set.info),
+                &self.license.color(self.text_colors.info),
             )?;
         }
 
@@ -233,13 +233,13 @@ impl Info {
         let project_license = Detector::new()?.get_project_license(workdir_str);
         let dominant_language = Language::get_dominant_language(&languages_stats);
         let dependencies = deps::DependencyDetector::new().get_dependencies(workdir_str)?;
-        let colors = Info::get_colors(
+        let ascii_colors = Info::get_ascii_colors(
             &config.ascii_language,
             &dominant_language,
             &config.ascii_colors,
             config.true_color,
         );
-        let color_set = TextColor::get_text_color_set(&config.text_colors, &colors);
+        let text_colors = TextColor::get_text_colors(&config.text_colors, &ascii_colors);
 
         Ok(Info {
             git_version: git_v,
@@ -261,8 +261,8 @@ impl Info {
             number_of_tags,
             number_of_branches,
             license: project_license?,
-            colors,
-            color_set,
+            ascii_colors,
+            text_colors,
             config,
         })
     }
@@ -555,7 +555,7 @@ impl Info {
         Ok(output)
     }
 
-    fn get_colors(
+    fn get_ascii_colors(
         ascii_language: &Language,
         dominant_language: &Language,
         ascii_colors: &[String],
@@ -608,8 +608,11 @@ impl Info {
     }
 
     fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
-        let formatted_label =
-            format!("{}{} ", label.color(self.color_set.subtitle), ":".color(self.color_set.colon));
+        let formatted_label = format!(
+            "{}{} ",
+            label.color(self.text_colors.subtitle),
+            ":".color(self.text_colors.colon)
+        );
         self.bold(&formatted_label)
     }
 
@@ -632,19 +635,19 @@ impl Info {
             if i == 0 {
                 author_field.push_str(&format!(
                     "{}{} {} {}\n",
-                    autor_contribution.to_string().color(self.color_set.info),
-                    "%".color(self.color_set.info),
-                    author_name.to_string().color(self.color_set.info),
-                    author_nbr_commits.to_string().color(self.color_set.info),
+                    autor_contribution.to_string().color(self.text_colors.info),
+                    "%".color(self.text_colors.info),
+                    author_name.to_string().color(self.text_colors.info),
+                    author_nbr_commits.to_string().color(self.text_colors.info),
                 ));
             } else {
                 author_field.push_str(&format!(
                     "{:<width$}{}{} {} {}\n",
                     "",
-                    autor_contribution.to_string().color(self.color_set.info),
-                    "%".color(self.color_set.info),
-                    author_name.to_string().color(self.color_set.info),
-                    author_nbr_commits.to_string().color(self.color_set.info),
+                    autor_contribution.to_string().color(self.text_colors.info),
+                    "%".color(self.text_colors.info),
+                    author_name.to_string().color(self.text_colors.info),
+                    author_nbr_commits.to_string().color(self.text_colors.info),
                     width = pad
                 ));
             }
@@ -671,19 +674,19 @@ impl Info {
         };
 
         for (cnt, language) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, language.1).color(self.color_set.info);
+            let formatted_number = format!("{:.*}", 1, language.1).color(self.text_colors.info);
             if cnt != 0 && cnt % 2 == 0 {
                 language_field.push_str(&format!(
                     "\n{:<width$}{} ({} %) ",
                     "",
-                    language.0.color(self.color_set.info),
+                    language.0.color(self.text_colors.info),
                     formatted_number,
                     width = pad
                 ));
             } else {
                 language_field.push_str(&format!(
                     "{} ({} %) ",
-                    language.0.color(self.color_set.info),
+                    language.0.color(self.text_colors.info),
                     formatted_number
                 ));
             }

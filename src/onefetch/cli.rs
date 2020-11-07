@@ -21,7 +21,7 @@ pub struct Cli {
     pub no_bold: bool,
     pub image: Option<DynamicImage>,
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
-    pub image_colors: usize,
+    pub image_color_resolution: usize,
     pub no_merges: bool,
     pub no_color_palette: bool,
     pub number_of_authors: usize,
@@ -258,7 +258,7 @@ impl Cli {
             return Err("Could not detect a supported image backend".into());
         }
 
-        let image_colors = if let Some(value) = matches.value_of("color-resolution") {
+        let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
             usize::from_str(value).unwrap()
         } else {
             16
@@ -305,7 +305,7 @@ impl Cli {
             no_bold,
             image,
             image_backend,
-            image_colors,
+            image_color_resolution,
             no_merges,
             no_color_palette,
             number_of_authors,
