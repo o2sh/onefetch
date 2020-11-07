@@ -1,7 +1,7 @@
-Thank you for your interest in contributing to onefetch! Whether it's a bug report, new feature, correction, or additional 
+Thank you for your interest in contributing to onefetch! Whether it's a bug report, new feature, correction, or additional
 documentation, we greatly value feedback and contributions from our community.
 
-Please read through this document before submitting any issues or pull requests to ensure we have all the necessary 
+Please read through this document before submitting any issues or pull requests to ensure we have all the necessary
 information to effectively respond to your bug report or contribution.
 
 # Contributing Guidelines
@@ -11,13 +11,14 @@ information to effectively respond to your bug report or contribution.
     * [Finding contributions to work on](#finding-contributions-to-work-on)
     * [Adding support for a new language](#adding-support-for-a-new-language)
       * [Ascii logo](#ascii-logo)
+    * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
     * [Project-specific notes](#project-specific-notes)
 
 ## Reporting Bugs / Feature Requests
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
 
-When filing an issue, please check [existing open](https://github.com/o2sh/onefetch/issues), or [recently closed](https://github.com/o2sh/onefetch/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed%20), issues to make sure somebody else hasn't already 
+When filing an issue, please check [existing open](https://github.com/o2sh/onefetch/issues), or [recently closed](https://github.com/o2sh/onefetch/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed%20), issues to make sure somebody else hasn't already
 reported the issue. Please try to include as much information as you can. Details like these are incredibly useful:
 
 * A reproducible test case or series of steps
@@ -42,7 +43,7 @@ To send us a pull request, please:
 5. Send us a pull request, answering any default questions in the pull request interface.
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
-GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and 
+GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
 ### Finding contributions to work on
@@ -64,7 +65,7 @@ The first item `CSharp` corresponds to the name of the language as defined in to
 #### Ascii logo
 
 ```
-{4}   _{1} _  _ 
+{4}   _{1} _  _
 {4} _|_{1}(_|/ \
 {0} o{4}| {1} _|\_/
 
@@ -99,6 +100,54 @@ Remarks:
     { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },
     { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] : [Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ), "c#" },
     { CSharp, "csharp.ascii", "C#", define_colors!( Colors { basic_colors: vec![Color::Blue, Color::Magenta] , true_colors: Some(vec![Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ) } ), "c#" },
+```
+
+### Adding support for a new package manager
+
+Any package manager is supported, as long as there is a file you can get the dependencies from.
+
+To add a new package manager, make sure you follow these steps:
+1. in `src/onefetch/deps/package_manager.rs`, add the name of your package manager to the `PackageManager` enum
+```rust
+pub enum PackageManager {
+    // ...
+    Cargo,
+    // ...
+}
+```
+
+2. in `src/onefetch/deps/package_manager.rs`, add a `writeln` macro call to the `fmt` function
+```rust
+fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    match *self {
+        // ...
+        PackageManager::Cargo => write!(f, "Cargo"),
+        // ...
+    }
+}
+```
+
+3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `usize` as the number of dependencies. You should also make sure you catch any edge cases, such as the absence of a `dependencies` field.
+```rust
+pub fn cargo(contents: &str) -> Result<usize> {
+    let parsed = contents.parse::<Value>()?;
+    let count = parsed.get("dependencies");
+
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
+}
+```
+
+4. in `src/onefetch/deps/mod.rs`, in the `new` method of the `DependencyDetector` impl, insert your new package managers information
+```rust
+package_managers.insert(
+    String::from("Cargo.toml"), // File name
+
+    // Parser function, then the corresponding element from the PackageManager enum
+    (package_parser::cargo, package_manager::PackageManager::Cargo),
+);
 ```
 
 ### Project-specific notes

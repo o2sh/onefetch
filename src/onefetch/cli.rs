@@ -213,7 +213,7 @@ impl Cli {
             Arg::with_name("off")
                 .long("off")
                 .help("Only shows the info lines.")
-                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]), 
+                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]),
             ).get_matches();
 
         let no_bold = matches.is_present("no-bold");
