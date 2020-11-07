@@ -232,7 +232,7 @@ impl Info {
         let last_change = Info::get_date_of_last_commit(&git_history);
         let project_license = Detector::new()?.get_project_license(workdir_str);
         let dominant_language = Language::get_dominant_language(&languages_stats);
-        let dependencies = deps::DependencyDetector::new().get_deps_info(workdir_str)?;
+        let dependencies = deps::DependencyDetector::new().get_dependencies(workdir_str)?;
         let colors = Info::get_colors(
             &config.ascii_language,
             &dominant_language,

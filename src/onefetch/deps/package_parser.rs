@@ -12,8 +12,22 @@ pub fn cargo(contents: &str) -> Result<usize> {
 }
 
 pub fn go_modules(contents: &str) -> Result<usize> {
-    let count = Regex::new(r"v[0-9]+")?.find_iter(contents).count()
-        - Regex::new(r"=>")?.find_iter(contents).count();
+    let mut count = 0;
+    let mut start = false;
+    for line in contents.lines() {
+        if line.contains("require") {
+            start = true;
+            continue;
+        }
+
+        if start && line.contains(')') {
+            break;
+        }
+
+        if start {
+            count += 1;
+        }
+    }
 
     Ok(count)
 }

@@ -121,7 +121,7 @@ pub enum PackageManager {
 fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
     match *self {
         // ...
-        PackageManager::Cargo => write!(f, "Cargo"),
+        PackageManager::Cargo => write!(f, "cargo"),
         // ...
     }
 }

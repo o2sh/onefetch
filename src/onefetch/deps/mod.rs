@@ -40,7 +40,7 @@ impl DependencyDetector {
         DependencyDetector { package_managers }
     }
 
-    pub fn get_deps_info(&self, dir: &str) -> Result<String> {
+    pub fn get_dependencies(&self, dir: &str) -> Result<String> {
         let deps = fs::read_dir(dir)
             .chain_err(|| "Could not read directory")?
             .filter_map(std::result::Result::ok)
@@ -58,19 +58,7 @@ impl DependencyDetector {
                     &self.package_managers[entry.file_name().unwrap().to_str().unwrap()];
                 let contents = fs::read_to_string(entry)?;
                 let number_of_deps = parser(&contents)?;
-                let used_package_manager;
-
-                // If a yarn.lock file is found and the current package manager
-                // is NPM, change the package manager to Yarn instead
-                if found_package_manager == &package_manager::PackageManager::Npm
-                    && std::path::Path::new(&format!("{}yarn.lock", dir)).exists()
-                {
-                    used_package_manager = &package_manager::PackageManager::Yarn;
-                } else {
-                    used_package_manager = found_package_manager;
-                }
-
-                Ok(format!("{} ({})", number_of_deps, used_package_manager))
+                Ok(format!("{} ({})", number_of_deps, found_package_manager))
             })
             .filter_map(Result::ok)
             .collect::<Vec<_>>();
