@@ -4,7 +4,7 @@ use {
     std::{ffi::OsStr, fs},
 };
 
-mod package_manager;
+pub mod package_manager;
 mod package_parser;
 
 type DependencyParser = fn(&str) -> Result<usize>;
@@ -58,7 +58,10 @@ impl DependencyDetector {
                     &self.package_managers[entry.file_name().unwrap().to_str().unwrap()];
                 let contents = fs::read_to_string(entry)?;
                 let number_of_deps = parser(&contents)?;
-                Ok(format!("{} ({})", number_of_deps, found_package_manager))
+                match number_of_deps {
+                    0 => Err("".into()),
+                    _ => Ok(format!("{} ({})", number_of_deps, found_package_manager)),
+                }
             })
             .filter_map(Result::ok)
             .collect::<Vec<_>>();

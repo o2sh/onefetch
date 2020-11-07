@@ -27,6 +27,7 @@ pub struct Cli {
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
     pub print_languages: bool,
+    pub print_package_managers: bool,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
@@ -144,6 +145,12 @@ impl Cli {
                 .help("Prints out supported languages."),
         )
         .arg(
+            Arg::with_name("package-managers")
+                .short("p")
+                .long("package-managers")
+                .help("Prints out supported package managers."),
+        )
+        .arg(
             Arg::with_name("image")
                 .short("i")
                 .long("image")
@@ -220,6 +227,7 @@ impl Cli {
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
+        let print_package_managers = matches.is_present("package-managers");
         let art_off = matches.is_present("off");
         let true_color = cli_utils::is_truecolor_terminal();
 
@@ -303,6 +311,7 @@ impl Cli {
             number_of_authors,
             excluded,
             print_languages,
+            print_package_managers,
             true_color,
             text_colors,
             art_off,

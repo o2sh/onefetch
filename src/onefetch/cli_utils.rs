@@ -1,4 +1,7 @@
-use crate::onefetch::{ascii_art::AsciiArt, error::*, info::Info, language::Language};
+use crate::onefetch::{
+    ascii_art::AsciiArt, deps::package_manager::PackageManager, error::*, info::Info,
+    language::Language,
+};
 use colored::Color;
 use std::env;
 use std::io::Write;
@@ -87,6 +90,14 @@ pub fn print_supported_languages() -> Result<()> {
 
     for l in iterator {
         println!("{}", l);
+    }
+
+    Ok(())
+}
+
+pub fn print_supported_package_managers() -> Result<()> {
+    for p in PackageManager::iter() {
+        println!("{}", p);
     }
 
     Ok(())

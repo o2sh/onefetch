@@ -1,4 +1,6 @@
-#[derive(PartialEq)]
+use strum::EnumIter;
+
+#[derive(PartialEq, EnumIter)]
 pub enum PackageManager {
     Cargo,
     GoModules,

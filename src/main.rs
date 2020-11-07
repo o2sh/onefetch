@@ -26,6 +26,10 @@ fn run() -> Result<()> {
         return cli_utils::print_supported_languages();
     }
 
+    if options.print_package_managers {
+        return cli_utils::print_supported_package_managers();
+    }
+
     let info = info::Info::new(options)?;
 
     let mut printer = cli_utils::Printer::new(io::BufWriter::new(io::stdout()), info);
