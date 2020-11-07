@@ -13,7 +13,7 @@
   <a href="https://snapcraft.io/onefetch"><img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store"></a>
 </p>
 
-<img src="assets/linux.png" align="right" height="240px">
+<img src="assets/react.png" align="right" height="240px">
 
 Onefetch is a command-line Git information tool written in `Rust` that will display project information and code statistics about your Git repository directly on your terminal.
 
@@ -21,7 +21,7 @@ By default, the repo's information is displayed alongside the dominant language'
 
 It automatically detects open source licenses from texts and provides the user with various information like code distribution, pending changes, dependencies, top contributors (by number of commits), size on disk, creation date, version, HEAD, last change, LOC (lines of code), etc.
 
-<img src="assets/go.png" align="right" height="240px">
+<img src="assets/kubernetes.png" align="right" height="240px">
 
 Onefetch can be configured via command-line flags to display exactly what you want, the you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, etc. Read more about it [here](https://github.com/o2sh/onefetch/wiki/command-line-options).
 
