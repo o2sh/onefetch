@@ -556,15 +556,15 @@ impl Info {
     }
 
     fn get_ascii_colors(
-        ascii_language: &Language,
+        ascii_language: &Option<Language>,
         dominant_language: &Language,
         ascii_colors: &[String],
         true_color: bool,
     ) -> Vec<Color> {
-        let language = if let Language::Unknown = ascii_language {
-            &dominant_language
+        let language = if let Some(ascii_language) = ascii_language {
+            ascii_language
         } else {
-            &ascii_language
+            &dominant_language
         };
 
         let colors = language.get_colors(true_color);

@@ -75,10 +75,10 @@ impl<W: Write> Printer<W> {
     }
 
     fn get_ascii(&self) -> &str {
-        let language = if let Language::Unknown = self.info.config.ascii_language {
-            &self.info.dominant_language
+        let language = if let Some(ascii_language) = &self.info.config.ascii_language {
+            ascii_language
         } else {
-            &self.info.config.ascii_language
+            &self.info.dominant_language
         };
 
         language.get_ascii_art()
@@ -86,9 +86,7 @@ impl<W: Write> Printer<W> {
 }
 
 pub fn print_supported_languages() -> Result<()> {
-    let iterator = Language::iter().filter(|x| *x != Language::Unknown);
-
-    for l in iterator {
+    for l in Language::iter() {
         println!("{}", l);
     }
 

@@ -15,7 +15,7 @@ use {
 pub struct Cli {
     pub path: String,
     pub ascii_input: Option<String>,
-    pub ascii_language: Language,
+    pub ascii_language: Option<Language>,
     pub ascii_colors: Vec<String>,
     pub disabled_fields: info_fields::InfoFieldOn,
     pub no_bold: bool,
@@ -63,7 +63,6 @@ impl Cli {
                 .help("Which LANGUAGE's ascii art to print.")
                 .possible_values(
                     &Language::iter()
-                        .filter(|language| *language != Language::Unknown)
                         .map(|language| language.into())
                         .collect::<Vec<&str>>()
                     ),
@@ -269,9 +268,9 @@ impl Cli {
         let ascii_input = matches.value_of("ascii-input").map(String::from);
 
         let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
-            Language::from_str(&ascii_language.to_lowercase()).unwrap()
+            Some(Language::from_str(&ascii_language.to_lowercase()).unwrap())
         } else {
-            Language::Unknown
+            None
         };
 
         let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {

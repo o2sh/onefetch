@@ -28,14 +28,12 @@ macro_rules! define_languages {
                 $( #[strum(serialize = $serialize)] )?
                 $name ,
             )*
-            Unknown,
         }
 
         impl std::fmt::Display for Language {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 match *self {
                     $( Language::$name => write!(f, $display), )*
-                    Language::Unknown => write!(f, "Unknown" ),
                 }
             }
         }
@@ -53,14 +51,12 @@ macro_rules! define_languages {
             pub fn get_ascii_art(&self) -> &str {
                 match *self {
                     $( Language::$name => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii)), )*
-                    Language::Unknown => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/unknown.ascii")),
                 }
             }
 
             pub fn get_colors(&self, true_color: bool) -> Vec<Color> {
                 let colors = match *self {
                     $( Language::$name => $colors, )*
-                    Language::Unknown => define_colors!( [Color::White] ),
                 };
                 match colors.true_colors {
                   Some( true_colors ) if true_color => true_colors,
