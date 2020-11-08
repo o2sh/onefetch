@@ -16,7 +16,7 @@ fn run() -> Result<()> {
     let _ = ansi_term::enable_ansi_support();
 
     if !is_git_installed() {
-        return Err("Git failed to execute!".into());
+        return Err("git failed to execute!".into());
     }
 
     let config = Cli::new()?;

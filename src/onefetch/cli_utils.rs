@@ -88,8 +88,7 @@ impl<W: Write> Printer<W> {
 }
 
 pub fn is_valid_repo(repo_path: &str) -> Result<bool> {
-    let repo =
-        Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
+    let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
 
     Ok(repo.is_ok() && !repo?.is_bare())
 }

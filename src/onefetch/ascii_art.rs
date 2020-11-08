@@ -65,22 +65,13 @@ impl std::fmt::Display for Token {
 }
 impl Token {
     fn is_solid(&self) -> bool {
-        match *self {
-            Token::Char(_) => true,
-            _ => false,
-        }
+        matches!(*self, Token::Char(_))
     }
     fn is_space(&self) -> bool {
-        match *self {
-            Token::Space => true,
-            _ => false,
-        }
+        matches!(*self, Token::Space)
     }
     fn has_zero_width(&self) -> bool {
-        match *self {
-            Token::Color(_) => true,
-            _ => false,
-        }
+        matches!(*self, Token::Color(_))
     }
 }
 
