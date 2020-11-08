@@ -1,11 +1,10 @@
 use {
     crate::onefetch::{
-        cli::Cli, commit_info::CommitInfo, deps, error::*, language::Language, license::Detector,
-        text_color::TextColor,
+        cli::Cli, commit_info::CommitInfo, deps, error::*, git_utils, language::Language,
+        license::Detector, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
-    regex::Regex,
     std::process::Command,
 };
 
@@ -213,25 +212,24 @@ impl std::fmt::Display for Info {
 impl Info {
     pub fn new(config: Cli) -> Result<Info> {
         let repo = Repository::discover(&config.repo_path)?;
-        let workdir = repo.workdir().unwrap();
-        let workdir_str = workdir.to_str().unwrap();
-        let (languages_stats, lines_of_code) =
-            Language::get_language_statistics(workdir_str, &config.excluded)?;
-        let git_history = Info::get_git_history(workdir_str, config.no_merges);
-        let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(workdir_str);
-        let (git_v, git_user) = Info::get_git_version_and_username(workdir_str);
-        let version = Info::get_version(workdir_str);
-        let pending = Info::get_pending_changes(workdir_str);
-        let repo_size = Info::get_packed_size(workdir_str);
-        let (repository_name, repository_url) = Info::get_repo_name_and_url(&repo);
-        let current_commit_info = Info::get_current_commit_info(&repo);
+        let workdir = git_utils::get_repo_work_dir(&repo)?;
+        let (repository_name, repository_url) = git_utils::get_repo_name_and_url(&repo)?;
+        let current_commit_info = git_utils::get_current_commit_info(&repo);
+        let git_history = Info::get_git_history(&workdir, config.no_merges);
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, config.number_of_authors);
         let last_change = Info::get_date_of_last_commit(&git_history);
-        let project_license = Detector::new()?.get_project_license(workdir_str);
+        let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(&workdir);
+        let (git_v, git_user) = Info::get_git_version_and_username(&workdir);
+        let version = Info::get_version(&workdir);
+        let pending = Info::get_pending_changes(&workdir);
+        let repo_size = Info::get_packed_size(&workdir);
+        let project_license = Detector::new()?.get_project_license(&workdir);
+        let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
+        let (languages_stats, lines_of_code) =
+            Language::get_language_statistics(&workdir, &config.excluded)?;
         let dominant_language = Language::get_dominant_language(&languages_stats);
-        let dependencies = deps::DependencyDetector::new().get_dependencies(workdir_str)?;
         let ascii_colors = Info::get_ascii_colors(
             &config.ascii_language,
             &dominant_language,
@@ -308,62 +306,6 @@ impl Info {
         };
 
         (tags, branches)
-    }
-
-    fn get_repo_name_and_url(repo: &Repository) -> (String, String) {
-        let config = repo.config().chain_err(|| "Could not retrieve git configuration data");
-        let mut remote_url = String::new();
-        let mut repository_name = String::new();
-
-        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url").unwrap();
-
-        for entry in &config.unwrap().entries(None).unwrap() {
-            let entry = entry.unwrap();
-            if remote_regex.is_match(entry.name().unwrap()) {
-                remote_url = entry.value().unwrap().to_string()
-            };
-        }
-
-        let name_parts: Vec<&str> = remote_url.split('/').collect();
-
-        if !name_parts.is_empty() {
-            let mut i = 1;
-            while repository_name.is_empty() && i <= name_parts.len() {
-                repository_name = name_parts[name_parts.len() - i].to_string();
-                i += 1;
-            }
-        }
-
-        if repository_name.contains(".git") {
-            let repo_name = repository_name.clone();
-            let parts: Vec<&str> = repo_name.split(".git").collect();
-            repository_name = parts[0].to_string();
-        }
-
-        (repository_name, remote_url)
-    }
-
-    fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-        let head = repo.head().chain_err(|| "Error while retrieving reference information")?;
-        let head_oid = head.target().ok_or("Error while retrieving reference information")?;
-        let refs =
-            repo.references().chain_err(|| "Error while retrieving reference information")?;
-        let refs_info = refs
-            .filter_map(|reference| match reference {
-                Ok(reference) => match (reference.target(), reference.shorthand()) {
-                    (Some(oid), Some(shorthand)) if oid == head_oid => {
-                        Some(if reference.is_tag() {
-                            String::from("tags/") + shorthand
-                        } else {
-                            String::from(shorthand)
-                        })
-                    }
-                    _ => None,
-                },
-                Err(_) => None,
-            })
-            .collect::<Vec<String>>();
-        Ok(CommitInfo::new(head_oid, refs_info))
     }
 
     fn get_authors(git_history: &[String], n: usize) -> Vec<(String, usize, usize)> {

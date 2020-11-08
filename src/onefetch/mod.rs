@@ -4,6 +4,7 @@ pub mod cli_utils;
 pub mod commit_info;
 pub mod deps;
 pub mod error;
+pub mod git_utils;
 pub mod image_backends;
 pub mod info;
 pub mod info_fields;

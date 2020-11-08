@@ -2,7 +2,7 @@
 #![recursion_limit = "1024"]
 #![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
 
-use onefetch::{cli::Cli, cli_utils, error::*, info};
+use onefetch::{cli::Cli, cli_utils, error::*, git_utils, info};
 
 use {
     process::{Command, Stdio},
@@ -21,7 +21,7 @@ fn run() -> Result<()> {
 
     let config = Cli::new()?;
 
-    if !cli_utils::is_valid_repo(&config.repo_path)? {
+    if !git_utils::is_valid_repo(&config.repo_path)? {
         return Err("please run onefetch inside of a non-bare git repository".into());
     }
 
