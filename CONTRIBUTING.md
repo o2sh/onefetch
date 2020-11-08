@@ -87,7 +87,7 @@ The first item `CSharp` corresponds to the name of the language as defined in to
 ```
 
 Remarks:
- - Your ascii logo's dimensions must fall below `25*45` (height\*width). The CI will fail otherwise.
+ - Your ascii logo's dimensions must fall below `25*40` (height\*width). The CI will fail otherwise.
  - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
  - Make sure to trim any unnecessary trailing whitespaces
  - See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii)
