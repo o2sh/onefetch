@@ -3,8 +3,10 @@ use crate::onefetch::{
     language::Language,
 };
 use colored::Color;
+use git2::{Repository, RepositoryOpenFlags};
 use std::env;
 use std::io::Write;
+use std::path::Path;
 use strum::IntoEnumIterator;
 
 pub struct Printer<W> {
@@ -83,6 +85,13 @@ impl<W: Write> Printer<W> {
 
         language.get_ascii_art()
     }
+}
+
+pub fn is_valid_repo(repo_path: &str) -> Result<bool> {
+    let repo =
+        Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
+
+    Ok(repo.is_ok() && !repo?.is_bare())
 }
 
 pub fn print_supported_languages() -> Result<()> {

@@ -19,18 +19,21 @@ fn run() -> Result<()> {
         return Err("Git failed to execute!".into());
     }
 
-    // Load command line options.
-    let options = Cli::new()?;
+    let config = Cli::new()?;
 
-    if options.print_languages {
+    if !cli_utils::is_valid_repo(&config.repo_path)? {
+        return Err("please run onefetch inside of a non-bare git repository".into());
+    }
+
+    if config.print_languages {
         return cli_utils::print_supported_languages();
     }
 
-    if options.print_package_managers {
+    if config.print_package_managers {
         return cli_utils::print_supported_package_managers();
     }
 
-    let info = info::Info::new(options)?;
+    let info = info::Info::new(config)?;
 
     let mut printer = cli_utils::Printer::new(io::BufWriter::new(io::stdout()), info);
 

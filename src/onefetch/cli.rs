@@ -13,7 +13,7 @@ use {
 };
 
 pub struct Cli {
-    pub path: String,
+    pub repo_path: String,
     pub ascii_input: Option<String>,
     pub ascii_language: Option<Language>,
     pub ascii_colors: Vec<String>,
@@ -49,8 +49,11 @@ impl Cli {
         .setting(AppSettings::DeriveDisplayOrder)
         .setting(AppSettings::UnifiedHelpMessage)
         .setting(AppSettings::HidePossibleValuesInHelp)
-        .arg(Arg::with_name("input").default_value(".").hide_default_value(true).help(
-            "Run as if onefetch was started in <input> instead of the current working directory.",
+        .arg(
+            Arg::with_name("input")
+            .default_value(".")
+            .hide_default_value(true)
+            .help("Run as if onefetch was started in <input> instead of the current working directory.",
         ))
         .arg(
             Arg::with_name("ascii-language")
@@ -263,7 +266,7 @@ impl Cli {
             16
         };
 
-        let path = String::from(matches.value_of("input").unwrap());
+        let repo_path = String::from(matches.value_of("input").unwrap());
 
         let ascii_input = matches.value_of("ascii-input").map(String::from);
 
@@ -296,7 +299,7 @@ impl Cli {
         };
 
         Ok(Cli {
-            path,
+            repo_path,
             ascii_input,
             ascii_language,
             ascii_colors,

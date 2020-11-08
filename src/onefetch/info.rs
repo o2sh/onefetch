@@ -212,9 +212,8 @@ impl std::fmt::Display for Info {
 
 impl Info {
     pub fn new(config: Cli) -> Result<Info> {
-        let repo = Repository::discover(&config.path)
-            .chain_err(|| "Could not find a valid git repo on the current path")?;
-        let workdir = repo.workdir().chain_err(|| "Unable to run onefetch on bare git repo")?;
+        let repo = Repository::discover(&config.repo_path)?;
+        let workdir = repo.workdir().unwrap();
         let workdir_str = workdir.to_str().unwrap();
         let (languages_stats, lines_of_code) =
             Language::get_language_statistics(workdir_str, &config.excluded)?;

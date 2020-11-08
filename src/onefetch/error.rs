@@ -12,6 +12,7 @@ error_chain! {
         Json(json::Error);
         Regex(regex::Error);
         Toml(toml::de::Error);
+        Git2(git2::Error);
     }
 }
 
