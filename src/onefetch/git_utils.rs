@@ -1,5 +1,5 @@
 use crate::onefetch::{commit_info::CommitInfo, error::*};
-use git2::{Repository, RepositoryOpenFlags};
+use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use regex::Regex;
 use std::path::Path;
 
@@ -13,6 +13,47 @@ pub fn get_repo_work_dir(repo: &Repository) -> Result<String> {
 
 fn work_dir(repo: &Repository) -> Result<&Path> {
     repo.workdir().ok_or_else(|| "unable to query workdir".into())
+}
+
+pub fn get_pending_changes(repo: &Repository) -> Result<String> {
+    let statuses = repo.statuses(Some(
+        StatusOptions::default()
+            .show(StatusShow::Workdir)
+            .update_index(true)
+            .include_untracked(true)
+            .renames_head_to_index(true)
+            .recurse_untracked_dirs(true),
+    ))?;
+
+    let mut deleted = 0;
+    let mut added = 0;
+    let mut modified = 0;
+
+    for e in statuses.iter() {
+        let s: Status = e.status();
+        if s.is_index_new() || s.is_wt_new() {
+            added += 1;
+        } else if s.is_index_deleted() || s.is_wt_deleted() {
+            deleted += 1;
+        } else {
+            modified += 1;
+        }
+    }
+
+    let mut result = String::from("");
+    if modified > 0 {
+        result = format!("{}+-", modified)
+    }
+
+    if added > 0 {
+        result = format!("{} {}+", result, added);
+    }
+
+    if deleted > 0 {
+        result = format!("{} {}-", result, deleted);
+    }
+
+    Ok(result.trim().into())
 }
 
 pub fn get_repo_name_and_url(repo: &Repository) -> Result<(String, String)> {

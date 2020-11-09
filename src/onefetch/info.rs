@@ -215,6 +215,7 @@ impl Info {
         let workdir = git_utils::get_repo_work_dir(&repo)?;
         let (repository_name, repository_url) = git_utils::get_repo_name_and_url(&repo)?;
         let current_commit_info = git_utils::get_current_commit_info(&repo);
+        let pending = git_utils::get_pending_changes(&repo);
         let git_history = Info::get_git_history(&workdir, config.no_merges);
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
@@ -223,7 +224,6 @@ impl Info {
         let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(&workdir);
         let (git_v, git_user) = Info::get_git_version_and_username(&workdir);
         let version = Info::get_version(&workdir);
-        let pending = Info::get_pending_changes(&workdir);
         let repo_size = Info::get_packed_size(&workdir);
         let project_license = Detector::new()?.get_project_license(&workdir);
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
@@ -379,54 +379,6 @@ impl Info {
     fn get_number_of_commits(git_history: &[String]) -> String {
         let number_of_commits = git_history.len();
         number_of_commits.to_string()
-    }
-
-    fn get_pending_changes(dir: &str) -> Result<String> {
-        let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("status")
-            .arg("--porcelain")
-            .output()
-            .expect("Failed to execute git.");
-
-        let output = String::from_utf8_lossy(&output.stdout);
-
-        if output == "" {
-            Ok("".into())
-        } else {
-            let lines = output.lines();
-
-            let mut deleted = 0;
-            let mut added = 0;
-            let mut modified = 0;
-
-            for line in lines {
-                let prefix = &line[..2];
-
-                match prefix.trim() {
-                    "D" => deleted += 1,
-                    "A" | "AM" | "??" => added += 1,
-                    "M" | "MM" | "R" => modified += 1,
-                    _ => {}
-                }
-            }
-
-            let mut result = String::from("");
-            if modified > 0 {
-                result = format!("{}+-", modified)
-            }
-
-            if added > 0 {
-                result = format!("{} {}+", result, added);
-            }
-
-            if deleted > 0 {
-                result = format!("{} {}-", result, deleted);
-            }
-
-            Ok(result.trim().into())
-        }
     }
 
     fn get_packed_size(dir: &str) -> Result<String> {
