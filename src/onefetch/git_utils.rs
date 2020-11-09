@@ -17,17 +17,22 @@ fn work_dir(repo: &Repository) -> Result<&Path> {
 
 pub fn get_repo_name_and_url(repo: &Repository) -> Result<(String, String)> {
     let config = repo.config()?;
-    let mut remote_url = String::new();
+    let mut remote_origin_url: Option<String> = None;
+    let mut remote_url_fallback = String::new();
     let mut repository_name = String::new();
-
     let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url").unwrap();
 
     for entry in &config.entries(None).unwrap() {
         let entry = entry?;
-        if remote_regex.is_match(entry.name().unwrap()) {
-            remote_url = entry.value().unwrap().to_string()
-        };
+        let entry_name = entry.name().unwrap();
+        if entry_name == "remote.origin.url" {
+            remote_origin_url = Some(entry.value().unwrap().to_string());
+        } else if remote_regex.is_match(entry_name) {
+            remote_url_fallback = entry.value().unwrap().to_string()
+        }
     }
+
+    let remote_url = if let Some(url) = remote_origin_url { url } else { remote_url_fallback };
 
     let name_parts: Vec<&str> = remote_url.split('/').collect();
 
