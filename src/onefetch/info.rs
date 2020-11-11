@@ -1,10 +1,9 @@
 use {
     crate::onefetch::{
-        cli::Cli, commit_info::CommitInfo, deps, error::*, git_utils, language::Language,
-        license::Detector, text_color::TextColor,
+        cli::Cli, commit_info::CommitInfo, deps, error::*, language::Language, license::Detector,
+        repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
-    git2::Repository,
     std::process::Command,
 };
 
@@ -83,7 +82,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.version {
+        if !self.config.disabled_fields.version  && !self.version.is_empty(){
             writeln!(
                 f,
                 "{}{}",
@@ -211,11 +210,12 @@ impl std::fmt::Display for Info {
 
 impl Info {
     pub fn new(config: Cli) -> Result<Info> {
-        let repo = Repository::discover(&config.repo_path)?;
-        let workdir = git_utils::get_repo_work_dir(&repo)?;
-        let (repository_name, repository_url) = git_utils::get_repo_name_and_url(&repo)?;
-        let current_commit_info = git_utils::get_current_commit_info(&repo);
-        let pending = git_utils::get_pending_changes(&repo);
+        let repo = Repo::new(&config.repo_path)?;
+        let workdir = repo.get_work_dir()?;
+        let (repository_name, repository_url) = repo.get_name_and_url()?;
+        let current_commit_info = repo.get_current_commit_info();
+        let pending = repo.get_pending_changes();
+        let version = repo.get_version()?;
         let git_history = Info::get_git_history(&workdir, config.no_merges);
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
@@ -223,7 +223,6 @@ impl Info {
         let last_change = Info::get_date_of_last_commit(&git_history);
         let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(&workdir);
         let (git_v, git_user) = Info::get_git_version_and_username(&workdir);
-        let version = Info::get_version(&workdir);
         let repo_size = Info::get_packed_size(&workdir);
         let project_license = Detector::new()?.get_project_license(&workdir);
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
@@ -243,7 +242,7 @@ impl Info {
             git_username: git_user,
             project_name: repository_name,
             current_commit: current_commit_info?,
-            version: version?,
+            version,
             creation_date: creation_date?,
             dominant_language,
             languages: languages_stats,
@@ -355,25 +354,6 @@ impl Info {
             .expect("Failed to execute git.");
         let username = String::from_utf8_lossy(&username.stdout).replace('\n', "");
         (version, username)
-    }
-
-    fn get_version(dir: &str) -> Result<String> {
-        let output = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("describe")
-            .arg("--abbrev=0")
-            .arg("--tags")
-            .output()
-            .expect("Failed to execute git.");
-
-        let output = String::from_utf8_lossy(&output.stdout);
-
-        if output == "" {
-            Ok("??".into())
-        } else {
-            Ok(output.to_string().replace('\n', ""))
-        }
     }
 
     fn get_number_of_commits(git_history: &[String]) -> String {
