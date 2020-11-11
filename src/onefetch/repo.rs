@@ -25,7 +25,12 @@ impl Repo {
     }
 
     pub fn get_number_of_branches(&self) -> Result<usize> {
-        Ok(self.repo.branches(Some(BranchType::Remote))?.count() - 1)
+        let mut number_of_branches = self.repo.branches(Some(BranchType::Remote))?.count();
+        if number_of_branches > 0 {
+            //Exclude origin/HEAD -> origin/master
+            number_of_branches -= 1;
+        }
+        Ok(number_of_branches)
     }
 
     pub fn get_git_username(&self) -> Result<String> {
@@ -71,16 +76,17 @@ impl Repo {
                 .recurse_untracked_dirs(true),
         ))?;
 
-        let (added, deleted, modified) = statuses.iter().fold((0, 0, 0), |(added, deleted, modified), e| {
-            let s: Status = e.status();
-            if s.is_index_new() || s.is_wt_new() {
-                (added + 1, deleted, modified)
-            } else if s.is_index_deleted() || s.is_wt_deleted() {
-                (added, deleted + 1, modified)
-            } else {
-                (added, deleted, modified + 1)
-            }
-        });
+        let (added, deleted, modified) =
+            statuses.iter().fold((0, 0, 0), |(added, deleted, modified), e| {
+                let s: Status = e.status();
+                if s.is_index_new() || s.is_wt_new() {
+                    (added + 1, deleted, modified)
+                } else if s.is_index_deleted() || s.is_wt_deleted() {
+                    (added, deleted + 1, modified)
+                } else {
+                    (added, deleted, modified + 1)
+                }
+            });
 
         let mut result = String::new();
         if modified > 0 {
