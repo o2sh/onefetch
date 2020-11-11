@@ -11,3 +11,4 @@ pub mod language;
 pub mod license;
 pub mod repo;
 pub mod text_color;
+mod utils;

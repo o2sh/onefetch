@@ -21,7 +21,7 @@ impl Detector {
             .map_err(|_| "Could not initialize the license detector".into())
     }
 
-    pub fn get_project_license(&self, dir: &str) -> Result<String> {
+    pub fn get_license(&self, dir: &str) -> Result<String> {
         fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
             LICENSE_FILES.iter().any(|&name| file_name.as_ref().starts_with(name))
         }

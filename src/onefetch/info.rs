@@ -8,25 +8,25 @@ use {
 };
 
 pub struct Info {
-    git_version: String,
     git_username: String,
-    project_name: String,
+    git_version: String,
+    repo_name: String,
+    number_of_tags: usize,
+    number_of_branches: usize,
     head_refs: CommitInfo,
+    pending_changes: String,
     version: String,
     creation_date: String,
-    pub dominant_language: Language,
     languages: Vec<(Language, f64)>,
     dependencies: String,
     authors: Vec<(String, usize, usize)>,
     last_change: String,
     repo_url: String,
-    commits: String,
-    pending: String,
-    repo_size: String,
+    number_of_commits: String,
     lines_of_code: usize,
-    number_of_tags: usize,
-    number_of_branches: usize,
+    repo_size: String,
     license: String,
+    pub dominant_language: Language,
     pub ascii_colors: Vec<Color>,
     pub text_colors: TextColor,
     pub config: Cli,
@@ -59,7 +59,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{} {}",
                 project_str,
-                self.project_name.color(self.text_colors.info),
+                self.repo_name.color(self.text_colors.info),
                 branches_tags_str.color(self.text_colors.info)
             )?;
         }
@@ -73,12 +73,12 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.pending && !self.pending.is_empty() {
+        if !self.config.disabled_fields.pending && !self.pending_changes.is_empty() {
             writeln!(
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Pending"),
-                &self.pending.color(self.text_colors.info),
+                &self.pending_changes.color(self.text_colors.info),
             )?;
         }
 
@@ -158,7 +158,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Commits"),
-                &self.commits.color(self.text_colors.info),
+                &self.number_of_commits.color(self.text_colors.info),
             )?;
         }
 
@@ -212,26 +212,26 @@ impl Info {
     pub fn new(config: Cli) -> Result<Info> {
         let repo = Repo::new(&config.repo_path)?;
         let workdir = repo.get_work_dir()?;
-        let (repository_name, repository_url) = repo.get_name_and_url()?;
+        let (repo_name, repo_url) = repo.get_name_and_url()?;
         let head_refs = repo.get_head_refs()?;
-        let pending = repo.get_pending_changes();
+        let pending_changes = repo.get_pending_changes()?;
         let version = repo.get_version()?;
         let git_username = repo.get_git_username()?;
         let number_of_tags = repo.get_number_of_tags()?;
         let number_of_branches = repo.get_number_of_branches()?;
         let git_history = Info::get_git_history(&workdir, config.no_merges);
-        let creation_date = Info::get_creation_date(&git_history);
+        let creation_date = Info::get_creation_date(&git_history)?;
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, config.number_of_authors);
-        let last_change = Info::get_date_of_last_commit(&git_history);
+        let last_change = Info::get_date_of_last_commit(&git_history)?;
         let git_version = Info::get_git_version()?;
-        let repo_size = Info::get_packed_size(&workdir);
-        let project_license = Detector::new()?.get_project_license(&workdir);
+        let repo_size = Info::get_packed_size(&workdir)?;
+        let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
-        let (languages_stats, lines_of_code) =
+        let (languages, lines_of_code) =
             Language::get_language_statistics(&workdir, &config.excluded)?;
-        let dominant_language = Language::get_dominant_language(&languages_stats);
-        let ascii_colors = Info::get_ascii_colors(
+        let dominant_language = Language::get_dominant_language(&languages);
+        let ascii_colors = Language::get_ascii_colors(
             &config.ascii_language,
             &dominant_language,
             &config.ascii_colors,
@@ -240,25 +240,25 @@ impl Info {
         let text_colors = TextColor::get_text_colors(&config.text_colors, &ascii_colors);
 
         Ok(Info {
-            git_version,
             git_username,
-            project_name: repository_name,
-            head_refs,
-            version,
-            creation_date: creation_date?,
-            dominant_language,
-            languages: languages_stats,
-            dependencies,
-            authors,
-            last_change: last_change?,
-            repo_url: repository_url,
-            commits: number_of_commits,
-            pending: pending?,
-            repo_size: repo_size?,
-            lines_of_code,
+            git_version,
+            repo_name,
             number_of_tags,
             number_of_branches,
-            license: project_license?,
+            head_refs,
+            pending_changes,
+            version,
+            creation_date,
+            languages,
+            dependencies,
+            authors,
+            last_change,
+            repo_url,
+            number_of_commits,
+            lines_of_code,
+            repo_size,
+            license,
+            dominant_language,
             ascii_colors,
             text_colors,
             config,
@@ -311,14 +311,36 @@ impl Info {
         authors
     }
 
-    fn get_git_version() -> Result<String> {
-        let version = Command::new("git").arg("--version").output()?;
-        Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
+    fn get_date_of_last_commit(git_history: &[String]) -> Result<String> {
+        let last_commit = git_history.first();
+
+        let output = match last_commit {
+            Some(date) => date.split('\t').collect::<Vec<_>>()[0].to_string(),
+            None => "??".into(),
+        };
+
+        Ok(output)
+    }
+
+    fn get_creation_date(git_history: &[String]) -> Result<String> {
+        let first_commit = git_history.last();
+
+        let output = match first_commit {
+            Some(creation_time) => creation_time.split('\t').collect::<Vec<_>>()[0].to_string(),
+            None => "??".into(),
+        };
+
+        Ok(output)
     }
 
     fn get_number_of_commits(git_history: &[String]) -> String {
         let number_of_commits = git_history.len();
         number_of_commits.to_string()
+    }
+
+    fn get_git_version() -> Result<String> {
+        let version = Command::new("git").arg("--version").output()?;
+        Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
     }
 
     fn get_packed_size(dir: &str) -> Result<String> {
@@ -364,80 +386,6 @@ impl Info {
             let res = repo_size;
             Ok(res.into())
         }
-    }
-
-    fn get_date_of_last_commit(git_history: &[String]) -> Result<String> {
-        let last_commit = git_history.first();
-
-        let output = match last_commit {
-            Some(date) => date.split('\t').collect::<Vec<_>>()[0].to_string(),
-            None => "??".into(),
-        };
-
-        Ok(output)
-    }
-
-    fn get_creation_date(git_history: &[String]) -> Result<String> {
-        let first_commit = git_history.last();
-
-        let output = match first_commit {
-            Some(creation_time) => creation_time.split('\t').collect::<Vec<_>>()[0].to_string(),
-            None => "??".into(),
-        };
-
-        Ok(output)
-    }
-
-    fn get_ascii_colors(
-        ascii_language: &Option<Language>,
-        dominant_language: &Language,
-        ascii_colors: &[String],
-        true_color: bool,
-    ) -> Vec<Color> {
-        let language = if let Some(ascii_language) = ascii_language {
-            ascii_language
-        } else {
-            &dominant_language
-        };
-
-        let colors = language.get_colors(true_color);
-
-        let colors: Vec<Color> = colors
-            .iter()
-            .enumerate()
-            .map(|(index, default_color)| {
-                if let Some(color_num) = ascii_colors.get(index) {
-                    if let Some(color) = Info::num_to_color(color_num) {
-                        return color;
-                    }
-                }
-                *default_color
-            })
-            .collect();
-        colors
-    }
-
-    pub fn num_to_color(num: &str) -> Option<Color> {
-        let color = match num {
-            "0" => Color::Black,
-            "1" => Color::Red,
-            "2" => Color::Green,
-            "3" => Color::Yellow,
-            "4" => Color::Blue,
-            "5" => Color::Magenta,
-            "6" => Color::Cyan,
-            "7" => Color::White,
-            "8" => Color::BrightBlack,
-            "9" => Color::BrightRed,
-            "10" => Color::BrightGreen,
-            "11" => Color::BrightYellow,
-            "12" => Color::BrightBlue,
-            "13" => Color::BrightMagenta,
-            "14" => Color::BrightCyan,
-            "15" => Color::BrightWhite,
-            _ => return None,
-        };
-        Some(color)
     }
 
     fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
