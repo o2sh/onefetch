@@ -39,7 +39,7 @@ impl Repo {
         let mut most_recent: i64 = 0;
 
         self.repo.tag_foreach(|id, name| {
-            if let Ok(name) = String::from_utf8(name[10..name.len()].into()) {
+            if let Ok(name) = String::from_utf8(name[10..].into()) {
                 let mut current_time: i64 = 0;
                 if let Ok(tag) = self.repo.find_tag(id) {
                     if let Ok(c) = self.repo.find_commit(tag.target_id()) {
