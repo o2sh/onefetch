@@ -5,6 +5,7 @@ use crate::onefetch::{
 use colored::Color;
 use std::env;
 use std::io::Write;
+use std::process::Command;
 use strum::IntoEnumIterator;
 
 pub struct Printer<W> {
@@ -105,4 +106,9 @@ pub fn is_truecolor_terminal() -> bool {
     env::var("COLORTERM")
         .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
         .unwrap_or(false)
+}
+
+pub fn get_git_version() -> Result<String> {
+    let version = Command::new("git").arg("--version").output()?;
+    Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
 }

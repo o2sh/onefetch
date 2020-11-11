@@ -1,7 +1,7 @@
 use {
     crate::onefetch::{
-        cli::Cli, commit_info::CommitInfo, deps, error::*, language::Language, license::Detector,
-        repo::Repo, text_color::TextColor,
+        cli::Cli, cli_utils, commit_info::CommitInfo, deps, error::*, language::Language,
+        license::Detector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
     std::process::Command,
@@ -224,7 +224,7 @@ impl Info {
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, config.number_of_authors);
         let last_change = Info::get_date_of_last_commit(&git_history)?;
-        let git_version = Info::get_git_version()?;
+        let git_version = cli_utils::get_git_version()?;
         let repo_size = Info::get_packed_size(&workdir)?;
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
@@ -336,11 +336,6 @@ impl Info {
     fn get_number_of_commits(git_history: &[String]) -> String {
         let number_of_commits = git_history.len();
         number_of_commits.to_string()
-    }
-
-    fn get_git_version() -> Result<String> {
-        let version = Command::new("git").arg("--version").output()?;
-        Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
     }
 
     fn get_packed_size(dir: &str) -> Result<String> {
