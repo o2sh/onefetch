@@ -9,6 +9,7 @@ pub mod info;
 pub mod info_fields;
 pub mod language;
 pub mod license;
+pub mod printer;
 pub mod repo;
 pub mod text_color;
 mod utils;

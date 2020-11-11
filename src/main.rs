@@ -2,7 +2,7 @@
 #![recursion_limit = "1024"]
 #![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
 
-use onefetch::{cli::Cli, cli_utils, error::*, info, repo};
+use onefetch::{cli::Cli, cli_utils, error::*, info, printer, repo};
 
 use std::{io, process};
 
@@ -32,7 +32,7 @@ fn run() -> Result<()> {
 
     let info = info::Info::new(config)?;
 
-    let mut printer = cli_utils::Printer::new(io::BufWriter::new(io::stdout()), info);
+    let mut printer = printer::Printer::new(io::BufWriter::new(io::stdout()), info);
 
     printer.print()?;
 
