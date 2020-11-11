@@ -4,10 +4,7 @@
 
 use onefetch::{cli::Cli, cli_utils, error::*, info, repo};
 
-use {
-    process::{Command, Stdio},
-    std::{io, process},
-};
+use std::{io, process};
 
 mod onefetch;
 
@@ -15,7 +12,7 @@ fn run() -> Result<()> {
     #[cfg(windows)]
     let _ = ansi_term::enable_ansi_support();
 
-    if !is_git_installed() {
+    if !cli_utils::is_git_installed() {
         return Err("git failed to execute!".into());
     }
 
@@ -54,8 +51,4 @@ fn main() {
             process::exit(1);
         }
     }
-}
-
-fn is_git_installed() -> bool {
-    Command::new("git").arg("--version").stdout(Stdio::null()).status().is_ok()
 }

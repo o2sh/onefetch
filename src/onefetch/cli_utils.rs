@@ -5,7 +5,7 @@ use crate::onefetch::{
 use colored::Color;
 use std::env;
 use std::io::Write;
-use std::process::Command;
+use std::process::{Command, Stdio};
 use strum::IntoEnumIterator;
 
 pub struct Printer<W> {
@@ -111,4 +111,8 @@ pub fn is_truecolor_terminal() -> bool {
 pub fn get_git_version() -> Result<String> {
     let version = Command::new("git").arg("--version").output()?;
     Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
+}
+
+pub fn is_git_installed() -> bool {
+    Command::new("git").arg("--version").stdout(Stdio::null()).status().is_ok()
 }
