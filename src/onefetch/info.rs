@@ -216,13 +216,15 @@ impl Info {
         let head_refs = repo.get_head_refs()?;
         let pending = repo.get_pending_changes();
         let version = repo.get_version()?;
+        let git_username = repo.get_git_username()?;
+        let number_of_tags = repo.get_number_of_tags()?;
+        let number_of_branches = repo.get_number_of_branches()?;
         let git_history = Info::get_git_history(&workdir, config.no_merges);
         let creation_date = Info::get_creation_date(&git_history);
         let number_of_commits = Info::get_number_of_commits(&git_history);
         let authors = Info::get_authors(&git_history, config.number_of_authors);
         let last_change = Info::get_date_of_last_commit(&git_history);
-        let (number_of_tags, number_of_branches) = Info::get_number_of_tags_branches(&workdir);
-        let (git_v, git_user) = Info::get_git_version_and_username(&workdir);
+        let git_version = Info::get_git_version()?;
         let repo_size = Info::get_packed_size(&workdir);
         let project_license = Detector::new()?.get_project_license(&workdir);
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
@@ -238,8 +240,8 @@ impl Info {
         let text_colors = TextColor::get_text_colors(&config.text_colors, &ascii_colors);
 
         Ok(Info {
-            git_version: git_v,
-            git_username: git_user,
+            git_version,
+            git_username,
             project_name: repository_name,
             head_refs,
             version,
@@ -277,36 +279,6 @@ impl Info {
         output.lines().map(|x| x.to_string()).collect::<Vec<_>>()
     }
 
-    fn get_number_of_tags_branches(dir: &str) -> (usize, usize) {
-        let tags = {
-            let output = Command::new("git")
-                .args(vec!["-C", dir, "tag"])
-                .output()
-                .expect("Failed to execute git.");
-
-            let tags = String::from_utf8_lossy(&output.stdout);
-
-            tags.lines().count()
-        };
-
-        let branches = {
-            let output = Command::new("git")
-                .args(vec!["-C", dir, "branch", "-r"])
-                .output()
-                .expect("Failed to execute git.");
-
-            let branches = String::from_utf8_lossy(&output.stdout);
-
-            if branches.lines().count() > 0 {
-                branches.lines().count() - 1 //Exclude origin/HEAD -> origin/master
-            } else {
-                0
-            }
-        };
-
-        (tags, branches)
-    }
-
     fn get_authors(git_history: &[String], n: usize) -> Vec<(String, usize, usize)> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
@@ -339,21 +311,9 @@ impl Info {
         authors
     }
 
-    fn get_git_version_and_username(dir: &str) -> (String, String) {
-        let version =
-            Command::new("git").arg("--version").output().expect("Failed to execute git.");
-        let version = String::from_utf8_lossy(&version.stdout).replace('\n', "");
-
-        let username = Command::new("git")
-            .arg("-C")
-            .arg(dir)
-            .arg("config")
-            .arg("--get")
-            .arg("user.name")
-            .output()
-            .expect("Failed to execute git.");
-        let username = String::from_utf8_lossy(&username.stdout).replace('\n', "");
-        (version, username)
+    fn get_git_version() -> Result<String> {
+        let version = Command::new("git").arg("--version").output()?;
+        Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
     }
 
     fn get_number_of_commits(git_history: &[String]) -> String {

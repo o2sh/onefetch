@@ -1,5 +1,5 @@
 use crate::onefetch::{commit_info::CommitInfo, error::*};
-use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
+use git2::{BranchType, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use regex::Regex;
 use std::path::Path;
 
@@ -18,6 +18,20 @@ impl Repo {
         } else {
             Err("invalid workdir".into())
         }
+    }
+
+    pub fn get_number_of_tags(&self) -> Result<usize> {
+        Ok(self.repo.tag_names(None)?.len())
+    }
+
+    pub fn get_number_of_branches(&self) -> Result<usize> {
+        Ok(self.repo.branches(Some(BranchType::Remote))?.count() - 1)
+    }
+
+    pub fn get_git_username(&self) -> Result<String> {
+        let config = self.repo.config()?;
+        let username = config.get_entry("user.name")?;
+        Ok(username.value().unwrap_or("unknown").to_string())
     }
 
     pub fn get_version(&self) -> Result<String> {
@@ -150,6 +164,5 @@ impl Repo {
 
 pub fn is_valid(repo_path: &str) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
-
     Ok(repo.is_ok() && !repo?.is_bare())
 }
