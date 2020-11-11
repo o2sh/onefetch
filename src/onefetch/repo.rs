@@ -71,20 +71,16 @@ impl Repo {
                 .recurse_untracked_dirs(true),
         ))?;
 
-        let mut deleted: usize = 0;
-        let mut added: usize = 0;
-        let mut modified: usize = 0;
-
-        for e in statuses.iter() {
+        let (added, deleted, modified) = statuses.iter().fold((0, 0, 0), |(added, deleted, modified), e| {
             let s: Status = e.status();
             if s.is_index_new() || s.is_wt_new() {
-                added += 1;
+                (added + 1, deleted, modified)
             } else if s.is_index_deleted() || s.is_wt_deleted() {
-                deleted += 1;
+                (added, deleted + 1, modified)
             } else {
-                modified += 1;
+                (added, deleted, modified + 1)
             }
-        }
+        });
 
         let mut result = String::new();
         if modified > 0 {
