@@ -1,4 +1,4 @@
-use {crate::onefetch::info::Info, colored::Color};
+use {crate::onefetch::utils::num_to_color, colored::Color};
 
 pub struct TextColor {
     pub title: Color,
@@ -27,7 +27,7 @@ impl TextColor {
             let custom_color = text_colors
                 .iter()
                 .map(|color_num| {
-                    let custom = Info::num_to_color(color_num);
+                    let custom = num_to_color(color_num);
                     match custom {
                         Some(custom) => custom,
                         None => Color::White,

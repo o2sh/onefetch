@@ -1,80 +1,120 @@
-use crate::onefetch::{commit_info::CommitInfo, error::*};
-use git2::{Repository, RepositoryOpenFlags};
-use regex::Regex;
-use std::path::Path;
+use crate::onefetch::error::*;
+use std::process::Command;
 
-pub fn get_repo_work_dir(repo: &Repository) -> Result<String> {
-    if let Some(workdir) = work_dir(&repo)?.to_str() {
-        Ok(workdir.to_string())
-    } else {
-        Err("invalid workdir".into())
+pub fn get_git_history(dir: &str, no_merges: bool) -> Result<Vec<String>> {
+    let mut args = vec!["-C", dir, "log"];
+    if no_merges {
+        args.push("--no-merges");
     }
+
+    args.push("--pretty=%cr\t%ae\t%an");
+
+    let output = Command::new("git").args(args).output()?;
+
+    let output = String::from_utf8_lossy(&output.stdout);
+    Ok(output.lines().map(|x| x.to_string()).collect::<Vec<_>>())
 }
 
-fn work_dir(repo: &Repository) -> Result<&Path> {
-    repo.workdir().ok_or_else(|| "unable to query workdir".into())
-}
-
-pub fn get_repo_name_and_url(repo: &Repository) -> Result<(String, String)> {
-    let config = repo.config()?;
-    let mut remote_origin_url: Option<String> = None;
-    let mut remote_url_fallback = String::new();
-    let mut repository_name = String::new();
-    let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url").unwrap();
-
-    for entry in &config.entries(None).unwrap() {
-        let entry = entry?;
-        let entry_name = entry.name().unwrap();
-        if entry_name == "remote.origin.url" {
-            remote_origin_url = Some(entry.value().unwrap().to_string());
-        } else if remote_regex.is_match(entry_name) {
-            remote_url_fallback = entry.value().unwrap().to_string()
-        }
+pub fn get_authors(git_history: &[String], n: usize) -> Vec<(String, usize, usize)> {
+    let mut authors = std::collections::HashMap::new();
+    let mut author_name_by_email = std::collections::HashMap::new();
+    let mut total_commits = 0;
+    for line in git_history {
+        let author_email = line.split('\t').collect::<Vec<_>>()[1].to_string();
+        let author_name = line.split('\t').collect::<Vec<_>>()[2].to_string();
+        let commit_count = authors.entry(author_email.to_string()).or_insert(0);
+        author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
+        *commit_count += 1;
+        total_commits += 1;
     }
 
-    let remote_url = if let Some(url) = remote_origin_url { url } else { remote_url_fallback };
+    let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
+    authors.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
 
-    let name_parts: Vec<&str> = remote_url.split('/').collect();
+    authors.truncate(n);
 
-    if !name_parts.is_empty() {
-        let mut i = 1;
-        while repository_name.is_empty() && i <= name_parts.len() {
-            repository_name = name_parts[name_parts.len() - i].to_string();
-            i += 1;
-        }
-    }
-
-    if repository_name.contains(".git") {
-        let repo_name = repository_name.clone();
-        let parts: Vec<&str> = repo_name.split(".git").collect();
-        repository_name = parts[0].to_string();
-    }
-
-    Ok((repository_name, remote_url))
-}
-
-pub fn get_current_commit_info(repo: &Repository) -> Result<CommitInfo> {
-    let head = repo.head()?;
-    let head_oid = head.target().ok_or("")?;
-    let refs = repo.references()?;
-    let refs_info = refs
-        .filter_map(|reference| match reference {
-            Ok(reference) => match (reference.target(), reference.shorthand()) {
-                (Some(oid), Some(shorthand)) if oid == head_oid => Some(if reference.is_tag() {
-                    String::from("tags/") + shorthand
-                } else {
-                    String::from(shorthand)
-                }),
-                _ => None,
-            },
-            Err(_) => None,
+    let authors: Vec<(String, usize, usize)> = authors
+        .into_iter()
+        .map(|(author, count)| {
+            (
+                author_name_by_email.get(&author).unwrap().trim_matches('\'').to_string(),
+                count,
+                count * 100 / total_commits,
+            )
         })
-        .collect::<Vec<String>>();
-    Ok(CommitInfo::new(head_oid, refs_info))
+        .collect();
+
+    authors
 }
 
-pub fn is_valid_repo(repo_path: &str) -> Result<bool> {
-    let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
+pub fn get_date_of_last_commit(git_history: &[String]) -> Result<String> {
+    let last_commit = git_history.first();
 
-    Ok(repo.is_ok() && !repo?.is_bare())
+    let output = match last_commit {
+        Some(date) => date.split('\t').collect::<Vec<_>>()[0].to_string(),
+        None => "??".into(),
+    };
+
+    Ok(output)
+}
+
+pub fn get_creation_date(git_history: &[String]) -> Result<String> {
+    let first_commit = git_history.last();
+
+    let output = match first_commit {
+        Some(creation_time) => creation_time.split('\t').collect::<Vec<_>>()[0].to_string(),
+        None => "??".into(),
+    };
+
+    Ok(output)
+}
+
+pub fn get_number_of_commits(git_history: &[String]) -> String {
+    let number_of_commits = git_history.len();
+    number_of_commits.to_string()
+}
+
+pub fn get_packed_size(dir: &str) -> Result<String> {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("count-objects")
+        .arg("-vH")
+        .output()
+        .expect("Failed to execute git.");
+
+    let output = String::from_utf8_lossy(&output.stdout);
+    let lines = output.to_string();
+    let size_line = lines.split('\n').find(|line| line.starts_with("size-pack:"));
+
+    let repo_size = match size_line {
+        None => "??",
+        Some(size_str) => &(size_str[11..]),
+    };
+
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("ls-files")
+        .output()
+        .expect("Failed to execute git.");
+    // To check if command executed successfully or not
+    let error = &output.stderr;
+
+    if error.is_empty() {
+        let output = String::from_utf8_lossy(&output.stdout);
+
+        let lines = output.to_string();
+        let files_list = lines.split('\n');
+        let mut files_count: u128 = 0;
+        for _file in files_list {
+            files_count += 1;
+        }
+        files_count -= 1; // As splitting giving one line extra(blank).
+        let res = repo_size.to_owned() + (" (") + &(files_count.to_string()) + (" files)");
+        Ok(res)
+    } else {
+        let res = repo_size;
+        Ok(res.into())
+    }
 }
