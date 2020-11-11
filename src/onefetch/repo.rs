@@ -21,7 +21,6 @@ impl Repo {
     }
 
     pub fn get_version(&self) -> Result<String> {
-        let mut number_of_release: usize = 0;
         let mut version_name = String::new();
         let mut most_recent: i64 = 0;
 
@@ -40,7 +39,6 @@ impl Repo {
                     version_name = name;
                 }
 
-                number_of_release += 1;
                 return true;
             }
             false
@@ -48,13 +46,7 @@ impl Repo {
         let mut res = String::new();
 
         if !version_name.is_empty() {
-            if number_of_release > 1 {
-                res = format!("{} ({} releases)", version_name, number_of_release);
-            } else if number_of_release == 1 {
-                res = format!("{} ({} release)", version_name, number_of_release);
-            } else {
-                res = format!("{}", version_name);
-            }
+            res = format!("{}", version_name);
         }
 
         Ok(res)
