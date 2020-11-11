@@ -43,13 +43,8 @@ impl Repo {
             }
             false
         })?;
-        let mut res = String::new();
 
-        if !version_name.is_empty() {
-            res = format!("{}", version_name);
-        }
-
-        Ok(res)
+        Ok(version_name)
     }
 
     pub fn get_pending_changes(&self) -> Result<String> {
@@ -131,19 +126,15 @@ impl Repo {
         Ok((repository_name, remote_url))
     }
 
-    pub fn get_current_commit_info(&self) -> Result<CommitInfo> {
+    pub fn get_head_refs(&self) -> Result<CommitInfo> {
         let head = self.repo.head()?;
         let head_oid = head.target().ok_or("")?;
         let refs = self.repo.references()?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
-                    (Some(oid), Some(shorthand)) if oid == head_oid => {
-                        Some(if reference.is_tag() {
-                            String::from("tags/") + shorthand
-                        } else {
-                            String::from(shorthand)
-                        })
+                    (Some(oid), Some(shorthand)) if oid == head_oid && !reference.is_tag() => {
+                        Some(String::from(shorthand))
                     }
                     _ => None,
                 },

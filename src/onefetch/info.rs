@@ -11,7 +11,7 @@ pub struct Info {
     git_version: String,
     git_username: String,
     project_name: String,
-    current_commit: CommitInfo,
+    head_refs: CommitInfo,
     version: String,
     creation_date: String,
     pub dominant_language: Language,
@@ -69,7 +69,7 @@ impl std::fmt::Display for Info {
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("HEAD"),
-                &self.current_commit.to_string().color(self.text_colors.info),
+                &self.head_refs.to_string().color(self.text_colors.info),
             )?;
         }
 
@@ -213,7 +213,7 @@ impl Info {
         let repo = Repo::new(&config.repo_path)?;
         let workdir = repo.get_work_dir()?;
         let (repository_name, repository_url) = repo.get_name_and_url()?;
-        let current_commit_info = repo.get_current_commit_info();
+        let head_refs = repo.get_head_refs()?;
         let pending = repo.get_pending_changes();
         let version = repo.get_version()?;
         let git_history = Info::get_git_history(&workdir, config.no_merges);
@@ -241,7 +241,7 @@ impl Info {
             git_version: git_v,
             git_username: git_user,
             project_name: repository_name,
-            current_commit: current_commit_info?,
+            head_refs,
             version,
             creation_date: creation_date?,
             dominant_language,
