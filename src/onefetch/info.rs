@@ -82,7 +82,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.version  && !self.version.is_empty(){
+        if !self.config.disabled_fields.version && !self.version.is_empty() {
             writeln!(
                 f,
                 "{}{}",
