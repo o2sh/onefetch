@@ -18,16 +18,7 @@ impl<'a> AsciiArt<'a> {
             }
         }
 
-        let (start, end) = lines
-            .iter()
-            .map(|line| {
-                let line_start = Tokens(line).leading_spaces();
-                let line_end = Tokens(line).true_length();
-                (line_start, line_end)
-            })
-            .fold((std::usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
-                (acc_s.min(line_s), acc_e.max(line_e))
-            });
+        let (start, end) = get_min_start_max_end(&lines);
 
         AsciiArt { content: Box::new(lines.into_iter()), colors, bold, start, end }
     }
@@ -35,6 +26,19 @@ impl<'a> AsciiArt<'a> {
         assert!(self.end >= self.start);
         self.end - self.start
     }
+}
+
+pub fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
+    lines
+        .iter()
+        .map(|line| {
+            let line_start = Tokens(line).leading_spaces();
+            let line_end = Tokens(line).true_length();
+            (line_start, line_end)
+        })
+        .fold((std::usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
+            (acc_s.min(line_s), acc_e.max(line_e))
+        })
 }
 
 /// Produces a series of lines which have been automatically truncated to the

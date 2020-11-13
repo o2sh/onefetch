@@ -126,30 +126,23 @@ macro_rules! define_languages {
 
         #[cfg(test)]
         mod ascii_size {
-            use lazy_static::lazy_static;
+            use crate::onefetch::ascii_art::get_min_start_max_end;
             use more_asserts::assert_le;
             use paste::paste;
-            use regex::Regex;
 
             const MAX_WIDTH: usize = 40;
             const MAX_HEIGHT: usize = 25;
-
-            lazy_static! {
-                static ref COLOR_INTERPOLATION: Regex = Regex::new(r"\{\d+\}").unwrap();
-            }
 
             $(
                 paste! {
                     #[test]
                     fn [<$name:lower _width>] () {
                         const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
-
-                        for (line_number, line) in ASCII.lines().enumerate() {
-                            let line = COLOR_INTERPOLATION.replace_all(line, "");
-                            if (line.trim().len() > MAX_WIDTH) {
-                                panic!("{} is too wide at line {}\n{:?}", $ascii, line_number + 1, line)
+                        let lines: Vec<_> = ASCII.lines().skip_while(|line| line.is_empty()).collect();
+                        let (start, end) = get_min_start_max_end(&lines);
+                            if (end - start > MAX_WIDTH) {
+                                panic!("{} is too wide", $ascii)
                             }
-                        }
                     }
 
                     #[test]

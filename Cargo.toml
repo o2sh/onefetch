@@ -41,7 +41,6 @@ libc = "0.2.80"
 base64 = "0.13.0"
 
 [dev-dependencies]
-lazy_static = "1.4"
 more-asserts = "0.2"
 paste = "1"
 

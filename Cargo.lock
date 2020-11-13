@@ -949,7 +949,6 @@ dependencies = [
  "git2",
  "image",
  "json",
- "lazy_static",
  "libc",
  "more-asserts",
  "paste",
