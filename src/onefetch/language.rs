@@ -261,6 +261,7 @@ define_languages! {
     { Tsx, "tsx.ascii", "TSX", define_colors!( [Color::Blue] ) },
     { TypeScript, "typescript.ascii", "TypeScript", define_colors!( [Color::Cyan] : [Color::TrueColor{ r:0, g:122, b:204} ]) },
     { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
+    { Xaml, "xaml.ascii", "Xaml", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206} ]) },
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
     { Zsh, "zsh.ascii", "Zsh", define_colors!( [Color::White] ) },
