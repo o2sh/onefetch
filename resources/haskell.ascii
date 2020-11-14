@@ -1,14 +1,13 @@
-
+{0}yyyyyy{1} xxxxxx
 {0} yyyyyy{1} xxxxxx
 {0}  yyyyyy{1} xxxxxx
 {0}   yyyyyy{1} xxxxxx
-{0}    yyyyyy{1} xxxxxx
-{0}     yyyyyy{1} xxxxxx{2} yyyyyyyyyy  
-{0}      yyyyyy{1} xxxxxx{2} yyyyyyyyy  
-{0}       yyyyyy{1} xxxxxx
-{0}      yyyyyy{1} xxxxxxxx{2} yyyyyyy  
-{0}     yyyyyy{1} xxxxxxxxxx{2} yyyyyy  
-{0}    yyyyyy{1} xxxxxxxxxxxx
-{0}   yyyyyy{1} xxxxxx  xxxxxx
-{0}  yyyyyy{1} xxxxxx    xxxxxx
-{0} yyyyyy{1} xxxxxx      xxxxxx
+{0}    yyyyyy{1} xxxxxx{2} yyyyyyyyyy  
+{0}     yyyyyy{1} xxxxxx{2} yyyyyyyyy  
+{0}      yyyyyy{1} xxxxxx
+{0}     yyyyyy{1} xxxxxxxx{2} yyyyyyy  
+{0}    yyyyyy{1} xxxxxxxxxx{2} yyyyyy  
+{0}   yyyyyy{1} xxxxxxxxxxxx
+{0}  yyyyyy{1} xxxxxx  xxxxxx
+{0} yyyyyy{1} xxxxxx    xxxxxx
+{0}yyyyyy{1} xxxxxx      xxxxxx
