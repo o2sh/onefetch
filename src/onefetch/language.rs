@@ -141,9 +141,7 @@ macro_rules! define_languages {
                         let lines: Vec<_> = ASCII.lines().skip_while(|line| line.is_empty()).collect();
                         let (start, end) = get_min_start_max_end(&lines);
                         assert!(start <= end);
-                        if (end - start > MAX_WIDTH) {
-                            panic!("{} is too wide", $ascii)
-                        }
+                        assert_le!(end - start, MAX_WIDTH, concat!($ascii, " is too wide."));
                     }
 
                     #[test]
