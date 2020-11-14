@@ -70,6 +70,7 @@ impl SixelBackend {
 }
 
 impl super::ImageBackend for SixelBackend {
+    #[allow(clippy::map_entry)]
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String> {
         let tty_size = unsafe {
             let tty_size: winsize = std::mem::zeroed();

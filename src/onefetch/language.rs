@@ -140,9 +140,10 @@ macro_rules! define_languages {
                         const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii));
                         let lines: Vec<_> = ASCII.lines().skip_while(|line| line.is_empty()).collect();
                         let (start, end) = get_min_start_max_end(&lines);
-                            if (end - start > MAX_WIDTH) {
-                                panic!("{} is too wide", $ascii)
-                            }
+                        assert!(start <= end);
+                        if (end - start > MAX_WIDTH) {
+                            panic!("{} is too wide", $ascii)
+                        }
                     }
 
                     #[test]
