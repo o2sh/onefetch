@@ -46,13 +46,7 @@ impl Detector {
 
         output.sort();
         output.dedup();
-        let output = output.join(", ");
-
-        if output == "" {
-            Ok("??".into())
-        } else {
-            Ok(output)
-        }
+        Ok(output.join(", "))
     }
 
     fn analyze(&self, text: &str) -> Option<String> {

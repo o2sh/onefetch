@@ -52,7 +52,7 @@ pub fn get_date_of_last_commit(git_history: &[String]) -> Result<String> {
 
     let output = match last_commit {
         Some(date) => date.split('\t').collect::<Vec<_>>()[0].to_string(),
-        None => "??".into(),
+        None => "".into(),
     };
 
     Ok(output)
@@ -63,7 +63,7 @@ pub fn get_creation_date(git_history: &[String]) -> Result<String> {
 
     let output = match first_commit {
         Some(creation_time) => creation_time.split('\t').collect::<Vec<_>>()[0].to_string(),
-        None => "??".into(),
+        None => "".into(),
     };
 
     Ok(output)
@@ -88,7 +88,7 @@ pub fn get_packed_size(dir: &str) -> Result<String> {
     let size_line = lines.split('\n').find(|line| line.starts_with("size-pack:"));
 
     let repo_size = match size_line {
-        None => "??",
+        None => "",
         Some(size_str) => &(size_str[11..]),
     };
 

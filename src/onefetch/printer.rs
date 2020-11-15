@@ -2,6 +2,8 @@ use crate::onefetch::{ascii_art::AsciiArt, error::*, info::Info};
 use colored::Color;
 use std::io::Write;
 
+const CENTER_PAD_LENGTH: usize = 3;
+
 pub struct Printer<W> {
     writer: W,
     info: Info,
@@ -13,7 +15,7 @@ impl<W: Write> Printer<W> {
     }
 
     pub fn print(&mut self) -> Result<()> {
-        let center_pad = "   ";
+        let center_pad = " ".repeat(CENTER_PAD_LENGTH);
         let info_str = format!("{}", &self.info);
         let mut info_lines = info_str.lines();
         let colors: Vec<Color> = Vec::new();

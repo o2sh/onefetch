@@ -90,7 +90,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.created {
+        if !self.config.disabled_fields.created && !self.creation_date.is_empty() {
             writeln!(
                 f,
                 "{}{}",
@@ -134,7 +134,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.last_change {
+        if !self.config.disabled_fields.last_change && !self.last_change.is_empty() {
             writeln!(
                 f,
                 "{}{}",
@@ -170,7 +170,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.size {
+        if !self.config.disabled_fields.size && !self.repo_size.is_empty() {
             writeln!(
                 f,
                 "{}{}",
@@ -179,7 +179,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.license {
+        if !self.config.disabled_fields.license && !self.license.is_empty() {
             writeln!(
                 f,
                 "{}{}",
