@@ -3,13 +3,13 @@ use {
         cli_utils,
         error::*,
         image_backends,
-        info_fields::{self, InfoFields},
+        info_fields::{InfoField, InfoFieldOff},
         language::Language,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     image::DynamicImage,
     std::{convert::From, env, str::FromStr},
-    strum::{EnumCount, IntoEnumIterator},
+    strum::IntoEnumIterator,
 };
 
 pub struct Cli {
@@ -17,7 +17,7 @@ pub struct Cli {
     pub ascii_input: Option<String>,
     pub ascii_language: Option<Language>,
     pub ascii_colors: Vec<String>,
-    pub disabled_fields: info_fields::InfoFieldOn,
+    pub disabled_fields: InfoFieldOff,
     pub no_bold: bool,
     pub image: Option<DynamicImage>,
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
@@ -80,8 +80,7 @@ impl Cli {
                 .case_insensitive(true)
                 .help("Allows you to disable FIELD(s) from appearing in the output.")
                 .possible_values(
-                    &InfoFields::iter()
-                        .take(InfoFields::COUNT - 1)
+                    &InfoField::iter()
                         .map(|field| field.into())
                         .collect::<Vec<&str>>()
                 ),
@@ -288,7 +287,7 @@ impl Cli {
             Vec::new()
         };
 
-        let disabled_fields = info_fields::get_disabled_fields(fields_to_hide)?;
+        let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
 
         let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
 

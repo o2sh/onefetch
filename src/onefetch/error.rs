@@ -13,6 +13,7 @@ error_chain! {
         Regex(regex::Error);
         Toml(toml::de::Error);
         Git2(git2::Error);
+        Strum(strum::ParseError);
     }
 }
 
