@@ -3,7 +3,7 @@ use {
         cli_utils,
         error::*,
         image_backends,
-        info_fields::{InfoField, InfoFieldOff},
+        info_field::{InfoField, InfoFieldOff},
         language::Language,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},

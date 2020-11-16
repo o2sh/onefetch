@@ -7,7 +7,7 @@ pub mod error;
 mod git_utils;
 mod image_backends;
 pub mod info;
-mod info_fields;
+mod info_field;
 mod language;
 mod license;
 pub mod printer;
