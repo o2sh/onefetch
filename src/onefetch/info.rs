@@ -49,15 +49,13 @@ impl std::fmt::Display for Info {
             writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
 
-        if !self.config.disabled_fields.project {
+        if !self.config.disabled_fields.project && !self.repo_name.is_empty() {
             let branches_tags_str = self.get_branches_and_tags_field();
-
-            let project_str = &self.get_formatted_subtitle_label("Project");
 
             writeln!(
                 f,
                 "{}{} {}",
-                project_str,
+                &self.get_formatted_subtitle_label("Project"),
                 self.repo_name.color(self.text_colors.info),
                 branches_tags_str.color(self.text_colors.info)
             )?;
@@ -143,7 +141,7 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.repo {
+        if !self.config.disabled_fields.repo && !self.repo_url.is_empty() {
             writeln!(
                 f,
                 "{}{}",
