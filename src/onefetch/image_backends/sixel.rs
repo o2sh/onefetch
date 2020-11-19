@@ -91,7 +91,7 @@ impl super::ImageBackend for SixelBackend {
         let image_columns = width_ratio * image.width() as f64;
         let image_rows = height_ratio * image.height() as f64;
 
-        let rgba_image = image.to_rgba(); // convert the image to rgba samples
+        let rgba_image = image.to_rgba8(); // convert the image to rgba samples
         let flat_samples = rgba_image.as_flat_samples();
         let mut rgba_image = rgba_image.clone();
         // reduce the amount of colors using dithering

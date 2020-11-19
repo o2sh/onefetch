@@ -98,7 +98,7 @@ impl super::ImageBackend for KittyBackend {
         let image_rows = height_ratio * f64::from(image.height());
 
         // convert the image to rgba samples
-        let rgba_image = image.to_rgba();
+        let rgba_image = image.to_rgba8();
         let flat_samples = rgba_image.as_flat_samples();
         let raw_image =
             flat_samples.image_slice().expect("Conversion from image to rgba samples failed");
