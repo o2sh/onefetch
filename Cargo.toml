@@ -28,7 +28,7 @@ askalono = "0.4.3"
 bytecount = "0.6.0"
 clap = "2.33.3"
 strum = { version = "0.19.5", features = ["derive"] }
-image = "0.23.11"
+image = "0.23.12"
 regex = "1"
 error-chain = "0.12"
 toml = "0.5.7"
