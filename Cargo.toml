@@ -2,7 +2,7 @@
 edition = "2018"
 name = "onefetch"
 description = "Git repository summary on your terminal"
-version = "2.7.1"
+version = "2.7.2"
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 readme = "README.md"
 license = "MIT"
