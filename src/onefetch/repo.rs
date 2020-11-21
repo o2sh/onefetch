@@ -35,8 +35,12 @@ impl Repo {
 
     pub fn get_git_username(&self) -> Result<String> {
         let config = self.repo.config()?;
-        let username = config.get_entry("user.name")?;
-        Ok(username.value().unwrap_or("unknown").to_string())
+        let username = match config.get_entry("user.name") {
+            Ok(v) => v.value().unwrap_or("unknown").into(),
+            Err(_) => "unknown".into(),
+        };
+
+        Ok(username)
     }
 
     pub fn get_version(&self) -> Result<String> {
