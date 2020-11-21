@@ -12,17 +12,20 @@ pub trait ImageBackend {
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String>;
 }
 
-#[cfg(not(windows))]
 pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
-    if sixel::SixelBackend::supported() {
-        Some(Box::new(sixel::SixelBackend::new()))
-    } else if kitty::KittyBackend::supported() {
+    #[cfg(not(windows))]
+    if kitty::KittyBackend::supported() {
         Some(Box::new(kitty::KittyBackend::new()))
     } else if iterm::ITermBackend::supported() {
         Some(Box::new(iterm::ITermBackend::new()))
+    } else if sixel::SixelBackend::supported() {
+        Some(Box::new(sixel::SixelBackend::new()))
     } else {
         None
     }
+
+    #[cfg(windows)]
+    None
 }
 
 pub fn get_image_backend(backend_name: &str) -> Option<Box<dyn ImageBackend>> {
@@ -33,12 +36,8 @@ pub fn get_image_backend(backend_name: &str) -> Option<Box<dyn ImageBackend>> {
         "sixel" => Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
         _ => unreachable!(),
     });
+
     #[cfg(windows)]
     let backend = None;
     backend
-}
-
-#[cfg(windows)]
-pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
-    None
 }
