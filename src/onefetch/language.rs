@@ -253,6 +253,7 @@ define_languages! {
     { Tex, "tex.ascii", "Tex", define_colors!( [Color::White, Color::Black] ) },
     { Tsx, "tsx.ascii", "TSX", define_colors!( [Color::Blue] ) },
     { TypeScript, "typescript.ascii", "TypeScript", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:0, g:122, b:204}, Color::TrueColor{ r:255, g:255, b:255} ]) },
+    { VimScript, "vimscript.ascii", "VimScript", define_colors!( [Color::Green, Color::Black, Color::White] ) },
     { Vue, "vue.ascii", "Vue", define_colors!( [Color::Green, Color::Blue] ) },
     { Xaml, "xaml.ascii", "Xaml", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
