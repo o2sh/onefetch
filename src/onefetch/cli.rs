@@ -222,7 +222,7 @@ impl Cli {
         .arg(
             Arg::with_name("off")
                 .long("off")
-                .help("Only shows the info lines. DEPRECATED: use \"--hide-logo\" true instead.")
+                .help("Only shows the info lines. DEPRECATED: use \"--hide-logo true\" instead.")
                 .conflicts_with_all(&["image", "ascii-language", "ascii-input", "hide-logo"]),
             )
         .arg(
