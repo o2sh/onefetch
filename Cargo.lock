@@ -954,6 +954,7 @@ dependencies = [
  "paste",
  "regex",
  "strum",
+ "term_size",
  "tokei",
  "toml",
 ]

@@ -7,9 +7,11 @@ use {
         language::Language,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
+    colored::Colorize,
     image::DynamicImage,
     std::{convert::From, env, str::FromStr},
     strum::IntoEnumIterator,
+    term_size,
 };
 
 pub struct Cli {
@@ -220,17 +222,38 @@ impl Cli {
         .arg(
             Arg::with_name("off")
                 .long("off")
-                .help("Only shows the info lines.")
-                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]),
-            ).get_matches();
+                .help("Only shows the info lines. DEPRECATED: use \"--hide-logo\" true instead.")
+                .conflicts_with_all(&["image", "ascii-language", "ascii-input", "hide-logo"]),
+            )
+        .arg(
+            Arg::with_name("hide-logo")
+                .long("hide-logo")
+                .value_name("auto | true | false")
+                .takes_value(true)
+                .max_values(1)
+                .multiple(false)
+                .default_value("auto")
+                .possible_values(&["auto", "true", "false"])
+                .help("Will hide the logo if true. If set to auto, the logo will be hidden if the terminal size is too small. If set to false, the logo will be shown no matter what.")
+                .conflicts_with("off")
+        ).get_matches();
 
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let art_off = matches.is_present("off");
+        let mut art_off = matches.is_present("off");
         let true_color = cli_utils::is_truecolor_terminal();
+        let max_term_size = 95;
+
+        // The --off flag was passed in
+        if art_off {
+            std::println!(
+                "{}",
+                ("The --off option is deprecated. Use \"--hide-logo true\" instead.").yellow(),
+            );
+        }
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -254,6 +277,25 @@ impl Cli {
         } else {
             None
         };
+
+        if let Some(should_hide_logo) = matches.value_of("hide-logo") {
+            if should_hide_logo == "true" {
+                art_off = true;
+            } else if should_hide_logo == "false" {
+                art_off = false;
+            } else {
+                if let Some((width, _)) = term_size::dimensions_stdout() {
+                    art_off = width <= max_term_size;
+                } else {
+                    std::println!(
+                        "{}",
+                        ("Coult not get terminal width. ASCII art will be displayed.").yellow(),
+                    );
+
+                    art_off = false;
+                }
+            }
+        }
 
         if image.is_some() && image_backend.is_none() {
             return Err("Could not detect a supported image backend".into());
