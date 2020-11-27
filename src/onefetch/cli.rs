@@ -277,12 +277,12 @@ impl Cli {
             None
         };
 
-        if let Some(should_hide_logo) = matches.value_of("hide-logo") {
+        if let Some(should_hide_logo) = matches.value_of("hide-logo").or(Some("auto")) {
             if should_hide_logo == "true" {
                 art_off = true;
             } else if should_hide_logo == "false" {
                 art_off = false;
-            } else {
+            } else if !art_off {
                 if let Some((width, _)) = term_size::dimensions_stdout() {
                     art_off = width <= max_term_size;
                 } else {
@@ -293,18 +293,6 @@ impl Cli {
 
                     art_off = false;
                 }
-            }
-        } else if !art_off {
-            // Default to auto without setting it in the CLI args
-            if let Some((width, _)) = term_size::dimensions_stdout() {
-                art_off = width <= max_term_size;
-            } else {
-                std::println!(
-                    "{}",
-                    ("Coult not get terminal width. ASCII art will be displayed.").yellow(),
-                );
-
-                art_off = false;
             }
         }
 
