@@ -232,7 +232,6 @@ impl Cli {
                 .takes_value(true)
                 .max_values(1)
                 .multiple(false)
-                .default_value("auto")
                 .possible_values(&["auto", "true", "false"])
                 .help("Will hide the logo if true. If set to auto, the logo will be hidden if the terminal size is too small. If set to false, the logo will be shown no matter what.")
                 .conflicts_with("off")
@@ -294,6 +293,18 @@ impl Cli {
 
                     art_off = false;
                 }
+            }
+        } else if !art_off {
+            // Default to auto without setting it in the CLI args
+            if let Some((width, _)) = term_size::dimensions_stdout() {
+                art_off = width <= max_term_size;
+            } else {
+                std::println!(
+                    "{}",
+                    ("Coult not get terminal width. ASCII art will be displayed.").yellow(),
+                );
+
+                art_off = false;
             }
         }
 
