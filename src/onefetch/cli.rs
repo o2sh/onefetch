@@ -286,9 +286,9 @@ impl Cli {
                 if let Some((width, _)) = term_size::dimensions_stdout() {
                     art_off = width <= max_term_size;
                 } else {
-                    std::println!(
+                    std::eprintln!(
                         "{}",
-                        ("Coult not get terminal width. ASCII art will be displayed.").yellow(),
+                        ("Could not get terminal width. ASCII art will be displayed."),
                     );
 
                     art_off = false;
