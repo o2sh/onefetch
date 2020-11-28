@@ -272,10 +272,7 @@ impl Cli {
         if let Some((width, _)) = term_size::dimensions_stdout() {
             art_off = width <= max_term_size && matches.is_present("hide-logo");
         } else {
-            std::eprintln!(
-                "{}",
-                ("Could not get terminal width. ASCII art will be displayed."),
-            );
+            std::eprintln!("{}", ("Could not get terminal width. ASCII art will be displayed."));
         }
 
         if image.is_some() && image_backend.is_none() {
