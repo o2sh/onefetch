@@ -4,12 +4,14 @@
 # https://github.com/o2sh/onefetch/wiki/ASCII-Art-From-Image-Using-Python-Image-Library/9c454b390273ffedd60db9d525fb001f89d581b1
 
 # lint with
-# flake8 --max-line-length 120 ASCII_art_from_image.py
-# black --diff --color ASCII_art_from_image.py
+# flake8 --max-line-length 120 image_to_ascii.py
+# black --color --diff image_to_ascii.py
+# isort --color --diff image_to_ascii.py
 
 from argparse import ArgumentParser
-from PIL import Image, ImageDraw
 from math import floor
+
+from PIL import Image, ImageDraw
 
 __version__ = "1.0.0"
 
@@ -41,7 +43,7 @@ parser.add_argument(
     "--version",
     help="show version",
     action="version",
-    version="ASCII_art_from_image.py {}".format(__version__),
+    version="image_to_ascii.py {}".format(__version__),
 )
 args = parser.parse_args()
 
