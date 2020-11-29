@@ -28,6 +28,7 @@ askalono = "0.4.3"
 bytecount = "0.6.1"
 clap = "2.33.3"
 strum = { version = "0.20.0", features = ["derive"] }
+term_size = "0.3.2"
 image = "0.23.12"
 regex = "1"
 error-chain = "0.12"

@@ -10,7 +10,10 @@ use {
     image::DynamicImage,
     std::{convert::From, env, str::FromStr},
     strum::IntoEnumIterator,
+    term_size,
 };
+
+const MAX_TERM_WIDTH: usize = 95;
 
 pub struct Cli {
     pub repo_path: String,
@@ -94,7 +97,7 @@ impl Cli {
                 .help("Takes a non-empty STRING as input to replace the ASCII logo.")
                 .long_help(
                     "Takes a non-empty STRING as input to replace the ASCII logo. \
-                     It is possible to pass a generated STRING by command substitution. \
+                     It is possible to pass a generated STRING by command substitution. \n\
                      For example:\n \
                      '--ascii-input \"$(fortune | cowsay -W 25)\"'"
             )
@@ -129,7 +132,7 @@ impl Cli {
                 .help("Changes the text colors (X X X...).")
                 .long_help(
                     "Changes the text colors (X X X...). \
-                     Goes in order of title, ~, underline, subtitle, colon, and info. \
+                     Goes in order of title, ~, underline, subtitle, colon, and info. \n\
                      For example:\n \
                      '--text-colors 9 10 11 12 13 14'"
             )
@@ -218,25 +221,44 @@ impl Cli {
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
         .arg(
-            Arg::with_name("off")
-                .long("off")
-                .help("Only shows the info lines.")
-                .conflicts_with_all(&["image", "ascii-language", "ascii-input"]),
-            ).get_matches();
+            Arg::with_name("hide-logo")
+                .long("hide-logo")
+                .value_name("WHEN")
+                .takes_value(true)
+                .possible_values(&["auto", "always"])
+                .default_value("always")
+                .hide_default_value(true)
+                .help("Specify when to hide the logo (auto, *always*).")
+                .long_help(
+                    "Specify when to hide the logo (auto, *always*). \n\
+                    If set to auto, the logo will be hidden if the terminal's width < 95."
+                )
+        ).get_matches();
 
+        let true_color = cli_utils::is_truecolor_terminal();
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let art_off = matches.is_present("off");
-        let true_color = cli_utils::is_truecolor_terminal();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
             values.map(String::from).collect()
         } else {
             Vec::new()
+        };
+
+        let art_off = match matches.value_of("hide-logo") {
+            Some("always") => true,
+            Some("auto") => {
+                if let Some((width, _)) = term_size::dimensions_stdout() {
+                    width < MAX_TERM_WIDTH
+                } else {
+                    false
+                }
+            }
+            _ => unreachable!("other values for --hide-logo are not allowed"),
         };
 
         let image = if let Some(image_path) = matches.value_of("image") {
