@@ -225,12 +225,12 @@ impl Cli {
                 .long("hide-logo")
                 .value_name("WHEN")
                 .takes_value(true)
-                .possible_values(&["auto", "never", "always"])
+                .possible_values(&["auto", "always"])
                 .default_value("always")
                 .hide_default_value(true)
-                .help("Specify when to hide the logo (auto, never, *always*).")
+                .help("Specify when to hide the logo (auto, *always*).")
                 .long_help(
-                    "Specify when to hide the logo (auto, never, *always*). \n\
+                    "Specify when to hide the logo (auto, *always*). \n\
                     If set to auto, the logo will be hidden if the terminal's width < 95."
                 )
         ).get_matches();
@@ -251,7 +251,6 @@ impl Cli {
 
         let art_off = match matches.value_of("hide-logo") {
             Some("always") => true,
-            Some("never") => false,
             Some("auto") => {
                 if let Some((width, _)) = term_size::dimensions_stdout() {
                     width < MAX_TERM_WIDTH
