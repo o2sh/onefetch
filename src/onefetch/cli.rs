@@ -63,7 +63,6 @@ impl Cli {
                 .short("a")
                 .value_name("LANGUAGE")
                 .long("ascii-language")
-                .max_values(1)
                 .takes_value(true)
                 .case_insensitive(true)
                 .help("Which LANGUAGE's ascii art to print.")
@@ -221,17 +220,17 @@ impl Cli {
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
         .arg(
-            Arg::with_name("hide-logo")
-                .long("hide-logo")
+            Arg::with_name("show-logo")
+                .long("show-logo")
                 .value_name("WHEN")
                 .takes_value(true)
-                .possible_values(&["auto", "always"])
+                .possible_values(&["auto", "never", "always"])
                 .default_value("always")
                 .hide_default_value(true)
-                .help("Specify when to hide the logo (auto, *always*).")
+                .help("Specify when to show the logo (auto, never, *always*).")
                 .long_help(
-                    "Specify when to hide the logo (auto, *always*). \n\
-                    If set to auto, the logo will be hidden if the terminal's width < 95."
+                    "Specify when to show the logo (auto, never, *always*). \n\
+                    If set to auto: the logo will be hidden if the terminal's width < 95."
                 )
         ).get_matches();
 
@@ -249,8 +248,9 @@ impl Cli {
             Vec::new()
         };
 
-        let art_off = match matches.value_of("hide-logo") {
-            Some("always") => true,
+        let art_off = match matches.value_of("show-logo") {
+            Some("always") => false,
+            Some("never") => true,
             Some("auto") => {
                 if let Some((width, _)) = term_size::dimensions_stdout() {
                     width < MAX_TERM_WIDTH
