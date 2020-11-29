@@ -219,14 +219,30 @@ impl Cli {
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
         .arg(
+            Arg::with_name("show-logo")
+                .short("S")
+                .long("show-logo")
+                .takes_value(false)
+                .help("If ASCII logo should be shown in all circumstances.")
+                .conflicts_with("hide-logo")
+        )
+        .arg(
             Arg::with_name("hide-logo")
                 .short("H")
                 .long("hide-logo")
-                .value_name("WIDTH_THRESHOLD")
+                .takes_value(false)
+                .help("If ASCII logo should be hidden in all circumstances.")
+                .conflicts_with("show-logo")
+        )
+        .arg(
+            Arg::with_name("max-width")
+                .short("w")
+                .long("max-width")
+                .value_name("AMOUNT")
                 .takes_value(true)
                 .max_values(1)
                 .default_value("95")
-                .help("If ASCII logo should be hidden when terminal width is below WIDTH_THRESHOLD.")
+                .help("If ASCII logo should be hidden when terminal width is below AMOUNT.")
                 .validator(
                     |t| {
                         t.parse::<u32>()
@@ -242,9 +258,9 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let mut art_off = false;
+        let mut art_off = matches.is_present("hide-logo") || !matches.is_present("show-logo");
         let true_color = cli_utils::is_truecolor_terminal();
-        let max_term_size: usize = matches.value_of("hide-logo").unwrap().parse().unwrap();
+        let max_term_size: usize = matches.value_of("max-width").unwrap().parse().unwrap();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -269,10 +285,15 @@ impl Cli {
             None
         };
 
-        if let Some((width, _)) = term_size::dimensions_stdout() {
-            art_off = width <= max_term_size && matches.is_present("hide-logo");
-        } else {
-            std::eprintln!("{}", ("Could not get terminal width. ASCII art will be displayed."));
+        if !matches.is_present("hide-logo") && !matches.is_present("show-logo") {
+            if let Some((width, _)) = term_size::dimensions_stdout() {
+                art_off = width <= max_term_size;
+            } else {
+                std::eprintln!(
+                    "{}",
+                    ("Could not get terminal width. ASCII art will be displayed.")
+                );
+            }
         }
 
         if image.is_some() && image_backend.is_none() {
