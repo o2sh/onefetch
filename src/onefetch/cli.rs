@@ -13,6 +13,8 @@ use {
     term_size,
 };
 
+const MAX_TERM_WIDTH: usize = 95;
+
 pub struct Cli {
     pub repo_path: String,
     pub ascii_input: Option<String>,
@@ -95,7 +97,7 @@ impl Cli {
                 .help("Takes a non-empty STRING as input to replace the ASCII logo.")
                 .long_help(
                     "Takes a non-empty STRING as input to replace the ASCII logo. \
-                     It is possible to pass a generated STRING by command substitution. \
+                     It is possible to pass a generated STRING by command substitution. \n\
                      For example:\n \
                      '--ascii-input \"$(fortune | cowsay -W 25)\"'"
             )
@@ -130,7 +132,7 @@ impl Cli {
                 .help("Changes the text colors (X X X...).")
                 .long_help(
                     "Changes the text colors (X X X...). \
-                     Goes in order of title, ~, underline, subtitle, colon, and info. \
+                     Goes in order of title, ~, underline, subtitle, colon, and info. \n\
                      For example:\n \
                      '--text-colors 9 10 11 12 13 14'"
             )
@@ -219,54 +221,45 @@ impl Cli {
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
         .arg(
-            Arg::with_name("show-logo")
-                .short("S")
-                .long("show-logo")
-                .takes_value(false)
-                .help("If ASCII logo should be shown in all circumstances.")
-                .conflicts_with("hide-logo")
-        )
-        .arg(
             Arg::with_name("hide-logo")
-                .short("H")
                 .long("hide-logo")
-                .takes_value(false)
-                .help("If ASCII logo should be hidden in all circumstances.")
-                .conflicts_with("show-logo")
-        )
-        .arg(
-            Arg::with_name("max-width")
-                .short("w")
-                .long("max-width")
-                .value_name("AMOUNT")
+                .value_name("WHEN")
                 .takes_value(true)
-                .max_values(1)
-                .default_value("95")
-                .help("If ASCII logo should be hidden when terminal width is below AMOUNT.")
-                .validator(
-                    |t| {
-                        t.parse::<u32>()
-                            .map_err(|_t| "must be a number")
-                            .map(|_t|())
-                            .map_err(|e| e.to_string())
-                    },
+                .possible_values(&["auto", "never", "always"])
+                .default_value("always")
+                .hide_default_value(true)
+                .help("Specify when to hide the logo (auto, never, *always*).")
+                .long_help(
+                    "Specify when to hide the logo (auto, never, *always*). \n\
+                    If set to auto, the logo will be hidden if the terminal's width < 95."
                 )
         ).get_matches();
 
+        let true_color = cli_utils::is_truecolor_terminal();
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let mut art_off = matches.is_present("hide-logo") || !matches.is_present("show-logo");
-        let true_color = cli_utils::is_truecolor_terminal();
-        let max_term_size: usize = matches.value_of("max-width").unwrap().parse().unwrap();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
             values.map(String::from).collect()
         } else {
             Vec::new()
+        };
+
+        let art_off = match matches.value_of("hide-logo") {
+            Some("always") => true,
+            Some("never") => false,
+            Some("auto") => {
+                if let Some((width, _)) = term_size::dimensions_stdout() {
+                    width < MAX_TERM_WIDTH
+                } else {
+                    false
+                }
+            }
+            _ => unreachable!("other values for --hide-logo are not allowed"),
         };
 
         let image = if let Some(image_path) = matches.value_of("image") {
@@ -284,17 +277,6 @@ impl Cli {
         } else {
             None
         };
-
-        if !matches.is_present("hide-logo") && !matches.is_present("show-logo") {
-            if let Some((width, _)) = term_size::dimensions_stdout() {
-                art_off = width <= max_term_size;
-            } else {
-                std::eprintln!(
-                    "{}",
-                    ("Could not get terminal width. ASCII art will be displayed.")
-                );
-            }
-        }
 
         if image.is_some() && image_backend.is_none() {
             return Err("Could not detect a supported image backend".into());
