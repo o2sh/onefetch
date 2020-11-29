@@ -59,6 +59,58 @@ impl Cli {
             .help("Run as if onefetch was started in <input> instead of the current working directory.",
         ))
         .arg(
+            Arg::with_name("languages")
+                .short("l")
+                .long("languages")
+                .help("Prints out supported languages."),
+        )
+        .arg(
+            Arg::with_name("package-managers")
+                .short("p")
+                .long("package-managers")
+                .help("Prints out supported package managers."),
+        )
+        .arg(
+            Arg::with_name("show-logo")
+                .long("show-logo")
+                .value_name("WHEN")
+                .takes_value(true)
+                .possible_values(&["auto", "never", "always"])
+                .default_value("always")
+                .hide_default_value(true)
+                .help("Specify when to show the logo (auto, never, *always*).")
+                .long_help(
+                    "Specify when to show the logo (auto, never, *always*). \n\
+                    If set to auto: the logo will be hidden if the terminal's width < 95."
+                )
+        )
+        .arg(
+            Arg::with_name("image")
+                .short("i")
+                .long("image")
+                .value_name("IMAGE")
+                .takes_value(true)
+                .help("Path to the IMAGE file."),
+        )
+        .arg(
+            Arg::with_name("image-backend")
+                .long("image-backend")
+                .value_name("BACKEND")
+                .takes_value(true)
+                .requires("image")
+                .possible_values(&possible_backends)
+                .help("Which image BACKEND to use."),
+        )
+        .arg(
+            Arg::with_name("color-resolution")
+                .long("color-resolution")
+                .value_name("VALUE")
+                .requires("image")
+                .takes_value(true)
+                .possible_values(&["16", "32", "64", "128", "256"])
+                .help("VALUE of color resolution to use with SIXEL backend."),
+        )
+        .arg(
             Arg::with_name("ascii-language")
                 .short("a")
                 .value_name("LANGUAGE")
@@ -73,26 +125,10 @@ impl Cli {
                     ),
         )
         .arg(
-            Arg::with_name("disable-fields")
-                .long("disable-fields")
-                .short("d")
-                .value_name("FIELD")
-                .multiple(true)
-                .takes_value(true)
-                .case_insensitive(true)
-                .help("Allows you to disable FIELD(s) from appearing in the output.")
-                .possible_values(
-                    &InfoField::iter()
-                        .map(|field| field.into())
-                        .collect::<Vec<&str>>()
-                ),
-        )
-        .arg(
             Arg::with_name("ascii-input")
                 .long("ascii-input")
                 .value_name("STRING")
                 .takes_value(true)
-                .max_values(1)
                 .help("Takes a non-empty STRING as input to replace the ASCII logo.")
                 .long_help(
                     "Takes a non-empty STRING as input to replace the ASCII logo. \
@@ -142,45 +178,9 @@ impl Cli {
                 .help("Turns off bold formatting."),
         )
         .arg(
-            Arg::with_name("languages")
-                .short("l")
-                .long("languages")
-                .help("Prints out supported languages."),
-        )
-        .arg(
-            Arg::with_name("package-managers")
-                .short("p")
-                .long("package-managers")
-                .help("Prints out supported package managers."),
-        )
-        .arg(
-            Arg::with_name("image")
-                .short("i")
-                .long("image")
-                .value_name("IMAGE")
-                .takes_value(true)
-                .max_values(1)
-                .help("Path to the IMAGE file."),
-        )
-        .arg(
-            Arg::with_name("image-backend")
-                .long("image-backend")
-                .value_name("BACKEND")
-                .takes_value(true)
-                .requires("image")
-                .max_values(1)
-                .possible_values(&possible_backends)
-                .help("Which image BACKEND to use."),
-        )
-        .arg(
-            Arg::with_name("color-resolution")
-                .long("color-resolution")
-                .value_name("VALUE")
-                .requires("image")
-                .takes_value(true)
-                .max_values(1)
-                .possible_values(&["16", "32", "64", "128", "256"])
-                .help("VALUE of color resolution to use with SIXEL backend."),
+            Arg::with_name("no-color-palette")
+                .long("no-color-palette")
+                .help("Hides the color palette."),
         )
         .arg(
             Arg::with_name("no-merge-commits")
@@ -188,9 +188,19 @@ impl Cli {
                 .help("Ignores merge commits."),
         )
         .arg(
-            Arg::with_name("no-color-palette")
-                .long("no-color-palette")
-                .help("Hides the color palette."),
+            Arg::with_name("disable-fields")
+                .long("disable-fields")
+                .short("d")
+                .value_name("FIELD")
+                .multiple(true)
+                .takes_value(true)
+                .case_insensitive(true)
+                .help("Allows you to disable FIELD(s) from appearing in the output.")
+                .possible_values(
+                    &InfoField::iter()
+                        .map(|field| field.into())
+                        .collect::<Vec<&str>>()
+                ),
         )
         .arg(
             Arg::with_name("authors-number")
@@ -198,7 +208,6 @@ impl Cli {
                 .long("authors-number")
                 .value_name("NUM")
                 .takes_value(true)
-                .max_values(1)
                 .default_value("3")
                 .help("NUM of authors to be shown.")
                 .validator(
@@ -219,20 +228,7 @@ impl Cli {
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
-        .arg(
-            Arg::with_name("show-logo")
-                .long("show-logo")
-                .value_name("WHEN")
-                .takes_value(true)
-                .possible_values(&["auto", "never", "always"])
-                .default_value("always")
-                .hide_default_value(true)
-                .help("Specify when to show the logo (auto, never, *always*).")
-                .long_help(
-                    "Specify when to show the logo (auto, never, *always*). \n\
-                    If set to auto: the logo will be hidden if the terminal's width < 95."
-                )
-        ).get_matches();
+.get_matches();
 
         let true_color = cli_utils::is_truecolor_terminal();
         let no_bold = matches.is_present("no-bold");
@@ -247,6 +243,8 @@ impl Cli {
         } else {
             Vec::new()
         };
+
+        let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
 
         let art_off = match matches.value_of("show-logo") {
             Some("always") => false,
@@ -308,8 +306,6 @@ impl Cli {
         } else {
             Vec::new()
         };
-
-        let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
 
         let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
 
