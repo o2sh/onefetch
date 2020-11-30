@@ -12,7 +12,7 @@ information to effectively respond to your bug report or contribution.
     * [Adding support for a new language](#adding-support-for-a-new-language)
       * [Ascii logo](#ascii-logo)
     * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
-    * [Adding translation for README.md](#adding-translation-for-readme)
+    * [Adding translation for README.md](#adding-translation-for-readmemd)
     * [Project-specific notes](#project-specific-notes)
 
 ## Reporting Bugs / Feature Requests
