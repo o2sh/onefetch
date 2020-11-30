@@ -12,6 +12,7 @@ information to effectively respond to your bug report or contribution.
     * [Adding support for a new language](#adding-support-for-a-new-language)
       * [Ascii logo](#ascii-logo)
     * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
+    * [Adding translation for README.md](#adding-translation-for-readme)
     * [Project-specific notes](#project-specific-notes)
 
 ## Reporting Bugs / Feature Requests
@@ -149,6 +150,12 @@ package_managers.insert(
     (package_parser::cargo, package_manager::PackageManager::Cargo),
 );
 ```
+
+### Adding translation for README.md
+
+In order to make Onefetch more accessible for non English-speakers, we are seeking the help of multilingual contributors willing to translate the README.md in their native tongue.
+
+These translations will be accessible directly from the English README.md via hyperlinks.
 
 ### Project-specific notes
 
