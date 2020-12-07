@@ -38,7 +38,7 @@ toml = "0.5.7"
 ansi_term = "0.12"
 
 [target.'cfg(not(windows))'.dependencies]
-libc = "0.2.80"
+libc = "0.2.81"
 base64 = "0.13.0"
 
 [dev-dependencies]
