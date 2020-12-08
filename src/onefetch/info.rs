@@ -26,7 +26,7 @@ pub struct Info {
     number_of_commits: String,
     lines_of_code: usize,
     packed_repo_size: String,
-    files_count: Option<u128>,
+    files_count: Option<u64>,
     repo_size: String,
     license: String,
     pub dominant_language: Language,

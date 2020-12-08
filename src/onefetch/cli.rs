@@ -31,7 +31,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub print_package_managers: bool,
-    pub print_json: bool,
+    pub format: String,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
@@ -230,10 +230,19 @@ impl Cli {
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
         .arg(
-            Arg::with_name("json")
-                .short("j")
-                .long("json")
-                .help("Print out a json representation of the normal onefetch output")
+            Arg::with_name("format")
+                .short("f")
+                .long("format")
+                .help("Select a output format.")
+                .takes_value(true)
+                .default_value("human")
+                .validator(
+                    |t| {
+                        let opts = vec!["human", "json"];
+                        if opts.contains(&t.as_str()) {return Ok(()); }
+                        Err(String::from(format!("Output type must be one of the following: {:?}", opts)))
+                    }
+                )
             )
 .get_matches();
 
@@ -243,7 +252,11 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let print_json = matches.is_present("json");
+        let format = if let Some(format) = matches.value_of("format") {
+            String::from(format)
+        } else {
+            String::from("human")
+        };
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -339,7 +352,7 @@ impl Cli {
             excluded,
             print_languages,
             print_package_managers,
-            print_json,
+            format,
             true_color,
             text_colors,
             art_off,
