@@ -31,6 +31,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub print_package_managers: bool,
+    pub print_json: bool,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
@@ -228,6 +229,12 @@ impl Cli {
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
+        .arg(
+            Arg::with_name("json")
+                .short("j")
+                .long("json")
+                .help("Print out a json representation of the normal onefetch output")
+            )
 .get_matches();
 
         let true_color = cli_utils::is_truecolor_terminal();
@@ -236,6 +243,7 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
+        let print_json = matches.is_present("json");
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -331,6 +339,7 @@ impl Cli {
             excluded,
             print_languages,
             print_package_managers,
+            print_json,
             true_color,
             text_colors,
             art_off,

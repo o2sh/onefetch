@@ -33,6 +33,8 @@ image = "0.23.12"
 regex = "1"
 error-chain = "0.12"
 toml = "0.5.7"
+serde = "1.0.118"
+serde_json = "1.0.60"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
@@ -44,6 +46,7 @@ base64 = "0.13.0"
 [dev-dependencies]
 more-asserts = "0.2"
 paste = "1"
+serde_test = "1.0.117"
 
 [features]
 fail-on-deprecated = []

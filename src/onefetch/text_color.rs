@@ -1,11 +1,21 @@
-use {crate::onefetch::utils::num_to_color, colored::Color};
+use {
+    crate::onefetch::serializer::ColorDef, crate::onefetch::utils::num_to_color, colored::Color,
+    serde::Serialize,
+};
 
+#[derive(Serialize)]
 pub struct TextColor {
+    #[serde(with = "ColorDef")]
     pub title: Color,
+    #[serde(with = "ColorDef")]
     pub tilde: Color,
+    #[serde(with = "ColorDef")]
     pub underline: Color,
+    #[serde(with = "ColorDef")]
     pub subtitle: Color,
+    #[serde(with = "ColorDef")]
     pub colon: Color,
+    #[serde(with = "ColorDef")]
     pub info: Color,
 }
 

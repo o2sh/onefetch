@@ -4,8 +4,11 @@ use {
         language::Language, license::Detector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
+    // serde::ser::{Serialize, SerializeStruct, Serializer},
+    serde::Serialize,
 };
 
+#[derive(Serialize)]
 pub struct Info {
     git_username: String,
     git_version: String,
@@ -26,8 +29,11 @@ pub struct Info {
     repo_size: String,
     license: String,
     pub dominant_language: Language,
+    // #[serde(with = "Vec<ColorDef>")]
+    #[serde(skip_serializing)]
     pub ascii_colors: Vec<Color>,
     pub text_colors: TextColor,
+    #[serde(skip_serializing)]
     pub config: Cli,
 }
 
@@ -371,3 +377,14 @@ impl Info {
         }
     }
 }
+
+// impl Serialize for Info {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok>
+//     where
+//         S: Serializer,
+//     {
+//         let mut state = serializer.serialize_struct("Info", 19)?;
+
+//         state.end()
+//     }
+// }

@@ -30,11 +30,17 @@ fn run() -> Result<()> {
         return Err("please run onefetch inside of a non-bare git repository".into());
     }
 
+    let print_json = config.print_json;
+
     let info = info::Info::new(config)?;
 
     let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info);
 
-    printer.print()?;
+    if print_json {
+        printer.print_json()?;
+    } else {
+        printer.print()?;
+    }
 
     Ok(())
 }

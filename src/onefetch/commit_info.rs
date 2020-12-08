@@ -1,6 +1,9 @@
 use git2::Oid;
+use serde::Serialize;
 
+#[derive(Serialize)]
 pub struct CommitInfo {
+    #[serde(skip_serializing)]
     commit: Oid,
     refs: Vec<String>,
 }

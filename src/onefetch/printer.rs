@@ -71,6 +71,11 @@ impl<W: Write> Printer<W> {
         Ok(())
     }
 
+    pub fn print_json(&mut self) -> Result<()> {
+        write!(self.writer, "{}", serde_json::to_string_pretty(&self.info).unwrap())?;
+        Ok(())
+    }
+
     fn get_ascii(&self) -> &str {
         let language = if let Some(ascii_language) = &self.info.config.ascii_language {
             ascii_language
