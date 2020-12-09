@@ -74,7 +74,20 @@ pub fn get_number_of_commits(git_history: &[String]) -> String {
     number_of_commits.to_string()
 }
 
-pub fn get_packed_size(dir: &str) -> Result<String> {
+pub fn get_packed_size(repo_size: String, files_count: Option<u64>) -> Result<String> {
+    match files_count {
+        Some(files_count) => {
+            let res = format!("{} ({} files)", repo_size, files_count.to_string());
+            Ok(res)
+        }
+        None => {
+            let res = repo_size;
+            Ok(res.into())
+        }
+    }
+}
+
+pub fn get_repo_size(dir: &str) -> String {
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -88,10 +101,13 @@ pub fn get_packed_size(dir: &str) -> Result<String> {
     let size_line = lines.split('\n').find(|line| line.starts_with("size-pack:"));
 
     let repo_size = match size_line {
-        None => "",
-        Some(size_str) => &(size_str[11..]),
+        None => String::new(),
+        Some(size_str) => String::from(&(size_str[11..])),
     };
+    repo_size
+}
 
+pub fn get_files_count(dir: &str) -> Option<u64> {
     let output = Command::new("git")
         .arg("-C")
         .arg(dir)
@@ -106,15 +122,13 @@ pub fn get_packed_size(dir: &str) -> Result<String> {
 
         let lines = output.to_string();
         let files_list = lines.split('\n');
-        let mut files_count: u128 = 0;
+        let mut files_count: u64 = 0;
         for _file in files_list {
             files_count += 1;
         }
         files_count -= 1; // As splitting giving one line extra(blank).
-        let res = repo_size.to_owned() + (" (") + &(files_count.to_string()) + (" files)");
-        Ok(res)
+        Some(files_count)
     } else {
-        let res = repo_size;
-        Ok(res.into())
+        None
     }
 }

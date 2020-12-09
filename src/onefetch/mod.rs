@@ -12,5 +12,6 @@ mod language;
 mod license;
 pub mod printer;
 pub mod repo;
+mod serializer;
 mod text_color;
 mod utils;

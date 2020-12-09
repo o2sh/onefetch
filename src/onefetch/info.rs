@@ -4,6 +4,8 @@ use {
         language::Language, license::Detector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
+    serde::ser::SerializeStruct,
+    serde::Serialize,
 };
 
 pub struct Info {
@@ -23,6 +25,8 @@ pub struct Info {
     repo_url: String,
     number_of_commits: String,
     lines_of_code: usize,
+    packed_repo_size: String,
+    files_count: Option<u64>,
     repo_size: String,
     license: String,
     pub dominant_language: Language,
@@ -168,12 +172,12 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.size && !self.repo_size.is_empty() {
+        if !self.config.disabled_fields.size && !self.packed_repo_size.is_empty() {
             writeln!(
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Size"),
-                &self.repo_size.color(self.text_colors.info),
+                &self.packed_repo_size.color(self.text_colors.info),
             )?;
         }
 
@@ -222,7 +226,11 @@ impl Info {
         let authors = git_utils::get_authors(&git_history, config.number_of_authors);
         let last_change = git_utils::get_date_of_last_commit(&git_history)?;
         let git_version = cli_utils::get_git_version()?;
-        let repo_size = git_utils::get_packed_size(&workdir)?;
+
+        let files_count = git_utils::get_files_count(&workdir);
+        let repo_size = git_utils::get_repo_size(&workdir);
+        let packed_repo_size = git_utils::get_packed_size(repo_size.clone(), files_count)?;
+
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
         let (languages, lines_of_code) =
@@ -253,6 +261,8 @@ impl Info {
             repo_url,
             number_of_commits,
             lines_of_code,
+            packed_repo_size,
+            files_count,
             repo_size,
             license,
             dominant_language,
@@ -369,5 +379,50 @@ impl Info {
         } else {
             format!("({}, {})", branches_str, tags_str)
         }
+    }
+}
+
+impl Serialize for Info {
+    fn serialize<S>(&self, serializer: S) -> serde::export::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_struct("Info", 21)?;
+        // Only collect the version number
+        let git_version_split: Vec<String> =
+            self.git_version.split(" ").map(|s| s.to_string()).collect();
+
+        state.serialize_field("gitVersion", &git_version_split[2])?;
+        state.serialize_field("gitUsername", &self.git_username)?;
+        state.serialize_field("repoName", &self.repo_name)?;
+        state.serialize_field("numberOfTags", &self.number_of_tags)?;
+        state.serialize_field("numberOfBranches", &self.number_of_branches)?;
+        state.serialize_field("headRefs", &self.head_refs)?;
+        state.serialize_field("pendingChanges", &self.pending_changes)?;
+        state.serialize_field("version", &self.version)?;
+        state.serialize_field("creationDate", &self.creation_date)?;
+        state.serialize_field("languages", &self.languages)?;
+
+        let dependencies_split: Vec<String> =
+            self.dependencies.split(" ").map(|s| s.to_string()).collect();
+
+        state.serialize_field("dependencies", &dependencies_split[0])?;
+        state.serialize_field("authors", &self.authors)?;
+        state.serialize_field("lastChange", &self.last_change)?;
+        state.serialize_field("repoUrl", &self.repo_url)?;
+        state.serialize_field("numberOfCommits", &self.number_of_commits)?;
+        state.serialize_field("linesOfCode", &self.lines_of_code)?;
+        state.serialize_field("packedRepoSize", &self.packed_repo_size)?;
+        state.serialize_field("repoSize", &self.repo_size)?;
+
+        match &self.files_count {
+            Some(files_count) => state.serialize_field("filesCount", files_count)?,
+            None => {}
+        }
+
+        state.serialize_field("license", &self.license)?;
+        state.serialize_field("dominantLanguage", &self.dominant_language)?;
+        state.serialize_field("textColors", &self.text_colors)?;
+        state.end()
     }
 }

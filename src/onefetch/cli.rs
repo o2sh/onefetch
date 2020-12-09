@@ -31,6 +31,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub print_package_managers: bool,
+    pub format: String,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
@@ -228,6 +229,15 @@ impl Cli {
                 .takes_value(true)
                 .help("Ignore all files & directories matching EXCLUDE."),
             )
+        .arg(
+            Arg::with_name("format")
+                .short("f")
+                .long("format")
+                .help("Select a output format.")
+                .takes_value(true)
+                .default_value("human")
+                .possible_values(&["human", "json"])
+            )
 .get_matches();
 
         let true_color = cli_utils::is_truecolor_terminal();
@@ -236,6 +246,7 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
+        let format = matches.value_of("format").map(String::from).unwrap();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -331,6 +342,7 @@ impl Cli {
             excluded,
             print_languages,
             print_package_managers,
+            format,
             true_color,
             text_colors,
             art_off,
