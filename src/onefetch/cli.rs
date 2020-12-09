@@ -246,11 +246,7 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let format = if let Some(format) = matches.value_of("format") {
-            String::from(format)
-        } else {
-            String::from("human")
-        };
+        let format = matches.value_of("format").map(String::from).unwrap();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
