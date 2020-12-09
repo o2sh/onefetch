@@ -236,13 +236,7 @@ impl Cli {
                 .help("Select a output format.")
                 .takes_value(true)
                 .default_value("human")
-                .validator(
-                    |t| {
-                        let opts = vec!["human", "json"];
-                        if opts.contains(&t.as_str()) {return Ok(()); }
-                        Err(String::from(format!("Output type must be one of the following: {:?}", opts)))
-                    }
-                )
+                .possible_values(&["human", "json"])
             )
 .get_matches();
 
