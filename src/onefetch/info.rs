@@ -4,6 +4,7 @@ use {
         language::Language, license::Detector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
+    git2::Repository,
     serde::ser::SerializeStruct,
     serde::Serialize,
 };
@@ -220,16 +221,26 @@ impl Info {
         let git_username = repo.get_git_username()?;
         let number_of_tags = repo.get_number_of_tags()?;
         let number_of_branches = repo.get_number_of_branches()?;
-        let git_history = git_utils::get_git_history(&workdir, config.no_merges)?;
-        let creation_date = git_utils::get_creation_date(&git_history)?;
-        let number_of_commits = git_utils::get_number_of_commits(&git_history);
-        let authors = git_utils::get_authors(&git_history, config.number_of_authors);
-        let last_change = git_utils::get_date_of_last_commit(&git_history)?;
-        let git_version = cli_utils::get_git_version()?;
 
-        let files_count = git_utils::get_files_count(&workdir);
+        let repo = Repository::open(&workdir)?;
+        let git_history2 = git_utils::get_git_history2(&repo, config.no_merges)?;
+        let creation_date = git_utils::get_creation_date2(&git_history2)?;
+        let number_of_commits = git_utils::get_number_of_commits2(&git_history2);
+        let authors = git_utils::get_authors2(&git_history2, config.number_of_authors);
+        let last_change = git_utils::get_date_of_last_commit2(&git_history2)?;
+        // let repo_size = git_utils::get_repo_size2(&repo);
+
+        // Git Calls
+        // let git_history = git_utils::get_git_history(&workdir, config.no_merges)?;
+        // let creation_date = git_utils::get_creation_date(&git_history)?;
+        // let number_of_commits = git_utils::get_number_of_commits(&git_history);
+        // let authors = git_utils::get_authors(&git_history, config.number_of_authors);
+        // let last_change = git_utils::get_date_of_last_commit(&git_history)?;
         let repo_size = git_utils::get_repo_size(&workdir);
+        let files_count = git_utils::get_files_count(&workdir);
         let packed_repo_size = git_utils::get_packed_size(repo_size.clone(), files_count)?;
+
+        let git_version = cli_utils::get_git_version()?;
 
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;

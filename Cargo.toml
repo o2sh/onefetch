@@ -36,6 +36,10 @@ toml = "0.5.7"
 serde = "1.0.118"
 serde_json = "1.0.60"
 
+chrono = "0.4"
+chrono-humanize = "0.1.1"
+byte-unit = "4.0.9"
+
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"
 

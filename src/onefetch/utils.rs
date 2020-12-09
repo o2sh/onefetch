@@ -1,3 +1,4 @@
+use byte_unit::Byte;
 use colored::Color;
 
 pub fn num_to_color(num: &str) -> Option<Color> {
@@ -21,4 +22,9 @@ pub fn num_to_color(num: &str) -> Option<Color> {
         _ => return None,
     };
     Some(color)
+}
+
+pub fn bytes_to_human_readable(bytes: u128) -> String {
+    let byte = Byte::from_bytes(bytes);
+    byte.get_appropriate_unit(true).to_string()
 }
