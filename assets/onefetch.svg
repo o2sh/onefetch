@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="129.4994mm"
-   height="82.804642mm"
-   viewBox="0 0 129.4994 82.804643"
+   width="133.69516mm"
+   height="84.593719mm"
+   viewBox="0 0 133.69515 84.593721"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (0767f8302a, 2020-10-17)"
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.93537788"
-     inkscape:cx="224.53147"
-     inkscape:cy="129.5037"
+     inkscape:zoom="1.6861883"
+     inkscape:cx="189.77509"
+     inkscape:cy="194.95397"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,14 +59,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(28.349482,19.20487)">
+     transform="translate(30.129501,21.147913)">
     <rect
        id="rect3713"
-       width="129.4994"
-       height="61.567524"
-       x="-28.349482"
-       y="-19.20487"
-       style="fill:#21262d;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       width="133.69516"
+       height="66.182007"
+       x="-30.129501"
+       y="-21.147913"
+       style="fill:#21262d;fill-opacity:1;stroke:none;stroke-width:1.11489;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -197,7 +197,7 @@
        inkscape:export-ydpi="96" />
     <g
        aria-label="onefetch"
-       transform="matrix(0.26458333,0,0,0.26458333,-44.136415,-18.866928)"
+       transform="matrix(0.26458333,0,0,0.26458333,-43.607248,-18.337761)"
        id="flowRoot4673"
        style="font-style:normal;font-weight:normal;font-size:53.3333px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#21262d;fill-opacity:1;stroke:none;stroke-linejoin:round;stroke-opacity:1"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
@@ -242,12 +242,12 @@
       </g>
     </g>
     <rect
-       style="fill:none;fill-rule:evenodd;stroke-width:0.261602"
+       style="fill:none;fill-rule:evenodd;stroke-width:0.268304"
        id="rect870"
-       width="129.4994"
-       height="82.804642"
-       x="-28.349482"
-       y="-19.20487"
+       width="133.4785"
+       height="84.504364"
+       x="-30.006668"
+       y="-21.058556"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
