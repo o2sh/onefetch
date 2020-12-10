@@ -8,8 +8,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="129.4994mm"
-   height="80.185272mm"
-   viewBox="0 0 129.4994 80.185273"
+   height="82.804642mm"
+   viewBox="0 0 129.4994 82.804643"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (0767f8302a, 2020-10-17)"
@@ -28,7 +28,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.93537788"
      inkscape:cx="224.53147"
-     inkscape:cy="129.50369"
+     inkscape:cy="129.5037"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -242,10 +242,10 @@
       </g>
     </g>
     <rect
-       style="fill:none;fill-rule:evenodd;stroke-width:0.260002"
+       style="fill:none;fill-rule:evenodd;stroke-width:0.261602"
        id="rect870"
        width="129.4994"
-       height="81.794769"
+       height="82.804642"
        x="-28.349482"
        y="-19.20487"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
