@@ -27,7 +27,7 @@ pub struct Info {
     number_of_commits: String,
     lines_of_code: usize,
     packed_repo_size: String,
-    files_count: Option<u64>,
+    files_count: u64,
     repo_size: String,
     license: String,
     pub dominant_language: Language,
@@ -223,21 +223,13 @@ impl Info {
         let number_of_branches = repo.get_number_of_branches()?;
 
         let repo = Repository::open(&workdir)?;
-        let git_history2 = git_utils::get_git_history2(&repo, config.no_merges)?;
-        let creation_date = git_utils::get_creation_date2(&git_history2)?;
-        let number_of_commits = git_utils::get_number_of_commits2(&git_history2);
-        let authors = git_utils::get_authors2(&git_history2, config.number_of_authors);
-        let last_change = git_utils::get_date_of_last_commit2(&git_history2)?;
-        // let repo_size = git_utils::get_repo_size2(&repo);
 
-        // Git Calls
-        // let git_history = git_utils::get_git_history(&workdir, config.no_merges)?;
-        // let creation_date = git_utils::get_creation_date(&git_history)?;
-        // let number_of_commits = git_utils::get_number_of_commits(&git_history);
-        // let authors = git_utils::get_authors(&git_history, config.number_of_authors);
-        // let last_change = git_utils::get_date_of_last_commit(&git_history)?;
-        let repo_size = git_utils::get_repo_size(&workdir);
-        let files_count = git_utils::get_files_count(&workdir);
+        let git_client = git_utils::GitClient::new(&repo, config.no_merges)?;
+        let creation_date = git_client.get_creation_date()?;
+        let number_of_commits = git_client.get_number_of_commits();
+        let authors = git_client.get_authors(config.number_of_authors);
+        let last_change = git_client.get_date_of_last_commit();
+        let (repo_size, files_count) = git_client.get_repo_size();
         let packed_repo_size = git_utils::get_packed_size(repo_size.clone(), files_count)?;
 
         let git_version = cli_utils::get_git_version()?;
@@ -425,12 +417,7 @@ impl Serialize for Info {
         state.serialize_field("linesOfCode", &self.lines_of_code)?;
         state.serialize_field("packedRepoSize", &self.packed_repo_size)?;
         state.serialize_field("repoSize", &self.repo_size)?;
-
-        match &self.files_count {
-            Some(files_count) => state.serialize_field("filesCount", files_count)?,
-            None => {}
-        }
-
+        state.serialize_field("filesCount", &self.files_count)?;
         state.serialize_field("license", &self.license)?;
         state.serialize_field("dominantLanguage", &self.dominant_language)?;
         state.serialize_field("textColors", &self.text_colors)?;

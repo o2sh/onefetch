@@ -1,5 +1,8 @@
 use byte_unit::Byte;
+use chrono::{FixedOffset, TimeZone};
+use chrono_humanize::{Accuracy, HumanTime, Tense};
 use colored::Color;
+use git2::Time;
 
 pub fn num_to_color(num: &str) -> Option<Color> {
     let color = match num {
@@ -27,4 +30,16 @@ pub fn num_to_color(num: &str) -> Option<Color> {
 pub fn bytes_to_human_readable(bytes: u128) -> String {
     let byte = Byte::from_bytes(bytes);
     byte.get_appropriate_unit(true).to_string()
+}
+
+pub fn git_time_to_human_time(time: &Time) -> String {
+    let (offset, _) = match time.offset_minutes() {
+        n if n < 0 => (-n, '-'),
+        n => (n, '+'),
+    };
+
+    let offset = FixedOffset::west(offset);
+    let dt_with_tz = offset.timestamp(time.seconds(), 0);
+    let ht = HumanTime::from(dt_with_tz);
+    format!("{}", ht.to_text_en(Accuracy::Rough, Tense::Past))
 }
