@@ -14,7 +14,6 @@ impl<'a> GitClient<'a> {
 
     pub fn get_creation_date(&self) -> Result<String> {
         let first_commit = self.commit_history.last();
-
         let output = match first_commit {
             Some(commit) => {
                 let time = commit.time();
@@ -37,8 +36,8 @@ impl<'a> GitClient<'a> {
         let mut total_commits = 0;
         for commit in &self.commit_history {
             let author = commit.author();
-            let author_name = author.name().unwrap().to_string();
-            let author_email = author.email().unwrap();
+            let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
+            let author_email = String::from_utf8_lossy(author.email_bytes()).into_owned();
 
             let commit_count = authors.entry(author_email.to_string()).or_insert(0);
             author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
@@ -78,15 +77,12 @@ impl<'a> GitClient<'a> {
     // This collects the repo size excluding .git
     pub fn get_repo_size(&self) -> (String, u64) {
         let (repo_size, file_count) = match self.repo.index() {
-            Ok(index) => {
-                let mut repo_size: u128 = 0;
-                let mut file_count: u64 = 0;
-                for index_entry in index.iter() {
-                    file_count += 1;
-                    repo_size += index_entry.file_size as u128;
-                }
-                (repo_size, file_count)
-            }
+            Ok(index) => index.iter().fold(
+                (0, 0),
+                |(repo_size, file_count): (u128, u64), index_entry| -> (u128, u64) {
+                    (repo_size + index_entry.file_size as u128, file_count + 1)
+                },
+            ),
             Err(_) => (0, 0),
         };
 
@@ -99,7 +95,7 @@ impl<'a> GitClient<'a> {
         revwalk.set_sorting(git2::Sort::TIME)?;
         let commits: Vec<Commit<'a>> = revwalk
             .filter_map(|r| match r {
-                Err(_) => return None,
+                Err(_) => None,
                 Ok(r) => {
                     let commit = repo.find_commit(r).expect("Could not find commit");
                     if no_merges {
@@ -120,10 +116,7 @@ impl<'a> GitClient<'a> {
 // Should be moved to fmt::Display of Info
 pub fn get_packed_size(repo_size: String, files_count: u64) -> Result<String> {
     match files_count {
-        0 => {
-            let res = repo_size;
-            Ok(res.into())
-        }
+        0 => Ok(repo_size),
         _ => {
             let res = format!("{} ({} files)", repo_size, files_count.to_string());
             Ok(res)

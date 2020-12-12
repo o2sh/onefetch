@@ -222,7 +222,7 @@ impl Info {
         let number_of_tags = repo.get_number_of_tags()?;
         let number_of_branches = repo.get_number_of_branches()?;
 
-        let repo = Repository::open(&workdir)?;
+        let repo = Repository::discover(&workdir)?;
 
         let git_client = git_utils::GitClient::new(&repo, config.no_merges)?;
         let creation_date = git_client.get_creation_date()?;
