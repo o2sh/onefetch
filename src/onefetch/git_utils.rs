@@ -92,7 +92,6 @@ impl<'a> GitClient<'a> {
     fn get_git_history(repo: &'a Repository, no_merges: bool) -> Result<Vec<Commit<'a>>> {
         let mut revwalk = repo.revwalk()?;
         revwalk.push_head()?;
-        revwalk.set_sorting(git2::Sort::TIME)?;
         let commits: Vec<Commit<'a>> = revwalk
             .filter_map(|r| match r {
                 Err(_) => None,
