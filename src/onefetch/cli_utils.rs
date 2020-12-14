@@ -1,6 +1,6 @@
 use crate::onefetch::{deps::package_manager::PackageManager, error::*, language::Language};
 use std::env;
-use std::process::{Command, Stdio};
+use std::process::Command;
 use strum::IntoEnumIterator;
 
 pub fn print_supported_languages() -> Result<()> {
@@ -25,11 +25,11 @@ pub fn is_truecolor_terminal() -> bool {
         .unwrap_or(false)
 }
 
-pub fn get_git_version() -> Result<String> {
-    let version = Command::new("git").arg("--version").output()?;
-    Ok(String::from_utf8_lossy(&version.stdout).replace('\n', ""))
-}
+pub fn get_git_version() -> String {
+    let version = Command::new("git").arg("--version").output();
 
-pub fn is_git_installed() -> bool {
-    Command::new("git").arg("--version").stdout(Stdio::null()).status().is_ok()
+    match version {
+        Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
+        Err(_) => String::new(),
+    }
 }

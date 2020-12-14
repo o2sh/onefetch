@@ -41,5 +41,5 @@ pub fn git_time_to_human_time(time: &Time) -> String {
     let offset = FixedOffset::west(offset);
     let dt_with_tz = offset.timestamp(time.seconds(), 0);
     let ht = HumanTime::from(dt_with_tz);
-    ht.to_text_en(Accuracy::Rough, Tense::Past).to_string()
+    ht.to_text_en(Accuracy::Rough, Tense::Past)
 }
