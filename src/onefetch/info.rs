@@ -1,9 +1,10 @@
 use {
     crate::onefetch::{
-        cli::Cli, cli_utils, commit_info::CommitInfo, deps, error::*, git_utils,
-        language::Language, license::Detector, repo::Repo, text_color::TextColor,
+        cli::Cli, cli_utils, commit_info::CommitInfo, deps, error::*, language::Language,
+        license::Detector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
+    git2::Repository,
     serde::ser::SerializeStruct,
     serde::Serialize,
 };
@@ -25,8 +26,7 @@ pub struct Info {
     repo_url: String,
     number_of_commits: String,
     lines_of_code: usize,
-    packed_repo_size: String,
-    files_count: Option<u64>,
+    file_count: u64,
     repo_size: String,
     license: String,
     pub dominant_language: Language,
@@ -37,7 +37,10 @@ pub struct Info {
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if !self.config.disabled_fields.git_info {
+        if !self.config.disabled_fields.git_info
+            && !&self.git_username.is_empty()
+            && !&self.git_version.is_empty()
+        {
             let git_info_length = self.git_username.len() + self.git_version.len() + 3;
 
             writeln!(
@@ -172,12 +175,14 @@ impl std::fmt::Display for Info {
             )?;
         }
 
-        if !self.config.disabled_fields.size && !self.packed_repo_size.is_empty() {
+        if !self.config.disabled_fields.size && !self.repo_size.is_empty() {
+            let repo_size_str = self.get_repo_size_field();
+
             writeln!(
                 f,
                 "{}{}",
                 &self.get_formatted_subtitle_label("Size"),
-                &self.packed_repo_size.color(self.text_colors.info),
+                &repo_size_str.color(self.text_colors.info),
             )?;
         }
 
@@ -211,26 +216,22 @@ impl std::fmt::Display for Info {
 
 impl Info {
     pub fn new(config: Cli) -> Result<Info> {
-        let repo = Repo::new(&config.repo_path)?;
-        let workdir = repo.get_work_dir()?;
-        let (repo_name, repo_url) = repo.get_name_and_url()?;
-        let head_refs = repo.get_head_refs()?;
-        let pending_changes = repo.get_pending_changes()?;
-        let version = repo.get_version()?;
-        let git_username = repo.get_git_username()?;
-        let number_of_tags = repo.get_number_of_tags()?;
-        let number_of_branches = repo.get_number_of_branches()?;
-        let git_history = git_utils::get_git_history(&workdir, config.no_merges)?;
-        let creation_date = git_utils::get_creation_date(&git_history)?;
-        let number_of_commits = git_utils::get_number_of_commits(&git_history);
-        let authors = git_utils::get_authors(&git_history, config.number_of_authors);
-        let last_change = git_utils::get_date_of_last_commit(&git_history)?;
-        let git_version = cli_utils::get_git_version()?;
-
-        let files_count = git_utils::get_files_count(&workdir);
-        let repo_size = git_utils::get_repo_size(&workdir);
-        let packed_repo_size = git_utils::get_packed_size(repo_size.clone(), files_count)?;
-
+        let git_version = cli_utils::get_git_version();
+        let repo = Repository::discover(&config.repo_path)?;
+        let internal_repo = Repo::new(&repo, config.no_merges)?;
+        let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
+        let head_refs = internal_repo.get_head_refs()?;
+        let pending_changes = internal_repo.get_pending_changes()?;
+        let version = internal_repo.get_version()?;
+        let git_username = internal_repo.get_git_username()?;
+        let number_of_tags = internal_repo.get_number_of_tags()?;
+        let number_of_branches = internal_repo.get_number_of_branches()?;
+        let creation_date = internal_repo.get_creation_date()?;
+        let number_of_commits = internal_repo.get_number_of_commits();
+        let authors = internal_repo.get_authors(config.number_of_authors);
+        let last_change = internal_repo.get_date_of_last_commit();
+        let (repo_size, file_count) = internal_repo.get_repo_size();
+        let workdir = internal_repo.get_work_dir()?;
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
         let (languages, lines_of_code) =
@@ -261,9 +262,8 @@ impl Info {
             repo_url,
             number_of_commits,
             lines_of_code,
-            packed_repo_size,
-            files_count,
             repo_size,
+            file_count,
             license,
             dominant_language,
             ascii_colors,
@@ -380,6 +380,16 @@ impl Info {
             format!("({}, {})", branches_str, tags_str)
         }
     }
+
+    fn get_repo_size_field(&self) -> String {
+        match self.file_count {
+            0 => String::from(&self.repo_size),
+            _ => {
+                let res = format!("{} ({} files)", self.repo_size, self.file_count.to_string());
+                res
+            }
+        }
+    }
 }
 
 impl Serialize for Info {
@@ -390,7 +400,7 @@ impl Serialize for Info {
         let mut state = serializer.serialize_struct("Info", 21)?;
         // Only collect the version number
         let git_version_split: Vec<String> =
-            self.git_version.split(" ").map(|s| s.to_string()).collect();
+            self.git_version.split(' ').map(|s| s.to_string()).collect();
 
         state.serialize_field("gitVersion", &git_version_split[2])?;
         state.serialize_field("gitUsername", &self.git_username)?;
@@ -404,7 +414,7 @@ impl Serialize for Info {
         state.serialize_field("languages", &self.languages)?;
 
         let dependencies_split: Vec<String> =
-            self.dependencies.split(" ").map(|s| s.to_string()).collect();
+            self.dependencies.split(' ').map(|s| s.to_string()).collect();
 
         state.serialize_field("dependencies", &dependencies_split[0])?;
         state.serialize_field("authors", &self.authors)?;
@@ -412,14 +422,8 @@ impl Serialize for Info {
         state.serialize_field("repoUrl", &self.repo_url)?;
         state.serialize_field("numberOfCommits", &self.number_of_commits)?;
         state.serialize_field("linesOfCode", &self.lines_of_code)?;
-        state.serialize_field("packedRepoSize", &self.packed_repo_size)?;
         state.serialize_field("repoSize", &self.repo_size)?;
-
-        match &self.files_count {
-            Some(files_count) => state.serialize_field("filesCount", files_count)?,
-            None => {}
-        }
-
+        state.serialize_field("filesCount", &self.file_count)?;
         state.serialize_field("license", &self.license)?;
         state.serialize_field("dominantLanguage", &self.dominant_language)?;
         state.serialize_field("textColors", &self.text_colors)?;

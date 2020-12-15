@@ -1,17 +1,113 @@
-use crate::onefetch::{commit_info::CommitInfo, error::*};
-use git2::{BranchType, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
+use crate::onefetch::{commit_info::CommitInfo, error::*, utils};
+use git2::{
+    BranchType, Commit, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow,
+};
 use regex::Regex;
 use std::path::Path;
 
-pub struct Repo {
-    repo: Repository,
+pub struct Repo<'a> {
+    repo: &'a Repository,
+    logs: Vec<Commit<'a>>,
 }
 
-impl Repo {
-    pub fn new(repo_path: &str) -> Result<Self> {
-        let repo = Repository::discover(repo_path)?;
-        Ok(Self { repo })
+impl<'a> Repo<'a> {
+    pub fn new(repo: &'a Repository, no_merges: bool) -> Result<Self> {
+        let logs = Repo::get_logs(repo, no_merges)?;
+        Ok(Self { repo, logs })
     }
+
+    fn get_logs(repo: &'a Repository, no_merges: bool) -> Result<Vec<Commit<'a>>> {
+        let mut revwalk = repo.revwalk()?;
+        revwalk.push_head()?;
+        let logs: Vec<Commit<'a>> = revwalk
+            .filter_map(|r| match r {
+                Err(_) => None,
+                Ok(r) => repo
+                    .find_commit(r)
+                    .ok()
+                    .filter(|commit| !(no_merges && commit.parents().len() > 1)),
+            })
+            .collect();
+
+        Ok(logs)
+    }
+
+    pub fn get_creation_date(&self) -> Result<String> {
+        let first_commit = self.logs.last();
+        let output = match first_commit {
+            Some(commit) => {
+                let time = commit.time();
+                utils::git_time_to_human_time(&time)
+            }
+            None => "".into(),
+        };
+
+        Ok(output)
+    }
+
+    pub fn get_number_of_commits(&self) -> String {
+        let number_of_commits = self.logs.len();
+        number_of_commits.to_string()
+    }
+
+    pub fn get_authors(&self, n: usize) -> Vec<(String, usize, usize)> {
+        let mut authors = std::collections::HashMap::new();
+        let mut author_name_by_email = std::collections::HashMap::new();
+        let mut total_commits = 0;
+        for commit in &self.logs {
+            let author = commit.author();
+            let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
+            let author_email = String::from_utf8_lossy(author.email_bytes()).into_owned();
+
+            let commit_count = authors.entry(author_email.to_string()).or_insert(0);
+            author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
+            *commit_count += 1;
+            total_commits += 1;
+        }
+
+        let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
+        authors.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+
+        authors.truncate(n);
+
+        let authors: Vec<(String, usize, usize)> = authors
+            .into_iter()
+            .map(|(author, count)| {
+                (
+                    author_name_by_email.get(&author).unwrap().trim_matches('\'').to_string(),
+                    count,
+                    count * 100 / total_commits,
+                )
+            })
+            .collect();
+
+        authors
+    }
+
+    pub fn get_date_of_last_commit(&self) -> String {
+        let last_commit = self.logs.first();
+
+        match last_commit {
+            Some(commit) => utils::git_time_to_human_time(&commit.time()),
+            None => "".into(),
+        }
+    }
+
+    // This collects the repo size excluding .git
+    pub fn get_repo_size(&self) -> (String, u64) {
+        let (repo_size, file_count) = match self.repo.index() {
+            Ok(index) => index.iter().fold(
+                (0, 0),
+                |(repo_size, file_count): (u128, u64), index_entry| -> (u128, u64) {
+                    (repo_size + index_entry.file_size as u128, file_count + 1)
+                },
+            ),
+            Err(_) => (0, 0),
+        };
+
+        (utils::bytes_to_human_readable(repo_size), file_count)
+    }
+
     pub fn get_work_dir(&self) -> Result<String> {
         if let Some(workdir) = self.work_dir()?.to_str() {
             Ok(workdir.to_string())
@@ -36,8 +132,8 @@ impl Repo {
     pub fn get_git_username(&self) -> Result<String> {
         let config = self.repo.config()?;
         let username = match config.get_entry("user.name") {
-            Ok(v) => v.value().unwrap_or("unknown").into(),
-            Err(_) => "unknown".into(),
+            Ok(v) => v.value().unwrap_or("").into(),
+            Err(_) => "".into(),
         };
 
         Ok(username)
