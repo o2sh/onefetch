@@ -22,19 +22,10 @@ impl<'a> Repo<'a> {
         let logs: Vec<Commit<'a>> = revwalk
             .filter_map(|r| match r {
                 Err(_) => None,
-                Ok(r) => {
-                    if let Ok(commit) = repo.find_commit(r) {
-                        if no_merges {
-                            let parents = commit.parents().len();
-                            if parents > 1 {
-                                return None;
-                            }
-                        }
-                        Some(commit)
-                    } else {
-                        None
-                    }
-                }
+                Ok(r) => repo
+                    .find_commit(r)
+                    .ok()
+                    .filter(|commit| !(no_merges && commit.parents().len() > 1)),
             })
             .collect();
 
