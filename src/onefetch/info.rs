@@ -426,7 +426,6 @@ impl Serialize for Info {
         state.serialize_field("filesCount", &self.file_count)?;
         state.serialize_field("license", &self.license)?;
         state.serialize_field("dominantLanguage", &self.dominant_language)?;
-        state.serialize_field("textColors", &self.text_colors)?;
         state.end()
     }
 }
