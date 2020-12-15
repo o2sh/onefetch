@@ -23,14 +23,17 @@ impl<'a> Repo<'a> {
             .filter_map(|r| match r {
                 Err(_) => None,
                 Ok(r) => {
-                    let commit = repo.find_commit(r).expect("Could not find commit");
-                    if no_merges {
-                        let parents = commit.parents().len();
-                        if parents > 1 {
-                            return None;
+                    if let Ok(commit) = repo.find_commit(r) {
+                        if no_merges {
+                            let parents = commit.parents().len();
+                            if parents > 1 {
+                                return None;
+                            }
                         }
+                        Some(commit)
+                    } else {
+                        None
                     }
-                    Some(commit.to_owned())
                 }
             })
             .collect();
