@@ -31,7 +31,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub print_package_managers: bool,
-    pub output: Option<String>,
+    pub print_in_json_format: bool,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
@@ -60,13 +60,10 @@ impl Cli {
             .help("Run as if onefetch was started in <input> instead of the current working directory.",
         ))
         .arg(
-            Arg::with_name("output")
-                .short("o")
-                .long("output")
-                .help("Outputs Onefetch in a specific format (json).")
-                .takes_value(true)
-                .hide_possible_values(false)
-                .possible_values(&["json"])
+            Arg::with_name("json")
+            .short("j")
+            .long("json")
+                .help("Outputs Onefetch in JSON format.")
             )
         .arg(
             Arg::with_name("languages")
@@ -246,7 +243,7 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let output = matches.value_of("output").map(String::from);
+        let print_in_json_format = matches.is_present("json");
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -342,7 +339,7 @@ impl Cli {
             excluded,
             print_languages,
             print_package_managers,
-            output,
+            print_in_json_format,
             true_color,
             text_colors,
             art_off,
