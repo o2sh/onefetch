@@ -38,20 +38,13 @@ pub struct Info {
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if !self.config.disabled_fields.git_info
-            && !&self.git_username.is_empty()
-            && !&self.git_version.is_empty()
+            && (!&self.git_username.is_empty() || !&self.git_version.is_empty())
         {
-            let git_info_length = self.git_username.len() + self.git_version.len() + 3;
+            let git_info_field = self.get_git_info_field();
 
-            writeln!(
-                f,
-                "{} {} {}",
-                &self.bold(&self.git_username).color(self.text_colors.title),
-                &self.bold("~").color(self.text_colors.tilde),
-                &self.bold(&self.git_version).color(self.text_colors.title)
-            )?;
+            writeln!(f, "{}", git_info_field.0)?;
 
-            let separator = "-".repeat(git_info_length);
+            let separator = "-".repeat(git_info_field.1);
 
             writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
@@ -286,6 +279,31 @@ impl Info {
             label.normal()
         } else {
             label.bold()
+        }
+    }
+
+    fn get_git_info_field(&self) -> (String, usize) {
+        let git_info_length = self.git_username.len() + self.git_version.len();
+
+        if !&self.git_username.is_empty() && !&self.git_version.is_empty() {
+            (
+                format!(
+                    "{} {} {}",
+                    &self.bold(&self.git_username).color(self.text_colors.title),
+                    &self.bold("~").color(self.text_colors.tilde),
+                    &self.bold(&self.git_version).color(self.text_colors.title)
+                ),
+                git_info_length + 3,
+            )
+        } else {
+            (
+                format!(
+                    "{}{}",
+                    &self.bold(&self.git_username).color(self.text_colors.title),
+                    &self.bold(&self.git_version).color(self.text_colors.title)
+                ),
+                git_info_length,
+            )
         }
     }
 
