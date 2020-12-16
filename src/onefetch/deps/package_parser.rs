@@ -38,10 +38,32 @@ pub fn npm(contents: &str) -> Result<usize> {
     Ok(parsed["dependencies"].len())
 }
 
-pub fn pip(contents: &str) -> Result<usize> {
+pub fn pip_reqs(contents: &str) -> Result<usize> {
     let count = Regex::new(r"(^|\n)[A-z]+")?.find_iter(contents).count();
 
     Ok(count)
+}
+
+pub fn pip_pyproject(contents: &str) -> Result<usize> {
+    let parsed = contents.parse::<Value>()?;
+    let count = parsed
+        .get("tool")
+        .and_then(|tool| tool.get("poetry"))
+        .and_then(|poetry| poetry.get("dependencies"));
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
+}
+
+pub fn pip_pipfile(contents: &str) -> Result<usize> {
+    let parsed = contents.parse::<Value>()?;
+    let count = parsed.get("packages");
+
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
 }
 
 pub fn pub_packages(contents: &str) -> Result<usize> {

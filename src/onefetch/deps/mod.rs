@@ -34,7 +34,15 @@ impl DependencyDetector {
         );
         package_managers.insert(
             String::from("requirements.txt"),
-            (package_parser::pip, package_manager::PackageManager::Pip),
+            (package_parser::pip_reqs, package_manager::PackageManager::Pip),
+        );
+        package_managers.insert(
+            String::from("pyproject.toml"),
+            (package_parser::pip_pyproject, package_manager::PackageManager::Pip),
+        );
+        package_managers.insert(
+            String::from("Pipfile"),
+            (package_parser::pip_pipfile, package_manager::PackageManager::Pip),
         );
         package_managers.insert(
             String::from("pubspec.yaml"),
