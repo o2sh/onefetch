@@ -36,6 +36,10 @@ impl DependencyDetector {
             String::from("requirements.txt"),
             (package_parser::pip, package_manager::PackageManager::Pip),
         );
+        package_managers.insert(
+            String::from("pubspec.yaml"),
+            (package_parser::pub_packages, package_manager::PackageManager::Pub),
+        );
 
         DependencyDetector { package_managers }
     }

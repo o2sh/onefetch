@@ -6,6 +6,7 @@ pub enum PackageManager {
     GoModules,
     Npm,
     Pip,
+    Pub,
 }
 
 impl std::fmt::Display for PackageManager {
@@ -15,6 +16,7 @@ impl std::fmt::Display for PackageManager {
             PackageManager::GoModules => write!(f, "go modules"),
             PackageManager::Npm => write!(f, "npm"),
             PackageManager::Pip => write!(f, "pip"),
+            PackageManager::Pub => write!(f, "pub"),
         }
     }
 }

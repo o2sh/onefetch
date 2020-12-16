@@ -1,5 +1,5 @@
 use crate::onefetch::error::*;
-use {regex::Regex, toml::Value};
+use {regex::Regex, toml::Value, yaml_rust::YamlLoader};
 
 pub fn cargo(contents: &str) -> Result<usize> {
     let parsed = contents.parse::<Value>()?;
@@ -42,4 +42,14 @@ pub fn pip(contents: &str) -> Result<usize> {
     let count = Regex::new(r"(^|\n)[A-z]+")?.find_iter(contents).count();
 
     Ok(count)
+}
+
+pub fn pub_packages(contents: &str) -> Result<usize> {
+    match YamlLoader::load_from_str(contents) {
+        Ok(parsed) => match &parsed[0]["dependencies"].as_hash() {
+            Some(deps) => Ok(deps.len()),
+            None => Ok(0),
+        },
+        Err(_) => Ok(0),
+    }
 }
