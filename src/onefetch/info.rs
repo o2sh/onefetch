@@ -397,12 +397,16 @@ impl Serialize for Info {
     where
         S: serde::Serializer,
     {
-        let mut state = serializer.serialize_struct("Info", 21)?;
-        // Only collect the version number
-        let git_version_split: Vec<String> =
-            self.git_version.split(' ').map(|s| s.to_string()).collect();
+        let mut state = serializer.serialize_struct("Info", 20)?;
 
-        state.serialize_field("gitVersion", &git_version_split[2])?;
+        // Only collect the version number
+        let git_version = if !self.git_version.is_empty() {
+            self.git_version.split(' ').collect::<Vec<_>>()[2]
+        } else {
+            ""
+        };
+
+        state.serialize_field("gitVersion", &git_version)?;
         state.serialize_field("gitUsername", &self.git_username)?;
         state.serialize_field("repoName", &self.repo_name)?;
         state.serialize_field("numberOfTags", &self.number_of_tags)?;
