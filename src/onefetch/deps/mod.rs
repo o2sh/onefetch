@@ -6,8 +6,10 @@ use {
 
 pub mod package_manager;
 
+type DependencyParser = fn(&str) -> Result<usize>;
+
 pub struct DependencyDetector {
-    package_managers: HashMap<String, (fn(&str) -> Result<usize>, package_manager::PackageManager)>,
+    package_managers: HashMap<String, (DependencyParser, package_manager::PackageManager)>,
 }
 
 impl DependencyDetector {
