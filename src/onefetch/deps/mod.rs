@@ -5,41 +5,14 @@ use {
 };
 
 pub mod package_manager;
-mod package_parser;
-
-type DependencyParser = fn(&str) -> Result<usize>;
 
 pub struct DependencyDetector {
-    package_managers: HashMap<String, (DependencyParser, package_manager::PackageManager)>,
+    package_managers: HashMap<String, (fn(&str) -> Result<usize>, package_manager::PackageManager)>,
 }
 
 impl DependencyDetector {
     pub fn new() -> Self {
-        let mut package_managers: HashMap<
-            String,
-            (DependencyParser, package_manager::PackageManager),
-        > = HashMap::new();
-
-        package_managers.insert(
-            String::from("Cargo.toml"),
-            (package_parser::cargo, package_manager::PackageManager::Cargo),
-        );
-        package_managers.insert(
-            String::from("go.mod"),
-            (package_parser::go_modules, package_manager::PackageManager::GoModules),
-        );
-        package_managers.insert(
-            String::from("package.json"),
-            (package_parser::npm, package_manager::PackageManager::Npm),
-        );
-        package_managers.insert(
-            String::from("requirements.txt"),
-            (package_parser::pip, package_manager::PackageManager::Pip),
-        );
-        package_managers.insert(
-            String::from("pubspec.yaml"),
-            (package_parser::pub_packages, package_manager::PackageManager::Pub),
-        );
+        let package_managers = package_manager::build();
 
         DependencyDetector { package_managers }
     }
