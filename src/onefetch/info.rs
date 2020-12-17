@@ -40,11 +40,11 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.git_info
             && (!&self.git_username.is_empty() || !&self.git_version.is_empty())
         {
-            let git_info_field = self.get_git_info_field();
+            let (git_info_field_str, git_info_field_len) = self.get_git_info_field();
 
-            writeln!(f, "{}", git_info_field.0)?;
+            writeln!(f, "{}", git_info_field_str)?;
 
-            let separator = "-".repeat(git_info_field.1);
+            let separator = "-".repeat(git_info_field_len);
 
             writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
