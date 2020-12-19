@@ -105,7 +105,7 @@ Remarks:
 
 ### Adding support for a new package manager
 
-Any package manager is supported, as long as there is a file you can get the dependencies from.
+Any package manager is supported, as long as it is associated to a file that can be parsed to extract the number of dependencies from.
 
 To add a new package manager, make sure to follow these steps:
 
@@ -117,7 +117,7 @@ To add a new package manager, make sure to follow these steps:
 
 The first item `Cargo` corresponds to the name of the package manager. The second item `cargo` is the display name. Then we have the name of the package manager file that will be parsed: `Cargo.toml`. The last item `cargo` corresponds to the function mame responsible for parsing the package manager file, cf. step 2.
 
-2. in `src/onefetch/deps/package_parser.rs`, add a function that should take in a `string` as the content of the package manager file, and return `usize` as the number of dependencies.
+2. in `src/onefetch/deps/package_parser.rs`: create a function that takes an input of type `&str` representing the content of the package manager's file, and returns a `usize` as its number of dependencies.
 
 ```rust
 pub fn cargo(contents: &str) -> Result<usize> {
