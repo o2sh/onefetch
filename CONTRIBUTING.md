@@ -109,7 +109,7 @@ Any package manager is supported, as long as it is associated to a file that can
 
 To add a new package manager, make sure to follow these steps:
 
-1. Add a new entry in the `define_package_managers!` macro in [package_manager.rs](src/deps/package_manager.rs).
+1. Add a new entry in the `define_package_managers!` macro in [package_manager.rs](src/onefetch/deps/package_manager.rs).
 
 **Example**:
 
