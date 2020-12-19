@@ -105,30 +105,20 @@ Remarks:
 
 ### Adding support for a new package manager
 
-Any package manager is supported, as long as there is a file you can get the dependencies from.
+Any package manager is supported, as long as it is associated to a file that can be parsed to extract the number of dependencies from.
 
-To add a new package manager, make sure you follow these steps:
-1. in `src/onefetch/deps/package_manager.rs`, add the name of your package manager to the `PackageManager` enum
-```rust
-pub enum PackageManager {
-    // ...
-    Cargo,
-    // ...
-}
-```
+To add a new package manager, make sure to follow these steps:
 
-2. in `src/onefetch/deps/package_manager.rs`, add a `writeln` macro call to the `fmt` function
-```rust
-fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-    match *self {
-        // ...
-        PackageManager::Cargo => write!(f, "cargo"),
-        // ...
-    }
-}
-```
+1. Add a new entry in the `define_package_managers!` macro in [package_manager.rs](src/onefetch/deps/package_manager.rs).
 
-3. in `src/onefetch/deps/package_parser.rs`, add a function whose name corresponds to your manager. This function should take in a `string` as the contents of the package manager file, and return `usize` as the number of dependencies. You should also make sure you catch any edge cases, such as the absence of a `dependencies` field.
+**Example**:
+
+`{ Cargo, "cargo", "Cargo.toml", cargo },`
+
+The first item `Cargo` corresponds to the name of the package manager. The second item `cargo` is the display name. Then we have the name of the package manager file that will be parsed: `Cargo.toml`. The last item `cargo` corresponds to the function mame responsible for parsing the package manager file, cf. step 2.
+
+2. in `src/onefetch/deps/package_parser.rs`: create a function that takes an input of type `&str` representing the content of the package manager's file, and returns a `usize` as its number of dependencies.
+
 ```rust
 pub fn cargo(contents: &str) -> Result<usize> {
     let parsed = contents.parse::<Value>()?;
@@ -139,16 +129,6 @@ pub fn cargo(contents: &str) -> Result<usize> {
         None => Ok(0),
     }
 }
-```
-
-4. in `src/onefetch/deps/mod.rs`, in the `new` method of the `DependencyDetector` impl, insert your new package managers information
-```rust
-package_managers.insert(
-    String::from("Cargo.toml"), // File name
-
-    // Parser function, then the corresponding element from the PackageManager enum
-    (package_parser::cargo, package_manager::PackageManager::Cargo),
-);
 ```
 
 ### Adding translation for README.md
