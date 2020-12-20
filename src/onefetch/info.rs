@@ -1,6 +1,6 @@
 use {
     crate::onefetch::{
-        cli::Cli, cli_utils, commit_info::CommitInfo, deps, error::*, language::Language,
+        cli::Cli, cli_utils, commit_info::CommitInfo, package_managers::DependencyDetector, error::*, language::Language,
         license::Detector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
@@ -226,7 +226,7 @@ impl Info {
         let (repo_size, file_count) = internal_repo.get_repo_size();
         let workdir = internal_repo.get_work_dir()?;
         let license = Detector::new()?.get_license(&workdir)?;
-        let dependencies = deps::DependencyDetector::new().get_dependencies(&workdir)?;
+        let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
         let (languages, lines_of_code) =
             Language::get_language_statistics(&workdir, &config.excluded)?;
         let dominant_language = Language::get_dominant_language(&languages);

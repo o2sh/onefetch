@@ -2,7 +2,7 @@ mod ascii_art;
 pub mod cli;
 pub mod cli_utils;
 mod commit_info;
-mod deps;
+mod package_managers;
 pub mod error;
 mod image_backends;
 pub mod info;
