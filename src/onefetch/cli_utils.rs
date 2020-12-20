@@ -1,4 +1,6 @@
-use crate::onefetch::{package_managers::package_manager::PackageManager, error::*, language::Language};
+use crate::onefetch::{
+    error::*, language::Language, package_managers::package_manager::PackageManager,
+};
 use std::env;
 use std::process::Command;
 use strum::IntoEnumIterator;

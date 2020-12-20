@@ -1,7 +1,7 @@
 use {
     crate::onefetch::{
-        cli::Cli, cli_utils, commit_info::CommitInfo, package_managers::DependencyDetector, error::*, language::Language,
-        license::Detector, repo::Repo, text_color::TextColor,
+        cli::Cli, cli_utils, commit_info::CommitInfo, error::*, language::Language,
+        license::Detector, package_managers::DependencyDetector, repo::Repo, text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
     git2::Repository,
