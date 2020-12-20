@@ -173,6 +173,7 @@ define_languages! {
     { Elisp, "emacslisp.ascii", "EmacsLisp", define_colors!( [Color::Magenta, Color::White] ), "emacslisp" },
     { Elixir, "elixir.ascii", "Elixir", define_colors!( [Color::Magenta] ) },
     { Elm, "elm.ascii", "Elm", define_colors!( [Color::Blue, Color::Green, Color::Yellow, Color::Cyan] ) },
+    { Emojicode, "emojicode.ascii", "Emojicode", define_colors!( [Color::Green, Color::Magenta,  Color::Magenta, Color::Magenta] : [Color::TrueColor{r:51, g:72, b:39}, Color::TrueColor{r:59, g:43, b:81}, Color::TrueColor{r:65, g:53, b:84}, Color::TrueColor{r:52, g:39, b:72}] ) },
     { Erlang, "erlang.ascii", "Erlang", define_colors!( [Color::Red] ) },
     { Fish, "fish.ascii", "Fish", define_colors!( [Color::Red, Color::Yellow] ) },
     { Forth, "forth.ascii", "Forth", define_colors!( [Color::Red] ) },
