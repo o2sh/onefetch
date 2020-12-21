@@ -14,6 +14,7 @@ jobs:
 
     steps:
     - name: Open Homebrew Formula PR
-      run: brew update-formula-pr --url=$TARBALL_URL
+      run: brew bump-formula-pr --url=$TARBALL_URL --version=$TAG_NAME onefetch
       env:
-        TARBALL_URL: ${{ format('https://github.com/{0}/archive/{1}.tar.gz', github.repository, github.event.release.tag_name) }}
+        TARBALL_URL: ${{ github.event.release.tarball_url }}
+        TAG_NAME: ${{ github.event.release.tag_name }}
