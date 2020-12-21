@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-# Original script by @atluft with inspiration from http://link.medium.com/0D6TnUKTIab located at:
+# Original script by @atluft with inspiration from http://link.medium.com/0D6TnUKTIab located at:  # noqa: E501
 # https://github.com/o2sh/onefetch/wiki/ASCII-Art-From-Image-Using-Python-Image-Library/9c454b390273ffedd60db9d525fb001f89d581b1
 
 # lint with
-# flake8 --max-line-length 120 image_to_ascii.py
+# flake8 --max-line-length 88 image_to_ascii.py
 # black --color --diff image_to_ascii.py
 # isort --color --diff image_to_ascii.py
 
@@ -17,6 +17,12 @@ __version__ = "1.0.0"
 
 parser = ArgumentParser(description="convert an image file to ASCII art")
 requiredNamed = parser.add_argument_group("required argument")
+requiredNamed.add_argument(
+    "-c",
+    "--characters",
+    help='characters available to be used, default " .:_-"',
+    default=" .:_-",
+)
 requiredNamed.add_argument(
     "-f",
     "--file",
@@ -61,8 +67,7 @@ draw = ImageDraw.Draw(outputImage)
 
 
 def getSomeChar(h):
-    chars = "-_:. "[::-1]
-    charArr = list(chars)
+    charArr = list(args.characters)
     mul = len(charArr) / 256
     return charArr[floor(h * mul)]
 
