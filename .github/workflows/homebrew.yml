@@ -1,0 +1,20 @@
+name: homebrew-update-formula
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+
+    runs-on: macos-latest
+
+    env:
+      HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+
+    steps:
+    - name: Open Homebrew Formula PR
+      run: brew bump-formula-pr --url=$TARBALL_URL --version=$TAG_NAME onefetch
+      env:
+        TARBALL_URL: ${{ github.event.release.tarball_url }}
+        TAG_NAME: ${{ github.event.release.tag_name }}
