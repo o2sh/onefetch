@@ -14,6 +14,7 @@ information to effectively respond to your bug report or contribution.
     * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
     * [Adding translation for README.md](#adding-translation-for-readmemd)
     * [Project-specific notes](#project-specific-notes)
+* [Special Thanks](#special-thanks-to)
 
 ## Reporting Bugs / Feature Requests
 
@@ -143,4 +144,18 @@ These translations will be accessible directly from the English README.md via hy
 - Do check for linting errors with `cargo clippy`. If you're having trouble with this, feel free to ask for help.
 - Documenting your changes in `CHANGELOG.md` (in the Unreleased section) would be awesome, but is not required.
 - If you can, try to write some tests for your change (if it addresses a bug) or feature. Again, feel free to ask for help. Our CI will run these tests to ensure your code never breaks with future changes.
+
+<h2 align="center">Special Thanks to</h2>
+
+- Every onefetch user, which contributed to the project by writing issues or PRs.
+- [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@ebroto](https://github.com/ebroto), [@erikgaal](https://github.com/erikgaal), [@yoichi](https://github.com/yoichi) and [@HallerPatrick](https://github.com/HallerPatrick) for maintaining this project.
+- Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
+
+<p align="center">:heart::heart:</p>
+
+<a href="https://github.com/o2sh/onefetch/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=o2sh/onefetch" />
+</a>
+
+Made with [contributors-img](https://contrib.rocks).
 
