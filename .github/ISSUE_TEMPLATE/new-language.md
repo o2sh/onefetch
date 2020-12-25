@@ -1,7 +1,7 @@
 ---
-name: new language
-about: Request a new language for onefetch to support
-title: "[NEW LANGUAGE]"
+name: New language
+about: Request for a new language to be supported
+title: "Support for [NEW LANGUAGE]"
 labels: 'Type: Enhancement, good first issue'
 assignees: ''
 
@@ -12,11 +12,11 @@ assignees: ''
 
 ## Logo
 
-<!-- Is there a logo that can be used as inspiration for the ASCII art? -->
+<!-- Is there a logo that can be used as a source of inspiration for the ASCII art? -->
 
 ## Upstream support
 
-<!-- Onefetch uses tokei to detect languages. Does tokei support already support the language that you want onefetch to support? -->
+<!-- Onefetch relies on tokei for language detection. Does tokei already support the language in question? -->
 - [ ] [tokei] supports this language
 
 [tokei]: https://github.com/XAMPPRocky/tokei
