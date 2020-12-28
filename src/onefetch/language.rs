@@ -207,7 +207,7 @@ define_languages! {
     { PureScript, "purescript.ascii", "PureScript", define_colors!( [Color::White] ) },
     { Python, "python.ascii", "Python", define_colors!( [Color::Blue, Color::Yellow] : [Color::TrueColor{ r:47, g:105 ,b:162}, Color::TrueColor{ r:255, g:217 ,b:64} ] ) },
     { Qml, "qml.ascii", "QML", define_colors!( [Color::Green, Color::White, Color::Green] : [Color::TrueColor{ r:128, g:195 ,b:66}, Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:77, g:117 ,b:40} ] ) },
-    { R, "r.ascii", "R", define_colors!( [Color::White, Color::Blue)] },
+    { R, "r.ascii", "R", define_colors!( [Color::White, Color::Blue] ) },
     { Racket, "racket.ascii", "Racket", define_colors!( [Color::Red, Color::White, Color::Blue] ) },
     {
         Perl6, "raku.ascii", "Raku", define_colors!( [
