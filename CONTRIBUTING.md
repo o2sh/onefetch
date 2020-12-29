@@ -147,7 +147,7 @@ These translations will be accessible directly from the English README.md via hy
 
 <h2 align="center">Special Thanks to</h2>
 
-- Every onefetch user, which contributed to the project by writing issues or PRs.
+- Every onefetch user, who contributed to the project by writing issues or PRs.
 - [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@ebroto](https://github.com/ebroto), [@erikgaal](https://github.com/erikgaal), [@yoichi](https://github.com/yoichi) and [@HallerPatrick](https://github.com/HallerPatrick) for maintaining this project.
 - Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
 
