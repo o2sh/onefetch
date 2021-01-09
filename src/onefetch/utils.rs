@@ -32,7 +32,7 @@ pub fn bytes_to_human_readable(bytes: u128) -> String {
     byte.get_appropriate_unit(true).to_string()
 }
 
-pub fn git_time_to_formatted_time(time: &Time, rfc_time: bool) -> String {
+pub fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
     let (offset, _) = match time.offset_minutes() {
         n if n < 0 => (-n, '-'),
         n => (n, '+'),
@@ -40,7 +40,7 @@ pub fn git_time_to_formatted_time(time: &Time, rfc_time: bool) -> String {
 
     let offset = FixedOffset::west(offset);
     let dt_with_tz = offset.timestamp(time.seconds(), 0);
-    if rfc_time {
+    if iso_time {
         dt_with_tz.with_timezone(&chrono::Utc).to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
     }
     else {
