@@ -32,12 +32,12 @@ impl<'a> Repo<'a> {
         Ok(logs)
     }
 
-    pub fn get_creation_date(&self) -> Result<String> {
+    pub fn get_creation_date(&self, rfc_time: bool) -> Result<String> {
         let first_commit = self.logs.last();
         let output = match first_commit {
             Some(commit) => {
                 let time = commit.time();
-                utils::git_time_to_human_time(&time)
+                utils::git_time_to_formatted_time(&time, rfc_time)
             }
             None => "".into(),
         };
@@ -84,11 +84,11 @@ impl<'a> Repo<'a> {
         authors
     }
 
-    pub fn get_date_of_last_commit(&self) -> String {
+    pub fn get_date_of_last_commit(&self, rfc_time: bool) -> String {
         let last_commit = self.logs.first();
 
         match last_commit {
-            Some(commit) => utils::git_time_to_human_time(&commit.time()),
+            Some(commit) => utils::git_time_to_formatted_time(&commit.time(), rfc_time),
             None => "".into(),
         }
     }

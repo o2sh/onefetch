@@ -76,6 +76,11 @@ impl<W: Write> Printer<W> {
         Ok(())
     }
 
+    pub fn print_yaml(&mut self) -> Result<()> {
+        write!(self.writer, "{}", serde_yaml::to_string(&self.info).unwrap())?;
+        Ok(())
+    }
+
     fn get_ascii(&self) -> &str {
         let language = if let Some(ascii_language) = &self.info.config.ascii_language {
             ascii_language

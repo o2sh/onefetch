@@ -32,9 +32,11 @@ pub struct Cli {
     pub print_languages: bool,
     pub print_package_managers: bool,
     pub print_in_json_format: bool,
+    pub print_in_yaml_format: bool,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
+    pub iso_time: bool,
 }
 
 impl Cli {
@@ -64,6 +66,18 @@ impl Cli {
             .short("j")
             .long("json")
                 .help("Outputs Onefetch in JSON format.")
+            )
+        .arg(
+            Arg::with_name("yaml")
+            .short("y")
+            .long("yaml")
+                .help("Outputs Onefetch in YAML format.")
+            )
+        .arg(
+            Arg::with_name("isotime")
+            .short("z")
+            .long("isotime")
+                .help("Outputs Onefetch with ISO 8601 formated timestamps")
             )
         .arg(
             Arg::with_name("languages")
@@ -244,6 +258,8 @@ impl Cli {
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
         let print_in_json_format = matches.is_present("json");
+        let print_in_yaml_format = matches.is_present("yaml");
+        let iso_time = matches.is_present("isotime");
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -340,9 +356,11 @@ impl Cli {
             print_languages,
             print_package_managers,
             print_in_json_format,
+            print_in_yaml_format,
             true_color,
             text_colors,
             art_off,
+            iso_time,
         })
     }
 }

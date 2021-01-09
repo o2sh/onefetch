@@ -26,6 +26,7 @@ fn run() -> Result<()> {
         return Err("please run onefetch inside of a non-bare git repository".into());
     }
     let print_in_json_format = config.print_in_json_format;
+    let print_in_yaml_format = config.print_in_yaml_format;
 
     let info = info::Info::new(config)?;
 
@@ -33,6 +34,8 @@ fn run() -> Result<()> {
 
     if print_in_json_format {
         printer.print_json()?
+    } else if print_in_yaml_format {
+        printer.print_yaml()?
     } else {
         printer.print()?
     }
