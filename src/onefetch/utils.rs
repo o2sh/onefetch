@@ -42,8 +42,7 @@ pub fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
     let dt_with_tz = offset.timestamp(time.seconds(), 0);
     if iso_time {
         dt_with_tz.with_timezone(&chrono::Utc).to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
-    }
-    else {
+    } else {
         let ht = HumanTime::from(dt_with_tz);
         ht.to_text_en(Accuracy::Rough, Tense::Past)
     }
