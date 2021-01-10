@@ -17,13 +17,13 @@
 
 Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly on your terminal. The tool is completely offline - no network access is required.
 
-By default, the repo's information is displayed alongside the dominant language's logo, but you can further configure onefetch to instead use an image - on supported terminals (more info [here](https://github.com/o2sh/onefetch/wiki/Images-in-the-terminal)) -, a text input or nothing at all.
+By default, the repo's information is displayed alongside the dominant language's logo, but you can further configure onefetch to instead use an image - on supported terminals -, a text input or nothing at all.
 
 It automatically detects open source licenses from texts and provides the user with valuable information like code distribution, pending changes, number of dependencies (by package manager), top contributors (by number of commits), size on disk, creation date, LOC (lines of code), etc.
 
 <img src="assets/kubernetes.png" align="right" height="240px">
 
-Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc. Read more about it [here](https://github.com/o2sh/onefetch/wiki/command-line-options).
+Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc.
 
 As of now, onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added.
 
