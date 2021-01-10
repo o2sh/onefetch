@@ -5,6 +5,7 @@ use {
         image_backends,
         info_field::{InfoField, InfoFieldOff},
         language::Language,
+        printer::SerializationFormat,
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     image::DynamicImage,
@@ -31,8 +32,7 @@ pub struct Cli {
     pub excluded: Vec<String>,
     pub print_languages: bool,
     pub print_package_managers: bool,
-    pub print_in_json_format: bool,
-    pub print_in_yaml_format: bool,
+    pub output: Option<SerializationFormat>,
     pub true_color: bool,
     pub art_off: bool,
     pub text_colors: Vec<String>,
@@ -62,22 +62,20 @@ impl Cli {
             .help("Run as if onefetch was started in <input> instead of the current working directory.",
         ))
         .arg(
-            Arg::with_name("json")
-            .short("j")
-            .long("json")
-                .help("Outputs Onefetch in JSON format.")
-            )
-        .arg(
-            Arg::with_name("yaml")
-            .short("y")
-            .long("yaml")
-                .help("Outputs Onefetch in YAML format.")
+            Arg::with_name("output")
+            .short("o")
+            .long("output")
+            .help("Outputs Onefetch in a specific format (json, yaml).")
+            .takes_value(true)
+            .possible_values(&SerializationFormat::iter()
+            .map(|format| format.into())
+            .collect::<Vec<&str>>())
             )
         .arg(
             Arg::with_name("isotime")
             .short("z")
             .long("isotime")
-                .help("Outputs Onefetch with ISO 8601 formated timestamps")
+            .help("Outputs Onefetch with ISO 8601 formated timestamps")
             )
         .arg(
             Arg::with_name("languages")
@@ -257,9 +255,13 @@ impl Cli {
         let no_color_palette = matches.is_present("no-color-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
-        let print_in_json_format = matches.is_present("json");
-        let print_in_yaml_format = matches.is_present("yaml");
         let iso_time = matches.is_present("isotime");
+
+        let output = if let Some(output) = matches.value_of("output") {
+            Some(SerializationFormat::from_str(&output).unwrap())
+        } else {
+            None
+        };
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -355,8 +357,7 @@ impl Cli {
             excluded,
             print_languages,
             print_package_managers,
-            print_in_json_format,
-            print_in_yaml_format,
+            output,
             true_color,
             text_colors,
             art_off,
