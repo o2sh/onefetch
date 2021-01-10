@@ -257,11 +257,7 @@ impl Cli {
         let print_package_managers = matches.is_present("package-managers");
         let iso_time = matches.is_present("isotime");
 
-        let output = if let Some(output) = matches.value_of("output") {
-            Some(SerializationFormat::from_str(&output).unwrap())
-        } else {
-            None
-        };
+        let output = matches.value_of("output").map(SerializationFormat::from_str).transpose().unwrap();
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
