@@ -26,10 +26,10 @@ impl<W: Write> Printer<W> {
         match &self.info.config.output {
             Some(format) => match format {
                 SerializationFormat::Json => {
-                    write!(self.writer, "{}", serde_json::to_string_pretty(&self.info).unwrap())?
+                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info).unwrap())?
                 }
                 SerializationFormat::Yaml => {
-                    write!(self.writer, "{}", serde_yaml::to_string(&self.info).unwrap())?
+                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info).unwrap())?
                 }
             },
             None => {
