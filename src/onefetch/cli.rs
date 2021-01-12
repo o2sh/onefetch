@@ -175,17 +175,17 @@ impl Cli {
                 .help("Colors (X X X...) to print the ascii art."),
         )
         .arg(
-            Arg::with_name("true-colors")
-                .value_name("SETTING")
+            Arg::with_name("true-color")
                 .long("true-color")
-                .possible_values(&["auto", "on", "off"])
+                .value_name("WHEN")
+                .takes_value(true)
+                .possible_values(&["auto", "never", "always"])
                 .default_value("auto")
-                .help("control the display of true colors (auto, on, off)")
+                .hide_default_value(true)
+                .help("Specify when to use true color (*auto*, never, always).")
                 .long_help(
-                    "- auto: detect if true colors are supported
-- on: force true colors to be displayed
-- off: force only 8 standard colors to be displayed
-"
+                    "Specify when to use true color (*auto*, never, always). \n\
+                    If set to auto: true color will be enabled if supported by the terminal."
                 )
         )
         .arg(
@@ -263,9 +263,9 @@ impl Cli {
             )
 .get_matches();
 
-        let true_color = match matches.value_of("true-colors") {
-            Some("on") => true,
-            Some("off") => false,
+        let true_color = match matches.value_of("true-color") {
+            Some("always") => true,
+            Some("never") => false,
             Some("auto") => cli_utils::is_truecolor_terminal(),
             _ => unreachable!(),
         };
