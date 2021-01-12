@@ -175,6 +175,20 @@ impl Cli {
                 .help("Colors (X X X...) to print the ascii art."),
         )
         .arg(
+            Arg::with_name("true-colors")
+                .value_name("SETTING")
+                .long("true-color")
+                .possible_values(&["auto", "on", "off"])
+                .default_value("auto")
+                .help("control the display of true colors (auto, on, off)")
+                .long_help(
+                    "- auto: detect if true colors are supported
+- on: force true colors to be displayed
+- off: force only 8 standard colors to be displayed
+"
+                )
+        )
+        .arg(
             Arg::with_name("text-colors")
                 .short("t")
                 .long("text-colors")
@@ -249,7 +263,12 @@ impl Cli {
             )
 .get_matches();
 
-        let true_color = cli_utils::is_truecolor_terminal();
+        let true_color = match matches.value_of("true-colors") {
+            Some("on") => true,
+            Some("off") => false,
+            Some("auto") => cli_utils::is_truecolor_terminal(),
+            _ => unreachable!(),
+        };
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merge-commits");
         let no_color_palette = matches.is_present("no-color-palette");
