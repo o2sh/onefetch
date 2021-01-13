@@ -24,7 +24,7 @@ color_quant = "1.1" # Use version required by image
 colored= "2.0.0"
 git2 = { version = "0.13.15", default-features = false }
 json = "0.12.4"
-tokei = "12.1.1"
+tokei = "12.1.2"
 askalono = "0.4.3"
 bytecount = "0.6.2"
 clap = "2.33.3"
