@@ -155,16 +155,6 @@ impl Cli {
             ),
         )
         .arg(
-            Arg::with_name("ascii-colors")
-            .short("c")
-            .long("ascii-colors")
-            .value_name("X")
-            .multiple(true)
-            .takes_value(true)
-            .possible_values(color_values)
-            .help("Colors (X X X...) to print the ascii art."),
-        )
-        .arg(
             Arg::with_name("true-color")
             .long("true-color")
             .value_name("WHEN")
@@ -176,6 +166,16 @@ impl Cli {
             .long_help(
                 "Specify when to use true color (*auto*, never, always). \n\
                 If set to auto: true color will be enabled if supported by the terminal.")
+        )
+        .arg(
+            Arg::with_name("ascii-colors")
+            .short("c")
+            .long("ascii-colors")
+            .value_name("X")
+            .multiple(true)
+            .takes_value(true)
+            .possible_values(color_values)
+            .help("Colors (X X X...) to print the ascii art."),
         )
         .arg(
             Arg::with_name("text-colors")
