@@ -411,7 +411,7 @@ impl Info {
 }
 
 impl Serialize for Info {
-    fn serialize<S>(&self, serializer: S) -> serde::export::Result<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
