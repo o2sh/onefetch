@@ -75,7 +75,7 @@ impl Cli {
             Arg::with_name("isotime")
             .short("z")
             .long("isotime")
-            .help("Outputs Onefetch with ISO 8601 formated timestamps")
+            .help("Outputs Onefetch with ISO 8601 formatted timestamps")
             )
         .arg(
             Arg::with_name("languages")
