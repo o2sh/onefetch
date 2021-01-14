@@ -40,7 +40,6 @@ pub struct Cli {
 }
 
 impl Cli {
-    /// Build `Options` from command line arguments.
     pub fn new() -> Result<Self> {
         #[cfg(not(windows))]
         let possible_backends = ["kitty", "iterm", "sixel"];
@@ -59,8 +58,8 @@ impl Cli {
             Arg::with_name("input")
             .default_value(".")
             .hide_default_value(true)
-            .help("Run as if onefetch was started in <input> instead of the current working directory.",
-        ))
+            .help("Run as if onefetch was started in <input> instead of the current working directory.")
+        )
         .arg(
             Arg::with_name("output")
             .short("o")
@@ -70,13 +69,7 @@ impl Cli {
             .possible_values(&SerializationFormat::iter()
             .map(|format| format.into())
             .collect::<Vec<&str>>())
-            )
-        .arg(
-            Arg::with_name("isotime")
-            .short("z")
-            .long("isotime")
-            .help("Outputs Onefetch with ISO 8601 formatted timestamps")
-            )
+        )
         .arg(
             Arg::with_name("languages")
             .short("l")
@@ -87,181 +80,180 @@ impl Cli {
             Arg::with_name("package-managers")
             .short("p")
             .long("package-managers")
-                .help("Prints out supported package managers."),
-            )
-            .arg(
-                Arg::with_name("show-logo")
-                .long("show-logo")
-                .value_name("WHEN")
-                .takes_value(true)
-                .possible_values(&["auto", "never", "always"])
-                .default_value("always")
-                .hide_default_value(true)
-                .help("Specify when to show the logo (auto, never, *always*).")
-                .long_help(
-                    "Specify when to show the logo (auto, never, *always*). \n\
-                    If set to auto: the logo will be hidden if the terminal's width < 95."
-                )
+            .help("Prints out supported package managers."),
+        )
+        .arg(
+            Arg::with_name("show-logo")
+            .long("show-logo")
+            .value_name("WHEN")
+            .takes_value(true)
+            .possible_values(&["auto", "never", "always"])
+            .default_value("always")
+            .hide_default_value(true)
+            .help("Specify when to show the logo (auto, never, *always*).")
+            .long_help(
+                "Specify when to show the logo (auto, never, *always*). \n\
+                If set to auto: the logo will be hidden if the terminal's width < 95.")
         )
         .arg(
             Arg::with_name("image")
-                .short("i")
-                .long("image")
-                .value_name("IMAGE")
-                .takes_value(true)
-                .help("Path to the IMAGE file."),
+            .short("i")
+            .long("image")
+            .value_name("IMAGE")
+            .takes_value(true)
+            .help("Path to the IMAGE file."),
         )
         .arg(
             Arg::with_name("image-backend")
-                .long("image-backend")
-                .value_name("BACKEND")
-                .takes_value(true)
-                .requires("image")
-                .possible_values(&possible_backends)
-                .help("Which image BACKEND to use."),
+            .long("image-backend")
+            .value_name("BACKEND")
+            .takes_value(true)
+            .requires("image")
+            .possible_values(&possible_backends)
+            .help("Which image BACKEND to use."),
         )
         .arg(
             Arg::with_name("color-resolution")
-                .long("color-resolution")
-                .value_name("VALUE")
-                .requires("image")
-                .takes_value(true)
-                .possible_values(&["16", "32", "64", "128", "256"])
-                .help("VALUE of color resolution to use with SIXEL backend."),
+            .long("color-resolution")
+            .value_name("VALUE")
+            .requires("image")
+            .takes_value(true)
+            .possible_values(&["16", "32", "64", "128", "256"])
+            .help("VALUE of color resolution to use with SIXEL backend."),
         )
         .arg(
             Arg::with_name("ascii-language")
-                .short("a")
-                .value_name("LANGUAGE")
-                .long("ascii-language")
-                .takes_value(true)
-                .case_insensitive(true)
-                .help("Which LANGUAGE's ascii art to print.")
-                .possible_values(
-                    &Language::iter()
-                        .map(|language| language.into())
-                        .collect::<Vec<&str>>()
-                    ),
+           .short("a")
+           .value_name("LANGUAGE")
+           .long("ascii-language")
+           .takes_value(true)
+           .case_insensitive(true)
+           .help("Which LANGUAGE's ascii art to print.")
+           .possible_values(
+               &Language::iter()
+               .map(|language| language.into())
+               .collect::<Vec<&str>>())
         )
         .arg(
             Arg::with_name("ascii-input")
-                .long("ascii-input")
-                .value_name("STRING")
-                .takes_value(true)
-                .help("Takes a non-empty STRING as input to replace the ASCII logo.")
-                .long_help(
-                    "Takes a non-empty STRING as input to replace the ASCII logo. \
-                     It is possible to pass a generated STRING by command substitution. \n\
-                     For example:\n \
-                     '--ascii-input \"$(fortune | cowsay -W 25)\"'"
-            )
-                .validator(
-                    |t| {
-                        if t.is_empty() {
-                            return Err(String::from("must not be empty"));
-                        }
-                        Ok(())
-                    },
-                ),
+            .long("ascii-input")
+            .value_name("STRING")
+            .takes_value(true)
+            .help("Takes a non-empty STRING as input to replace the ASCII logo.")
+            .long_help(
+                "Takes a non-empty STRING as input to replace the ASCII logo. \
+                It is possible to pass a generated STRING by command substitution. \n\
+                For example:\n \
+                '--ascii-input \"$(fortune | cowsay -W 25)\"'")
+            .validator(
+                |t| {
+                    if t.is_empty() {
+                        return Err(String::from("must not be empty"));
+                    }
+                    Ok(())
+                },
+            ),
         )
         .arg(
             Arg::with_name("ascii-colors")
-                .short("c")
-                .long("ascii-colors")
-                .value_name("X")
-                .multiple(true)
-                .takes_value(true)
-                .possible_values(color_values)
-                .help("Colors (X X X...) to print the ascii art."),
+            .short("c")
+            .long("ascii-colors")
+            .value_name("X")
+            .multiple(true)
+            .takes_value(true)
+            .possible_values(color_values)
+            .help("Colors (X X X...) to print the ascii art."),
         )
         .arg(
             Arg::with_name("true-color")
-                .long("true-color")
-                .value_name("WHEN")
-                .takes_value(true)
-                .possible_values(&["auto", "never", "always"])
-                .default_value("auto")
-                .hide_default_value(true)
-                .help("Specify when to use true color (*auto*, never, always).")
-                .long_help(
-                    "Specify when to use true color (*auto*, never, always). \n\
-                    If set to auto: true color will be enabled if supported by the terminal."
-                )
+            .long("true-color")
+            .value_name("WHEN")
+            .takes_value(true)
+            .possible_values(&["auto", "never", "always"])
+            .default_value("auto")
+            .hide_default_value(true)
+            .help("Specify when to use true color (*auto*, never, always).")
+            .long_help(
+                "Specify when to use true color (*auto*, never, always). \n\
+                If set to auto: true color will be enabled if supported by the terminal.")
         )
         .arg(
             Arg::with_name("text-colors")
-                .short("t")
-                .long("text-colors")
-                .value_name("X")
-                .multiple(true)
-                .takes_value(true)
-                .max_values(6)
-                .possible_values(color_values)
-                .help("Changes the text colors (X X X...).")
-                .long_help(
-                    "Changes the text colors (X X X...). \
-                     Goes in order of title, ~, underline, subtitle, colon, and info. \n\
-                     For example:\n \
-                     '--text-colors 9 10 11 12 13 14'"
-            )
+            .short("t")
+            .long("text-colors")
+            .value_name("X")
+            .multiple(true)
+            .takes_value(true)
+            .max_values(6)
+            .possible_values(color_values)
+            .help("Changes the text colors (X X X...).")
+            .long_help(
+                "Changes the text colors (X X X...). \
+                Goes in order of title, ~, underline, subtitle, colon, and info. \n\
+                For example:\n \
+                '--text-colors 9 10 11 12 13 14'")
         )
         .arg(
             Arg::with_name("no-bold")
-                .long("no-bold")
-                .help("Turns off bold formatting."),
+            .long("no-bold")
+            .help("Turns off bold formatting."),
         )
         .arg(
             Arg::with_name("no-color-palette")
-                .long("no-color-palette")
-                .help("Hides the color palette."),
+            .long("no-color-palette")
+            .help("Hides the color palette."),
         )
         .arg(
             Arg::with_name("no-merge-commits")
-                .long("no-merge-commits")
-                .help("Ignores merge commits."),
+            .long("no-merge-commits")
+            .help("Ignores merge commits."),
+        )
+        .arg(
+            Arg::with_name("isotime")
+            .short("z")
+            .long("isotime")
+            .help("Use ISO 8601 formatted timestamps.")
         )
         .arg(
             Arg::with_name("disable-fields")
-                .long("disable-fields")
-                .short("d")
-                .value_name("FIELD")
-                .multiple(true)
-                .takes_value(true)
-                .case_insensitive(true)
-                .help("Allows you to disable FIELD(s) from appearing in the output.")
-                .possible_values(
-                    &InfoField::iter()
-                        .map(|field| field.into())
-                        .collect::<Vec<&str>>()
-                ),
+            .long("disable-fields")
+            .short("d")
+            .value_name("FIELD")
+            .multiple(true)
+            .takes_value(true)
+            .case_insensitive(true)
+            .help("Allows you to disable FIELD(s) from appearing in the output.")
+            .possible_values(
+                &InfoField::iter()
+                    .map(|field| field.into())
+                    .collect::<Vec<&str>>())
         )
         .arg(
             Arg::with_name("authors-number")
-                .short("A")
-                .long("authors-number")
-                .value_name("NUM")
-                .takes_value(true)
-                .default_value("3")
-                .help("NUM of authors to be shown.")
-                .validator(
-                    |t| {
-                        t.parse::<u32>()
-                            .map_err(|_t| "must be a number")
-                            .map(|_t|())
-                            .map_err(|e| e.to_string())
-                    },
-                )
+            .short("A")
+            .long("authors-number")
+            .value_name("NUM")
+            .takes_value(true)
+            .default_value("3")
+            .help("NUM of authors to be shown.")
+            .validator(
+                |t| {
+                    t.parse::<u32>()
+                        .map_err(|_t| "must be a number")
+                        .map(|_t|())
+                        .map_err(|e| e.to_string())
+                })
         )
         .arg(
             Arg::with_name("exclude")
-                .short("e")
-                .long("exclude")
-                .value_name("EXCLUDE")
-                .multiple(true)
-                .takes_value(true)
-                .help("Ignore all files & directories matching EXCLUDE."),
-            )
-.get_matches();
+            .short("e")
+            .long("exclude")
+            .value_name("EXCLUDE")
+            .multiple(true)
+            .takes_value(true)
+            .help("Ignore all files & directories matching EXCLUDE."),
+        )
+        .get_matches();
 
         let true_color = match matches.value_of("true-color") {
             Some("always") => true,
