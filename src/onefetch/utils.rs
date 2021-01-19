@@ -1,6 +1,6 @@
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
-use chrono_humanize::{Accuracy, HumanTime, Tense};
+use chrono_humanize::HumanTime;
 use colored::Color;
 use git2::Time;
 
@@ -44,6 +44,6 @@ pub fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
         dt_with_tz.with_timezone(&chrono::Utc).to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
     } else {
         let ht = HumanTime::from(dt_with_tz);
-        ht.to_text_en(Accuracy::Rough, Tense::Past)
+        format!("{}", ht)
     }
 }
