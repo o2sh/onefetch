@@ -15,6 +15,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Restore cargo cache
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+        
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
