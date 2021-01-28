@@ -46,7 +46,7 @@ byte-unit = "4.0.9"
 ansi_term = "0.12"
 
 [target.'cfg(not(windows))'.dependencies]
-libc = "0.2.82"
+libc = "0.2.83"
 base64 = "0.13.0"
 
 [dev-dependencies]
