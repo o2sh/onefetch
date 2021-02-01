@@ -8,9 +8,9 @@ information to effectively respond to your bug report or contribution.
 
 * [Reporting Bugs / Feature Requests](#reporting-bugs--feature-requests)
 * [Contributing via Pull Requests](#contributing-via-pull-requests)
-    * [Finding contributions to work on](#finding-contributions-to-work-on)
-    * [Adding support for a new language](#adding-support-for-a-new-language)
-      * [Ascii logo](#ascii-logo)
+* [Finding contributions to work on](#finding-contributions-to-work-on)
+  * [Adding support for a new language](#adding-support-for-a-new-language)
+  * [Ascii logo](#ascii-logo)
     * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
     * [Adding translation for README.md](#adding-translation-for-readmemd)
     * [Project-specific notes](#project-specific-notes)
@@ -66,7 +66,7 @@ The first item `CSharp` corresponds to the name of the language as defined in to
 
 #### Ascii logo
 
-```
+```text
 {4}   _{1} _  _
 {4} _|_{1}(_|/ \
 {0} o{4}| {1} _|\_/
@@ -89,16 +89,18 @@ The first item `CSharp` corresponds to the name of the language as defined in to
 ```
 
 Remarks:
- - Your ascii logo's dimensions must fall below `25*40` (height\*width). The CI will fail otherwise.
- - You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
- - Make sure to trim any unnecessary trailing whitespaces
- - See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii)
- - You must always provide an array of basic colors
- - Optionally, you may provide true colors in a second array of colors separated from the first array by a colon
- - One last approach allows you to define colors using the Colors structure itself
- - Make sure if you use true colors that the number of true colors matches the number of basic colors
- - For example, the following are equivalent:
-```
+
+* Your ascii logo's dimensions must fall below `25*40` (height\*width). The CI will fail otherwise.
+* You can use `{N}` to color the ascii which will utilize the vec! of colors defined in `define_language!`
+* Make sure to trim any unnecessary trailing whitespaces
+* See example here [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii)
+* You must always provide an array of basic colors
+* Optionally, you may provide true colors in a second array of colors separated from the first array by a colon
+* One last approach allows you to define colors using the Colors structure itself
+* Make sure if you use true colors that the number of true colors matches the number of basic colors
+* For example, the following are equivalent:
+
+```rust
     { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },
     { CSharp, "csharp.ascii", "C#", define_colors!( [Color::Blue, Color::Magenta] : [Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ), "c#" },
     { CSharp, "csharp.ascii", "C#", define_colors!( Colors { basic_colors: vec![Color::Blue, Color::Magenta] , true_colors: Some(vec![Color::TrueColor{ r:0, g:255, b:255 }, Color::TrueColor{ r:255, g:0, b:255 } ] ) } ), "c#" },
@@ -140,16 +142,16 @@ These translations will be accessible directly from the English README.md via hy
 
 ### Project-specific notes
 
-- Please ensure your changes are formatted according to `cargo fmt`.
-- Do check for linting errors with `cargo clippy`. If you're having trouble with this, feel free to ask for help.
-- Documenting your changes in `CHANGELOG.md` (in the Unreleased section) would be awesome, but is not required.
-- If you can, try to write some tests for your change (if it addresses a bug) or feature. Again, feel free to ask for help. Our CI will run these tests to ensure your code never breaks with future changes.
+* Please ensure your changes are formatted according to `cargo fmt`.
+* Do check for linting errors with `cargo clippy`. If you're having trouble with this, feel free to ask for help.
+* Documenting your changes in `CHANGELOG.md` (in the Unreleased section) would be awesome, but is not required.
+* If you can, try to write some tests for your change (if it addresses a bug) or feature. Again, feel free to ask for help. Our CI will run these tests to ensure your code never breaks with future changes.
 
 <h2 align="center">Special Thanks to</h2>
 
-- Every onefetch user, who contributed to the project by writing issues or PRs.
-- [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@ebroto](https://github.com/ebroto), [@erikgaal](https://github.com/erikgaal), [@yoichi](https://github.com/yoichi) and [@HallerPatrick](https://github.com/HallerPatrick) for maintaining this project.
-- Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
+* Every onefetch user, who contributed to the project by writing issues or PRs.
+* [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@ebroto](https://github.com/ebroto), [@erikgaal](https://github.com/erikgaal), [@yoichi](https://github.com/yoichi) and [@HallerPatrick](https://github.com/HallerPatrick) for maintaining this project.
+* Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
 
 <p align="center">:heart::heart:</p>
 
@@ -158,4 +160,3 @@ These translations will be accessible directly from the English README.md via hy
 </a>
 
 Made with [contributors-img](https://contrib.rocks).
-
