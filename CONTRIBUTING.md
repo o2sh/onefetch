@@ -8,7 +8,7 @@ information to effectively respond to your bug report or contribution.
 
 * [Reporting Bugs / Feature Requests](#reporting-bugs--feature-requests)
 * [Contributing via Pull Requests](#contributing-via-pull-requests)
-* [Finding contributions to work on](#finding-contributions-to-work-on)
+  * [Finding contributions to work on](#finding-contributions-to-work-on)
   * [Adding support for a new language](#adding-support-for-a-new-language)
     * [Ascii logo](#ascii-logo)
   * [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
