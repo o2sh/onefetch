@@ -183,7 +183,7 @@ define_languages! {
     { Graphql, "graphql.ascii", "GraphQL", define_colors!( [Color::Magenta] ) },
     { Groovy, "groovy.ascii", "Groovy", define_colors!( [Color::Cyan, Color::White] ) },
     { Haskell, "haskell.ascii", "Haskell", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] : [Color::TrueColor{ r:69, g:58, b:98 }, Color::TrueColor{ r:94, g:80, b:134 }, Color::TrueColor{ r:143, g:78, b:139 }] ) },
-    { Haxe, "haxe.ascii", "Haxe", define_colors!( [Color::Yellow, Color::White, Color::Red] : [Color::TrueColor{ r: 250, g: 178, b: 11 }, Color::TrueColor{ r:246, g:153, b:18 }, Color::TrueColor{ r: 244, g: 114, b: 22 }] ) },
+    { Haxe, "haxe.ascii", "Haxe", define_colors!( [Color::Yellow, Color::Yellow, Color::Yellow] : [Color::TrueColor{ r: 250, g: 178, b: 11 }, Color::TrueColor{ r:246, g:153, b:18 }, Color::TrueColor{ r: 244, g: 114, b: 22 }] ) },
     { HolyC, "holyc.ascii", "HolyC", define_colors!( [Color::Yellow, Color::Cyan, Color::White] : [Color::TrueColor{ r:251, g:254 ,b:103}, Color::TrueColor{ r:11, g:68 ,b:157}, Color::TrueColor{ r:255, g:255 ,b:255} ]) },
     { Html, "html.ascii", "HTML", define_colors!( [Color::Red, Color::White] ) },
     { Idris, "idris.ascii", "Idris", define_colors!( [Color::Red] ) },
