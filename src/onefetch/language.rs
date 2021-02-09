@@ -265,6 +265,7 @@ define_languages! {
     { Xml, "xml.ascii", "XML", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", "Zig", define_colors!( [Color::Yellow] ) },
     { Zsh, "zsh.ascii", "Zsh", define_colors!( [Color::White] ) },
+    { Haxe, "haxe.ascii", "Haxe", define_colors!( [Color::Yellow, Color::Yellow, Color::Yellow] : [Color::TrueColor{ r: 250, g: 178, b: 11 }, Color::TrueColor{ r:246, g:153, b:18 }, Color::TrueColor{ r: 244, g: 114, b: 22 }] ) },
 }
 
 impl Language {
