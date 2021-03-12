@@ -20,7 +20,7 @@ section = "utility"
 priority = "optional"
 
 [dependencies]
-color_quant = "1.1" # Use version required by image
+color_quant = "1.1.0"
 colored= "2.0.0"
 git2 = { version = "0.13.17", default-features = false }
 json = "0.12.4"
@@ -31,7 +31,7 @@ clap = "2.33.3"
 strum = { version = "0.20.0", features = ["derive"] }
 term_size = "0.3.2"
 image = "0.23.14"
-regex = "1"
+regex = "1.4.4"
 error-chain = "0.12"
 toml = "0.5.8"
 yaml-rust = "0.4"
