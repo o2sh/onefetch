@@ -21,7 +21,7 @@ priority = "optional"
 
 [dependencies]
 color_quant = "1.1.0"
-colored= "2.0.0"
+colored = "2.0.0"
 git2 = { version = "0.13.17", default-features = false }
 json = "0.12.4"
 tokei = "12.1.2"
@@ -46,12 +46,12 @@ byte-unit = "4.0.10"
 ansi_term = "0.12"
 
 [target.'cfg(not(windows))'.dependencies]
-libc = "0.2.88"
+libc = "0.2.89"
 base64 = "0.13.0"
 
 [dev-dependencies]
 more-asserts = "0.2"
-paste = "1"
+paste = "1.0.5"
 
 [features]
 fail-on-deprecated = []
