@@ -229,6 +229,7 @@ define_languages! {
     { Ruby, "ruby.ascii", "Ruby", define_colors!( [Color::Magenta] ) },
     { Rust, "rust.ascii", "Rust", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:228, g:55 ,b:23}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
     { Scala, "scala.ascii", "Scala", define_colors!( [Color::Red, Color::Red] : [Color::TrueColor{ r:223, g:63 ,b:61}, Color::TrueColor{ r:127, g:12 ,b:29} ] ) },
+    { Scheme, "scheme.ascii", "Scheme", define_colors!( [Color::Black] ), "scheme" },
     { Sh, "shell.ascii", "Shell", define_colors!( [Color::Green] ), "shell" },
     {
         Swift, "swift.ascii", "Swift", define_colors!( [
