@@ -29,7 +29,7 @@ clap = "2.33.3"
 color_quant = "1.1.0"
 colored = "2.0.0"
 error-chain = "0.12"
-git2 = {version = "0.13.17", default-features = false}
+git2 = {version = "0.13.18", default-features = false}
 image = "0.23.14"
 json = "0.12.4"
 regex = "1.4.5"
