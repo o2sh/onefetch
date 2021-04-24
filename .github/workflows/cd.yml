@@ -12,35 +12,43 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        components: clippy
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: clippy
 
-    - name: Build
-      run: make build
+      - name: Build
+        run: make build
 
-    - name: Build Release Mac
-      if: matrix.os == 'macos-latest'
-      run: make release-mac
+      - name: Build Release Mac
+        if: matrix.os == 'macos-latest'
+        run: make release-mac
 
-    - name: Build Release Linux
-      if: matrix.os == 'ubuntu-latest'
-      run: make release-linux
+      - name: Build Release Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: make release-linux
 
-    - name: Build Release Win
-      if: matrix.os == 'windows-latest'
-      run: make release-win
+      - name: Build Release Win
+        if: matrix.os == 'windows-latest'
+        run: make release-win
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./release/*.tar.gz
-          ./release/*.zip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./release/*.tar.gz
+            ./release/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump homebrew-core formula
+        uses: mislav/bump-homebrew-formula-action@v1
+        if: matrix.os == 'macos-latest'
+        env:
+          COMMITTER_TOKEN: ${{ secrets.BREW_TOKEN }}
+        with:
+          formula-name: onefetch 
