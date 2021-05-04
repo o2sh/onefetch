@@ -43,6 +43,7 @@ toml = "0.5.8"
 yaml-rust = "0.4"
 md5 = "0.7"
 hex = "0.4"
+indicatif = "0.16"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12"

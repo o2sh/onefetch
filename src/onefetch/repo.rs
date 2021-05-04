@@ -1,7 +1,10 @@
 use crate::onefetch::{commit_info::CommitInfo, error::*, utils};
+use colored::*;
 use git2::{
-    BranchType, Commit, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow,
+    build::RepoBuilder, BranchType, Commit, FetchOptions, RemoteCallbacks, Repository,
+    RepositoryOpenFlags, Status, StatusOptions, StatusShow,
 };
+use indicatif::{ProgressBar, ProgressStyle};
 use regex::Regex;
 use std::path::Path;
 
@@ -265,7 +268,37 @@ impl<'a> Repo<'a> {
 }
 
 pub fn clone_remote(url: &str, path: &std::path::PathBuf) -> Result<Repository> {
-    let repository = Repository::clone(url, path)?;
+    // I'm creating new scope for each option to avoid exposing mutable variables
+
+    let progress_bar = ProgressBar::new(1);
+    let progress_bar_style = ProgressStyle::default_bar()
+        .template("{msg}\n{spinner:.green} [{elapsed}] [{wide_bar:.cyan/blue}] {pos}/{len}")
+        .progress_chars("#>-");
+
+    progress_bar.set_style(progress_bar_style);
+    progress_bar.set_message("- Cloning Git repository".bold().to_string());
+    let remote_callbacks = {
+        let mut v = RemoteCallbacks::new();
+        v.transfer_progress(|v| {
+            progress_bar.set_length(v.total_objects() as u64);
+            progress_bar.set_position(v.received_objects() as u64);
+            true
+        });
+        v
+    };
+
+    let fetch_options = {
+        let mut v = FetchOptions::new();
+        v.remote_callbacks(remote_callbacks);
+        v
+    };
+    let mut builder = {
+        let mut v = RepoBuilder::new();
+        v.fetch_options(fetch_options);
+        v
+    };
+    let repository = builder.clone(url, path)?;
+    progress_bar.finish_and_clear();
     Ok(repository)
 }
 
