@@ -13,7 +13,7 @@ fn get_repo(config: &Cli) -> Result<git2::Repository> {
         let temp_directory = std::env::temp_dir();
         let repo_digest = md5::compute(&config.repo_path);
         let mut repo_directory = temp_directory;
-        repo_directory.push("onefetch/");
+        repo_directory.push("onefetch");
         repo_directory.push(hex::encode(repo_digest.0));
         if repo_directory.exists() {
             git2::Repository::discover(repo_directory)?
