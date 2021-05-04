@@ -37,6 +37,7 @@ pub struct Cli {
     pub art_off: bool,
     pub text_colors: Vec<String>,
     pub iso_time: bool,
+    pub is_remote: bool,
 }
 
 impl Cli {
@@ -253,6 +254,11 @@ impl Cli {
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE."),
         )
+        .arg(
+            Arg::with_name("remote")
+            .long("remote")
+            .help("Clone repository from remote"),
+        )
         .get_matches();
 
         let true_color = match matches.value_of("true-color") {
@@ -349,6 +355,8 @@ impl Cli {
             Vec::new()
         };
 
+        let is_remote = matches.is_present("remote");
+
         Ok(Cli {
             repo_path,
             ascii_input,
@@ -370,6 +378,7 @@ impl Cli {
             text_colors,
             art_off,
             iso_time,
+            is_remote,
         })
     }
 }

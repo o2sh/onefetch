@@ -208,9 +208,8 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: Cli) -> Result<Info> {
+    pub fn new(config: Cli, repo: Repository) -> Result<Info> {
         let git_version = cli_utils::get_git_version();
-        let repo = Repository::discover(&config.repo_path)?;
         let internal_repo = Repo::new(&repo, config.no_merges)?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
         let head_refs = internal_repo.get_head_refs()?;
