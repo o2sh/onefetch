@@ -1,10 +1,16 @@
 use {
     crate::onefetch::{
-        cli::Cli, cli_utils, commit_info::CommitInfo, error::*, language::Language,
-        license::Detector, package_managers::DependencyDetector, repo::Repo, text_color::TextColor,
+        cli::Cli,
+        cli_utils,
+        commit_info::CommitInfo,
+        error::*,
+        language::Language,
+        license::Detector,
+        package_managers::DependencyDetector,
+        repo::{get_repo, Repo},
+        text_color::TextColor,
     },
     colored::{Color, ColoredString, Colorize},
-    git2::Repository,
     serde::ser::SerializeStruct,
     serde::Serialize,
 };
@@ -208,8 +214,9 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: Cli, repo: Repository) -> Result<Info> {
+    pub fn new(config: Cli) -> Result<Info> {
         let git_version = cli_utils::get_git_version();
+        let repo = get_repo(config.is_remote, &config.repo_path)?;
         let internal_repo = Repo::new(&repo, config.no_merges)?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
         let head_refs = internal_repo.get_head_refs()?;

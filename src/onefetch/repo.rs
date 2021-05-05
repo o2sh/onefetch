@@ -267,9 +267,28 @@ impl<'a> Repo<'a> {
     }
 }
 
-pub fn clone_remote(url: &str, path: &std::path::PathBuf) -> Result<Repository> {
-    // I'm creating new scope for each option to avoid exposing mutable variables
+pub fn get_repo(is_remote: bool, repo_path: &str) -> Result<Repository> {
+    let repo = if is_remote {
+        let temp_directory = std::env::temp_dir();
+        let repo_digest = md5::compute(repo_path);
+        let mut repo_directory = temp_directory;
+        repo_directory.push("onefetch");
+        repo_directory.push(hex::encode(repo_digest.0));
+        if repo_directory.exists() {
+            Repository::discover(repo_directory)?
+        } else {
+            clone_remote(repo_path, &repo_directory)?
+        }
+    } else {
+        if !is_valid(repo_path)? {
+            return Err("please run onefetch inside of a non-bare git repository".into());
+        }
+        Repository::discover(repo_path)?
+    };
+    Ok(repo)
+}
 
+fn clone_remote(url: &str, path: &std::path::PathBuf) -> Result<Repository> {
     let progress_bar = ProgressBar::new(1);
     let progress_bar_style = ProgressStyle::default_bar()
         .template("{msg}\n{spinner:.green} [{elapsed}] [{wide_bar:.cyan/blue}] {pos}/{len}")
@@ -284,6 +303,7 @@ pub fn clone_remote(url: &str, path: &std::path::PathBuf) -> Result<Repository> 
             progress_bar.set_position(v.received_objects() as u64);
             true
         });
+
         v
     };
 
@@ -302,7 +322,7 @@ pub fn clone_remote(url: &str, path: &std::path::PathBuf) -> Result<Repository> 
     Ok(repository)
 }
 
-pub fn is_valid(repo_path: &str) -> Result<bool> {
+fn is_valid(repo_path: &str) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
     Ok(repo.is_ok() && !repo?.is_bare())
 }
