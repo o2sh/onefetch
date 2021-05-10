@@ -21,7 +21,7 @@ section = "utility"
 
 [dependencies]
 askalono = "0.4.3"
-byte-unit = "4.0.11"
+byte-unit = "4.0.12"
 bytecount = "0.6.2"
 chrono = "0.4"
 chrono-humanize = "0.2.1"
