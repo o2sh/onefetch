@@ -34,9 +34,9 @@ parser.add_argument(
     "--resolution",
     nargs=2,
     metavar=("height", "width"),
-    help="set custom resolution, default 25 45",
+    help="set custom resolution, default 25 40",
     type=int,
-    default=[25, 45],
+    default=[25, 40],
 )
 parser.add_argument(
     "-s",
@@ -55,8 +55,8 @@ args = parser.parse_args()
 
 image = Image.open(args.file)
 scaleFac = 1.0
-charWidth = int(args.resolution[1])
 charHeight = int(args.resolution[0])
+charWidth = int(args.resolution[1])
 w, h = image.size
 image = image.resize((charWidth, charHeight), Image.NEAREST)
 w, h = image.size
@@ -83,9 +83,9 @@ for i in range(h):
         print(getSomeChar(grey), end="")
     print("")
 
-if charHeight > 25 or charWidth > 45:
+if charHeight > 25 or charWidth > 40:
     print(
-        "WARNING: Custom resolution exceeds maximum 25*45 (height*width). See: \n"
+        "WARNING: Custom resolution exceeds maximum 25*40 (height*width). See: \n"
         "https://github.com/o2sh/onefetch/blob/master/CONTRIBUTING.md#ascii-logo"
     )
 

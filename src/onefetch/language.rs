@@ -179,6 +179,7 @@ define_languages! {
     { Forth, "forth.ascii", "Forth", define_colors!( [Color::Red] ) },
     { FortranModern, "f90.ascii", "Fortran", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortran" },
     { FSharp, "fsharp.ascii", "F#", define_colors!( [Color::Cyan, Color::Cyan] ), "f#" },
+    { GdScript, "gdscript.ascii", "GDScript", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:69, g:141, b:192 }, Color::TrueColor{ r:255, g:255, b:255}] ) },
     { Go, "go.ascii", "Go", define_colors!( [Color::Cyan, Color::White, Color::Yellow] : [Color::TrueColor{ r:116, g:205, b:221 }, Color::TrueColor{ r:255, g:255, b:255 }, Color::TrueColor{ r:246, g:210, b:162 }] ) },
     { Graphql, "graphql.ascii", "GraphQL", define_colors!( [Color::Magenta] ) },
     { Groovy, "groovy.ascii", "Groovy", define_colors!( [Color::Cyan, Color::White] ) },
