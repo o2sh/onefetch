@@ -157,6 +157,7 @@ macro_rules! define_languages {
 }
 
 define_languages! {
+    { Ada, "ada.ascii", "Ada", define_colors!( [Color::Black, Color::Blue] ) },
     { Assembly, "assembly.ascii", "Assembly", define_colors!( [Color::Cyan] ) },
     { Bash, "bash.ascii", "Bash", define_colors!( [Color::White] ), "bash" },
     { C, "c.ascii", "C", define_colors!( [Color::Cyan, Color::Blue, Color::White] : [Color::TrueColor{r:93, g:108, b:191}, Color::TrueColor{r:41, g:54, b:147}, Color::TrueColor{r:255, g:255, b:255}] ) },
