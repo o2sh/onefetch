@@ -3,7 +3,7 @@
 <h5 align="center">A command-line Git information tool written in Rust</h5>
 
 <p align="center">
-	English | <a href="./README.ja.md">日本語</a>
+	[<a href="./README.ja.md">日本語</a>]
 </p>
 
 <p align="center">
