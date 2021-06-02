@@ -9,6 +9,8 @@
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
+<p align="center">[<a href="./docs/README.ja.md">日本語</a>]</p>
+
 <img src="assets/react.png" align="right" height="240px">
 
 Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly on your terminal. The tool is completely offline - no network access is required.
