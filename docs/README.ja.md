@@ -1,4 +1,4 @@
-<h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
+<h3 align="center"><img src="../assets/onefetch.svg" height="130px"></h3>
 
 <h5 align="center">‎Rustで書かれたコマンドラインインターフェースのGit情報ツール‎</h5>
 
@@ -9,7 +9,7 @@
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
-<img src="assets/react.png" align="right" height="240px">
+<img src="../assets/react.png" align="right" height="240px">
 
 Onefetchは`Rust`で書かれたコマンドラインインターフェースのGit情報ツールで、ローカルにあるGitリポジトリのプロジェクト情報やコードの統計をターミナルへ直接表示します。このツールは常にオフラインで動作し、ネットワークへのアクセスは必要ありません。
 
@@ -17,7 +17,7 @@ Onefetchは`Rust`で書かれたコマンドラインインターフェースの
 
 テキストからオープンソースライセンスを自動的に検出し、ソースコードの配布ページや保留中の変更、依存関係の数（パッケージマネージャーによる）、トップコントリビューター（コミット数による）、ディスク上のサイズ、作成日、LOC（コードの行数）などの有益な情報をユーザーに提供します。
 
-<img src="assets/kubernetes.png" align="right" height="240px">
+<img src="../assets/kubernetes.png" align="right" height="240px">
 
 Onefetchはコマンドラインフラグを使用してASCII/テキストフォーマットのカスタマイズや情報行の無効化、ファイルやディレクトリの除外、複数のフォーマット（JSON、YAML）での出力など設定できます。
 
