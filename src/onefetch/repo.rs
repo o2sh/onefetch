@@ -53,16 +53,16 @@ impl<'a> Repo<'a> {
     pub fn get_authors(&self, n: usize) -> Vec<(String, usize, usize)> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
-        let mut total_commits = 0;
+        let mut total_nbr_of_commits = 0;
         for commit in &self.logs {
             let author = commit.author();
             let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
             let author_email = String::from_utf8_lossy(author.email_bytes()).into_owned();
 
-            let commit_count = authors.entry(author_email.to_string()).or_insert(0);
+            let author_nbr_of_commits = authors.entry(author_email.to_string()).or_insert(0);
             author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
-            *commit_count += 1;
-            total_commits += 1;
+            *author_nbr_of_commits += 1;
+            total_nbr_of_commits += 1;
         }
 
         let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
@@ -72,11 +72,12 @@ impl<'a> Repo<'a> {
 
         let authors: Vec<(String, usize, usize)> = authors
             .into_iter()
-            .map(|(author, count)| {
+            .map(|(author_email, author_nbr_of_commits)| {
                 (
-                    author_name_by_email.get(&author).unwrap().trim_matches('\'').to_string(),
-                    count,
-                    count * 100 / total_commits,
+                    author_name_by_email.get(&author_email).unwrap().trim_matches('\'').to_string(),
+                    author_nbr_of_commits,
+                    (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
+                        as usize,
                 )
             })
             .collect();
