@@ -199,13 +199,13 @@ impl Cli {
             .help("Turns off bold formatting."),
         )
         .arg(
-            Arg::with_name("no-color-palette")
-            .long("no-color-palette")
+            Arg::with_name("no-palette")
+            .long("no-palette")
             .help("Hides the color palette."),
         )
         .arg(
-            Arg::with_name("no-merge-commits")
-            .long("no-merge-commits")
+            Arg::with_name("no-merges")
+            .long("no-merges")
             .help("Ignores merge commits."),
         )
         .arg(
@@ -262,8 +262,8 @@ impl Cli {
             _ => unreachable!(),
         };
         let no_bold = matches.is_present("no-bold");
-        let no_merges = matches.is_present("no-merge-commits");
-        let no_color_palette = matches.is_present("no-color-palette");
+        let no_merges = matches.is_present("no-merges");
+        let no_color_palette = matches.is_present("no-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
         let iso_time = matches.is_present("isotime");
