@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.59615759"
-     inkscape:cx="-123.28955"
-     inkscape:cy="223.93408"
+     inkscape:zoom="0.84309415"
+     inkscape:cx="376.58902"
+     inkscape:cy="139.36759"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -113,9 +113,9 @@
            y="-306.05176" /></flowRegion><flowPara
          id="flowPara4538" /></flowRoot>
     <rect
-       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.211415"
+       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.240128"
        id="rect4540"
-       width="28.680334"
+       width="37"
        height="4.3254261"
        x="41.591343"
        y="-12.774675"
@@ -123,9 +123,9 @@
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
-       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.280705"
+       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.28627"
        id="rect4540-2"
-       width="50.560997"
+       width="52.586029"
        height="4.3254266"
        x="41.591343"
        y="-3.9568648"
@@ -153,9 +153,9 @@
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
-       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.269836"
+       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.240129"
        id="rect4540-2-95"
-       width="46.721031"
+       width="37"
        height="4.3254266"
        x="41.591343"
        y="13.693441"
@@ -163,9 +163,9 @@
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
-       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.143311"
+       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.12085"
        id="rect4540-2-2"
-       width="13.178705"
+       width="9.3714828"
        height="4.3254266"
        x="41.591343"
        y="22.51861"
@@ -173,11 +173,11 @@
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
-       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.227049"
+       style="fill:#ffffff;fill-opacity:0.941176;stroke-width:0.243144"
        id="rect4540-2-0"
-       width="33.079151"
+       width="37.93544"
        height="4.3254266"
-       x="60.044083"
+       x="56.244682"
        y="22.51861"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
