@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="143.88251mm"
-   height="96.728378mm"
-   viewBox="0 0 143.88249 96.72838"
+   width="143.66379mm"
+   height="96.827484mm"
+   viewBox="0 0 143.66377 96.827486"
    version="1.1"
    id="svg8"
    inkscape:version="1.1 (ce6663b3b7, 2021-05-25)"
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.84309415"
-     inkscape:cx="351.68077"
-     inkscape:cy="348.12245"
+     inkscape:zoom="1.6861883"
+     inkscape:cx="143.81549"
+     inkscape:cy="136.69885"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -59,14 +59,14 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Layer 2"
-     transform="translate(5.0270715,5.3849745)">
+     transform="translate(4.9796638,5.0175033)">
     <rect
-       style="fill:#ffffff;fill-opacity:0.989301;fill-rule:evenodd;stroke-width:0.298031"
+       style="fill:#ffffff;fill-opacity:0.989301;fill-rule:evenodd;stroke-width:0.297957"
        id="rect870"
-       width="143.88251"
-       height="96.728378"
-       x="-5.0270715"
-       y="-5.3849745"
+       width="143.66379"
+       height="96.827484"
+       x="-4.9796638"
+       y="-5.0175033"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -75,27 +75,28 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(35.156572,26.532887)">
+     transform="translate(35.109164,26.165416)">
     <rect
        id="rect3713"
        width="133.69516"
-       height="66.182007"
+       height="65.208031"
        x="-30.129501"
        y="-21.147913"
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.11489;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.10665;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <g
        aria-label="{}"
        id="text4530"
-       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583">
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       transform="matrix(1,0,0,1.0358115,0.58678209,-3.9242328)">
       <path
-         d="m -1.7147324,31.381088 v 3.571875 H -3.252623 q -6.1763671,0 -8.284765,-1.835547 -2.083594,-1.835547 -2.083594,-7.317382 v -5.928321 q 0,-3.745507 -1.339453,-5.184179 -1.339453,-1.438672 -4.861719,-1.438672 H -21.33524 V 9.7017916 h 1.513086 q 3.54707,0 4.861719,-1.4138671 1.339453,-1.4386719 1.339453,-5.1345703 v -5.9531249 q 0,-5.4818358 2.083594,-7.2925783 2.1083979,-1.835547 8.284765,-1.835547 h 1.5378906 v 3.5470707 h -1.6867187 q -3.4974609,0 -4.5640624,1.0914063 -1.0666016,1.0914062 -1.0666016,4.5888671 v 6.1515624 q 0,3.8943359 -1.1410159,5.6554686 -1.116211,1.7611329 -3.844726,2.3812499 2.75332,0.669727 3.869531,2.430859 1.1162109,1.761133 1.1162109,5.630664 v 6.151563 q 0,3.497461 1.0666016,4.588867 1.0666015,1.091406 4.5640624,1.091406 z"
+         d="m -1.714732,34.67764 v 3.571875 h -1.537891 q -6.176367,0 -8.284765,-1.835547 -2.083594,-1.835547 -2.083594,-7.317382 v -5.928321 q 0,-3.745507 -1.339453,-5.184179 -1.339453,-1.438672 -4.861719,-1.438672 h -1.513086 v -3.547071 h 1.513086 q 3.54707,0 4.861719,-1.413868 1.339453,-1.438672 1.339453,-5.1345705 V 0.49677947 q 0,-5.48183567 2.083594,-7.29257817 2.108398,-1.8355461 8.284765,-1.8355461 h 1.537891 v 3.5470698 h -1.686719 q -3.497461,0 -4.564062,1.0914063 -1.066602,1.0914062 -1.066602,4.58886704 V 6.7475608 q 0,3.8943362 -1.141016,5.6554692 -1.116211,1.761134 -3.844726,2.381251 2.75332,0.669727 3.869531,2.430859 1.116211,1.761133 1.116211,5.630664 v 6.151563 q 0,3.497461 1.066602,4.588867 1.066601,1.091406 4.564062,1.091406 z"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.8px;font-family:sans-serif;-inkscape-font-specification:sans-serif;fill:#ffffff;fill-opacity:0.941176;stroke-width:0.264583"
          id="path1547" />
       <path
-         d="m 11.01007,31.381088 h 1.736328 q 3.472657,0 4.514453,-1.066601 1.066602,-1.066602 1.066602,-4.613672 v -6.151563 q 0,-3.869531 1.116211,-5.630664 1.116211,-1.761132 3.869531,-2.430859 -2.75332,-0.620117 -3.869531,-2.3812499 -1.116211,-1.7611327 -1.116211,-5.6554686 v -6.1515624 q 0,-3.5222656 -1.066602,-4.5888671 -1.041796,-1.0914063 -4.514453,-1.0914063 H 11.01007 v -3.5470707 h 1.562696 q 6.176367,0 8.235156,1.835547 2.083593,1.8107425 2.083593,7.2925783 v 5.9531249 q 0,3.6958984 1.339454,5.1345703 1.339453,1.4138671 4.861718,1.4138671 h 1.537891 v 3.5470704 h -1.537891 q -3.522265,0 -4.861718,1.438672 -1.339454,1.438672 -1.339454,5.184179 v 5.928321 q 0,5.481835 -2.083593,7.317382 -2.058789,1.835547 -8.235156,1.835547 H 11.01007 Z"
+         d="m 11.999382,34.67764 h 1.736328 q 3.472657,0 4.514453,-1.066601 1.066602,-1.066602 1.066602,-4.613672 v -6.151563 q 0,-3.869531 1.116211,-5.630664 1.116211,-1.761132 3.869531,-2.430859 -2.75332,-0.620117 -3.869531,-2.381251 -1.116211,-1.761134 -1.116211,-5.6554697 V 0.59599784 q 0,-3.52226554 -1.066602,-4.58886704 -1.041796,-1.0914063 -4.514453,-1.0914063 h -1.736328 v -3.5470693 h 1.562696 q 6.176367,0 8.235156,1.8355461 2.083593,1.810742 2.083593,7.29257767 V 6.449904 q 0,3.695898 1.339454,5.134571 1.339453,1.413868 4.861718,1.413868 h 1.537891 v 3.547071 h -1.537891 q -3.522265,0 -4.861718,1.438672 -1.339454,1.438672 -1.339454,5.184179 v 5.928321 q 0,5.481835 -2.083593,7.317382 -2.058789,1.835547 -8.235156,1.835547 h -1.562696 z"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.8px;font-family:sans-serif;-inkscape-font-specification:sans-serif;fill:#ffffff;fill-opacity:0.941176;stroke-width:0.264583"
          id="path1549" />
     </g>
@@ -116,8 +117,8 @@
        id="rect4540"
        width="28.680334"
        height="4.3254261"
-       x="42.164768"
-       y="-12.187752"
+       x="41.591343"
+       y="-12.774675"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -126,7 +127,7 @@
        id="rect4540-2"
        width="50.560997"
        height="4.3254266"
-       x="41.941555"
+       x="41.591343"
        y="-3.9568648"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
@@ -136,8 +137,8 @@
        id="rect4540-2-7"
        width="23.067677"
        height="4.3254266"
-       x="42.002987"
-       y="4.9966645"
+       x="41.591343"
+       y="4.8805099"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -147,7 +148,7 @@
        width="16.920479"
        height="4.3254266"
        x="68.852844"
-       y="4.9966645"
+       y="4.8805099"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -156,8 +157,8 @@
        id="rect4540-2-95"
        width="46.721031"
        height="4.3254266"
-       x="41.602085"
-       y="13.944821"
+       x="41.591343"
+       y="13.693441"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -166,8 +167,8 @@
        id="rect4540-2-2"
        width="13.178705"
        height="4.3254266"
-       x="41.73035"
-       y="22.631081"
+       x="41.591343"
+       y="22.51861"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -177,7 +178,7 @@
        width="33.090286"
        height="4.3254266"
        x="60.032948"
-       y="22.631081"
+       y="22.51861"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -187,7 +188,7 @@
        width="21.731329"
        height="4.3254266"
        x="41.591343"
-       y="31.178333"
+       y="31.347874"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -197,7 +198,7 @@
        width="9.4369316"
        height="4.3254266"
        x="66.497658"
-       y="31.178333"
+       y="31.347874"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -213,7 +214,7 @@
        inkscape:export-ydpi="96" />
     <g
        aria-label="onefetch"
-       transform="matrix(0.26458333,0,0,0.26458333,-43.607248,-18.337761)"
+       transform="matrix(0.26458333,0,0,0.26458333,-43.607248,-18.830088)"
        id="flowRoot4673"
        style="font-style:normal;font-weight:normal;font-size:53.3333px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-linejoin:round;stroke-opacity:1"
        inkscape:export-filename="/home/o2sh/dev/onefetch/assets/onefetch.png"
