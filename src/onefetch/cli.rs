@@ -27,6 +27,7 @@ pub struct Cli {
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
     pub image_color_resolution: usize,
     pub no_merges: bool,
+    pub no_bots: bool,
     pub no_color_palette: bool,
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
@@ -209,6 +210,11 @@ impl Cli {
             .help("Ignores merge commits."),
         )
         .arg(
+            Arg::with_name("no-bots")
+            .long("no-bots")
+            .help("Ignore bots."),
+        )
+        .arg(
             Arg::with_name("isotime")
             .short("z")
             .long("isotime")
@@ -263,6 +269,7 @@ impl Cli {
         };
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merges");
+        let no_bots = matches.is_present("no-bots");
         let no_color_palette = matches.is_present("no-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
@@ -360,6 +367,7 @@ impl Cli {
             image_backend,
             image_color_resolution,
             no_merges,
+            no_bots,
             no_color_palette,
             number_of_authors,
             excluded,

@@ -1,6 +1,7 @@
 use crate::onefetch::{commit_info::CommitInfo, error::*, utils};
 use git2::{
-    BranchType, Commit, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow,
+    BranchType, Commit, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions,
+    StatusShow,
 };
 use regex::Regex;
 use std::path::Path;
@@ -11,12 +12,12 @@ pub struct Repo<'a> {
 }
 
 impl<'a> Repo<'a> {
-    pub fn new(repo: &'a Repository, no_merges: bool) -> Result<Self> {
-        let logs = Repo::get_logs(repo, no_merges)?;
+    pub fn new(repo: &'a Repository, no_merges: bool, no_bots: bool) -> Result<Self> {
+        let logs = Repo::get_logs(repo, no_merges, no_bots)?;
         Ok(Self { repo, logs })
     }
 
-    fn get_logs(repo: &'a Repository, no_merges: bool) -> Result<Vec<Commit<'a>>> {
+    fn get_logs(repo: &'a Repository, no_merges: bool, no_bots: bool) -> Result<Vec<Commit<'a>>> {
         let mut revwalk = repo.revwalk()?;
         revwalk.push_head()?;
         let logs: Vec<Commit<'a>> = revwalk
@@ -25,7 +26,8 @@ impl<'a> Repo<'a> {
                 Ok(r) => repo
                     .find_commit(r)
                     .ok()
-                    .filter(|commit| !(no_merges && commit.parents().len() > 1)),
+                    .filter(|commit| !(no_merges && commit.parents().len() > 1))
+                    .filter(|commit| !(no_bots && is_bot(commit.author()))),
             })
             .collect();
 
@@ -268,4 +270,9 @@ impl<'a> Repo<'a> {
 pub fn is_valid(repo_path: &str) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
     Ok(repo.is_ok() && !repo?.is_bare())
+}
+
+pub fn is_bot(author: Signature) -> bool {
+    let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
+    author_name.contains("[bot]")
 }
