@@ -12,12 +12,20 @@ pub struct Repo<'a> {
 }
 
 impl<'a> Repo<'a> {
-    pub fn new(repo: &'a Repository, no_merges: bool, no_bots: bool) -> Result<Self> {
-        let logs = Repo::get_logs(repo, no_merges, no_bots)?;
+    pub fn new(
+        repo: &'a Repository,
+        no_merges: bool,
+        bot_exclude_pattern: &Option<String>,
+    ) -> Result<Self> {
+        let logs = Repo::get_logs(repo, no_merges, bot_exclude_pattern)?;
         Ok(Self { repo, logs })
     }
 
-    fn get_logs(repo: &'a Repository, no_merges: bool, no_bots: bool) -> Result<Vec<Commit<'a>>> {
+    fn get_logs(
+        repo: &'a Repository,
+        no_merges: bool,
+        bot_exclude_pattern: &Option<String>,
+    ) -> Result<Vec<Commit<'a>>> {
         let mut revwalk = repo.revwalk()?;
         revwalk.push_head()?;
         let logs: Vec<Commit<'a>> = revwalk
@@ -27,7 +35,10 @@ impl<'a> Repo<'a> {
                     .find_commit(r)
                     .ok()
                     .filter(|commit| !(no_merges && commit.parents().len() > 1))
-                    .filter(|commit| !(no_bots && is_bot(commit.author()))),
+                    .filter(|commit| {
+                        !(bot_exclude_pattern.is_some()
+                            && is_bot(commit.author(), bot_exclude_pattern))
+                    }),
             })
             .collect();
 
@@ -272,7 +283,8 @@ pub fn is_valid(repo_path: &str) -> Result<bool> {
     Ok(repo.is_ok() && !repo?.is_bare())
 }
 
-pub fn is_bot(author: Signature) -> bool {
+pub fn is_bot(author: Signature, bot_exclude_pattern: &Option<String>) -> bool {
     let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
-    author_name.contains("[bot]")
+    let re = Regex::new(bot_exclude_pattern.as_ref().unwrap()).unwrap();
+    re.is_match(&author_name)
 }

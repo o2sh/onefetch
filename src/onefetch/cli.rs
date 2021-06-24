@@ -27,10 +27,10 @@ pub struct Cli {
     pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
     pub image_color_resolution: usize,
     pub no_merges: bool,
-    pub no_bots: bool,
     pub no_color_palette: bool,
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
+    pub bot_exclude_pattern: Option<String>,
     pub print_languages: bool,
     pub print_package_managers: bool,
     pub output: Option<SerializationFormat>,
@@ -212,7 +212,10 @@ impl Cli {
         .arg(
             Arg::with_name("no-bots")
             .long("no-bots")
-            .help("Ignore bots."),
+            .min_values(0)
+            .max_values(1)
+            .value_name("REGEX")
+            .help("Exclude [bot] commits. Use <REGEX> to override the default pattern."),
         )
         .arg(
             Arg::with_name("isotime")
@@ -269,7 +272,6 @@ impl Cli {
         };
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merges");
-        let no_bots = matches.is_present("no-bots");
         let no_color_palette = matches.is_present("no-palette");
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
@@ -356,6 +358,16 @@ impl Cli {
             Vec::new()
         };
 
+        let bot_exclude_pattern = if matches.is_present("no-bots") {
+            if let Some(pattern) = matches.value_of("no-bots") {
+                Some(String::from(pattern))
+            } else {
+                Some(String::from(r".*\[bot\].*"))
+            }
+        } else {
+            None
+        };
+
         Ok(Cli {
             repo_path,
             ascii_input,
@@ -367,10 +379,10 @@ impl Cli {
             image_backend,
             image_color_resolution,
             no_merges,
-            no_bots,
             no_color_palette,
             number_of_authors,
             excluded,
+            bot_exclude_pattern,
             print_languages,
             print_package_managers,
             output,
