@@ -147,15 +147,13 @@ impl Cli {
                 It is possible to pass a generated STRING by command substitution. \n\
                 For example:\n \
                 '--ascii-input \"$(fortune | cowsay -W 25)\"'")
-            .validator(
-                |t| {
-                    if t.is_empty() {
-                        Err(String::from("must not be empty"))
-                    } else {
-                        Ok(())
-                    }
-                },
-            ),
+            .validator(|t| {
+                if t.is_empty() {
+                    Err(String::from("must not be empty"))
+                } else {
+                    Ok(())
+                }
+            }),
         )
         .arg(
             Arg::with_name("true-color")
@@ -254,13 +252,12 @@ impl Cli {
             .takes_value(true)
             .default_value("3")
             .help("NUM of authors to be shown.")
-            .validator(
-                |t| {
-                    t.parse::<u32>()
-                        .map_err(|_t| "must be a number")
-                        .map(|_t|())
-                        .map_err(|e| e.to_string())
-                })
+            .validator(|t| {
+                t.parse::<u32>()
+                    .map_err(|_t| "must be a number")
+                    .map(|_t|())
+                    .map_err(|e| e.to_string())
+            })
         )
         .arg(
             Arg::with_name("exclude")
