@@ -9,6 +9,7 @@ use {
     },
     clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
     image::DynamicImage,
+    regex::Regex,
     std::{convert::From, env, str::FromStr},
     strum::IntoEnumIterator,
     term_size,
@@ -30,6 +31,7 @@ pub struct Cli {
     pub no_color_palette: bool,
     pub number_of_authors: usize,
     pub excluded: Vec<String>,
+    pub bot_regex_pattern: Option<Regex>,
     pub print_languages: bool,
     pub print_package_managers: bool,
     pub output: Option<SerializationFormat>,
@@ -209,6 +211,21 @@ impl Cli {
             .help("Ignores merge commits."),
         )
         .arg(
+            Arg::with_name("no-bots")
+            .long("no-bots")
+            .min_values(0)
+            .max_values(1)
+            .value_name("REGEX")
+            .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
+            .validator(|p| {
+                if Regex::from_str(&p).is_err() {
+                    return Err(String::from("must be a valid regex pattern"));
+                } else {
+                    Ok(())
+                }
+            }),
+        )
+        .arg(
             Arg::with_name("isotime")
             .short("z")
             .long("isotime")
@@ -349,6 +366,12 @@ impl Cli {
             Vec::new()
         };
 
+        let bot_regex_pattern = matches.is_present("no-bots").then(|| {
+            matches
+                .value_of("no-bots")
+                .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| Regex::from_str(s).unwrap())
+        });
+
         Ok(Cli {
             repo_path,
             ascii_input,
@@ -363,6 +386,7 @@ impl Cli {
             no_color_palette,
             number_of_authors,
             excluded,
+            bot_regex_pattern,
             print_languages,
             print_package_managers,
             output,

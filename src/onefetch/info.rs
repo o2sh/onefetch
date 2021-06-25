@@ -211,7 +211,7 @@ impl Info {
     pub fn new(config: Cli) -> Result<Info> {
         let git_version = cli_utils::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
-        let internal_repo = Repo::new(&repo, config.no_merges)?;
+        let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
         let head_refs = internal_repo.get_head_refs()?;
         let pending_changes = internal_repo.get_pending_changes()?;
