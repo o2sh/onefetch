@@ -22,8 +22,8 @@ macro_rules! define_colors {
 macro_rules! define_languages {
     ($( { $name:ident, $ascii:literal, $display:literal, $colors:expr $(, $serialize:literal )? } ),* ,) => {
 
-        #[strum(serialize_all = "lowercase")]
         #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter, IntoStaticStr, Serialize)]
+        #[strum(serialize_all = "lowercase")]
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
