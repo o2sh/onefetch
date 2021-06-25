@@ -150,9 +150,10 @@ impl Cli {
             .validator(
                 |t| {
                     if t.is_empty() {
-                        return Err(String::from("must not be empty"));
+                        Err(String::from("must not be empty"))
+                    } else {
+                        Ok(())
                     }
-                    Ok(())
                 },
             ),
         )
@@ -219,7 +220,7 @@ impl Cli {
             .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
             .validator(|p| {
                 if Regex::from_str(&p).is_err() {
-                    return Err(String::from("must be a valid regex pattern"));
+                    Err(String::from("must be a valid regex pattern"))
                 } else {
                     Ok(())
                 }
