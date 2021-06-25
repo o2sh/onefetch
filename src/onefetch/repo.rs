@@ -15,16 +15,16 @@ impl<'a> Repo<'a> {
     pub fn new(
         repo: &'a Repository,
         no_merges: bool,
-        bot_exclude_pattern: &Option<String>,
+        bot_regex_pattern: &Option<Regex>,
     ) -> Result<Self> {
-        let logs = Repo::get_logs(repo, no_merges, bot_exclude_pattern)?;
+        let logs = Repo::get_logs(repo, no_merges, bot_regex_pattern)?;
         Ok(Self { repo, logs })
     }
 
     fn get_logs(
         repo: &'a Repository,
         no_merges: bool,
-        bot_exclude_pattern: &Option<String>,
+        bot_regex_pattern: &Option<Regex>,
     ) -> Result<Vec<Commit<'a>>> {
         let mut revwalk = repo.revwalk()?;
         revwalk.push_head()?;
@@ -36,8 +36,8 @@ impl<'a> Repo<'a> {
                     .ok()
                     .filter(|commit| !(no_merges && commit.parents().len() > 1))
                     .filter(|commit| {
-                        !(bot_exclude_pattern.is_some()
-                            && is_bot(commit.author(), bot_exclude_pattern))
+                        !(bot_regex_pattern.is_some()
+                            && is_bot(commit.author(), &bot_regex_pattern))
                     }),
             })
             .collect();
@@ -283,8 +283,7 @@ pub fn is_valid(repo_path: &str) -> Result<bool> {
     Ok(repo.is_ok() && !repo?.is_bare())
 }
 
-pub fn is_bot(author: Signature, bot_exclude_pattern: &Option<String>) -> bool {
+pub fn is_bot(author: Signature, bot_regex_pattern: &Option<Regex>) -> bool {
     let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
-    let re = Regex::new(bot_exclude_pattern.as_ref().unwrap()).unwrap();
-    re.is_match(&author_name)
+    bot_regex_pattern.as_ref().unwrap().is_match(&author_name)
 }
