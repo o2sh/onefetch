@@ -54,15 +54,37 @@ impl<'a> Repo<'a> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
         let mut total_nbr_of_commits = 0;
+
         for commit in &self.logs {
             let author = commit.author();
             let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
             let author_email = String::from_utf8_lossy(author.email_bytes()).into_owned();
 
-            let author_nbr_of_commits = authors.entry(author_email.to_string()).or_insert(0);
-            author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
-            *author_nbr_of_commits += 1;
-            total_nbr_of_commits += 1;
+            // Check if in our list is a already a  user, but with a different email.
+            // Then dont add this <email, user> pair but use the existing email
+            let mut found_duplicate = false;
+
+            for (email, name) in author_name_by_email.iter() {
+                if name == &author_name && email != &author_email {
+                    let author_nbr_of_commits =
+                        authors.entry(author_email.to_string()).or_insert(0);
+                    *author_nbr_of_commits += 1;
+                    total_nbr_of_commits += 1;
+
+                    // Memove the duplicate from authors
+                    authors.remove(&author_email);
+                    found_duplicate = true;
+                }
+            }
+
+            // If no duplicate found, then add to entries
+            if !found_duplicate {
+                let author_nbr_of_commits = authors.entry(author_email.to_string()).or_insert(0);
+                author_name_by_email.entry(author_email.to_string()).or_insert(author_name.clone());
+
+                *author_nbr_of_commits += 1;
+                total_nbr_of_commits += 1;
+            }
         }
 
         let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
