@@ -1,11 +1,8 @@
-build:
-	cargo build --release --features=fail-on-deprecated
-
-install: build
-	sudo cp target/release/onefetch /usr/local/bin
+install:
+	cargo install --path "." --features=fail-on-deprecated
 
 uninstall:
-	sudo rm -f /usr/local/bin/onefetch
+	cargo uninstall onefetch
 
 clean:
 	cargo clean
