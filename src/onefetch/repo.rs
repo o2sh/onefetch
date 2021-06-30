@@ -88,7 +88,7 @@ impl<'a> Repo<'a> {
             .map(|(author_email, author_nbr_of_commits)| {
                 (
                     author_name_by_email.get(&author_email).unwrap().trim_matches('\'').to_string(),
-					if include_email { Some(author_email) } else { None },
+                    include_email.then(|| author_email),
                     author_nbr_of_commits,
                     (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
                         as usize,
