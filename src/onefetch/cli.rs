@@ -346,11 +346,9 @@ impl Cli {
 
         let ascii_input = matches.value_of("ascii-input").map(String::from);
 
-        let ascii_language = if let Some(ascii_language) = matches.value_of("ascii-language") {
-            Some(Language::from_str(&ascii_language.to_lowercase()).unwrap())
-        } else {
-            None
-        };
+        let ascii_language = matches
+            .value_of("ascii-language")
+            .map(|ascii_language| Language::from_str(&ascii_language.to_lowercase()).unwrap());
 
         let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {
             values.map(String::from).collect()
@@ -377,7 +375,6 @@ impl Cli {
                 .value_of("no-bots")
                 .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| Regex::from_str(s).unwrap())
         });
-
         Ok(Cli {
             repo_path,
             ascii_input,
@@ -397,8 +394,8 @@ impl Cli {
             print_package_managers,
             output,
             true_color,
-            text_colors,
             art_off,
+            text_colors,
             iso_time,
             show_email,
         })
