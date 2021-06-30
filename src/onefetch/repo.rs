@@ -63,7 +63,11 @@ impl<'a> Repo<'a> {
         number_of_commits.to_string()
     }
 
-    pub fn get_authors(&self, n: usize) -> Vec<(String, usize, usize)> {
+    pub fn get_authors(
+        &self,
+        n: usize,
+        show_email: bool,
+    ) -> Vec<(String, Option<String>, usize, usize)> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
         let mut total_nbr_of_commits = 0;
@@ -83,11 +87,12 @@ impl<'a> Repo<'a> {
 
         authors.truncate(n);
 
-        let authors: Vec<(String, usize, usize)> = authors
+        let authors: Vec<(String, Option<String>, usize, usize)> = authors
             .into_iter()
             .map(|(author_email, author_nbr_of_commits)| {
                 (
                     author_name_by_email.get(&author_email).unwrap().trim_matches('\'').to_string(),
+                    show_email.then(|| author_email),
                     author_nbr_of_commits,
                     (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
                         as usize,
