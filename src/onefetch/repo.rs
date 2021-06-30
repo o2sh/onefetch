@@ -87,7 +87,10 @@ impl<'a> Repo<'a> {
         let mut total_nbr_of_commits = 0;
         let mailmap = self.repo.mailmap()?;
         for commit in &self.logs {
-            let author = commit.author_with_mailmap(&mailmap)?;
+            let author = match commit.author_with_mailmap(&mailmap) {
+                Ok(val) => val,
+                Err(_) => commit.author(),
+            };
             let author_nbr_of_commits =
                 author_to_number_of_commits.entry(Sig::from(author)).or_insert(0);
             *author_nbr_of_commits += 1;
