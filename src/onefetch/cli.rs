@@ -39,7 +39,7 @@ pub struct Cli {
     pub art_off: bool,
     pub text_colors: Vec<String>,
     pub iso_time: bool,
-    pub email: bool,
+    pub show_email: bool,
 }
 
 impl Cli {
@@ -264,7 +264,7 @@ impl Cli {
 			Arg::with_name("email")
 			.short("E")
 			.long("email")
-			.help("Display emails in authors section.")
+			.help("show the email address of each author.")
 		)
         .arg(
             Arg::with_name("exclude")
@@ -289,7 +289,7 @@ impl Cli {
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
         let iso_time = matches.is_present("isotime");
-        let email = matches.is_present("email");
+        let show_email = matches.is_present("email");
 
         let output =
             matches.value_of("output").map(SerializationFormat::from_str).transpose().unwrap();
@@ -400,7 +400,7 @@ impl Cli {
             text_colors,
             art_off,
             iso_time,
-            email,
+            show_email,
         })
     }
 }

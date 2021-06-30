@@ -66,7 +66,7 @@ impl<'a> Repo<'a> {
     pub fn get_authors(
         &self,
         n: usize,
-        include_email: bool,
+        show_email: bool,
     ) -> Vec<(String, Option<String>, usize, usize)> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
@@ -92,7 +92,7 @@ impl<'a> Repo<'a> {
             .map(|(author_email, author_nbr_of_commits)| {
                 (
                     author_name_by_email.get(&author_email).unwrap().trim_matches('\'').to_string(),
-                    include_email.then(|| author_email),
+                    show_email.then(|| author_email),
                     author_nbr_of_commits,
                     (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
                         as usize,
