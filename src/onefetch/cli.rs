@@ -261,9 +261,9 @@ impl Cli {
             })
         )
 		.arg(
-			Arg::with_name("email")
+			Arg::with_name("show-email")
 			.short("E")
-			.long("email")
+			.long("show-email")
 			.help("show the email address of each author.")
 		)
         .arg(
@@ -289,7 +289,7 @@ impl Cli {
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
         let iso_time = matches.is_present("isotime");
-        let show_email = matches.is_present("email");
+        let show_email = matches.is_present("show-email");
 
         let output =
             matches.value_of("output").map(SerializationFormat::from_str).transpose().unwrap();
