@@ -67,12 +67,13 @@ impl<'a> Repo<'a> {
         &self,
         n: usize,
         show_email: bool,
-    ) -> Vec<(String, Option<String>, usize, usize)> {
+    ) -> Result<Vec<(String, Option<String>, usize, usize)>> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
         let mut total_nbr_of_commits = 0;
+        let mailmap = self.repo.mailmap()?;
         for commit in &self.logs {
-            let author = commit.author();
+            let author = commit.author_with_mailmap(&mailmap)?;
             let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
             let author_email = String::from_utf8_lossy(author.email_bytes()).into_owned();
 
@@ -100,7 +101,7 @@ impl<'a> Repo<'a> {
             })
             .collect();
 
-        authors
+        Ok(authors)
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
