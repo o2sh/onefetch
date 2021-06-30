@@ -315,13 +315,13 @@ impl Info {
         for (i, (author_name, author_email_opt, author_nbr_commits, autor_contribution)) in
             self.authors.iter().enumerate()
         {
-			let author = if let Some(author_email) = author_email_opt {
-				format!("{} <{}>", author_name, author_email)
-			}else {
-				author_name.to_owned()
-			};
-			
-			if i == 0 {
+            let author = if let Some(author_email) = author_email_opt {
+                format!("{} <{}>", author_name, author_email)
+            } else {
+                author_name.to_owned()
+            };
+
+            if i == 0 {
                 author_field.push_str(&format!(
                     "{}{} {} {}\n",
                     autor_contribution.to_string().color(self.text_colors.info),
