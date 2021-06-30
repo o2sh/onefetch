@@ -63,7 +63,11 @@ impl<'a> Repo<'a> {
         number_of_commits.to_string()
     }
 
-    pub fn get_authors(&self, n: usize, include_email: bool) -> Vec<(String, Option<String>, usize, usize)> {
+    pub fn get_authors(
+        &self,
+        n: usize,
+        include_email: bool,
+    ) -> Vec<(String, Option<String>, usize, usize)> {
         let mut authors = std::collections::HashMap::new();
         let mut author_name_by_email = std::collections::HashMap::new();
         let mut total_nbr_of_commits = 0;
