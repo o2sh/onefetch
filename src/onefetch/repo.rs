@@ -142,7 +142,7 @@ impl<'a> Repo<'a> {
     pub fn get_number_of_branches(&self) -> Result<usize> {
         let mut number_of_branches = self.repo.branches(Some(BranchType::Remote))?.count();
         if number_of_branches > 0 {
-            //Exclude origin/HEAD -> origin/master
+            //Exclude origin/HEAD -> origin/main
             number_of_branches -= 1;
         }
         Ok(number_of_branches)

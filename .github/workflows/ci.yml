@@ -1,9 +1,9 @@
-name: CI  
+name: CI
 on:
   push:
-    branches: [ '*' ]
+    branches: ["*"]
   pull_request:
-    branches: [ master ]
+    branches: [main]
 
 jobs:
   build:
@@ -14,44 +14,44 @@ jobs:
         rust: [stable, nightly]
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Restore cargo cache
-      uses: actions/cache@v2.1.6
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
-        
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.rust }}
-        default: true
-        profile: minimal
-        components: clippy
+      - name: Restore cargo cache
+        uses: actions/cache@v2.1.6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Build Debug
-      run: |
-        rustc --version
-        cargo build --features=fail-on-deprecated
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          default: true
+          profile: minimal
+          components: clippy
 
-    - name: Run tests
-      run: cargo test
+      - name: Build Debug
+        run: |
+          rustc --version
+          cargo build --features=fail-on-deprecated
 
-    - name: Run clippy
-      run: cargo clippy
+      - name: Run tests
+        run: cargo test
+
+      - name: Run clippy
+        run: cargo clippy
 
   rustfmt:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        components: rustfmt
-    - run: cargo fmt -- --check
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt
+      - run: cargo fmt -- --check

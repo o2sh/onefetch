@@ -32,7 +32,7 @@ reported the issue. Please try to include as much information as you can. Detail
 
 Contributions via pull requests are much appreciated. Before sending us a pull request, please ensure that:
 
-1. You are working against the latest source on the *master* branch.
+1. You are working against the latest source on the *main* branch.
 2. You check existing open, and recently merged, pull requests to make sure someone else hasn't addressed the problem already.
 3. You open an issue to discuss any significant work - we would hate for your time to be wasted.
 
@@ -56,7 +56,7 @@ Looking at the existing issues is a great way to find something to contribute on
 
 First, you have to make sure that the language you want to add is supported by tokei ([supported languages](https://github.com/XAMPPRocky/tokei#supported-languages))
 
-Adding support for a new Language requires adding a new entry in the `define_language!` macro in [language.rs](https://raw.githubusercontent.com/o2sh/onefetch/master/src/language.rs).
+Adding support for a new Language requires adding a new entry in the `define_language!` macro in [language.rs](https://raw.githubusercontent.com/o2sh/onefetch/main/src/language.rs).
 
 **Example**:
 
