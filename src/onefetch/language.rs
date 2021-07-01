@@ -206,6 +206,7 @@ define_languages! {
     { Org, "org.ascii", "Org", define_colors!( [Color::Green, Color::Red, Color::White] ) },
     { Perl, "perl.ascii", "Perl", define_colors!( [Color::Cyan] ) },
     { Php, "php.ascii", "Php", define_colors!( [Color::Magenta, Color::Blue, Color::Cyan, Color::White] ) },
+    { PowerShell, "powershell.ascii", "PowerShell", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:49, g:108, b:185}, Color::TrueColor{ r:255, g:255, b:255} ] ) },
     { Processing, "processing.ascii", "Processing", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:80, g:80 ,b:80}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
     { Prolog, "prolog.ascii", "Prolog", define_colors!( [Color::White] ) },
     { PureScript, "purescript.ascii", "PureScript", define_colors!( [Color::White] ) },
