@@ -62,7 +62,8 @@ image = image.resize((charWidth, charHeight), Image.NEAREST)
 w, h = image.size
 pixels = image.load()
 
-outputImage = Image.new("RGB", (charWidth * w, charHeight * h), color=(0, 0, 0))
+outputImage = Image.new(
+    "RGB", (charWidth * w, charHeight * h), color=(0, 0, 0))
 draw = ImageDraw.Draw(outputImage)
 
 
@@ -79,14 +80,15 @@ for i in range(h):
         r, g, b = p[0], p[1], p[2]
         grey = int((r / 3 + g / 3 + b / 3))
         pixels[j, i] = (grey, grey, grey)
-        draw.text((j * charWidth, i * charHeight), getSomeChar(grey), fill=(r, g, b))
+        draw.text((j * charWidth, i * charHeight),
+                  getSomeChar(grey), fill=(r, g, b))
         print(getSomeChar(grey), end="")
     print("")
 
 if charHeight > 25 or charWidth > 40:
     print(
         "WARNING: Custom resolution exceeds maximum 25*40 (height*width). See: \n"
-        "https://github.com/o2sh/onefetch/blob/master/CONTRIBUTING.md#ascii-logo"
+        "https://github.com/o2sh/onefetch/blob/main/CONTRIBUTING.md#ascii-logo"
     )
 
 
