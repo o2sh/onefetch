@@ -1,5 +1,5 @@
 use {
-    crate::onefetch::error::*,
+    crate::error::*,
     color_quant::NeuQuant,
     image::{
         imageops::{colorops, FilterType},

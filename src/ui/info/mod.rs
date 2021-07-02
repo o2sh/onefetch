@@ -1,13 +1,18 @@
-use {
-    crate::onefetch::{
-        cli::Cli, cli_utils, commit_info::CommitInfo, error::*, language::Language,
-        license::Detector, package_managers::DependencyDetector, repo::Repo, text_color::TextColor,
-    },
-    colored::{Color, ColoredString, Colorize},
-    git2::Repository,
-    serde::ser::SerializeStruct,
-    serde::Serialize,
-};
+use crate::cli::{self, Config};
+use crate::error::*;
+use crate::repo::deps::DependencyDetector;
+use crate::repo::head_refs::HeadRefs;
+use crate::repo::language::Language;
+use crate::repo::license::Detector;
+use crate::repo::Repo;
+use crate::ui;
+use crate::ui::text_color::TextColor;
+use colored::{Color, ColoredString, Colorize};
+use git2::Repository;
+use serde::ser::SerializeStruct;
+use serde::Serialize;
+
+pub mod info_field;
 
 pub struct Info {
     git_username: String,
@@ -15,7 +20,7 @@ pub struct Info {
     repo_name: String,
     number_of_tags: usize,
     number_of_branches: usize,
-    head_refs: CommitInfo,
+    head_refs: HeadRefs,
     pending_changes: String,
     version: String,
     creation_date: String,
@@ -32,7 +37,7 @@ pub struct Info {
     pub dominant_language: Language,
     pub ascii_colors: Vec<Color>,
     pub text_colors: TextColor,
-    pub config: Cli,
+    pub config: Config,
 }
 
 impl std::fmt::Display for Info {
@@ -208,8 +213,8 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: Cli) -> Result<Info> {
-        let git_version = cli_utils::get_git_version();
+    pub fn new(config: Config) -> Result<Info> {
+        let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
         let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
@@ -230,7 +235,7 @@ impl Info {
         let (languages, lines_of_code) =
             Language::get_language_statistics(&workdir, &config.excluded)?;
         let dominant_language = Language::get_dominant_language(&languages);
-        let ascii_colors = Language::get_ascii_colors(
+        let ascii_colors = get_ascii_colors(
             &config.ascii_language,
             &dominant_language,
             &config.ascii_colors,
@@ -414,6 +419,32 @@ impl Info {
             }
         }
     }
+}
+
+fn get_ascii_colors(
+    ascii_language: &Option<Language>,
+    dominant_language: &Language,
+    ascii_colors: &[String],
+    true_color: bool,
+) -> Vec<Color> {
+    let language =
+        if let Some(ascii_language) = ascii_language { ascii_language } else { &dominant_language };
+
+    let colors = language.get_colors(true_color);
+
+    let colors: Vec<Color> = colors
+        .iter()
+        .enumerate()
+        .map(|(index, default_color)| {
+            if let Some(color_num) = ascii_colors.get(index) {
+                if let Some(color) = ui::num_to_color(color_num) {
+                    return color;
+                }
+            }
+            *default_color
+        })
+        .collect();
+    colors
 }
 
 impl Serialize for Info {

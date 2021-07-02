@@ -1,4 +1,4 @@
-use crate::onefetch::error::*;
+use crate::error::*;
 use std::collections::HashMap;
 use {regex::Regex, strum::EnumIter, toml::Value, yaml_rust::YamlLoader};
 

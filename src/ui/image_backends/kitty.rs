@@ -1,5 +1,5 @@
 use {
-    crate::onefetch::error::*,
+    crate::error::*,
     image::{imageops::FilterType, DynamicImage, GenericImageView},
     libc::{
         c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,

@@ -1,23 +1,21 @@
-use {
-    crate::onefetch::{
-        cli_utils,
-        error::*,
-        image_backends,
-        info_field::{InfoField, InfoFieldOff},
-        language::Language,
-        printer::SerializationFormat,
-    },
-    clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg},
-    image::DynamicImage,
-    regex::Regex,
-    std::{convert::From, env, str::FromStr},
-    strum::IntoEnumIterator,
-    term_size,
-};
+use crate::error::*;
+use crate::repo::deps::package_manager::PackageManager;
+use crate::repo::language::Language;
+use crate::ui::image_backends;
+use crate::ui::image_backends::ImageBackend;
+use crate::ui::info::info_field::{InfoField, InfoFieldOff};
+use crate::ui::printer::SerializationFormat;
+use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
+use image::DynamicImage;
+use regex::Regex;
+use std::process::Command;
+use std::{convert::From, env, str::FromStr};
+use strum::IntoEnumIterator;
+use term_size;
 
 const MAX_TERM_WIDTH: usize = 95;
 
-pub struct Cli {
+pub struct Config {
     pub repo_path: String,
     pub ascii_input: Option<String>,
     pub ascii_language: Option<Language>,
@@ -25,7 +23,7 @@ pub struct Cli {
     pub disabled_fields: InfoFieldOff,
     pub no_bold: bool,
     pub image: Option<DynamicImage>,
-    pub image_backend: Option<Box<dyn image_backends::ImageBackend>>,
+    pub image_backend: Option<Box<dyn ImageBackend>>,
     pub image_color_resolution: usize,
     pub no_merges: bool,
     pub no_color_palette: bool,
@@ -42,7 +40,7 @@ pub struct Cli {
     pub show_email: bool,
 }
 
-impl Cli {
+impl Config {
     pub fn new() -> Result<Self> {
         #[cfg(not(windows))]
         let possible_backends = ["kitty", "iterm", "sixel"];
@@ -280,7 +278,7 @@ impl Cli {
         let true_color = match matches.value_of("true-color") {
             Some("always") => true,
             Some("never") => false,
-            Some("auto") => cli_utils::is_truecolor_terminal(),
+            Some("auto") => is_truecolor_terminal(),
             _ => unreachable!(),
         };
         let no_bold = matches.is_present("no-bold");
@@ -375,7 +373,7 @@ impl Cli {
                 .value_of("no-bots")
                 .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| Regex::from_str(s).unwrap())
         });
-        Ok(Cli {
+        Ok(Config {
             repo_path,
             ascii_input,
             ascii_language,
@@ -399,5 +397,36 @@ impl Cli {
             iso_time,
             show_email,
         })
+    }
+}
+
+pub fn print_supported_languages() -> Result<()> {
+    for l in Language::iter() {
+        println!("{}", l);
+    }
+
+    Ok(())
+}
+
+pub fn print_supported_package_managers() -> Result<()> {
+    for p in PackageManager::iter() {
+        println!("{}", p);
+    }
+
+    Ok(())
+}
+
+pub fn is_truecolor_terminal() -> bool {
+    env::var("COLORTERM")
+        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
+        .unwrap_or(false)
+}
+
+pub fn get_git_version() -> String {
+    let version = Command::new("git").arg("--version").output();
+
+    match version {
+        Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
+        Err(_) => String::new(),
     }
 }

@@ -1,10 +1,20 @@
-use crate::onefetch::{commit_info::CommitInfo, error::*, utils};
+use crate::error::*;
+use crate::repo::head_refs::HeadRefs;
+use byte_unit::Byte;
+use chrono::{FixedOffset, TimeZone};
+use chrono_humanize::HumanTime;
+use git2::Time;
 use git2::{
     BranchType, Commit, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions,
     StatusShow,
 };
 use regex::Regex;
 use std::path::Path;
+
+pub mod deps;
+pub mod head_refs;
+pub mod language;
+pub mod license;
 
 pub struct Repo<'a> {
     repo: &'a Repository,
@@ -50,7 +60,7 @@ impl<'a> Repo<'a> {
         let output = match first_commit {
             Some(commit) => {
                 let time = commit.time();
-                utils::git_time_to_formatted_time(&time, iso_time)
+                git_time_to_formatted_time(&time, iso_time)
             }
             None => "".into(),
         };
@@ -107,7 +117,7 @@ impl<'a> Repo<'a> {
         let last_commit = self.logs.first();
 
         match last_commit {
-            Some(commit) => utils::git_time_to_formatted_time(&commit.time(), iso_time),
+            Some(commit) => git_time_to_formatted_time(&commit.time(), iso_time),
             None => "".into(),
         }
     }
@@ -124,7 +134,7 @@ impl<'a> Repo<'a> {
             Err(_) => (0, 0),
         };
 
-        (utils::bytes_to_human_readable(repo_size), file_count)
+        (bytes_to_human_readable(repo_size), file_count)
     }
 
     pub fn get_work_dir(&self) -> Result<String> {
@@ -261,7 +271,7 @@ impl<'a> Repo<'a> {
         Ok((repository_name, remote_url))
     }
 
-    pub fn get_head_refs(&self) -> Result<CommitInfo> {
+    pub fn get_head_refs(&self) -> Result<HeadRefs> {
         let head = self.repo.head()?;
         let head_oid = head.target().ok_or("")?;
         let refs = self.repo.references()?;
@@ -276,19 +286,40 @@ impl<'a> Repo<'a> {
                 Err(_) => None,
             })
             .collect::<Vec<String>>();
-        Ok(CommitInfo::new(head_oid, refs_info))
+        Ok(HeadRefs::new(head_oid, refs_info))
     }
     fn work_dir(&self) -> Result<&Path> {
         self.repo.workdir().ok_or_else(|| "unable to query workdir".into())
     }
 }
 
-pub fn is_valid(repo_path: &str) -> Result<bool> {
-    let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
-    Ok(repo.is_ok() && !repo?.is_bare())
-}
-
 pub fn is_bot(author: Signature, bot_regex_pattern: &Option<Regex>) -> bool {
     let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
     bot_regex_pattern.as_ref().unwrap().is_match(&author_name)
+}
+
+pub fn bytes_to_human_readable(bytes: u128) -> String {
+    let byte = Byte::from_bytes(bytes);
+    byte.get_appropriate_unit(true).to_string()
+}
+
+pub fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
+    let (offset, _) = match time.offset_minutes() {
+        n if n < 0 => (-n, '-'),
+        n => (n, '+'),
+    };
+
+    let offset = FixedOffset::west(offset);
+    let dt_with_tz = offset.timestamp(time.seconds(), 0);
+    if iso_time {
+        dt_with_tz.with_timezone(&chrono::Utc).to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
+    } else {
+        let ht = HumanTime::from(dt_with_tz);
+        format!("{}", ht)
+    }
+}
+
+pub fn is_valid(repo_path: &str) -> Result<bool> {
+    let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
+    Ok(repo.is_ok() && !repo?.is_bare())
 }

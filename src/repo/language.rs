@@ -1,12 +1,10 @@
-use {
-    crate::onefetch::{error::*, utils::num_to_color},
-    colored::Color,
-    regex::Regex,
-    serde::Serialize,
-    std::collections::HashMap,
-    std::env,
-    strum::{EnumIter, EnumString, IntoStaticStr},
-};
+use crate::error::*;
+use colored::Color;
+use regex::Regex;
+use serde::Serialize;
+use std::collections::HashMap;
+use std::env;
+use strum::{EnumIter, EnumString, IntoStaticStr};
 
 pub struct Colors {
     basic_colors: Vec<Color>,
@@ -129,7 +127,7 @@ macro_rules! define_languages {
 
         #[cfg(test)]
         mod ascii_size {
-            use crate::onefetch::ascii_art::get_min_start_max_end;
+            use crate::ui::ascii_art::get_min_start_max_end;
             use more_asserts::assert_le;
             use paste::paste;
 
@@ -367,34 +365,5 @@ impl Language {
         }
 
         languages
-    }
-
-    pub fn get_ascii_colors(
-        ascii_language: &Option<Language>,
-        dominant_language: &Language,
-        ascii_colors: &[String],
-        true_color: bool,
-    ) -> Vec<Color> {
-        let language = if let Some(ascii_language) = ascii_language {
-            ascii_language
-        } else {
-            &dominant_language
-        };
-
-        let colors = language.get_colors(true_color);
-
-        let colors: Vec<Color> = colors
-            .iter()
-            .enumerate()
-            .map(|(index, default_color)| {
-                if let Some(color_num) = ascii_colors.get(index) {
-                    if let Some(color) = num_to_color(color_num) {
-                        return color;
-                    }
-                }
-                *default_color
-            })
-            .collect();
-        colors
     }
 }
