@@ -11,15 +11,13 @@
 
 ### Adding support for a new language
 
-Before anything, you need to make sure that the language you want to add is supported by ([tokei](https://github.com/XAMPPRocky/tokei#supported-languages)).
-
-Adding support for a new Language consists in adding a new entry in the `define_language!` macro in [language.rs](https://raw.githubusercontent.com/o2sh/onefetch/main/src/language.rs) in filling it in with the right data.
+Adding support for a new Language consists in adding a new entry to the `define_language!` macro in [language.rs](https://raw.githubusercontent.com/o2sh/onefetch/main/src/language.rs) and filling it in with the right data.
 
 **Example**:
 
 ` { CSharp, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta] ), "c#" }, `
 
-The first item `CSharp` corresponds to the name of the language as defined in tokei. The second item `csharp.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is only required if the Enum name `CSharp` doesn't match the display name `C#` and is used as an input for `-a, --ascii-language <LANGUAGE>` - by default we take the Enum name in lowercase.
+The first item `CSharp` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item `csharp.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is only required if the Enum name `CSharp` doesn't match the display name `C#` and is used as an input for `-a, --ascii-language <LANGUAGE>` - by default we take the Enum name in lowercase.
 
 #### Ascii logo
 
@@ -54,7 +52,7 @@ Remarks:
 - The ascii logo's dimensions must fall below `25*40` (height\*width); The CI will fail otherwise.
 - Use `{i}` to color the ascii with `i` the color index from the `vec!` of colors defined in `define_language!`.
 - Make sure to trim any unnecessary trailing whitespaces.
-- Check [Convert image to ASCII art](https://github.com/o2sh/onefetch/wiki/image-to-ascii) to learn more about image to ascii conversion.
+- Check ["Convert image to ASCII art"](https://github.com/o2sh/onefetch/wiki/image-to-ascii) to learn more about image to ascii conversion.
 - Optionally, you may provide a `vec!` of colors in `rgb` format as an alternative to basic colors for terminals that support [true colour](https://gist.github.com/XVilka/8346728).
 
 ### Adding support for a new package manager
