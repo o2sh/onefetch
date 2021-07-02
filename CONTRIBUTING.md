@@ -2,17 +2,12 @@
 
 - [How to Contribute](#how-to-contribute)
   - [Contributing via Pull Requests](#contributing-via-pull-requests)
-    - [Finding contributions to work on](#finding-contributions-to-work-on)
     - [Adding support for a new language](#adding-support-for-a-new-language)
       - [Ascii logo](#ascii-logo)
     - [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
     - [Adding translation for README.md](#adding-translation-for-readmemd)
 
 ## Contributing via Pull Requests
-
-### Finding contributions to work on
-
-Looking at existing issues is a great way to find something to contribute on, any ['help wanted'](https://github.com/o2sh/onefetch/labels/help%20wanted) issue is a great place to start.
 
 ### Adding support for a new language
 
