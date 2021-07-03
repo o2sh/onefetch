@@ -115,12 +115,7 @@ impl std::fmt::Display for Info {
 
             let languages_str = self.get_language_field(title);
 
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label(title),
-                languages_str.color(self.text_colors.info)
-            )?;
+            writeln!(f, "{}{}", &self.get_formatted_subtitle_label(title), languages_str)?;
         }
 
         if !self.config.disabled_fields.dependencies && !self.dependencies.is_empty() {
@@ -137,12 +132,7 @@ impl std::fmt::Display for Info {
 
             let author_str = self.get_author_field(title);
 
-            write!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label(title),
-                author_str.color(self.text_colors.info),
-            )?;
+            write!(f, "{}{}", &self.get_formatted_subtitle_label(title), author_str)?;
         }
 
         if !self.config.disabled_fields.last_change && !self.last_change.is_empty() {
@@ -339,10 +329,12 @@ impl Info {
         let pad = title.len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
+            let author_str = format!("{}", author).color(self.text_colors.info);
+
             if i == 0 {
-                author_field.push_str(&format!("{}\n", author));
+                author_field.push_str(&format!("{}\n", author_str));
             } else {
-                author_field.push_str(&format!("{:<width$}{}\n", "", author, width = pad));
+                author_field.push_str(&format!("{:<width$}{}\n", "", author_str, width = pad));
             }
         }
 
@@ -367,21 +359,13 @@ impl Info {
         };
 
         for (cnt, language) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, language.1).color(self.text_colors.info);
+            let formatted_number = format!("{:.*}", 1, language.1);
+            let language_str =
+                format!("{} ({} %) ", language.0, formatted_number).color(self.text_colors.info);
             if cnt != 0 && cnt % 2 == 0 {
-                language_field.push_str(&format!(
-                    "\n{:<width$}{} ({} %) ",
-                    "",
-                    language.0.color(self.text_colors.info),
-                    formatted_number,
-                    width = pad
-                ));
+                language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
             } else {
-                language_field.push_str(&format!(
-                    "{} ({} %) ",
-                    language.0.color(self.text_colors.info),
-                    formatted_number
-                ));
+                language_field.push_str(&format!("{}", language_str));
             }
         }
         language_field
