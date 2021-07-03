@@ -431,31 +431,17 @@ impl Serialize for Info {
     where
         S: serde::Serializer,
     {
-        let mut state = serializer.serialize_struct("Info", 20)?;
-
-        // Only collect the version number
-        let git_version = if !self.git_version.is_empty() {
-            self.git_version.split(' ').collect::<Vec<_>>()[2]
-        } else {
-            ""
-        };
-
-        state.serialize_field("gitVersion", &git_version)?;
-        state.serialize_field("gitUsername", &self.git_username)?;
+        let mut state = serializer.serialize_struct("Info", 15)?;
+        let langs: Vec<String> = self.languages.iter().map(|(l, _)| format!("{}", l)).collect();
+        let auths: Vec<String> = self.authors.iter().map(|(l, _, _, _)| format!("{}", l)).collect();
         state.serialize_field("repoName", &self.repo_name)?;
         state.serialize_field("numberOfTags", &self.number_of_tags)?;
         state.serialize_field("numberOfBranches", &self.number_of_branches)?;
         state.serialize_field("headRefs", &self.head_refs)?;
-        state.serialize_field("pendingChanges", &self.pending_changes)?;
         state.serialize_field("version", &self.version)?;
         state.serialize_field("creationDate", &self.creation_date)?;
-        state.serialize_field("languages", &self.languages)?;
-
-        let dependencies_split: Vec<String> =
-            self.dependencies.split(' ').map(|s| s.to_string()).collect();
-
-        state.serialize_field("dependencies", &dependencies_split[0])?;
-        state.serialize_field("authors", &self.authors)?;
+        state.serialize_field("languages", &langs)?;
+        state.serialize_field("authors", &auths)?;
         state.serialize_field("lastChange", &self.last_change)?;
         state.serialize_field("repoUrl", &self.repo_url)?;
         state.serialize_field("numberOfCommits", &self.number_of_commits)?;
@@ -463,7 +449,7 @@ impl Serialize for Info {
         state.serialize_field("repoSize", &self.repo_size)?;
         state.serialize_field("filesCount", &self.file_count)?;
         state.serialize_field("license", &self.license)?;
-        state.serialize_field("dominantLanguage", &self.dominant_language)?;
+
         state.end()
     }
 }
