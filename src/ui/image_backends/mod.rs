@@ -1,4 +1,4 @@
-use crate::onefetch::error::*;
+use crate::error::*;
 use image::DynamicImage;
 
 #[cfg(not(windows))]

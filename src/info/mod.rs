@@ -1,13 +1,23 @@
-use {
-    crate::onefetch::{
-        cli::Cli, cli_utils, commit_info::CommitInfo, error::*, language::Language,
-        license::Detector, package_managers::DependencyDetector, repo::Repo, text_color::TextColor,
-    },
-    colored::{Color, ColoredString, Colorize},
-    git2::Repository,
-    serde::ser::SerializeStruct,
-    serde::Serialize,
-};
+use crate::cli::{self, Config};
+use crate::error::*;
+use crate::ui::get_ascii_colors;
+use crate::ui::text_color::TextColor;
+use colored::{Color, ColoredString, Colorize};
+use deps::DependencyDetector;
+use git2::Repository;
+use head_refs::HeadRefs;
+use language::Language;
+use license::Detector;
+use repo::Repo;
+use serde::ser::SerializeStruct;
+use serde::Serialize;
+
+pub mod deps;
+mod head_refs;
+pub mod info_field;
+pub mod language;
+mod license;
+pub mod repo;
 
 pub struct Info {
     git_username: String,
@@ -15,7 +25,7 @@ pub struct Info {
     repo_name: String,
     number_of_tags: usize,
     number_of_branches: usize,
-    head_refs: CommitInfo,
+    head_refs: HeadRefs,
     pending_changes: String,
     version: String,
     creation_date: String,
@@ -32,7 +42,7 @@ pub struct Info {
     pub dominant_language: Language,
     pub ascii_colors: Vec<Color>,
     pub text_colors: TextColor,
-    pub config: Cli,
+    pub config: Config,
 }
 
 impl std::fmt::Display for Info {
@@ -208,8 +218,8 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: Cli) -> Result<Info> {
-        let git_version = cli_utils::get_git_version();
+    pub fn new(config: Config) -> Result<Self> {
+        let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
         let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
@@ -230,7 +240,7 @@ impl Info {
         let (languages, lines_of_code) =
             Language::get_language_statistics(&workdir, &config.excluded)?;
         let dominant_language = Language::get_dominant_language(&languages);
-        let ascii_colors = Language::get_ascii_colors(
+        let ascii_colors = get_ascii_colors(
             &config.ascii_language,
             &dominant_language,
             &config.ascii_colors,
@@ -238,7 +248,7 @@ impl Info {
         );
         let text_colors = TextColor::get_text_colors(&config.text_colors, &ascii_colors);
 
-        Ok(Info {
+        Ok(Self {
             git_username,
             git_version,
             repo_name,
@@ -255,8 +265,8 @@ impl Info {
             repo_url,
             number_of_commits,
             lines_of_code,
-            repo_size,
             file_count,
+            repo_size,
             license,
             dominant_language,
             ascii_colors,

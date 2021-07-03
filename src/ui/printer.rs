@@ -1,4 +1,6 @@
-use crate::onefetch::{ascii_art::AsciiArt, error::*, info::Info};
+use crate::error::*;
+use crate::info::Info;
+use crate::ui::ascii_art::AsciiArt;
 use colored::Color;
 use std::io::Write;
 use strum::{EnumIter, EnumString, IntoStaticStr};

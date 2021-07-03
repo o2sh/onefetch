@@ -1,4 +1,5 @@
-use {crate::onefetch::utils::num_to_color, colored::Color};
+use crate::ui::num_to_color;
+use colored::Color;
 
 pub struct TextColor {
     pub title: Color,

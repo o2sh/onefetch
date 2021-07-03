@@ -1,5 +1,5 @@
 use {
-    crate::onefetch::error::*,
+    crate::error::*,
     askalono::{Store, TextData},
     std::{ffi::OsStr, fs},
 };

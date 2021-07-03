@@ -1,8 +1,6 @@
-use {
-    crate::onefetch::error::*,
-    std::str::FromStr,
-    strum::{EnumCount, EnumIter, EnumString, IntoStaticStr},
-};
+use crate::error::*;
+use std::str::FromStr;
+use strum::{EnumCount, EnumIter, EnumString, IntoStaticStr};
 
 #[derive(PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr)]
 #[strum(serialize_all = "snake_case")]

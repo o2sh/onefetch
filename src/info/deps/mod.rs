@@ -1,5 +1,5 @@
 use {
-    crate::onefetch::error::*,
+    crate::error::*,
     std::collections::HashMap,
     std::{ffi::OsStr, fs},
 };
