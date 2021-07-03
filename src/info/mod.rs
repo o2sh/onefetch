@@ -2,6 +2,7 @@ use crate::cli::{self, Config};
 use crate::error::*;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_color::TextColor;
+use author::Author;
 use colored::{Color, ColoredString, Colorize};
 use deps::DependencyDetector;
 use git2::Repository;
@@ -12,6 +13,7 @@ use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 
+mod author;
 pub mod deps;
 mod head_refs;
 pub mod info_field;
@@ -31,8 +33,9 @@ pub struct Info {
     creation_date: String,
     languages: Vec<(Language, f64)>,
     dependencies: String,
-    authors: Vec<(String, Option<String>, usize, usize)>,
+    authors: Vec<Author>,
     last_change: String,
+    contributors: usize,
     repo_url: String,
     number_of_commits: String,
     lines_of_code: usize,
@@ -151,6 +154,17 @@ impl std::fmt::Display for Info {
             )?;
         }
 
+        if !self.config.disabled_fields.contributors
+            && self.contributors > self.config.number_of_authors
+        {
+            writeln!(
+                f,
+                "{}{}",
+                &self.get_formatted_subtitle_label("Contributors"),
+                &self.contributors.to_string().color(self.text_colors.info),
+            )?;
+        }
+
         if !self.config.disabled_fields.repo && !self.repo_url.is_empty() {
             writeln!(
                 f,
@@ -231,7 +245,8 @@ impl Info {
         let number_of_branches = internal_repo.get_number_of_branches()?;
         let creation_date = internal_repo.get_creation_date(config.iso_time)?;
         let number_of_commits = internal_repo.get_number_of_commits();
-        let authors = internal_repo.get_authors(config.number_of_authors, config.show_email)?;
+        let (authors, contributors) =
+            internal_repo.get_authors(config.number_of_authors, config.show_email)?;
         let last_change = internal_repo.get_date_of_last_commit(config.iso_time);
         let (repo_size, file_count) = internal_repo.get_repo_size();
         let workdir = internal_repo.get_work_dir()?;
@@ -262,6 +277,7 @@ impl Info {
             dependencies,
             authors,
             last_change,
+            contributors,
             repo_url,
             number_of_commits,
             lines_of_code,
@@ -322,33 +338,11 @@ impl Info {
 
         let pad = title.len() + 2;
 
-        for (i, (author_name, author_email_opt, author_nbr_commits, autor_contribution)) in
-            self.authors.iter().enumerate()
-        {
-            let author = if let Some(author_email) = author_email_opt {
-                format!("{} <{}>", author_name, author_email)
-            } else {
-                author_name.to_owned()
-            };
-
+        for (i, author) in self.authors.iter().enumerate() {
             if i == 0 {
-                author_field.push_str(&format!(
-                    "{}{} {} {}\n",
-                    autor_contribution.to_string().color(self.text_colors.info),
-                    "%".color(self.text_colors.info),
-                    author.to_string().color(self.text_colors.info),
-                    author_nbr_commits.to_string().color(self.text_colors.info),
-                ));
+                author_field.push_str(&format!("{}\n", author));
             } else {
-                author_field.push_str(&format!(
-                    "{:<width$}{}{} {} {}\n",
-                    "",
-                    autor_contribution.to_string().color(self.text_colors.info),
-                    "%".color(self.text_colors.info),
-                    author.to_string().color(self.text_colors.info),
-                    author_nbr_commits.to_string().color(self.text_colors.info),
-                    width = pad
-                ));
+                author_field.push_str(&format!("{:<width$}{}\n", "", author, width = pad));
             }
         }
 
@@ -433,7 +427,6 @@ impl Serialize for Info {
     {
         let mut state = serializer.serialize_struct("Info", 15)?;
         let langs: Vec<String> = self.languages.iter().map(|(l, _)| format!("{}", l)).collect();
-        let auths: Vec<String> = self.authors.iter().map(|(l, _, _, _)| format!("{}", l)).collect();
         state.serialize_field("repoName", &self.repo_name)?;
         state.serialize_field("numberOfTags", &self.number_of_tags)?;
         state.serialize_field("numberOfBranches", &self.number_of_branches)?;
@@ -441,7 +434,7 @@ impl Serialize for Info {
         state.serialize_field("version", &self.version)?;
         state.serialize_field("creationDate", &self.creation_date)?;
         state.serialize_field("languages", &langs)?;
-        state.serialize_field("authors", &auths)?;
+        state.serialize_field("authors", &self.authors)?;
         state.serialize_field("lastChange", &self.last_change)?;
         state.serialize_field("repoUrl", &self.repo_url)?;
         state.serialize_field("numberOfCommits", &self.number_of_commits)?;

@@ -1,4 +1,5 @@
 use crate::error::*;
+use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
@@ -87,7 +88,7 @@ impl<'a> Repo<'a> {
         &self,
         number_of_author: usize,
         show_email: bool,
-    ) -> Result<Vec<(String, Option<String>, usize, usize)>> {
+    ) -> Result<(Vec<Author>, usize)> {
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
         let mut total_nbr_of_commits = 0;
         let mailmap = self.repo.mailmap()?;
@@ -102,29 +103,28 @@ impl<'a> Repo<'a> {
             total_nbr_of_commits += 1;
         }
 
-        let mut authors_sorted_by_number_of_commits: Vec<(Sig, usize)> =
+        let mut authors_by_number_of_commits: Vec<(Sig, usize)> =
             author_to_number_of_commits.into_iter().collect();
 
-        authors_sorted_by_number_of_commits
-            .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+        let number_of_authors = authors_by_number_of_commits.len();
 
-        authors_sorted_by_number_of_commits.truncate(number_of_author);
+        authors_by_number_of_commits.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
 
-        let result: Vec<(String, Option<String>, usize, usize)> =
-            authors_sorted_by_number_of_commits
-                .into_iter()
-                .map(|(author, author_nbr_of_commits)| {
-                    (
-                        author.name.clone(),
-                        show_email.then(|| author.email),
-                        author_nbr_of_commits,
-                        (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
-                            as usize,
-                    )
-                })
-                .collect();
+        authors_by_number_of_commits.truncate(number_of_author);
 
-        Ok(result)
+        let authors: Vec<Author> = authors_by_number_of_commits
+            .into_iter()
+            .map(|(author, author_nbr_of_commits)| {
+                Author::new(
+                    author.name.clone(),
+                    show_email.then(|| author.email),
+                    author_nbr_of_commits,
+                    total_nbr_of_commits,
+                )
+            })
+            .collect();
+
+        Ok((authors, number_of_authors))
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
