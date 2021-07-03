@@ -86,7 +86,7 @@ impl<'a> Repo<'a> {
 
     pub fn get_authors(
         &self,
-        number_of_author: usize,
+        number_of_authors_to_display: usize,
         show_email: bool,
     ) -> Result<(Vec<Author>, usize)> {
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
@@ -110,7 +110,9 @@ impl<'a> Repo<'a> {
 
         authors_by_number_of_commits.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
 
-        authors_by_number_of_commits.truncate(number_of_author);
+        if number_of_authors > number_of_authors_to_display {
+            authors_by_number_of_commits.truncate(number_of_authors_to_display);
+        }
 
         let authors: Vec<Author> = authors_by_number_of_commits
             .into_iter()
