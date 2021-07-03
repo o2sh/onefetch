@@ -954,7 +954,7 @@ checksum = "af8b08b04175473088b46763e51ee54da5f9a164bc162f615b91bc179dbf15a3"
 
 [[package]]
 name = "onefetch"
-version = "2.9.1"
+version = "2.10.0"
 dependencies = [
  "ansi_term 0.12.1",
  "askalono",
