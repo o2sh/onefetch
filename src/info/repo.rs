@@ -1,5 +1,5 @@
 use crate::error::*;
-use crate::repo::head_refs::HeadRefs;
+use crate::info::head_refs::HeadRefs;
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
 use chrono_humanize::HumanTime;
@@ -10,11 +10,6 @@ use git2::{
 };
 use regex::Regex;
 use std::path::Path;
-
-pub mod deps;
-pub mod head_refs;
-pub mod language;
-pub mod license;
 
 pub struct Repo<'a> {
     repo: &'a Repository,
@@ -27,7 +22,7 @@ impl<'a> Repo<'a> {
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
     ) -> Result<Self> {
-        let logs = Repo::get_logs(repo, no_merges, bot_regex_pattern)?;
+        let logs = Self::get_logs(repo, no_merges, bot_regex_pattern)?;
         Ok(Self { repo, logs })
     }
 
@@ -293,17 +288,17 @@ impl<'a> Repo<'a> {
     }
 }
 
-pub fn is_bot(author: Signature, bot_regex_pattern: &Option<Regex>) -> bool {
+fn is_bot(author: Signature, bot_regex_pattern: &Option<Regex>) -> bool {
     let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
     bot_regex_pattern.as_ref().unwrap().is_match(&author_name)
 }
 
-pub fn bytes_to_human_readable(bytes: u128) -> String {
+fn bytes_to_human_readable(bytes: u128) -> String {
     let byte = Byte::from_bytes(bytes);
     byte.get_appropriate_unit(true).to_string()
 }
 
-pub fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
+fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
     let (offset, _) = match time.offset_minutes() {
         n if n < 0 => (-n, '-'),
         n => (n, '+'),

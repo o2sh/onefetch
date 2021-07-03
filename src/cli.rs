@@ -1,9 +1,9 @@
 use crate::error::*;
-use crate::repo::deps::package_manager::PackageManager;
-use crate::repo::language::Language;
+use crate::info::deps::package_manager::PackageManager;
+use crate::info::info_field::{InfoField, InfoFieldOff};
+use crate::info::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
-use crate::ui::info::info_field::{InfoField, InfoFieldOff};
 use crate::ui::printer::SerializationFormat;
 use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
 use image::DynamicImage;
@@ -11,7 +11,6 @@ use regex::Regex;
 use std::process::Command;
 use std::{convert::From, env, str::FromStr};
 use strum::IntoEnumIterator;
-use term_size;
 
 const MAX_TERM_WIDTH: usize = 95;
 

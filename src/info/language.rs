@@ -25,7 +25,7 @@ macro_rules! define_languages {
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
-                $name ,
+                $name,
             )*
         }
 

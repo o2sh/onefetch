@@ -1,18 +1,23 @@
 use crate::cli::{self, Config};
 use crate::error::*;
-use crate::repo::deps::DependencyDetector;
-use crate::repo::head_refs::HeadRefs;
-use crate::repo::language::Language;
-use crate::repo::license::Detector;
-use crate::repo::Repo;
-use crate::ui;
+use crate::ui::get_ascii_colors;
 use crate::ui::text_color::TextColor;
 use colored::{Color, ColoredString, Colorize};
+use deps::DependencyDetector;
 use git2::Repository;
+use head_refs::HeadRefs;
+use language::Language;
+use license::Detector;
+use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 
+pub mod deps;
+mod head_refs;
 pub mod info_field;
+pub mod language;
+mod license;
+pub mod repo;
 
 pub struct Info {
     git_username: String,
@@ -213,7 +218,7 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: Config) -> Result<Info> {
+    pub fn new(config: Config) -> Result<Self> {
         let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
         let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
@@ -243,7 +248,7 @@ impl Info {
         );
         let text_colors = TextColor::get_text_colors(&config.text_colors, &ascii_colors);
 
-        Ok(Info {
+        Ok(Self {
             git_username,
             git_version,
             repo_name,
@@ -419,32 +424,6 @@ impl Info {
             }
         }
     }
-}
-
-fn get_ascii_colors(
-    ascii_language: &Option<Language>,
-    dominant_language: &Language,
-    ascii_colors: &[String],
-    true_color: bool,
-) -> Vec<Color> {
-    let language =
-        if let Some(ascii_language) = ascii_language { ascii_language } else { &dominant_language };
-
-    let colors = language.get_colors(true_color);
-
-    let colors: Vec<Color> = colors
-        .iter()
-        .enumerate()
-        .map(|(index, default_color)| {
-            if let Some(color_num) = ascii_colors.get(index) {
-                if let Some(color) = ui::num_to_color(color_num) {
-                    return color;
-                }
-            }
-            *default_color
-        })
-        .collect();
-    colors
 }
 
 impl Serialize for Info {

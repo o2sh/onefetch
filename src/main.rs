@@ -4,13 +4,13 @@
 
 use cli::Config;
 use error::*;
+use info::{repo, Info};
 use std::{io, process};
-use ui::info::Info;
 use ui::printer::Printer;
 
 mod cli;
 mod error;
-mod repo;
+mod info;
 mod ui;
 
 fn run() -> Result<()> {
@@ -30,6 +30,7 @@ fn run() -> Result<()> {
     if !repo::is_valid(&config.repo_path)? {
         return Err("please run onefetch inside of a non-bare git repository".into());
     }
+
     let info = Info::new(config)?;
 
     let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info);

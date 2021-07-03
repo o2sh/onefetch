@@ -1,6 +1,6 @@
 use crate::error::*;
+use crate::info::Info;
 use crate::ui::ascii_art::AsciiArt;
-use crate::ui::info::Info;
 use colored::Color;
 use std::io::Write;
 use strum::{EnumIter, EnumString, IntoStaticStr};
