@@ -9,11 +9,26 @@ use git2::{
     StatusShow,
 };
 use regex::Regex;
+use std::collections::HashMap;
 use std::path::Path;
 
 pub struct Repo<'a> {
     repo: &'a Repository,
     logs: Vec<Commit<'a>>,
+}
+
+#[derive(Hash, PartialEq, Eq)]
+pub struct Sig {
+    name: String,
+    email: String,
+}
+
+impl From<Signature<'_>> for Sig {
+    fn from(sig: Signature) -> Self {
+        let name = String::from_utf8_lossy(sig.name_bytes()).into_owned();
+        let email = String::from_utf8_lossy(sig.email_bytes()).into_owned();
+        Self { name, email }
+    }
 }
 
 impl<'a> Repo<'a> {
@@ -70,42 +85,46 @@ impl<'a> Repo<'a> {
 
     pub fn get_authors(
         &self,
-        n: usize,
+        number_of_author: usize,
         show_email: bool,
-    ) -> Vec<(String, Option<String>, usize, usize)> {
-        let mut authors = std::collections::HashMap::new();
-        let mut author_name_by_email = std::collections::HashMap::new();
+    ) -> Result<Vec<(String, Option<String>, usize, usize)>> {
+        let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
         let mut total_nbr_of_commits = 0;
+        let mailmap = self.repo.mailmap()?;
         for commit in &self.logs {
-            let author = commit.author();
-            let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
-            let author_email = String::from_utf8_lossy(author.email_bytes()).into_owned();
-
-            let author_nbr_of_commits = authors.entry(author_email.to_string()).or_insert(0);
-            author_name_by_email.entry(author_email.to_string()).or_insert(author_name);
+            let author = match commit.author_with_mailmap(&mailmap) {
+                Ok(val) => val,
+                Err(_) => commit.author(),
+            };
+            let author_nbr_of_commits =
+                author_to_number_of_commits.entry(Sig::from(author)).or_insert(0);
             *author_nbr_of_commits += 1;
             total_nbr_of_commits += 1;
         }
 
-        let mut authors: Vec<(String, usize)> = authors.into_iter().collect();
-        authors.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+        let mut authors_sorted_by_number_of_commits: Vec<(Sig, usize)> =
+            author_to_number_of_commits.into_iter().collect();
 
-        authors.truncate(n);
+        authors_sorted_by_number_of_commits
+            .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
 
-        let authors: Vec<(String, Option<String>, usize, usize)> = authors
-            .into_iter()
-            .map(|(author_email, author_nbr_of_commits)| {
-                (
-                    author_name_by_email.get(&author_email).unwrap().trim_matches('\'').to_string(),
-                    show_email.then(|| author_email),
-                    author_nbr_of_commits,
-                    (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
-                        as usize,
-                )
-            })
-            .collect();
+        authors_sorted_by_number_of_commits.truncate(number_of_author);
 
-        authors
+        let result: Vec<(String, Option<String>, usize, usize)> =
+            authors_sorted_by_number_of_commits
+                .into_iter()
+                .map(|(author, author_nbr_of_commits)| {
+                    (
+                        author.name.clone(),
+                        show_email.then(|| author.email),
+                        author_nbr_of_commits,
+                        (author_nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round()
+                            as usize,
+                    )
+                })
+                .collect();
+
+        Ok(result)
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
