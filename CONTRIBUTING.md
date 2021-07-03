@@ -67,7 +67,7 @@ To add a new package manager, make sure to follow these steps:
 
 The first item `Cargo` corresponds to the name of the package manager. The second item `cargo` is the display name. Then we have the name of the package manager file that will be parsed: `Cargo.toml` along with its parser `cargo` (cf. step 2), notice that the third item is an array of tuple in case the package manager has multiple parsers (e.g. pip).
 
-2. In [package_parser.rs](src/info/deps/package_parser.rs): create a function that takes an input of type `&str` representing the content of the package manager's file, and returns a `usize` as its number of dependencies.
+2. In [package_manager.rs](src/info/deps/package_manager.rs): create a function that takes an input of type `&str` representing the content of the package manager's file, and returns a `usize` as its number of dependencies.
 
 ```rust
 pub fn cargo(contents: &str) -> Result<usize> {
