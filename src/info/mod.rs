@@ -54,152 +54,78 @@ impl std::fmt::Display for Info {
             && (!&self.git_username.is_empty() || !&self.git_version.is_empty())
         {
             let (git_info_field_str, git_info_field_len) = self.get_git_info_field();
-
             writeln!(f, "{}", git_info_field_str)?;
-
             let separator = "-".repeat(git_info_field_len);
-
             writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
 
         if !self.config.disabled_fields.project && !self.repo_name.is_empty() {
             let branches_tags_str = self.get_branches_and_tags_field();
-
-            writeln!(
-                f,
-                "{}{} {}",
-                &self.get_formatted_subtitle_label("Project"),
-                self.repo_name.color(self.text_colors.info),
-                branches_tags_str.color(self.text_colors.info)
-            )?;
+            let project_str = format!("{} {}", &self.repo_name, branches_tags_str);
+            self.write_colored_info_line("Project", &project_str, f)?;
         }
 
         if !self.config.disabled_fields.head {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("HEAD"),
-                &self.head_refs.to_string().color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("HEAD", &self.head_refs.to_string(), f)?;
         }
 
         if !self.config.disabled_fields.pending && !self.pending_changes.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Pending"),
-                &self.pending_changes.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Pending", &self.pending_changes, f)?;
         }
 
         if !self.config.disabled_fields.version && !self.version.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Version"),
-                &self.version.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Version", &self.version, f)?;
         }
 
         if !self.config.disabled_fields.created && !self.creation_date.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Created"),
-                &self.creation_date.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Created", &self.creation_date, f)?;
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
             let title = if self.languages.len() > 1 { "Languages" } else { "Language" };
-
             let languages_str = self.get_language_field(title);
-
-            writeln!(f, "{}{}", &self.get_formatted_subtitle_label(title), languages_str)?;
+            self.write_info_line(title, &languages_str, f)?;
         }
 
         if !self.config.disabled_fields.dependencies && !self.dependencies.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Dependencies"),
-                &self.dependencies.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Dependencies", &self.dependencies, f)?;
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
             let title = if self.authors.len() > 1 { "Authors" } else { "Author" };
-
             let author_str = self.get_author_field(title);
-
-            write!(f, "{}{}", &self.get_formatted_subtitle_label(title), author_str)?;
+            self.write_info_line(title, &author_str, f)?;
         }
 
         if !self.config.disabled_fields.last_change && !self.last_change.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Last change"),
-                &self.last_change.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Last change", &self.last_change, f)?;
         }
 
         if !self.config.disabled_fields.contributors
             && self.contributors > self.config.number_of_authors
         {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Contributors"),
-                &self.contributors.to_string().color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Contributors", &self.contributors.to_string(), f)?;
         }
 
         if !self.config.disabled_fields.repo && !self.repo_url.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Repo"),
-                &self.repo_url.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Repo", &self.repo_url, f)?;
         }
 
         if !self.config.disabled_fields.commits {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Commits"),
-                &self.number_of_commits.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Commits", &self.number_of_commits, f)?;
         }
 
         if !self.config.disabled_fields.lines_of_code {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Lines of code"),
-                &self.lines_of_code.to_string().color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
         }
 
         if !self.config.disabled_fields.size && !self.repo_size.is_empty() {
             let repo_size_str = self.get_repo_size_field();
-
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("Size"),
-                &repo_size_str.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("Size", &repo_size_str, f)?;
         }
 
         if !self.config.disabled_fields.license && !self.license.is_empty() {
-            writeln!(
-                f,
-                "{}{}",
-                &self.get_formatted_subtitle_label("License"),
-                &self.license.color(self.text_colors.info),
-            )?;
+            self.write_colored_info_line("License", &self.license, f)?;
         }
 
         if !self.config.no_color_palette {
@@ -281,9 +207,28 @@ impl Info {
         })
     }
 
+    fn write_colored_info_line(
+        &self,
+        label: &str,
+        info: &str,
+        f: &mut std::fmt::Formatter,
+    ) -> std::fmt::Result {
+        let info_colored = info.color(self.text_colors.info);
+        self.write_info_line(label, &info_colored, f)
+    }
+
+    fn write_info_line(
+        &self,
+        label: &str,
+        info: &str,
+        f: &mut std::fmt::Formatter,
+    ) -> std::fmt::Result {
+        writeln!(f, "{} {}", &self.get_formatted_subtitle_label(label), info)
+    }
+
     fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
         let formatted_label = format!(
-            "{}{} ",
+            "{}{}",
             label.color(self.text_colors.subtitle),
             ":".color(self.text_colors.colon)
         );
@@ -332,9 +277,9 @@ impl Info {
             let author_str = format!("{}", author).color(self.text_colors.info);
 
             if i == 0 {
-                author_field.push_str(&format!("{}\n", author_str));
+                author_field.push_str(&format!("{}", author_str));
             } else {
-                author_field.push_str(&format!("{:<width$}{}\n", "", author_str, width = pad));
+                author_field.push_str(&format!("\n{:<width$}{}", "", author_str, width = pad));
             }
         }
 
