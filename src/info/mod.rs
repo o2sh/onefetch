@@ -214,7 +214,7 @@ impl Info {
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
         let info_colored = info.color(self.text_colors.info);
-        self.write_info_line(label, &info_colored, f)
+        writeln!(f, "{} {}", &self.get_formatted_subtitle_label(label), info_colored)
     }
 
     fn write_info_line(
