@@ -23,6 +23,6 @@ Onefetchはコマンドラインフラグを使用してASCII/テキストフォ
 
 ‎現在、Onefetchは50種類以上のプログラミング言語をサポートしています。選択した言語がサポートされていない場合はIssueを追加してください。
 
-貢献は大歓迎です。詳しくは [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/main/CONTRIBUTING.md) をご覧ください。
+貢献は大歓迎です。詳しくは [CONTRIBUTING](../CONTRIBUTING.md) をご覧ください。
 
 ### 詳細: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\]

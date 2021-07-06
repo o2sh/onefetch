@@ -27,7 +27,7 @@ Onefetch را می توان از طریق پرچم های خط فرمان پیک
 
 Onefetch از بیش از 50 زبان برنامه نویسی مختلف پشتیبانی می کند. اگر زبان انتخابی شما پشتیبانی نمی شود: [مسئله ای](https://github.com/o2sh/onefetch/issues/new/choose) را باز کنید و تا آن زبان به برنامه اضافه شود.
 
-برای مشارکت بسیار خوش آمدید!  این  [فایل را](https://github.com/o2sh/onefetch/blob/main/CONTRIBUTING.md) برای اطلاعات بیشتر مطالعه کنید.
+برای مشارکت بسیار خوش آمدید!  این  [فایل را](../CONTRIBUTING.md) برای اطلاعات بیشتر مطالعه کنید.
 
 ### سایر لینک ها: \[[ویکی](https://github.com/o2sh/onefetch/wiki)\] \[[نصب کردن](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[شروع](https://github.com/o2sh/onefetch/wiki/getting-started)\]
 

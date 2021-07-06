@@ -27,6 +27,6 @@ Onefetch can be configured via command-line flags to display exactly what you wa
 
 As of now, onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added.
 
-Contributions are very welcome! See [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/main/CONTRIBUTING.md) for more info.
+Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
 ### More: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\]
