@@ -11,9 +11,6 @@
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
-<p align="center">[<a href="https://github.com/o2sh/onefetch/docs/README.ja.md">日本語</a>, 
-<a href="https://github.com/o2sh/onefetch/docs/README.fa.md">فارسی</a>]</p>
-
 <img src="../assets/screenshot-1.png" align="left" height="240px">
 
 Onefetch یک ابزار کامند لاینی نوشته شده با زبان راست است که اطلاعات پروژه و آمار کد را برای یک مخزن محلی گیت مستقیماً در ترمینال شما نمایش می دهد. این ابزار کاملا آفلاین است و دسترسی به اینترنت نیازی نیست.

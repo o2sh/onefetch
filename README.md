@@ -9,7 +9,8 @@
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
-<p align="center">[<a href="https://github.com/o2sh/onefetch/docs/README.ja.md">日本語</a>, 
+<p align="center">[<a href="https://github.com/o2sh/onefetch/docs/README.ja.md">日本語</a>
+|
 <a href="https://github.com/o2sh/onefetch/docs/README.fa.md">فارسی</a>]</p>
 
 <img src="assets/screenshot-1.png" align="right" height="240px">
