@@ -9,7 +9,9 @@
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
-<p align="center">[<a href="./docs/README.ja.md">日本語</a>]</p>
+<p align="center">
+  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a>
+</p>
 
 <img src="assets/screenshot-1.png" align="right" height="240px">
 
