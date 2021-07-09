@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a>
+  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a> | <a href="docs/README.cn.md">简体中文</a>
 </p>
 
 <img src="assets/screenshot-1.png" align="right" height="240px">
