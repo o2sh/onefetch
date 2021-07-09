@@ -11,7 +11,7 @@
 
 <img src="../assets/screenshot-1.png" align="right" height="240px">
 
-Onefetch 是一款由 `Rust` 编写的命令行 Git 信息工具，它将直接在终端中展示本地 Git 仓库的项目详情和代码统计等内容。工具完全离线可用（不需要网络连接）。<br><br>
+Onefetch 是一款由 `Rust` 编写的命令行 Git 信息工具，它将直接在终端中展示本地 Git 仓库的项目详情和代码统计等内容。工具完全离线可用（不需要网络连接。<br><br>
 
 默认情况下，仓库信息显示在主要语言 logo 的旁边，但是您还可以进一步配置 onefetch 以使用图像（在支持的终端上）、文本输入或什么都不展示。<br><br>
 
