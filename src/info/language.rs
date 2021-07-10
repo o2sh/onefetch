@@ -343,7 +343,11 @@ impl Language {
 
         let mut languages = tokei::Languages::new();
         let required_languages = get_all_language_types();
-        let tokei_config = Config { types: Some(required_languages), ..Config::default() };
+        let tokei_config = Config { 
+            types: Some(required_languages),
+            hidden: Some(true),
+            ..Config::default() 
+        };
 
         if !ignored_directories.is_empty() {
             let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
