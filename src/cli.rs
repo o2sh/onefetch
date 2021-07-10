@@ -258,12 +258,17 @@ impl Config {
                     .map_err(|e| e.to_string())
             })
         )
-		.arg(
-			Arg::with_name("show-email")
-			.short("E")
-			.long("show-email")
-			.help("show the email address of each author.")
-		)
+        .arg(
+            Arg::with_name("email")
+            .short("E")
+            .long("email")
+            .help("show the email address of each author.")
+        )
+        .arg(
+            Arg::with_name("hidden")
+            .long("hidden")
+            .help("Count hidden files and directories.")
+        )
         .arg(
             Arg::with_name("exclude")
             .short("e")
@@ -272,11 +277,6 @@ impl Config {
             .multiple(true)
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE."),
-        )
-        .arg(
-            Arg::with_name("hidden")
-            .long("hidden")
-            .help("Count hidden files and directories.")
         )
         .get_matches();
 
@@ -292,7 +292,7 @@ impl Config {
         let print_languages = matches.is_present("languages");
         let print_package_managers = matches.is_present("package-managers");
         let iso_time = matches.is_present("isotime");
-        let show_email = matches.is_present("show-email");
+        let show_email = matches.is_present("email");
         let include_hidden = matches.is_present("hidden");
 
         let output =
