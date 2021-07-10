@@ -37,6 +37,7 @@ pub struct Config {
     pub text_colors: Vec<String>,
     pub iso_time: bool,
     pub show_email: bool,
+    pub include_hidden: bool,
 }
 
 impl Config {
@@ -272,6 +273,11 @@ impl Config {
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE."),
         )
+        .arg(
+            Arg::with_name("hidden")
+            .long("hidden")
+            .help("Count hidden files and directories.")
+        )
         .get_matches();
 
         let true_color = match matches.value_of("true-color") {
@@ -287,6 +293,7 @@ impl Config {
         let print_package_managers = matches.is_present("package-managers");
         let iso_time = matches.is_present("isotime");
         let show_email = matches.is_present("show-email");
+        let include_hidden = matches.is_present("hidden");
 
         let output =
             matches.value_of("output").map(SerializationFormat::from_str).transpose().unwrap();
@@ -395,6 +402,7 @@ impl Config {
             text_colors,
             iso_time,
             show_email,
+            include_hidden,
         })
     }
 }
