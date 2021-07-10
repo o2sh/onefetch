@@ -281,7 +281,7 @@ impl Language {
     pub fn get_language_statistics(
         dir: &str,
         ignored_directories: &[String],
-        include_hidden: bool
+        include_hidden: bool,
     ) -> Result<(Vec<(Language, f64)>, usize)> {
         let stats = Language::get_statistics(&dir, ignored_directories, include_hidden);
         let language_distribution = Language::get_language_distribution(&stats)
@@ -338,18 +338,17 @@ impl Language {
             .fold(0, |sum, val| sum + val.code)
     }
 
-
     fn get_statistics(
-        dir: &str, 
-        ignored_directories: &[String], 
-        include_hidden: bool
+        dir: &str,
+        ignored_directories: &[String],
+        include_hidden: bool,
     ) -> tokei::Languages {
         let mut languages = tokei::Languages::new();
         let required_languages = get_all_language_types();
-        let tokei_config = tokei::Config { 
+        let tokei_config = tokei::Config {
             types: Some(required_languages),
             hidden: Some(include_hidden),
-            ..tokei::Config::default() 
+            ..tokei::Config::default()
         };
         let ignored: Vec<&str> = ignored_directories.iter().map(AsRef::as_ref).collect();
         languages.get_statistics(&[&dir], &ignored, &tokei_config);
