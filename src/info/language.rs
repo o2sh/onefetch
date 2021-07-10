@@ -1,6 +1,5 @@
 use crate::error::*;
 use colored::Color;
-use regex::Regex;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::env;
@@ -338,6 +337,7 @@ impl Language {
             .iter()
             .fold(0, |sum, val| sum + val.code)
     }
+
 
     fn get_statistics(
         dir: &str, 
