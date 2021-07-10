@@ -169,7 +169,7 @@ impl Info {
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
         let (languages, lines_of_code) =
-            Language::get_language_statistics(&workdir, &config.excluded)?;
+            Language::get_language_statistics(&workdir, &config.excluded, config.include_hidden)?;
         let dominant_language = Language::get_dominant_language(&languages);
         let ascii_colors = get_ascii_colors(
             &config.ascii_language,
