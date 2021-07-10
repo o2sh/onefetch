@@ -276,7 +276,7 @@ impl Config {
         .arg(
             Arg::with_name("hidden")
             .long("hidden")
-            .help("Count hidden files and directories")
+            .help("Count hidden files and directories.")
         )
         .get_matches();
 
