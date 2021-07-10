@@ -344,34 +344,15 @@ impl Language {
         ignored_directories: &[String], 
         include_hidden: bool
     ) -> tokei::Languages {
-        use tokei::Config;
-
         let mut languages = tokei::Languages::new();
         let required_languages = get_all_language_types();
-        let tokei_config = Config { 
+        let tokei_config = tokei::Config { 
             types: Some(required_languages),
             hidden: Some(include_hidden),
-            ..Config::default() 
+            ..tokei::Config::default() 
         };
-
-        if !ignored_directories.is_empty() {
-            let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
-            let mut v = Vec::with_capacity(ignored_directories.len());
-            for ignored in ignored_directories {
-                if re.is_match(&ignored) {
-                    let p = if ignored.starts_with('/') { "**" } else { "**/" };
-                    v.push(format!("{}{}", p, ignored));
-                } else {
-                    v.push(String::from(ignored));
-                }
-            }
-            let ignored_directories_for_ab: Vec<&str> = v.iter().map(|x| &**x).collect();
-            languages.get_statistics(&[&dir], &ignored_directories_for_ab, &tokei_config);
-        } else {
-            let ignored_directories_ref: Vec<&str> =
-                ignored_directories.iter().map(|s| &**s).collect();
-            languages.get_statistics(&[&dir], &ignored_directories_ref, &tokei_config);
-        }
+        let ignored: Vec<&str> = ignored_directories.iter().map(AsRef::as_ref).collect();
+        languages.get_statistics(&[&dir], &ignored, &tokei_config);
 
         languages
     }
