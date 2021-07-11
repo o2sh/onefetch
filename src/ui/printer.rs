@@ -1,6 +1,6 @@
-use crate::error::*;
 use crate::info::Info;
 use crate::ui::ascii_art::AsciiArt;
+use anyhow::{Context, Result};
 use colored::Color;
 use std::io::Write;
 use strum::{EnumIter, EnumString, IntoStaticStr};
@@ -28,10 +28,10 @@ impl<W: Write> Printer<W> {
         match &self.info.config.output {
             Some(format) => match format {
                 SerializationFormat::Json => {
-                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info).unwrap())?
+                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?
                 }
                 SerializationFormat::Yaml => {
-                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info).unwrap())?
+                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?
                 }
             },
             None => {
@@ -56,7 +56,7 @@ impl<W: Write> Printer<W> {
                                 custom_image,
                                 self.info.config.image_color_resolution,
                             )
-                            .chain_err(|| "Error while drawing image")?,
+                            .with_context(|| "Error while drawing image")?,
                     );
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {

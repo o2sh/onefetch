@@ -1,10 +1,10 @@
-use crate::error::*;
 use crate::info::deps::package_manager::PackageManager;
 use crate::info::info_field::{InfoField, InfoFieldOff};
 use crate::info::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
+use anyhow::{bail, Context, Result};
 use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
 use image::DynamicImage;
 use regex::Regex;
@@ -295,8 +295,7 @@ impl Config {
         let show_email = matches.is_present("email");
         let include_hidden = matches.is_present("hidden");
 
-        let output =
-            matches.value_of("output").map(SerializationFormat::from_str).transpose().unwrap();
+        let output = matches.value_of("output").map(SerializationFormat::from_str).transpose()?;
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -321,7 +320,7 @@ impl Config {
         };
 
         let image = if let Some(image_path) = matches.value_of("image") {
-            Some(image::open(image_path).chain_err(|| "Could not load the specified image")?)
+            Some(image::open(image_path).with_context(|| "Could not load the specified image")?)
         } else {
             None
         };
@@ -337,11 +336,11 @@ impl Config {
         };
 
         if image.is_some() && image_backend.is_none() {
-            return Err("Could not detect a supported image backend".into());
+            bail!("Could not detect a supported image backend");
         }
 
         let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
-            usize::from_str(value).unwrap()
+            usize::from_str(value)?
         } else {
             16
         };

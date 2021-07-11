@@ -1,4 +1,4 @@
-use crate::error::*;
+use anyhow::{Context, Result};
 use colored::Color;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -285,7 +285,7 @@ impl Language {
     ) -> Result<(Vec<(Language, f64)>, usize)> {
         let stats = Language::get_statistics(&dir, ignored_directories, include_hidden);
         let language_distribution = Language::get_language_distribution(&stats)
-            .ok_or("Could not find any source code in this directory")?;
+            .with_context(|| "Could not find any source code in this directory")?;
         let mut language_distribution_vec: Vec<(_, _)> =
             language_distribution.into_iter().collect();
         language_distribution_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());

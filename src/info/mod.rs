@@ -1,7 +1,7 @@
 use crate::cli::{self, Config};
-use crate::error::*;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_color::TextColor;
+use anyhow::Result;
 use author::Author;
 use colored::{Color, ColoredString, Colorize};
 use deps::DependencyDetector;
