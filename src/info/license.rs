@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{anyhow, Result};
 use askalono::{Store, TextData};
 use std::{ffi::OsStr, fs};
 
@@ -16,7 +16,7 @@ impl Detector {
     pub fn new() -> Result<Self> {
         match Store::from_cache(CACHE_DATA) {
             Ok(store) => Ok(Self { store }),
-            Err(_) => bail!("Could not initialize the license detector"),
+            Err(_) => Err(anyhow!("Could not initialize the license detector")),
         }
     }
 
