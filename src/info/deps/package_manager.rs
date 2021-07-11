@@ -1,6 +1,9 @@
 use anyhow::Result;
+use regex::Regex;
 use std::collections::HashMap;
-use {regex::Regex, strum::EnumIter, toml::Value, yaml_rust::YamlLoader};
+use strum::EnumIter;
+use toml::Value;
+use yaml_rust::YamlLoader;
 
 macro_rules! define_package_managers {
     ($( { $name:ident, $display:literal, [$(($file:literal, $parser:expr))+] } ),+ ,) => {

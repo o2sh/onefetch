@@ -4,7 +4,7 @@ use crate::info::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
-use anyhow::{bail, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
 use image::DynamicImage;
 use regex::Regex;
@@ -216,10 +216,9 @@ impl Config {
             .value_name("REGEX")
             .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
             .validator(|p| {
-                if Regex::from_str(&p).is_err() {
-                    Err(String::from("must be a valid regex pattern"))
-                } else {
-                    Ok(())
+                match Regex::from_str(&p) {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err(String::from("must be a valid regex pattern"))
                 }
             }),
         )
@@ -252,10 +251,10 @@ impl Config {
             .default_value("3")
             .help("NUM of authors to be shown.")
             .validator(|t| {
-                t.parse::<u32>()
-                    .map_err(|_t| "must be a number")
-                    .map(|_t|())
-                    .map_err(|e| e.to_string())
+                match t.parse::<u32>() {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err(String::from("must be a number"))
+                }
             })
         )
         .arg(
@@ -345,7 +344,11 @@ impl Config {
             16
         };
 
-        let repo_path = String::from(matches.value_of("input").unwrap());
+        let repo_path = String::from(
+            matches
+                .value_of("input")
+                .ok_or_else(|| anyhow!("Failed to parse the directory to work in"))?,
+        );
 
         let ascii_input = matches.value_of("ascii-input").map(String::from);
 
@@ -365,11 +368,11 @@ impl Config {
             Vec::new()
         };
 
-        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
+        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
 
         let mut ignored_directories: Vec<String> = Vec::new();
         if let Some(user_ignored_directories) = matches.values_of("exclude") {
-            let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
+            let re = Regex::new(r"((.*)+/)+(.*)")?;
             for user_ignored_directory in user_ignored_directories {
                 if re.is_match(&user_ignored_directory) {
                     let prefix = if user_ignored_directory.starts_with('/') { "**" } else { "**/" };

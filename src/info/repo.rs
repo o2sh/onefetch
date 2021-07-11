@@ -1,6 +1,6 @@
 use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
-use anyhow::{bail, Context, Result};
+use anyhow::{anyhow, Context, Result};
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
 use chrono_humanize::HumanTime;
@@ -157,7 +157,7 @@ impl<'a> Repo<'a> {
         if let Some(workdir) = self.work_dir()?.to_str() {
             Ok(workdir.to_string())
         } else {
-            bail!("invalid workdir")
+            Err(anyhow!("invalid workdir"))
         }
     }
 
@@ -256,13 +256,16 @@ impl<'a> Repo<'a> {
         let mut repository_name = String::new();
         let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url")?;
 
-        for entry in &config.entries(None).unwrap() {
+        for entry in &config.entries(None)? {
             let entry = entry?;
-            let entry_name = entry.name().unwrap();
+            let entry_name = entry.name().ok_or_else(|| anyhow!("Could not read entry name"))?;
             if entry_name == "remote.origin.url" {
-                remote_origin_url = Some(entry.value().unwrap().to_string());
+                remote_origin_url = Some(
+                    entry.value().ok_or_else(|| anyhow!("Could not read entry value"))?.to_string(),
+                );
             } else if remote_regex.is_match(entry_name) {
-                remote_url_fallback = entry.value().unwrap().to_string()
+                remote_url_fallback =
+                    entry.value().ok_or_else(|| anyhow!("Could not read entry value"))?.to_string()
             }
         }
 
@@ -304,7 +307,7 @@ impl<'a> Repo<'a> {
                 .collect::<Vec<String>>();
             Ok(HeadRefs::new(head_oid, refs_info))
         } else {
-            bail!("Could not read HEAD")
+            Err(anyhow!("Could not read HEAD"))
         }
     }
     fn work_dir(&self) -> Result<&Path> {
