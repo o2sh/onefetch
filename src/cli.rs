@@ -27,7 +27,7 @@ pub struct Config {
     pub no_merges: bool,
     pub no_color_palette: bool,
     pub number_of_authors: usize,
-    pub excluded: Vec<String>,
+    pub ignored_directories: Vec<String>,
     pub bot_regex_pattern: Option<Regex>,
     pub print_languages: bool,
     pub print_package_managers: bool,
@@ -368,10 +368,17 @@ impl Config {
 
         let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
 
-        let excluded = if let Some(user_ignored) = matches.values_of("exclude") {
-            user_ignored.map(String::from).collect()
-        } else {
-            Vec::new()
+        let mut ignored_directories: Vec<String> = Vec::new();
+        if let Some(user_ignored_directories) = matches.values_of("exclude") {
+            let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
+            for user_ignored_directory in user_ignored_directories {
+                if re.is_match(&user_ignored_directory) {
+                    let prefix = if user_ignored_directory.starts_with('/') { "**" } else { "**/" };
+                    ignored_directories.push(format!("{}{}", prefix, user_ignored_directory));
+                } else {
+                    ignored_directories.push(String::from(user_ignored_directory));
+                }
+            }
         };
 
         let bot_regex_pattern = matches.is_present("no-bots").then(|| {
@@ -379,6 +386,7 @@ impl Config {
                 .value_of("no-bots")
                 .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| Regex::from_str(s).unwrap())
         });
+
         Ok(Config {
             repo_path,
             ascii_input,
@@ -392,7 +400,7 @@ impl Config {
             no_merges,
             no_color_palette,
             number_of_authors,
-            excluded,
+            ignored_directories,
             bot_regex_pattern,
             print_languages,
             print_package_managers,

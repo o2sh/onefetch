@@ -352,7 +352,6 @@ impl Language {
         };
         let ignored: Vec<&str> = ignored_directories.iter().map(AsRef::as_ref).collect();
         languages.get_statistics(&[&dir], &ignored, &tokei_config);
-
         languages
     }
 }
