@@ -157,7 +157,7 @@ impl<'a> Repo<'a> {
         if let Some(workdir) = self.work_dir()?.to_str() {
             Ok(workdir.to_string())
         } else {
-            Err(anyhow!("invalid workdir"))
+            bail!("invalid workdir")
         }
     }
 
