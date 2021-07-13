@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use std::{ffi::OsStr, fs};
 

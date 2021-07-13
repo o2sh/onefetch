@@ -1,6 +1,6 @@
 use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
 use chrono_humanize::HumanTime;
