@@ -1,6 +1,6 @@
 use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{Context, Result};
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
 use chrono_humanize::HumanTime;
@@ -154,11 +154,8 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_work_dir(&self) -> Result<String> {
-        if let Some(workdir) = self.work_dir()?.to_str() {
-            Ok(workdir.to_string())
-        } else {
-            bail!("invalid workdir")
-        }
+        let workdir = self.work_dir()?.to_str().with_context(|| "invalid workdir")?;
+        Ok(workdir.to_string())
     }
 
     pub fn get_number_of_tags(&self) -> Result<usize> {
@@ -258,14 +255,16 @@ impl<'a> Repo<'a> {
 
         for entry in &config.entries(None)? {
             let entry = entry?;
-            let entry_name = entry.name().ok_or_else(|| anyhow!("Could not read entry name"))?;
+            let entry_name = entry.name().with_context(|| "Could not read entry name")?;
             if entry_name == "remote.origin.url" {
                 remote_origin_url = Some(
-                    entry.value().ok_or_else(|| anyhow!("Could not read entry value"))?.to_string(),
+                    entry.value().with_context(|| "Could not read remote origin url")?.to_string(),
                 );
             } else if remote_regex.is_match(entry_name) {
-                remote_url_fallback =
-                    entry.value().ok_or_else(|| anyhow!("Could not read entry value"))?.to_string()
+                remote_url_fallback = entry
+                    .value()
+                    .with_context(|| "Could not read remote origin url fallback")?
+                    .to_string()
             }
         }
 
@@ -292,24 +291,22 @@ impl<'a> Repo<'a> {
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
         let head = self.repo.head()?;
-        if let Some(head_oid) = head.target() {
-            let refs = self.repo.references()?;
-            let refs_info = refs
-                .filter_map(|reference| match reference {
-                    Ok(reference) => match (reference.target(), reference.shorthand()) {
-                        (Some(oid), Some(shorthand)) if oid == head_oid && !reference.is_tag() => {
-                            Some(String::from(shorthand))
-                        }
-                        _ => None,
-                    },
-                    Err(_) => None,
-                })
-                .collect::<Vec<String>>();
-            Ok(HeadRefs::new(head_oid, refs_info))
-        } else {
-            bail!("Could not read HEAD")
-        }
+        let head_oid = head.target().with_context(|| "Could not read HEAD")?;
+        let refs = self.repo.references()?;
+        let refs_info = refs
+            .filter_map(|reference| match reference {
+                Ok(reference) => match (reference.target(), reference.shorthand()) {
+                    (Some(oid), Some(shorthand)) if oid == head_oid && !reference.is_tag() => {
+                        Some(String::from(shorthand))
+                    }
+                    _ => None,
+                },
+                Err(_) => None,
+            })
+            .collect::<Vec<String>>();
+        Ok(HeadRefs::new(head_oid, refs_info))
     }
+
     fn work_dir(&self) -> Result<&Path> {
         self.repo.workdir().with_context(|| "unable to query workdir")
     }

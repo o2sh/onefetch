@@ -4,7 +4,7 @@ use crate::info::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{bail, Context, Result};
 use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
 use image::DynamicImage;
 use regex::Regex;
@@ -285,6 +285,7 @@ impl Config {
             Some("auto") => is_truecolor_terminal(),
             _ => unreachable!(),
         };
+
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merges");
         let no_color_palette = matches.is_present("no-palette");
@@ -315,7 +316,7 @@ impl Config {
                     false
                 }
             }
-            _ => unreachable!("other values for --hide-logo are not allowed"),
+            _ => unreachable!(),
         };
 
         let image = if let Some(image_path) = matches.value_of("image") {
@@ -344,11 +345,10 @@ impl Config {
             16
         };
 
-        let repo_path = String::from(
-            matches
-                .value_of("input")
-                .ok_or_else(|| anyhow!("Failed to parse the directory to work in"))?,
-        );
+        let repo_path = matches
+            .value_of("input")
+            .map(String::from)
+            .with_context(|| "Failed to parse input directory")?;
 
         let ascii_input = matches.value_of("ascii-input").map(String::from);
 
