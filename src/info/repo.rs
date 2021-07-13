@@ -307,7 +307,7 @@ impl<'a> Repo<'a> {
                 .collect::<Vec<String>>();
             Ok(HeadRefs::new(head_oid, refs_info))
         } else {
-            Err(anyhow!("Could not read HEAD"))
+            bail!("Could not read HEAD")
         }
     }
     fn work_dir(&self) -> Result<&Path> {
