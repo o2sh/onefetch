@@ -11,8 +11,5 @@ insert_final_newline = true
 [*.{yml,yaml,md}]
 indent_size = 2
 
-[*.ascii]
-trim_trailing_whitespace = false
-
 [{Makefile,.SRCINFO}]
 indent_style = tab
