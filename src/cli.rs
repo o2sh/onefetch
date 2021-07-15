@@ -366,18 +366,12 @@ impl Config {
 
         let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
 
-        let mut ignored_directories: Vec<String> = Vec::new();
-        if let Some(user_ignored_directories) = matches.values_of("exclude") {
-            let re = Regex::new(r"((.*)+/)+(.*)")?;
-            for user_ignored_directory in user_ignored_directories {
-                if re.is_match(&user_ignored_directory) {
-                    let prefix = if user_ignored_directory.starts_with('/') { "**" } else { "**/" };
-                    ignored_directories.push(format!("{}{}", prefix, user_ignored_directory));
-                } else {
-                    ignored_directories.push(String::from(user_ignored_directory));
-                }
-            }
-        };
+        let ignored_directories =
+            if let Some(user_ignored_directories) = matches.values_of("exclude") {
+                user_ignored_directories.map(String::from).collect()
+            } else {
+                Vec::new()
+            };
 
         let bot_regex_pattern = matches.is_present("no-bots").then(|| {
             matches
