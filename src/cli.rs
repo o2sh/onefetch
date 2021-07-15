@@ -4,7 +4,7 @@ use crate::info::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result};
 use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
 use image::DynamicImage;
 use regex::Regex;
@@ -334,10 +334,6 @@ impl Config {
         } else {
             None
         };
-
-        if image.is_some() && image_backend.is_none() {
-            bail!("Could not detect a supported image backend");
-        }
 
         let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
             usize::from_str(value)?
