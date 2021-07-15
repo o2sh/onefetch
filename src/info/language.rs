@@ -208,6 +208,7 @@ define_languages! {
     { PowerShell, "powershell.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:49, g:108, b:185}, Color::TrueColor{ r:255, g:255, b:255} ] ) },
     { Processing, "processing.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:80, g:80 ,b:80}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
     { Prolog, "prolog.ascii", define_colors!( [Color::White] ) },
+    { Protobuf, "protobuf.ascii", define_colors!( [Color::White, Color::Red, Color::Blue, Color::Green, Color::Yellow] )},
     { PureScript, "purescript.ascii", define_colors!( [Color::White] ) },
     { Python, "python.ascii", define_colors!( [Color::Blue, Color::Yellow] : [Color::TrueColor{ r:47, g:105 ,b:162}, Color::TrueColor{ r:255, g:217 ,b:64} ] ) },
     { Qml, "qml.ascii", define_colors!( [Color::Green, Color::White, Color::Green] : [Color::TrueColor{ r:128, g:195 ,b:66}, Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:77, g:117 ,b:40} ] ) },
