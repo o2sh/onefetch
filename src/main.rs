@@ -2,18 +2,17 @@
 #![recursion_limit = "1024"]
 #![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
 
+use anyhow::{bail, Result};
 use cli::Config;
-use error::*;
 use info::{repo, Info};
-use std::{io, process};
+use std::io;
 use ui::printer::Printer;
 
 mod cli;
-mod error;
 mod info;
 mod ui;
 
-fn run() -> Result<()> {
+fn main() -> Result<()> {
     #[cfg(windows)]
     let _ = ansi_term::enable_ansi_support();
 
@@ -28,7 +27,7 @@ fn run() -> Result<()> {
     }
 
     if !repo::is_valid(&config.repo_path)? {
-        return Err("please run onefetch inside of a non-bare git repository".into());
+        bail!("please run onefetch inside of a non-bare git repository");
     }
 
     let info = Info::new(config)?;
@@ -38,18 +37,4 @@ fn run() -> Result<()> {
     printer.print()?;
 
     Ok(())
-}
-
-fn main() {
-    let result = run();
-    match result {
-        Ok(_) => {
-            process::exit(0);
-        }
-        Err(error) => {
-            let stderr = io::stderr();
-            default_error_handler(&error, &mut stderr.lock());
-            process::exit(1);
-        }
-    }
 }

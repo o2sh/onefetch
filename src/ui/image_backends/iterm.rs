@@ -1,9 +1,7 @@
-use {
-    crate::error::*,
-    image::{imageops::FilterType, DynamicImage, GenericImageView},
-    libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ},
-    std::env,
-};
+use anyhow::Result;
+use image::{imageops::FilterType, DynamicImage, GenericImageView};
+use libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ};
+use std::env;
 
 pub struct ITermBackend {}
 

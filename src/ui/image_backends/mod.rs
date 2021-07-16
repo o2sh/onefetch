@@ -1,4 +1,4 @@
-use crate::error::*;
+use anyhow::Result;
 use image::DynamicImage;
 
 #[cfg(not(windows))]

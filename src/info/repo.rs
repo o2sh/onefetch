@@ -1,6 +1,6 @@
-use crate::error::*;
 use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
+use anyhow::{Context, Result};
 use byte_unit::Byte;
 use chrono::{FixedOffset, TimeZone};
 use chrono_humanize::HumanTime;
@@ -154,11 +154,8 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_work_dir(&self) -> Result<String> {
-        if let Some(workdir) = self.work_dir()?.to_str() {
-            Ok(workdir.to_string())
-        } else {
-            Err("invalid workdir".into())
-        }
+        let workdir = self.work_dir()?.to_str().with_context(|| "invalid workdir")?;
+        Ok(workdir.to_string())
     }
 
     pub fn get_number_of_tags(&self) -> Result<usize> {
@@ -254,15 +251,20 @@ impl<'a> Repo<'a> {
         let mut remote_origin_url: Option<String> = None;
         let mut remote_url_fallback = String::new();
         let mut repository_name = String::new();
-        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url").unwrap();
+        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url")?;
 
-        for entry in &config.entries(None).unwrap() {
+        for entry in &config.entries(None)? {
             let entry = entry?;
-            let entry_name = entry.name().unwrap();
+            let entry_name = entry.name().with_context(|| "Could not read entry name")?;
             if entry_name == "remote.origin.url" {
-                remote_origin_url = Some(entry.value().unwrap().to_string());
+                remote_origin_url = Some(
+                    entry.value().with_context(|| "Could not read remote origin url")?.to_string(),
+                );
             } else if remote_regex.is_match(entry_name) {
-                remote_url_fallback = entry.value().unwrap().to_string()
+                remote_url_fallback = entry
+                    .value()
+                    .with_context(|| "Could not read remote origin url fallback")?
+                    .to_string()
             }
         }
 
@@ -289,7 +291,7 @@ impl<'a> Repo<'a> {
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
         let head = self.repo.head()?;
-        let head_oid = head.target().ok_or("")?;
+        let head_oid = head.target().with_context(|| "Could not read HEAD")?;
         let refs = self.repo.references()?;
         let refs_info = refs
             .filter_map(|reference| match reference {
@@ -304,8 +306,9 @@ impl<'a> Repo<'a> {
             .collect::<Vec<String>>();
         Ok(HeadRefs::new(head_oid, refs_info))
     }
+
     fn work_dir(&self) -> Result<&Path> {
-        self.repo.workdir().ok_or_else(|| "unable to query workdir".into())
+        self.repo.workdir().with_context(|| "unable to query workdir")
     }
 }
 

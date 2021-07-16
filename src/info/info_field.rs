@@ -1,4 +1,4 @@
-use crate::error::*;
+use anyhow::Result;
 use std::str::FromStr;
 use strum::{EnumCount, EnumIter, EnumString, IntoStaticStr};
 

@@ -1,10 +1,10 @@
-use crate::error::*;
 use crate::info::deps::package_manager::PackageManager;
 use crate::info::info_field::{InfoField, InfoFieldOff};
 use crate::info::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
+use anyhow::{Context, Result};
 use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
 use image::DynamicImage;
 use regex::Regex;
@@ -216,10 +216,9 @@ impl Config {
             .value_name("REGEX")
             .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
             .validator(|p| {
-                if Regex::from_str(&p).is_err() {
-                    Err(String::from("must be a valid regex pattern"))
-                } else {
-                    Ok(())
+                match Regex::from_str(&p) {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err(String::from("must be a valid regex pattern"))
                 }
             }),
         )
@@ -252,10 +251,10 @@ impl Config {
             .default_value("3")
             .help("NUM of authors to be shown.")
             .validator(|t| {
-                t.parse::<u32>()
-                    .map_err(|_t| "must be a number")
-                    .map(|_t|())
-                    .map_err(|e| e.to_string())
+                match t.parse::<u32>() {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err(String::from("must be a number"))
+                }
             })
         )
         .arg(
@@ -286,6 +285,7 @@ impl Config {
             Some("auto") => is_truecolor_terminal(),
             _ => unreachable!(),
         };
+
         let no_bold = matches.is_present("no-bold");
         let no_merges = matches.is_present("no-merges");
         let no_color_palette = matches.is_present("no-palette");
@@ -295,8 +295,7 @@ impl Config {
         let show_email = matches.is_present("email");
         let include_hidden = matches.is_present("hidden");
 
-        let output =
-            matches.value_of("output").map(SerializationFormat::from_str).transpose().unwrap();
+        let output = matches.value_of("output").map(SerializationFormat::from_str).transpose()?;
 
         let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
         {
@@ -317,11 +316,11 @@ impl Config {
                     false
                 }
             }
-            _ => unreachable!("other values for --hide-logo are not allowed"),
+            _ => unreachable!(),
         };
 
         let image = if let Some(image_path) = matches.value_of("image") {
-            Some(image::open(image_path).chain_err(|| "Could not load the specified image")?)
+            Some(image::open(image_path).with_context(|| "Could not load the specified image")?)
         } else {
             None
         };
@@ -336,17 +335,16 @@ impl Config {
             None
         };
 
-        if image.is_some() && image_backend.is_none() {
-            return Err("Could not detect a supported image backend".into());
-        }
-
         let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
-            usize::from_str(value).unwrap()
+            usize::from_str(value)?
         } else {
             16
         };
 
-        let repo_path = String::from(matches.value_of("input").unwrap());
+        let repo_path = matches
+            .value_of("input")
+            .map(String::from)
+            .with_context(|| "Failed to parse input directory")?;
 
         let ascii_input = matches.value_of("ascii-input").map(String::from);
 
@@ -366,20 +364,14 @@ impl Config {
             Vec::new()
         };
 
-        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse().unwrap();
+        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
 
-        let mut ignored_directories: Vec<String> = Vec::new();
-        if let Some(user_ignored_directories) = matches.values_of("exclude") {
-            let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
-            for user_ignored_directory in user_ignored_directories {
-                if re.is_match(&user_ignored_directory) {
-                    let prefix = if user_ignored_directory.starts_with('/') { "**" } else { "**/" };
-                    ignored_directories.push(format!("{}{}", prefix, user_ignored_directory));
-                } else {
-                    ignored_directories.push(String::from(user_ignored_directory));
-                }
-            }
-        };
+        let ignored_directories =
+            if let Some(user_ignored_directories) = matches.values_of("exclude") {
+                user_ignored_directories.map(String::from).collect()
+            } else {
+                Vec::new()
+            };
 
         let bot_regex_pattern = matches.is_present("no-bots").then(|| {
             matches

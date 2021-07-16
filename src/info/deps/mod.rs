@@ -1,8 +1,6 @@
-use {
-    crate::error::*,
-    std::collections::HashMap,
-    std::{ffi::OsStr, fs},
-};
+use anyhow::Result;
+use std::collections::HashMap;
+use std::{ffi::OsStr, fs};
 
 pub mod package_manager;
 
@@ -20,8 +18,7 @@ impl DependencyDetector {
     }
 
     pub fn get_dependencies(&self, dir: &str) -> Result<String> {
-        let deps = fs::read_dir(dir)
-            .chain_err(|| "Could not read directory")?
+        let deps = fs::read_dir(dir)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
             .filter(|entry| {
@@ -35,10 +32,10 @@ impl DependencyDetector {
             .map(|entry| {
                 let (parser, found_package_manager) =
                     &self.package_managers[entry.file_name().unwrap().to_str().unwrap()];
-                let contents = fs::read_to_string(entry)?;
-                let number_of_deps = parser(&contents)?;
+                let contents = fs::read_to_string(entry).unwrap_or_default();
+                let number_of_deps = parser(&contents).unwrap();
                 match number_of_deps {
-                    0 => Err("".into()),
+                    0 => Err(""),
                     _ => Ok(format!("{} ({})", number_of_deps, found_package_manager)),
                 }
             })

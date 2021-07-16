@@ -1,8 +1,6 @@
-use {
-    crate::error::*,
-    askalono::{Store, TextData},
-    std::{ffi::OsStr, fs},
-};
+use anyhow::{bail, Result};
+use askalono::{Store, TextData};
+use std::{ffi::OsStr, fs};
 
 const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
 
@@ -16,9 +14,10 @@ pub struct Detector {
 
 impl Detector {
     pub fn new() -> Result<Self> {
-        Store::from_cache(CACHE_DATA)
-            .map(|store| Self { store })
-            .map_err(|_| "Could not initialize the license detector".into())
+        match Store::from_cache(CACHE_DATA) {
+            Ok(store) => Ok(Self { store }),
+            Err(_) => bail!("Could not initialize the license detector"),
+        }
     }
 
     pub fn get_license(&self, dir: &str) -> Result<String> {
@@ -26,8 +25,7 @@ impl Detector {
             LICENSE_FILES.iter().any(|&name| file_name.as_ref().starts_with(name))
         }
 
-        let mut output = fs::read_dir(dir)
-            .chain_err(|| "Could not read directory")?
+        let mut output = fs::read_dir(dir)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
             .filter(|entry| {

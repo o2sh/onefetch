@@ -1,17 +1,15 @@
-use {
-    crate::error::*,
-    color_quant::NeuQuant,
-    image::{
-        imageops::{colorops, FilterType},
-        DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
-    },
-    libc::{
-        c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
-        POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
-    },
-    std::io::{stdout, Write},
-    std::time::Instant,
+use anyhow::{Context, Result};
+use color_quant::NeuQuant;
+use image::{
+    imageops::{colorops, FilterType},
+    DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
 };
+use libc::{
+    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
+    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
+};
+use std::io::{stdout, Write};
+use std::time::Instant;
 
 pub struct SixelBackend {}
 
@@ -95,14 +93,9 @@ impl super::ImageBackend for SixelBackend {
         let flat_samples = rgba_image.as_flat_samples();
         let mut rgba_image = rgba_image.clone();
         // reduce the amount of colors using dithering
-        colorops::dither(
-            &mut rgba_image,
-            &NeuQuant::new(
-                10,
-                colors,
-                flat_samples.image_slice().ok_or("Error while slicing the image")?,
-            ),
-        );
+        let pixels = flat_samples.image_slice().with_context(|| "Error while slicing the image")?;
+        colorops::dither(&mut rgba_image, &NeuQuant::new(10, colors, pixels));
+
         let rgb_image = ImageBuffer::from_fn(rgba_image.width(), rgba_image.height(), |x, y| {
             let rgba_pixel = rgba_image.get_pixel(x, y);
             let mut rgb_pixel = rgba_pixel.to_rgb();

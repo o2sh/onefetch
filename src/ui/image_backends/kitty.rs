@@ -1,13 +1,11 @@
-use {
-    crate::error::*,
-    image::{imageops::FilterType, DynamicImage, GenericImageView},
-    libc::{
-        c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
-        POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
-    },
-    std::io::{stdout, Write},
-    std::time::Instant,
+use anyhow::Result;
+use image::{imageops::FilterType, DynamicImage, GenericImageView};
+use libc::{
+    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
+    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
 };
+use std::io::{stdout, Write};
+use std::time::Instant;
 
 pub struct KittyBackend {}
 
