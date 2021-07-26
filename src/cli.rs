@@ -53,7 +53,6 @@ impl Config {
         .about(crate_description!())
         .setting(AppSettings::ColoredHelp)
         .setting(AppSettings::DeriveDisplayOrder)
-        .setting(AppSettings::UnifiedHelpMessage)
         .setting(AppSettings::HidePossibleValuesInHelp)
         .arg(
             Arg::with_name("input")

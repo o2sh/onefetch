@@ -26,7 +26,7 @@ byte-unit = "4.0.12"
 bytecount = "0.6.2"
 chrono = "0.4"
 chrono-humanize = "0.2.1"
-clap = "2.33.3"
+clap = {version = "2.33.3", features = ["wrap_help"]}
 color_quant = "1.1.0"
 colored = "2.0.0"
 git2 = {version = "0.13.20", default-features = false}
