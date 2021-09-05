@@ -1,3 +1,4 @@
+
 <h3 align="center"><img src="../assets/onefetch.svg" height="130px"></h3>
 
 <h5 align="center">Терминальная утилита для выведения информации о Git
@@ -37,7 +38,7 @@ Onefetch конфигурирутеся через флаги, позволяю�
 нужный вам язык не поддерживается, дайте нам об этом знать, мы добавим
 его.
 
-Контрибуции всегда приветствуются! Прочтите [CONTRIBUTING](CONTRIBUTING.md),
+Контрибуции всегда приветствуются! Прочтите [CONTRIBUTING](../CONTRIBUTING.md),
 чтобы узнать больше.
 
-### Больше информации: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Установка](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Руководство для новичков](https://github.com/o2sh/onefetch/wiki/getting-started)\]
+### Больше информации: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Установка](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Основы](https://github.com/o2sh/onefetch/wiki/getting-started)\]
