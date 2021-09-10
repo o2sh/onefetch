@@ -284,7 +284,7 @@ pub fn get_language_statistics(
     ignored_directories: &[String],
     include_hidden: bool,
 ) -> Result<(Vec<(Language, f64)>, usize)> {
-    let stats = get_statistics(&dir, ignored_directories, include_hidden);
+    let stats = get_statistics(dir, ignored_directories, include_hidden);
     let language_distribution = get_language_distribution(&stats)
         .with_context(|| "Could not find any source code in this directory")?;
     let mut language_distribution_vec: Vec<(_, _)> = language_distribution.into_iter().collect();
@@ -346,7 +346,7 @@ fn get_statistics(
         hidden: Some(include_hidden),
         ..tokei::Config::default()
     };
-    let user_ignored = get_ignored_directories(&ignored_directories);
+    let user_ignored = get_ignored_directories(ignored_directories);
     let ignored: Vec<&str> = user_ignored.iter().map(AsRef::as_ref).collect();
     languages.get_statistics(&[&dir], &ignored, &tokei_config);
     languages
@@ -357,7 +357,7 @@ fn get_ignored_directories(user_ignored_directories: &[String]) -> Vec<String> {
     if !user_ignored_directories.is_empty() {
         let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
         for user_ignored_directory in user_ignored_directories {
-            if re.is_match(&user_ignored_directory) {
+            if re.is_match(user_ignored_directory) {
                 let prefix = if user_ignored_directory.starts_with('/') { "**" } else { "**/" };
                 ignored_directories.push(format!("{}{}", prefix, user_ignored_directory));
             } else {

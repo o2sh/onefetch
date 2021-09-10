@@ -57,8 +57,7 @@ impl<'a> Repo<'a> {
                     .ok()
                     .filter(|commit| !(no_merges && commit.parents().len() > 1))
                     .filter(|commit| {
-                        !(bot_regex_pattern.is_some()
-                            && is_bot(commit.author(), &bot_regex_pattern))
+                        !(bot_regex_pattern.is_some() && is_bot(commit.author(), bot_regex_pattern))
                     }),
             })
             .collect();

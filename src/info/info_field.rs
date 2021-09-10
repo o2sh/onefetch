@@ -7,7 +7,7 @@ use strum::{EnumCount, EnumIter, EnumString, IntoStaticStr};
 pub enum InfoField {
     GitInfo,
     Project,
-    HEAD,
+    Head,
     Pending,
     Version,
     Created,
@@ -53,7 +53,7 @@ impl InfoFieldOff {
             match item {
                 InfoField::GitInfo => info_field_off.git_info = true,
                 InfoField::Project => info_field_off.project = true,
-                InfoField::HEAD => info_field_off.head = true,
+                InfoField::Head => info_field_off.head = true,
                 InfoField::Pending => info_field_off.pending = true,
                 InfoField::Version => info_field_off.version = true,
                 InfoField::Created => info_field_off.created = true,

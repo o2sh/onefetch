@@ -48,7 +48,7 @@ impl<'a> Iterator for AsciiArt<'a> {
     fn next(&mut self) -> Option<String> {
         self.content
             .next()
-            .map(|line| Tokens(line).render(&self.colors, self.start, self.end, self.bold))
+            .map(|line| Tokens(line).render(self.colors, self.start, self.end, self.bold))
     }
 }
 
