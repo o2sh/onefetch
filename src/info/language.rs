@@ -236,6 +236,7 @@ define_languages! {
     { Scala, "scala.ascii", define_colors!( [Color::Red, Color::Red] : [Color::TrueColor{ r:223, g:63 ,b:61}, Color::TrueColor{ r:127, g:12 ,b:29} ] ) },
     { Scheme, "scheme.ascii", define_colors!( [Color::White] : [Color::TrueColor{r: 85, g:85, b:85}] ) },
     { Sh, "shell.ascii", define_colors!( [Color::Green] ), "shell" },
+    { Sql, "sql.ascii", define_colors!( [Color::Cyan, Color::Yellow] ) },
     { Svelte, "svelte.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r: 255, g: 60, b: 0 }, Color::TrueColor{ r: 255, g: 255, b: 255 }] ) },
     {
         Swift, "swift.ascii", define_colors!( [
