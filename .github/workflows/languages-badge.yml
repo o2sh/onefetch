@@ -18,6 +18,7 @@ jobs:
       - name: Get Badge
         run: curl https://img.shields.io/badge/supported%20languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/supported-languages.svg
       - name: Commit Badge
+        continue-on-error: true
         run: |
           git add ./assets
           git config user.name "github-actions[bot]"
