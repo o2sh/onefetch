@@ -1,4 +1,4 @@
-name: Supported Languages Badge
+name: Generate Language Badge
 on:
   release:
     types: [published]
@@ -16,12 +16,12 @@ jobs:
         with:
           variables: COUNT=$(cargo run -- --languages | wc -l)
       - name: Get Badge
-        run: curl https://img.shields.io/badge/supported%20languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/supported-languages.svg
+        run: curl https://img.shields.io/badge/supported%20languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/language-badge.svg
       - name: Commit Badge
         continue-on-error: true
         run: |
-          git add ./assets
+          git add ./assets/language-badge.svg
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update supported languages badge [Skip CI]"
+          git commit -m "Update language badge [Skip CI]"
           git push
