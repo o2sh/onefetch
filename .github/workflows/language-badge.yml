@@ -16,7 +16,7 @@ jobs:
         with:
           variables: COUNT=$(cargo run -- --languages | wc -l)
       - name: Get Badge
-        run: curl https://img.shields.io/badge/supported%20languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/language-badge.svg
+        run: curl https://img.shields.io/badge/languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/language-badge.svg
       - name: Commit Badge
         continue-on-error: true
         run: |
