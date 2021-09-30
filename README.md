@@ -1,4 +1,3 @@
-
 <h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
 
 <h5 align="center">A command-line Git information tool written in Rust</h5>
@@ -8,10 +7,11 @@
 	<a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
 	<a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+	<a href="https://github.com/o2sh/onefetch/wiki/language-Support"><img src="assets/language-badge.svg"></a>
 </p>
 
 <p align="center">
-  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a> | 
+  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a> |
   <a href="docs/README.cn.md">简体中文</a> | <a href="docs/README.ru.md">Русский</a>
 </p>
 
