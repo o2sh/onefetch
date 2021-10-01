@@ -81,9 +81,11 @@ fn go_modules(contents: &str) -> Result<usize> {
 }
 
 fn npm(contents: &str) -> Result<usize> {
-    let parsed = json::parse(contents)?;
-
-    Ok(parsed["dependencies"].len())
+    let parsed: serde_json::Value = serde_json::from_str(contents)?;
+    match &parsed["dependencies"].as_object() {
+        Some(val) => Ok(val.len()),
+        None => Ok(0),
+    }
 }
 
 fn pip_requirement(contents: &str) -> Result<usize> {
