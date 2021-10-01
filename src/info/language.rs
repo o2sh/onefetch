@@ -265,7 +265,7 @@ define_languages! {
     },
     { Tcl, "tcl.ascii", define_colors!( [Color::Blue, Color::White, Color::Cyan] ) },
     { Tex, "tex.ascii", define_colors!( [Color::White, Color::Black] ) },
-    { Toml, "toml.ascii", define_colors!( [Color::Red, Color::Black] : [Color::TrueColor{ r:156, g:66, b:33}, Color::TrueColor{ r:0, g:0, b:0} ]) },
+    { Toml, "toml.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:156, g:66, b:33}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Tsx, "tsx.ascii", define_colors!( [Color::Blue] ) },
     { TypeScript, "typescript.ascii", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:0, g:122, b:204}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Vala, "vala.ascii", define_colors!( [Color::Magenta, Color::White] ) },
