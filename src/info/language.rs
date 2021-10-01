@@ -270,6 +270,7 @@ define_languages! {
     { Vala, "vala.ascii", define_colors!( [Color::Magenta, Color::White] ) },
     { VimScript, "vimscript.ascii", define_colors!( [Color::Green, Color::Black, Color::White] ) },
     { Vue, "vue.ascii", define_colors!( [Color::Green, Color::Blue] ) },
+    { WebAssembly, "webassembly.ascii", define_colors!( [Color::Magenta, Color::White] : [Color::TrueColor{ r:101, g:79, b:240}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Xaml, "xaml.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Xml, "xml.ascii", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Zig, "zig.ascii", define_colors!( [Color::Yellow] ) },
