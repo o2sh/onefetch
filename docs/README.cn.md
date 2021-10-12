@@ -24,6 +24,6 @@ Onefetch 可以通过命令行参数进行配置，以准确显示您想要的�
 
 截至目前，onefetch 支持超过 50 种不同的编程语言；如果您选择的语言不受支持：创建一个 issue，我们将尽快适配。<br><br>
 
-欢迎大家一起来维护项目！详见 [CONTRIBUTING](CONTRIBUTING.md).<br><br>
+欢迎大家一起来维护项目！详见 [CONTRIBUTING](../CONTRIBUTING.md).<br><br>
 
 ### 更多: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[安装](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[开始使用](https://github.com/o2sh/onefetch/wiki/getting-started)\]
