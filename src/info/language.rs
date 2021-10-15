@@ -200,6 +200,7 @@ define_languages! {
     { Kotlin, "kotlin.ascii", define_colors!( [Color::Blue, Color::Yellow, Color::Magenta] ) },
     { Lisp, "lisp.ascii", define_colors!( [Color::White] ) },
     { Lua, "lua.ascii", define_colors!( [Color::Blue, Color::White, Color::White] : [Color::TrueColor{ r:46, g:0 ,b:127}, Color::TrueColor{ r:128, g:128 ,b:128}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
+    { LLVM, "llvm.ascii", define_colors!( [Color::Red] : [Color::TrueColor{ r:152, g:1 ,b:46}] ) },
     { Markdown, "markdown.ascii", define_colors!( [Color::White, Color::Red] ) },
     { Nim, "nim.ascii", define_colors!( [Color::Yellow, Color::White] ) },
     { Nix, "nix.ascii", define_colors!( [Color::Cyan, Color::Blue] ) },
