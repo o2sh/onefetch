@@ -192,6 +192,7 @@ define_languages! {
     { Idris, "idris.ascii", define_colors!( [Color::Red] ) },
     { Java, "java.ascii", define_colors!( [Color::Red, Color::Blue] : [Color::TrueColor{ r:244, g:67 ,b:54}, Color::TrueColor{ r:22, g:101 ,b:192} ] ) },
     { JavaScript, "javascript.ascii", define_colors!( [Color::Yellow] : [Color::TrueColor{ r:236, g:230 ,b:83} ]) },
+    { Json, "json.ascii", define_colors!( [Color::White, Color::Black] ) },
     { Jsonnet, "jsonnet.ascii", define_colors!( [Color::White, Color::Black] ) },
     { Jsx, "jsx.ascii", define_colors!( [Color::Yellow] ) },
     { Julia, "julia.ascii", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },
