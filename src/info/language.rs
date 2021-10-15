@@ -235,6 +235,7 @@ define_languages! {
     },
     { Ruby, "ruby.ascii", define_colors!( [Color::Magenta] ) },
     { Rust, "rust.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:228, g:55 ,b:23}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
+    { Sass, "sass.ascii", define_colors!( [Color::Magenta] : [Color::TrueColor{ r:205, g:103 ,b:153} ] ) },
     { Scala, "scala.ascii", define_colors!( [Color::Red, Color::Red] : [Color::TrueColor{ r:223, g:63 ,b:61}, Color::TrueColor{ r:127, g:12 ,b:29} ] ) },
     { Scheme, "scheme.ascii", define_colors!( [Color::White] : [Color::TrueColor{r: 85, g:85, b:85}] ) },
     { Sh, "shell.ascii", define_colors!( [Color::Green] ), "shell" },
