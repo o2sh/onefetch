@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get Language Count
-        uses: spenserblack/actions-set-output@v0.1
+        uses: spenserblack/actions-set-output@v1
         id: lang-count
         with:
           variables: COUNT=$(cargo run -- --languages | wc -l)
