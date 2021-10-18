@@ -232,7 +232,7 @@ define_languages! {
         ] ),
         "raku"
     },
-    { Ruby, "ruby.ascii", define_colors!( [Color::Magenta] ) },
+    { Ruby, "ruby.ascii", define_colors!( [Color::Red] : [Color::TrueColor{ r: 204, g: 52, b: 45 }] ) },
     { Rust, "rust.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:228, g:55 ,b:23}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
     { Sass, "sass.ascii", define_colors!( [Color::Magenta] : [Color::TrueColor{ r:205, g:103 ,b:153} ] ) },
     { Scala, "scala.ascii", define_colors!( [Color::Red, Color::Red] : [Color::TrueColor{ r:223, g:63 ,b:61}, Color::TrueColor{ r:127, g:12 ,b:29} ] ) },
