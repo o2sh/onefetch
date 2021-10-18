@@ -1,6 +1,6 @@
 use crate::info::deps::package_manager::PackageManager;
 use crate::info::info_field::{InfoField, InfoFieldOff};
-use crate::info::language::Language;
+use crate::info::langs::language::Language;
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;

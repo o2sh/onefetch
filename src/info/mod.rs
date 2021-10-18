@@ -7,7 +7,7 @@ use colored::{Color, ColoredString, Colorize};
 use deps::DependencyDetector;
 use git2::Repository;
 use head_refs::HeadRefs;
-use language::Language;
+use langs::language::Language;
 use license::Detector;
 use repo::Repo;
 use serde::ser::SerializeStruct;
@@ -17,7 +17,7 @@ mod author;
 pub mod deps;
 mod head_refs;
 pub mod info_field;
-pub mod language;
+pub mod langs;
 mod license;
 pub mod repo;
 
@@ -168,12 +168,12 @@ impl Info {
         let workdir = internal_repo.get_work_dir()?;
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
-        let (languages, lines_of_code) = language::get_language_statistics(
+        let (languages, lines_of_code) = langs::get_language_statistics(
             &workdir,
             &config.ignored_directories,
             config.include_hidden,
         )?;
-        let dominant_language = language::get_dominant_language(&languages);
+        let dominant_language = langs::get_dominant_language(&languages);
         let ascii_colors = get_ascii_colors(
             &config.ascii_language,
             &dominant_language,

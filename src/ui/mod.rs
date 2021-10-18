@@ -1,4 +1,4 @@
-use crate::info::language::Language;
+use crate::info::langs::language::Language;
 use colored::Color;
 
 pub mod ascii_art;
