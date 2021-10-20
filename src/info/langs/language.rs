@@ -296,7 +296,7 @@ define_languages! {
     { WebAssembly, Programming, "webassembly.ascii", define_colors!( [Color::Magenta, Color::White] : [Color::TrueColor{ r:101, g:79, b:240}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Xaml, Data, "xaml.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Xml, Data, "xml.ascii", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
-    { Yaml, Programming, "yaml.ascii", define_colors!( [Color::White] ) },
+    { Yaml, Data, "yaml.ascii", define_colors!( [Color::White] ) },
     { Zig, Programming, "zig.ascii", define_colors!( [Color::Yellow] ) },
     { Zsh, Programming, "zsh.ascii", define_colors!( [Color::White] ) },
 }
