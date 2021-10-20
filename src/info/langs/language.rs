@@ -28,6 +28,7 @@ macro_rules! define_languages {
 
         #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter, IntoStaticStr, Serialize)]
         #[strum(serialize_all = "lowercase")]
+        #[allow(clippy::upper_case_acronyms)]
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
@@ -212,7 +213,7 @@ define_languages! {
     { Jsonnet, Programming, "jsonnet.ascii", define_colors!( [Color::White, Color::Black] ) },
     { Jsx, Programming, "jsx.ascii", define_colors!( [Color::Yellow] ) },
     { Julia, Programming, "julia.ascii", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },
-    { Jupyter, Markup, "jupyter.ascii", define_colors!( [Color::White, Color::Yellow, Color::White] : [Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:255, g:112 ,b:15}, Color::TrueColor{ r:158, g:158 ,b:158} ] ), "jupyter-notebooks" },
+    { Jupyter, Programming, "jupyter.ascii", define_colors!( [Color::White, Color::Yellow, Color::White] : [Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:255, g:112 ,b:15}, Color::TrueColor{ r:158, g:158 ,b:158} ] ), "jupyter-notebooks" },
     { Kotlin, Programming, "kotlin.ascii", define_colors!( [Color::Blue, Color::Yellow, Color::Magenta] ) },
     { Lisp, Programming, "lisp.ascii", define_colors!( [Color::White] ) },
     { Lua, Programming, "lua.ascii", define_colors!( [Color::Blue, Color::White, Color::White] : [Color::TrueColor{ r:46, g:0 ,b:127}, Color::TrueColor{ r:128, g:128 ,b:128}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
@@ -291,10 +292,10 @@ define_languages! {
     { TypeScript, Programming, "typescript.ascii", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:0, g:122, b:204}, Color::TrueColor{ r:255, g:255, b:255} ]) },
     { Vala, Programming, "vala.ascii", define_colors!( [Color::Magenta, Color::White] ) },
     { VimScript, Programming, "vimscript.ascii", define_colors!( [Color::Green, Color::Black, Color::White] ) },
-    { Vue, Markup, "vue.ascii", define_colors!( [Color::Green, Color::Blue] ) },
+    { Vue, Programming, "vue.ascii", define_colors!( [Color::Green, Color::Blue] ) },
     { WebAssembly, Programming, "webassembly.ascii", define_colors!( [Color::Magenta, Color::White] : [Color::TrueColor{ r:101, g:79, b:240}, Color::TrueColor{ r:255, g:255, b:255} ]) },
-    { Xaml, Programming, "xaml.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206}, Color::TrueColor{ r:255, g:255, b:255} ]) },
-    { Xml, Programming, "xml.ascii", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
+    { Xaml, Data, "xaml.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206}, Color::TrueColor{ r:255, g:255, b:255} ]) },
+    { Xml, Data, "xml.ascii", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
     { Yaml, Programming, "yaml.ascii", define_colors!( [Color::White] ) },
     { Zig, Programming, "zig.ascii", define_colors!( [Color::Yellow] ) },
     { Zsh, Programming, "zsh.ascii", define_colors!( [Color::White] ) },
