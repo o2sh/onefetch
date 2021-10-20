@@ -181,6 +181,7 @@ define_languages! {
     { Clojure, Programming, "clojure.ascii", define_colors!( [Color::Cyan, Color::Green] ) },
     { CMake, Programming, "cmake.ascii", define_colors!( [Color::Blue, Color::Green, Color::Red, Color::Black] ) },
     { CoffeeScript, Programming, "coffeescript.ascii", define_colors!( [Color::Red] ) },
+    { Coq, Programming, "coq.ascii", define_colors!( [Color::Yellow, Color::White] : [Color::TrueColor {r:191, g:140, b:94}, Color::TrueColor {r:213, g:190, b:153}] ) },
     { Cpp, Programming, "cpp.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::White] : [Color::TrueColor{r:100, g:154, b:210}, Color::TrueColor{r:0, g:68, b:130}, Color::TrueColor{r:255, g:255, b:255}] ), "c++" },
     { Crystal, Programming, "crystal.ascii", define_colors!( [Color::White, Color::Black] ) },
     { CSharp, Programming, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta, Color::White] : [Color::TrueColor{r:154, g:73, b:147}, Color::TrueColor{r:106, g:21, b:119}, Color::TrueColor{r:255, g:255, b:255}] ), "c#" },
