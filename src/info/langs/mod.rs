@@ -1,7 +1,8 @@
 use anyhow::{Context, Result};
-use language::{get_all_language_types, Language};
+use language::{Language, LanguageType};
 use regex::Regex;
 use std::collections::HashMap;
+use strum::IntoEnumIterator;
 
 pub mod language;
 
@@ -12,9 +13,10 @@ pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language
 pub fn get_language_statistics(
     dir: &str,
     ignored_directories: &[String],
+    language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<(Vec<(Language, f64)>, usize)> {
-    let stats = get_statistics(dir, ignored_directories, include_hidden);
+    let stats = get_statistics(dir, ignored_directories, language_types, include_hidden);
     let language_distribution = get_language_distribution(&stats)
         .with_context(|| "Could not find any source code in this directory")?;
     let mut language_distribution_vec: Vec<(_, _)> = language_distribution.into_iter().collect();
@@ -26,7 +28,7 @@ pub fn get_language_statistics(
 fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
     let mut language_distribution = HashMap::new();
 
-    for (language_type, language) in languages.iter() {
+    for (language_name, language) in languages.iter() {
         let mut code = language.code;
 
         let has_children = !language.children.is_empty();
@@ -43,7 +45,7 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
             continue;
         }
 
-        language_distribution.insert(Language::from(*language_type), code as f64);
+        language_distribution.insert(Language::from(*language_name), code as f64);
     }
 
     let total: f64 = language_distribution.iter().map(|(_, v)| v).sum();
@@ -67,12 +69,14 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
 fn get_statistics(
     dir: &str,
     ignored_directories: &[String],
+    language_types: &[LanguageType],
     include_hidden: bool,
 ) -> tokei::Languages {
     let mut languages = tokei::Languages::new();
-    let required_languages = get_all_language_types();
+    let supported_languages = get_supported_languages(language_types);
+
     let tokei_config = tokei::Config {
-        types: Some(required_languages),
+        types: Some(supported_languages),
         hidden: Some(include_hidden),
         ..tokei::Config::default()
     };
@@ -80,6 +84,13 @@ fn get_statistics(
     let ignored: Vec<&str> = user_ignored.iter().map(AsRef::as_ref).collect();
     languages.get_statistics(&[&dir], &ignored, &tokei_config);
     languages
+}
+
+fn get_supported_languages(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
+    Language::iter()
+        .filter(|language| types.contains(&language.get_type()))
+        .map(|language| language.into())
+        .collect()
 }
 
 fn get_ignored_directories(user_ignored_directories: &[String]) -> Vec<String> {
