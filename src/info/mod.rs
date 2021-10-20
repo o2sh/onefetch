@@ -171,6 +171,7 @@ impl Info {
         let (languages, lines_of_code) = langs::get_language_statistics(
             &workdir,
             &config.ignored_directories,
+            &config.language_types,
             config.include_hidden,
         )?;
         let dominant_language = langs::get_dominant_language(&languages);

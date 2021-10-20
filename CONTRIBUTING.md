@@ -15,9 +15,9 @@ Adding support for a new Language consists in adding a new entry to the `define_
 
 **Example**:
 
-`{ CSharp, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },`
+`{ CSharp, Programming, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },`
 
-The first item `CSharp` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item `csharp.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is only required if the Enum name `CSharp` doesn't match the display name `C#` and is used as an input for `-a, --ascii-language <LANGUAGE>` - by default we take the Enum name in lowercase.
+The first item `CSharp` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item refers to the language type as specified by [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml), only four values are possible: Programming, Markup, Prose and Data. The third item `csharp.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is only required if the Enum name `CSharp` doesn't match the display name `C#` and is used as an input for `-a, --ascii-language <LANGUAGE>` - by default we take the Enum name in lowercase.
 
 #### Ascii logo
 

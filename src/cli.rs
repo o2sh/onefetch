@@ -1,6 +1,6 @@
 use crate::info::deps::package_manager::PackageManager;
 use crate::info::info_field::{InfoField, InfoFieldOff};
-use crate::info::langs::language::Language;
+use crate::info::langs::language::{Language, LanguageType};
 use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
@@ -38,6 +38,7 @@ pub struct Config {
     pub iso_time: bool,
     pub show_email: bool,
     pub include_hidden: bool,
+    pub language_types: Vec<LanguageType>,
 }
 
 impl Config {
@@ -64,11 +65,13 @@ impl Config {
             Arg::with_name("output")
             .short("o")
             .long("output")
+            .value_name("FORMAT")
             .help("Outputs Onefetch in a specific format (json, yaml).")
             .takes_value(true)
-            .possible_values(&SerializationFormat::iter()
-            .map(|format| format.into())
-            .collect::<Vec<&str>>())
+            .possible_values(
+                &SerializationFormat::iter()
+                .map(|format| format.into())
+                .collect::<Vec<&str>>())
         )
         .arg(
             Arg::with_name("languages")
@@ -276,6 +279,20 @@ impl Config {
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE."),
         )
+        .arg(
+            Arg::with_name("type")
+            .short("T")
+            .long("type")
+            .value_name("TYPE")
+            .multiple(true)
+            .takes_value(true)
+            .case_insensitive(true)
+            .help("Filters output by language type (*programming*, *markup*, prose, data).")
+            .possible_values(
+                &LanguageType::iter()
+                    .map(|t| t.into())
+                    .collect::<Vec<&str>>())
+        )
         .get_matches();
 
         let true_color = match matches.value_of("true-color") {
@@ -378,6 +395,12 @@ impl Config {
                 .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| Regex::from_str(s).unwrap())
         });
 
+        let language_types: Vec<LanguageType> = if let Some(values) = matches.values_of("type") {
+            values.map(|t| LanguageType::from_str(t).unwrap()).collect()
+        } else {
+            vec![LanguageType::Programming, LanguageType::Markup]
+        };
+
         Ok(Config {
             repo_path,
             ascii_input,
@@ -402,6 +425,7 @@ impl Config {
             iso_time,
             show_email,
             include_hidden,
+            language_types,
         })
     }
 }
