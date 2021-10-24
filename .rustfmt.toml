@@ -1,3 +1,2 @@
+hard_tabs = true
 newline_style = "Unix"
-# The "Default" setting has a heuristic which splits lines too aggresively.
-use_small_heuristics = "Max"
