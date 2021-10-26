@@ -197,6 +197,7 @@ define_languages! {
 	{ Fish, Programming, "fish.ascii", define_colors!( [Color::Red, Color::Yellow] ) },
 	{ Forth, Programming, "forth.ascii", define_colors!( [Color::Red] ) },
 	{ FortranModern, Programming, "f90.ascii", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortran" },
+    { FortranLegacy, Programming, "f77.ascii", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortranlegacy" },
 	{ FSharp, Programming, "fsharp.ascii", define_colors!( [Color::Cyan, Color::Cyan] ), "f#" },
 	{ GdScript, Programming, "gdscript.ascii", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:69, g:141, b:192 }, Color::TrueColor{ r:255, g:255, b:255}] ) },
 	{ Go, Programming, "go.ascii", define_colors!( [Color::Cyan, Color::White, Color::Yellow] : [Color::TrueColor{ r:116, g:205, b:221 }, Color::TrueColor{ r:255, g:255, b:255 }, Color::TrueColor{ r:246, g:210, b:162 }] ) },
