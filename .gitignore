@@ -5,10 +5,5 @@
 /parts
 /prime
 .gitignore.swp
-
-
-# needed for nix
-# Cargo.lock
-
-# nix result from nix-build
+.DS_Store
 result
