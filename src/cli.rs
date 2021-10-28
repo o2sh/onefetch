@@ -15,42 +15,42 @@ use strum::IntoEnumIterator;
 const MAX_TERM_WIDTH: usize = 95;
 
 pub struct Config {
-	pub repo_path: String,
-	pub ascii_input: Option<String>,
-	pub ascii_language: Option<Language>,
-	pub ascii_colors: Vec<String>,
-	pub disabled_fields: InfoFieldOff,
-	pub no_bold: bool,
-	pub image: Option<DynamicImage>,
-	pub image_backend: Option<Box<dyn ImageBackend>>,
-	pub image_color_resolution: usize,
-	pub no_merges: bool,
-	pub no_color_palette: bool,
-	pub number_of_authors: usize,
-	pub ignored_directories: Vec<String>,
-	pub bot_regex_pattern: Option<Regex>,
-	pub print_languages: bool,
-	pub print_package_managers: bool,
-	pub output: Option<SerializationFormat>,
-	pub true_color: bool,
-	pub art_off: bool,
-	pub text_colors: Vec<String>,
-	pub iso_time: bool,
-	pub show_email: bool,
-	pub include_hidden: bool,
-	pub language_types: Vec<LanguageType>,
+    pub repo_path: String,
+    pub ascii_input: Option<String>,
+    pub ascii_language: Option<Language>,
+    pub ascii_colors: Vec<String>,
+    pub disabled_fields: InfoFieldOff,
+    pub no_bold: bool,
+    pub image: Option<DynamicImage>,
+    pub image_backend: Option<Box<dyn ImageBackend>>,
+    pub image_color_resolution: usize,
+    pub no_merges: bool,
+    pub no_color_palette: bool,
+    pub number_of_authors: usize,
+    pub ignored_directories: Vec<String>,
+    pub bot_regex_pattern: Option<Regex>,
+    pub print_languages: bool,
+    pub print_package_managers: bool,
+    pub output: Option<SerializationFormat>,
+    pub true_color: bool,
+    pub art_off: bool,
+    pub text_colors: Vec<String>,
+    pub iso_time: bool,
+    pub show_email: bool,
+    pub include_hidden: bool,
+    pub language_types: Vec<LanguageType>,
 }
 
 impl Config {
-	pub fn new() -> Result<Self> {
-		#[cfg(not(windows))]
-		let possible_backends = ["kitty", "iterm", "sixel"];
-		#[cfg(windows)]
-		let possible_backends = [];
-		let color_values = &[
-			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-		];
-		let matches = App::new(crate_name!())
+    pub fn new() -> Result<Self> {
+        #[cfg(not(windows))]
+        let possible_backends = ["kitty", "iterm", "sixel"];
+        #[cfg(windows)]
+        let possible_backends = [];
+        let color_values = &[
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+        ];
+        let matches = App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
         .setting(AppSettings::ColoredHelp)
@@ -296,173 +296,173 @@ impl Config {
         )
         .get_matches();
 
-		let true_color = match matches.value_of("true-color") {
-			Some("always") => true,
-			Some("never") => false,
-			Some("auto") => is_truecolor_terminal(),
-			_ => unreachable!(),
-		};
+        let true_color = match matches.value_of("true-color") {
+            Some("always") => true,
+            Some("never") => false,
+            Some("auto") => is_truecolor_terminal(),
+            _ => unreachable!(),
+        };
 
-		let no_bold = matches.is_present("no-bold");
-		let no_merges = matches.is_present("no-merges");
-		let no_color_palette = matches.is_present("no-palette");
-		let print_languages = matches.is_present("languages");
-		let print_package_managers = matches.is_present("package-managers");
-		let iso_time = matches.is_present("isotime");
-		let show_email = matches.is_present("email");
-		let include_hidden = matches.is_present("hidden");
+        let no_bold = matches.is_present("no-bold");
+        let no_merges = matches.is_present("no-merges");
+        let no_color_palette = matches.is_present("no-palette");
+        let print_languages = matches.is_present("languages");
+        let print_package_managers = matches.is_present("package-managers");
+        let iso_time = matches.is_present("isotime");
+        let show_email = matches.is_present("email");
+        let include_hidden = matches.is_present("hidden");
 
-		let output = matches
-			.value_of("output")
-			.map(SerializationFormat::from_str)
-			.transpose()?;
+        let output = matches
+            .value_of("output")
+            .map(SerializationFormat::from_str)
+            .transpose()?;
 
-		let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
-		{
-			values.map(String::from).collect()
-		} else {
-			Vec::new()
-		};
+        let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
+        {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
 
-		let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
+        let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
 
-		let art_off = match matches.value_of("show-logo") {
-			Some("always") => false,
-			Some("never") => true,
-			Some("auto") => {
-				if let Some((width, _)) = term_size::dimensions_stdout() {
-					width < MAX_TERM_WIDTH
-				} else {
-					false
-				}
-			}
-			_ => unreachable!(),
-		};
+        let art_off = match matches.value_of("show-logo") {
+            Some("always") => false,
+            Some("never") => true,
+            Some("auto") => {
+                if let Some((width, _)) = term_size::dimensions_stdout() {
+                    width < MAX_TERM_WIDTH
+                } else {
+                    false
+                }
+            }
+            _ => unreachable!(),
+        };
 
-		let image = if let Some(image_path) = matches.value_of("image") {
-			Some(image::open(image_path).with_context(|| "Could not load the specified image")?)
-		} else {
-			None
-		};
+        let image = if let Some(image_path) = matches.value_of("image") {
+            Some(image::open(image_path).with_context(|| "Could not load the specified image")?)
+        } else {
+            None
+        };
 
-		let image_backend = if image.is_some() {
-			if let Some(backend_name) = matches.value_of("image-backend") {
-				image_backends::get_image_backend(backend_name)
-			} else {
-				image_backends::get_best_backend()
-			}
-		} else {
-			None
-		};
+        let image_backend = if image.is_some() {
+            if let Some(backend_name) = matches.value_of("image-backend") {
+                image_backends::get_image_backend(backend_name)
+            } else {
+                image_backends::get_best_backend()
+            }
+        } else {
+            None
+        };
 
-		let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
-			usize::from_str(value)?
-		} else {
-			16
-		};
+        let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
+            usize::from_str(value)?
+        } else {
+            16
+        };
 
-		let repo_path = matches
-			.value_of("input")
-			.map(String::from)
-			.with_context(|| "Failed to parse input directory")?;
+        let repo_path = matches
+            .value_of("input")
+            .map(String::from)
+            .with_context(|| "Failed to parse input directory")?;
 
-		let ascii_input = matches.value_of("ascii-input").map(String::from);
+        let ascii_input = matches.value_of("ascii-input").map(String::from);
 
-		let ascii_language = matches
-			.value_of("ascii-language")
-			.map(|ascii_language| Language::from_str(&ascii_language.to_lowercase()).unwrap());
+        let ascii_language = matches
+            .value_of("ascii-language")
+            .map(|ascii_language| Language::from_str(&ascii_language.to_lowercase()).unwrap());
 
-		let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {
-			values.map(String::from).collect()
-		} else {
-			Vec::new()
-		};
+        let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
 
-		let text_colors = if let Some(values) = matches.values_of("text-colors") {
-			values.map(String::from).collect()
-		} else {
-			Vec::new()
-		};
+        let text_colors = if let Some(values) = matches.values_of("text-colors") {
+            values.map(String::from).collect()
+        } else {
+            Vec::new()
+        };
 
-		let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
+        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
 
-		let ignored_directories =
-			if let Some(user_ignored_directories) = matches.values_of("exclude") {
-				user_ignored_directories.map(String::from).collect()
-			} else {
-				Vec::new()
-			};
+        let ignored_directories =
+            if let Some(user_ignored_directories) = matches.values_of("exclude") {
+                user_ignored_directories.map(String::from).collect()
+            } else {
+                Vec::new()
+            };
 
-		let bot_regex_pattern = matches.is_present("no-bots").then(|| {
-			matches
-				.value_of("no-bots")
-				.map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| {
-					Regex::from_str(s).unwrap()
-				})
-		});
+        let bot_regex_pattern = matches.is_present("no-bots").then(|| {
+            matches
+                .value_of("no-bots")
+                .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| {
+                    Regex::from_str(s).unwrap()
+                })
+        });
 
-		let language_types: Vec<LanguageType> = if let Some(values) = matches.values_of("type") {
-			values.map(|t| LanguageType::from_str(t).unwrap()).collect()
-		} else {
-			vec![LanguageType::Programming, LanguageType::Markup]
-		};
+        let language_types: Vec<LanguageType> = if let Some(values) = matches.values_of("type") {
+            values.map(|t| LanguageType::from_str(t).unwrap()).collect()
+        } else {
+            vec![LanguageType::Programming, LanguageType::Markup]
+        };
 
-		Ok(Config {
-			repo_path,
-			ascii_input,
-			ascii_language,
-			ascii_colors,
-			disabled_fields,
-			no_bold,
-			image,
-			image_backend,
-			image_color_resolution,
-			no_merges,
-			no_color_palette,
-			number_of_authors,
-			ignored_directories,
-			bot_regex_pattern,
-			print_languages,
-			print_package_managers,
-			output,
-			true_color,
-			art_off,
-			text_colors,
-			iso_time,
-			show_email,
-			include_hidden,
-			language_types,
-		})
-	}
+        Ok(Config {
+            repo_path,
+            ascii_input,
+            ascii_language,
+            ascii_colors,
+            disabled_fields,
+            no_bold,
+            image,
+            image_backend,
+            image_color_resolution,
+            no_merges,
+            no_color_palette,
+            number_of_authors,
+            ignored_directories,
+            bot_regex_pattern,
+            print_languages,
+            print_package_managers,
+            output,
+            true_color,
+            art_off,
+            text_colors,
+            iso_time,
+            show_email,
+            include_hidden,
+            language_types,
+        })
+    }
 }
 
 pub fn print_supported_languages() -> Result<()> {
-	for l in Language::iter() {
-		println!("{}", l);
-	}
+    for l in Language::iter() {
+        println!("{}", l);
+    }
 
-	Ok(())
+    Ok(())
 }
 
 pub fn print_supported_package_managers() -> Result<()> {
-	for p in PackageManager::iter() {
-		println!("{}", p);
-	}
+    for p in PackageManager::iter() {
+        println!("{}", p);
+    }
 
-	Ok(())
+    Ok(())
 }
 
 pub fn is_truecolor_terminal() -> bool {
-	env::var("COLORTERM")
-		.map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
-		.unwrap_or(false)
+    env::var("COLORTERM")
+        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
+        .unwrap_or(false)
 }
 
 pub fn get_git_version() -> String {
-	let version = Command::new("git").arg("--version").output();
+    let version = Command::new("git").arg("--version").output();
 
-	match version {
-		Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
-		Err(_) => String::new(),
-	}
+    match version {
+        Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
+        Err(_) => String::new(),
+    }
 }

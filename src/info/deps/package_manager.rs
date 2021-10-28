@@ -42,86 +42,86 @@ macro_rules! define_package_managers {
 }
 
 define_package_managers! {
-	{ Cargo, "cargo", [ ("Cargo.toml", cargo) ] },
-	{ GoModules, "go modules", [ ("go.mod", go_modules) ] },
-	{ Npm, "npm", [ ("package.json", npm) ] },
-	{ Pip, "pip", [ ("requirements.txt", pip_requirement) ("pyproject.toml", pip_pyproject) ("Pipfile", pip_pipfile) ] },
-	{ Pub, "pub", [ ("pubspec.yaml", pub_packages) ] },
+    { Cargo, "cargo", [ ("Cargo.toml", cargo) ] },
+    { GoModules, "go modules", [ ("go.mod", go_modules) ] },
+    { Npm, "npm", [ ("package.json", npm) ] },
+    { Pip, "pip", [ ("requirements.txt", pip_requirement) ("pyproject.toml", pip_pyproject) ("Pipfile", pip_pipfile) ] },
+    { Pub, "pub", [ ("pubspec.yaml", pub_packages) ] },
 }
 
 fn cargo(contents: &str) -> Result<usize> {
-	let parsed = contents.parse::<Value>()?;
-	let count = parsed.get("dependencies");
+    let parsed = contents.parse::<Value>()?;
+    let count = parsed.get("dependencies");
 
-	match count {
-		Some(val) => Ok(val.as_table().unwrap().len()),
-		None => Ok(0),
-	}
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
 }
 
 fn go_modules(contents: &str) -> Result<usize> {
-	let mut count = 0;
-	let mut start = false;
-	for line in contents.lines() {
-		if line.contains("require") {
-			start = true;
-			continue;
-		}
+    let mut count = 0;
+    let mut start = false;
+    for line in contents.lines() {
+        if line.contains("require") {
+            start = true;
+            continue;
+        }
 
-		if start && line.contains(')') {
-			break;
-		}
+        if start && line.contains(')') {
+            break;
+        }
 
-		if start {
-			count += 1;
-		}
-	}
+        if start {
+            count += 1;
+        }
+    }
 
-	Ok(count)
+    Ok(count)
 }
 
 fn npm(contents: &str) -> Result<usize> {
-	let parsed: serde_json::Value = serde_json::from_str(contents)?;
-	match &parsed["dependencies"].as_object() {
-		Some(val) => Ok(val.len()),
-		None => Ok(0),
-	}
+    let parsed: serde_json::Value = serde_json::from_str(contents)?;
+    match &parsed["dependencies"].as_object() {
+        Some(val) => Ok(val.len()),
+        None => Ok(0),
+    }
 }
 
 fn pip_requirement(contents: &str) -> Result<usize> {
-	let count = Regex::new(r"(^|\n)[A-z]+")?.find_iter(contents).count();
+    let count = Regex::new(r"(^|\n)[A-z]+")?.find_iter(contents).count();
 
-	Ok(count)
+    Ok(count)
 }
 
 fn pip_pyproject(contents: &str) -> Result<usize> {
-	let parsed = contents.parse::<Value>()?;
-	let count = parsed
-		.get("tool")
-		.and_then(|tool| tool.get("poetry"))
-		.and_then(|poetry| poetry.get("dependencies"));
-	match count {
-		Some(val) => Ok(val.as_table().unwrap().len()),
-		None => Ok(0),
-	}
+    let parsed = contents.parse::<Value>()?;
+    let count = parsed
+        .get("tool")
+        .and_then(|tool| tool.get("poetry"))
+        .and_then(|poetry| poetry.get("dependencies"));
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
 }
 
 fn pip_pipfile(contents: &str) -> Result<usize> {
-	let parsed = contents.parse::<Value>()?;
-	let count = parsed.get("packages");
+    let parsed = contents.parse::<Value>()?;
+    let count = parsed.get("packages");
 
-	match count {
-		Some(val) => Ok(val.as_table().unwrap().len()),
-		None => Ok(0),
-	}
+    match count {
+        Some(val) => Ok(val.as_table().unwrap().len()),
+        None => Ok(0),
+    }
 }
 
 fn pub_packages(contents: &str) -> Result<usize> {
-	match YamlLoader::load_from_str(contents) {
-		Ok(parsed) => match &parsed[0]["dependencies"].as_hash() {
-			Some(deps) => Ok(deps.len()),
-			None => Ok(0),
-		},
-		Err(_) => Ok(0),
-	}
+    match YamlLoader::load_from_str(contents) {
+        Ok(parsed) => match &parsed[0]["dependencies"].as_hash() {
+            Some(deps) => Ok(deps.len()),
+            None => Ok(0),
+        },
+        Err(_) => Ok(0),
+    }
 }
