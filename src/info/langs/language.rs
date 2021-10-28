@@ -175,7 +175,7 @@ macro_rules! define_languages {
 define_languages! {
 	{ Ada, Programming, "ada.ascii", define_colors!( [Color::White, Color::Cyan, Color::Blue] : [Color::TrueColor{r:255, g:255, b:255}, Color::TrueColor{r:0, g:24, b:201}, Color::TrueColor{r:12, g:10, b:124}] ) },
 	{ Assembly, Programming, "assembly.ascii", define_colors!( [Color::Cyan] ) },
-    { Ats, Programming, "ats.ascii", define_colors!( [Color::Yellow, Color::Red, Color::Blue, Color::White] : [Color::TrueColor{r:255, g:255, b:0}, Color::TrueColor{r:255, g:0, b:0}, Color::TrueColor{r:0, g:0, b:255}, Color::TrueColor{r:255, g:255, b:255}] ), "ats" },
+    { Ats, Programming, "ats.ascii", define_colors!( [Color::Yellow, Color::Red, Color::Blue] : [Color::TrueColor{r:255, g:255, b:0}, Color::TrueColor{r:255, g:0, b:0}, Color::TrueColor{r:0, g:0, b:255}] ), "ats" },
 	{ AutoHotKey, Programming, "autohotkey.ascii", define_colors!( [Color::White, Color::Green] : [Color::TrueColor{r:255, g:255, b:255}, Color::TrueColor{r: 0x11, g: 0x98, b: 0x10}]) },
 	{ Bash, Programming, "bash.ascii", define_colors!( [Color::White] ), "bash" },
 	{ C, Programming, "c.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::White] : [Color::TrueColor{r:93, g:108, b:191}, Color::TrueColor{r:41, g:54, b:147}, Color::TrueColor{r:255, g:255, b:255}] ) },
