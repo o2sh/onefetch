@@ -1,7 +1,7 @@
 name: Minimum Rust Version
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   make-badge:
