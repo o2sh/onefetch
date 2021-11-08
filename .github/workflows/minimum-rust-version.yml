@@ -5,6 +5,7 @@ on:
     paths:
       - Cargo.toml
       - 'src/**'
+  workflow_dispatch:
 
 jobs:
   make-badge:
