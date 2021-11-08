@@ -1,0 +1,26 @@
+name: Minimum Rust Version
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  make-badge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get Minimum Rust Version
+        uses: spenserblack/actions-msrv@v0.2
+        id: get-msrv
+      - name: Create Badge
+        run: curl https://img.shields.io/badge/minimum%20rust%20version-${{ steps.get-msrv-outputs.msrv }}-blue > ./assets/rust-version.svg
+      - name: Commit Badge
+        # Continue on error in case there are no changes, resulting in empty
+        # commit. This shouldn't count as a failure.
+        continue-on-error: true
+        run: |
+          git add ./assets/rust-version.svg
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update Rust version badge [Skip CI]"
+          git push
