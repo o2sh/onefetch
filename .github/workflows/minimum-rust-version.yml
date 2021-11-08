@@ -17,7 +17,7 @@ jobs:
         uses: spenserblack/actions-msrv@v0.2
         id: get-msrv
       - name: Create Badge
-        run: curl https://img.shields.io/badge/minimum%20rust%20version-${{ steps.get-msrv-outputs.msrv }}-blue > ./assets/rust-version.svg
+        run: curl https://img.shields.io/badge/minimum%20rust%20version-${{ steps.get-msrv.outputs.msrv }}-blue > ./assets/rust-version.svg
       - name: Commit Badge
         # Continue on error in case there are no changes, resulting in empty
         # commit. This shouldn't count as a failure.
