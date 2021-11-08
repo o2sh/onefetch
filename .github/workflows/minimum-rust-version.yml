@@ -23,6 +23,7 @@ jobs:
         # commit. This shouldn't count as a failure.
         continue-on-error: true
         run: |
+          git status
           git pull --ff-only
           git add ./assets/rust-version.svg
           git config user.name "github-actions[bot]"
