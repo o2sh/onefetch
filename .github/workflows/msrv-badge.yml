@@ -1,7 +1,7 @@
-name: Minimum Rust Version
+name: Generate MSRV Badge
 on:
-  push:
-    branches: [ main ]
+  release:
+    types: [published]
     paths:
       - Cargo.toml
       - 'src/**'
@@ -13,20 +13,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Get Minimum Rust Version
+      - name: Get Minimum Supported Rust Version
         uses: spenserblack/actions-msrv@v0.2
         id: get-msrv
       - name: Create Badge
-        run: curl https://img.shields.io/badge/minimum%20rust%20version-${{ steps.get-msrv.outputs.msrv }}-blue > ./assets/rust-version.svg
+        run: curl https://img.shields.io/badge/rustc-${{ steps.get-msrv.outputs.msrv }}+-blue > ./assets/msrv-badge.svg
       - name: Commit Badge
-        # Continue on error in case there are no changes, resulting in empty
-        # commit. This shouldn't count as a failure.
         continue-on-error: true
         run: |
           git status
           git pull --ff-only
-          git add ./assets/rust-version.svg
+          git add ./assets/msrv-badge.svg
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update Rust version badge [Skip CI]"
+          git commit -m "Update msrv badge [Skip CI]"
           git push
