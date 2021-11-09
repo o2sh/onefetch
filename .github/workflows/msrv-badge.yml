@@ -2,9 +2,6 @@ name: Generate MSRV Badge
 on:
   release:
     types: [published]
-    paths:
-      - Cargo.toml
-      - 'src/**'
   workflow_dispatch:
 
 jobs:
