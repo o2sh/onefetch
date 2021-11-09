@@ -17,7 +17,7 @@ jobs:
         uses: spenserblack/actions-msrv@v0.2
         id: get-msrv
       - name: Create Badge
-        run: curl https://img.shields.io/badge/rustc-${{ steps.get-msrv.outputs.msrv }}+-blue > ./assets/msrv-badge.svg
+        run: curl https://img.shields.io/badge/rustc-${{ steps.get-msrv.outputs.msrv }}%2B-blue > ./assets/msrv-badge.svg
       - name: Commit Badge
         continue-on-error: true
         run: |
