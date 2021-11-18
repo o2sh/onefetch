@@ -400,5 +400,4 @@ mod tests {
         let result = git_time_to_formatted_time(&time, true);
         assert_eq!(result, "1970-01-01T00:00:00Z");
     }
-
 }
