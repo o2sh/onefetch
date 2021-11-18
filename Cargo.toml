@@ -30,8 +30,8 @@ anyhow = "1.0"
 askalono = "0.4.3"
 byte-unit = "4.0.12"
 bytecount = "0.6.2"
-time-humanize = {version="0.1.2", features = ["time"]}
-time = { version = "0.3.5", features = ["formatting"]}
+time-humanize = { version="0.1.2", features = ["time"] }
+time = { version = "0.3.5", features = ["formatting"] }
 clap = {version = "2.33.3", features = ["wrap_help"]}
 color_quant = "1.1.0"
 colored = "2.0.0"
@@ -39,7 +39,7 @@ git2 = {version = "0.13.23", default-features = false}
 image = "0.23.14"
 regex = "1.4.6"
 serde = "1.0.130"
-serde_json = "1.0.68"
+serde_json = "1.0.70"
 serde_yaml = "0.8"
 strum = {version = "0.22.0", features = ["derive"]}
 term_size = "0.3.2"
@@ -56,7 +56,7 @@ libc = "0.2.103"
 
 [dev-dependencies]
 more-asserts = "0.2"
-paste = "1.0.5"
+paste = "1.0.6"
 
 [features]
 fail-on-deprecated = []
