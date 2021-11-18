@@ -358,3 +358,47 @@ pub fn is_valid(repo_path: &str) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
     Ok(repo.is_ok() && !repo?.is_bare())
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use git2::Time;
+    use std::time::SystemTime;
+
+    #[test]
+    fn display_time_as_human_time_current_time_now() {
+        let current_time = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap();
+
+        let time = Time::new(current_time.as_secs() as i64, 0);
+        let result = git_time_to_formatted_time(&time, false);
+        assert_eq!(result, "now");
+    }
+
+    #[test]
+    fn display_time_as_human_time_current_time_arbitrary() {
+        let time = 1600000000;
+        let time = Time::new(time, 0);
+        let result = git_time_to_formatted_time(&time, false);
+        assert_eq!(result, "a year ago");
+    }
+
+    #[test]
+    fn display_time_as_iso_time_some_time() {
+        // Set "current" time to 11/18/2021 11:02:22
+        let time_sample = 1637233282;
+        let time = Time::new(time_sample, 0);
+        let result = git_time_to_formatted_time(&time, true);
+        assert_eq!(result, "2021-11-18T11:01:22Z");
+    }
+    #[test]
+    fn display_time_as_iso_time_current_epoch() {
+        let time_sample = 0;
+        let time = Time::new(time_sample, 0);
+        let result = git_time_to_formatted_time(&time, true);
+        assert_eq!(result, "1970-01-01T00:00:00Z");
+    }
+
+}
