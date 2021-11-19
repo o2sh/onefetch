@@ -2,8 +2,6 @@ use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
-use chrono::{FixedOffset, TimeZone};
-use chrono_humanize::HumanTime;
 use git2::Time;
 use git2::{
     BranchType, Commit, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions,
@@ -12,6 +10,10 @@ use git2::{
 use regex::Regex;
 use std::collections::HashMap;
 use std::path::Path;
+use time::format_description::well_known::Rfc3339;
+use time::OffsetDateTime;
+
+use time_humanize::HumanTime;
 
 pub struct Repo<'a> {
     repo: &'a Repository,
@@ -337,24 +339,65 @@ fn bytes_to_human_readable(bytes: u128) -> String {
 }
 
 fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
-    let (offset, _) = match time.offset_minutes() {
-        n if n < 0 => (-n, '-'),
-        n => (n, '+'),
-    };
-
-    let offset = FixedOffset::west(offset);
-    let dt_with_tz = offset.timestamp(time.seconds(), 0);
     if iso_time {
-        dt_with_tz
-            .with_timezone(&chrono::Utc)
-            .to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
+        to_rfc3339(HumanTime::from(time.seconds()))
     } else {
-        let ht = HumanTime::from(dt_with_tz);
+        let ht = HumanTime::from_duration_since_timestamp(time.seconds().unsigned_abs());
         format!("{}", ht)
     }
+}
+
+fn to_rfc3339<T>(dt: T) -> String
+where
+    T: Into<OffsetDateTime>,
+{
+    dt.into().format(&Rfc3339).unwrap()
 }
 
 pub fn is_valid(repo_path: &str) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
     Ok(repo.is_ok() && !repo?.is_bare())
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use git2::Time;
+    use std::time::SystemTime;
+
+    #[test]
+    fn display_time_as_human_time_current_time_now() {
+        let current_time = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap();
+
+        let time = Time::new(current_time.as_secs() as i64, 0);
+        let result = git_time_to_formatted_time(&time, false);
+        assert_eq!(result, "now");
+    }
+
+    #[test]
+    fn display_time_as_human_time_current_time_arbitrary() {
+        let time = 1600000000;
+        let time = Time::new(time, 0);
+        let result = git_time_to_formatted_time(&time, false);
+        assert_eq!(result, "a year ago");
+    }
+
+    #[test]
+    fn display_time_as_iso_time_some_time() {
+        // Set "current" time to 11/18/2021 11:02:22
+        let time_sample = 1637233282;
+        let time = Time::new(time_sample, 0);
+        let result = git_time_to_formatted_time(&time, true);
+        assert_eq!(result, "2021-11-18T11:01:22Z");
+    }
+    #[test]
+    fn display_time_as_iso_time_current_epoch() {
+        let time_sample = 0;
+        let time = Time::new(time_sample, 0);
+        let result = git_time_to_formatted_time(&time, true);
+        assert_eq!(result, "1970-01-01T00:00:00Z");
+    }
 }
