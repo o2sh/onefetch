@@ -215,17 +215,8 @@ dependencies = [
  "libc",
  "num-integer",
  "num-traits",
- "time",
+ "time 0.1.43",
  "winapi",
-]
-
-[[package]]
-name = "chrono-humanize"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2eddc119501d583fd930cb92144e605f44e0252c38dd89d9247fffa1993375cb"
-dependencies = [
- "chrono",
 ]
 
 [[package]]
@@ -931,8 +922,6 @@ dependencies = [
  "base64",
  "byte-unit",
  "bytecount",
- "chrono",
- "chrono-humanize",
  "clap",
  "color_quant",
  "colored",
@@ -947,6 +936,8 @@ dependencies = [
  "serde_yaml",
  "strum",
  "term_size",
+ "time 0.3.5",
+ "time-humanize",
  "tokei",
  "toml",
  "yaml-rust",
@@ -1443,6 +1434,25 @@ checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
 dependencies = [
  "libc",
  "winapi",
+]
+
+[[package]]
+name = "time"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41effe7cfa8af36f439fac33861b66b049edc6f9a32331e2312660529c1c24ad"
+dependencies = [
+ "itoa",
+ "libc",
+]
+
+[[package]]
+name = "time-humanize"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "094045cdf53654db5ccf58b2d77758931338923be2b83ccd62645923cf6eb98a"
+dependencies = [
+ "time 0.3.5",
 ]
 
 [[package]]
