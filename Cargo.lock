@@ -1448,9 +1448,9 @@ dependencies = [
 
 [[package]]
 name = "time-humanize"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "094045cdf53654db5ccf58b2d77758931338923be2b83ccd62645923cf6eb98a"
+checksum = "3e32d019b4f7c100bcd5494e40a27119d45b71fba2b07a4684153129279a4647"
 dependencies = [
  "time 0.3.5",
 ]
