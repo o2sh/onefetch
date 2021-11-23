@@ -10,12 +10,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          components: clippy
       - name: Get Language Count
         uses: spenserblack/actions-set-output@v1
         id: lang-count
