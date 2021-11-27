@@ -10,13 +10,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Get Language Count
-        uses: spenserblack/actions-set-output@v1
-        id: lang-count
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
         with:
-          variables: COUNT=$(cargo run -- --languages | wc -l)
+          toolchain: stable
+          profile: minimal
+      - name: Get Language Count
+        id: vars
+        run: echo "::set-output name=language_count::$(cargo run -- --languages | wc -l)"
       - name: Get Badge
-        run: curl https://img.shields.io/badge/languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/language-badge.svg
+        run: curl https://img.shields.io/badge/languages-${{steps.vars.language_count}}-blue > ./assets/language-badge.svg
       - name: Commit Badge
         continue-on-error: true
         run: |
