@@ -19,7 +19,7 @@ jobs:
         id: vars
         run: echo "::set-output name=language_count::$(cargo run -- --languages | wc -l)"
       - name: Get Badge
-        run: curl https://img.shields.io/badge/languages-${{steps.vars.language_count}}-blue > ./assets/language-badge.svg
+        run: curl https://img.shields.io/badge/languages-${{ steps.vars.outputs.language_count }}-blue > ./assets/language-badge.svg
       - name: Commit Badge
         continue-on-error: true
         run: |
