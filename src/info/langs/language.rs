@@ -253,6 +253,25 @@ define_languages! {
         ] ),
         "raku"
     },
+    {
+        Renpy, Programming, "renpy.ascii", define_colors!( [
+            Color::White,
+            Color::Red,
+            Color::White,
+            Color::Blue,
+            Color::Yellow,
+            Color::White,
+            Color::Magenta
+        ] : [
+            Color::TrueColor{ r:234, g:219, b:204 },
+            Color::TrueColor{ r:255, g:127, b:127 },
+            Color::TrueColor{ r:251, g:238, b:226 },
+            Color::TrueColor{ r:73, g:95, b:142 },
+            Color::TrueColor{ r:250, g:228, b:90 },
+            Color::White,
+            Color::TrueColor{ r:181, g:163, b:150 }
+        ] )
+    },
     { Ruby, Programming, "ruby.ascii", define_colors!( [Color::Red] : [Color::TrueColor{ r: 204, g: 52, b: 45 }] ) },
     { Rust, Programming, "rust.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:228, g:55 ,b:23}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
     { Sass, Markup, "sass.ascii", define_colors!( [Color::Magenta] : [Color::TrueColor{ r:205, g:103 ,b:153} ] ) },
