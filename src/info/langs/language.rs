@@ -261,17 +261,15 @@ define_languages! {
             Color::Blue,
             Color::Yellow,
             Color::White,
-            Color::White,
-            Color::Black
+            Color::Magenta
         ] : [
-            Color::TrueColor{ r:193, g:176, b:158 },
+            Color::TrueColor{ r:234, g:219, b:204 },
             Color::TrueColor{ r:255, g:127, b:127 },
-            Color::TrueColor{ r:251, g:239, b:227 },
-            Color::TrueColor{ r:42, g:52, b:96 },
+            Color::TrueColor{ r:251, g:238, b:226 },
+            Color::TrueColor{ r:73, g:95, b:142 },
             Color::TrueColor{ r:250, g:228, b:90 },
             Color::White,
-            Color::TrueColor{ r:193, g:176, b:158 },
-            Color::TrueColor{ r:99, g:99, b:99 }
+            Color::TrueColor{ r:181, g:163, b:150 }
         ] )
     },
     { Ruby, Programming, "ruby.ascii", define_colors!( [Color::Red] : [Color::TrueColor{ r: 204, g: 52, b: 45 }] ) },
