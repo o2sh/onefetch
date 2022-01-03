@@ -64,7 +64,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("output")
-            .short("o")
+            .short('o')
             .long("output")
             .value_name("FORMAT")
             .help("Outputs Onefetch in a specific format (json, yaml).")
@@ -76,13 +76,13 @@ impl Config {
         )
         .arg(
             Arg::with_name("languages")
-            .short("l")
+            .short('l')
             .long("languages")
             .help("Prints out supported languages."),
         )
         .arg(
             Arg::with_name("package-managers")
-            .short("p")
+            .short('p')
             .long("package-managers")
             .help("Prints out supported package managers."),
         )
@@ -101,7 +101,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("image")
-            .short("i")
+            .short('i')
             .long("image")
             .value_name("IMAGE")
             .takes_value(true)
@@ -127,7 +127,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("ascii-language")
-           .short("a")
+           .short('a')
            .value_name("LANGUAGE")
            .long("ascii-language")
            .takes_value(true)
@@ -172,7 +172,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("ascii-colors")
-            .short("c")
+            .short('c')
             .long("ascii-colors")
             .value_name("X")
             .multiple(true)
@@ -182,7 +182,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("text-colors")
-            .short("t")
+            .short('t')
             .long("text-colors")
             .value_name("X")
             .multiple(true)
@@ -227,14 +227,14 @@ impl Config {
         )
         .arg(
             Arg::with_name("isotime")
-            .short("z")
+            .short('z')
             .long("isotime")
             .help("Use ISO 8601 formatted timestamps.")
         )
         .arg(
             Arg::with_name("disable-fields")
             .long("disable-fields")
-            .short("d")
+            .short('d')
             .value_name("FIELD")
             .multiple(true)
             .takes_value(true)
@@ -247,7 +247,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("authors-number")
-            .short("A")
+            .short('A')
             .long("authors-number")
             .value_name("NUM")
             .takes_value(true)
@@ -262,7 +262,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("email")
-            .short("E")
+            .short('E')
             .long("email")
             .help("show the email address of each author.")
         )
@@ -273,7 +273,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("exclude")
-            .short("e")
+            .short('e')
             .long("exclude")
             .value_name("EXCLUDE")
             .multiple(true)
@@ -282,7 +282,7 @@ impl Config {
         )
         .arg(
             Arg::with_name("type")
-            .short("T")
+            .short('T')
             .long("type")
             .value_name("TYPE")
             .multiple(true)
