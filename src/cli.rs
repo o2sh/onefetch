@@ -43,28 +43,25 @@ pub struct Config {
 
 impl Config {
     pub fn new() -> Result<Self> {
-        #[cfg(not(windows))]
         let possible_backends = ["kitty", "iterm", "sixel"];
-        #[cfg(windows)]
-        let possible_backends = [];
+
         let color_values = &[
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         ];
         let matches = App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
-        .setting(AppSettings::ColoredHelp)
         .setting(AppSettings::DeriveDisplayOrder)
-        .setting(AppSettings::HidePossibleValuesInHelp)
+        .setting(AppSettings::HidePossibleValues)
         .arg(
-            Arg::with_name("input")
+            Arg::new("input")
             .default_value(".")
             .hide_default_value(true)
             .help("Run as if onefetch was started in <input> instead of the current working directory.")
         )
         .arg(
-            Arg::with_name("output")
-            .short("o")
+            Arg::new("output")
+            .short('o')
             .long("output")
             .value_name("FORMAT")
             .help("Outputs Onefetch in a specific format (json, yaml).")
@@ -75,19 +72,19 @@ impl Config {
                 .collect::<Vec<&str>>())
         )
         .arg(
-            Arg::with_name("languages")
-            .short("l")
+            Arg::new("languages")
+            .short('l')
             .long("languages")
             .help("Prints out supported languages."),
         )
         .arg(
-            Arg::with_name("package-managers")
-            .short("p")
+            Arg::new("package-managers")
+            .short('p')
             .long("package-managers")
             .help("Prints out supported package managers."),
         )
         .arg(
-            Arg::with_name("show-logo")
+            Arg::new("show-logo")
             .long("show-logo")
             .value_name("WHEN")
             .takes_value(true)
@@ -100,15 +97,15 @@ impl Config {
                 If set to auto: the logo will be hidden if the terminal's width < 95.")
         )
         .arg(
-            Arg::with_name("image")
-            .short("i")
+            Arg::new("image")
+            .short('i')
             .long("image")
             .value_name("IMAGE")
             .takes_value(true)
             .help("Path to the IMAGE file."),
         )
         .arg(
-            Arg::with_name("image-backend")
+            Arg::new("image-backend")
             .long("image-backend")
             .value_name("BACKEND")
             .takes_value(true)
@@ -117,7 +114,7 @@ impl Config {
             .help("Which image BACKEND to use."),
         )
         .arg(
-            Arg::with_name("color-resolution")
+            Arg::new("color-resolution")
             .long("color-resolution")
             .value_name("VALUE")
             .requires("image")
@@ -126,12 +123,12 @@ impl Config {
             .help("VALUE of color resolution to use with SIXEL backend."),
         )
         .arg(
-            Arg::with_name("ascii-language")
-           .short("a")
+            Arg::new("ascii-language")
+           .short('a')
            .value_name("LANGUAGE")
            .long("ascii-language")
            .takes_value(true)
-           .case_insensitive(true)
+           .ignore_case(true)
            .help("Which LANGUAGE's ascii art to print.")
            .possible_values(
                &Language::iter()
@@ -139,7 +136,7 @@ impl Config {
                .collect::<Vec<&str>>())
         )
         .arg(
-            Arg::with_name("ascii-input")
+            Arg::new("ascii-input")
             .long("ascii-input")
             .value_name("STRING")
             .takes_value(true)
@@ -158,7 +155,7 @@ impl Config {
             }),
         )
         .arg(
-            Arg::with_name("true-color")
+            Arg::new("true-color")
             .long("true-color")
             .value_name("WHEN")
             .takes_value(true)
@@ -171,21 +168,21 @@ impl Config {
                 If set to auto: true color will be enabled if supported by the terminal.")
         )
         .arg(
-            Arg::with_name("ascii-colors")
-            .short("c")
+            Arg::new("ascii-colors")
+            .short('c')
             .long("ascii-colors")
             .value_name("X")
-            .multiple(true)
+            .multiple_values(true)
             .takes_value(true)
             .possible_values(color_values)
             .help("Colors (X X X...) to print the ascii art."),
         )
         .arg(
-            Arg::with_name("text-colors")
-            .short("t")
+            Arg::new("text-colors")
+            .short('t')
             .long("text-colors")
             .value_name("X")
-            .multiple(true)
+            .multiple_values(true)
             .takes_value(true)
             .max_values(6)
             .possible_values(color_values)
@@ -197,48 +194,48 @@ impl Config {
                 '--text-colors 9 10 11 12 13 14'")
         )
         .arg(
-            Arg::with_name("no-bold")
+            Arg::new("no-bold")
             .long("no-bold")
             .help("Turns off bold formatting."),
         )
         .arg(
-            Arg::with_name("no-palette")
+            Arg::new("no-palette")
             .long("no-palette")
             .help("Hides the color palette."),
         )
         .arg(
-            Arg::with_name("no-merges")
+            Arg::new("no-merges")
             .long("no-merges")
             .help("Ignores merge commits."),
         )
         .arg(
-            Arg::with_name("no-bots")
+            Arg::new("no-bots")
             .long("no-bots")
             .min_values(0)
             .max_values(1)
             .value_name("REGEX")
             .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
             .validator(|p| {
-                match Regex::from_str(&p) {
+                match Regex::from_str(p) {
                     Ok(_) => Ok(()),
                     Err(_) => Err(String::from("must be a valid regex pattern"))
                 }
             }),
         )
         .arg(
-            Arg::with_name("isotime")
-            .short("z")
+            Arg::new("isotime")
+            .short('z')
             .long("isotime")
             .help("Use ISO 8601 formatted timestamps.")
         )
         .arg(
-            Arg::with_name("disable-fields")
+            Arg::new("disable-fields")
             .long("disable-fields")
-            .short("d")
+            .short('d')
             .value_name("FIELD")
-            .multiple(true)
+            .multiple_values(true)
             .takes_value(true)
-            .case_insensitive(true)
+            .ignore_case(true)
             .help("Allows you to disable FIELD(s) from appearing in the output.")
             .possible_values(
                 &InfoField::iter()
@@ -246,8 +243,8 @@ impl Config {
                     .collect::<Vec<&str>>())
         )
         .arg(
-            Arg::with_name("authors-number")
-            .short("A")
+            Arg::new("authors-number")
+            .short('A')
             .long("authors-number")
             .value_name("NUM")
             .takes_value(true)
@@ -261,33 +258,35 @@ impl Config {
             })
         )
         .arg(
-            Arg::with_name("email")
-            .short("E")
+            Arg::new("email")
+            .short('E')
             .long("email")
             .help("show the email address of each author.")
         )
         .arg(
-            Arg::with_name("hidden")
+            Arg::new("hidden")
             .long("hidden")
             .help("Count hidden files and directories.")
         )
         .arg(
-            Arg::with_name("exclude")
-            .short("e")
+            Arg::new("exclude")
+            .short('e')
             .long("exclude")
             .value_name("EXCLUDE")
-            .multiple(true)
+            .multiple_values(true)
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE."),
         )
         .arg(
-            Arg::with_name("type")
-            .short("T")
+            Arg::new("type")
+            .short('T')
             .long("type")
             .value_name("TYPE")
-            .multiple(true)
+            .multiple_values(true)
             .takes_value(true)
-            .case_insensitive(true)
+            .ignore_case(true)
+            .default_values(&["programming", "markup"])
+            .hide_default_value(true)
             .help("Filters output by language type (*programming*, *markup*, prose, data).")
             .possible_values(
                 &LanguageType::iter()
@@ -401,11 +400,11 @@ impl Config {
                 })
         });
 
-        let language_types: Vec<LanguageType> = if let Some(values) = matches.values_of("type") {
-            values.map(|t| LanguageType::from_str(t).unwrap()).collect()
-        } else {
-            vec![LanguageType::Programming, LanguageType::Markup]
-        };
+        let language_types: Vec<LanguageType> = matches
+            .values_of("type")
+            .unwrap()
+            .map(|t| LanguageType::from_str(t).unwrap())
+            .collect();
 
         Ok(Config {
             repo_path,
