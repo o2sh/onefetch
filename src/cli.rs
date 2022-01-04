@@ -46,7 +46,7 @@ impl Config {
         #[cfg(not(windows))]
         let possible_backends = ["kitty", "iterm", "sixel"];
         #[cfg(windows)]
-        let possible_backends = [];
+        let possible_backends: [&str] = [];
         let color_values = &[
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         ];
@@ -218,7 +218,7 @@ impl Config {
             .value_name("REGEX")
             .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
             .validator(|p| {
-                match Regex::from_str(&p) {
+                match Regex::from_str(p) {
                     Ok(_) => Ok(()),
                     Err(_) => Err(String::from("must be a valid regex pattern"))
                 }
@@ -275,7 +275,7 @@ impl Config {
             .short('e')
             .long("exclude")
             .value_name("EXCLUDE")
-            .multiple_occurrences(true)
+            .multiple_values(true)
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE."),
         )
@@ -284,9 +284,11 @@ impl Config {
             .short('T')
             .long("type")
             .value_name("TYPE")
-            .multiple_occurrences(true)
+            .multiple_values(true)
             .takes_value(true)
             .ignore_case(true)
+            .default_values(&["programming", "markup"])
+            .hide_default_value(true)
             .help("Filters output by language type (*programming*, *markup*, prose, data).")
             .possible_values(
                 &LanguageType::iter()
@@ -400,11 +402,11 @@ impl Config {
                 })
         });
 
-        let language_types: Vec<LanguageType> = if let Some(values) = matches.values_of("type") {
-            values.map(|t| LanguageType::from_str(t).unwrap()).collect()
-        } else {
-            vec![LanguageType::Programming, LanguageType::Markup]
-        };
+        let language_types: Vec<LanguageType> = matches
+            .values_of("type")
+            .unwrap()
+            .map(|t| LanguageType::from_str(t).unwrap())
+            .collect();
 
         Ok(Config {
             repo_path,
