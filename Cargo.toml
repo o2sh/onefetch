@@ -37,7 +37,7 @@ git2 = {version = "0.13.25", default-features = false}
 image = "0.23.14"
 regex = "1.4.6"
 serde = "1.0.136"
-serde_json = "1.0.78"
+serde_json = "1.0.79"
 serde_yaml = "0.8"
 strum = {version = "0.23.0", features = ["derive"]}
 term_size = "0.3.2"
