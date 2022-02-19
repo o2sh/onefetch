@@ -304,7 +304,7 @@ impl Info {
     }
 
     fn get_language_field(&self, title: &str) -> String {
-        let progress_bar_length = 26;
+        let language_bar_length = 26;
         let pad = title.len() + 2;
         let color_palette = vec![
             Color::Red,
@@ -339,7 +339,7 @@ impl Info {
 
         for (_, language) in languages.iter().enumerate() {
             let bar_width = std::cmp::max(
-                (language.1 / 100. * progress_bar_length as f64).round() as usize,
+                (language.1 / 100. * language_bar_length as f64).round() as usize,
                 1,
             );
             language_field.push_str(&format!(
