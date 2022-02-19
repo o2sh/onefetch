@@ -351,11 +351,10 @@ impl Info {
 
         for (cnt, language) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language.1);
-            let language_chip = format!("\u{25CF}").color(language.2);
             let language_with_perc =
                 format!("{} ({} %)", language.0, formatted_number).color(self.text_colors.info);
-            let language_str =
-                format!("{} {} ", language_chip, language_with_perc).color(self.text_colors.info);
+            let language_chip = format!("\u{25CF}").color(language.2);
+            let language_str = format!("{} {} ", language_chip, language_with_perc);
             if cnt % 2 == 0 {
                 language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
             } else {
