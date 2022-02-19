@@ -304,27 +304,61 @@ impl Info {
     }
 
     fn get_language_field(&self, title: &str) -> String {
-        let mut language_field = String::from("");
-
+        let progress_bar_length = 26;
         let pad = title.len() + 2;
+        let color_palette = vec![
+            Color::Red,
+            Color::Green,
+            Color::Yellow,
+            Color::Blue,
+            Color::Magenta,
+            Color::Cyan,
+        ];
 
-        let languages: Vec<(String, f64)> = {
-            let mut iter = self.languages.iter().map(|x| (format!("{}", x.0), x.1));
+        let mut language_field = String::from("");
+        let mut i = 0;
+        let languages: Vec<(String, f64, Color)> = {
+            let mut iter = self.languages.iter().map(|x| {
+                i += 1;
+                let color = if self.config.true_color {
+                    x.0.get_colors(true)[0]
+                } else {
+                    color_palette[i % color_palette.len()]
+                };
+                (format!("{}", x.0), x.1, color)
+            });
             if self.languages.len() > 6 {
                 let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
                 let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
-                languages.push(("Other".to_owned(), other_sum));
+                languages.push(("Other".to_owned(), other_sum, Color::White));
                 languages
             } else {
                 iter.collect()
             }
         };
 
+        for (_, language) in languages.iter().enumerate() {
+            let bar_width = std::cmp::max(
+                (language.1 / 100. * progress_bar_length as f64).round() as usize,
+                1,
+            );
+            language_field.push_str(&format!(
+                "{:<width$}",
+                "".on_color(language.2),
+                width = bar_width
+            ));
+        }
+
         for (cnt, language) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language.1);
-            let language_str =
-                format!("{} ({} %) ", language.0, formatted_number).color(self.text_colors.info);
-            if cnt != 0 && cnt % 2 == 0 {
+            let language_str = format!(
+                "{} {} ({} %) ",
+                "\u{25CF}".color(language.2),
+                language.0,
+                formatted_number
+            )
+            .color(self.text_colors.info);
+            if cnt % 2 == 0 {
                 language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
             } else {
                 language_field.push_str(&format!("{}", language_str));
