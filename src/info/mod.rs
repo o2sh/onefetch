@@ -335,23 +335,16 @@ impl Info {
             }
         };
 
-        let mut actual_language_bar_length = 0;
-        let language_bars: Vec<String> = languages
+        let language_bar: String = languages
             .iter()
             .map(|x| {
                 let bar_width = std::cmp::max(
                     (x.1 / 100. * language_bar_length as f64).round() as usize,
                     1,
                 );
-                actual_language_bar_length += bar_width;
                 format!("{:<width$}", "".on_color(x.2), width = bar_width)
             })
             .collect();
-
-        let mut language_bar = String::with_capacity(actual_language_bar_length);
-        for bar in language_bars.iter() {
-            language_bar.push_str(bar);
-        }
 
         language_field.push_str(&language_bar);
 
