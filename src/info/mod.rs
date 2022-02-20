@@ -304,6 +304,7 @@ impl Info {
     }
 
     fn get_language_field(&self, title: &str) -> String {
+        let mut language_field = String::from("");
         let language_bar_length = 26;
         let pad = title.len() + 2;
         let color_palette = vec![
@@ -315,11 +316,8 @@ impl Info {
             Color::Cyan,
         ];
 
-        let mut language_field = String::from("");
-        let mut i = 0;
         let languages: Vec<(String, f64, Color)> = {
-            let mut iter = self.languages.iter().map(|x| {
-                i += 1;
+            let mut iter = self.languages.iter().enumerate().map(|(i, x)| {
                 let color = if self.config.true_color {
                     x.0.get_colors(true)[0]
                 } else {
@@ -337,28 +335,36 @@ impl Info {
             }
         };
 
-        for (_, language) in languages.iter().enumerate() {
-            let bar_width = std::cmp::max(
-                (language.1 / 100. * language_bar_length as f64).round() as usize,
-                1,
-            );
-            language_field.push_str(&format!(
-                "{:<width$}",
-                "".on_color(language.2),
-                width = bar_width
-            ));
+        let mut actual_language_bar_length = 0;
+        let language_bars: Vec<String> = languages
+            .iter()
+            .map(|x| {
+                let bar_width = std::cmp::max(
+                    (x.1 / 100. * language_bar_length as f64).round() as usize,
+                    1,
+                );
+                actual_language_bar_length += bar_width;
+                format!("{:<width$}", "".on_color(x.2), width = bar_width)
+            })
+            .collect();
+
+        let mut language_bar = String::with_capacity(actual_language_bar_length);
+        for bar in language_bars.iter() {
+            language_bar.push_str(bar);
         }
 
-        for (cnt, language) in languages.iter().enumerate() {
+        language_field.push_str(&language_bar);
+
+        for (i, language) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language.1);
             let language_with_perc =
                 format!("{} ({} %)", language.0, formatted_number).color(self.text_colors.info);
-            let language_chip = format!("\u{25CF}").color(language.2);
+            let language_chip = "\u{25CF}".color(language.2);
             let language_str = format!("{} {} ", language_chip, language_with_perc);
-            if cnt % 2 == 0 {
+            if i % 2 == 0 {
                 language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
             } else {
-                language_field.push_str(&format!("{}", language_str));
+                language_field.push_str(&language_str.to_string());
             }
         }
         language_field
