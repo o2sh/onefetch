@@ -5,7 +5,7 @@ use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
 use anyhow::{Context, Result};
-use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
+use clap::{crate_description, crate_name, crate_version, AppSettings, Arg};
 use image::DynamicImage;
 use regex::Regex;
 use std::process::Command;
@@ -48,11 +48,11 @@ impl Config {
         let color_values = &[
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         ];
-        let matches = App::new(crate_name!())
+        let matches = clap::Command::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
         .setting(AppSettings::DeriveDisplayOrder)
-        .setting(AppSettings::HidePossibleValues)
+        .hide_possible_values(true)
         .arg(
             Arg::new("input")
             .default_value(".")
