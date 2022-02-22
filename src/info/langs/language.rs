@@ -184,7 +184,7 @@ define_languages! {
     { Coq, Programming, "coq.ascii", define_colors!( [Color::Yellow, Color::White] : [Color::TrueColor {r:191, g:140, b:94}, Color::TrueColor {r:213, g:190, b:153}] ) },
     { Cpp, Programming, "cpp.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::Blue, Color::White] : [Color::TrueColor{r:100, g:154, b:210}, Color::TrueColor{r:0, g:66, b:131}, Color::TrueColor{r:0, g:89, b:157}, Color::TrueColor{r:255, g:255, b:255}] ), "c++" },
     { Crystal, Programming, "crystal.ascii", define_colors!( [Color::White, Color::Black] ) },
-    { CSharp, Programming, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta, Color::White] : [Color::TrueColor{r:154, g:73, b:147}, Color::TrueColor{r:106, g:21, b:119}, Color::TrueColor{r:255, g:255, b:255}] ), "c#" },
+    { CSharp, Programming, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta, Color::Magenta, Color::White] : [Color::TrueColor{r:155, g:79, b:151}, Color::TrueColor{r:103, g:33, b:122}, Color::TrueColor{r:128, g:55, b:136}, Color::TrueColor{r:255, g:255, b:255}] ), "c#" },
     { Css, Markup, "css.ascii", define_colors!( [Color::Blue, Color::White] ) },
     { D, Programming, "d.ascii", define_colors!( [Color::Red] ) },
     { Dart, Programming, "dart.ascii", define_colors!( [Color::Blue, Color::Cyan, Color::Blue ] : [Color::TrueColor{ r:0, g:163, b:231 }, Color::TrueColor{ r:66, g:223, b:205 }, Color::TrueColor{ r:1, g:89, b:125 }] ) },
