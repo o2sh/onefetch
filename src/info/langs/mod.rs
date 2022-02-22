@@ -18,7 +18,7 @@ pub fn get_language_statistics(
 ) -> Result<(Vec<(Language, f64)>, usize)> {
     let stats = get_statistics(dir, ignored_directories, language_types, include_hidden);
     let language_distribution = get_language_distribution(&stats)
-        .with_context(|| "Could not find any source code in this directory")?;
+        .with_context(|| "Could not find any source code in this repository")?;
     let mut language_distribution_vec: Vec<(_, _)> = language_distribution.into_iter().collect();
     language_distribution_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
     let loc = get_total_loc(&stats);
