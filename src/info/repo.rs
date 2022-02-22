@@ -356,7 +356,7 @@ where
 
 pub fn is_valid(repo_path: &str) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
-    Ok(repo.is_ok() && !repo?.is_bare())
+    Ok(!repo?.is_bare())
 }
 
 #[cfg(test)]
