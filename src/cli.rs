@@ -46,7 +46,7 @@ impl Config {
         let possible_backends = ["kitty", "iterm", "sixel"];
 
         let color_values = &[
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+            "_", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         ];
         let matches = clap::Command::new(crate_name!())
         .version(crate_version!())
