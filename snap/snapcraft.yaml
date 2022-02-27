@@ -16,12 +16,19 @@ parts:
     stage-packages:
       - git
     override-build: |
-      snapcraftctl build 
+      snapcraftctl build
       snapcraftctl set-version $(git describe --abbrev=0 --tags)
+
+plugs:
+  config-git:
+    interface: system-files
+    read:
+      - /etc/gitconfig
 
 apps:
   onefetch:
     command: bin/onefetch
-    plugs: 
+    plugs:
       - home
       - removable-media
+      - config-git
