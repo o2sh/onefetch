@@ -30,7 +30,7 @@ anyhow = "1.0"
 askalono = "0.4.4"
 byte-unit = "4.0.13"
 bytecount = "0.6.2"
-clap = {version = "3.1.1", features = ["cargo", "wrap_help"]}
+clap = {version = "3.1.3", features = ["cargo", "wrap_help"]}
 color_quant = "1.1.0"
 colored = "2.0.0"
 git2 = {version = "0.13.25", default-features = false}
