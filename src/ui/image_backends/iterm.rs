@@ -1,7 +1,8 @@
 use anyhow::Result;
-use image::{imageops::FilterType, DynamicImage, GenericImageView};
+use image::{imageops::FilterType, DynamicImage};
 use libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ};
 use std::env;
+use std::io::Cursor;
 
 pub struct ITermBackend {}
 
@@ -41,7 +42,7 @@ impl super::ImageBackend for ITermBackend {
         let image_rows = height_ratio * f64::from(image.height());
 
         let mut bytes: Vec<u8> = Vec::new();
-        image.write_to(&mut bytes, image::ImageOutputFormat::Png)?;
+        image.write_to(&mut Cursor::new(&mut bytes), image::ImageOutputFormat::Png)?;
         let encoded_image = base64::encode(bytes);
         let mut image_data = Vec::<u8>::new();
 
