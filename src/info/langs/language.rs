@@ -178,6 +178,7 @@ define_languages! {
     { AutoHotKey, Programming, "autohotkey.ascii", define_colors!( [Color::White, Color::Green] : [Color::TrueColor{r:255, g:255, b:255}, Color::TrueColor{r: 0x11, g: 0x98, b: 0x10}]) },
     { Bash, Programming, "bash.ascii", define_colors!( [Color::White] ) },
     { C, Programming, "c.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::Blue, Color::White] : [Color::TrueColor{r:93, g:108, b:191}, Color::TrueColor{r:41, g:54, b:147}, Color::TrueColor{r:57, g:73, b:170}, Color::TrueColor{r:255, g:255, b:255}] ) },
+    { Ceylon, Programming, "ceylon.ascii", define_colors!( [Color::Yellow] : [Color::TrueColor{r:206, g:142 ,b:29}] ) },
     { Clojure, Programming, "clojure.ascii", define_colors!( [Color::Cyan, Color::Green] ) },
     { CMake, Programming, "cmake.ascii", define_colors!( [Color::Blue, Color::Green, Color::Red, Color::Black] ) },
     { CoffeeScript, Programming, "coffeescript.ascii", define_colors!( [Color::Red] ) },
