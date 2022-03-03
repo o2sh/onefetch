@@ -20,10 +20,15 @@ parts:
       snapcraftctl set-version $(git describe --abbrev=0 --tags)
 
 plugs:
-  config-git:
+  system-gitconfig:
     interface: system-files
     read:
-      - /etc/gitconfig
+    - /etc/gitconfig
+  global-gitconfig:
+    interface: personal-files
+    read:
+    - $HOME/.gitconfig
+    - $HOME/.config/git/config
 
 apps:
   onefetch:
@@ -31,4 +36,5 @@ apps:
     plugs:
       - home
       - removable-media
-      - config-git
+      - system-gitconfig
+      - global-gitconfig
