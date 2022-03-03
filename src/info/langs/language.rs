@@ -178,7 +178,21 @@ define_languages! {
     { AutoHotKey, Programming, "autohotkey.ascii", define_colors!( [Color::White, Color::Green] : [Color::TrueColor{r:255, g:255, b:255}, Color::TrueColor{r: 0x11, g: 0x98, b: 0x10}]) },
     { Bash, Programming, "bash.ascii", define_colors!( [Color::White] ) },
     { C, Programming, "c.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::Blue, Color::White] : [Color::TrueColor{r:93, g:108, b:191}, Color::TrueColor{r:41, g:54, b:147}, Color::TrueColor{r:57, g:73, b:170}, Color::TrueColor{r:255, g:255, b:255}] ) },
-    { Ceylon, Programming, "ceylon.ascii", define_colors!( [Color::Yellow] : [Color::TrueColor{r:206, g:142 ,b:29}] ) },
+    {
+        Ceylon, Programming, "ceylon.ascii", define_colors!( [
+            Color::Yellow,
+            Color::Yellow,
+            Color::Yellow,
+            Color::Yellow,
+            Color::Yellow
+        ] : [
+            Color::TrueColor{ r:194, g:126, b:16 },
+            Color::TrueColor{ r:221, g:161, b:46 },
+            Color::TrueColor{ r:209, g:145, b:31 },
+            Color::TrueColor{ r:204, g:139, b:24 },
+            Color::TrueColor{ r:171, g:112, b:8 }
+        ] )
+    },
     { Clojure, Programming, "clojure.ascii", define_colors!( [Color::Cyan, Color::Green] ) },
     { CMake, Programming, "cmake.ascii", define_colors!( [Color::Blue, Color::Green, Color::Red, Color::Black] ) },
     { CoffeeScript, Programming, "coffeescript.ascii", define_colors!( [Color::Red] ) },
