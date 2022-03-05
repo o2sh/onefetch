@@ -1,5 +1,5 @@
 use crate::ui::num_to_color;
-use colored::{Color, ColoredString, Colorize};
+use colored::Color;
 
 pub struct TextColor {
     pub title: Color,
@@ -45,13 +45,5 @@ impl TextColor {
         }
 
         text_color_set
-    }
-}
-
-pub fn color_if_some(s: &str, color: Option<Color>) -> ColoredString {
-    if let Some(c) = color {
-        s.color(c)
-    } else {
-        s.into()
     }
 }
