@@ -3,22 +3,22 @@ use colored::Color;
 
 pub struct TextColor {
     pub title: Color,
-    pub tilde: Color,
-    pub underline: Color,
+    pub tilde: Option<Color>,
+    pub underline: Option<Color>,
     pub subtitle: Color,
-    pub colon: Color,
-    pub info: Color,
+    pub colon: Option<Color>,
+    pub info: Option<Color>,
 }
 
 impl TextColor {
     fn new(color: Color) -> TextColor {
         TextColor {
             title: color,
-            tilde: Color::White,
-            underline: Color::White,
+            tilde: None,
+            underline: None,
             subtitle: color,
-            colon: Color::White,
-            info: Color::White,
+            colon: None,
+            info: None,
         }
     }
 
@@ -37,11 +37,11 @@ impl TextColor {
                 .collect::<Vec<Color>>();
 
             text_color_set.title = *custom_color.get(0).unwrap_or(&default_colors[0]);
-            text_color_set.tilde = *custom_color.get(1).unwrap_or(&Color::White);
-            text_color_set.underline = *custom_color.get(2).unwrap_or(&Color::White);
+            text_color_set.tilde = custom_color.get(1).cloned();
+            text_color_set.underline = custom_color.get(2).cloned();
             text_color_set.subtitle = *custom_color.get(3).unwrap_or(&default_colors[0]);
-            text_color_set.colon = *custom_color.get(4).unwrap_or(&Color::White);
-            text_color_set.info = *custom_color.get(5).unwrap_or(&Color::White);
+            text_color_set.colon = custom_color.get(4).cloned();
+            text_color_set.info = custom_color.get(5).cloned();
         }
 
         text_color_set

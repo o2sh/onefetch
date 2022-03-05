@@ -1,10 +1,27 @@
 use crate::info::langs::language::Language;
-use colored::Color;
+use colored::{Color, ColoredString, Colorize};
 
 pub mod ascii_art;
 pub mod image_backends;
 pub mod printer;
 pub mod text_color;
+
+pub trait ColorizeOption {
+    fn try_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString;
+}
+
+impl<T> ColorizeOption for T
+where
+    T: Colorize,
+    T: Into<ColoredString>,
+{
+    fn try_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString {
+        match color {
+            Some(color) => Colorize::color(self, color),
+            None => self.into(),
+        }
+    }
+}
 
 pub fn get_ascii_colors(
     ascii_language: &Option<Language>,
