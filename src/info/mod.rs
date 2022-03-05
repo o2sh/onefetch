@@ -1,6 +1,6 @@
 use crate::cli::{self, Config};
 use crate::ui::get_ascii_colors;
-use crate::ui::text_color::TextColor;
+use crate::ui::text_color::{color_if_some, TextColor};
 use anyhow::Result;
 use author::Author;
 use colored::{Color, ColoredString, Colorize};
@@ -56,7 +56,11 @@ impl std::fmt::Display for Info {
             let (git_info_field_str, git_info_field_len) = self.get_git_info_field();
             writeln!(f, "{}", git_info_field_str)?;
             let separator = "-".repeat(git_info_field_len);
-            writeln!(f, "{}", separator.color(self.text_colors.underline))?;
+            writeln!(
+                f,
+                "{}",
+                color_if_some(&separator, self.text_colors.underline)
+            )?;
         }
 
         if !self.config.disabled_fields.project && !self.repo_name.is_empty() {
@@ -225,7 +229,7 @@ impl Info {
         info: &str,
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
-        let info_colored = info.color(self.text_colors.info);
+        let info_colored = color_if_some(info, self.text_colors.info);
         writeln!(
             f,
             "{} {}",
@@ -247,7 +251,7 @@ impl Info {
         let formatted_label = format!(
             "{}{}",
             label.color(self.text_colors.subtitle),
-            ":".color(self.text_colors.colon)
+            color_if_some(":", self.text_colors.colon)
         );
         self.bold(&formatted_label)
     }
@@ -268,7 +272,7 @@ impl Info {
                 format!(
                     "{} {} {}",
                     &self.bold(&self.git_username).color(self.text_colors.title),
-                    &self.bold("~").color(self.text_colors.tilde),
+                    color_if_some(&self.bold("~"), self.text_colors.tilde),
                     &self.bold(&self.git_version).color(self.text_colors.title)
                 ),
                 git_info_length + 3,
@@ -291,7 +295,7 @@ impl Info {
         let pad = title.len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
-            let author_str = format!("{}", author).color(self.text_colors.info);
+            let author_str = color_if_some(&format!("{}", author), self.text_colors.info);
 
             if i == 0 {
                 author_field.push_str(&format!("{}", author_str));
@@ -350,8 +354,10 @@ impl Info {
 
         for (i, language) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language.1);
-            let language_with_perc =
-                format!("{} ({} %)", language.0, formatted_number).color(self.text_colors.info);
+            let language_with_perc = color_if_some(
+                &format!("{} ({} %)", language.0, formatted_number),
+                self.text_colors.info,
+            );
             let language_chip = "\u{25CF}".color(language.2);
             let language_str = format!("{} {} ", language_chip, language_with_perc);
             if i % 2 == 0 {
