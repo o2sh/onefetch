@@ -389,7 +389,7 @@ impl Info {
         match self.file_count {
             0 => String::from(&self.repo_size),
             _ => {
-                let res = format!("{} ({} files)", self.repo_size, self.file_count.to_string());
+                let res = format!("{} ({} files)", self.repo_size, self.file_count);
                 res
             }
         }
