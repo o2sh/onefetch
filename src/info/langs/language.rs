@@ -8,6 +8,28 @@ pub struct Colors {
     true_colors: Option<Vec<Color>>,
 }
 
+macro_rules! define_optional_color {
+    ($( $color:ident ),*) => {
+        pub enum OptionalColor {
+            $( $color, )*
+            TrueColor{ r: u8, g: u8, b: u8 },
+            None,
+        }
+
+        impl From<OptionalColor> for Option<::colored::Color> {
+            fn from(color: OptionalColor) -> Option<::colored::Color> {
+                match color {
+                    $( OptionalColor::$color => Some(::colored::Color::$color), )*
+                    OptionalColor::TrueColor{ r, g, b } => Some(::colored::Color::TrueColor{r, g, b}),
+                    OptionalColor::None => Option::None,
+                }
+            }
+        }
+    }
+}
+
+define_optional_color!(Black, Red, Green, Yellow, Blue, Magenta, Cyan, White);
+
 macro_rules! define_colors {
     ( [ $($color:expr),+ ] ) => { Colors { basic_colors: vec![$($color),+], true_colors: None } };
     ( [ $($bc:expr),+ ] : [ $($tc:expr),+ ] ) => { Colors { basic_colors: vec![$($bc),+], true_colors: Some(vec![$($tc),+]) } };
