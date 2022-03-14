@@ -43,7 +43,7 @@ pub struct Info {
     repo_size: String,
     license: String,
     pub dominant_language: Language,
-    pub ascii_colors: Vec<Color>,
+    pub ascii_colors: Vec<Option<Color>>,
     pub text_colors: TextColor,
     pub config: Config,
 }
@@ -246,7 +246,7 @@ impl Info {
     fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
         let formatted_label = format!(
             "{}{}",
-            label.color(self.text_colors.subtitle),
+            label.try_color(self.text_colors.subtitle),
             ":".try_color(self.text_colors.colon)
         );
         self.bold(&formatted_label)
@@ -267,9 +267,13 @@ impl Info {
             (
                 format!(
                     "{} {} {}",
-                    &self.bold(&self.git_username).color(self.text_colors.title),
+                    &self
+                        .bold(&self.git_username)
+                        .try_color(self.text_colors.title),
                     &self.bold("~").try_color(self.text_colors.tilde),
-                    &self.bold(&self.git_version).color(self.text_colors.title)
+                    &self
+                        .bold(&self.git_version)
+                        .try_color(self.text_colors.title)
                 ),
                 git_info_length + 3,
             )
@@ -277,8 +281,12 @@ impl Info {
             (
                 format!(
                     "{}{}",
-                    &self.bold(&self.git_username).color(self.text_colors.title),
-                    &self.bold(&self.git_version).color(self.text_colors.title)
+                    &self
+                        .bold(&self.git_username)
+                        .try_color(self.text_colors.title),
+                    &self
+                        .bold(&self.git_version)
+                        .try_color(self.text_colors.title)
                 ),
                 git_info_length,
             )
@@ -316,19 +324,19 @@ impl Info {
             Color::Cyan,
         ];
 
-        let languages: Vec<(String, f64, Color)> = {
+        let languages: Vec<(String, f64, Option<Color>)> = {
             let mut iter = self.languages.iter().enumerate().map(|(i, x)| {
                 let color = if self.config.true_color {
                     x.0.get_colors(true)[0]
                 } else {
-                    color_palette[i % color_palette.len()]
+                    Some(color_palette[i % color_palette.len()])
                 };
                 (format!("{}", x.0), x.1, color)
             });
             if self.languages.len() > 6 {
                 let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
                 let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
-                languages.push(("Other".to_owned(), other_sum, Color::White));
+                languages.push(("Other".to_owned(), other_sum, None));
                 languages
             } else {
                 iter.collect()
@@ -342,7 +350,7 @@ impl Info {
                     (x.1 / 100. * language_bar_length as f64).round() as usize,
                     1,
                 );
-                format!("{:<width$}", "".on_color(x.2), width = bar_width)
+                format!("{:<width$}", "".try_on_color(x.2), width = bar_width)
             })
             .collect();
 
@@ -352,7 +360,7 @@ impl Info {
             let formatted_number = format!("{:.*}", 1, language.1);
             let language_with_perc =
                 format!("{} ({} %)", language.0, formatted_number).try_color(self.text_colors.info);
-            let language_chip = "\u{25CF}".color(language.2);
+            let language_chip = "\u{25CF}".try_color(language.2);
             let language_str = format!("{} {} ", language_chip, language_with_perc);
             if i % 2 == 0 {
                 language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));

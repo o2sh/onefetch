@@ -38,7 +38,7 @@ impl<W: Write> Printer<W> {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
                 let info_str = format!("{}", &self.info);
                 let mut info_lines = info_str.lines();
-                let colors: Vec<Color> = Vec::new();
+                let colors: Vec<Option<Color>> = Vec::new();
                 let mut buf = String::new();
 
                 if self.info.config.art_off {

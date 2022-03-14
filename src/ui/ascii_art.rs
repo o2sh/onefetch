@@ -1,14 +1,15 @@
+use crate::ui::ColorizeOption;
 use colored::{Color, Colorize};
 
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
-    colors: &'a [Color],
+    colors: &'a [Option<Color>],
     bold: bool,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str, colors: &'a [Color], bold: bool) -> AsciiArt<'a> {
+    pub fn new(input: &'a str, colors: &'a [Option<Color>], bold: bool) -> AsciiArt<'a> {
         let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
@@ -150,12 +151,12 @@ impl<'a> Tokens<'a> {
         })
     }
     /// render a truncated line of tokens.
-    fn render(self, colors: &[Color], start: usize, end: usize, bold: bool) -> String {
+    fn render(self, colors: &[Option<Color>], start: usize, end: usize, bold: bool) -> String {
         assert!(start <= end);
         let mut width = end - start;
         let mut colored_segment = String::new();
         let mut whole_string = String::new();
-        let mut color = &Color::White;
+        let mut color: Option<Color> = None;
 
         self.truncate(start, end).for_each(|token| {
             match token {
@@ -164,9 +165,9 @@ impl<'a> Tokens<'a> {
                     colored_segment.push(chr);
                 }
                 Token::Color(col) => {
-                    add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
+                    add_colored_segment(&mut whole_string, &colored_segment, color, bold);
                     colored_segment = String::new();
-                    color = colors.get(col as usize).unwrap_or(&Color::White);
+                    color = colors.get(col as usize).cloned().flatten();
                 }
                 Token::Space => {
                     width = width.saturating_sub(1);
@@ -175,7 +176,7 @@ impl<'a> Tokens<'a> {
             };
         });
 
-        add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
+        add_colored_segment(&mut whole_string, &colored_segment, color, bold);
         (0..width).for_each(|_| whole_string.push(' '));
         whole_string
     }
@@ -193,8 +194,8 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     }
 }
 
-fn add_colored_segment(base: &mut String, segment: &str, color: Color, bold: bool) {
-    let mut colored_segment = segment.color(color);
+fn add_colored_segment(base: &mut String, segment: &str, color: Option<Color>, bold: bool) {
+    let mut colored_segment = segment.try_color(color);
     if bold {
         colored_segment = colored_segment.bold();
     }

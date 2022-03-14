@@ -8,6 +8,7 @@ pub mod text_color;
 
 pub trait ColorizeOption {
     fn try_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString;
+    fn try_on_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString;
 }
 
 impl<T> ColorizeOption for T
@@ -21,6 +22,12 @@ where
             None => self.into(),
         }
     }
+    fn try_on_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString {
+        match color {
+            Some(color) => Colorize::on_color(self, color),
+            None => self.into(),
+        }
+    }
 }
 
 pub fn get_ascii_colors(
@@ -28,7 +35,7 @@ pub fn get_ascii_colors(
     dominant_language: &Language,
     ascii_colors: &[String],
     true_color: bool,
-) -> Vec<Color> {
+) -> Vec<Option<Color>> {
     let language = if let Some(ascii_language) = ascii_language {
         ascii_language
     } else {
@@ -37,13 +44,13 @@ pub fn get_ascii_colors(
 
     let colors = language.get_colors(true_color);
 
-    let colors: Vec<Color> = colors
+    let colors: Vec<Option<Color>> = colors
         .iter()
         .enumerate()
         .map(|(index, default_color)| {
             if let Some(color_num) = ascii_colors.get(index) {
                 if let Some(color) = num_to_color(color_num) {
-                    return color;
+                    return Some(color);
                 }
             }
             *default_color
