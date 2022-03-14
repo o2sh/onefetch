@@ -267,53 +267,47 @@ mod test {
 
         assert_eq!(
             Tokens("").render(&colors_shim, 0, 0, true),
-            "\u{1b}[1;37m\u{1b}[0m"
+            "\u{1b}[1m\u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 0, true),
-            "\u{1b}[1;37m\u{1b}[0m"
+            "\u{1b}[1m\u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 5, true),
-            "\u{1b}[1;37m     \u{1b}[0m"
+            "\u{1b}[1m     \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 1, 5, true),
-            "\u{1b}[1;37m    \u{1b}[0m"
+            "\u{1b}[1m    \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 3, 5, true),
-            "\u{1b}[1;37m  \u{1b}[0m"
+            "\u{1b}[1m  \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 4, true),
-            "\u{1b}[1;37m    \u{1b}[0m"
+            "\u{1b}[1m    \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 3, true),
-            "\u{1b}[1;37m   \u{1b}[0m"
+            "\u{1b}[1m   \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
-            "\u{1b}[1;37m\u{1b}[0m\u{1b}[1;37m\u{1b}[0m\u{1b}[1;37m \u{1b}[0m\u{1b}[1;37m a\u{1b}[0m   "
+            "\u{1b}[1m\u{1b}[0m\u{1b}[1m\u{1b}[0m\u{1b}[1m \u{1b}[0m\u{1b}[1m a\u{1b}[0m   "
         );
 
         // Tests for bold disabled
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, false),
-            "\u{1b}[37m\u{1b}[0m"
-        );
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, false),
-            "\u{1b}[37m     \u{1b}[0m"
-        );
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 0, false), "");
+        assert_eq!(Tokens("     ").render(&colors_shim, 0, 5, false), "     ");
     }
 
     #[test]
