@@ -35,7 +35,7 @@ color_quant = "1.1.0"
 colored = "2.0.0"
 git2 = {version = "0.14.1", default-features = false}
 image = "0.24.1"
-regex = "1.4.6"
+regex = "1.5.5"
 serde = "1.0.136"
 serde_json = "1.0.79"
 serde_yaml = "0.8"
