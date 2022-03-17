@@ -32,7 +32,7 @@ pub fn get_ascii_colors(
     let language = if let Some(ascii_language) = ascii_language {
         ascii_language
     } else {
-        &dominant_language
+        dominant_language
     };
 
     let colors = language.get_colors(true_color);
