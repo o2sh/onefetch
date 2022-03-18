@@ -27,8 +27,8 @@ plugs:
   gitconfig:
     interface: personal-files
     read:
-      - $HOME/.gitconfig
-      - $HOME/.config/git/config
+      - $SNAP_REAL_HOME/.gitconfig
+      - $SNAP_REAL_HOME/.config/git/config
 
 apps:
   onefetch:
