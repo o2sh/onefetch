@@ -1,34 +1,17 @@
 use crate::info::langs::language::Language;
-use colored::{Color, ColoredString, Colorize};
+use owo_colors::{AnsiColors, DynColors};
 
 pub mod ascii_art;
 pub mod image_backends;
 pub mod printer;
-pub mod text_color;
-
-pub trait ColorizeOption {
-    fn try_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString;
-}
-
-impl<T> ColorizeOption for T
-where
-    T: Colorize,
-    T: Into<ColoredString>,
-{
-    fn try_color<S: Into<Color>>(self, color: Option<S>) -> ColoredString {
-        match color {
-            Some(color) => Colorize::color(self, color),
-            None => self.into(),
-        }
-    }
-}
+pub mod text_colors;
 
 pub fn get_ascii_colors(
     ascii_language: &Option<Language>,
     dominant_language: &Language,
     ascii_colors: &[String],
     true_color: bool,
-) -> Vec<Color> {
+) -> Vec<DynColors> {
     let language = if let Some(ascii_language) = ascii_language {
         ascii_language
     } else {
@@ -37,14 +20,12 @@ pub fn get_ascii_colors(
 
     let colors = language.get_colors(true_color);
 
-    let colors: Vec<Color> = colors
+    let colors: Vec<DynColors> = colors
         .iter()
         .enumerate()
         .map(|(index, default_color)| {
             if let Some(color_num) = ascii_colors.get(index) {
-                if let Some(color) = num_to_color(color_num) {
-                    return color;
-                }
+                return num_to_color(color_num);
             }
             *default_color
         })
@@ -52,25 +33,24 @@ pub fn get_ascii_colors(
     colors
 }
 
-fn num_to_color(num: &str) -> Option<Color> {
-    let color = match num {
-        "0" => Color::Black,
-        "1" => Color::Red,
-        "2" => Color::Green,
-        "3" => Color::Yellow,
-        "4" => Color::Blue,
-        "5" => Color::Magenta,
-        "6" => Color::Cyan,
-        "7" => Color::White,
-        "8" => Color::BrightBlack,
-        "9" => Color::BrightRed,
-        "10" => Color::BrightGreen,
-        "11" => Color::BrightYellow,
-        "12" => Color::BrightBlue,
-        "13" => Color::BrightMagenta,
-        "14" => Color::BrightCyan,
-        "15" => Color::BrightWhite,
-        _ => return None,
-    };
-    Some(color)
+fn num_to_color(num: &str) -> DynColors {
+    match num {
+        "0" => DynColors::Ansi(AnsiColors::Black),
+        "1" => DynColors::Ansi(AnsiColors::Red),
+        "2" => DynColors::Ansi(AnsiColors::Green),
+        "3" => DynColors::Ansi(AnsiColors::Yellow),
+        "4" => DynColors::Ansi(AnsiColors::Blue),
+        "5" => DynColors::Ansi(AnsiColors::Magenta),
+        "6" => DynColors::Ansi(AnsiColors::Cyan),
+        "7" => DynColors::Ansi(AnsiColors::White),
+        "8" => DynColors::Ansi(AnsiColors::BrightBlack),
+        "9" => DynColors::Ansi(AnsiColors::BrightRed),
+        "10" => DynColors::Ansi(AnsiColors::BrightGreen),
+        "11" => DynColors::Ansi(AnsiColors::BrightYellow),
+        "12" => DynColors::Ansi(AnsiColors::BrightBlue),
+        "13" => DynColors::Ansi(AnsiColors::BrightMagenta),
+        "14" => DynColors::Ansi(AnsiColors::BrightCyan),
+        "15" => DynColors::Ansi(AnsiColors::BrightWhite),
+        _ => DynColors::Ansi(AnsiColors::Default),
+    }
 }

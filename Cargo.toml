@@ -32,9 +32,9 @@ byte-unit = "4.0.14"
 bytecount = "0.6.2"
 clap = {version = "3.1.6", features = ["cargo", "wrap_help"]}
 color_quant = "1.1.0"
-colored = "2.0.0"
 git2 = {version = "0.14.1", default-features = false}
 image = "0.24.1"
+owo-colors = "3.2.0"
 regex = "1.5.5"
 serde = "1.0.136"
 serde_json = "1.0.79"

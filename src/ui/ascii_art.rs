@@ -1,14 +1,14 @@
-use colored::{Color, Colorize};
+use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
 
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
-    colors: &'a [Color],
+    colors: &'a [DynColors],
     bold: bool,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str, colors: &'a [Color], bold: bool) -> AsciiArt<'a> {
+    pub fn new(input: &'a str, colors: &'a [DynColors], bold: bool) -> AsciiArt<'a> {
         let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
@@ -150,12 +150,12 @@ impl<'a> Tokens<'a> {
         })
     }
     /// render a truncated line of tokens.
-    fn render(self, colors: &[Color], start: usize, end: usize, bold: bool) -> String {
+    fn render(self, colors: &[DynColors], start: usize, end: usize, bold: bool) -> String {
         assert!(start <= end);
         let mut width = end - start;
         let mut colored_segment = String::new();
         let mut whole_string = String::new();
-        let mut color = &Color::White;
+        let mut color = &DynColors::Ansi(AnsiColors::White);
 
         self.truncate(start, end).for_each(|token| {
             match token {
@@ -166,7 +166,9 @@ impl<'a> Tokens<'a> {
                 Token::Color(col) => {
                     add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
                     colored_segment = String::new();
-                    color = colors.get(col as usize).unwrap_or(&Color::White);
+                    color = colors
+                        .get(col as usize)
+                        .unwrap_or(&DynColors::Ansi(AnsiColors::White));
                 }
                 Token::Space => {
                     width = width.saturating_sub(1);
@@ -193,12 +195,13 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     }
 }
 
-fn add_colored_segment(base: &mut String, segment: &str, color: Color, bold: bool) {
-    let mut colored_segment = segment.color(color);
+fn add_colored_segment(base: &mut String, segment: &str, color: DynColors, bold: bool) {
+    let mut style = Style::new().color(color);
     if bold {
-        colored_segment = colored_segment.bold();
+        style = style.bold();
     }
-    base.push_str(&format!("{}", colored_segment));
+    let formatted_segment = segment.style(style);
+    base.push_str(&format!("{}", formatted_segment));
 }
 
 // Basic combinators
@@ -259,49 +262,46 @@ mod test {
 
     #[test]
     fn render() {
-        use colored::control::SHOULD_COLORIZE;
-        SHOULD_COLORIZE.set_override(true);
-
         let colors_shim = Vec::new();
 
         assert_eq!(
             Tokens("").render(&colors_shim, 0, 0, true),
-            "\u{1b}[1;37m\u{1b}[0m"
+            "\u{1b}[37;1m\u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 0, true),
-            "\u{1b}[1;37m\u{1b}[0m"
+            "\u{1b}[37;1m\u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 5, true),
-            "\u{1b}[1;37m     \u{1b}[0m"
+            "\u{1b}[37;1m     \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 1, 5, true),
-            "\u{1b}[1;37m    \u{1b}[0m"
+            "\u{1b}[37;1m    \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 3, 5, true),
-            "\u{1b}[1;37m  \u{1b}[0m"
+            "\u{1b}[37;1m  \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 4, true),
-            "\u{1b}[1;37m    \u{1b}[0m"
+            "\u{1b}[37;1m    \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 3, true),
-            "\u{1b}[1;37m   \u{1b}[0m"
+            "\u{1b}[37;1m   \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
-            "\u{1b}[1;37m\u{1b}[0m\u{1b}[1;37m\u{1b}[0m\u{1b}[1;37m \u{1b}[0m\u{1b}[1;37m a\u{1b}[0m   "
+            "\u{1b}[37;1m\u{1b}[0m\u{1b}[37;1m\u{1b}[0m\u{1b}[37;1m \u{1b}[0m\u{1b}[37;1m a\u{1b}[0m   "
         );
 
         // Tests for bold disabled
