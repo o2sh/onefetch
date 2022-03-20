@@ -317,20 +317,24 @@ impl Info {
         ];
 
         let languages: Vec<(String, f64, DynColors)> = {
-            let mut iter = self.languages.iter().enumerate().map(|(i, x)| {
-                let color = if self.config.true_color {
-                    x.0.get_colors(true)[0]
-                } else {
-                    color_palette[i % color_palette.len()]
-                };
-                (format!("{}", x.0), x.1, color)
-            });
+            let mut iter = self
+                .languages
+                .iter()
+                .enumerate()
+                .map(|(i, (language, perc))| {
+                    let circle_color = if self.config.true_color {
+                        language.get_colors(true)[0]
+                    } else {
+                        color_palette[i % color_palette.len()]
+                    };
+                    (language.to_string(), *perc, circle_color)
+                });
             if self.languages.len() > 6 {
                 let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
-                let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
+                let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
                 languages.push((
-                    "Other".to_owned(),
-                    other_sum,
+                    "Other".to_string(),
+                    other_perc,
                     DynColors::Ansi(AnsiColors::White),
                 ));
                 languages
@@ -341,24 +345,24 @@ impl Info {
 
         let language_bar: String = languages
             .iter()
-            .map(|x| {
+            .map(|(_, perc, circle_color)| {
                 let bar_width = std::cmp::max(
-                    (x.1 / 100. * language_bar_length as f64).round() as usize,
+                    (perc / 100. * language_bar_length as f64).round() as usize,
                     1,
                 );
-                format!("{:<width$}", "".on_color(x.2), width = bar_width)
+                format!("{:<width$}", "".on_color(*circle_color), width = bar_width)
             })
             .collect();
 
         language_field.push_str(&language_bar);
 
-        for (i, language) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, language.1);
-            let language_chip = "\u{25CF}".color(language.2);
+        for (i, (language, perc, circle_color)) in languages.iter().enumerate() {
+            let formatted_number = format!("{:.*}", 1, perc);
+            let circle = "\u{25CF}".color(*circle_color);
             let language_str = format!(
                 "{} {} ",
-                language_chip,
-                format!("{} ({} %)", language.0, formatted_number).color(self.text_colors.info)
+                circle,
+                format!("{} ({} %)", language, formatted_number).color(self.text_colors.info)
             );
             if i % 2 == 0 {
                 language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
