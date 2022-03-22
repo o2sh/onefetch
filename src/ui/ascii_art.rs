@@ -155,7 +155,7 @@ impl<'a> Tokens<'a> {
         let mut width = end - start;
         let mut colored_segment = String::new();
         let mut whole_string = String::new();
-        let mut color = &DynColors::Ansi(AnsiColors::White);
+        let mut color = &DynColors::Ansi(AnsiColors::Default);
 
         self.truncate(start, end).for_each(|token| {
             match token {
@@ -168,7 +168,7 @@ impl<'a> Tokens<'a> {
                     colored_segment = String::new();
                     color = colors
                         .get(col as usize)
-                        .unwrap_or(&DynColors::Ansi(AnsiColors::White));
+                        .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
                 }
                 Token::Space => {
                     width = width.saturating_sub(1);
@@ -266,52 +266,52 @@ mod test {
 
         assert_eq!(
             Tokens("").render(&colors_shim, 0, 0, true),
-            "\u{1b}[37;1m\u{1b}[0m"
+            "\u{1b}[39;1m\u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 0, true),
-            "\u{1b}[37;1m\u{1b}[0m"
+            "\u{1b}[39;1m\u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 5, true),
-            "\u{1b}[37;1m     \u{1b}[0m"
+            "\u{1b}[39;1m     \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 1, 5, true),
-            "\u{1b}[37;1m    \u{1b}[0m"
+            "\u{1b}[39;1m    \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 3, 5, true),
-            "\u{1b}[37;1m  \u{1b}[0m"
+            "\u{1b}[39;1m  \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 4, true),
-            "\u{1b}[37;1m    \u{1b}[0m"
+            "\u{1b}[39;1m    \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 3, true),
-            "\u{1b}[37;1m   \u{1b}[0m"
+            "\u{1b}[39;1m   \u{1b}[0m"
         );
 
         assert_eq!(
             Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
-            "\u{1b}[37;1m\u{1b}[0m\u{1b}[37;1m\u{1b}[0m\u{1b}[37;1m \u{1b}[0m\u{1b}[37;1m a\u{1b}[0m   "
+            "\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m \u{1b}[0m\u{1b}[39;1m a\u{1b}[0m   "
         );
 
         // Tests for bold disabled
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 0, false),
-            "\u{1b}[37m\u{1b}[0m"
+            "\u{1b}[39m\u{1b}[0m"
         );
         assert_eq!(
             Tokens("     ").render(&colors_shim, 0, 5, false),
-            "\u{1b}[37m     \u{1b}[0m"
+            "\u{1b}[39m     \u{1b}[0m"
         );
     }
 
