@@ -335,7 +335,7 @@ impl Info {
                 languages.push((
                     "Other".to_string(),
                     other_perc,
-                    DynColors::Ansi(AnsiColors::White),
+                    DynColors::Ansi(AnsiColors::Default),
                 ));
                 languages
             } else {

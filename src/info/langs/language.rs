@@ -8,9 +8,20 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
+/// Maps colors to preferred versions. Used to allow contributors to include
+/// colors with minimal confusion.
+macro_rules! clean_color {
+    ( White ) => {
+        clean_color!(Default)
+    };
+    ( $color:ident ) => {
+        DynColors::Ansi(AnsiColors::$color)
+    };
+}
+
 macro_rules! define_colors {
-    ( [ $($color:ident),+ ] ) => { Colors { basic_colors: vec![$(DynColors::Ansi(AnsiColors::$color)),+], true_colors: None } };
-    ( [ $($bc:ident),+ ] : [ $($c:ident($r:expr, $g:expr, $b:expr)),+ ] ) => { Colors { basic_colors: vec![$(DynColors::Ansi(AnsiColors::$bc)),+], true_colors: Some(vec![$(DynColors::$c($r, $g, $b)),+]) } };
+    ( [ $($color:ident),+ ] ) => { Colors { basic_colors: vec![$( clean_color!($color) ),+], true_colors: None } };
+    ( [ $($bc:ident),+ ] : [ $($c:ident($r:expr, $g:expr, $b:expr)),+ ] ) => { Colors { basic_colors: vec![$(clean_color!($bc)),+], true_colors: Some(vec![$(DynColors::$c($r, $g, $b)),+]) } };
 }
 
 #[derive(PartialEq, EnumString, EnumIter, IntoStaticStr)]
