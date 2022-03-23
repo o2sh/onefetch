@@ -364,7 +364,7 @@ mod tests {
 
     use super::*;
     use git2::Time;
-    use std::time::SystemTime;
+    use std::time::{Duration, SystemTime};
 
     #[test]
     fn display_time_as_human_time_current_time_now() {
@@ -379,8 +379,13 @@ mod tests {
 
     #[test]
     fn display_time_as_human_time_current_time_arbitrary() {
-        let time = 1600000000;
-        let time = Time::new(time, 0);
+        let day = Duration::from_secs(60 * 60 * 24);
+        let current_time = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap();
+        // NOTE 366 so that it's a year ago even with leap years.
+        let year_ago = current_time - (day * 366);
+        let time = Time::new(year_ago.as_secs() as i64, 0);
         let result = git_time_to_formatted_time(&time, false);
         assert_eq!(result, "a year ago");
     }
