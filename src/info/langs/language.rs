@@ -340,6 +340,7 @@ define_languages! {
     { VimScript, Programming, "vimscript.ascii", define_colors!([Green, Black, White]) },
     { Vue, Programming, "vue.ascii", define_colors!([Green, Blue]) },
     { WebAssembly, Programming, "webassembly.ascii", define_colors!([Magenta, White] : [Rgb(101, 79, 240), Rgb(255, 255, 255)]) },
+    { Wolfram, Programming, "wolfram.ascii", define_colors!( [Red, White, Black] : [Rgb(255, 10, 1), Rgb(255, 255, 255), Rgb(0, 0, 0)]) },
     { Xaml, Data, "xaml.ascii", define_colors!([Blue, White] : [Rgb(51, 120, 206), Rgb(255, 255, 255)]) },
     { Xml, Data, "xml.ascii", define_colors!([Yellow, White, Green]) },
     { Yaml, Data, "yaml.ascii", define_colors!([White]) },
