@@ -164,7 +164,7 @@ impl<'a> Tokens<'a> {
                     colored_segment.push(chr);
                 }
                 Token::Color(col) => {
-                    add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
+                    add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
                     colored_segment = String::new();
                     color = colors
                         .get(col as usize)
@@ -177,7 +177,7 @@ impl<'a> Tokens<'a> {
             };
         });
 
-        add_colored_segment(&mut whole_string, &colored_segment, *color, bold);
+        add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
         (0..width).for_each(|_| whole_string.push(' '));
         whole_string
     }
@@ -195,7 +195,7 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     }
 }
 
-fn add_colored_segment(base: &mut String, segment: &str, color: DynColors, bold: bool) {
+fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: bool) {
     let mut style = Style::new().color(color);
     if bold {
         style = style.bold();
