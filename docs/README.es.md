@@ -17,11 +17,11 @@ Onefetch es una herramienta de información Git de línea de comandos escrita en
 
 De manera predeterminada, la información del repositorio se muestra junto con el logotipo del idioma dominante, pero puede configurar onefetch para usar una imagen, en terminales compatibles, una entrada de texto o nada en absoluto.
 
-Detecta automáticamente las licencias de código abierto de los textos y proporciona al usuario información valiosa como distribución de código, cambios pendientes, número de dependencias (por administrador de paquetes), principales contribuyentes (por número de confirmaciones), tamaño en disco, fecha de creación, LOC (líneas de código), etc 
+Detecta automáticamente las licencias de código abierto de los textos y proporciona al usuario información valiosa como distribución de código, cambios pendientes, número de dependencias (por administrador de paquetes), principales contribuyentes (por número de confirmaciones), tamaño en disco, fecha de creación, LOC (líneas de código), etc.
 
 <img src="../assets/screenshot-2.png" align="right" height="240px">
 
-Onefetch se puede configurar a través de indicadores de línea de comandos para mostrar exactamente lo que desea, de la manera que desea: puede personalizar el formato de texto/ASCII, deshabilitar líneas de información, ignorar archivos y directorios, salida en múltiples formatos (Json, Yaml), etc
+Onefetch se puede configurar a través de indicadores de línea de comandos para mostrar exactamente lo que desea, de la manera que desea: puede personalizar el formato de texto/ASCII, deshabilitar líneas de información, ignorar archivos y directorios, salida en múltiples formatos (Json, Yaml), etc.
 
 A partir de ahora, onefetch admite más de 50 lenguajes de programación diferentes; si el idioma de su elección no es compatible: abra un problema y se agregará soporte.
 
