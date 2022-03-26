@@ -235,10 +235,10 @@ impl Info {
         info: &str,
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
-        writeln!(f, "{} {}", &self.get_styled_subtitle_label(subtitle), info)
+        writeln!(f, "{} {}", &self.style_subtitle(subtitle), info)
     }
 
-    fn get_styled_subtitle_label(&self, subtitle: &str) -> String {
+    fn style_subtitle(&self, subtitle: &str) -> String {
         let subtitle_style = self.style(self.text_colors.subtitle);
         let colon_style = self.style(self.text_colors.colon);
         format!(
