@@ -42,9 +42,9 @@ pub struct Info {
     file_count: u64,
     repo_size: String,
     license: String,
+    text_colors: TextColors,
     pub dominant_language: Language,
     pub ascii_colors: Vec<DynColors>,
-    pub text_colors: TextColors,
     pub config: Config,
 }
 
