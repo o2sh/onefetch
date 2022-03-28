@@ -321,7 +321,7 @@ impl Info {
                 .enumerate()
                 .map(|(i, (language, perc))| {
                     let circle_color = if self.config.true_color {
-                        language.get_colors(true)[0]
+                        language.get_circle_color()
                     } else {
                         color_palette[i % color_palette.len()]
                     };
