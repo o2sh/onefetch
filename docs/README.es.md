@@ -25,8 +25,6 @@ Onefetch se puede configurar a través de indicadores de línea de comandos para
 
 A partir de ahora, onefetch admite más de 50 lenguajes de programación diferentes; si el idioma de su elección no es compatible: abra un problema y se agregará soporte.
 
-Contributions are very welcome! See  for more info.
-
 ¡Las contribuciones son muy bienvenidas! Consulte [CONTRIBUTING](../CONTRIBUTING.md) para obtener más información.
 
 ### Más: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Instalación](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Para Empezar](https://github.com/o2sh/onefetch/wiki/getting-started)\]
