@@ -2,7 +2,6 @@ use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
-use git2::Time;
 use git2::{
     BranchType, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions, StatusShow,
 };
@@ -28,10 +27,19 @@ pub struct Sig {
     email: String,
 }
 
+// TODO: make Sig use BString, to avoid allocations/utf8 checks
 impl From<Signature<'_>> for Sig {
     fn from(sig: Signature) -> Self {
         let name = String::from_utf8_lossy(sig.name_bytes()).into_owned();
         let email = String::from_utf8_lossy(sig.email_bytes()).into_owned();
+        Self { name, email }
+    }
+}
+
+impl From<git::actor::Signature> for Sig {
+    fn from(sig: git::actor::Signature) -> Self {
+        let name = sig.name.to_string();
+        let email = sig.email.to_string();
         Self { name, email }
     }
 }
@@ -86,16 +94,16 @@ impl<'a> Repo<'a> {
 
     pub fn get_creation_date(&self, iso_time: bool) -> Result<String> {
         let first_commit = self.commits.last();
-        todo!()
-        // let output = match first_commit {
-        //     Some(commit) => {
-        //         let time = commit.time();
-        //         git_time_to_formatted_time(&time, iso_time)
-        //     }
-        //     None => "".into(),
-        // };
-        //
-        // Ok(output)
+        let output = match first_commit {
+            Some(commit) => {
+                // TODO: no clone
+                let commit: git::Commit = commit.clone().attach(&self.repo).into_commit();
+                gitoxide_time_to_formatted_time(commit.time()?, iso_time)
+            }
+            None => "".into(),
+        };
+
+        Ok(output)
     }
 
     pub fn get_number_of_commits(&self) -> String {
@@ -110,16 +118,17 @@ impl<'a> Repo<'a> {
     ) -> Result<(Vec<Author>, usize)> {
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
         let mut total_nbr_of_commits = 0;
-        let mailmap = self.git2_repo.mailmap()?;
+        let mailmap = self.repo.load_mailmap();
         for commit in &self.commits {
-            // let author = match commit.author_with_mailmap(&mailmap) {
-            //     Ok(val) => val,
-            //     Err(_) => commit.author(),
-            // };
-            // let author_nbr_of_commits = author_to_number_of_commits
-            //     .entry(Sig::from(author))
-            //     .or_insert(0);
-            // *author_nbr_of_commits += 1;
+            let mut commit = git::objs::CommitRefIter::from_bytes(&commit.data);
+            let author = match commit.author() {
+                Some(author) => mailmap.resolve(&author),
+                None => continue,
+            };
+            let author_nbr_of_commits = author_to_number_of_commits
+                .entry(Sig::from(author))
+                .or_insert(0);
+            *author_nbr_of_commits += 1;
             total_nbr_of_commits += 1;
         }
 
@@ -149,14 +158,17 @@ impl<'a> Repo<'a> {
         Ok((authors, number_of_authors))
     }
 
-    pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
+    pub fn get_date_of_last_commit(&self, iso_time: bool) -> Result<String> {
         let last_commit = self.commits.first();
 
-        todo!()
-        // match last_commit {
-        //     Some(commit) => git_time_to_formatted_time(&commit.time(), iso_time),
-        //     None => "".into(),
-        // }
+        Ok(match last_commit {
+            Some(commit) => {
+                // TODO: no clone
+                let commit = commit.clone().attach(&self.repo).into_commit();
+                gitoxide_time_to_formatted_time(commit.time()?, iso_time)
+            }
+            None => "".into(),
+        })
     }
 
     // This collects the repo size excluding .git
@@ -362,11 +374,11 @@ fn bytes_to_human_readable(bytes: u128) -> String {
     byte.get_appropriate_unit(true).to_string()
 }
 
-fn git_time_to_formatted_time(time: &Time, iso_time: bool) -> String {
+fn gitoxide_time_to_formatted_time(time: git::actor::Time, iso_time: bool) -> String {
     if iso_time {
-        to_rfc3339(HumanTime::from(time.seconds()))
+        to_rfc3339(HumanTime::from(time.seconds_since_unix_epoch as i64))
     } else {
-        let ht = HumanTime::from_duration_since_timestamp(time.seconds().unsigned_abs());
+        let ht = HumanTime::from_duration_since_timestamp(time.seconds_since_unix_epoch as u64);
         format!("{}", ht)
     }
 }
@@ -385,9 +397,7 @@ pub fn is_valid(repo_path: &str) -> Result<bool> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
-    use git2::Time;
     use std::time::{Duration, SystemTime};
 
     #[test]
@@ -396,8 +406,8 @@ mod tests {
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();
 
-        let time = Time::new(current_time.as_secs() as i64, 0);
-        let result = git_time_to_formatted_time(&time, false);
+        let time = git::actor::Time::new(current_time.as_secs() as u32, 0);
+        let result = gitoxide_time_to_formatted_time(time, false);
         assert_eq!(result, "now");
     }
 
@@ -409,8 +419,8 @@ mod tests {
             .unwrap();
         // NOTE 366 so that it's a year ago even with leap years.
         let year_ago = current_time - (day * 366);
-        let time = Time::new(year_ago.as_secs() as i64, 0);
-        let result = git_time_to_formatted_time(&time, false);
+        let time = git::actor::Time::new(year_ago.as_secs() as u32, 0);
+        let result = gitoxide_time_to_formatted_time(time, false);
         assert_eq!(result, "a year ago");
     }
 
@@ -418,15 +428,15 @@ mod tests {
     fn display_time_as_iso_time_some_time() {
         // Set "current" time to 11/18/2021 11:02:22
         let time_sample = 1637233282;
-        let time = Time::new(time_sample, 0);
-        let result = git_time_to_formatted_time(&time, true);
+        let time = git::actor::Time::new(time_sample, 0);
+        let result = gitoxide_time_to_formatted_time(time, true);
         assert_eq!(result, "2021-11-18T11:01:22Z");
     }
     #[test]
     fn display_time_as_iso_time_current_epoch() {
         let time_sample = 0;
-        let time = Time::new(time_sample, 0);
-        let result = git_time_to_formatted_time(&time, true);
+        let time = git::actor::Time::new(time_sample, 0);
+        let result = gitoxide_time_to_formatted_time(time, true);
         assert_eq!(result, "1970-01-01T00:00:00Z");
     }
 }
