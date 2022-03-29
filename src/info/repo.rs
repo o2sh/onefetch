@@ -4,9 +4,10 @@ use anyhow::{Context, Result};
 use byte_unit::Byte;
 use git2::Time;
 use git2::{
-    BranchType, Commit, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions,
-    StatusShow,
+    BranchType, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions, StatusShow,
 };
+use git_repository as git;
+use git_repository::bstr::ByteSlice;
 use regex::Regex;
 use std::collections::HashMap;
 use std::path::Path;
@@ -16,8 +17,9 @@ use time::OffsetDateTime;
 use time_humanize::HumanTime;
 
 pub struct Repo<'a> {
-    repo: &'a Repository,
-    logs: Vec<Commit<'a>>,
+    git2_repo: &'a Repository,
+    repo: git::Repository,
+    commits: Vec<git::DetachedObject>,
 }
 
 #[derive(Hash, PartialEq, Eq)]
@@ -36,52 +38,68 @@ impl From<Signature<'_>> for Sig {
 
 impl<'a> Repo<'a> {
     pub fn new(
-        repo: &'a Repository,
+        git2_repo: &'a Repository,
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
     ) -> Result<Self> {
-        let logs = Self::get_logs(repo, no_merges, bot_regex_pattern)?;
-        Ok(Self { repo, logs })
+        let mut repo = git::open(git2_repo.path())?;
+        let logs = Self::get_logs(&mut repo, no_merges, bot_regex_pattern)?;
+        Ok(Self {
+            git2_repo,
+            repo,
+            commits: logs,
+        })
     }
 
+    // TODO: avoid allocating/copying buffers. Instead gather the desired information
+    //       during traversal and keep only author names for processing.
     fn get_logs(
-        repo: &'a Repository,
+        repo: &mut git::Repository,
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
-    ) -> Result<Vec<Commit<'a>>> {
-        let mut revwalk = repo.revwalk()?;
-        revwalk.push_head()?;
-        let logs: Vec<Commit<'a>> = revwalk
-            .filter_map(|r| match r {
-                Err(_) => None,
-                Ok(r) => repo
-                    .find_commit(r)
-                    .ok()
-                    .filter(|commit| !(no_merges && commit.parents().len() > 1))
-                    .filter(|commit| {
-                        !(bot_regex_pattern.is_some() && is_bot(commit.author(), bot_regex_pattern))
-                    }),
+    ) -> Result<Vec<git::DetachedObject>> {
+        // assure that objects we just traversed are coming from cache
+        // when we read the commit right after.
+        repo.object_cache_size(128 * 1024);
+        let commits = repo
+            .head()?
+            .peel_to_commit_in_place()?
+            .ancestors()
+            .all()
+            .filter_map(|commit_id| {
+                let commit: git::Commit = commit_id
+                    .ok()?
+                    .object()
+                    .expect("commit is still present/comes from cache")
+                    .into_commit();
+                if no_merges && commit.parent_ids().take(2).count() > 1 {
+                    return None;
+                }
+                if is_bot(commit.iter().author(), bot_regex_pattern) {
+                    return None;
+                }
+                commit.detach().into()
             })
             .collect();
-
-        Ok(logs)
+        Ok(commits)
     }
 
     pub fn get_creation_date(&self, iso_time: bool) -> Result<String> {
-        let first_commit = self.logs.last();
-        let output = match first_commit {
-            Some(commit) => {
-                let time = commit.time();
-                git_time_to_formatted_time(&time, iso_time)
-            }
-            None => "".into(),
-        };
-
-        Ok(output)
+        let first_commit = self.commits.last();
+        todo!()
+        // let output = match first_commit {
+        //     Some(commit) => {
+        //         let time = commit.time();
+        //         git_time_to_formatted_time(&time, iso_time)
+        //     }
+        //     None => "".into(),
+        // };
+        //
+        // Ok(output)
     }
 
     pub fn get_number_of_commits(&self) -> String {
-        let number_of_commits = self.logs.len();
+        let number_of_commits = self.commits.len();
         number_of_commits.to_string()
     }
 
@@ -92,16 +110,16 @@ impl<'a> Repo<'a> {
     ) -> Result<(Vec<Author>, usize)> {
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
         let mut total_nbr_of_commits = 0;
-        let mailmap = self.repo.mailmap()?;
-        for commit in &self.logs {
-            let author = match commit.author_with_mailmap(&mailmap) {
-                Ok(val) => val,
-                Err(_) => commit.author(),
-            };
-            let author_nbr_of_commits = author_to_number_of_commits
-                .entry(Sig::from(author))
-                .or_insert(0);
-            *author_nbr_of_commits += 1;
+        let mailmap = self.git2_repo.mailmap()?;
+        for commit in &self.commits {
+            // let author = match commit.author_with_mailmap(&mailmap) {
+            //     Ok(val) => val,
+            //     Err(_) => commit.author(),
+            // };
+            // let author_nbr_of_commits = author_to_number_of_commits
+            //     .entry(Sig::from(author))
+            //     .or_insert(0);
+            // *author_nbr_of_commits += 1;
             total_nbr_of_commits += 1;
         }
 
@@ -132,17 +150,18 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
-        let last_commit = self.logs.first();
+        let last_commit = self.commits.first();
 
-        match last_commit {
-            Some(commit) => git_time_to_formatted_time(&commit.time(), iso_time),
-            None => "".into(),
-        }
+        todo!()
+        // match last_commit {
+        //     Some(commit) => git_time_to_formatted_time(&commit.time(), iso_time),
+        //     None => "".into(),
+        // }
     }
 
     // This collects the repo size excluding .git
     pub fn get_repo_size(&self) -> (String, u64) {
-        let (repo_size, file_count) = match self.repo.index() {
+        let (repo_size, file_count) = match self.git2_repo.index() {
             Ok(index) => index.iter().fold(
                 (0, 0),
                 |(repo_size, file_count): (u128, u64), index_entry| -> (u128, u64) {
@@ -164,11 +183,11 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_number_of_tags(&self) -> Result<usize> {
-        Ok(self.repo.tag_names(None)?.len())
+        Ok(self.git2_repo.tag_names(None)?.len())
     }
 
     pub fn get_number_of_branches(&self) -> Result<usize> {
-        let mut number_of_branches = self.repo.branches(Some(BranchType::Remote))?.count();
+        let mut number_of_branches = self.git2_repo.branches(Some(BranchType::Remote))?.count();
         if number_of_branches > 0 {
             //Exclude origin/HEAD -> origin/main
             number_of_branches -= 1;
@@ -177,7 +196,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_git_username(&self) -> Result<String> {
-        let config = self.repo.config()?;
+        let config = self.git2_repo.config()?;
         let username = match config.get_entry("user.name") {
             Ok(v) => v.value().unwrap_or("").into(),
             Err(_) => "".into(),
@@ -190,14 +209,14 @@ impl<'a> Repo<'a> {
         let mut version_name = String::new();
         let mut most_recent: i64 = 0;
 
-        self.repo.tag_foreach(|id, name| {
+        self.git2_repo.tag_foreach(|id, name| {
             if let Ok(name) = String::from_utf8(name[10..].into()) {
                 let mut current_time: i64 = 0;
-                if let Ok(tag) = self.repo.find_tag(id) {
-                    if let Ok(c) = self.repo.find_commit(tag.target_id()) {
+                if let Ok(tag) = self.git2_repo.find_tag(id) {
+                    if let Ok(c) = self.git2_repo.find_commit(tag.target_id()) {
                         current_time = c.time().seconds();
                     }
-                } else if let Ok(c) = self.repo.find_commit(id) {
+                } else if let Ok(c) = self.git2_repo.find_commit(id) {
                     current_time = c.time().seconds();
                 }
                 if current_time > most_recent {
@@ -214,7 +233,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_pending_changes(&self) -> Result<String> {
-        let statuses = self.repo.statuses(Some(
+        let statuses = self.git2_repo.statuses(Some(
             StatusOptions::default()
                 .show(StatusShow::Workdir)
                 .update_index(true)
@@ -254,7 +273,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_name_and_url(&self) -> Result<(String, String)> {
-        let config = self.repo.config()?;
+        let config = self.git2_repo.config()?;
         let mut remote_origin_url: Option<String> = None;
         let mut remote_url_fallback = String::new();
         let mut repository_name = String::new();
@@ -304,9 +323,9 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
-        let head = self.repo.head()?;
+        let head = self.git2_repo.head()?;
         let head_oid = head.target().with_context(|| "Could not read HEAD")?;
-        let refs = self.repo.references()?;
+        let refs = self.git2_repo.references()?;
         let refs_info = refs
             .filter_map(|reference| match reference {
                 Ok(reference) => match (reference.target(), reference.shorthand()) {
@@ -322,15 +341,20 @@ impl<'a> Repo<'a> {
     }
 
     fn work_dir(&self) -> Result<&Path> {
-        self.repo
+        self.git2_repo
             .workdir()
             .with_context(|| "unable to query workdir")
     }
 }
 
-fn is_bot(author: Signature, bot_regex_pattern: &Option<Regex>) -> bool {
-    let author_name = String::from_utf8_lossy(author.name_bytes()).into_owned();
-    bot_regex_pattern.as_ref().unwrap().is_match(&author_name)
+fn is_bot(author: Option<git::actor::SignatureRef<'_>>, bot_regex_pattern: &Option<Regex>) -> bool {
+    author
+        .and_then(|author| {
+            bot_regex_pattern
+                .as_ref()
+                .map(|regex| regex.is_match(author.name.to_str_lossy().as_ref()))
+        })
+        .unwrap_or(false)
 }
 
 fn bytes_to_human_readable(bytes: u128) -> String {

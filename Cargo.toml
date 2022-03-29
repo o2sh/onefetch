@@ -33,7 +33,7 @@ bytecount = "0.6.2"
 clap = {version = "3.1.6", features = ["cargo", "wrap_help"]}
 color_quant = "1.1.0"
 git2 = {version = "0.14.2", default-features = false}
-git-repository = { version = "0.15.0", optional = true, default-features = false, git = "https://github.com/Byron/gitoxide", branch = "main" }
+git-repository = { version = "0.15.0", default-features = false, git = "https://github.com/Byron/gitoxide", branch = "main" }
 image = "0.24.1"
 owo-colors = "3.3.0"
 regex = "1.5.5"
