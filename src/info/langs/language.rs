@@ -273,7 +273,7 @@ define_languages! {
     { Tsx, Programming, "tsx.ascii", define_colors!([Blue]), Rgb(43, 116, 137) },
     { TypeScript, Programming, "typescript.ascii", define_colors!([Cyan, White] : [Rgb(0, 122, 204), Rgb(255, 255, 255)]), Rgb(43, 116, 137) },
     { Vala, Programming, "vala.ascii", define_colors!([Magenta, White]), Rgb(165, 109, 226) },
-    { Vhdl, Programming, "vhdl.ascii", define_colors!([Cyan, Yellow]), Rgb(173, 178, 203) },
+    { Vhdl, Programming, "vhdl.ascii", define_colors!([Yellow, Green, White]), Rgb(173, 178, 203) },
     { VimScript, Programming, "vimscript.ascii", define_colors!([Green, Black, White]), Rgb(25, 159, 75) },
     { Vue, Programming, "vue.ascii", define_colors!([Green, Blue]), Rgb(65, 184, 131) },
     { WebAssembly, Programming, "webassembly.ascii", define_colors!([Magenta, White] : [Rgb(101, 79, 240), Rgb(255, 255, 255)]), Rgb(4, 19, 59) },
