@@ -10,6 +10,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Get Minimum Supported Rust Version
         uses: spenserblack/actions-msrv@v0.2
         id: get-msrv
