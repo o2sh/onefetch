@@ -13,7 +13,7 @@ license = "MIT"
 name = "onefetch"
 readme = "README.md"
 repository = "https://github.com/o2sh/onefetch"
-version = "2.11.0"
+version = "2.12.0"
 
 [package.metadata.deb]
 depends = "$auto"
