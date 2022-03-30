@@ -165,7 +165,8 @@ impl Info {
             &config.bot_regex_pattern,
             config.number_of_authors,
         )?;
-        let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
+        let workdir = internal_repo.get_work_dir()?;
+
         let pending_changes = std::thread::spawn({
             let git_dir = repo.path().to_owned();
             move || {
@@ -173,7 +174,22 @@ impl Info {
                 repo::get_pending_changes(&repo)
             }
         });
+        let languages_handle = std::thread::spawn({
+            let ignored_directories = config.ignored_directories.clone();
+            let language_types = config.language_types.clone();
+            let include_hidden = config.include_hidden;
+            let workdir = workdir.clone();
+            move || {
+                langs::get_language_statistics(
+                    &workdir,
+                    &ignored_directories,
+                    &language_types,
+                    include_hidden,
+                )
+            }
+        });
 
+        let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
         let head_refs = internal_repo.get_head_refs()?;
         let version = internal_repo.get_version()?;
         let git_username = internal_repo.get_git_username()?;
@@ -184,15 +200,18 @@ impl Info {
         let (authors, contributors) = internal_repo.take_authors(config.show_email);
         let last_change = internal_repo.get_date_of_last_commit(config.iso_time);
         let (repo_size, file_count) = internal_repo.get_repo_size();
-        let workdir = internal_repo.get_work_dir()?;
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
-        let (languages, lines_of_code) = langs::get_language_statistics(
-            &workdir,
-            &config.ignored_directories,
-            &config.language_types,
-            config.include_hidden,
-        )?;
+
+        let pending_changes = pending_changes
+            .join()
+            .ok()
+            .context("BUG: panic in pending-changes thread")??;
+
+        let (languages, lines_of_code) = languages_handle
+            .join()
+            .ok()
+            .context("BUG: panic in language statistics thread")??;
         let dominant_language = langs::get_dominant_language(&languages);
         let ascii_colors = get_ascii_colors(
             &config.ascii_language,
@@ -209,10 +228,7 @@ impl Info {
             number_of_tags,
             number_of_branches,
             head_refs,
-            pending_changes: pending_changes
-                .join()
-                .ok()
-                .context("BUG: panic in pending-changes thread")??,
+            pending_changes,
             version,
             creation_date,
             languages,
