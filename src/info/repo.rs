@@ -19,6 +19,9 @@ pub struct Repo<'a> {
     git2_repo: &'a Repository,
     repo: git::Repository,
     commits: Vec<git::DetachedObject>,
+    num_commits: usize,
+    time_of_most_recent_commit: git::actor::Time,
+    time_of_first_commit: git::actor::Time,
 }
 
 #[derive(Hash, PartialEq, Eq)]
@@ -51,64 +54,74 @@ impl<'a> Repo<'a> {
         bot_regex_pattern: &Option<Regex>,
     ) -> Result<Self> {
         let mut repo = git::open(git2_repo.path())?;
-        let logs = Self::get_logs(&mut repo, no_merges, bot_regex_pattern)?;
+        let (logs, num_commits, time_of_first_commit, time_of_most_recent_commit) =
+            Self::extract_commit_infos(&mut repo, no_merges, bot_regex_pattern)?;
         Ok(Self {
             git2_repo,
             repo,
             commits: logs,
+            num_commits,
+            time_of_first_commit,
+            time_of_most_recent_commit,
         })
     }
 
     // TODO: avoid allocating/copying buffers. Instead gather the desired information
     //       during traversal and keep only author names for processing.
-    fn get_logs(
+    fn extract_commit_infos(
         repo: &mut git::Repository,
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
-    ) -> Result<Vec<git::DetachedObject>> {
+    ) -> Result<(
+        Vec<git::DetachedObject>,
+        usize,
+        git::actor::Time,
+        git::actor::Time,
+    )> {
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
         repo.object_cache_size(128 * 1024);
-        let commits = repo
-            .head()?
-            .peel_to_commit_in_place()?
-            .ancestors()
-            .all()
-            .filter_map(|commit_id| {
-                let commit: git::Commit = commit_id
-                    .ok()?
-                    .object()
-                    .expect("commit is still present/comes from cache")
-                    .into_commit();
-                if no_merges && commit.parent_ids().take(2).count() > 1 {
-                    return None;
-                }
-                if is_bot(commit.iter().author(), bot_regex_pattern) {
-                    return None;
-                }
-                commit.detach().into()
-            })
-            .collect();
-        Ok(commits)
+        let mut commits = Vec::new();
+
+        let mut most_recent_commit_time = None;
+        let mut first_commit_time = None;
+        let mut ancestors = repo.head()?.peel_to_commit_in_place()?.ancestors();
+        let mut commit_iter = ancestors.all().peekable();
+
+        while let Some(commit_id) = commit_iter.next() {
+            let commit: git::Commit = commit_id?
+                .object()
+                .expect("commit is still present/comes from cache")
+                .into_commit();
+            if no_merges && commit.parent_ids().take(2).count() > 1 {
+                continue;
+            }
+            if is_bot(commit.iter().author(), bot_regex_pattern) {
+                continue;
+            }
+
+            most_recent_commit_time.get_or_insert_with(|| commit.time());
+            if commit_iter.peek().is_none() {
+                first_commit_time = commit.time()?.into();
+            }
+            commits.push(commit.detach().into());
+        }
+
+        let num_commits = commits.len();
+        Ok((
+            commits,
+            num_commits,
+            first_commit_time.expect("at least one commit"),
+            most_recent_commit_time.expect("at least one commit")?,
+        ))
     }
 
-    pub fn get_creation_date(&self, iso_time: bool) -> Result<String> {
-        let first_commit = self.commits.last();
-        let output = match first_commit {
-            Some(commit) => {
-                // TODO: no clone
-                let commit: git::Commit = commit.clone().attach(&self.repo).into_commit();
-                gitoxide_time_to_formatted_time(commit.time()?, iso_time)
-            }
-            None => "".into(),
-        };
-
-        Ok(output)
+    pub fn get_creation_date(&self, iso_time: bool) -> String {
+        gitoxide_time_to_formatted_time(self.time_of_first_commit, iso_time)
     }
 
     pub fn get_number_of_commits(&self) -> String {
-        let number_of_commits = self.commits.len();
-        number_of_commits.to_string()
+        self.num_commits.to_string()
     }
 
     pub fn get_authors(
@@ -158,17 +171,8 @@ impl<'a> Repo<'a> {
         Ok((authors, number_of_authors))
     }
 
-    pub fn get_date_of_last_commit(&self, iso_time: bool) -> Result<String> {
-        let last_commit = self.commits.first();
-
-        Ok(match last_commit {
-            Some(commit) => {
-                // TODO: no clone
-                let commit = commit.clone().attach(&self.repo).into_commit();
-                gitoxide_time_to_formatted_time(commit.time()?, iso_time)
-            }
-            None => "".into(),
-        })
+    pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
+        gitoxide_time_to_formatted_time(self.time_of_most_recent_commit, iso_time)
     }
 
     // This collects the repo size excluding .git

@@ -167,11 +167,11 @@ impl Info {
         let git_username = internal_repo.get_git_username()?;
         let number_of_tags = internal_repo.get_number_of_tags()?;
         let number_of_branches = internal_repo.get_number_of_branches()?;
-        let creation_date = internal_repo.get_creation_date(config.iso_time)?;
+        let creation_date = internal_repo.get_creation_date(config.iso_time);
         let number_of_commits = internal_repo.get_number_of_commits();
         let (authors, contributors) =
             internal_repo.get_authors(config.number_of_authors, config.show_email)?;
-        let last_change = internal_repo.get_date_of_last_commit(config.iso_time)?;
+        let last_change = internal_repo.get_date_of_last_commit(config.iso_time);
         let (repo_size, file_count) = internal_repo.get_repo_size();
         let workdir = internal_repo.get_work_dir()?;
         let license = Detector::new()?.get_license(&workdir)?;
