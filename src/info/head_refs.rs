@@ -1,14 +1,14 @@
-use git2::Oid;
+use git_repository as git;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 
 pub struct HeadRefs {
-    commit: Oid,
+    commit: git::hash::ObjectId,
     refs: Vec<String>,
 }
 
 impl HeadRefs {
-    pub fn new(commit: Oid, refs: Vec<String>) -> HeadRefs {
+    pub fn new(commit: git::hash::ObjectId, refs: Vec<String>) -> HeadRefs {
         HeadRefs { commit, refs }
     }
 }

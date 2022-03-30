@@ -203,7 +203,7 @@ impl<'a> Repo<'a> {
                 let current_time = commit.time()?.seconds();
                 if current_time > most_recent {
                     most_recent = current_time;
-                    version_name = tag.name().strip_prefix().to_string();
+                    version_name = tag.name().shorten().to_string();
                 }
             }
         }
@@ -301,20 +301,24 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
-        let head = self.git2_repo.head()?;
-        let head_oid = head.target().with_context(|| "Could not read HEAD")?;
-        let refs = self.git2_repo.references()?;
-        let refs_info = refs
-            .filter_map(|reference| match reference {
-                Ok(reference) => match (reference.target(), reference.shorthand()) {
-                    (Some(oid), Some(shorthand)) if oid == head_oid && !reference.is_tag() => {
-                        Some(String::from(shorthand))
-                    }
-                    _ => None,
-                },
-                Err(_) => None,
+        let head_oid = self
+            .repo
+            .head()
+            .with_context(|| "Could not read HEAD")?
+            .peel_to_commit_in_place()?
+            .id;
+        let refs_info = self
+            .repo
+            .references()?
+            .all()?
+            .peeled()
+            .filter_map(Result::ok)
+            .filter_map(|reference: git::Reference<'_>| {
+                (reference.id() == head_oid
+                    && reference.name().category() != Some(git::reference::Category::Tag))
+                .then(|| reference.name().shorten().to_string())
             })
-            .collect::<Vec<String>>();
+            .collect();
         Ok(HeadRefs::new(head_oid, refs_info))
     }
 
