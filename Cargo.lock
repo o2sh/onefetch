@@ -176,6 +176,7 @@ dependencies = [
  "lazy_static",
  "memchr",
  "regex-automata",
+ "serde",
 ]
 
 [[package]]
@@ -691,6 +692,7 @@ dependencies = [
  "itoa 1.0.1",
  "nom",
  "quick-error",
+ "serde",
 ]
 
 [[package]]
@@ -756,6 +758,7 @@ version = "0.9.2"
 dependencies = [
  "hex",
  "quick-error",
+ "serde",
 ]
 
 [[package]]
@@ -772,6 +775,7 @@ dependencies = [
  "git-object",
  "memmap2 0.5.3",
  "quick-error",
+ "serde",
  "smallvec",
 ]
 
@@ -791,6 +795,7 @@ dependencies = [
  "bstr",
  "git-actor",
  "quick-error",
+ "serde",
 ]
 
 [[package]]
@@ -807,6 +812,7 @@ dependencies = [
  "itoa 1.0.1",
  "nom",
  "quick-error",
+ "serde",
  "smallvec",
 ]
 
@@ -821,6 +827,7 @@ dependencies = [
  "git-pack",
  "git-quote",
  "parking_lot 0.12.0",
+ "serde",
  "tempfile",
  "thiserror",
 ]
@@ -842,9 +849,34 @@ dependencies = [
  "hash_hasher",
  "memmap2 0.5.3",
  "parking_lot 0.12.0",
+ "serde",
  "smallvec",
  "thiserror",
  "uluru",
+]
+
+[[package]]
+name = "git-packetline"
+version = "0.12.3"
+dependencies = [
+ "bstr",
+ "hex",
+ "quick-error",
+]
+
+[[package]]
+name = "git-protocol"
+version = "0.14.0"
+dependencies = [
+ "bstr",
+ "btoi",
+ "git-features",
+ "git-hash",
+ "git-transport",
+ "maybe-async",
+ "nom",
+ "quick-error",
+ "serde",
 ]
 
 [[package]]
@@ -870,6 +902,7 @@ dependencies = [
  "memmap2 0.5.3",
  "nom",
  "quick-error",
+ "serde",
 ]
 
 [[package]]
@@ -889,8 +922,10 @@ dependencies = [
  "git-object",
  "git-odb",
  "git-pack",
+ "git-protocol",
  "git-ref",
  "git-tempfile",
+ "git-transport",
  "git-traverse",
  "git-url",
  "git-validate",
@@ -911,6 +946,19 @@ dependencies = [
  "signal-hook",
  "signal-hook-registry",
  "tempfile",
+]
+
+[[package]]
+name = "git-transport"
+version = "0.15.0"
+dependencies = [
+ "bstr",
+ "git-features",
+ "git-packetline",
+ "git-url",
+ "quick-error",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -1301,6 +1349,17 @@ name = "matches"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
+
+[[package]]
+name = "maybe-async"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6007f9dad048e0a224f27ca599d669fca8cfa0dac804725aab542b2eb032bce6"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "memchr"
@@ -2035,6 +2094,9 @@ name = "smallvec"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2dd574626839106c320a323308629dcb1acfc96e32a8cba364ddc61ac23ee83"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "spin"

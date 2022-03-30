@@ -1,17 +1,18 @@
+use git_repository as git;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 
 pub struct Author {
-    name: String,
-    email: Option<String>,
+    name: git::bstr::BString,
+    email: Option<git::bstr::BString>,
     nbr_of_commits: usize,
     contribution: usize,
 }
 
 impl Author {
     pub fn new(
-        name: String,
-        email: Option<String>,
+        name: git::bstr::BString,
+        email: Option<git::bstr::BString>,
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
     ) -> Self {

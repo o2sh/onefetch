@@ -2,9 +2,7 @@ use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
-use git2::{
-    BranchType, Repository, RepositoryOpenFlags, Signature, Status, StatusOptions, StatusShow,
-};
+use git2::{BranchType, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
 use regex::Regex;
@@ -26,23 +24,12 @@ pub struct Repo<'a> {
 
 #[derive(Hash, PartialEq, Eq)]
 pub struct Sig {
-    name: String,
-    email: String,
-}
-
-// TODO: make Sig use BString, to avoid allocations/utf8 checks
-impl From<Signature<'_>> for Sig {
-    fn from(sig: Signature) -> Self {
-        let name = String::from_utf8_lossy(sig.name_bytes()).into_owned();
-        let email = String::from_utf8_lossy(sig.email_bytes()).into_owned();
-        Self { name, email }
-    }
+    name: git::bstr::BString,
+    email: git::bstr::BString,
 }
 
 impl From<git::actor::Signature> for Sig {
-    fn from(sig: git::actor::Signature) -> Self {
-        let name = sig.name.to_string();
-        let email = sig.email.to_string();
+    fn from(git::actor::Signature { name, email, .. }: git::actor::Signature) -> Self {
         Self { name, email }
     }
 }
@@ -159,9 +146,10 @@ impl<'a> Repo<'a> {
         let authors: Vec<Author> = authors_by_number_of_commits
             .into_iter()
             .map(|(author, author_nbr_of_commits)| {
+                let email = author.email;
                 Author::new(
-                    author.name.clone(),
-                    show_email.then(|| author.email),
+                    author.name,
+                    show_email.then(|| email),
                     author_nbr_of_commits,
                     total_nbr_of_commits,
                 )
