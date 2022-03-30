@@ -2,7 +2,7 @@ use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
-use git2::{BranchType, Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
+use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
 use regex::Regex;
@@ -50,8 +50,12 @@ impl<'a> Repo<'a> {
 
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
-        let mut ancestors = repo.head()?.peel_to_commit_in_place()?.ancestors();
-        let mut commit_iter = ancestors.all().peekable();
+        let mut commit_iter = repo
+            .head()?
+            .peel_to_commit_in_place()?
+            .ancestors()
+            .all()
+            .peekable();
 
         let mailmap = repo.load_mailmap();
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
@@ -166,7 +170,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_number_of_branches(&self) -> Result<usize> {
-        let mut number_of_branches = self.git2_repo.branches(Some(BranchType::Remote))?.count();
+        let mut number_of_branches = self.repo.references()?.remote_branches()?.count();
         if number_of_branches > 0 {
             //Exclude origin/HEAD -> origin/main
             number_of_branches -= 1;
@@ -320,8 +324,8 @@ impl<'a> Repo<'a> {
     }
 
     fn work_dir(&self) -> Result<&Path> {
-        self.git2_repo
-            .workdir()
+        self.repo
+            .work_dir()
             .with_context(|| "unable to query workdir")
     }
 }
