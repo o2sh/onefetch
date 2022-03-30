@@ -106,6 +106,11 @@ impl<'a> Repo<'a> {
             .take(number_of_authors_to_display)
             .collect();
 
+        // This could happen if a branch pointed to non-commit object, so no traversal actually happens.
+        let (time_of_first_commit, time_of_most_recent_commit) = time_of_first_commit
+            .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
+            .unwrap_or_default();
+
         drop(commit_iter);
         Ok(Self {
             repo,
@@ -113,8 +118,8 @@ impl<'a> Repo<'a> {
             authors,
             total_num_authors,
             num_commits,
-            time_of_first_commit: time_of_first_commit.expect("at least one commit"),
-            time_of_most_recent_commit: time_of_most_recent_commit.expect("at least one commit"),
+            time_of_first_commit,
+            time_of_most_recent_commit,
         })
     }
 
