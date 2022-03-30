@@ -40,6 +40,7 @@ impl<'a> Repo<'a> {
         git2_repo: &'a Repository,
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
+        number_of_authors_to_display: usize,
     ) -> Result<Self> {
         let mut repo = git::open(git2_repo.path())?;
 
@@ -103,6 +104,7 @@ impl<'a> Repo<'a> {
                     total_nbr_of_commits,
                 )
             })
+            .take(number_of_authors_to_display)
             .collect();
 
         drop(commit_iter);
@@ -125,15 +127,7 @@ impl<'a> Repo<'a> {
         self.num_commits.to_string()
     }
 
-    pub fn take_authors(
-        &mut self,
-        number_of_authors_to_display: usize,
-        show_email: bool,
-    ) -> (Vec<Author>, usize) {
-        if self.total_num_authors > number_of_authors_to_display {
-            self.authors.truncate(number_of_authors_to_display);
-        }
-
+    pub fn take_authors(&mut self, show_email: bool) -> (Vec<Author>, usize) {
         if !show_email {
             for author in &mut self.authors {
                 author.clear_email();
@@ -168,7 +162,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_number_of_tags(&self) -> Result<usize> {
-        Ok(self.git2_repo.tag_names(None)?.len())
+        Ok(self.repo.references()?.tags()?.count())
     }
 
     pub fn get_number_of_branches(&self) -> Result<usize> {

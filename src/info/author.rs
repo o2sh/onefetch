@@ -3,8 +3,8 @@ use serde::ser::SerializeStruct;
 use serde::Serialize;
 
 pub struct Author {
-    name: git::bstr::BString,
-    email: Option<git::bstr::BString>,
+    name: String,
+    email: Option<String>,
     nbr_of_commits: usize,
     contribution: usize,
 }
@@ -19,8 +19,8 @@ impl Author {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
-            name,
-            email,
+            name: name.to_string(),
+            email: email.map(|e| e.to_string()),
             nbr_of_commits,
             contribution,
         }
