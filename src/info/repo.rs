@@ -50,12 +50,7 @@ impl<'a> Repo<'a> {
 
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
-        let mut commit_iter = repo
-            .head()?
-            .peel_to_commit_in_place()?
-            .ancestors()
-            .all()
-            .peekable();
+        let mut commit_iter = repo.head_commit()?.ancestors().all().peekable();
 
         let mailmap = repo.load_mailmap();
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
@@ -301,12 +296,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
-        let head_oid = self
-            .repo
-            .head()
-            .context("Could not read HEAD")?
-            .peel_to_id_in_place()
-            .context("The repository isn't initialized")??;
+        let head_oid = self.repo.head_id().context("Could not read HEAD")?;
         let refs_info = self
             .repo
             .references()?
