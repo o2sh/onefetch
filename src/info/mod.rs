@@ -1,7 +1,7 @@
 use crate::cli::{self, Config};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use author::Author;
 use deps::DependencyDetector;
 use git2::Repository;
@@ -166,8 +166,15 @@ impl Info {
             config.number_of_authors,
         )?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
+        let pending_changes = std::thread::spawn({
+            let git_dir = repo.path().to_owned();
+            move || {
+                let repo = git2::Repository::open(git_dir)?;
+                repo::get_pending_changes(&repo)
+            }
+        });
+
         let head_refs = internal_repo.get_head_refs()?;
-        let pending_changes = internal_repo.get_pending_changes()?;
         let version = internal_repo.get_version()?;
         let git_username = internal_repo.get_git_username()?;
         let number_of_tags = internal_repo.get_number_of_tags()?;
@@ -202,7 +209,10 @@ impl Info {
             number_of_tags,
             number_of_branches,
             head_refs,
-            pending_changes,
+            pending_changes: pending_changes
+                .join()
+                .ok()
+                .context("BUG: panic in pending-changes thread")??,
             version,
             creation_date,
             languages,

@@ -205,46 +205,6 @@ impl<'a> Repo<'a> {
         Ok(version_name)
     }
 
-    pub fn get_pending_changes(&self) -> Result<String> {
-        let statuses = self.git2_repo.statuses(Some(
-            StatusOptions::default()
-                .show(StatusShow::Workdir)
-                .update_index(true)
-                .include_untracked(true)
-                .renames_head_to_index(true)
-                .recurse_untracked_dirs(true),
-        ))?;
-
-        let (added, deleted, modified) =
-            statuses
-                .iter()
-                .fold((0, 0, 0), |(added, deleted, modified), e| {
-                    let s: Status = e.status();
-                    if s.is_index_new() || s.is_wt_new() {
-                        (added + 1, deleted, modified)
-                    } else if s.is_index_deleted() || s.is_wt_deleted() {
-                        (added, deleted + 1, modified)
-                    } else {
-                        (added, deleted, modified + 1)
-                    }
-                });
-
-        let mut result = String::new();
-        if modified > 0 {
-            result = format!("{}+-", modified)
-        }
-
-        if added > 0 {
-            result = format!("{} {}+", result, added);
-        }
-
-        if deleted > 0 {
-            result = format!("{} {}-", result, deleted);
-        }
-
-        Ok(result.trim().into())
-    }
-
     pub fn get_name_and_url(&self) -> Result<(String, String)> {
         let config = self.git2_repo.config()?;
         let mut remote_origin_url: Option<String> = None;
@@ -396,4 +356,44 @@ mod tests {
         let result = gitoxide_time_to_formatted_time(time, true);
         assert_eq!(result, "1970-01-01T00:00:00Z");
     }
+}
+
+pub fn get_pending_changes(repo: &git2::Repository) -> Result<String> {
+    let statuses = repo.statuses(Some(
+        StatusOptions::default()
+            .show(StatusShow::Workdir)
+            .update_index(true)
+            .include_untracked(true)
+            .renames_head_to_index(true)
+            .recurse_untracked_dirs(true),
+    ))?;
+
+    let (added, deleted, modified) =
+        statuses
+            .iter()
+            .fold((0, 0, 0), |(added, deleted, modified), e| {
+                let s: Status = e.status();
+                if s.is_index_new() || s.is_wt_new() {
+                    (added + 1, deleted, modified)
+                } else if s.is_index_deleted() || s.is_wt_deleted() {
+                    (added, deleted + 1, modified)
+                } else {
+                    (added, deleted, modified + 1)
+                }
+            });
+
+    let mut result = String::new();
+    if modified > 0 {
+        result = format!("{}+-", modified)
+    }
+
+    if added > 0 {
+        result = format!("{} {}+", result, added);
+    }
+
+    if deleted > 0 {
+        result = format!("{} {}-", result, deleted);
+    }
+
+    Ok(result.trim().into())
 }
