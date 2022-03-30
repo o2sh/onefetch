@@ -190,28 +190,23 @@ impl<'a> Repo<'a> {
 
     pub fn get_version(&self) -> Result<String> {
         let mut version_name = String::new();
-        let mut most_recent: i64 = 0;
+        let mut most_recent = 0;
 
-        self.git2_repo.tag_foreach(|id, name| {
-            if let Ok(name) = String::from_utf8(name[10..].into()) {
-                let mut current_time: i64 = 0;
-                if let Ok(tag) = self.git2_repo.find_tag(id) {
-                    if let Ok(c) = self.git2_repo.find_commit(tag.target_id()) {
-                        current_time = c.time().seconds();
-                    }
-                } else if let Ok(c) = self.git2_repo.find_commit(id) {
-                    current_time = c.time().seconds();
-                }
+        for tag in self
+            .repo
+            .references()?
+            .tags()?
+            .peeled()
+            .filter_map(Result::ok)
+        {
+            if let Ok(commit) = tag.id().object()?.try_into_commit() {
+                let current_time = commit.time()?.seconds();
                 if current_time > most_recent {
                     most_recent = current_time;
-                    version_name = name;
+                    version_name = tag.name().strip_prefix().to_string();
                 }
-
-                return true;
             }
-            false
-        })?;
-
+        }
         Ok(version_name)
     }
 
