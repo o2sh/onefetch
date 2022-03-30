@@ -15,8 +15,8 @@ use time_humanize::HumanTime;
 
 pub struct Repo<'a> {
     git2_repo: &'a Repository,
-    repo: git::Repository,
-    commits: Vec<git::DetachedObject>,
+    authors: Vec<Author>,
+    total_num_authors: usize,
     num_commits: usize,
     time_of_most_recent_commit: git::actor::Time,
     time_of_first_commit: git::actor::Time,
@@ -41,12 +41,17 @@ impl<'a> Repo<'a> {
         bot_regex_pattern: &Option<Regex>,
     ) -> Result<Self> {
         let mut repo = git::open(git2_repo.path())?;
-        let (logs, num_commits, time_of_first_commit, time_of_most_recent_commit) =
-            Self::extract_commit_infos(&mut repo, no_merges, bot_regex_pattern)?;
+        let (
+            authors,
+            total_num_authors,
+            num_commits,
+            time_of_first_commit,
+            time_of_most_recent_commit,
+        ) = Self::extract_commit_infos(&mut repo, no_merges, bot_regex_pattern)?;
         Ok(Self {
             git2_repo,
-            repo,
-            commits: logs,
+            authors,
+            total_num_authors,
             num_commits,
             time_of_first_commit,
             time_of_most_recent_commit,
@@ -60,7 +65,8 @@ impl<'a> Repo<'a> {
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
     ) -> Result<(
-        Vec<git::DetachedObject>,
+        Vec<Author>,
+        usize,
         usize,
         git::actor::Time,
         git::actor::Time,
@@ -68,38 +74,72 @@ impl<'a> Repo<'a> {
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
         repo.object_cache_size(128 * 1024);
-        let mut commits = Vec::new();
 
         let mut most_recent_commit_time = None;
         let mut first_commit_time = None;
         let mut ancestors = repo.head()?.peel_to_commit_in_place()?.ancestors();
         let mut commit_iter = ancestors.all().peekable();
 
+        let mailmap = repo.load_mailmap();
+        let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
+        let mut total_nbr_of_commits = 0;
+
+        let mut num_commits = 0;
         while let Some(commit_id) = commit_iter.next() {
             let commit: git::Commit = commit_id?
                 .object()
                 .expect("commit is still present/comes from cache")
                 .into_commit();
-            if no_merges && commit.parent_ids().take(2).count() > 1 {
-                continue;
-            }
-            if is_bot(commit.iter().author(), bot_regex_pattern) {
-                continue;
-            }
+            num_commits += 1;
+            {
+                let commit = commit.decode()?;
+                if no_merges && commit.parents().take(2).count() > 1 {
+                    continue;
+                }
 
-            most_recent_commit_time.get_or_insert_with(|| commit.time());
-            if commit_iter.peek().is_none() {
-                first_commit_time = commit.time()?.into();
+                if is_bot(commit.author, bot_regex_pattern) {
+                    continue;
+                }
+
+                let author_nbr_of_commits = author_to_number_of_commits
+                    .entry(Sig::from(mailmap.resolve(commit.author)))
+                    .or_insert(0);
+                *author_nbr_of_commits += 1;
+                total_nbr_of_commits += 1;
+
+                most_recent_commit_time.get_or_insert_with(|| commit.committer.time);
+                if commit_iter.peek().is_none() {
+                    first_commit_time = commit.committer.time.into();
+                }
             }
-            commits.push(commit.detach().into());
         }
 
-        let num_commits = commits.len();
+        let mut authors_by_number_of_commits: Vec<(Sig, usize)> =
+            author_to_number_of_commits.into_iter().collect();
+
+        let number_of_authors = authors_by_number_of_commits.len();
+
+        authors_by_number_of_commits.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+
+        let authors: Vec<Author> = authors_by_number_of_commits
+            .into_iter()
+            .map(|(author, author_nbr_of_commits)| {
+                let email = author.email;
+                Author::new(
+                    author.name,
+                    email.into(),
+                    author_nbr_of_commits,
+                    total_nbr_of_commits,
+                )
+            })
+            .collect();
+
         Ok((
-            commits,
+            authors,
+            number_of_authors,
             num_commits,
             first_commit_time.expect("at least one commit"),
-            most_recent_commit_time.expect("at least one commit")?,
+            most_recent_commit_time.expect("at least one commit"),
         ))
     }
 
@@ -111,52 +151,21 @@ impl<'a> Repo<'a> {
         self.num_commits.to_string()
     }
 
-    pub fn get_authors(
-        &self,
+    pub fn take_authors(
+        &mut self,
         number_of_authors_to_display: usize,
         show_email: bool,
-    ) -> Result<(Vec<Author>, usize)> {
-        let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
-        let mut total_nbr_of_commits = 0;
-        let mailmap = self.repo.load_mailmap();
-        for commit in &self.commits {
-            let mut commit = git::objs::CommitRefIter::from_bytes(&commit.data);
-            let author = match commit.author() {
-                Some(author) => mailmap.resolve(&author),
-                None => continue,
-            };
-            let author_nbr_of_commits = author_to_number_of_commits
-                .entry(Sig::from(author))
-                .or_insert(0);
-            *author_nbr_of_commits += 1;
-            total_nbr_of_commits += 1;
+    ) -> (Vec<Author>, usize) {
+        if self.total_num_authors > number_of_authors_to_display {
+            self.authors.truncate(number_of_authors_to_display);
         }
 
-        let mut authors_by_number_of_commits: Vec<(Sig, usize)> =
-            author_to_number_of_commits.into_iter().collect();
-
-        let number_of_authors = authors_by_number_of_commits.len();
-
-        authors_by_number_of_commits.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
-
-        if number_of_authors > number_of_authors_to_display {
-            authors_by_number_of_commits.truncate(number_of_authors_to_display);
+        if !show_email {
+            for author in &mut self.authors {
+                author.clear_email();
+            }
         }
-
-        let authors: Vec<Author> = authors_by_number_of_commits
-            .into_iter()
-            .map(|(author, author_nbr_of_commits)| {
-                let email = author.email;
-                Author::new(
-                    author.name,
-                    show_email.then(|| email),
-                    author_nbr_of_commits,
-                    total_nbr_of_commits,
-                )
-            })
-            .collect();
-
-        Ok((authors, number_of_authors))
+        (std::mem::take(&mut self.authors), self.total_num_authors)
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
@@ -351,13 +360,10 @@ impl<'a> Repo<'a> {
     }
 }
 
-fn is_bot(author: Option<git::actor::SignatureRef<'_>>, bot_regex_pattern: &Option<Regex>) -> bool {
-    author
-        .and_then(|author| {
-            bot_regex_pattern
-                .as_ref()
-                .map(|regex| regex.is_match(author.name.to_str_lossy().as_ref()))
-        })
+fn is_bot(author: git::actor::SignatureRef<'_>, bot_regex_pattern: &Option<Regex>) -> bool {
+    bot_regex_pattern
+        .as_ref()
+        .map(|regex| regex.is_match(author.name.to_str_lossy().as_ref()))
         .unwrap_or(false)
 }
 

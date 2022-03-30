@@ -25,6 +25,10 @@ impl Author {
             contribution,
         }
     }
+
+    pub fn clear_email(&mut self) {
+        self.email = None;
+    }
 }
 
 impl std::fmt::Display for Author {

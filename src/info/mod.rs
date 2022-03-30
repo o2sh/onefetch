@@ -159,7 +159,7 @@ impl Info {
     pub fn new(config: Config) -> Result<Self> {
         let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
-        let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
+        let mut internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
         let head_refs = internal_repo.get_head_refs()?;
         let pending_changes = internal_repo.get_pending_changes()?;
@@ -170,7 +170,7 @@ impl Info {
         let creation_date = internal_repo.get_creation_date(config.iso_time);
         let number_of_commits = internal_repo.get_number_of_commits();
         let (authors, contributors) =
-            internal_repo.get_authors(config.number_of_authors, config.show_email)?;
+            internal_repo.take_authors(config.number_of_authors, config.show_email);
         let last_change = internal_repo.get_date_of_last_commit(config.iso_time);
         let (repo_size, file_count) = internal_repo.get_repo_size();
         let workdir = internal_repo.get_work_dir()?;
