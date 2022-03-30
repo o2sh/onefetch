@@ -90,7 +90,6 @@ impl<'a> Repo<'a> {
                 .object()
                 .expect("commit is still present/comes from cache")
                 .into_commit();
-            num_commits += 1;
             {
                 let commit = commit.decode()?;
                 if no_merges && commit.parents().take(2).count() > 1 {
@@ -100,6 +99,7 @@ impl<'a> Repo<'a> {
                 if is_bot(commit.author, bot_regex_pattern) {
                     continue;
                 }
+                num_commits += 1;
 
                 let author_nbr_of_commits = author_to_number_of_commits
                     .entry(Sig::from(mailmap.resolve(commit.author)))
