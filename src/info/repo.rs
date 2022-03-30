@@ -41,42 +41,13 @@ impl<'a> Repo<'a> {
         bot_regex_pattern: &Option<Regex>,
     ) -> Result<Self> {
         let mut repo = git::open(git2_repo.path())?;
-        let (
-            authors,
-            total_num_authors,
-            num_commits,
-            time_of_first_commit,
-            time_of_most_recent_commit,
-        ) = Self::extract_commit_infos(&mut repo, no_merges, bot_regex_pattern)?;
-        Ok(Self {
-            git2_repo,
-            authors,
-            total_num_authors,
-            num_commits,
-            time_of_first_commit,
-            time_of_most_recent_commit,
-        })
-    }
 
-    // TODO: avoid allocating/copying buffers. Instead gather the desired information
-    //       during traversal and keep only author names for processing.
-    fn extract_commit_infos(
-        repo: &mut git::Repository,
-        no_merges: bool,
-        bot_regex_pattern: &Option<Regex>,
-    ) -> Result<(
-        Vec<Author>,
-        usize,
-        usize,
-        git::actor::Time,
-        git::actor::Time,
-    )> {
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
         repo.object_cache_size(128 * 1024);
 
-        let mut most_recent_commit_time = None;
-        let mut first_commit_time = None;
+        let mut time_of_most_recent_commit = None;
+        let mut time_of_first_commit = None;
         let mut ancestors = repo.head()?.peel_to_commit_in_place()?.ancestors();
         let mut commit_iter = ancestors.all().peekable();
 
@@ -107,9 +78,9 @@ impl<'a> Repo<'a> {
                 *author_nbr_of_commits += 1;
                 total_nbr_of_commits += 1;
 
-                most_recent_commit_time.get_or_insert_with(|| commit.committer.time);
+                time_of_most_recent_commit.get_or_insert_with(|| commit.committer.time);
                 if commit_iter.peek().is_none() {
-                    first_commit_time = commit.committer.time.into();
+                    time_of_first_commit = commit.committer.time.into();
                 }
             }
         }
@@ -117,8 +88,7 @@ impl<'a> Repo<'a> {
         let mut authors_by_number_of_commits: Vec<(Sig, usize)> =
             author_to_number_of_commits.into_iter().collect();
 
-        let number_of_authors = authors_by_number_of_commits.len();
-
+        let total_num_authors = authors_by_number_of_commits.len();
         authors_by_number_of_commits.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
 
         let authors: Vec<Author> = authors_by_number_of_commits
@@ -134,13 +104,14 @@ impl<'a> Repo<'a> {
             })
             .collect();
 
-        Ok((
+        Ok(Self {
+            git2_repo,
             authors,
-            number_of_authors,
+            total_num_authors,
             num_commits,
-            first_commit_time.expect("at least one commit"),
-            most_recent_commit_time.expect("at least one commit"),
-        ))
+            time_of_first_commit: time_of_first_commit.expect("at least one commit"),
+            time_of_most_recent_commit: time_of_most_recent_commit.expect("at least one commit"),
+        })
     }
 
     pub fn get_creation_date(&self, iso_time: bool) -> String {
