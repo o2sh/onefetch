@@ -79,9 +79,9 @@ impl<'a> Repo<'a> {
                 *author_nbr_of_commits += 1;
                 total_nbr_of_commits += 1;
 
-                time_of_most_recent_commit.get_or_insert_with(|| commit.committer.time);
+                time_of_most_recent_commit.get_or_insert_with(|| commit.time());
                 if commit_iter.peek().is_none() {
-                    time_of_first_commit = commit.committer.time.into();
+                    time_of_first_commit = commit.time().into();
                 }
             }
         }
