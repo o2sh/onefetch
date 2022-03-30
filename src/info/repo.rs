@@ -152,14 +152,6 @@ impl<'a> Repo<'a> {
         (bytes_to_human_readable(repo_size), file_count)
     }
 
-    pub fn get_work_dir(&self) -> Result<String> {
-        let workdir = self
-            .work_dir()?
-            .to_str()
-            .with_context(|| "invalid workdir")?;
-        Ok(workdir.to_string())
-    }
-
     pub fn get_number_of_tags(&self) -> Result<usize> {
         Ok(self.repo.references()?.tags()?.count())
     }
@@ -270,12 +262,6 @@ impl<'a> Repo<'a> {
             })
             .collect();
         Ok(HeadRefs::new(head_oid.shorten()?.to_string(), refs_info))
-    }
-
-    fn work_dir(&self) -> Result<&Path> {
-        self.repo
-            .work_dir()
-            .with_context(|| "unable to query workdir")
     }
 }
 

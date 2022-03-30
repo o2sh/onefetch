@@ -159,13 +159,7 @@ impl Info {
     pub fn new(config: Config) -> Result<Self> {
         let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
-        let mut internal_repo = Repo::new(
-            &repo,
-            config.no_merges,
-            &config.bot_regex_pattern,
-            config.number_of_authors,
-        )?;
-        let workdir = internal_repo.get_work_dir()?;
+        let workdir = repo.workdir().expect("non-bare repo").to_owned();
 
         let pending_changes = std::thread::spawn({
             let git_dir = repo.path().to_owned();
@@ -189,6 +183,12 @@ impl Info {
             }
         });
 
+        let mut internal_repo = Repo::new(
+            &repo,
+            config.no_merges,
+            &config.bot_regex_pattern,
+            config.number_of_authors,
+        )?;
         let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
         let head_refs = internal_repo.get_head_refs()?;
         let version = internal_repo.get_version()?;

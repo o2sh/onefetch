@@ -1,5 +1,6 @@
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
+use std::path::Path;
 use std::{ffi::OsStr, fs};
 
 const LICENSE_FILES: [&str; 3] = ["LICENSE", "LICENCE", "COPYING"];
@@ -24,7 +25,7 @@ impl Detector {
         }
     }
 
-    pub fn get_license(&self, dir: &str) -> Result<String> {
+    pub fn get_license(&self, dir: &Path) -> Result<String> {
         fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
             LICENSE_FILES
                 .iter()
