@@ -148,17 +148,13 @@ impl<'a> Repo<'a> {
 
     // This collects the repo size excluding .git
     pub fn get_repo_size(&self) -> (String, u64) {
-        let (repo_size, file_count) = self
-            .repo
-            .load_index()
-            .transpose()
-            .ok()
-            .flatten()
-            .map(|index| {
+        let (repo_size, file_count) = match self.repo.load_index() {
+            Some(Ok(index)) => {
                 let repo_size = index.entries().iter().map(|e| e.stat.size as u128).sum();
                 (repo_size, index.entries().len() as u64)
-            })
-            .unwrap_or_default();
+            }
+            _ => (0, 0),
+        };
 
         (bytes_to_human_readable(repo_size), file_count)
     }
