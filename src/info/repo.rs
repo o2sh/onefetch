@@ -15,6 +15,7 @@ use time_humanize::HumanTime;
 
 pub struct Repo<'a> {
     git2_repo: &'a Repository,
+    repo: git::Repository,
     authors: Vec<Author>,
     total_num_authors: usize,
     num_commits: usize,
@@ -104,7 +105,9 @@ impl<'a> Repo<'a> {
             })
             .collect();
 
+        drop(commit_iter);
         Ok(Self {
+            repo,
             git2_repo,
             authors,
             total_num_authors,
@@ -145,15 +148,17 @@ impl<'a> Repo<'a> {
 
     // This collects the repo size excluding .git
     pub fn get_repo_size(&self) -> (String, u64) {
-        let (repo_size, file_count) = match self.git2_repo.index() {
-            Ok(index) => index.iter().fold(
-                (0, 0),
-                |(repo_size, file_count): (u128, u64), index_entry| -> (u128, u64) {
-                    (repo_size + index_entry.file_size as u128, file_count + 1)
-                },
-            ),
-            Err(_) => (0, 0),
-        };
+        let (repo_size, file_count) = self
+            .repo
+            .load_index()
+            .transpose()
+            .ok()
+            .flatten()
+            .map(|index| {
+                let repo_size = index.entries().iter().map(|e| e.stat.size as u128).sum();
+                (repo_size, index.entries().len() as u64)
+            })
+            .unwrap_or_default();
 
         (bytes_to_human_readable(repo_size), file_count)
     }
