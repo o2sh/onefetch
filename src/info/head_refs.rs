@@ -1,21 +1,22 @@
-use git_repository as git;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 
 pub struct HeadRefs {
-    commit: git::hash::ObjectId,
+    short_commit_id: String,
     refs: Vec<String>,
 }
 
 impl HeadRefs {
-    pub fn new(commit: git::hash::ObjectId, refs: Vec<String>) -> HeadRefs {
-        HeadRefs { commit, refs }
+    pub fn new(short_commit_id: String, refs: Vec<String>) -> HeadRefs {
+        HeadRefs {
+            short_commit_id,
+            refs,
+        }
     }
 }
 
 impl std::fmt::Display for HeadRefs {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let short_commit = self.commit.to_string().chars().take(7).collect::<String>();
         if !self.refs.is_empty() {
             let refs_str = self
                 .refs
@@ -23,9 +24,9 @@ impl std::fmt::Display for HeadRefs {
                 .map(|ref_name| ref_name.as_str())
                 .collect::<Vec<&str>>()
                 .join(", ");
-            write!(f, "{} ({})", short_commit, refs_str)
+            write!(f, "{} ({})", self.short_commit_id, refs_str)
         } else {
-            write!(f, "{}", short_commit)
+            write!(f, "{}", self.short_commit_id)
         }
     }
 }
@@ -37,10 +38,7 @@ impl Serialize for HeadRefs {
     {
         let mut state = serializer.serialize_struct("HeadRefs", 2)?;
         state.serialize_field("refs", &self.refs)?;
-        state.serialize_field(
-            "oid",
-            &self.commit.to_string().chars().take(7).collect::<String>(),
-        )?;
+        state.serialize_field("oid", &self.short_commit_id)?;
         state.end()
     }
 }

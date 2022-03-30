@@ -304,9 +304,9 @@ impl<'a> Repo<'a> {
         let head_oid = self
             .repo
             .head()
-            .with_context(|| "Could not read HEAD")?
-            .peel_to_commit_in_place()?
-            .id;
+            .context("Could not read HEAD")?
+            .peel_to_id_in_place()
+            .context("The repository isn't initialized")??;
         let refs_info = self
             .repo
             .references()?
@@ -319,7 +319,7 @@ impl<'a> Repo<'a> {
                 .then(|| reference.name().shorten().to_string())
             })
             .collect();
-        Ok(HeadRefs::new(head_oid, refs_info))
+        Ok(HeadRefs::new(head_oid.shorten()?.to_string(), refs_info))
     }
 
     fn work_dir(&self) -> Result<&Path> {
