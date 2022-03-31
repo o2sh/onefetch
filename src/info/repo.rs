@@ -314,10 +314,9 @@ impl<'a> Repo<'a> {
             .repo
             .references()?
             .all()?
-            .peeled()
             .filter_map(Result::ok)
             .filter_map(|reference: git::Reference<'_>| {
-                (reference.id() == head_oid
+                (reference.target().try_id() == Some(&head_oid)
                     && reference.name().category() != Some(git::reference::Category::Tag))
                 .then(|| reference.name().shorten().to_string())
             })
