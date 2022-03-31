@@ -105,10 +105,15 @@ impl<'a> Repo<'a> {
 
         let mut num_commits = 0;
         while let Some(commit_id) = commit_iter.next() {
-            let commit: git::Commit = commit_id?
-                .object()
-                .expect("commit is still present/comes from cache")
-                .into_commit();
+            let commit = match commit_id {
+                Ok(commit_id) => commit_id
+                    .object()
+                    .expect("commit is still present/comes from cache")
+                    .into_commit(),
+                Err(git::traverse::commit::ancestors::Error::FindExisting { .. }) => break, // assume a shallow clone
+                Err(err) => return Err(err.into()),
+            };
+
             {
                 let commit = commit.decode()?;
                 if no_merges && commit.parents().take(2).count() > 1 {
