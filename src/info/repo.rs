@@ -23,14 +23,22 @@ pub struct Repo<'a> {
     time_of_first_commit: git::actor::Time,
 }
 
-#[derive(Hash, PartialEq, Eq)]
+#[derive(Hash, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Sig {
     name: git::bstr::BString,
     email: git::bstr::BString,
 }
 
 impl From<git::actor::Signature> for Sig {
-    fn from(git::actor::Signature { name, email, .. }: git::actor::Signature) -> Self {
+    fn from(
+        git::actor::Signature {
+            name, mut email, ..
+        }: git::actor::Signature,
+    ) -> Self {
+        // authors who aren't mail-mapped would otherwise seem dissimilar if the email case is different.
+        // Explicitly lower-casing it normalizes for that.
+        // This comes at the cost of displaying only lower-case emails as well, which seems beneficial.
+        email.make_ascii_lowercase();
         Self { name, email }
     }
 }
@@ -90,7 +98,8 @@ impl<'a> Repo<'a> {
             author_to_number_of_commits.into_iter().collect();
 
         let total_num_authors = authors_by_number_of_commits.len();
-        authors_by_number_of_commits.sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+        authors_by_number_of_commits
+            .sort_by(|(sa, a_count), (sb, b_count)| b_count.cmp(a_count).then_with(|| sa.cmp(&sb)));
 
         let authors: Vec<Author> = authors_by_number_of_commits
             .into_iter()
