@@ -47,7 +47,8 @@ impl std::hash::Hash for Sig {
         self.email_lowercase
             .as_ref()
             .map(|email_lc| email_lc.hash(state))
-            .unwrap_or_else(|| self.email.hash(state))
+            .unwrap_or_else(|| self.email.hash(state));
+        self.name.hash(state);
     }
 }
 
@@ -79,6 +80,7 @@ impl Ord for Sig {
                 || self.email.cmp(&other.email),
                 |(a_email_lc, b_email_lc)| a_email_lc.cmp(b_email_lc),
             )
+            .then_with(|| self.name.cmp(&other.name))
     }
 }
 
