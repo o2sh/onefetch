@@ -6,6 +6,7 @@ use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
 use regex::Regex;
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::path::Path;
 use time::format_description::well_known::Rfc3339;
@@ -23,23 +24,53 @@ pub struct Repo<'a> {
     time_of_first_commit: git::actor::Time,
 }
 
-#[derive(Hash, PartialEq, Eq, Ord, PartialOrd)]
+#[derive(Hash)]
 pub struct Sig {
     name: git::bstr::BString,
     email: git::bstr::BString,
+    email_lowercase: Option<String>,
 }
 
 impl From<git::actor::Signature> for Sig {
-    fn from(
-        git::actor::Signature {
-            name, mut email, ..
-        }: git::actor::Signature,
-    ) -> Self {
-        // authors who aren't mail-mapped would otherwise seem dissimilar if the email case is different.
-        // Explicitly lower-casing it normalizes for that.
-        // This comes at the cost of displaying only lower-case emails as well, which seems beneficial.
-        email.make_ascii_lowercase();
-        Self { name, email }
+    fn from(git::actor::Signature { name, email, .. }: git::actor::Signature) -> Self {
+        let needs_lowercase = email.chars().any(|c| c.to_ascii_lowercase() != c);
+        let email_lowercase = needs_lowercase.then(|| email.chars().collect::<String>());
+        Self {
+            name,
+            email,
+            email_lowercase,
+        }
+    }
+}
+
+impl Eq for Sig {}
+
+impl PartialEq<Self> for Sig {
+    fn eq(&self, other: &Self) -> bool {
+        self.cmp(other) == Ordering::Equal
+    }
+}
+
+impl PartialOrd<Self> for Sig {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.cmp(other).into()
+    }
+}
+
+impl Ord for Sig {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.email_lowercase
+            .as_ref()
+            .and_then(|a_email_lc| {
+                other
+                    .email_lowercase
+                    .as_ref()
+                    .map(|b_email_lc| (a_email_lc, b_email_lc))
+            })
+            .map_or_else(
+                || self.email.cmp(&other.email),
+                |(a_email_lc, b_email_lc)| a_email_lc.cmp(b_email_lc),
+            )
     }
 }
 
@@ -98,8 +129,9 @@ impl<'a> Repo<'a> {
             author_to_number_of_commits.into_iter().collect();
 
         let total_num_authors = authors_by_number_of_commits.len();
-        authors_by_number_of_commits
-            .sort_by(|(sa, a_count), (sb, b_count)| b_count.cmp(a_count).then_with(|| sa.cmp(&sb)));
+        authors_by_number_of_commits.sort_by(|(sa, a_count), (sb, b_count)| {
+            b_count.cmp(a_count).then_with(|| sa.name.cmp(&sb.name))
+        });
 
         let authors: Vec<Author> = authors_by_number_of_commits
             .into_iter()
