@@ -46,7 +46,7 @@ impl<'a> Repo<'a> {
 
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
-        repo.object_cache_size(128 * 1024);
+        repo.object_cache_size(32 * 1024);
 
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
