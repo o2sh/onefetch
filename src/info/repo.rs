@@ -24,7 +24,6 @@ pub struct Repo<'a> {
     time_of_first_commit: git::actor::Time,
 }
 
-#[derive(Hash)]
 pub struct Sig {
     name: git::bstr::BString,
     email: git::bstr::BString,
@@ -40,6 +39,15 @@ impl From<git::actor::Signature> for Sig {
             email,
             email_lowercase,
         }
+    }
+}
+
+impl std::hash::Hash for Sig {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.email_lowercase
+            .as_ref()
+            .map(|email_lc| email_lc.hash(state))
+            .unwrap_or_else(|| self.email.hash(state))
     }
 }
 
