@@ -44,6 +44,11 @@ jobs:
       - name: Run clippy
         run: cargo clippy
 
+      - name: Debug
+        run: "cat .git/HEAD; git cat-file -p a802f89fc823c6c8cf2467c2b7908e1d78e8b755"
+      - name: Run onefetch
+        run: cargo run
+
   rustfmt:
     name: Rustfmt
     runs-on: ubuntu-latest
