@@ -101,48 +101,36 @@ impl<'a> Repo<'a> {
 
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
-        let mut commit_iter = repo.head_commit()?.ancestors().all().peekable();
-        let mut is_shallow = false;
+        let mut commit_iter = repo.head_commit()?.ancestors().all();
+        let mut commit_iter_peekable = commit_iter.by_ref().peekable();
 
         let mailmap = repo.load_mailmap();
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
         let mut total_nbr_of_commits = 0;
 
         let mut num_commits = 0;
-        while let Some(commit_id) = commit_iter.next() {
-            let commit = match commit_id {
-                Ok(commit_id) => commit_id
-                    .object()
-                    .expect("commit is still present/comes from cache")
-                    .into_commit(),
-                Err(git::traverse::commit::ancestors::Error::FindExisting { .. }) => {
-                    is_shallow = true;
-                    break;
-                }
-                Err(err) => return Err(err.into()),
-            };
+        while let Some(commit_id) = commit_iter_peekable.next() {
+            let commit = commit_id?.object()?.into_commit();
+            let commit = commit.decode()?;
 
-            {
-                let commit = commit.decode()?;
-                if no_merges && commit.parents().take(2).count() > 1 {
-                    continue;
-                }
+            if no_merges && commit.parents().take(2).count() > 1 {
+                continue;
+            }
 
-                if is_bot(commit.author, bot_regex_pattern) {
-                    continue;
-                }
-                num_commits += 1;
+            if is_bot(commit.author, bot_regex_pattern) {
+                continue;
+            }
+            num_commits += 1;
 
-                let author_nbr_of_commits = author_to_number_of_commits
-                    .entry(Sig::from(mailmap.resolve(commit.author)))
-                    .or_insert(0);
-                *author_nbr_of_commits += 1;
-                total_nbr_of_commits += 1;
+            let author_nbr_of_commits = author_to_number_of_commits
+                .entry(Sig::from(mailmap.resolve(commit.author)))
+                .or_insert(0);
+            *author_nbr_of_commits += 1;
+            total_nbr_of_commits += 1;
 
-                time_of_most_recent_commit.get_or_insert_with(|| commit.time());
-                if commit_iter.peek().is_none() {
-                    time_of_first_commit = commit.time().into();
-                }
+            time_of_most_recent_commit.get_or_insert_with(|| commit.time());
+            if commit_iter_peekable.peek().is_none() {
+                time_of_first_commit = commit.time().into();
             }
         }
 
@@ -173,6 +161,9 @@ impl<'a> Repo<'a> {
             .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
             .unwrap_or_default();
 
+        let is_shallow = commit_iter
+            .is_shallow
+            .expect("BUG: we must deplete the iterator");
         drop(commit_iter);
         Ok(Self {
             repo,
