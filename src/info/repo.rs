@@ -20,6 +20,8 @@ pub struct Repo<'a> {
     authors: Vec<Author>,
     total_num_authors: usize,
     num_commits: usize,
+    /// false if we have found the first commit that started it all, true if the repository is shallow.
+    is_shallow: bool,
     time_of_most_recent_commit: git::actor::Time,
     time_of_first_commit: git::actor::Time,
 }
@@ -100,6 +102,7 @@ impl<'a> Repo<'a> {
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
         let mut commit_iter = repo.head_commit()?.ancestors().all().peekable();
+        let mut is_shallow = false;
 
         let mailmap = repo.load_mailmap();
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
@@ -112,7 +115,10 @@ impl<'a> Repo<'a> {
                     .object()
                     .expect("commit is still present/comes from cache")
                     .into_commit(),
-                Err(git::traverse::commit::ancestors::Error::FindExisting { .. }) => break, // assume a shallow clone
+                Err(git::traverse::commit::ancestors::Error::FindExisting { .. }) => {
+                    is_shallow = true;
+                    break;
+                }
                 Err(err) => return Err(err.into()),
             };
 
@@ -174,6 +180,7 @@ impl<'a> Repo<'a> {
             authors,
             total_num_authors,
             num_commits,
+            is_shallow,
             time_of_first_commit,
             time_of_most_recent_commit,
         })
@@ -184,7 +191,11 @@ impl<'a> Repo<'a> {
     }
 
     pub fn get_number_of_commits(&self) -> String {
-        self.num_commits.to_string()
+        format!(
+            "{}{}",
+            self.num_commits,
+            self.is_shallow.then(|| " (shallow)").unwrap_or_default()
+        )
     }
 
     pub fn take_authors(&mut self, show_email: bool) -> (Vec<Author>, usize) {
