@@ -184,7 +184,7 @@ impl Info {
             }
         });
 
-        let repo = Repo::new(&repo)?;
+        let repo = Repo::new(repo)?;
         let mut commits = Commits::new(
             repo.gitoxide(),
             config.no_merges,
@@ -197,13 +197,14 @@ impl Info {
         let git_username = repo.get_git_username()?;
         let number_of_tags = repo.get_number_of_tags()?;
         let number_of_branches = repo.get_number_of_branches()?;
+        let (repo_size, file_count) = repo.get_repo_size();
+        let license = Detector::new()?.get_license(&workdir)?;
+        let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
+
         let creation_date = commits.get_creation_date(config.iso_time);
         let number_of_commits = commits.count();
         let (authors, contributors) = commits.take_authors(config.show_email);
         let last_change = commits.get_date_of_last_commit(config.iso_time);
-        let (repo_size, file_count) = repo.get_repo_size();
-        let license = Detector::new()?.get_license(&workdir)?;
-        let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
 
         let pending_changes = pending_changes
             .join()

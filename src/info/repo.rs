@@ -23,8 +23,8 @@ pub struct Commits {
     time_of_first_commit: git::actor::Time,
 }
 
-pub struct Repo<'a> {
-    git2_repo: &'a Repository,
+pub struct Repo {
+    git2_repo: Repository,
     repo: git::Repository,
 }
 
@@ -153,8 +153,8 @@ impl Commits {
     }
 }
 
-impl<'a> Repo<'a> {
-    pub fn new(git2_repo: &'a Repository) -> Result<Self> {
+impl Repo {
+    pub fn new(git2_repo: Repository) -> Result<Self> {
         let repo = git::open(git2_repo.path())?;
 
         Ok(Self { repo, git2_repo })
