@@ -13,9 +13,7 @@ use time::OffsetDateTime;
 
 use time_humanize::HumanTime;
 
-pub struct Repo<'a> {
-    git2_repo: &'a Repository,
-    repo: git::Repository,
+pub struct Commits {
     authors: Vec<Author>,
     total_num_authors: usize,
     num_commits: usize,
@@ -23,6 +21,12 @@ pub struct Repo<'a> {
     is_shallow: bool,
     time_of_most_recent_commit: git::actor::Time,
     time_of_first_commit: git::actor::Time,
+}
+
+pub struct Repo<'a> {
+    git2_repo: &'a Repository,
+    repo: git::Repository,
+    commits: Commits,
 }
 
 #[derive(Hash, PartialOrd, Ord, Eq, PartialEq)]
@@ -37,15 +41,13 @@ impl From<git::actor::Signature> for Sig {
     }
 }
 
-impl<'a> Repo<'a> {
+impl Commits {
     pub fn new(
-        git2_repo: &'a Repository,
+        mut repo: git::Repository,
         no_merges: bool,
         bot_regex_pattern: &Option<Regex>,
         number_of_authors_to_display: usize,
     ) -> Result<Self> {
-        let mut repo = git::open(git2_repo.path())?;
-
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
         repo.object_cache_size(32 * 1024);
@@ -117,8 +119,6 @@ impl<'a> Repo<'a> {
         );
         drop(commit_iter);
         Ok(Self {
-            repo,
-            git2_repo,
             authors,
             total_num_authors,
             num_commits,
@@ -127,30 +127,59 @@ impl<'a> Repo<'a> {
             time_of_most_recent_commit,
         })
     }
+}
+
+impl<'a> Repo<'a> {
+    pub fn new(
+        git2_repo: &'a Repository,
+        no_merges: bool,
+        bot_regex_pattern: &Option<Regex>,
+        number_of_authors_to_display: usize,
+    ) -> Result<Self> {
+        let repo = git::open(git2_repo.path())?;
+        let commits = Commits::new(
+            repo.clone(),
+            no_merges,
+            bot_regex_pattern,
+            number_of_authors_to_display,
+        )?;
+
+        Ok(Self {
+            repo,
+            git2_repo,
+            commits,
+        })
+    }
 
     pub fn get_creation_date(&self, iso_time: bool) -> String {
-        gitoxide_time_to_formatted_time(self.time_of_first_commit, iso_time)
+        gitoxide_time_to_formatted_time(self.commits.time_of_first_commit, iso_time)
     }
 
     pub fn get_number_of_commits(&self) -> String {
         format!(
             "{}{}",
-            self.num_commits,
-            self.is_shallow.then(|| " (shallow)").unwrap_or_default()
+            self.commits.num_commits,
+            self.commits
+                .is_shallow
+                .then(|| " (shallow)")
+                .unwrap_or_default()
         )
     }
 
     pub fn take_authors(&mut self, show_email: bool) -> (Vec<Author>, usize) {
         if !show_email {
-            for author in &mut self.authors {
+            for author in &mut self.commits.authors {
                 author.clear_email();
             }
         }
-        (std::mem::take(&mut self.authors), self.total_num_authors)
+        (
+            std::mem::take(&mut self.commits.authors),
+            self.commits.total_num_authors,
+        )
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
-        gitoxide_time_to_formatted_time(self.time_of_most_recent_commit, iso_time)
+        gitoxide_time_to_formatted_time(self.commits.time_of_most_recent_commit, iso_time)
     }
 
     // This collects the repo size excluding .git
