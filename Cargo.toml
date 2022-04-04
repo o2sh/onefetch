@@ -28,7 +28,7 @@ section = "utility"
 [dependencies]
 anyhow = "1.0"
 askalono = "0.4.4"
-byte-unit = "=4.0.13" # to match git-repository's lower requirement, which it needs for MSRV
+byte-unit = "4.0" # to match git-repository's lower requirement, which it needs for MSRV
 bytecount = "0.6.2"
 clap = {version = "3.1.6", features = ["cargo", "wrap_help"]}
 color_quant = "1.1.0"
