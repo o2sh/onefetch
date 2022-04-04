@@ -112,9 +112,9 @@ impl<'a> Repo<'a> {
             .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
             .unwrap_or_default();
 
-        let is_shallow = commit_iter
-            .is_shallow
-            .expect("BUG: we must deplete the iterator");
+        let is_shallow = commit_iter.is_shallow.expect(
+            "BUG: we must deplete the iterator. If you are seeing this, please let us know at https://github.com/o2sh/onefetch/issues/new",
+        );
         drop(commit_iter);
         Ok(Self {
             repo,
