@@ -26,7 +26,6 @@ pub struct Commits {
 pub struct Repo<'a> {
     git2_repo: &'a Repository,
     repo: git::Repository,
-    commits: Commits,
 }
 
 #[derive(Hash, PartialOrd, Ord, Eq, PartialEq)]
@@ -127,59 +126,42 @@ impl Commits {
             time_of_most_recent_commit,
         })
     }
-}
-
-impl<'a> Repo<'a> {
-    pub fn new(
-        git2_repo: &'a Repository,
-        no_merges: bool,
-        bot_regex_pattern: &Option<Regex>,
-        number_of_authors_to_display: usize,
-    ) -> Result<Self> {
-        let repo = git::open(git2_repo.path())?;
-        let commits = Commits::new(
-            repo.clone(),
-            no_merges,
-            bot_regex_pattern,
-            number_of_authors_to_display,
-        )?;
-
-        Ok(Self {
-            repo,
-            git2_repo,
-            commits,
-        })
-    }
 
     pub fn get_creation_date(&self, iso_time: bool) -> String {
-        gitoxide_time_to_formatted_time(self.commits.time_of_first_commit, iso_time)
+        gitoxide_time_to_formatted_time(self.time_of_first_commit, iso_time)
     }
 
-    pub fn get_number_of_commits(&self) -> String {
+    pub fn count(&self) -> String {
         format!(
             "{}{}",
-            self.commits.num_commits,
-            self.commits
-                .is_shallow
-                .then(|| " (shallow)")
-                .unwrap_or_default()
+            self.num_commits,
+            self.is_shallow.then(|| " (shallow)").unwrap_or_default()
         )
     }
 
     pub fn take_authors(&mut self, show_email: bool) -> (Vec<Author>, usize) {
         if !show_email {
-            for author in &mut self.commits.authors {
+            for author in &mut self.authors {
                 author.clear_email();
             }
         }
-        (
-            std::mem::take(&mut self.commits.authors),
-            self.commits.total_num_authors,
-        )
+        (std::mem::take(&mut self.authors), self.total_num_authors)
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
-        gitoxide_time_to_formatted_time(self.commits.time_of_most_recent_commit, iso_time)
+        gitoxide_time_to_formatted_time(self.time_of_most_recent_commit, iso_time)
+    }
+}
+
+impl<'a> Repo<'a> {
+    pub fn new(git2_repo: &'a Repository) -> Result<Self> {
+        let repo = git::open(git2_repo.path())?;
+
+        Ok(Self { repo, git2_repo })
+    }
+
+    pub fn gitoxide(&self) -> git::Repository {
+        self.repo.clone()
     }
 
     // This collects the repo size excluding .git
