@@ -1,3 +1,4 @@
+use git_repository as git;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 
@@ -10,19 +11,23 @@ pub struct Author {
 
 impl Author {
     pub fn new(
-        name: String,
-        email: Option<String>,
+        name: git::bstr::BString,
+        email: Option<git::bstr::BString>,
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
-            name,
-            email,
+            name: name.to_string(),
+            email: email.map(|e| e.to_string()),
             nbr_of_commits,
             contribution,
         }
+    }
+
+    pub fn clear_email(&mut self) {
+        self.email = None;
     }
 }
 

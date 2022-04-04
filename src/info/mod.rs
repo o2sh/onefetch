@@ -1,7 +1,8 @@
 use crate::cli::{self, Config};
+use crate::repo::Commits;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use author::Author;
 use deps::DependencyDetector;
 use git2::Repository;
@@ -159,29 +160,61 @@ impl Info {
     pub fn new(config: Config) -> Result<Self> {
         let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
-        let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
-        let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
-        let head_refs = internal_repo.get_head_refs()?;
-        let pending_changes = internal_repo.get_pending_changes()?;
-        let version = internal_repo.get_version()?;
-        let git_username = internal_repo.get_git_username()?;
-        let number_of_tags = internal_repo.get_number_of_tags()?;
-        let number_of_branches = internal_repo.get_number_of_branches()?;
-        let creation_date = internal_repo.get_creation_date(config.iso_time)?;
-        let number_of_commits = internal_repo.get_number_of_commits();
-        let (authors, contributors) =
-            internal_repo.get_authors(config.number_of_authors, config.show_email)?;
-        let last_change = internal_repo.get_date_of_last_commit(config.iso_time);
-        let (repo_size, file_count) = internal_repo.get_repo_size();
-        let workdir = internal_repo.get_work_dir()?;
+        let workdir = repo.workdir().expect("non-bare repo").to_owned();
+
+        let pending_changes = std::thread::spawn({
+            let git_dir = repo.path().to_owned();
+            move || {
+                let repo = git2::Repository::open(git_dir)?;
+                repo::get_pending_changes(&repo)
+            }
+        });
+        let languages_handle = std::thread::spawn({
+            let ignored_directories = config.ignored_directories.clone();
+            let language_types = config.language_types.clone();
+            let include_hidden = config.include_hidden;
+            let workdir = workdir.clone();
+            move || {
+                langs::get_language_statistics(
+                    &workdir,
+                    &ignored_directories,
+                    &language_types,
+                    include_hidden,
+                )
+            }
+        });
+
+        let repo = Repo::new(repo)?;
+        let mut commits = Commits::new(
+            repo.gitoxide(),
+            config.no_merges,
+            &config.bot_regex_pattern,
+            config.number_of_authors,
+        )?;
+        let (repo_name, repo_url) = repo.get_name_and_url()?;
+        let head_refs = repo.get_head_refs()?;
+        let version = repo.get_version()?;
+        let git_username = repo.get_git_username()?;
+        let number_of_tags = repo.get_number_of_tags()?;
+        let number_of_branches = repo.get_number_of_branches()?;
+        let (repo_size, file_count) = repo.get_repo_size();
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
-        let (languages, lines_of_code) = langs::get_language_statistics(
-            &workdir,
-            &config.ignored_directories,
-            &config.language_types,
-            config.include_hidden,
-        )?;
+
+        let creation_date = commits.get_creation_date(config.iso_time);
+        let number_of_commits = commits.count();
+        let (authors, contributors) = commits.take_authors(config.show_email);
+        let last_change = commits.get_date_of_last_commit(config.iso_time);
+
+        let pending_changes = pending_changes
+            .join()
+            .ok()
+            .context("BUG: panic in pending-changes thread")??;
+
+        let (languages, lines_of_code) = languages_handle
+            .join()
+            .ok()
+            .context("BUG: panic in language statistics thread")??;
         let dominant_language = langs::get_dominant_language(&languages);
         let ascii_colors = get_ascii_colors(
             &config.ascii_language,

@@ -44,6 +44,9 @@ jobs:
       - name: Run clippy
         run: cargo clippy
 
+      - name: Run onefetch
+        run: cargo run
+
   rustfmt:
     name: Rustfmt
     runs-on: ubuntu-latest

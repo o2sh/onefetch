@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use language::{Language, LanguageType};
 use regex::Regex;
 use std::collections::HashMap;
+use std::path::Path;
 use strum::IntoEnumIterator;
 
 pub mod language;
@@ -11,7 +12,7 @@ pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language
 }
 
 pub fn get_language_statistics(
-    dir: &str,
+    dir: &Path,
     ignored_directories: &[String],
     language_types: &[LanguageType],
     include_hidden: bool,
@@ -71,7 +72,7 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
 }
 
 fn get_statistics(
-    dir: &str,
+    dir: &Path,
     ignored_directories: &[String],
     language_types: &[LanguageType],
     include_hidden: bool,
