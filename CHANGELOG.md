@@ -11,14 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <csr-id-7b34b0aef20b1bc1dfd5de56596d3dca53e28d3e/>
 <csr-id-d00ab45d3cab26e6c8394c2952d7704dd58b8245/>
 
-### Refactor
+`onefetch` is now typically more than twice as fast when executing. This was achieved by reducing
+allocations and switching to `gitoxide` for the most taxing tasks.
 
- - <csr-id-b6cd415d049b24348150e0e2088f2fdb5822e1cb/> git2 repository can now be owned by the `Repo` type
-   Previously this wasn't possible as commits would be kept in `Repo`
-   which would cause self-referential borrow check issues unless
-   the git2 repository was kept outside.
- - <csr-id-7b34b0aef20b1bc1dfd5de56596d3dca53e28d3e/> completely separate `Commits` and `Repo` structure
- - <csr-id-d00ab45d3cab26e6c8394c2952d7704dd58b8245/> put all commit-traversal related initialization into own struct
+### Fixes
+
+- Commits replaced with `git replace` are now followed. This can be turned off by setting the
+  `GIT_NO_REPLACE_OBJECTS` environment variable.
+- Shallow clones are now detected and displayed as such. Previously it might have appeared that 
+  the commit count is the real even though it was truncated due to the shallow-ness of the
+  repository.
+
+  If a repository is shallow, `(shallow)` will appear after the commit count.
+
 
 ### Commit Statistics
 
