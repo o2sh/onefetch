@@ -23,7 +23,7 @@ Detecta automáticamente las licencias de código abierto de los textos y propor
 
 Onefetch se puede configurar a través de indicadores de línea de comandos para mostrar exactamente lo que desea, de la manera que desea: puede personalizar el formato de texto/ASCII, deshabilitar líneas de información, ignorar archivos y directorios, salida en múltiples formatos (Json, Yaml), etc.
 
-A partir de ahora, onefetch admite más de 50 lenguajes de programación diferentes; si el idioma de su elección no es compatible: abra un problema y se agregará soporte.
+A partir de ahora, onefetch admite más de 50 lenguajes de programación diferentes;si el lenguaje de su elección no es compatible: abra una propuesta (issue) y se agregará soporte.
 
 ¡Las contribuciones son muy bienvenidas! Consulte [CONTRIBUTING](../CONTRIBUTING.md) para obtener más información.
 
