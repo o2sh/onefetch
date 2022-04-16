@@ -53,7 +53,7 @@ impl Commits {
 
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
-        let mut commit_iter = repo.head_commit()?.ancestors().all();
+        let mut commit_iter = repo.head_commit()?.ancestors().all()?;
         let mut commit_iter_peekable = commit_iter.by_ref().peekable();
 
         let mailmap = repo.load_mailmap();
