@@ -1,8 +1,8 @@
 ---
 name: New Language Request
 about: Request for a new language to be supported
-title: "New Language Request: [LANGUAGE]"
-labels: 'Type: Enhancement, good first issue'
+title: 'New Language Request: [LANGUAGE]'
+labels: 'Enhancement, good first issue'
 
 ---
 
