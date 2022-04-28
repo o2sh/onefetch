@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an improvement.
+about: Suggest an improvement
 title: ''
 labels: 'feature request'
 
