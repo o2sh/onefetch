@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug or unexpected behavior with onefetch
+about: Report a bug or unexpected behavior
 title: "Bug: [DESCRIPTION]"
 labels: 'Type: Bug'
 
