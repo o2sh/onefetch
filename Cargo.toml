@@ -53,7 +53,7 @@ ansi_term = "0.12"
 
 [target.'cfg(not(windows))'.dependencies]
 base64 = "0.13.0"
-libc = "0.2.123"
+libc = "0.2.125"
 
 [dev-dependencies]
 more-asserts = "0.2"
