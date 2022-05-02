@@ -34,7 +34,7 @@ clap = {version = "3.1.15", features = ["cargo", "wrap_help"]}
 color_quant = "1.1.0"
 git2 = {version = "0.14.2", default-features = false}
 git-repository = { version = "0.16.0", features = ["max-performance", "unstable", "serde1"] }
-image = "0.24.1"
+image = "0.24.2"
 owo-colors = "3.4.0"
 regex = "1.5.5"
 serde = "1.0.136"
