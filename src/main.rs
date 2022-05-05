@@ -24,6 +24,11 @@ fn main() -> Result<()> {
         return cli::print_supported_package_managers();
     }
 
+    if let Some(generator) = config.completion {
+        cli::print_completions(generator);
+        return Ok(());
+    }
+
     if !repo::is_valid(&config.repo_path)? {
         bail!("please run onefetch inside of a non-bare git repository");
     }
