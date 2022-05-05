@@ -5,7 +5,7 @@ use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
 use anyhow::{Context, Result};
-use clap::{crate_description, crate_name, crate_version, AppSettings, Arg};
+use clap::{crate_description, crate_name, crate_version, AppSettings, Arg, ValueHint};
 use image::DynamicImage;
 use regex::Regex;
 use std::process::Command;
@@ -58,6 +58,7 @@ impl Config {
             .default_value(".")
             .hide_default_value(true)
             .help("Run as if onefetch was started in <input> instead of the current working directory.")
+            .value_hint(ValueHint::DirPath)
         )
         .arg(
             Arg::new("output")
@@ -102,7 +103,8 @@ impl Config {
             .long("image")
             .value_name("IMAGE")
             .takes_value(true)
-            .help("Path to the IMAGE file."),
+            .help("Path to the IMAGE file.")
+            .value_hint(ValueHint::FilePath)
         )
         .arg(
             Arg::new("image-backend")
@@ -275,7 +277,8 @@ impl Config {
             .value_name("EXCLUDE")
             .multiple_values(true)
             .takes_value(true)
-            .help("Ignore all files & directories matching EXCLUDE."),
+            .help("Ignore all files & directories matching EXCLUDE.")
+            .value_hint(ValueHint::AnyPath)
         )
         .arg(
             Arg::new("type")
