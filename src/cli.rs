@@ -229,7 +229,7 @@ pub fn get_git_version() -> String {
 
 pub fn print_completions<G: Generator>(gen: G) {
     let mut cmd = build_cli();
-    let name = cmd.get_name().to_string();
+    let name = crate_name!();
     generate(gen, &mut cmd, name, &mut io::stdout());
 }
 
