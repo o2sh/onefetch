@@ -493,6 +493,6 @@ pub(crate) fn build_cli() -> clap::Command<'static> {
                 .long("completion")
                 .possible_values(Shell::possible_values())
                 .value_name("SHELL")
-                .help("Print shell completions to STDOUT and exit")
+                .help("Print shell completion to STDOUT and exit.")
         )
 }
