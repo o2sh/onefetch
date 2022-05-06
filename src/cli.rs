@@ -490,9 +490,9 @@ pub fn build_cli() -> clap::Command<'static> {
         )
         .arg(
             Arg::new("completion")
-                .long("completion")
-                .possible_values(Shell::possible_values())
-                .value_name("SHELL")
-                .help("Prints out SHELL completion script.")
+            .long("completion")
+            .possible_values(Shell::possible_values())
+            .value_name("SHELL")
+            .help("Prints out SHELL completion script.")
         )
 }
