@@ -235,7 +235,6 @@ pub fn print_completions<G: Generator>(gen: G) {
 
 pub(crate) fn build_cli() -> clap::Command<'static> {
     let possible_backends = ["kitty", "iterm", "sixel"];
-    let possible_shells = Shell::possible_values();
 
     let color_values = &[
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
@@ -492,7 +491,7 @@ pub(crate) fn build_cli() -> clap::Command<'static> {
         .arg(
             Arg::new("completion")
                 .long("completion")
-                .possible_values(possible_shells)
+                .possible_values(Shell::possible_values())
                 .value_name("SHELL")
                 .help("Print shell completions to STDOUT and exit")
         )
