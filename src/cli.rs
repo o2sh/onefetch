@@ -233,7 +233,7 @@ pub fn print_completions<G: Generator>(gen: G) {
     generate(gen, &mut cmd, name, &mut io::stdout());
 }
 
-pub(crate) fn build_cli() -> clap::Command<'static> {
+pub fn build_cli() -> clap::Command<'static> {
     let possible_backends = ["kitty", "iterm", "sixel"];
 
     let color_values = &[
