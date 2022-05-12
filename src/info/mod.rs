@@ -1,14 +1,15 @@
 use crate::cli::{self, Config};
+use crate::repo::Commits;
 use crate::ui::get_ascii_colors;
-use crate::ui::text_color::TextColor;
-use anyhow::Result;
+use crate::ui::text_colors::TextColors;
+use anyhow::{Context, Result};
 use author::Author;
-use colored::{Color, ColoredString, Colorize};
 use deps::DependencyDetector;
 use git2::Repository;
 use head_refs::HeadRefs;
 use langs::language::Language;
 use license::Detector;
+use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
 use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
@@ -42,9 +43,9 @@ pub struct Info {
     file_count: u64,
     repo_size: String,
     license: String,
+    text_colors: TextColors,
     pub dominant_language: Language,
-    pub ascii_colors: Vec<Color>,
-    pub text_colors: TextColor,
+    pub ascii_colors: Vec<DynColors>,
     pub config: Config,
 }
 
@@ -62,23 +63,23 @@ impl std::fmt::Display for Info {
         if !self.config.disabled_fields.project && !self.repo_name.is_empty() {
             let branches_tags_str = self.get_branches_and_tags_field();
             let project_str = format!("{} {}", &self.repo_name, branches_tags_str);
-            self.write_colored_info_line("Project", &project_str, f)?;
+            self.write_styled_info_line("Project", &project_str, f)?;
         }
 
         if !self.config.disabled_fields.head {
-            self.write_colored_info_line("HEAD", &self.head_refs.to_string(), f)?;
+            self.write_styled_info_line("HEAD", &self.head_refs.to_string(), f)?;
         }
 
         if !self.config.disabled_fields.pending && !self.pending_changes.is_empty() {
-            self.write_colored_info_line("Pending", &self.pending_changes, f)?;
+            self.write_styled_info_line("Pending", &self.pending_changes, f)?;
         }
 
         if !self.config.disabled_fields.version && !self.version.is_empty() {
-            self.write_colored_info_line("Version", &self.version, f)?;
+            self.write_styled_info_line("Version", &self.version, f)?;
         }
 
         if !self.config.disabled_fields.created && !self.creation_date.is_empty() {
-            self.write_colored_info_line("Created", &self.creation_date, f)?;
+            self.write_styled_info_line("Created", &self.creation_date, f)?;
         }
 
         if !self.config.disabled_fields.languages && !self.languages.is_empty() {
@@ -92,7 +93,7 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.dependencies && !self.dependencies.is_empty() {
-            self.write_colored_info_line("Dependencies", &self.dependencies, f)?;
+            self.write_styled_info_line("Dependencies", &self.dependencies, f)?;
         }
 
         if !self.config.disabled_fields.authors && !self.authors.is_empty() {
@@ -106,34 +107,34 @@ impl std::fmt::Display for Info {
         }
 
         if !self.config.disabled_fields.last_change && !self.last_change.is_empty() {
-            self.write_colored_info_line("Last change", &self.last_change, f)?;
+            self.write_styled_info_line("Last change", &self.last_change, f)?;
         }
 
         if !self.config.disabled_fields.contributors
             && self.contributors > self.config.number_of_authors
         {
-            self.write_colored_info_line("Contributors", &self.contributors.to_string(), f)?;
+            self.write_styled_info_line("Contributors", &self.contributors.to_string(), f)?;
         }
 
         if !self.config.disabled_fields.repo && !self.repo_url.is_empty() {
-            self.write_colored_info_line("Repo", &self.repo_url, f)?;
+            self.write_styled_info_line("Repo", &self.repo_url, f)?;
         }
 
         if !self.config.disabled_fields.commits {
-            self.write_colored_info_line("Commits", &self.number_of_commits, f)?;
+            self.write_styled_info_line("Commits", &self.number_of_commits, f)?;
         }
 
         if !self.config.disabled_fields.lines_of_code {
-            self.write_colored_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
+            self.write_styled_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
         }
 
         if !self.config.disabled_fields.size && !self.repo_size.is_empty() {
             let repo_size_str = self.get_repo_size_field();
-            self.write_colored_info_line("Size", &repo_size_str, f)?;
+            self.write_styled_info_line("Size", &repo_size_str, f)?;
         }
 
         if !self.config.disabled_fields.license && !self.license.is_empty() {
-            self.write_colored_info_line("License", &self.license, f)?;
+            self.write_styled_info_line("License", &self.license, f)?;
         }
 
         if !self.config.no_color_palette {
@@ -159,29 +160,61 @@ impl Info {
     pub fn new(config: Config) -> Result<Self> {
         let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.repo_path)?;
-        let internal_repo = Repo::new(&repo, config.no_merges, &config.bot_regex_pattern)?;
-        let (repo_name, repo_url) = internal_repo.get_name_and_url()?;
-        let head_refs = internal_repo.get_head_refs()?;
-        let pending_changes = internal_repo.get_pending_changes()?;
-        let version = internal_repo.get_version()?;
-        let git_username = internal_repo.get_git_username()?;
-        let number_of_tags = internal_repo.get_number_of_tags()?;
-        let number_of_branches = internal_repo.get_number_of_branches()?;
-        let creation_date = internal_repo.get_creation_date(config.iso_time)?;
-        let number_of_commits = internal_repo.get_number_of_commits();
-        let (authors, contributors) =
-            internal_repo.get_authors(config.number_of_authors, config.show_email)?;
-        let last_change = internal_repo.get_date_of_last_commit(config.iso_time);
-        let (repo_size, file_count) = internal_repo.get_repo_size();
-        let workdir = internal_repo.get_work_dir()?;
+        let workdir = repo.workdir().expect("non-bare repo").to_owned();
+
+        let pending_changes = std::thread::spawn({
+            let git_dir = repo.path().to_owned();
+            move || {
+                let repo = git2::Repository::open(git_dir)?;
+                repo::get_pending_changes(&repo)
+            }
+        });
+        let languages_handle = std::thread::spawn({
+            let ignored_directories = config.ignored_directories.clone();
+            let language_types = config.language_types.clone();
+            let include_hidden = config.include_hidden;
+            let workdir = workdir.clone();
+            move || {
+                langs::get_language_statistics(
+                    &workdir,
+                    &ignored_directories,
+                    &language_types,
+                    include_hidden,
+                )
+            }
+        });
+
+        let repo = Repo::new(repo)?;
+        let mut commits = Commits::new(
+            repo.gitoxide(),
+            config.no_merges,
+            &config.bot_regex_pattern,
+            config.number_of_authors,
+        )?;
+        let (repo_name, repo_url) = repo.get_name_and_url()?;
+        let head_refs = repo.get_head_refs()?;
+        let version = repo.get_version()?;
+        let git_username = repo.get_git_username()?;
+        let number_of_tags = repo.get_number_of_tags()?;
+        let number_of_branches = repo.get_number_of_branches()?;
+        let (repo_size, file_count) = repo.get_repo_size();
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
-        let (languages, lines_of_code) = langs::get_language_statistics(
-            &workdir,
-            &config.ignored_directories,
-            &config.language_types,
-            config.include_hidden,
-        )?;
+
+        let creation_date = commits.get_creation_date(config.iso_time);
+        let number_of_commits = commits.count();
+        let (authors, contributors) = commits.take_authors(config.show_email);
+        let last_change = commits.get_date_of_last_commit(config.iso_time);
+
+        let pending_changes = pending_changes
+            .join()
+            .ok()
+            .context("BUG: panic in pending-changes thread")??;
+
+        let (languages, lines_of_code) = languages_handle
+            .join()
+            .ok()
+            .context("BUG: panic in language statistics thread")??;
         let dominant_language = langs::get_dominant_language(&languages);
         let ascii_colors = get_ascii_colors(
             &config.ascii_language,
@@ -189,7 +222,7 @@ impl Info {
             &config.ascii_colors,
             config.true_color,
         );
-        let text_colors = TextColor::get_text_colors(&config.text_colors, &ascii_colors);
+        let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
 
         Ok(Self {
             git_username,
@@ -219,57 +252,55 @@ impl Info {
         })
     }
 
-    fn write_colored_info_line(
+    fn write_styled_info_line(
         &self,
-        label: &str,
+        subtitle: &str,
         info: &str,
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
-        let info_colored = info.color(self.text_colors.info);
-        writeln!(
-            f,
-            "{} {}",
-            &self.get_formatted_subtitle_label(label),
-            info_colored
-        )
+        let colored_info = info.color(self.text_colors.info);
+        self.write_info_line(subtitle, &colored_info.to_string(), f)
     }
 
     fn write_info_line(
         &self,
-        label: &str,
+        subtitle: &str,
         info: &str,
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
-        writeln!(f, "{} {}", &self.get_formatted_subtitle_label(label), info)
+        writeln!(f, "{} {}", &self.style_subtitle(subtitle), info)
     }
 
-    fn get_formatted_subtitle_label(&self, label: &str) -> ColoredString {
-        let formatted_label = format!(
+    fn style_subtitle(&self, subtitle: &str) -> String {
+        let subtitle_style = self.style(self.text_colors.subtitle);
+        let colon_style = self.style(self.text_colors.colon);
+        format!(
             "{}{}",
-            label.color(self.text_colors.subtitle),
-            ":".color(self.text_colors.colon)
-        );
-        self.bold(&formatted_label)
+            subtitle.style(subtitle_style),
+            ":".style(colon_style)
+        )
     }
 
-    fn bold(&self, label: &str) -> ColoredString {
-        if self.config.no_bold {
-            label.normal()
-        } else {
-            label.bold()
+    fn style(&self, color: DynColors) -> Style {
+        let mut style = Style::new().color(color);
+        if !self.config.no_bold {
+            style = style.bold();
         }
+        style
     }
 
     fn get_git_info_field(&self) -> (String, usize) {
         let git_info_length = self.git_username.len() + self.git_version.len();
+        let title_style = self.style(self.text_colors.title);
 
         if !&self.git_username.is_empty() && !&self.git_version.is_empty() {
+            let tilde_style = self.style(self.text_colors.tilde);
             (
                 format!(
                     "{} {} {}",
-                    &self.bold(&self.git_username).color(self.text_colors.title),
-                    &self.bold("~").color(self.text_colors.tilde),
-                    &self.bold(&self.git_version).color(self.text_colors.title)
+                    &self.git_username.style(title_style),
+                    "~".style(tilde_style),
+                    &self.git_version.style(title_style)
                 ),
                 git_info_length + 3,
             )
@@ -277,8 +308,8 @@ impl Info {
             (
                 format!(
                     "{}{}",
-                    &self.bold(&self.git_username).color(self.text_colors.title),
-                    &self.bold(&self.git_version).color(self.text_colors.title)
+                    &self.git_username.style(title_style),
+                    &self.git_version.style(title_style)
                 ),
                 git_info_length,
             )
@@ -291,7 +322,7 @@ impl Info {
         let pad = title.len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
-            let author_str = format!("{}", author).color(self.text_colors.info);
+            let author_str = author.color(self.text_colors.info);
 
             if i == 0 {
                 author_field.push_str(&format!("{}", author_str));
@@ -308,27 +339,35 @@ impl Info {
         let language_bar_length = 26;
         let pad = title.len() + 2;
         let color_palette = vec![
-            Color::Red,
-            Color::Green,
-            Color::Yellow,
-            Color::Blue,
-            Color::Magenta,
-            Color::Cyan,
+            DynColors::Ansi(AnsiColors::Red),
+            DynColors::Ansi(AnsiColors::Green),
+            DynColors::Ansi(AnsiColors::Yellow),
+            DynColors::Ansi(AnsiColors::Blue),
+            DynColors::Ansi(AnsiColors::Magenta),
+            DynColors::Ansi(AnsiColors::Cyan),
         ];
 
-        let languages: Vec<(String, f64, Color)> = {
-            let mut iter = self.languages.iter().enumerate().map(|(i, x)| {
-                let color = if self.config.true_color {
-                    x.0.get_colors(true)[0]
-                } else {
-                    color_palette[i % color_palette.len()]
-                };
-                (format!("{}", x.0), x.1, color)
-            });
+        let languages: Vec<(String, f64, DynColors)> = {
+            let mut iter = self
+                .languages
+                .iter()
+                .enumerate()
+                .map(|(i, (language, perc))| {
+                    let circle_color = if self.config.true_color {
+                        language.get_circle_color()
+                    } else {
+                        color_palette[i % color_palette.len()]
+                    };
+                    (language.to_string(), *perc, circle_color)
+                });
             if self.languages.len() > 6 {
                 let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
-                let other_sum = iter.fold(0.0, |acc, x| acc + x.1);
-                languages.push(("Other".to_owned(), other_sum, Color::White));
+                let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
+                languages.push((
+                    "Other".to_string(),
+                    other_perc,
+                    DynColors::Ansi(AnsiColors::White),
+                ));
                 languages
             } else {
                 iter.collect()
@@ -337,23 +376,25 @@ impl Info {
 
         let language_bar: String = languages
             .iter()
-            .map(|x| {
+            .map(|(_, perc, circle_color)| {
                 let bar_width = std::cmp::max(
-                    (x.1 / 100. * language_bar_length as f64).round() as usize,
+                    (perc / 100. * language_bar_length as f64).round() as usize,
                     1,
                 );
-                format!("{:<width$}", "".on_color(x.2), width = bar_width)
+                format!("{:<width$}", "".on_color(*circle_color), width = bar_width)
             })
             .collect();
 
         language_field.push_str(&language_bar);
 
-        for (i, language) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, language.1);
-            let language_with_perc =
-                format!("{} ({} %)", language.0, formatted_number).color(self.text_colors.info);
-            let language_chip = "\u{25CF}".color(language.2);
-            let language_str = format!("{} {} ", language_chip, language_with_perc);
+        for (i, (language, perc, circle_color)) in languages.iter().enumerate() {
+            let formatted_number = format!("{:.*}", 1, perc);
+            let circle = "\u{25CF}".color(*circle_color);
+            let language_str = format!(
+                "{} {} ",
+                circle,
+                format!("{} ({} %)", language, formatted_number).color(self.text_colors.info)
+            );
             if i % 2 == 0 {
                 language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
             } else {
@@ -389,7 +430,7 @@ impl Info {
         match self.file_count {
             0 => String::from(&self.repo_size),
             _ => {
-                let res = format!("{} ({} files)", self.repo_size, self.file_count.to_string());
+                let res = format!("{} ({} files)", self.repo_size, self.file_count);
                 res
             }
         }

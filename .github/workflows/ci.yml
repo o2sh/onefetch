@@ -14,10 +14,10 @@ jobs:
         rust: [stable, nightly]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Restore cargo cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -44,11 +44,14 @@ jobs:
       - name: Run clippy
         run: cargo clippy
 
+      - name: Run onefetch
+        run: cargo run
+
   rustfmt:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:

@@ -15,36 +15,31 @@ Adding support for a new Language consists in adding a new entry to the `define_
 
 **Example**:
 
-`{ CSharp, Programming, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta] ), "c#" },`
+`{ TypeScript, Programming, "typescript.ascii", define_colors!([Cyan, White] : [Rgb(0, 122, 204), Rgb(255, 255, 255)]), Rgb(43, 116, 137) }`
 
-The first item `CSharp` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item refers to the language type as specified by [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml), only four values are possible: Programming, Markup, Prose and Data. The third item `csharp.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. The last item `c#` is only required if the Enum name `CSharp` doesn't match the display name `C#` and is used as an input for `-a, --ascii-language <LANGUAGE>` - by default we take the Enum name in lowercase.
+The first item `TypeScript` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item refers to the language type as specified by [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml), only four values are possible: Programming, Markup, Prose and Data. The third item `typescript.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. Finally, the circle color used in the language distribution whose hex value can be found in [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml).
 
 #### Ascii logo
 
 ```text
-{0}                 ++++++
-{0}              ++++++++++++
-{0}          ++++++++++++++++++++
-{0}       ++++++++++++++++++++++++++
-{0}    ++++++++++++++++++++++++++++++++
-{0} +++++++++++++{2}************{0}+++++++++++++
-{0}+++++++++++{2}******************{0}++++++++{1}:::
-{0}+++++++++{2}**********************{0}++{1}:::::::
-{0}++++++++{2}*********{0}++++++{2}******{1}:::::::::::
-{0}+++++++{2}********{0}++++++++++{2}**{1}:::{2}**{1}:::{2}**{1}:::
-{0}+++++++{2}*******{0}+++++++++{1}::::::{2}*********{1}::
-{0}+++++++{2}******{0}+++++++{1}::::::::::{2}**{1}:::{2}**{1}:::
-{0}+++++++{2}*******{0}+++{1}::::::::::::{2}*********{1}::
-{0}+++++++{2}********{1}::::::::::{2}**{1}:::{2}**{1}:::{2}**{1}:::
-{0}++++++++{2}*********{1}::::::{2}******{1}:::::::::::
-{0}++++++{1}:::{2}**********************{1}:::::::::
-{0}+++{1}::::::::{2}******************{1}:::::::::::
-{1} :::::::::::::{2}************{1}:::::::::::::
-{1}    ::::::::::::::::::::::::::::::::
-{1}       ::::::::::::::::::::::::::
-{1}          ::::::::::::::::::::
-{1}              ::::::::::::
-{1}                 ::::::
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TSTS{1}TSTSTS{0}TSTSTS
+{0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TS{1}TSTSTSTSTS{0}TSTS
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTST{1}TSTST{0}TSTSTSTST
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTST{0}STSTSTST
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTST{0}STSTST
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTS{1}TSTST{0}TSTS
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTST{1}TSTST{0}TST
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTSTSTSTS{0}TST
+{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTSTS{0}STSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
 ```
 
 Remarks:
@@ -90,7 +85,7 @@ These translations will be accessible directly from the English README.md via hy
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
-- [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@ebroto](https://github.com/ebroto), [@erikgaal](https://github.com/erikgaal), [@yoichi](https://github.com/yoichi) and [@HallerPatrick](https://github.com/HallerPatrick) for maintaining this project.
+- [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@yoichi](https://github.com/yoichi), [@HallerPatrick](https://github.com/HallerPatrick) and [@Byron](https://github.com/Byron) for maintaining this project.
 - Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
 
 <p align="center">:heart::heart:</p>

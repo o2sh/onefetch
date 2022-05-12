@@ -1,5 +1,6 @@
 use anyhow::Result;
 use std::collections::HashMap;
+use std::path::Path;
 use std::{ffi::OsStr, fs};
 
 pub mod package_manager;
@@ -17,7 +18,7 @@ impl DependencyDetector {
         DependencyDetector { package_managers }
     }
 
-    pub fn get_dependencies(&self, dir: &str) -> Result<String> {
+    pub fn get_dependencies(&self, dir: &Path) -> Result<String> {
         let deps = fs::read_dir(dir)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())

@@ -1,20 +1,30 @@
-use colored::Color;
+use owo_colors::{AnsiColors, DynColors};
 use serde::Serialize;
 use std::env;
 use strum::{EnumIter, EnumString, IntoStaticStr};
 
 pub struct Colors {
-    basic_colors: Vec<Color>,
-    true_colors: Option<Vec<Color>>,
+    basic_colors: Vec<DynColors>,
+    true_colors: Option<Vec<DynColors>>,
+}
+
+/// Maps colors to preferred versions. Used to allow contributors to include
+/// colors with minimal confusion.
+macro_rules! clean_color {
+    ( White ) => {
+        clean_color!(Default)
+    };
+    ( $color:ident ) => {
+        DynColors::Ansi(AnsiColors::$color)
+    };
 }
 
 macro_rules! define_colors {
-    ( [ $($color:expr),+ ] ) => { Colors { basic_colors: vec![$($color),+], true_colors: None } };
-    ( [ $($bc:expr),+ ] : [ $($tc:expr),+ ] ) => { Colors { basic_colors: vec![$($bc),+], true_colors: Some(vec![$($tc),+]) } };
-    (   $color:expr ) => { $color };
+    ( [ $($color:ident),+ ] ) => { Colors { basic_colors: vec![$( clean_color!($color) ),+], true_colors: None } };
+    ( [ $($bc:ident),+ ] : [ $($c:ident($r:expr, $g:expr, $b:expr)),+ ] ) => { Colors { basic_colors: vec![$(clean_color!($bc)),+], true_colors: Some(vec![$(DynColors::$c($r, $g, $b)),+]) } };
 }
 
-#[derive(PartialEq, EnumString, EnumIter, IntoStaticStr)]
+#[derive(Clone, PartialEq, EnumString, EnumIter, IntoStaticStr)]
 #[strum(serialize_all = "lowercase")]
 pub enum LanguageType {
     Programming,
@@ -24,7 +34,7 @@ pub enum LanguageType {
 }
 
 macro_rules! define_languages {
-    ($( { $name:ident, $type:ident, $ascii:literal, $colors:expr $(, $serialize:literal )? } ),* ,) => {
+    ($( { $name:ident, $type:ident, $ascii:literal, $colors:expr, $circle_color:ident($r:expr, $g:expr, $b:expr) $(, $serialize:literal )? } ),* ,) => {
 
         #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter, IntoStaticStr, Serialize)]
         #[strum(serialize_all = "lowercase")]
@@ -70,7 +80,7 @@ macro_rules! define_languages {
                 }
             }
 
-            pub fn get_colors(&self, true_color: bool) -> Vec<Color> {
+            pub fn get_colors(&self, true_color: bool) -> Vec<DynColors> {
                 let colors = match *self {
                     $( Language::$name => $colors, )*
                 };
@@ -84,6 +94,13 @@ macro_rules! define_languages {
                 match *self {
                     $( Language::$name => LanguageType::$type, )*
                 }
+            }
+
+            pub fn get_circle_color(&self) -> DynColors{
+                match *self {
+                    $( Language::$name => DynColors::$circle_color($r, $g, $b), )*
+                }
+
             }
         }
 
@@ -99,13 +116,13 @@ macro_rules! define_languages {
                     output += "Colors {\n";
                     output += "    basic_colors: vec![\n";
                     for (color_index, bc) in self.basic_colors.iter().enumerate() {
-                        output += &format!( "        Color::{:?}, // {}\n", bc, color_index );
+                        output += &format!( "        AnsiColors::{:?}, // {}\n", bc, color_index );
                     }
                     output += "    ], \n";
                     if let Some(tcs) = &self.true_colors {
                         output += "    true_colors: vec![\n";
                         for (color_index,tc) in tcs.iter().enumerate() {
-                            output += &format!( "        Color::{:?}, // {}\n", tc, color_index );
+                            output += &format!( "        AnsiColors::{:?}, // {}\n", tc, color_index );
                         }
                     } else {
                         output += "    true_colors: None\n";
@@ -122,8 +139,8 @@ macro_rules! define_languages {
                     fn [<$name:lower _basic_color_test>] () {
                         let colors = $colors;
                         for (color_index, bc) in colors.basic_colors.iter().enumerate() {
-                            let color_str = &format!( "Color::{:?}", bc );
-                            if let Color::TrueColor { .. } = bc {
+                            let color_str = &format!( "AnsiColors::{:?}", bc );
+                            if let DynColors::Rgb( .. ) = bc {
                                 panic!( "TrueColor found in basic_colors for {} at index {} found {}", stringify!( $name ), color_index, color_str );
                             }
                         }
@@ -173,166 +190,97 @@ macro_rules! define_languages {
 }
 
 define_languages! {
-    { Ada, Programming, "ada.ascii", define_colors!( [Color::White, Color::Cyan, Color::Blue] : [Color::TrueColor{r:255, g:255, b:255}, Color::TrueColor{r:0, g:24, b:201}, Color::TrueColor{r:12, g:10, b:124}] ) },
-    { Assembly, Programming, "assembly.ascii", define_colors!( [Color::Cyan] ) },
-    { AutoHotKey, Programming, "autohotkey.ascii", define_colors!( [Color::White, Color::Green] : [Color::TrueColor{r:255, g:255, b:255}, Color::TrueColor{r: 0x11, g: 0x98, b: 0x10}]) },
-    { Bash, Programming, "bash.ascii", define_colors!( [Color::White] ) },
-    { C, Programming, "c.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::Blue, Color::White] : [Color::TrueColor{r:93, g:108, b:191}, Color::TrueColor{r:41, g:54, b:147}, Color::TrueColor{r:57, g:73, b:170}, Color::TrueColor{r:255, g:255, b:255}] ) },
-    {
-        Ceylon, Programming, "ceylon.ascii", define_colors!( [
-            Color::Yellow,
-            Color::Yellow,
-            Color::Yellow,
-            Color::Yellow,
-            Color::Yellow
-        ] : [
-            Color::TrueColor{ r:194, g:126, b:16 },
-            Color::TrueColor{ r:221, g:161, b:46 },
-            Color::TrueColor{ r:209, g:145, b:31 },
-            Color::TrueColor{ r:204, g:139, b:24 },
-            Color::TrueColor{ r:171, g:112, b:8 }
-        ] )
-    },
-    { Clojure, Programming, "clojure.ascii", define_colors!( [Color::Cyan, Color::Green] ) },
-    { CMake, Programming, "cmake.ascii", define_colors!( [Color::Blue, Color::Green, Color::Red, Color::Black] ) },
-    { CoffeeScript, Programming, "coffeescript.ascii", define_colors!( [Color::Red] ) },
-    { Coq, Programming, "coq.ascii", define_colors!( [Color::Yellow, Color::White] : [Color::TrueColor {r:191, g:140, b:94}, Color::TrueColor {r:213, g:190, b:153}] ) },
-    { Cpp, Programming, "cpp.ascii", define_colors!( [Color::Cyan, Color::Blue, Color::Blue, Color::White] : [Color::TrueColor{r:100, g:154, b:210}, Color::TrueColor{r:0, g:66, b:131}, Color::TrueColor{r:0, g:89, b:157}, Color::TrueColor{r:255, g:255, b:255}] ), "c++" },
-    { Crystal, Programming, "crystal.ascii", define_colors!( [Color::White, Color::Black] ) },
-    { CSharp, Programming, "csharp.ascii", define_colors!( [Color::Blue, Color::Magenta, Color::Magenta, Color::White] : [Color::TrueColor{r:155, g:79, b:151}, Color::TrueColor{r:103, g:33, b:122}, Color::TrueColor{r:128, g:55, b:136}, Color::TrueColor{r:255, g:255, b:255}] ), "c#" },
-    { Css, Markup, "css.ascii", define_colors!( [Color::Blue, Color::White] ) },
-    { D, Programming, "d.ascii", define_colors!( [Color::Red] ) },
-    { Dart, Programming, "dart.ascii", define_colors!( [Color::Blue, Color::Cyan, Color::Blue ] : [Color::TrueColor{ r:0, g:163, b:231 }, Color::TrueColor{ r:66, g:223, b:205 }, Color::TrueColor{ r:1, g:89, b:125 }] ) },
-    { Dockerfile, Programming, "dockerfile.ascii", define_colors!( [Color::Cyan, Color::White, Color::Cyan] ) },
-    { Elisp, Programming, "emacslisp.ascii", define_colors!( [Color::Magenta, Color::White] ), "emacs-lisp" },
-    { Elixir, Programming, "elixir.ascii", define_colors!( [Color::Magenta] ) },
-    { Elm, Programming, "elm.ascii", define_colors!( [Color::Blue, Color::Green, Color::Yellow, Color::Cyan] ) },
-    { Emojicode, Programming, "emojicode.ascii", define_colors!( [Color::Green, Color::Magenta,  Color::Magenta, Color::Magenta] : [Color::TrueColor{r:119, g:178, b:85}, Color::TrueColor{r:146, g:102, b:204}, Color::TrueColor{r:170, g:141, b:216}, Color::TrueColor{r:116, g:78, b:170}] ) },
-    { Erlang, Programming, "erlang.ascii", define_colors!( [Color::Red] ) },
-    { Fish, Programming, "fish.ascii", define_colors!( [Color::Red, Color::Yellow] ) },
-    { Forth, Programming, "forth.ascii", define_colors!( [Color::Red] ) },
-    { FortranModern, Programming, "f90.ascii", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortran" },
-    { FortranLegacy, Programming, "f77.ascii", define_colors!( [Color::White, Color::Green, Color::Cyan, Color::Yellow, Color::Red] ), "fortran-legacy" },
-    { FSharp, Programming, "fsharp.ascii", define_colors!( [Color::Cyan, Color::Cyan] ), "f#" },
-    { GdScript, Programming, "gdscript.ascii", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:69, g:141, b:192 }, Color::TrueColor{ r:255, g:255, b:255}] ) },
-    { Go, Programming, "go.ascii", define_colors!( [Color::Cyan, Color::White, Color::Yellow] : [Color::TrueColor{ r:116, g:205, b:221 }, Color::TrueColor{ r:255, g:255, b:255 }, Color::TrueColor{ r:246, g:210, b:162 }] ) },
-    { Graphql, Data, "graphql.ascii", define_colors!( [Color::Magenta] ) },
-    { Groovy, Programming, "groovy.ascii", define_colors!( [Color::Cyan, Color::White] ) },
-    { Haskell, Programming, "haskell.ascii", define_colors!( [Color::Cyan, Color::Magenta, Color::Blue] : [Color::TrueColor{ r:69, g:58, b:98 }, Color::TrueColor{ r:94, g:80, b:134 }, Color::TrueColor{ r:143, g:78, b:139 }] ) },
-    { Haxe, Programming, "haxe.ascii", define_colors!( [Color::Yellow, Color::Yellow, Color::Yellow] : [Color::TrueColor{ r: 250, g: 178, b: 11 }, Color::TrueColor{ r:246, g:153, b:18 }, Color::TrueColor{ r: 244, g: 114, b: 22 }] ) },
-    { Hcl, Programming, "hcl.ascii", define_colors!( [Color::Magenta, Color::Magenta] : [Color::TrueColor{ r: 95, g: 67, b: 233 }, Color::TrueColor{ r: 64, g: 64, b: 178 }] ) },
-    { HolyC, Programming, "holyc.ascii", define_colors!( [Color::Yellow, Color::Cyan, Color::White] : [Color::TrueColor{ r:251, g:254 ,b:103}, Color::TrueColor{ r:11, g:68 ,b:157}, Color::TrueColor{ r:255, g:255 ,b:255} ]) },
-    { Html, Markup, "html.ascii", define_colors!( [Color::Red, Color::White] ) },
-    { Idris, Programming, "idris.ascii", define_colors!( [Color::Red] ) },
-    { Java, Programming, "java.ascii", define_colors!( [Color::Red, Color::Blue] : [Color::TrueColor{ r:244, g:67 ,b:54}, Color::TrueColor{ r:22, g:101 ,b:192} ] ) },
-    { JavaScript, Programming, "javascript.ascii", define_colors!( [Color::Yellow] : [Color::TrueColor{ r:236, g:230 ,b:83} ]) },
-    { Json, Data, "json.ascii", define_colors!( [Color::White, Color::Black] ) },
-    { Jsonnet, Programming, "jsonnet.ascii", define_colors!( [Color::White, Color::Black] ) },
-    { Jsx, Programming, "jsx.ascii", define_colors!( [Color::Yellow] ) },
-    { Julia, Programming, "julia.ascii", define_colors!( [Color::White, Color::Blue, Color::Green, Color::Red, Color::Magenta] ) },
-    { Jupyter, Programming, "jupyter.ascii", define_colors!( [Color::White, Color::Yellow, Color::White] : [Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:255, g:112 ,b:15}, Color::TrueColor{ r:158, g:158 ,b:158} ] ), "jupyter-notebooks" },
-    { Kotlin, Programming, "kotlin.ascii", define_colors!( [Color::Blue, Color::Yellow, Color::Magenta] ) },
-    { Lisp, Programming, "lisp.ascii", define_colors!( [Color::White] ) },
-    { Lua, Programming, "lua.ascii", define_colors!( [Color::Blue, Color::White, Color::White] : [Color::TrueColor{ r:46, g:0 ,b:127}, Color::TrueColor{ r:128, g:128 ,b:128}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
-    { LLVM, Programming, "llvm.ascii", define_colors!( [Color::Red] : [Color::TrueColor{ r:152, g:1 ,b:46}] ) },
-    { Markdown, Prose, "markdown.ascii", define_colors!( [Color::White, Color::Red] ) },
-    { Nim, Programming, "nim.ascii", define_colors!( [Color::Yellow, Color::White] ) },
-    { Nix, Programming, "nix.ascii", define_colors!( [Color::Cyan, Color::Blue] ) },
-    { ObjectiveC, Programming, "objectivec.ascii", define_colors!( [Color::Cyan, Color::Blue] ), "objective-c" },
-    { OCaml, Programming, "ocaml.ascii", define_colors!( [Color::Yellow] ) },
-    { Org, Prose, "org.ascii", define_colors!( [Color::Green, Color::Red, Color::White] ) },
-    { Perl, Programming, "perl.ascii", define_colors!( [Color::Cyan] ) },
-    { Php, Programming, "php.ascii", define_colors!( [Color::Magenta, Color::White] : [Color::TrueColor{ r:119, g:123, b:179 }, Color::TrueColor{ r:255, g:255, b:255} ] ) },
-    { PowerShell, Programming, "powershell.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:49, g:108, b:185}, Color::TrueColor{ r:255, g:255, b:255} ] ) },
-    { Processing, Programming, "processing.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:80, g:80 ,b:80}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
-    { Prolog, Programming, "prolog.ascii", define_colors!( [Color::White] ) },
-    { Protobuf, Programming, "protobuf.ascii", define_colors!( [Color::Red, Color::Blue, Color::Green, Color::Yellow] ), "protocol-buffers" },
-    { PureScript, Programming, "purescript.ascii", define_colors!( [Color::White] ) },
-    { Python, Programming, "python.ascii", define_colors!( [Color::Blue, Color::Yellow] : [Color::TrueColor{ r:47, g:105 ,b:162}, Color::TrueColor{ r:255, g:217 ,b:64} ] ) },
-    { Qml, Programming, "qml.ascii", define_colors!( [Color::Green, Color::White, Color::Green] : [Color::TrueColor{ r:128, g:195 ,b:66}, Color::TrueColor{ r:255, g:255 ,b:255}, Color::TrueColor{ r:77, g:117 ,b:40} ] ) },
-    { R, Programming, "r.ascii", define_colors!( [Color::White, Color::Blue] ) },
-    { Racket, Programming, "racket.ascii", define_colors!( [Color::Red, Color::White, Color::Blue] ) },
-    {
-        Perl6, Programming, "raku.ascii", define_colors!( [
-            Color::Blue,
-            Color::Red,
-            Color::Yellow,
-            Color::White,
-            Color::Green
-        ] : [
-            Color::TrueColor{ r:91, g:0, b:253 },
-            Color::TrueColor{ r:255, g:0, b:94 },
-            Color::TrueColor{ r:243, g:255, b:39 },
-            Color::TrueColor{ r:255, g:255, b:255 },
-            Color::TrueColor{ r:0, g:255, b:57 }
-        ] ),
-        "raku"
-    },
-    {
-        Renpy, Programming, "renpy.ascii", define_colors!( [
-            Color::White,
-            Color::Red,
-            Color::White,
-            Color::Blue,
-            Color::Yellow,
-            Color::White,
-            Color::Magenta
-        ] : [
-            Color::TrueColor{ r:234, g:219, b:204 },
-            Color::TrueColor{ r:255, g:127, b:127 },
-            Color::TrueColor{ r:251, g:238, b:226 },
-            Color::TrueColor{ r:73, g:95, b:142 },
-            Color::TrueColor{ r:250, g:228, b:90 },
-            Color::White,
-            Color::TrueColor{ r:181, g:163, b:150 }
-        ] )
-    },
-    { Ruby, Programming, "ruby.ascii", define_colors!( [Color::Red] : [Color::TrueColor{ r: 204, g: 52, b: 45 }] ) },
-    { Rust, Programming, "rust.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:228, g:55 ,b:23}, Color::TrueColor{ r:255, g:255 ,b:255} ] ) },
-    { Sass, Markup, "sass.ascii", define_colors!( [Color::Magenta] : [Color::TrueColor{ r:205, g:103 ,b:153} ] ) },
-    { Scala, Programming, "scala.ascii", define_colors!( [Color::Red, Color::Red] : [Color::TrueColor{ r:223, g:63 ,b:61}, Color::TrueColor{ r:127, g:12 ,b:29} ] ) },
-    { Scheme, Programming, "scheme.ascii", define_colors!( [Color::White] : [Color::TrueColor{r: 85, g:85, b:85}] ) },
-    { Sh, Programming, "shell.ascii", define_colors!( [Color::Green] ), "shell" },
-    { Solidity, Programming, "solidity.ascii", define_colors!( [ Color::White, Color::Black, Color::Black, Color::Black, Color::Black] : [ Color::White, Color::TrueColor{ r: 46, g: 46, b: 46 }, Color::TrueColor{ r: 26, g: 26, b: 26 }, Color::TrueColor{ r: 51, g: 51, b: 51 }, Color::TrueColor{ r: 81, g: 81, b: 81 } ] ) },
-    { Sql, Data, "sql.ascii", define_colors!( [Color::Cyan, Color::Yellow] ) },
-    { Svelte, Markup, "svelte.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r: 255, g: 60, b: 0 }, Color::TrueColor{ r: 255, g: 255, b: 255 }] ) },
-    {
-        Swift, Programming, "swift.ascii", define_colors!( [
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red,
-            Color::Red
-        ] : [
-            Color::TrueColor{ r:248, g:129, b:52 },
-            Color::TrueColor{ r:249, g:119, b:50 },
-            Color::TrueColor{ r:249, g:109, b:48 },
-            Color::TrueColor{ r:250, g:99, b:46 },
-            Color::TrueColor{ r:250, g:89, b:44 },
-            Color::TrueColor{ r:251, g:80, b:42 },
-            Color::TrueColor{ r:251, g:70, b:40 },
-            Color::TrueColor{ r:252, g:60, b:38 },
-            Color::TrueColor{ r:252, g:50, b:36 },
-            Color::TrueColor{ r:253, g:40, b:34 }
-        ] )
-    },
-    { Tcl, Programming, "tcl.ascii", define_colors!( [Color::Blue, Color::White, Color::Cyan] ) },
-    { Tex, Markup, "tex.ascii", define_colors!( [Color::White, Color::Black] ) },
-    { Toml, Data, "toml.ascii", define_colors!( [Color::Red, Color::White] : [Color::TrueColor{ r:156, g:66, b:33}, Color::TrueColor{ r:255, g:255, b:255} ]) },
-    { Tsx, Programming, "tsx.ascii", define_colors!( [Color::Blue] ) },
-    { TypeScript, Programming, "typescript.ascii", define_colors!( [Color::Cyan, Color::White] : [Color::TrueColor{ r:0, g:122, b:204}, Color::TrueColor{ r:255, g:255, b:255} ]) },
-    { Vala, Programming, "vala.ascii", define_colors!( [Color::Magenta, Color::White] ) },
-    { VimScript, Programming, "vimscript.ascii", define_colors!( [Color::Green, Color::Black, Color::White] ) },
-    { Vue, Programming, "vue.ascii", define_colors!( [Color::Green, Color::Blue] ) },
-    { WebAssembly, Programming, "webassembly.ascii", define_colors!( [Color::Magenta, Color::White] : [Color::TrueColor{ r:101, g:79, b:240}, Color::TrueColor{ r:255, g:255, b:255} ]) },
-    { Xaml, Data, "xaml.ascii", define_colors!( [Color::Blue, Color::White] : [Color::TrueColor{ r:51, g:120, b:206}, Color::TrueColor{ r:255, g:255, b:255} ]) },
-    { Xml, Data, "xml.ascii", define_colors!( [Color::Yellow, Color::White, Color::Green] ) },
-    { Yaml, Data, "yaml.ascii", define_colors!( [Color::White] ) },
-    { Zig, Programming, "zig.ascii", define_colors!( [Color::Yellow] ) },
-    { Zsh, Programming, "zsh.ascii", define_colors!( [Color::White] ) },
+    { Ada, Programming, "ada.ascii", define_colors!([White, Cyan, Blue] : [Rgb(255, 255, 255), Rgb(0, 24, 201), Rgb(12, 10, 124)]), Rgb(2, 248, 140) },
+    { Assembly, Programming, "assembly.ascii", define_colors!([Cyan]), Rgb(110, 76, 19) },
+    { AutoHotKey, Programming, "autohotkey.ascii", define_colors!([White, Green] : [Rgb(255, 255, 255), Rgb(0x11, 0x98, 0x10)]), Rgb(101, 148, 185) },
+    { Bash, Programming, "bash.ascii", define_colors!([White]), Rgb(137, 224, 81) },
+    { C, Programming, "c.ascii", define_colors!([Cyan, Blue, Blue, White] : [Rgb(93, 108, 191), Rgb(41, 54, 147), Rgb(57, 73, 170), Rgb(255, 255, 255)]), Rgb(85, 85, 85) },
+    { Ceylon, Programming, "ceylon.ascii", define_colors!([Yellow, Yellow, Yellow, Yellow, Yellow] : [Rgb(194, 126, 16), Rgb(221, 161, 46), Rgb(209, 145, 31), Rgb(204, 139, 24), Rgb(171, 112, 8)]), Rgb(223, 165, 53) },
+    { Clojure, Programming, "clojure.ascii", define_colors!([Cyan, Green]), Rgb(219, 88, 85) },
+    { CMake, Programming, "cmake.ascii", define_colors!([Blue, Green, Red, Black]), Rgb(218, 52, 52) },
+    { CoffeeScript, Programming, "coffeescript.ascii", define_colors!([Red]), Rgb(36, 71, 118) },
+    { Coq, Programming, "coq.ascii", define_colors!([Yellow, White] : [Rgb(191, 140, 94), Rgb(213, 190, 153)]), Rgb(208, 182, 140) },
+    { Cpp, Programming, "cpp.ascii", define_colors!([Cyan, Blue, Blue, White] : [Rgb(100, 154, 210), Rgb(0, 66, 131), Rgb(0, 89, 157), Rgb(255, 255, 255)]), Rgb(243, 75, 125), "c++" },
+    { Crystal, Programming, "crystal.ascii", define_colors!([White, Black]), Rgb(0, 1, 0) },
+    { CSharp, Programming, "csharp.ascii", define_colors!([Blue, Magenta, Magenta, White] : [Rgb(155, 79, 151), Rgb(103, 33, 122), Rgb(128, 55, 136), Rgb(255, 255, 255)]), Rgb(23, 134, 0), "c#" },
+    { Css, Markup, "css.ascii", define_colors!([Blue, White]), Rgb(86, 61, 124) },
+    { D, Programming, "d.ascii", define_colors!([Red]), Rgb(186, 89, 94) },
+    { Dart, Programming, "dart.ascii", define_colors!([Blue, Cyan, Blue ] : [Rgb(0, 163, 231), Rgb(66, 223, 205), Rgb(1, 89, 125)]), Rgb(0, 180, 171) },
+    { Dockerfile, Programming, "dockerfile.ascii", define_colors!([Cyan, White, Cyan]), Rgb(56, 77, 84) },
+    { Elisp, Programming, "emacslisp.ascii", define_colors!([Magenta, White]), Rgb(192, 101, 219), "emacs-lisp" },
+    { Elixir, Programming, "elixir.ascii", define_colors!([Magenta]), Rgb(110, 74, 126) },
+    { Elm, Programming, "elm.ascii", define_colors!([Blue, Green, Yellow, Cyan]), Rgb(96, 181, 204) },
+    { Emojicode, Programming, "emojicode.ascii", define_colors!([Green, Magenta,  Magenta, Magenta] : [Rgb(119, 178, 85), Rgb(146, 102, 204), Rgb(170, 141, 216), Rgb(116, 78, 170)]), Rgb(96, 181, 204) },
+    { Erlang, Programming, "erlang.ascii", define_colors!([Red]), Rgb(184, 57, 152) },
+    { Fish, Programming, "fish.ascii", define_colors!([Red, Yellow]), Rgb(74, 174, 71) },
+    { Forth, Programming, "forth.ascii", define_colors!([Red]), Rgb(52, 23, 8) },
+    { FortranModern, Programming, "f90.ascii", define_colors!([White, Green, Cyan, Yellow, Red]), Rgb(77, 65, 177), "fortran" },
+    { FortranLegacy, Programming, "f77.ascii", define_colors!([White, Green, Cyan, Yellow, Red]), Rgb(77, 65, 177), "fortran-legacy" },
+    { FSharp, Programming, "fsharp.ascii", define_colors!([Cyan, Cyan]), Rgb(184, 69, 252), "f#" },
+    { GdScript, Programming, "gdscript.ascii", define_colors!([Cyan, White] : [Rgb(69, 141, 192), Rgb(255, 255, 255)]), Rgb(53, 85, 112) },
+    { Go, Programming, "go.ascii", define_colors!([Cyan, White, Yellow] : [Rgb(116, 205, 221), Rgb(255, 255, 255), Rgb(246, 210, 162)]), Rgb(0, 173, 216) },
+    { Graphql, Data, "graphql.ascii", define_colors!([Magenta]), Rgb(225, 0, 152) },
+    { Groovy, Programming, "groovy.ascii", define_colors!([Cyan, White]), Rgb(66, 152, 184) },
+    { Haskell, Programming, "haskell.ascii", define_colors!([Cyan, Magenta, Blue] : [Rgb(69, 58, 98), Rgb(94, 80, 134), Rgb(143, 78, 139)]), Rgb(94, 80, 134) },
+    { Haxe, Programming, "haxe.ascii", define_colors!([Yellow, Yellow, Yellow] : [Rgb(250, 178, 11), Rgb(246, 153, 18), Rgb(244, 114, 22)]), Rgb(223, 121, 0) },
+    { Hcl, Programming, "hcl.ascii", define_colors!([Magenta, Magenta] : [Rgb(95, 67, 233), Rgb(64, 64, 178)]), Rgb(170, 206, 96) },
+    { HolyC, Programming, "holyc.ascii", define_colors!([Yellow, Cyan, White] : [Rgb(251, 254 ,103), Rgb(11, 68 ,157), Rgb(255, 255 ,255)]), Rgb(255, 239, 175) },
+    { Html, Markup, "html.ascii", define_colors!([Red, White]), Rgb(227, 76, 38) },
+    { Idris, Programming, "idris.ascii", define_colors!([Red]), Rgb(179, 0, 0) },
+    { Java, Programming, "java.ascii", define_colors!([Red, Blue] : [Rgb(244, 67 ,54), Rgb(22, 101 ,192)]), Rgb(176, 114, 25) },
+    { JavaScript, Programming, "javascript.ascii", define_colors!([Yellow] : [Rgb(236, 230 ,83)]), Rgb(241, 224, 90) },
+    { Json, Data, "json.ascii", define_colors!([White, Black]), Rgb(41, 41, 41) },
+    { Jsonnet, Programming, "jsonnet.ascii", define_colors!([White, Black]), Rgb(0, 100, 189) },
+    { Jsx, Programming, "jsx.ascii", define_colors!([Yellow]), Rgb(241, 224, 90) },
+    { Julia, Programming, "julia.ascii", define_colors!([White, Blue, Green, Red, Magenta]), Rgb(162, 112, 186) },
+    { Jupyter, Programming, "jupyter.ascii", define_colors!([White, Yellow, White] : [Rgb(255, 255 ,255), Rgb(255, 112 ,15), Rgb(158, 158 ,158)]), Rgb(218, 91, 11), "jupyter-notebooks" },
+    { Kotlin, Programming, "kotlin.ascii", define_colors!([Blue, Yellow, Magenta]), Rgb(169, 123, 255) },
+    { Lisp, Programming, "lisp.ascii", define_colors!([White]), Rgb(63, 182, 139) },
+    { Lua, Programming, "lua.ascii", define_colors!([Blue, White, White] : [Rgb(46, 0 ,127), Rgb(128, 128 ,128), Rgb(255, 255 ,255)]), Rgb(0, 0, 128) },
+    { LLVM, Programming, "llvm.ascii", define_colors!([Red] : [Rgb(152, 1 ,46)]), Rgb(24, 86, 25) },
+    { Markdown, Prose, "markdown.ascii", define_colors!([White, Red]), Rgb(8, 63, 161) },
+    { Nim, Programming, "nim.ascii", define_colors!([Yellow, White]), Rgb(255, 194, 0) },
+    { Nix, Programming, "nix.ascii", define_colors!([Cyan, Blue]), Rgb(126, 126, 255) },
+    { ObjectiveC, Programming, "objectivec.ascii", define_colors!([Cyan, Blue]), Rgb(67, 142, 255), "objective-c" },
+    { OCaml, Programming, "ocaml.ascii", define_colors!([Yellow]), Rgb(59, 225, 51) },
+    { Org, Prose, "org.ascii", define_colors!([Green, Red, White]), Rgb(119, 170, 153) },
+    { Perl, Programming, "perl.ascii", define_colors!([Cyan]), Rgb(2, 152, 195) },
+    { Php, Programming, "php.ascii", define_colors!([Magenta, White] : [Rgb(119, 123, 179), Rgb(255, 255, 255)]), Rgb(119, 123, 179) },
+    { PowerShell, Programming, "powershell.ascii", define_colors!([Blue, White] : [Rgb(49, 108, 185), Rgb(255, 255, 255)]), Rgb(1, 36, 86) },
+    { Processing, Programming, "processing.ascii", define_colors!([Blue, White] : [Rgb(80, 80 ,80), Rgb(255, 255 ,255)]), Rgb(0, 150, 216) },
+    { Prolog, Programming, "prolog.ascii", define_colors!([White]), Rgb(116, 40, 60) },
+    { Protobuf, Programming, "protobuf.ascii", define_colors!([Red, Blue, Green, Yellow]), Rgb(116, 40, 60), "protocol-buffers" },
+    { PureScript, Programming, "purescript.ascii", define_colors!([White]), Rgb(29, 34, 45) },
+    { Python, Programming, "python.ascii", define_colors!([Blue, Yellow] : [Rgb(47, 105 ,162), Rgb(255, 217 ,64)]), Rgb(53, 114, 165) },
+    { Qml, Programming, "qml.ascii", define_colors!([Green, White, Green] : [Rgb(128, 195 ,66), Rgb(255, 255 ,255), Rgb(77, 117 ,40)]), Rgb(68, 165, 28) },
+    { R, Programming, "r.ascii", define_colors!([White, Blue]), Rgb(25, 140, 231) },
+    { Racket, Programming, "racket.ascii", define_colors!([Red, White, Blue]), Rgb(60, 92, 170) },
+    { Perl6, Programming, "raku.ascii", define_colors!([Blue, Red, Yellow, White, Green] : [Rgb(91, 0, 253), Rgb(255, 0, 94), Rgb(243, 255, 39), Rgb(255, 255, 255), Rgb(0, 255, 57)]), Rgb(0, 0, 251), "raku"  },
+    { Renpy, Programming, "renpy.ascii", define_colors!([White, Red, White, Blue, Yellow, White, Magenta] : [Rgb(234, 219, 204), Rgb(255, 127, 127), Rgb(251, 238, 226), Rgb(73, 95, 142), Rgb(250, 228, 90), Rgb(255, 255, 255), Rgb(181, 163, 150)]), Rgb(255, 127, 127) },
+    { Ruby, Programming, "ruby.ascii", define_colors!([Red] : [Rgb(204, 52, 45)]), Rgb(112, 21, 22) },
+    { Rust, Programming, "rust.ascii", define_colors!([Red, White] : [Rgb(228, 55 ,23), Rgb(255, 255 ,255)]), Rgb(222, 165, 132) },
+    { Sass, Markup, "sass.ascii", define_colors!([Magenta] : [Rgb(205, 103 ,153)]), Rgb(165, 59, 112) },
+    { Scala, Programming, "scala.ascii", define_colors!([Red, Red] : [Rgb(223, 63 ,61), Rgb(127, 12 ,29)]), Rgb(194, 45, 64) },
+    { Scheme, Programming, "scheme.ascii", define_colors!([White] : [Rgb(85, 85, 85)]), Rgb(30, 74, 236) },
+    { Sh, Programming, "shell.ascii", define_colors!([Green]), Rgb(137, 224, 81), "shell" },
+    { Solidity, Programming, "solidity.ascii", define_colors!([White, Black, Black, Black, Black] : [Rgb(255, 255, 255), Rgb(46, 46, 46), Rgb(26, 26, 26), Rgb(51, 51, 51), Rgb(81, 81, 81)]), Rgb(170, 103, 70) },
+    { Sql, Data, "sql.ascii", define_colors!([Cyan, Yellow]), Rgb(227, 140, 0) },
+    { Svelte, Markup, "svelte.ascii", define_colors!([Red, White] : [Rgb(255, 60, 0), Rgb(255, 255, 255)]), Rgb(255, 62, 0) },
+    { Swift, Programming, "swift.ascii", define_colors!([Red, Red, Red, Red, Red, Red, Red, Red, Red, Red] : [Rgb(248, 129, 52), Rgb(249, 119, 50), Rgb(249, 109, 48), Rgb(250, 99, 46), Rgb(250, 89, 44), Rgb(251, 80, 42), Rgb(251, 70, 40), Rgb(252, 60, 38), Rgb(252, 50, 36), Rgb(253, 40, 34)]), Rgb(240, 81, 56) },
+    { Tcl, Programming, "tcl.ascii", define_colors!([Blue, White, Cyan]), Rgb(228, 204, 152) },
+    { Tex, Markup, "tex.ascii", define_colors!([White, Black]), Rgb(61, 97, 23) },
+    { Toml, Data, "toml.ascii", define_colors!([Red, White] : [Rgb(156, 66, 33), Rgb(255, 255, 255)]), Rgb(156, 66, 33) },
+    { Tsx, Programming, "tsx.ascii", define_colors!([Blue]), Rgb(43, 116, 137) },
+    { TypeScript, Programming, "typescript.ascii", define_colors!([Cyan, White] : [Rgb(0, 122, 204), Rgb(255, 255, 255)]), Rgb(43, 116, 137) },
+    { Vala, Programming, "vala.ascii", define_colors!([Magenta, White]), Rgb(165, 109, 226) },
+    { Vhdl, Programming, "vhdl.ascii", define_colors!([Yellow, Green, White]), Rgb(173, 178, 203) },
+    { VimScript, Programming, "vimscript.ascii", define_colors!([Green, Black, White]), Rgb(25, 159, 75) },
+    { Vue, Programming, "vue.ascii", define_colors!([Green, Blue]), Rgb(65, 184, 131) },
+    { WebAssembly, Programming, "webassembly.ascii", define_colors!([Magenta, White] : [Rgb(101, 79, 240), Rgb(255, 255, 255)]), Rgb(4, 19, 59) },
+    { Wolfram, Programming, "wolfram.ascii", define_colors!([Red, White, Black] : [Rgb(255, 10, 1), Rgb(255, 255, 255), Rgb(0, 0, 0)]), Rgb(221, 17, 0) },
+    { Xaml, Data, "xaml.ascii", define_colors!([Blue, White] : [Rgb(51, 120, 206), Rgb(255, 255, 255)]), Rgb(0, 96, 172) },
+    { Xml, Data, "xml.ascii", define_colors!([Yellow, White, Green]), Rgb(0, 96, 172) },
+    { Yaml, Data, "yaml.ascii", define_colors!([White]), Rgb(203, 23, 30) },
+    { Zig, Programming, "zig.ascii", define_colors!([Yellow]), Rgb(236, 145, 92) },
+    { Zsh, Programming, "zsh.ascii", define_colors!([White]), Rgb(137, 224, 81) },
 }
