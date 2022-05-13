@@ -12,4 +12,4 @@ body:
   - type: textarea
     attributes:
       label: Motivation 🔦
-      description: What are you trying to accomplish? How has the lack of this feature affected you? Providing context helps us come up with a solution that is more useful in the real world.
+      description: What are you trying to accomplish? How has the lack of this feature affected you?
