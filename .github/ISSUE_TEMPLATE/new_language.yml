@@ -19,7 +19,6 @@ body:
       label: Upstream support ✅
       description: |
         Onefetch relies on [tokei](https://github.com/XAMPPRocky/tokei) for language detection.
-        Does tokei already support the language in question?
       options:
-        - label: tokei supports this language
+        - label: Does tokei already support the language in question?
           required: true
