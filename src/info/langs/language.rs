@@ -245,7 +245,7 @@ define_languages! {
     { OCaml, Programming, "ocaml.ascii", define_colors!([Yellow]), Rgb(59, 225, 51) },
     { Org, Prose, "org.ascii", define_colors!([Green, Red, White]), Rgb(119, 170, 153) },
     { Perl, Programming, "perl.ascii", define_colors!([Cyan]), Rgb(2, 152, 195) },
-    { Php, Programming, "php.ascii", define_colors!([Magenta, Blue, Cyan, White]), Rgb(79, 93, 149) },
+    { Php, Programming, "php.ascii", define_colors!([Blue, White] : [Rgb(119, 123, 179), Rgb(255, 255, 255)]), Rgb(79, 93, 149) },
     { PowerShell, Programming, "powershell.ascii", define_colors!([Blue, White] : [Rgb(49, 108, 185), Rgb(255, 255, 255)]), Rgb(1, 36, 86) },
     { Processing, Programming, "processing.ascii", define_colors!([Blue, White] : [Rgb(80, 80 ,80), Rgb(255, 255 ,255)]), Rgb(0, 150, 216) },
     { Prolog, Programming, "prolog.ascii", define_colors!([White]), Rgb(116, 40, 60) },
