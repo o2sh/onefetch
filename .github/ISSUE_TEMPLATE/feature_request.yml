@@ -12,4 +12,6 @@ body:
   - type: textarea
     attributes:
       label: Motivation 🔦
-      description: What are you trying to accomplish? How has the lack of this feature affected you?
+      description: >
+        What are you trying to accomplish?
+        How has the lack of this feature affected you?
