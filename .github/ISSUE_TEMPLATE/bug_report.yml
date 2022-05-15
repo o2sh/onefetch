@@ -11,7 +11,7 @@ body:
       description: |
         Please [search the history](https://github.com/o2sh/onefetch/issues) to see if an issue already exists for the same problem.
 
-        📌 If your issue refers to an incorrect language detection, please have look [here](https://github.com/o2sh/onefetch/issues/26).
+        📌 If your issue refers to an incorrect language detection, please have a look [here](https://github.com/o2sh/onefetch/issues/26).
       options:
         - label: I have searched the existing issues
           required: true
