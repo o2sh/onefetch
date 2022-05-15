@@ -1,0 +1,24 @@
+name: New Language Request 📢
+description: Request for a new language to be supported
+labels: ["enhancement, good first issue"]
+
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for contributing by creating an issue! ❤️
+  - type: textarea
+    attributes:
+      label: Language Name 🖊
+      description: Provide the name of the language and any additional details that we should know.
+  - type: textarea
+    attributes:
+      label: Logo 📷
+      description: Is there a logo that can be used as a source of inspiration for the ASCII art?
+  - type: checkboxes
+    attributes:
+      label: Upstream support ✅
+      description: |
+        Onefetch relies on [tokei](https://github.com/XAMPPRocky/tokei) for language detection.
+      options:
+        - label: Does tokei already support the language in question?
+          required: true

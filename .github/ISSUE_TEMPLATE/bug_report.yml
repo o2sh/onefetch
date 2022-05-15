@@ -1,0 +1,33 @@
+name: Bug report 🐛
+description: Create a bug report to help us improve
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for contributing by creating an issue! ❤️
+  - type: checkboxes
+    attributes:
+      label: Duplicates
+      description: |
+        Please [search the history](https://github.com/o2sh/onefetch/issues) to see if an issue already exists for the same problem.
+
+        📌 If your issue refers to an incorrect language detection, please have a look [here](https://github.com/o2sh/onefetch/issues/26).
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: textarea
+    attributes:
+      label: Current behavior 😯
+      description: Describe what happens instead of the expected behavior.
+  - type: textarea
+    attributes:
+      label: Expected behavior 🤔
+      description: Describe what should happen.
+  - type: textarea
+    attributes:
+      label: Steps to reproduce 🕹
+      description: Describe how we can reproduce this bug.
+      placeholder: |
+        1.
+        2.
+        3.
