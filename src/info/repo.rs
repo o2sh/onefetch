@@ -155,7 +155,7 @@ impl Commits {
 
 impl Repo {
     pub fn new(git2_repo: Repository) -> Result<Self> {
-        let repo = git::open(git2_repo.workdir().unwrap_or(git2_repo.path()))?;
+        let repo = git::open(git2_repo.path())?;
 
         Ok(Self { repo, git2_repo })
     }
