@@ -1,9 +1,8 @@
 name: Generate Language Badge
 on:
-  push:
-    branches: ["*"]
-  pull_request:
-    branches: [main]
+  schedule:
+    # Once week at midnight UTC
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 jobs:
