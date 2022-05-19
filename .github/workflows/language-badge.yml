@@ -1,7 +1,9 @@
 name: Generate Language Badge
 on:
-  release:
-    types: [published]
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
