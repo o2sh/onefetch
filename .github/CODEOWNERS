@@ -1,4 +1,6 @@
 .github @spenserblack @o2sh
-src/ui/image_backends @CephalonRho @Yoichi
+src/ui/image_backends @CephalonRho @yoichi
 src/info/repo.rs @Byron
 src/info/langs @spenserblack
+src/info/deps @HallerPatrick @o2sh
+src/cli.rs @spenserblack @o2sh
