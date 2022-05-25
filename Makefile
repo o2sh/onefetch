@@ -18,6 +18,8 @@ release-mac:
 release-win:
 	mkdir -p release
 	tar -C ./target/release/ -czvf ./release/onefetch-win.tar.gz ./onefetch.exe
+	TAG_NAME=$(git describe --abbrev=0 --tags)
+	iscc.exe -DMyAppVersion=${TAG_NAME:1} ./.github/workflows/windows-installer.iss
 
 release-linux:
 	strip target/release/onefetch
