@@ -23,7 +23,7 @@ DisableDirPage=yes
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=..
+OutputDir=..\..
 OutputBaseFilename=onefetch-setup
 SetupIconFile=..\..\assets\onefetch.ico
 Compression=lzma
