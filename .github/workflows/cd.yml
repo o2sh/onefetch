@@ -42,6 +42,7 @@ jobs:
           files: |
             ./release/*.tar.gz
             ./release/*.zip
+            ./onefetch-setup.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
