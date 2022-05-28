@@ -1,7 +1,7 @@
 name: CD
 on:
   release:
-    types: [published]
+    types: [released]
 
 jobs:
   deploy:
@@ -52,4 +52,4 @@ jobs:
         env:
           COMMITTER_TOKEN: ${{ secrets.BREW_TOKEN }}
         with:
-          formula-name: onefetch 
+          formula-name: onefetch
