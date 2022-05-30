@@ -761,14 +761,16 @@ dependencies = [
 
 [[package]]
 name = "git-config"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d39ba0374be00805c6dbf1d8e323441988ce7c516193680960026eb46e84d003"
+checksum = "f5ce33ef8b44ccdeb8862d924eb12022415647b2780851a09a02db11989fb34c"
 dependencies = [
  "bstr",
  "dirs 4.0.0",
  "git-features",
+ "git-glob",
  "git-path",
+ "git-ref",
  "git-sec",
  "memchr",
  "nom",
@@ -801,9 +803,9 @@ dependencies = [
 
 [[package]]
 name = "git-discover"
-version = "0.1.0"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff5be7cf1987d05f35d0b9cb5e3e0f89febc303b6a7248b859813427dc8034a9"
+checksum = "bac073947f802bce1862a5433fd4c52e61d1a2ad43c10c9aefe86ef1b132def8"
 dependencies = [
  "bstr",
  "git-hash",
@@ -941,9 +943,9 @@ dependencies = [
 
 [[package]]
 name = "git-pack"
-version = "0.19.0"
+version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ec6cbb9074941e0308a22664349fb04c46dac4f374135bb0a24216b4192d064"
+checksum = "a13a9d3d0b2e1760263bd62d401bde7f3145269c85cab46839c9f697e644be90"
 dependencies = [
  "bytesize",
  "clru",
@@ -978,11 +980,13 @@ dependencies = [
 
 [[package]]
 name = "git-path"
-version = "0.1.1"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2557400d97e5f2aa424f5446d94da6bdd3ee31f42f9d2a0006da3c2e34d6b66"
+checksum = "30fc67f9035d349bc4d6b2e7795d8c28ebebea4df304107018eaf68d11ecbe95"
 dependencies = [
  "bstr",
+ "tempfile",
+ "thiserror",
 ]
 
 [[package]]
@@ -1036,9 +1040,9 @@ dependencies = [
 
 [[package]]
 name = "git-repository"
-version = "0.17.0"
+version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd7eed033037c74441f29fda883b76ef788adfcc09937ca1eb30a633d5e23150"
+checksum = "5e021a76941e2aef67609d33e3ad31f9481a6bbea8fcdac9c886ab8aa3de160b"
 dependencies = [
  "byte-unit",
  "clru",
@@ -1088,11 +1092,13 @@ dependencies = [
 
 [[package]]
 name = "git-sec"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b62eedd061c7c27c00baed2b43c8840ee17fa5374e707f7f5d8fd00350d382ae"
+checksum = "2208433d1fedf9ef84ae0edee4891a79b9e540fd3c33624c1eeab129bcd4c56a"
 dependencies = [
  "bitflags",
+ "dirs 4.0.0",
+ "git-path",
  "libc",
  "thiserror",
  "windows",
