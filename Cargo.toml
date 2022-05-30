@@ -38,7 +38,7 @@ git-repository = {version = "0.17.0", features = ["max-performance", "unstable",
 git2 = {version = "0.14.4", default-features = false}
 image = "0.24.2"
 owo-colors = "3.4.0"
-regex = "1.5.5"
+regex = "1.5.6"
 serde = "1.0.137"
 serde_json = "1.0.81"
 serde_yaml = "0.8.24"
