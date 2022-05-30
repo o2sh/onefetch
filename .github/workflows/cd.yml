@@ -53,3 +53,16 @@ jobs:
           COMMITTER_TOKEN: ${{ secrets.BREW_TOKEN }}
         with:
           formula-name: onefetch
+
+  winget-pkg-release:
+    needs: [ deploy ]
+    runs-on: windows-latest
+
+    steps:
+      - name: Publish executable to WinGet
+        uses: vedantmgoyal2009/vedantmgoyal2009/winget-pkgs-automation/releaser-action@v1.0.0
+        with:
+          identifier: o2sh.onefetch
+          installers-regex: '\.exe$'
+          delete-previous-version: 'true'
+          token: ${{ secrets.WINGET_TOKEN }}
