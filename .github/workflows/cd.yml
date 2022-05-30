@@ -54,13 +54,9 @@ jobs:
         with:
           formula-name: onefetch
 
-  winget-pkg-release:
-    needs: [ deploy ]
-    runs-on: windows-latest
-
-    steps:
       - name: Publish executable to WinGet
         uses: vedantmgoyal2009/vedantmgoyal2009/winget-pkgs-automation/releaser-action@v1.0.0
+        if: matrix.os == 'windows-latest'
         with:
           identifier: o2sh.onefetch
           installers-regex: '\.exe$'
