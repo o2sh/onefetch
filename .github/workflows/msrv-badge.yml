@@ -14,7 +14,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Get Minimum Supported Rust Version
-        uses: spenserblack/actions-msrv@v0.3
+        uses: spenserblack/actions-msrv@v0.4
         id: get-msrv
         timeout-minutes: 60
       - name: Create Badge
