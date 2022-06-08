@@ -30,7 +30,7 @@ section = "utility"
 anyhow = "1.0.57"
 askalono = "0.4.5"
 byte-unit = "4.0.14"
-bytecount = "0.6.2"
+bytecount = "0.6.3"
 clap = {version = "3.1.18", features = ["cargo", "wrap_help"]}
 clap_complete = "3.1.4"
 color_quant = "1.1.0"
