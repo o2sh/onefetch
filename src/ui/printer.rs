@@ -1,7 +1,6 @@
 use crate::info::Info;
 use crate::ui::ascii_art::AsciiArt;
 use anyhow::{Context, Result};
-use owo_colors::DynColors;
 use std::io::Write;
 use strum::{EnumIter, EnumString, IntoStaticStr};
 
@@ -38,7 +37,6 @@ impl<W: Write> Printer<W> {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
                 let info_str = format!("{}", &self.info);
                 let mut info_lines = info_str.lines();
-                let colors: Vec<DynColors> = Vec::new();
                 let mut buf = String::new();
 
                 if self.info.config.art_off {
@@ -62,7 +60,11 @@ impl<W: Write> Printer<W> {
                     );
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
-                        AsciiArt::new(custom_ascii, &colors, !self.info.config.no_bold)
+                        AsciiArt::new(
+                            custom_ascii,
+                            &self.info.ascii_colors,
+                            !self.info.config.no_bold,
+                        )
                     } else {
                         AsciiArt::new(
                             self.get_ascii(),
