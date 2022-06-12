@@ -18,15 +18,19 @@ pub fn get_ascii_colors(
         dominant_language
     };
 
-    let mut colors: Vec<DynColors> = ascii_colors.iter().map(|s| num_to_color(s)).collect();
-
     let mut language_colors: Vec<DynColors> = language.get_colors(true_color);
 
-    if language_colors.len() > colors.len() {
-        let mut missing = language_colors.drain(colors.len()..).collect();
-        colors.append(&mut missing);
+    if ascii_colors.is_empty() {
+        language_colors
+    } else {
+        let mut colors: Vec<DynColors> = ascii_colors.iter().map(|s| num_to_color(s)).collect();
+
+        if language_colors.len() > colors.len() {
+            let mut missing = language_colors.drain(colors.len()..).collect();
+            colors.append(&mut missing);
+        }
+        colors
     }
-    colors
 }
 
 fn num_to_color(num: &str) -> DynColors {
