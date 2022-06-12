@@ -1,7 +1,6 @@
 use crate::info::Info;
 use crate::ui::ascii_art::AsciiArt;
 use anyhow::{Context, Result};
-use owo_colors::DynColors;
 use std::io::Write;
 use strum::{EnumIter, EnumString, IntoStaticStr};
 

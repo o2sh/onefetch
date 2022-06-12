@@ -18,18 +18,14 @@ pub fn get_ascii_colors(
         dominant_language
     };
 
-    let colors = language.get_colors(true_color);
+    let mut colors: Vec<DynColors> = ascii_colors.iter().map(|s| num_to_color(s)).collect();
 
-    let colors: Vec<DynColors> = colors
-        .iter()
-        .enumerate()
-        .map(|(index, default_color)| {
-            if let Some(color_num) = ascii_colors.get(index) {
-                return num_to_color(color_num);
-            }
-            *default_color
-        })
-        .collect();
+    let mut language_colors: Vec<DynColors> = language.get_colors(true_color);
+
+    if language_colors.len() > colors.len() {
+        let mut missing = language_colors.drain(colors.len()..).collect();
+        colors.append(&mut missing);
+    }
     colors
 }
 
