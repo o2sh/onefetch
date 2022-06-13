@@ -31,14 +31,14 @@ anyhow = "1.0.57"
 askalono = "0.4.5"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
-clap = {version = "3.1.18", features = ["cargo", "wrap_help"]}
+clap = {version = "3.2.1", features = ["cargo", "wrap_help"]}
 clap_complete = "3.1.4"
 color_quant = "1.1.0"
 git-repository = {version = "0.18.1", features = ["max-performance", "unstable", "serde1"]}
 git2 = {version = "0.14.4", default-features = false}
 image = "0.24.2"
 owo-colors = "3.4.0"
-regex = "1.5.5"
+regex = "1.5.6"
 serde = "1.0.137"
 serde_json = "1.0.81"
 serde_yaml = "0.8.24"
