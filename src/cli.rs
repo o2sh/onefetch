@@ -155,11 +155,8 @@ impl Config {
                 })
         });
 
-        let language_types: Vec<LanguageType> = matches
-            .values_of("type")
-            .unwrap()
-            .map(|t| LanguageType::from_str(t).unwrap())
-            .collect();
+        let language_types: Vec<LanguageType> =
+            matches.get_many("type").unwrap().copied().collect();
 
         let completion: Option<Shell> = matches.get_one("completion").copied();
 
@@ -480,10 +477,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .default_values(&["programming", "markup"])
             .hide_default_value(true)
             .help("Filters output by language type (*programming*, *markup*, prose, data).")
-            .possible_values(
-                LanguageType::iter()
-                    .map(|t| t.into())
-                    .collect::<Vec<&str>>())
+            .value_parser(value_parser!(LanguageType))
         )
         .arg(
             Arg::new("completion")

@@ -24,7 +24,7 @@ macro_rules! define_colors {
     ( [ $($bc:ident),+ ] : [ $($c:ident($r:expr, $g:expr, $b:expr)),+ ] ) => { Colors { basic_colors: vec![$(clean_color!($bc)),+], true_colors: Some(vec![$(DynColors::$c($r, $g, $b)),+]) } };
 }
 
-#[derive(Clone, PartialEq, EnumString, EnumIter, IntoStaticStr)]
+#[derive(Clone, Copy, PartialEq, EnumString, EnumIter, IntoStaticStr, clap::ValueEnum)]
 #[strum(serialize_all = "lowercase")]
 pub enum LanguageType {
     Programming,
