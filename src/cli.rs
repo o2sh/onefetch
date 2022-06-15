@@ -6,11 +6,13 @@ use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
 use anyhow::{Context, Result};
 use clap::{
-    crate_description, crate_name, crate_version, value_parser, AppSettings, Arg, ValueHint,
+    crate_description, crate_name, crate_version, error as clap_error, value_parser, AppSettings,
+    Arg, ValueHint,
 };
 use clap_complete::{generate, Generator, Shell};
 use image::DynamicImage;
 use regex::Regex;
+use std::ffi;
 use std::io;
 use std::process::Command;
 use std::{convert::From, env, str::FromStr};
@@ -145,12 +147,11 @@ impl Config {
                 Vec::new()
             };
 
-        let bot_regex_pattern = matches.is_present("no-bots").then(|| {
+        let bot_regex_pattern: Option<Regex> = matches.contains_id("no-bots").then(|| {
             matches
-                .value_of("no-bots")
-                .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| {
-                    Regex::from_str(s).unwrap()
-                })
+                .get_one::<Regex>("no-bots")
+                .cloned()
+                .map_or(Regex::from_str(r"\[bot\]").unwrap(), Into::into)
         });
 
         let language_types: Vec<LanguageType> =
@@ -401,12 +402,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .max_values(1)
             .value_name("REGEX")
             .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
-            .validator(|p| {
-                match Regex::from_str(p) {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err(String::from("must be a valid regex pattern"))
-                }
-            }),
+            .value_parser(CliRegexParser),
         )
         .arg(
             Arg::new("isotime")
@@ -476,4 +472,38 @@ pub fn build_cli() -> clap::Command<'static> {
             .value_name("SHELL")
             .help("Prints out SHELL completion script.")
         )
+}
+
+#[derive(Clone, Debug)]
+struct RegexWrapper(Regex);
+
+impl clap::builder::ValueParserFactory for RegexWrapper {
+    type Parser = CliRegexParser;
+
+    fn value_parser() -> Self::Parser {
+        CliRegexParser
+    }
+}
+
+#[derive(Clone, Debug)]
+struct CliRegexParser;
+
+impl clap::builder::TypedValueParser for CliRegexParser {
+    type Value = Regex;
+
+    fn parse_ref(
+        &self,
+        _: &clap::Command,
+        _: Option<&Arg>,
+        value: &ffi::OsStr,
+    ) -> std::result::Result<Self::Value, clap_error::Error> {
+        Regex::from_str(&value.to_string_lossy())
+            .map_err(|e| clap_error::Error::raw(clap_error::ErrorKind::InvalidValue, e))
+    }
+}
+
+impl From<RegexWrapper> for Regex {
+    fn from(wrapper: RegexWrapper) -> Regex {
+        wrapper.0
+    }
 }
