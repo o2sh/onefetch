@@ -22,6 +22,7 @@ use strum::IntoEnumIterator;
 const MAX_TERM_WIDTH: usize = 95;
 
 pub struct Config {
+    // TODO Use PathBuf?
     pub repo_path: String,
     pub ascii_input: Option<String>,
     pub ascii_language: Option<Language>,
@@ -115,9 +116,10 @@ impl Config {
         let image_color_resolution = image_color_resolution.parse().unwrap();
 
         let repo_path = matches
-            .value_of("input")
-            .map(String::from)
-            .with_context(|| "Failed to parse input directory")?;
+            .get_one::<PathBuf>("input")
+            .cloned()
+            .map(|p| p.display().to_string())
+            .unwrap();
 
         let ascii_input: Option<String> = matches.get_one("ascii-input").cloned();
 
@@ -234,6 +236,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .default_value(".")
             .hide_default_value(true)
             .help("Run as if onefetch was started in <input> instead of the current working directory.")
+            .value_parser(value_parser!(PathBuf))
             .value_hint(ValueHint::DirPath)
         )
         .arg(
