@@ -6,8 +6,8 @@ use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
 use anyhow::{Context, Result};
 use clap::{
-    crate_description, crate_name, crate_version, error as clap_error, value_parser, AppSettings,
-    Arg, ValueHint,
+    builder::ArgAction, crate_description, crate_name, crate_version, error as clap_error,
+    value_parser, AppSettings, Arg, ValueHint,
 };
 use clap_complete::{generate, Generator, Shell};
 use image::DynamicImage;
@@ -63,14 +63,14 @@ impl Config {
             _ => unreachable!(),
         };
 
-        let no_bold = matches.is_present("no-bold");
-        let no_merges = matches.is_present("no-merges");
-        let no_color_palette = matches.is_present("no-palette");
-        let print_languages = matches.is_present("languages");
-        let print_package_managers = matches.is_present("package-managers");
-        let iso_time = matches.is_present("isotime");
-        let show_email = matches.is_present("email");
-        let include_hidden = matches.is_present("hidden");
+        let no_bold = matches.get_one("no-bold").copied().unwrap();
+        let no_merges = matches.get_one("no-merges").copied().unwrap();
+        let no_color_palette = matches.get_one("no-palette").copied().unwrap();
+        let print_languages = matches.get_one("languages").copied().unwrap();
+        let print_package_managers = matches.get_one("package-managers").copied().unwrap();
+        let iso_time = matches.get_one("isotime").copied().unwrap();
+        let show_email = matches.get_one("email").copied().unwrap();
+        let include_hidden = matches.get_one("hidden").copied().unwrap();
 
         let output = matches.get_one::<SerializationFormat>("output").copied();
 
@@ -252,12 +252,14 @@ pub fn build_cli() -> clap::Command<'static> {
             Arg::new("languages")
             .short('l')
             .long("languages")
+            .action(ArgAction::SetTrue)
             .help("Prints out supported languages."),
         )
         .arg(
             Arg::new("package-managers")
             .short('p')
             .long("package-managers")
+            .action(ArgAction::SetTrue)
             .help("Prints out supported package managers."),
         )
         .arg(
@@ -367,16 +369,19 @@ pub fn build_cli() -> clap::Command<'static> {
         .arg(
             Arg::new("no-bold")
             .long("no-bold")
+            .action(ArgAction::SetTrue)
             .help("Turns off bold formatting."),
         )
         .arg(
             Arg::new("no-palette")
             .long("no-palette")
+            .action(ArgAction::SetTrue)
             .help("Hides the color palette."),
         )
         .arg(
             Arg::new("no-merges")
             .long("no-merges")
+            .action(ArgAction::SetTrue)
             .help("Ignores merge commits."),
         )
         .arg(
@@ -392,6 +397,7 @@ pub fn build_cli() -> clap::Command<'static> {
             Arg::new("isotime")
             .short('z')
             .long("isotime")
+            .action(ArgAction::SetTrue)
             .help("Use ISO 8601 formatted timestamps.")
         )
         .arg(
@@ -419,11 +425,13 @@ pub fn build_cli() -> clap::Command<'static> {
             Arg::new("email")
             .short('E')
             .long("email")
+            .action(ArgAction::SetTrue)
             .help("show the email address of each author.")
         )
         .arg(
             Arg::new("hidden")
             .long("hidden")
+            .action(ArgAction::SetTrue)
             .help("Count hidden files and directories.")
         )
         .arg(
