@@ -71,14 +71,12 @@ impl Config {
             .map(SerializationFormat::from_str)
             .transpose()?;
 
-        let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
-        {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        };
+        let fields_to_hide: Vec<InfoField> = matches
+            .get_many("disable-fields")
+            .map(|fields| fields.copied().collect())
+            .unwrap_or(Vec::new());
 
-        let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
+        let disabled_fields = InfoFieldOff::from_info_fields(&fields_to_hide);
 
         let art_off = match matches.value_of("show-logo") {
             Some("always") => false,
@@ -425,10 +423,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .takes_value(true)
             .ignore_case(true)
             .help("Allows you to disable FIELD(s) from appearing in the output.")
-            .possible_values(
-                InfoField::iter()
-                    .map(|field| field.into())
-                    .collect::<Vec<&str>>())
+            .value_parser(value_parser!(InfoField))
         )
         .arg(
             Arg::new("authors-number")
