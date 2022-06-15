@@ -5,7 +5,9 @@ use crate::ui::image_backends;
 use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
 use anyhow::{Context, Result};
-use clap::{crate_description, crate_name, crate_version, AppSettings, Arg, ValueHint};
+use clap::{
+    crate_description, crate_name, crate_version, value_parser, AppSettings, Arg, ValueHint,
+};
 use clap_complete::{generate, Generator, Shell};
 use image::DynamicImage;
 use regex::Regex;
@@ -159,12 +161,7 @@ impl Config {
             .map(|t| LanguageType::from_str(t).unwrap())
             .collect();
 
-        let completion = matches
-            .value_of("completion")
-            .map(Shell::from_str)
-            .transpose()
-            .map_err(anyhow::Error::msg)
-            .context("Could not parse shell")?;
+        let completion: Option<Shell> = matches.get_one("completion").copied();
 
         Ok(Config {
             repo_path,
@@ -491,7 +488,7 @@ pub fn build_cli() -> clap::Command<'static> {
         .arg(
             Arg::new("completion")
             .long("completion")
-            .possible_values(Shell::possible_values())
+            .value_parser(value_parser!(Shell))
             .value_name("SHELL")
             .help("Prints out SHELL completion script.")
         )
