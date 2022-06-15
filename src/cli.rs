@@ -34,6 +34,7 @@ pub struct Config {
     pub no_merges: bool,
     pub no_color_palette: bool,
     pub number_of_authors: usize,
+    // TODO Use PathBuf?
     pub ignored_directories: Vec<String>,
     pub bot_regex_pattern: Option<Regex>,
     pub print_languages: bool,
@@ -136,12 +137,10 @@ impl Config {
 
         let number_of_authors: usize = *matches.get_one("authors-number").unwrap();
 
-        let ignored_directories =
-            if let Some(user_ignored_directories) = matches.values_of("exclude") {
-                user_ignored_directories.map(String::from).collect()
-            } else {
-                Vec::new()
-            };
+        let ignored_directories = matches
+            .get_many::<PathBuf>("exclude")
+            .map(|i| i.cloned().map(|p| p.display().to_string()).collect())
+            .unwrap_or(Vec::new());
 
         let bot_regex_pattern: Option<Regex> = matches.contains_id("no-bots").then(|| {
             matches
@@ -432,6 +431,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .multiple_values(true)
             .takes_value(true)
             .help("Ignore all files & directories matching EXCLUDE.")
+            .value_parser(value_parser!(PathBuf))
             .value_hint(ValueHint::AnyPath)
         )
         .arg(
