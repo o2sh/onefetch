@@ -101,11 +101,12 @@ impl Config {
         };
 
         let image_backend = if image.is_some() {
-            if let Some(backend_name) = matches.value_of("image-backend") {
-                image_backends::get_image_backend(backend_name)
-            } else {
-                image_backends::get_best_backend()
-            }
+            matches
+                .get_one::<String>("image-backend")
+                .cloned()
+                .map_or_else(image_backends::get_best_backend, |s| {
+                    image_backends::get_image_backend(&s)
+                })
         } else {
             None
         };
@@ -223,8 +224,6 @@ pub fn print_completions<G: Generator>(gen: G) {
 }
 
 pub fn build_cli() -> clap::Command<'static> {
-    let possible_backends = ["kitty", "iterm", "sixel"];
-
     let color_values = value_parser!(u8).range(..16);
 
     clap::Command::new(crate_name!())
@@ -291,7 +290,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .value_name("BACKEND")
             .takes_value(true)
             .requires("image")
-            .possible_values(possible_backends)
+            .value_parser(["kitty", "iterm", "sixel"])
             .help("Which image BACKEND to use."),
         )
         .arg(
