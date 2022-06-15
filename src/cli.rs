@@ -14,6 +14,7 @@ use image::DynamicImage;
 use regex::Regex;
 use std::ffi;
 use std::io;
+use std::path::PathBuf;
 use std::process::Command;
 use std::{convert::From, env, str::FromStr};
 use strum::IntoEnumIterator;
@@ -92,10 +93,10 @@ impl Config {
             _ => unreachable!(),
         };
 
-        let image = if let Some(image_path) = matches.value_of("image") {
-            Some(image::open(image_path).with_context(|| "Could not load the specified image")?)
-        } else {
-            None
+        // TODO This should be possible with a .map instead of Option => Option
+        let image = match matches.get_one::<PathBuf>("image") {
+            Some(p) => Some(image::open(p).context("Could not load the specified image")?),
+            None => None,
         };
 
         let image_backend = if image.is_some() {
@@ -277,6 +278,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .value_name("IMAGE")
             .takes_value(true)
             .help("Path to the IMAGE file.")
+            .value_parser(value_parser!(PathBuf))
             .value_hint(ValueHint::FilePath)
         )
         .arg(
