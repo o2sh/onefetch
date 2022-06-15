@@ -52,10 +52,11 @@ impl Config {
     pub fn new() -> Result<Self> {
         let matches = build_cli().get_matches();
 
-        let true_color = match matches.value_of("true-color") {
-            Some("always") => true,
-            Some("never") => false,
-            Some("auto") => is_truecolor_terminal(),
+        let true_color: String = matches.get_one("true-color").cloned().unwrap();
+        let true_color = match true_color.as_str() {
+            "always" => true,
+            "never" => false,
+            "auto" => is_truecolor_terminal(),
             _ => unreachable!(),
         };
 
@@ -344,7 +345,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .long("true-color")
             .value_name("WHEN")
             .takes_value(true)
-            .possible_values(&["auto", "never", "always"])
+            .value_parser(["auto", "never", "always"])
             .default_value("auto")
             .hide_default_value(true)
             .help("Specify when to use true color (*auto*, never, always).")
