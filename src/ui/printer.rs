@@ -6,7 +6,7 @@ use strum::{EnumIter, EnumString, IntoStaticStr};
 
 const CENTER_PAD_LENGTH: usize = 3;
 
-#[derive(EnumString, EnumIter, IntoStaticStr)]
+#[derive(Clone, Copy, EnumString, EnumIter, IntoStaticStr, clap::ValueEnum)]
 #[strum(serialize_all = "lowercase")]
 pub enum SerializationFormat {
     Json,

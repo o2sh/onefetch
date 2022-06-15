@@ -69,10 +69,7 @@ impl Config {
         let show_email = matches.is_present("email");
         let include_hidden = matches.is_present("hidden");
 
-        let output = matches
-            .value_of("output")
-            .map(SerializationFormat::from_str)
-            .transpose()?;
+        let output = matches.get_one::<SerializationFormat>("output").copied();
 
         let fields_to_hide: Vec<InfoField> = matches
             .get_many("disable-fields")
@@ -246,10 +243,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .value_name("FORMAT")
             .help("Outputs Onefetch in a specific format (json, yaml).")
             .takes_value(true)
-            .possible_values(
-                SerializationFormat::iter()
-                .map(|format| format.into())
-                .collect::<Vec<&str>>())
+            .value_parser(value_parser!(SerializationFormat))
         )
         .arg(
             Arg::new("languages")
