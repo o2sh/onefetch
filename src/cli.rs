@@ -110,11 +110,8 @@ impl Config {
             None
         };
 
-        let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
-            usize::from_str(value)?
-        } else {
-            16
-        };
+        let image_color_resolution: String = matches.get_one("color-resolution").cloned().unwrap();
+        let image_color_resolution = image_color_resolution.parse().unwrap();
 
         let repo_path = matches
             .value_of("input")
@@ -303,7 +300,8 @@ pub fn build_cli() -> clap::Command<'static> {
             .value_name("VALUE")
             .requires("image")
             .takes_value(true)
-            .possible_values(&["16", "32", "64", "128", "256"])
+            .value_parser(["16", "32", "64", "128", "256"])
+            .default_value("16")
             .help("VALUE of color resolution to use with SIXEL backend."),
         )
         .arg(
