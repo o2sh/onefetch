@@ -36,7 +36,7 @@ pub enum LanguageType {
 macro_rules! define_languages {
     ($( { $name:ident, $type:ident, $ascii:literal, $colors:expr, $circle_color:ident($r:expr, $g:expr, $b:expr) $(, $serialize:literal )? } ),* ,) => {
 
-        #[derive(PartialEq, Eq, Hash, Clone, EnumString, EnumIter, IntoStaticStr, Serialize)]
+        #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumString, EnumIter, IntoStaticStr, Serialize, clap::ValueEnum)]
         #[strum(serialize_all = "lowercase")]
         #[allow(clippy::upper_case_acronyms)]
         pub enum Language {

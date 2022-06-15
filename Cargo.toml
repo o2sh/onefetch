@@ -42,6 +42,8 @@ regex = "1.5.6"
 serde = "1.0.137"
 serde_json = "1.0.81"
 serde_yaml = "0.8.24"
+# TODO With the new value parsers, we're really close to being able to eliminate
+# the strum dependency
 strum = {version = "0.24.0", features = ["derive"]}
 term_size = "0.3.2"
 time = {version = "0.3.9", features = ["formatting"]}

@@ -123,9 +123,7 @@ impl Config {
 
         let ascii_input: Option<String> = matches.get_one("ascii-input").cloned();
 
-        let ascii_language = matches
-            .value_of("ascii-language")
-            .map(|ascii_language| Language::from_str(&ascii_language.to_lowercase()).unwrap());
+        let ascii_language: Option<Language> = matches.get_one("ascii-language").copied();
 
         let ascii_colors: Vec<u8> = matches
             .get_many("ascii-colors")
@@ -316,10 +314,7 @@ pub fn build_cli() -> clap::Command<'static> {
            .takes_value(true)
            .ignore_case(true)
            .help("Which LANGUAGE's ascii art to print.")
-           .possible_values(
-               Language::iter()
-               .map(|language| language.into())
-               .collect::<Vec<&str>>())
+           .value_parser(value_parser!(Language))
         )
         .arg(
             Arg::new("ascii-input")
