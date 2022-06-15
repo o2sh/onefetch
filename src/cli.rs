@@ -121,7 +121,7 @@ impl Config {
             .map(String::from)
             .with_context(|| "Failed to parse input directory")?;
 
-        let ascii_input = matches.value_of("ascii-input").map(String::from);
+        let ascii_input: Option<String> = matches.get_one("ascii-input").cloned();
 
         let ascii_language = matches
             .value_of("ascii-language")
@@ -332,13 +332,7 @@ pub fn build_cli() -> clap::Command<'static> {
                 It is possible to pass a generated STRING by command substitution. \n\
                 For example:\n \
                 '--ascii-input \"$(fortune | cowsay -W 25)\"'")
-            .validator(|t| {
-                if t.is_empty() {
-                    Err(String::from("must not be empty"))
-                } else {
-                    Ok(())
-                }
-            }),
+            .value_parser(clap::builder::NonEmptyStringValueParser::new()),
         )
         .arg(
             Arg::new("true-color")
