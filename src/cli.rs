@@ -126,17 +126,17 @@ impl Config {
             .value_of("ascii-language")
             .map(|ascii_language| Language::from_str(&ascii_language.to_lowercase()).unwrap());
 
-        let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        };
+        let ascii_colors: Vec<u8> = matches
+            .get_many("ascii-colors")
+            .map(|colors| colors.copied().collect())
+            .unwrap_or(Vec::new());
+        let ascii_colors: Vec<String> = ascii_colors.iter().map(|n| n.to_string()).collect();
 
-        let text_colors = if let Some(values) = matches.values_of("text-colors") {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        };
+        let text_colors: Vec<u8> = matches
+            .get_many("text-colors")
+            .map(|colors| colors.copied().collect())
+            .unwrap_or(Vec::new());
+        let text_colors: Vec<String> = text_colors.iter().map(|n| n.to_string()).collect();
 
         let number_of_authors: usize = *matches.get_one("authors-number").unwrap();
 
@@ -229,9 +229,7 @@ pub fn print_completions<G: Generator>(gen: G) {
 pub fn build_cli() -> clap::Command<'static> {
     let possible_backends = ["kitty", "iterm", "sixel"];
 
-    let color_values = &[
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-    ];
+    let color_values = value_parser!(u8).range(..16);
 
     clap::Command::new(crate_name!())
         .version(crate_version!())
@@ -361,7 +359,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .value_name("X")
             .multiple_values(true)
             .takes_value(true)
-            .possible_values(color_values)
+            .value_parser(color_values)
             .help("Colors (X X X...) to print the ascii art."),
         )
         .arg(
@@ -372,7 +370,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .multiple_values(true)
             .takes_value(true)
             .max_values(6)
-            .possible_values(color_values)
+            .value_parser(color_values)
             .help("Changes the text colors (X X X...).")
             .long_help(
                 "Changes the text colors (X X X...). \
