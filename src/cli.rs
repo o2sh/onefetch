@@ -138,7 +138,7 @@ impl Config {
             Vec::new()
         };
 
-        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
+        let number_of_authors: usize = *matches.get_one("authors-number").unwrap();
 
         let ignored_directories =
             if let Some(user_ignored_directories) = matches.values_of("exclude") {
@@ -438,12 +438,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .takes_value(true)
             .default_value("3")
             .help("NUM of authors to be shown.")
-            .validator(|t| {
-                match t.parse::<u32>() {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err(String::from("must be a number"))
-                }
-            })
+            .value_parser(value_parser!(usize))
         )
         .arg(
             Arg::new("email")
