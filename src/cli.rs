@@ -81,10 +81,11 @@ impl Config {
 
         let disabled_fields = InfoFieldOff::from_info_fields(&fields_to_hide);
 
-        let art_off = match matches.value_of("show-logo") {
-            Some("always") => false,
-            Some("never") => true,
-            Some("auto") => {
+        let art_off: String = matches.get_one("show-logo").cloned().unwrap();
+        let art_off = match art_off.as_str() {
+            "always" => false,
+            "never" => true,
+            "auto" => {
                 if let Some((width, _)) = term_size::dimensions_stdout() {
                     width < MAX_TERM_WIDTH
                 } else {
@@ -267,7 +268,7 @@ pub fn build_cli() -> clap::Command<'static> {
             .long("show-logo")
             .value_name("WHEN")
             .takes_value(true)
-            .possible_values(&["auto", "never", "always"])
+            .value_parser(["auto", "never", "always"])
             .default_value("always")
             .hide_default_value(true)
             .help("Specify when to show the logo (auto, never, *always*).")
