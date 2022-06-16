@@ -8,7 +8,7 @@ use strum::IntoEnumIterator;
 pub mod language;
 
 pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
-    languages_stat_vec[0].0.clone()
+    languages_stat_vec[0].0
 }
 
 pub fn get_language_statistics(
