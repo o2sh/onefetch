@@ -22,8 +22,7 @@ use strum::IntoEnumIterator;
 const MAX_TERM_WIDTH: usize = 95;
 
 pub struct Config {
-    // TODO Use PathBuf?
-    pub repo_path: String,
+    pub repo_path: PathBuf,
     pub ascii_input: Option<String>,
     pub ascii_language: Option<Language>,
     pub ascii_colors: Vec<u8>,
@@ -35,8 +34,7 @@ pub struct Config {
     pub no_merges: bool,
     pub no_color_palette: bool,
     pub number_of_authors: usize,
-    // TODO Use PathBuf?
-    pub ignored_directories: Vec<String>,
+    pub ignored_directories: Vec<PathBuf>,
     pub bot_regex_pattern: Option<Regex>,
     pub print_languages: bool,
     pub print_package_managers: bool,
@@ -115,11 +113,7 @@ impl Config {
         let image_color_resolution: String = matches.get_one("color-resolution").cloned().unwrap();
         let image_color_resolution = image_color_resolution.parse().unwrap();
 
-        let repo_path = matches
-            .get_one::<PathBuf>("input")
-            .cloned()
-            .map(|p| p.display().to_string())
-            .unwrap();
+        let repo_path = matches.get_one::<PathBuf>("input").cloned().unwrap();
 
         let ascii_input: Option<String> = matches.get_one("ascii-input").cloned();
 
@@ -139,7 +133,7 @@ impl Config {
 
         let ignored_directories = matches
             .get_many::<PathBuf>("exclude")
-            .map(|i| i.cloned().map(|p| p.display().to_string()).collect())
+            .map(|i| i.cloned().collect())
             .unwrap_or_default();
 
         let bot_regex_pattern: Option<Regex> = matches.contains_id("no-bots").then(|| {

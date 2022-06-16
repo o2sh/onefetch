@@ -3,6 +3,7 @@ use language::{Language, LanguageType};
 use regex::Regex;
 use std::collections::HashMap;
 use std::path::Path;
+use std::path::PathBuf;
 use strum::IntoEnumIterator;
 
 pub mod language;
@@ -13,7 +14,7 @@ pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language
 
 pub fn get_language_statistics(
     dir: &Path,
-    ignored_directories: &[String],
+    ignored_directories: &[PathBuf],
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<(Vec<(Language, f64)>, usize)> {
@@ -73,7 +74,7 @@ fn get_total_loc(languages: &tokei::Languages) -> usize {
 
 fn get_statistics(
     dir: &Path,
-    ignored_directories: &[String],
+    ignored_directories: &[PathBuf],
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> tokei::Languages {
@@ -98,20 +99,17 @@ fn get_supported_languages(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
         .collect()
 }
 
-fn get_ignored_directories(user_ignored_directories: &[String]) -> Vec<String> {
+fn get_ignored_directories(user_ignored_directories: &[PathBuf]) -> Vec<String> {
     let mut ignored_directories = Vec::new();
     if !user_ignored_directories.is_empty() {
         let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
         for user_ignored_directory in user_ignored_directories {
-            if re.is_match(user_ignored_directory) {
-                let prefix = if user_ignored_directory.starts_with('/') {
-                    "**"
-                } else {
-                    "**/"
-                };
-                ignored_directories.push(format!("{}{}", prefix, user_ignored_directory));
+            let dir = user_ignored_directory.display().to_string();
+            if re.is_match(&dir) {
+                let prefix = if dir.starts_with('/') { "**" } else { "**/" };
+                ignored_directories.push(format!("{}{}", prefix, dir));
             } else {
-                ignored_directories.push(String::from(user_ignored_directory));
+                ignored_directories.push(dir);
             }
         }
     }

@@ -8,6 +8,7 @@ use git_repository::bstr::ByteSlice;
 use regex::Regex;
 use std::collections::HashMap;
 use std::path::Path;
+use std::path::PathBuf;
 use time::format_description::well_known::Rfc3339;
 use time::OffsetDateTime;
 
@@ -317,7 +318,7 @@ where
     dt.into().format(&Rfc3339).unwrap()
 }
 
-pub fn is_valid(repo_path: &str) -> Result<bool> {
+pub fn is_valid(repo_path: &PathBuf) -> Result<bool> {
     let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
     Ok(!repo?.is_bare())
 }
