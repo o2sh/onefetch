@@ -26,7 +26,7 @@ pub struct Config {
     pub repo_path: String,
     pub ascii_input: Option<String>,
     pub ascii_language: Option<Language>,
-    pub ascii_colors: Vec<String>,
+    pub ascii_colors: Vec<u8>,
     pub disabled_fields: InfoFieldOff,
     pub no_bold: bool,
     pub image: Option<DynamicImage>,
@@ -43,7 +43,7 @@ pub struct Config {
     pub output: Option<SerializationFormat>,
     pub true_color: bool,
     pub art_off: bool,
-    pub text_colors: Vec<String>,
+    pub text_colors: Vec<u8>,
     pub iso_time: bool,
     pub show_email: bool,
     pub include_hidden: bool,
@@ -129,13 +129,11 @@ impl Config {
             .get_many("ascii-colors")
             .map(|colors| colors.copied().collect())
             .unwrap_or_default();
-        let ascii_colors: Vec<String> = ascii_colors.iter().map(|n| n.to_string()).collect();
 
         let text_colors: Vec<u8> = matches
             .get_many("text-colors")
             .map(|colors| colors.copied().collect())
             .unwrap_or_default();
-        let text_colors: Vec<String> = text_colors.iter().map(|n| n.to_string()).collect();
 
         let number_of_authors: usize = *matches.get_one("authors-number").unwrap();
 
