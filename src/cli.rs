@@ -77,7 +77,7 @@ impl Config {
         let fields_to_hide: Vec<InfoField> = matches
             .get_many("disable-fields")
             .map(|fields| fields.copied().collect())
-            .unwrap_or(Vec::new());
+            .unwrap_or_default();
 
         let disabled_fields = InfoFieldOff::from_info_fields(&fields_to_hide);
 
@@ -128,13 +128,13 @@ impl Config {
         let ascii_colors: Vec<u8> = matches
             .get_many("ascii-colors")
             .map(|colors| colors.copied().collect())
-            .unwrap_or(Vec::new());
+            .unwrap_or_default();
         let ascii_colors: Vec<String> = ascii_colors.iter().map(|n| n.to_string()).collect();
 
         let text_colors: Vec<u8> = matches
             .get_many("text-colors")
             .map(|colors| colors.copied().collect())
-            .unwrap_or(Vec::new());
+            .unwrap_or_default();
         let text_colors: Vec<String> = text_colors.iter().map(|n| n.to_string()).collect();
 
         let number_of_authors: usize = *matches.get_one("authors-number").unwrap();
@@ -142,7 +142,7 @@ impl Config {
         let ignored_directories = matches
             .get_many::<PathBuf>("exclude")
             .map(|i| i.cloned().map(|p| p.display().to_string()).collect())
-            .unwrap_or(Vec::new());
+            .unwrap_or_default();
 
         let bot_regex_pattern: Option<Regex> = matches.contains_id("no-bots").then(|| {
             matches
