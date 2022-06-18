@@ -2,7 +2,7 @@
 
 use crate::cli::Config;
 use anyhow::{bail, Result};
-use clap::Parser;
+use clap::{CommandFactory, Parser};
 use info::{repo, Info};
 use std::io;
 use ui::printer::Printer;
@@ -25,10 +25,11 @@ fn main() -> Result<()> {
         return cli::print_supported_package_managers();
     }
 
-    /*     if let Some(generator) = config.completion {
-        cli::print_completions(generator);
+    if let Some(generator) = config.completion {
+        let mut cmd = Config::command();
+        cli::print_completions(generator, &mut cmd);
         return Ok(());
-    } */
+    }
 
     if !repo::is_valid(&config.input)? {
         bail!("please run onefetch inside of a non-bare git repository");

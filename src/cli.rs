@@ -7,7 +7,7 @@ use crate::ui::image_backends::ImageProtocol;
 use crate::ui::printer::SerializationFormat;
 use anyhow::{Context, Result};
 use clap::AppSettings;
-use clap::Parser;
+use clap::{Command, CommandFactory, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use image::DynamicImage;
 use regex::Regex;
@@ -15,7 +15,6 @@ use std::ffi;
 use std::fmt;
 use std::io;
 use std::path::PathBuf;
-use std::process::Command;
 use std::{convert::From, env, str::FromStr};
 use strum::IntoEnumIterator;
 
@@ -26,7 +25,7 @@ const MAX_TERM_WIDTH: usize = 95;
 #[clap(global_setting(AppSettings::DeriveDisplayOrder))]
 pub struct Config {
     /// Run as if onefetch was started in <input> instead of the current working directory
-    #[clap(long, default_value = ".", value_parser, hide_default_value = true)]
+    #[clap(default_value = ".", value_parser, hide_default_value = true)]
     pub input: PathBuf,
     /// Takes a non-empty STRING as input to replace the ASCII logo
     ///
@@ -46,7 +45,7 @@ pub struct Config {
         multiple_values = true,
         value_name = "X",
         short = 'c',
-        value_parser
+        value_parser = clap::value_parser!(u8).range(..16),
     )]
     pub ascii_colors: Vec<u8>,
     /// Allows you to disable FIELD(s) from appearing in the output
@@ -130,7 +129,14 @@ pub struct Config {
     /// For example:
     ///
     /// '--text-colors 9 10 11 12 13 14'
-    #[clap(long, short, multiple_values = true, value_name = "X", value_parser)]
+    #[clap(
+        long,
+        short = 't',
+        multiple_values = true,
+        value_name = "X",
+        value_parser = clap::value_parser!(u8).range(..16),
+        max_values = 6
+    )]
     pub text_colors: Vec<u8>,
     /// Use ISO 8601 formatted timestamps
     #[clap(long, short = 'z', action)]
@@ -151,8 +157,8 @@ pub struct Config {
         value_parser
     )]
     pub r#type: Vec<LanguageType>,
-    /// Prints out SHELL completion script
-    #[clap(long, value_parser)]
+    /// If provided, outputs the completion file for given SHELL
+    #[clap(long = "generate", value_name = "SHELL", arg_enum, value_parser)]
     pub completion: Option<Shell>,
 }
 
@@ -179,12 +185,16 @@ pub fn is_truecolor_terminal() -> bool {
 }
 
 pub fn get_git_version() -> String {
-    let version = Command::new("git").arg("--version").output();
+    let version = std::process::Command::new("git").arg("--version").output();
 
     match version {
         Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
         Err(_) => String::new(),
     }
+}
+
+pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
+    generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
 #[derive(clap::ValueEnum, Clone)]

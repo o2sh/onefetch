@@ -39,7 +39,7 @@ impl<W: Write> Printer<W> {
                 let mut info_lines = info_str.lines();
                 let mut buf = String::new();
 
-                if true {
+                if false {
                     buf.push_str(&info_str);
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
