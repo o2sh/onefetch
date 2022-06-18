@@ -39,25 +39,8 @@ impl<W: Write> Printer<W> {
                 let mut info_lines = info_str.lines();
                 let mut buf = String::new();
 
-                if self.info.config.art_off {
+                if true {
                     buf.push_str(&info_str);
-                } else if let Some(custom_image) = &self.info.config.image {
-                    let image_backend = self
-                        .info
-                        .config
-                        .image_backend
-                        .as_ref()
-                        .with_context(|| "Could not detect a supported image backend")?;
-
-                    buf.push_str(
-                        &image_backend
-                            .add_image(
-                                info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
-                                custom_image,
-                                self.info.config.image_color_resolution,
-                            )
-                            .with_context(|| "Error while drawing image")?,
-                    );
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.info.config.ascii_input {
                         AsciiArt::new(

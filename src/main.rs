@@ -1,7 +1,8 @@
 #![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
 
+use crate::cli::Config;
 use anyhow::{bail, Result};
-use cli::Config;
+use clap::Parser;
 use info::{repo, Info};
 use std::io;
 use ui::printer::Printer;
@@ -14,22 +15,22 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     let _ = ansi_term::enable_ansi_support();
 
-    let config = Config::new()?;
+    let config = Config::parse();
 
-    if config.print_languages {
+    if config.languages {
         return cli::print_supported_languages();
     }
 
-    if config.print_package_managers {
+    if config.package_managers {
         return cli::print_supported_package_managers();
     }
 
-    if let Some(generator) = config.completion {
+    /*     if let Some(generator) = config.completion {
         cli::print_completions(generator);
         return Ok(());
-    }
+    } */
 
-    if !repo::is_valid(&config.repo_path)? {
+    if !repo::is_valid(&config.input)? {
         bail!("please run onefetch inside of a non-bare git repository");
     }
 

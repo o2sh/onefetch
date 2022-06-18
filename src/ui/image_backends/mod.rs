@@ -1,6 +1,13 @@
 use anyhow::Result;
 use image::DynamicImage;
 
+#[derive(clap::ValueEnum, Clone)]
+pub enum ImageProtocol {
+    Kitty,
+    Sixel,
+    Iterm,
+}
+
 #[cfg(not(windows))]
 pub mod iterm;
 #[cfg(not(windows))]

@@ -51,38 +51,34 @@ pub struct Info {
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if !self.config.disabled_fields.git_info
-            && (!&self.git_username.is_empty() || !&self.git_version.is_empty())
-        {
+        if (!&self.git_username.is_empty() || !&self.git_version.is_empty()) {
             let (git_info_field_str, git_info_field_len) = self.get_git_info_field();
             writeln!(f, "{}", git_info_field_str)?;
             let separator = "-".repeat(git_info_field_len);
             writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
 
-        if !self.config.disabled_fields.project && !self.repo_name.is_empty() {
+        if !self.repo_name.is_empty() {
             let branches_tags_str = self.get_branches_and_tags_field();
             let project_str = format!("{} {}", &self.repo_name, branches_tags_str);
             self.write_styled_info_line("Project", &project_str, f)?;
         }
 
-        if !self.config.disabled_fields.head {
-            self.write_styled_info_line("HEAD", &self.head_refs.to_string(), f)?;
-        }
+        self.write_styled_info_line("HEAD", &self.head_refs.to_string(), f)?;
 
-        if !self.config.disabled_fields.pending && !self.pending_changes.is_empty() {
+        if !self.pending_changes.is_empty() {
             self.write_styled_info_line("Pending", &self.pending_changes, f)?;
         }
 
-        if !self.config.disabled_fields.version && !self.version.is_empty() {
+        if !self.version.is_empty() {
             self.write_styled_info_line("Version", &self.version, f)?;
         }
 
-        if !self.config.disabled_fields.created && !self.creation_date.is_empty() {
+        if !self.creation_date.is_empty() {
             self.write_styled_info_line("Created", &self.creation_date, f)?;
         }
 
-        if !self.config.disabled_fields.languages && !self.languages.is_empty() {
+        if !self.languages.is_empty() {
             let title = if self.languages.len() > 1 {
                 "Languages"
             } else {
@@ -92,11 +88,11 @@ impl std::fmt::Display for Info {
             self.write_info_line(title, &languages_str, f)?;
         }
 
-        if !self.config.disabled_fields.dependencies && !self.dependencies.is_empty() {
+        if !self.dependencies.is_empty() {
             self.write_styled_info_line("Dependencies", &self.dependencies, f)?;
         }
 
-        if !self.config.disabled_fields.authors && !self.authors.is_empty() {
+        if !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
                 "Authors"
             } else {
@@ -106,34 +102,28 @@ impl std::fmt::Display for Info {
             self.write_info_line(title, &author_str, f)?;
         }
 
-        if !self.config.disabled_fields.last_change && !self.last_change.is_empty() {
+        if !self.last_change.is_empty() {
             self.write_styled_info_line("Last change", &self.last_change, f)?;
         }
 
-        if !self.config.disabled_fields.contributors
-            && self.contributors > self.config.number_of_authors
-        {
+        if self.contributors > self.config.number_of_authors {
             self.write_styled_info_line("Contributors", &self.contributors.to_string(), f)?;
         }
 
-        if !self.config.disabled_fields.repo && !self.repo_url.is_empty() {
+        if !self.repo_url.is_empty() {
             self.write_styled_info_line("Repo", &self.repo_url, f)?;
         }
 
-        if !self.config.disabled_fields.commits {
-            self.write_styled_info_line("Commits", &self.number_of_commits, f)?;
-        }
+        self.write_styled_info_line("Commits", &self.number_of_commits, f)?;
 
-        if !self.config.disabled_fields.lines_of_code {
-            self.write_styled_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
-        }
+        self.write_styled_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
 
-        if !self.config.disabled_fields.size && !self.repo_size.is_empty() {
+        if !self.repo_size.is_empty() {
             let repo_size_str = self.get_repo_size_field();
             self.write_styled_info_line("Size", &repo_size_str, f)?;
         }
 
-        if !self.config.disabled_fields.license && !self.license.is_empty() {
+        if !self.license.is_empty() {
             self.write_styled_info_line("License", &self.license, f)?;
         }
 
@@ -159,7 +149,7 @@ impl std::fmt::Display for Info {
 impl Info {
     pub fn new(config: Config) -> Result<Self> {
         let git_version = cli::get_git_version();
-        let repo = Repository::discover(&config.repo_path)?;
+        let repo = Repository::discover(&config.input)?;
         let workdir = repo.workdir().expect("non-bare repo").to_owned();
 
         let pending_changes = std::thread::spawn({
@@ -170,8 +160,8 @@ impl Info {
             }
         });
         let languages_handle = std::thread::spawn({
-            let ignored_directories = config.ignored_directories.clone();
-            let language_types = config.language_types.clone();
+            let ignored_directories = config.exclude.clone();
+            let language_types = config.r#type.clone();
             let include_hidden = config.include_hidden;
             let workdir = workdir.clone();
             move || {
@@ -188,7 +178,7 @@ impl Info {
         let mut commits = Commits::new(
             repo.gitoxide(),
             config.no_merges,
-            &config.bot_regex_pattern,
+            &config.no_bots,
             config.number_of_authors,
         )?;
         let (repo_name, repo_url) = repo.get_name_and_url()?;
@@ -203,7 +193,7 @@ impl Info {
 
         let creation_date = commits.get_creation_date(config.iso_time);
         let number_of_commits = commits.count();
-        let (authors, contributors) = commits.take_authors(config.show_email);
+        let (authors, contributors) = commits.take_authors(config.email);
         let last_change = commits.get_date_of_last_commit(config.iso_time);
 
         let pending_changes = pending_changes
@@ -220,7 +210,7 @@ impl Info {
             &config.ascii_language,
             &dominant_language,
             &config.ascii_colors,
-            config.true_color,
+            true,
         );
         let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
 
@@ -353,7 +343,7 @@ impl Info {
                 .iter()
                 .enumerate()
                 .map(|(i, (language, perc))| {
-                    let circle_color = if self.config.true_color {
+                    let circle_color = if true {
                         language.get_circle_color()
                     } else {
                         color_palette[i % color_palette.len()]
