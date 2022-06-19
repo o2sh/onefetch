@@ -11,7 +11,7 @@ pub struct TextColors {
 }
 
 impl TextColors {
-    pub fn new(colors: &[String], logo_primary_color: DynColors) -> Self {
+    pub fn new(colors: &[u8], logo_primary_color: DynColors) -> Self {
         let mut text_colors = Self {
             title: logo_primary_color,
             tilde: DynColors::Ansi(AnsiColors::Default),
@@ -22,10 +22,7 @@ impl TextColors {
         };
 
         if !colors.is_empty() {
-            let custom_color = colors
-                .iter()
-                .map(|color_num| num_to_color(color_num))
-                .collect::<Vec<DynColors>>();
+            let custom_color = colors.iter().map(num_to_color).collect::<Vec<DynColors>>();
 
             text_colors.title = *custom_color.get(0).unwrap_or(&logo_primary_color);
             text_colors.tilde = *custom_color

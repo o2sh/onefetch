@@ -1,6 +1,13 @@
 use anyhow::Result;
 use image::DynamicImage;
 
+#[derive(clap::ValueEnum, Clone)]
+pub enum ImageProtocol {
+    Kitty,
+    Sixel,
+    Iterm,
+}
+
 #[cfg(not(windows))]
 pub mod iterm;
 #[cfg(not(windows))]
@@ -28,13 +35,12 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     None
 }
 
-pub fn get_image_backend(backend_name: &str) -> Option<Box<dyn ImageBackend>> {
+pub fn get_image_backend(image_protocol: ImageProtocol) -> Option<Box<dyn ImageBackend>> {
     #[cfg(not(windows))]
-    let backend = Some(match backend_name {
-        "kitty" => Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
-        "iterm" => Box::new(iterm::ITermBackend::new()) as Box<dyn ImageBackend>,
-        "sixel" => Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
-        _ => unreachable!(),
+    let backend = Some(match image_protocol {
+        ImageProtocol::Kitty => Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
+        ImageProtocol::Iterm => Box::new(iterm::ITermBackend::new()) as Box<dyn ImageBackend>,
+        ImageProtocol::Sixel => Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
     });
 
     #[cfg(windows)]

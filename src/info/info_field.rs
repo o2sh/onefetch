@@ -1,8 +1,8 @@
-use anyhow::Result;
-use std::str::FromStr;
 use strum::{EnumCount, EnumIter, EnumString, IntoStaticStr};
 
-#[derive(PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr)]
+#[derive(
+    Clone, Copy, PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr, clap::ValueEnum,
+)]
 #[strum(serialize_all = "snake_case")]
 pub enum InfoField {
     GitInfo,
@@ -44,15 +44,14 @@ pub struct InfoFieldOff {
 }
 
 impl InfoFieldOff {
-    pub fn new(fields_to_hide: Vec<String>) -> Result<Self> {
+    pub fn from_info_fields(fields_to_hide: &[InfoField]) -> Self {
+        // TODO Implement using From trait instead?
         let mut info_field_off = InfoFieldOff {
             ..Default::default()
         };
 
         for field in fields_to_hide.iter() {
-            let item = InfoField::from_str(field.to_lowercase().as_str())?;
-
-            match item {
+            match field {
                 InfoField::GitInfo => info_field_off.git_info = true,
                 InfoField::Project => info_field_off.project = true,
                 InfoField::Head => info_field_off.head = true,
@@ -72,6 +71,6 @@ impl InfoFieldOff {
             }
         }
 
-        Ok(info_field_off)
+        info_field_off
     }
 }
