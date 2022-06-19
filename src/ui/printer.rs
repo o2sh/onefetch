@@ -7,13 +7,11 @@ use crate::ui::Language;
 use anyhow::{Context, Result};
 use image::DynamicImage;
 use std::io::Write;
-use strum::{EnumIter, EnumString, IntoStaticStr};
 
 const CENTER_PAD_LENGTH: usize = 3;
 const MAX_TERM_WIDTH: usize = 95;
 
-#[derive(Clone, EnumString, EnumIter, IntoStaticStr)]
-#[strum(serialize_all = "lowercase")]
+#[derive(Clone, clap::ArgEnum)]
 pub enum SerializationFormat {
     Json,
     Yaml,

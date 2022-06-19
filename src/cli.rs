@@ -103,10 +103,10 @@ pub struct Config {
     /// Prints out supported package managers
     #[clap(long, short, action)]
     pub package_managers: bool,
-    /// Outputs Onefetch in a specific format (json, yaml)
+    /// Outputs Onefetch in a specific format
     #[clap(long, short, value_name = "FORMAT", value_parser)]
     pub output: Option<SerializationFormat>,
-    /// Specify when to use true color (*auto*, never, always)
+    /// Specify when to use true color
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
     #[clap(long, default_value = "auto", value_name = "WHEN", value_parser)]
