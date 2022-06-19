@@ -14,7 +14,7 @@ use std::path::PathBuf;
 use strum::IntoEnumIterator;
 
 #[derive(Parser)]
-#[clap(version, about, hide_possible_values = true, long_about = None, rename_all = "kebab-case")]
+#[clap(version, about, long_about = None, rename_all = "kebab-case")]
 #[clap(global_setting(AppSettings::DeriveDisplayOrder))]
 pub struct Config {
     /// Run as if onefetch was started in <input> instead of the current working directory
@@ -30,7 +30,13 @@ pub struct Config {
     #[clap(long, value_name = "STRING", value_parser, value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
-    #[clap(long, short, value_name = "LANGUAGE", value_parser)]
+    #[clap(
+        long,
+        short,
+        value_name = "LANGUAGE",
+        value_parser,
+        hide_possible_values = true
+    )]
     pub ascii_language: Option<Language>,
     /// Colors (X X X...) to print the ascii art
     #[clap(
@@ -47,8 +53,7 @@ pub struct Config {
         short,
         multiple_values = true,
         value_name = "FIELD",
-        value_parser,
-        value_hint = ValueHint::AnyPath
+        value_parser
     )]
     pub disabled_fields: Vec<InfoField>,
     /// Path to the IMAGE file
@@ -83,12 +88,11 @@ pub struct Config {
         short,
         default_value_t = 3usize,
         value_name = "NUM",
-        value_parser,
-        hide_default_value = true
+        value_parser
     )]
     pub number_of_authors: usize,
     /// gnore all files & directories matching EXCLUDE
-    #[clap(long, multiple_values = true, short, value_parser)]
+    #[clap(long, multiple_values = true, short, value_parser, value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[clap(long, value_name = "REGEX", value_parser)]
@@ -105,24 +109,12 @@ pub struct Config {
     /// Specify when to use true color (*auto*, never, always)
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
-    #[clap(
-        long,
-        default_value = "auto",
-        value_name = "WHEN",
-        value_parser,
-        hide_default_value = true
-    )]
+    #[clap(long, default_value = "auto", value_name = "WHEN", value_parser)]
     pub true_color: When,
-    /// Specify when to show the logo (auto, never, *always*)
+    /// Specify when to show the logo
     ///
     /// If set to auto: the logo will be hidden if the terminal's width < 95
-    #[clap(
-        long,
-        default_value = "always",
-        value_name = "WHEN",
-        value_parser,
-        hide_default_value = true
-    )]
+    #[clap(long, default_value = "always", value_name = "WHEN", value_parser)]
     pub show_logo: When,
     /// Changes the text colors (X X X...)
     ///
@@ -149,14 +141,13 @@ pub struct Config {
     /// Count hidden files and directories
     #[clap(long, action)]
     pub include_hidden: bool,
-    /// Filters output by language type (*programming*, *markup*, prose, data)
+    /// Filters output by language type
     #[clap(
         long,
         multiple_values = true,
         default_values = &["programming", "markup"],
-        hide_default_value = true,
         short = 'T',
-        value_parser
+        value_parser,
     )]
     pub r#type: Vec<LanguageType>,
     /// If provided, outputs the completion file for given SHELL
