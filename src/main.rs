@@ -35,9 +35,9 @@ fn main() -> Result<()> {
         bail!("please run onefetch inside of a non-bare git repository");
     }
 
-    let info = Info::new(config)?;
+    let info = Info::new(&config)?;
 
-    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info);
+    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, config)?;
 
     printer.print()?;
 

@@ -1,4 +1,5 @@
-use crate::cli::{self, Config};
+use crate::cli::{self, is_truecolor_terminal, Config, When};
+use crate::info::info_field::InfoFieldOff;
 use crate::repo::Commits;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
@@ -44,41 +45,49 @@ pub struct Info {
     repo_size: String,
     license: String,
     text_colors: TextColors,
+    disabled_fields: InfoFieldOff,
+    true_color: bool,
+    no_color_palette: bool,
+    no_bold: bool,
+    number_of_authors: usize,
     pub dominant_language: Language,
     pub ascii_colors: Vec<DynColors>,
-    pub config: Config,
 }
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if (!&self.git_username.is_empty() || !&self.git_version.is_empty()) {
+        if !self.disabled_fields.git_info
+            && (!&self.git_username.is_empty() || !&self.git_version.is_empty())
+        {
             let (git_info_field_str, git_info_field_len) = self.get_git_info_field();
             writeln!(f, "{}", git_info_field_str)?;
             let separator = "-".repeat(git_info_field_len);
             writeln!(f, "{}", separator.color(self.text_colors.underline))?;
         }
 
-        if !self.repo_name.is_empty() {
+        if !self.disabled_fields.project && !self.repo_name.is_empty() {
             let branches_tags_str = self.get_branches_and_tags_field();
             let project_str = format!("{} {}", &self.repo_name, branches_tags_str);
             self.write_styled_info_line("Project", &project_str, f)?;
         }
 
-        self.write_styled_info_line("HEAD", &self.head_refs.to_string(), f)?;
+        if !self.disabled_fields.head {
+            self.write_styled_info_line("HEAD", &self.head_refs.to_string(), f)?;
+        }
 
-        if !self.pending_changes.is_empty() {
+        if !self.disabled_fields.pending && !self.pending_changes.is_empty() {
             self.write_styled_info_line("Pending", &self.pending_changes, f)?;
         }
 
-        if !self.version.is_empty() {
+        if !self.disabled_fields.version && !self.version.is_empty() {
             self.write_styled_info_line("Version", &self.version, f)?;
         }
 
-        if !self.creation_date.is_empty() {
+        if !self.disabled_fields.created && !self.creation_date.is_empty() {
             self.write_styled_info_line("Created", &self.creation_date, f)?;
         }
 
-        if !self.languages.is_empty() {
+        if !self.disabled_fields.languages && !self.languages.is_empty() {
             let title = if self.languages.len() > 1 {
                 "Languages"
             } else {
@@ -88,11 +97,11 @@ impl std::fmt::Display for Info {
             self.write_info_line(title, &languages_str, f)?;
         }
 
-        if !self.dependencies.is_empty() {
+        if !self.disabled_fields.dependencies && !self.dependencies.is_empty() {
             self.write_styled_info_line("Dependencies", &self.dependencies, f)?;
         }
 
-        if !self.authors.is_empty() {
+        if !self.disabled_fields.authors && !self.authors.is_empty() {
             let title = if self.authors.len() > 1 {
                 "Authors"
             } else {
@@ -102,32 +111,36 @@ impl std::fmt::Display for Info {
             self.write_info_line(title, &author_str, f)?;
         }
 
-        if !self.last_change.is_empty() {
+        if !self.disabled_fields.last_change && !self.last_change.is_empty() {
             self.write_styled_info_line("Last change", &self.last_change, f)?;
         }
 
-        if self.contributors > self.config.number_of_authors {
+        if !self.disabled_fields.contributors && self.contributors > self.number_of_authors {
             self.write_styled_info_line("Contributors", &self.contributors.to_string(), f)?;
         }
 
-        if !self.repo_url.is_empty() {
+        if !self.disabled_fields.repo && !self.repo_url.is_empty() {
             self.write_styled_info_line("Repo", &self.repo_url, f)?;
         }
 
-        self.write_styled_info_line("Commits", &self.number_of_commits, f)?;
+        if !self.disabled_fields.commits {
+            self.write_styled_info_line("Commits", &self.number_of_commits, f)?;
+        }
 
-        self.write_styled_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
+        if !self.disabled_fields.lines_of_code {
+            self.write_styled_info_line("Lines of code", &self.lines_of_code.to_string(), f)?;
+        }
 
-        if !self.repo_size.is_empty() {
+        if !self.disabled_fields.size && !self.repo_size.is_empty() {
             let repo_size_str = self.get_repo_size_field();
             self.write_styled_info_line("Size", &repo_size_str, f)?;
         }
 
-        if !self.license.is_empty() {
+        if !self.disabled_fields.license && !self.license.is_empty() {
             self.write_styled_info_line("License", &self.license, f)?;
         }
 
-        if !self.config.no_color_palette {
+        if !self.no_color_palette {
             writeln!(
                 f,
                 "\n{0}{1}{2}{3}{4}{5}{6}{7}",
@@ -147,7 +160,7 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: Config) -> Result<Self> {
+    pub fn new(config: &Config) -> Result<Self> {
         let git_version = cli::get_git_version();
         let repo = Repository::discover(&config.input)?;
         let workdir = repo.workdir().expect("non-bare repo").to_owned();
@@ -206,13 +219,19 @@ impl Info {
             .ok()
             .context("BUG: panic in language statistics thread")??;
         let dominant_language = langs::get_dominant_language(&languages);
+        let true_color = match config.true_color {
+            When::Always => true,
+            When::Never => false,
+            When::Auto => is_truecolor_terminal(),
+        };
         let ascii_colors = get_ascii_colors(
             &config.ascii_language,
             &dominant_language,
             &config.ascii_colors,
-            true,
+            true_color,
         );
         let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
+        let disabled_fields = InfoFieldOff::from_info_fields(&config.disabled_fields);
 
         Ok(Self {
             git_username,
@@ -235,10 +254,14 @@ impl Info {
             file_count,
             repo_size,
             license,
+            text_colors,
             dominant_language,
             ascii_colors,
-            text_colors,
-            config,
+            disabled_fields,
+            true_color,
+            no_color_palette: config.no_color_palette,
+            no_bold: config.no_bold,
+            number_of_authors: config.number_of_authors,
         })
     }
 
@@ -273,7 +296,7 @@ impl Info {
 
     fn style(&self, color: DynColors) -> Style {
         let mut style = Style::new().color(color);
-        if !self.config.no_bold {
+        if !self.no_bold {
             style = style.bold();
         }
         style
@@ -343,7 +366,7 @@ impl Info {
                 .iter()
                 .enumerate()
                 .map(|(i, (language, perc))| {
-                    let circle_color = if true {
+                    let circle_color = if self.true_color {
                         language.get_circle_color()
                     } else {
                         color_palette[i % color_palette.len()]

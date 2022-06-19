@@ -1,24 +1,17 @@
 use crate::info::deps::package_manager::PackageManager;
-use crate::info::info_field::{InfoField, InfoFieldOff};
+use crate::info::info_field::InfoField;
 use crate::info::langs::language::{Language, LanguageType};
-use crate::ui::image_backends;
-use crate::ui::image_backends::ImageBackend;
 use crate::ui::image_backends::ImageProtocol;
 use crate::ui::printer::SerializationFormat;
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::AppSettings;
-use clap::{Command, CommandFactory, Parser, ValueHint};
+use clap::{Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
-use image::DynamicImage;
 use regex::Regex;
-use std::ffi;
-use std::fmt;
+use std::env;
 use std::io;
 use std::path::PathBuf;
-use std::{convert::From, env, str::FromStr};
 use strum::IntoEnumIterator;
-
-const MAX_TERM_WIDTH: usize = 95;
 
 #[derive(Parser)]
 #[clap(version, about, hide_possible_values = true, long_about = None, rename_all = "kebab-case")]
@@ -37,7 +30,7 @@ pub struct Config {
     #[clap(long, value_name = "STRING", value_parser, value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
-    #[clap(long, short, value_name = "LANGUAGE", arg_enum, value_parser)]
+    #[clap(long, short, value_name = "LANGUAGE", value_parser)]
     pub ascii_language: Option<Language>,
     /// Colors (X X X...) to print the ascii art
     #[clap(
@@ -70,8 +63,9 @@ pub struct Config {
         value_name = "VALUE",
         value_parser,
         requires = "image",
-        default_value_t = 16,
-        value_parser = clap::value_parser!(usize)([16, 32, 64, 128, 256])
+        default_value_t = 16usize,
+        possible_values = ["16", "32", "64", "128", "256"],
+        value_parser
     )]
     pub color_resolution: usize,
     /// Turns off bold formatting
@@ -87,7 +81,7 @@ pub struct Config {
     #[clap(
         long,
         short,
-        default_value_t = 3,
+        default_value_t = 3usize,
         value_name = "NUM",
         value_parser,
         hide_default_value = true
@@ -166,7 +160,7 @@ pub struct Config {
     )]
     pub r#type: Vec<LanguageType>,
     /// If provided, outputs the completion file for given SHELL
-    #[clap(long = "generate", value_name = "SHELL", arg_enum, value_parser)]
+    #[clap(long = "generate", value_name = "SHELL", value_parser)]
     pub completion: Option<Shell>,
 }
 
