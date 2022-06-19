@@ -1,7 +1,6 @@
 use owo_colors::{AnsiColors, DynColors};
-use serde::Serialize;
 use std::env;
-use strum::{EnumIter, EnumString, IntoStaticStr};
+use strum::EnumIter;
 
 pub struct Colors {
     basic_colors: Vec<DynColors>,
@@ -24,8 +23,7 @@ macro_rules! define_colors {
     ( [ $($bc:ident),+ ] : [ $($c:ident($r:expr, $g:expr, $b:expr)),+ ] ) => { Colors { basic_colors: vec![$(clean_color!($bc)),+], true_colors: Some(vec![$(DynColors::$c($r, $g, $b)),+]) } };
 }
 
-#[derive(Clone, Copy, PartialEq, EnumString, EnumIter, IntoStaticStr, clap::ValueEnum)]
-#[strum(serialize_all = "lowercase")]
+#[derive(Clone, PartialEq, clap::ValueEnum)]
 pub enum LanguageType {
     Programming,
     Markup,
@@ -36,9 +34,7 @@ pub enum LanguageType {
 macro_rules! define_languages {
     ($( { $name:ident, $type:ident, $ascii:literal, $colors:expr, $circle_color:ident($r:expr, $g:expr, $b:expr) $(, $serialize:literal )? } ),* ,) => {
 
-        #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumString, EnumIter, IntoStaticStr, Serialize, clap::ValueEnum)]
-        #[strum(serialize_all = "lowercase")]
-        #[allow(clippy::upper_case_acronyms)]
+        #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
