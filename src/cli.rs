@@ -25,7 +25,7 @@ const MAX_TERM_WIDTH: usize = 95;
 #[clap(global_setting(AppSettings::DeriveDisplayOrder))]
 pub struct Config {
     /// Run as if onefetch was started in <input> instead of the current working directory
-    #[clap(default_value = ".", value_parser, hide_default_value = true)]
+    #[clap(default_value = ".", value_parser, hide_default_value = true, value_hint = ValueHint::DirPath)]
     pub input: PathBuf,
     /// Takes a non-empty STRING as input to replace the ASCII logo
     ///
@@ -34,7 +34,7 @@ pub struct Config {
     /// For example:
     ///
     /// '--ascii-input "$(fortune | cowsay -W 25)'
-    #[clap(long, value_name = "STRING", value_parser)]
+    #[clap(long, value_name = "STRING", value_parser, value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
     #[clap(long, short, value_name = "LANGUAGE", arg_enum, value_parser)]
@@ -54,18 +54,26 @@ pub struct Config {
         short,
         multiple_values = true,
         value_name = "FIELD",
-        value_parser
+        value_parser,
+        value_hint = ValueHint::AnyPath
     )]
     pub disabled_fields: Vec<InfoField>,
     /// Path to the IMAGE file
-    #[clap(long, short, value_parser)]
+    #[clap(long, short, value_parser, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
     /// Which image BACKEND to use
-    #[clap(long, value_parser)]
+    #[clap(long, value_parser, requires = "image")]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
-    #[clap(long, value_name = "VALUE", value_parser)]
-    pub color_resolution: Option<usize>,
+    #[clap(
+        long,
+        value_name = "VALUE",
+        value_parser,
+        requires = "image",
+        default_value_t = 16,
+        value_parser = clap::value_parser!(usize)([16, 32, 64, 128, 256])
+    )]
+    pub color_resolution: usize,
     /// Turns off bold formatting
     #[clap(long, action)]
     pub no_bold: bool,
