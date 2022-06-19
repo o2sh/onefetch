@@ -34,7 +34,7 @@ bytecount = "0.6.3"
 clap = {version = "3.2.5", features = ["derive"]}
 clap_complete = "3.2.1"
 color_quant = "1.1.0"
-git-repository = {version = "0.18.1", features = ["max-performance", "unstable", "serde1"]}
+git-repository = {version = "0.19.0", features = ["max-performance", "unstable", "serde1"]}
 git2 = {version = "0.14.4", default-features = false}
 image = "0.24.2"
 owo-colors = "3.4.0"
