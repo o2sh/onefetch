@@ -36,9 +36,10 @@ macro_rules! define_languages {
 
         #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
         #[allow(clippy::upper_case_acronyms)]
+        #[clap(rename_all = "lowercase")]
         pub enum Language {
             $(
-                $( #[strum(serialize = $serialize)] )?
+                $( #[clap(name = $serialize)] )?
                 $name,
             )*
         }
