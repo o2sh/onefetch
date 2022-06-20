@@ -35,6 +35,7 @@ macro_rules! define_languages {
     ($( { $name:ident, $type:ident, $ascii:literal, $colors:expr, $circle_color:ident($r:expr, $g:expr, $b:expr) $(, $serialize:literal )? } ),* ,) => {
 
         #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
+        #[allow(clippy::upper_case_acronyms)]
         pub enum Language {
             $(
                 $( #[strum(serialize = $serialize)] )?
