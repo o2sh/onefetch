@@ -59,7 +59,7 @@ pub struct Config {
     /// Path to the IMAGE file
     #[clap(long, short, value_parser, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
-    /// Which image BACKEND to use
+    /// Which image protocol to use
     #[clap(long, value_parser, requires = "image")]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
@@ -96,7 +96,7 @@ pub struct Config {
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[clap(long, value_name = "REGEX", value_parser)]
-    pub no_bots: Option<Regex>,
+    pub no_bots: Option<Option<Regex>>,
     /// Prints out supported languages
     #[clap(long, short, action)]
     pub languages: bool,

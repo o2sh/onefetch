@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::cli::{self, is_truecolor_terminal, Config, When};
 use crate::info::info_field::InfoFieldOff;
 use crate::repo::Commits;
@@ -11,6 +13,7 @@ use head_refs::HeadRefs;
 use langs::language::Language;
 use license::Detector;
 use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
+use regex::Regex;
 use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
@@ -187,11 +190,20 @@ impl Info {
             }
         });
 
+        let no_bots = if let Some(r) = config.no_bots.clone() {
+            match r {
+                Some(p) => Some(p),
+                None => Some(Regex::from_str(r"\[(b|B)ot\]")?),
+            }
+        } else {
+            None
+        };
+
         let repo = Repo::new(repo)?;
         let mut commits = Commits::new(
             repo.gitoxide(),
             config.no_merges,
-            &config.no_bots,
+            &no_bots,
             config.number_of_authors,
         )?;
         let (repo_name, repo_url) = repo.get_name_and_url()?;
