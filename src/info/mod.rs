@@ -1,5 +1,4 @@
 use std::str::FromStr;
-
 use crate::cli::{self, is_truecolor_terminal, Config, When};
 use crate::info::info_field::InfoFieldOff;
 use crate::repo::Commits;
