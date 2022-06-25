@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use crate::cli::{self, is_truecolor_terminal, Config, When};
 use crate::info::info_field::InfoFieldOff;
 use crate::repo::Commits;
@@ -16,6 +15,7 @@ use regex::Regex;
 use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
+use std::str::FromStr;
 
 mod author;
 pub mod deps;
