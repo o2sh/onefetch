@@ -192,7 +192,7 @@ impl Info {
         let no_bots = if let Some(r) = config.no_bots.clone() {
             match r {
                 Some(p) => Some(p),
-                None => Some(Regex::from_str(r"\[(b|B)ot\]")?),
+                None => Some(Regex::from_str(r"(b|B)ot")?),
             }
         } else {
             None
