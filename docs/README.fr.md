@@ -11,25 +11,19 @@
 	<img src="../assets/msrv-badge.svg">
 </p>
 
-<p align="center">
-  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a> |
-  <a href="docs/README.cn.md">简体中文</a> | <a href="docs/README.ru.md">Русский</a> |
-  <a href="docs/README.es.md">Español</a> | <a href="docs/README.fr.md">Français</a>
-</p>
-
 <img src="../assets/screenshot-1.png" align="right" height="240px">
 
-Onefetch est un outil en ligne de commande pour Git écrit en `Rust` qui affiche les informations d'un projet et les statistiques de codes pour un dépôt local directement dans le terminal. Cet outil est complètement hors ligne - aucun accès internet n'est recquis.
+Onefetch est un outil en ligne de commande pour Git écrit en `Rust` qui affiche les informations d'un projet et les statistiques de codes pour un dépôt local directement dans le terminal. Cet outil est complètement hors ligne - aucun accès internet n'est requis.
 
-Par défaut, les informations du dépôt sont affichées à côté du logo du langage dominant, mais vous pouvez configurer onfetch pour afficher une autre image de votre choix - sur les emulateurs le supportant -, ou du text, ou rien du tout.
+Par défaut, les informations du dépôt sont affichées à côté du logo du langage dominant, mais vous pouvez configurer onefetch pour afficher une autre image à la place - sur les emulateurs le supportant -, ou du texte, ou rien du tout.
 
-Il détecte automatiquement les licences open sources depuis le text et fournit à l'utilisateur plusieurs informations comme la distribution du code, les changements en attentes, le nombres de dépendances (par le manager de paquets), les tops contributeurs (par nombre de commits), la taille sur le disque, la date de création, LOC (ligne de code), etc.
+Il détecte automatiquement les licences open sources et fournit à l'utilisateur plusieurs informations comme la décomposition du code par langage, les changements en attentes, le nombres de dépendances (par le manager de paquets), les tops contributeurs (par nombre de commits), la taille sur le disque, la date de création, LOC (ligne de code), etc.
 
 <img src="../assets/screenshot-2.png" align="right" height="240px">
 
-Onefetch peut être configuré en passent des arguments en ligne de commande pour afficher exactement ce que vous voulez, de la manière dont vous voulez: vous pouvez personnaliser du text au format ASCII/text, désactiver les informations sur les lignes, ignorer des fichiers & répertoires, afficher la sortie dans plusieurs formats (Json, Yaml), etc.
+Onefetch peut être configuré en passent des arguments en ligne de commande pour afficher exactement ce que vous voulez, de la manière dont vous voulez: vous pouvez personnaliser le formatage du texte au format ASCII/texte, cacher certaines lignes, ignorer des fichiers & répertoires, afficher la sortie dans plusieurs formats (Json, Yaml), etc.
 Actuellement, onefetch supporte plus de 50 langages de programmation différents; si le langage de votre choix n'est pas supporté, ouvrez une issue et le support sera ajouté.
 
 Les contributions sont les bienvenues! Rendez-vous sur la page [CONTRIBUTING](../CONTRIBUTING.md) pour plus d'informations.
 
-### More: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Premiers Pas](https://github.com/o2sh/onefetch/wiki/getting-started)\]
+### Complément: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Premiers Pas](https://github.com/o2sh/onefetch/wiki/getting-started)\]
