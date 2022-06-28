@@ -82,6 +82,8 @@ In order to make Onefetch more accessible for non English-speakers, we are seeki
 
 These translations will be accessible directly from the English README.md via hyperlinks.
 
+You can use `partials/templates/Readme.contribute.md` file as starter template and replace elements between `{{ }}` with your content.
+
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
