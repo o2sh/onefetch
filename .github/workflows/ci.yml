@@ -2,8 +2,16 @@ name: CI
 on:
   push:
     branches: ["*"]
+    paths:
+      - 'src/**'
+      - 'resources/**'
+      - 'Cargo.*'
   pull_request:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'resources/**'
+      - 'Cargo.*'
 
 jobs:
   build:
