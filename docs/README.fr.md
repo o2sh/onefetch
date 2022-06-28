@@ -26,4 +26,4 @@ Actuellement, onefetch supporte plus de 50 langages de programmation différents
 
 Les contributions sont plus que bienvenues! Rendez-vous sur la page [CONTRIBUTING](../CONTRIBUTING.md) pour plus d'informations.
 
-### Complément: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Premiers Pas](https://github.com/o2sh/onefetch/wiki/getting-started)\]
+### Compléments: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Premiers Pas](https://github.com/o2sh/onefetch/wiki/getting-started)\]
