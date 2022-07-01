@@ -2,16 +2,14 @@ name: CI
 on:
   push:
     branches: ["*"]
-    paths:
-      - 'src/**'
-      - 'resources/**'
-      - 'Cargo.*'
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
   pull_request:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'resources/**'
-      - 'Cargo.*'
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
 
 jobs:
   build:
