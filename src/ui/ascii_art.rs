@@ -1,4 +1,5 @@
 use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
+use std::fmt::Write;
 
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
@@ -201,7 +202,7 @@ fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: 
         style = style.bold();
     }
     let formatted_segment = segment.style(style);
-    base.push_str(&format!("{}", formatted_segment));
+    let _ = write!(base, "{}", formatted_segment);
 }
 
 // Basic combinators

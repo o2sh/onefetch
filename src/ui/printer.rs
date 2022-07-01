@@ -6,6 +6,7 @@ use crate::ui::image_backends::ImageBackend;
 use crate::ui::Language;
 use anyhow::{Context, Result};
 use image::DynamicImage;
+use std::fmt::Write as _;
 use std::io::Write;
 
 const CENTER_PAD_LENGTH: usize = 3;
@@ -114,16 +115,18 @@ impl<W: Write> Printer<W> {
 
                     loop {
                         match (logo_lines.next(), info_lines.next()) {
-                            (Some(logo_line), Some(info_line)) => buf
-                                .push_str(&format!("{}{}{:^}\n", logo_line, center_pad, info_line)),
-                            (Some(logo_line), None) => buf.push_str(&format!("{}\n", logo_line)),
-                            (None, Some(info_line)) => buf.push_str(&format!(
-                                "{:<width$}{}{:^}\n",
+                            (Some(logo_line), Some(info_line)) => {
+                                writeln!(buf, "{}{}{:^}", logo_line, center_pad, info_line)?
+                            }
+                            (Some(logo_line), None) => writeln!(buf, "{}", logo_line)?,
+                            (None, Some(info_line)) => writeln!(
+                                buf,
+                                "{:<width$}{}{:^}",
                                 "",
                                 center_pad,
                                 info_line,
                                 width = logo_lines.width()
-                            )),
+                            )?,
                             (None, None) => {
                                 buf.push('\n');
                                 break;

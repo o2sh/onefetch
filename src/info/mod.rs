@@ -15,6 +15,7 @@ use regex::Regex;
 use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
+use std::fmt::Write;
 use std::str::FromStr;
 
 mod author;
@@ -349,9 +350,9 @@ impl Info {
             let author_str = author.color(self.text_colors.info);
 
             if i == 0 {
-                author_field.push_str(&format!("{}", author_str));
+                let _ = write!(author_field, "{}", author_str);
             } else {
-                author_field.push_str(&format!("\n{:<width$}{}", "", author_str, width = pad));
+                let _ = write!(author_field, "\n{:<width$}{}", "", author_str, width = pad);
             }
         }
 
@@ -420,7 +421,13 @@ impl Info {
                 format!("{} ({} %)", language, formatted_number).color(self.text_colors.info)
             );
             if i % 2 == 0 {
-                language_field.push_str(&format!("\n{:<width$}{}", "", language_str, width = pad));
+                let _ = write!(
+                    language_field,
+                    "\n{:<width$}{}",
+                    "",
+                    language_str,
+                    width = pad
+                );
             } else {
                 language_field.push_str(&language_str.to_string());
             }
