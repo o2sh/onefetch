@@ -47,7 +47,6 @@ Remarks:
 - The ascii logo's dimensions must fall below `25*40` (height\*width); The CI will fail otherwise.
 - Use `{i}` to color the ascii with `i` the color index from the `vec!` of colors defined in `define_language!`.
 - Make sure to trim any unnecessary trailing whitespaces.
-- Check ["Convert image to ASCII art"](https://github.com/o2sh/onefetch/wiki/image-to-ascii) to learn more about image to ascii conversion.
 - Optionally, you may provide a `vec!` of colors in `rgb` format as an alternative to basic colors for terminals that support [true colour](https://gist.github.com/XVilka/8346728).
 
 ### Adding support for a new package manager
