@@ -1,3 +1,11 @@
+[[bin]]
+name = "onefetch"
+path = "src/bin/onefetch.rs"
+
+[[bin]]
+name = "export-langs"
+path = "src/bin/imlazy.rs"
+
 [package]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 categories = ["command-line-utilities"]

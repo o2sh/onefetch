@@ -1,6 +1,5 @@
 use crate::cli::{self, is_truecolor_terminal, Config, When};
 use crate::info::info_field::InfoFieldOff;
-use crate::repo::Commits;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -12,6 +11,7 @@ use langs::language::Language;
 use license::Detector;
 use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
 use regex::Regex;
+use repo::Commits;
 use repo::Repo;
 use serde::ser::SerializeStruct;
 use serde::Serialize;

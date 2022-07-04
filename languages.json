@@ -1,0 +1,1771 @@
+[
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "cyan",
+        "blue"
+      ],
+      "rgb": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          0,
+          24,
+          201
+        ],
+        [
+          12,
+          10,
+          124
+        ]
+      ]
+    },
+    "name": "Ada",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan"
+      ],
+      "rgb": null
+    },
+    "name": "Assembly",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "green"
+      ],
+      "rgb": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          17,
+          152,
+          16
+        ]
+      ]
+    },
+    "name": "AutoHotKey",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "BASH",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "blue",
+        "blue",
+        "default"
+      ],
+      "rgb": [
+        [
+          93,
+          108,
+          191
+        ],
+        [
+          41,
+          54,
+          147
+        ],
+        [
+          57,
+          73,
+          170
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "C",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "yellow",
+        "yellow",
+        "yellow",
+        "yellow"
+      ],
+      "rgb": [
+        [
+          194,
+          126,
+          16
+        ],
+        [
+          221,
+          161,
+          46
+        ],
+        [
+          209,
+          145,
+          31
+        ],
+        [
+          204,
+          139,
+          24
+        ],
+        [
+          171,
+          112,
+          8
+        ]
+      ]
+    },
+    "name": "Ceylon",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "green"
+      ],
+      "rgb": null
+    },
+    "name": "Clojure",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "green",
+        "red",
+        "black"
+      ],
+      "rgb": null
+    },
+    "name": "CMake",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "CoffeeScript",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "default"
+      ],
+      "rgb": [
+        [
+          191,
+          140,
+          94
+        ],
+        [
+          213,
+          190,
+          153
+        ]
+      ]
+    },
+    "name": "Coq",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "blue",
+        "blue",
+        "default"
+      ],
+      "rgb": [
+        [
+          100,
+          154,
+          210
+        ],
+        [
+          0,
+          66,
+          131
+        ],
+        [
+          0,
+          89,
+          157
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "C++",
+    "serialization": "c++",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "black"
+      ],
+      "rgb": null
+    },
+    "name": "Crystal",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "magenta",
+        "magenta",
+        "default"
+      ],
+      "rgb": [
+        [
+          155,
+          79,
+          151
+        ],
+        [
+          103,
+          33,
+          122
+        ],
+        [
+          128,
+          55,
+          136
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "C#",
+    "serialization": "c#",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "CSS",
+    "serialization": null,
+    "type": "markup"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "D",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "cyan",
+        "blue"
+      ],
+      "rgb": [
+        [
+          0,
+          163,
+          231
+        ],
+        [
+          66,
+          223,
+          205
+        ],
+        [
+          1,
+          89,
+          125
+        ]
+      ]
+    },
+    "name": "Dart",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "default",
+        "cyan"
+      ],
+      "rgb": null
+    },
+    "name": "Dockerfile",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Emacs Lisp",
+    "serialization": "emacs-lisp",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta"
+      ],
+      "rgb": null
+    },
+    "name": "Elixir",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "green",
+        "yellow",
+        "cyan"
+      ],
+      "rgb": null
+    },
+    "name": "Elm",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "green",
+        "magenta",
+        "magenta",
+        "magenta"
+      ],
+      "rgb": [
+        [
+          119,
+          178,
+          85
+        ],
+        [
+          146,
+          102,
+          204
+        ],
+        [
+          170,
+          141,
+          216
+        ],
+        [
+          116,
+          78,
+          170
+        ]
+      ]
+    },
+    "name": "Emojicode",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "Erlang",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "yellow"
+      ],
+      "rgb": null
+    },
+    "name": "Fish",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "Forth",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "green",
+        "cyan",
+        "yellow",
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "FORTRAN Modern",
+    "serialization": "fortran",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "green",
+        "cyan",
+        "yellow",
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "FORTRAN Legacy",
+    "serialization": "fortran-legacy",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "cyan"
+      ],
+      "rgb": null
+    },
+    "name": "F#",
+    "serialization": "f#",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "default"
+      ],
+      "rgb": [
+        [
+          69,
+          141,
+          192
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "GDScript",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "default",
+        "yellow"
+      ],
+      "rgb": [
+        [
+          116,
+          205,
+          221
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          246,
+          210,
+          162
+        ]
+      ]
+    },
+    "name": "Go",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta"
+      ],
+      "rgb": null
+    },
+    "name": "GraphQL",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Groovy",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "magenta",
+        "blue"
+      ],
+      "rgb": [
+        [
+          69,
+          58,
+          98
+        ],
+        [
+          94,
+          80,
+          134
+        ],
+        [
+          143,
+          78,
+          139
+        ]
+      ]
+    },
+    "name": "Haskell",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "yellow",
+        "yellow"
+      ],
+      "rgb": [
+        [
+          250,
+          178,
+          11
+        ],
+        [
+          246,
+          153,
+          18
+        ],
+        [
+          244,
+          114,
+          22
+        ]
+      ]
+    },
+    "name": "Haxe",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta",
+        "magenta"
+      ],
+      "rgb": [
+        [
+          95,
+          67,
+          233
+        ],
+        [
+          64,
+          64,
+          178
+        ]
+      ]
+    },
+    "name": "HCL",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "cyan",
+        "default"
+      ],
+      "rgb": [
+        [
+          251,
+          254,
+          103
+        ],
+        [
+          11,
+          68,
+          157
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "HolyC",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "HTML",
+    "serialization": null,
+    "type": "markup"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "Idris",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "blue"
+      ],
+      "rgb": [
+        [
+          244,
+          67,
+          54
+        ],
+        [
+          22,
+          101,
+          192
+        ]
+      ]
+    },
+    "name": "Java",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow"
+      ],
+      "rgb": [
+        [
+          236,
+          230,
+          83
+        ]
+      ]
+    },
+    "name": "JavaScript",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "black"
+      ],
+      "rgb": null
+    },
+    "name": "JSON",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "black"
+      ],
+      "rgb": null
+    },
+    "name": "Jsonnet",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow"
+      ],
+      "rgb": null
+    },
+    "name": "JSX",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "blue",
+        "green",
+        "red",
+        "magenta"
+      ],
+      "rgb": null
+    },
+    "name": "Julia",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "yellow",
+        "default"
+      ],
+      "rgb": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          112,
+          15
+        ],
+        [
+          158,
+          158,
+          158
+        ]
+      ]
+    },
+    "name": "Jupyter Notebooks",
+    "serialization": "jupyter-notebooks",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "yellow",
+        "magenta"
+      ],
+      "rgb": null
+    },
+    "name": "Kotlin",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Lisp",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default",
+        "default"
+      ],
+      "rgb": [
+        [
+          46,
+          0,
+          127
+        ],
+        [
+          128,
+          128,
+          128
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "Lua",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": [
+        [
+          152,
+          1,
+          46
+        ]
+      ]
+    },
+    "name": "LLVM",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "red"
+      ],
+      "rgb": null
+    },
+    "name": "Markdown",
+    "serialization": null,
+    "type": "prose"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Nim",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "blue"
+      ],
+      "rgb": null
+    },
+    "name": "Nix",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "blue"
+      ],
+      "rgb": null
+    },
+    "name": "Objective-C",
+    "serialization": "objective-c",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow"
+      ],
+      "rgb": null
+    },
+    "name": "OCaml",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "green",
+        "red",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Org",
+    "serialization": null,
+    "type": "prose"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan"
+      ],
+      "rgb": null
+    },
+    "name": "Perl",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default"
+      ],
+      "rgb": [
+        [
+          119,
+          123,
+          179
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "PHP",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default"
+      ],
+      "rgb": [
+        [
+          49,
+          108,
+          185
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "PowerShell",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default"
+      ],
+      "rgb": [
+        [
+          80,
+          80,
+          80
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "Processing",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Prolog",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "blue",
+        "green",
+        "yellow"
+      ],
+      "rgb": null
+    },
+    "name": "Protocol Buffers",
+    "serialization": "protocol-buffers",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "PureScript",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "yellow"
+      ],
+      "rgb": [
+        [
+          47,
+          105,
+          162
+        ],
+        [
+          255,
+          217,
+          64
+        ]
+      ]
+    },
+    "name": "Python",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "green",
+        "default",
+        "green"
+      ],
+      "rgb": [
+        [
+          128,
+          195,
+          66
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          77,
+          117,
+          40
+        ]
+      ]
+    },
+    "name": "QML",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "blue"
+      ],
+      "rgb": null
+    },
+    "name": "R",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "default",
+        "blue"
+      ],
+      "rgb": null
+    },
+    "name": "Racket",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "red",
+        "yellow",
+        "default",
+        "green"
+      ],
+      "rgb": [
+        [
+          91,
+          0,
+          253
+        ],
+        [
+          255,
+          0,
+          94
+        ],
+        [
+          243,
+          255,
+          39
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          0,
+          255,
+          57
+        ]
+      ]
+    },
+    "name": "Rakudo",
+    "serialization": "raku",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "red",
+        "default",
+        "blue",
+        "yellow",
+        "default",
+        "magenta"
+      ],
+      "rgb": [
+        [
+          234,
+          219,
+          204
+        ],
+        [
+          255,
+          127,
+          127
+        ],
+        [
+          251,
+          238,
+          226
+        ],
+        [
+          73,
+          95,
+          142
+        ],
+        [
+          250,
+          228,
+          90
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          181,
+          163,
+          150
+        ]
+      ]
+    },
+    "name": "Ren'Py",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red"
+      ],
+      "rgb": [
+        [
+          204,
+          52,
+          45
+        ]
+      ]
+    },
+    "name": "Ruby",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "default"
+      ],
+      "rgb": [
+        [
+          228,
+          55,
+          23
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "Rust",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta"
+      ],
+      "rgb": [
+        [
+          205,
+          103,
+          153
+        ]
+      ]
+    },
+    "name": "Sass",
+    "serialization": null,
+    "type": "markup"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "red"
+      ],
+      "rgb": [
+        [
+          223,
+          63,
+          61
+        ],
+        [
+          127,
+          12,
+          29
+        ]
+      ]
+    },
+    "name": "Scala",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": [
+        [
+          85,
+          85,
+          85
+        ]
+      ]
+    },
+    "name": "Scheme",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "green"
+      ],
+      "rgb": null
+    },
+    "name": "Shell",
+    "serialization": "shell",
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "black",
+        "black",
+        "black",
+        "black"
+      ],
+      "rgb": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          46,
+          46,
+          46
+        ],
+        [
+          26,
+          26,
+          26
+        ],
+        [
+          51,
+          51,
+          51
+        ],
+        [
+          81,
+          81,
+          81
+        ]
+      ]
+    },
+    "name": "Solidity",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "yellow"
+      ],
+      "rgb": null
+    },
+    "name": "SQL",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "default"
+      ],
+      "rgb": [
+        [
+          255,
+          60,
+          0
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "Svelte",
+    "serialization": null,
+    "type": "markup"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "red",
+        "red",
+        "red",
+        "red",
+        "red",
+        "red",
+        "red",
+        "red",
+        "red"
+      ],
+      "rgb": [
+        [
+          248,
+          129,
+          52
+        ],
+        [
+          249,
+          119,
+          50
+        ],
+        [
+          249,
+          109,
+          48
+        ],
+        [
+          250,
+          99,
+          46
+        ],
+        [
+          250,
+          89,
+          44
+        ],
+        [
+          251,
+          80,
+          42
+        ],
+        [
+          251,
+          70,
+          40
+        ],
+        [
+          252,
+          60,
+          38
+        ],
+        [
+          252,
+          50,
+          36
+        ],
+        [
+          253,
+          40,
+          34
+        ]
+      ]
+    },
+    "name": "Swift",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default",
+        "cyan"
+      ],
+      "rgb": null
+    },
+    "name": "TCL",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default",
+        "black"
+      ],
+      "rgb": null
+    },
+    "name": "TeX",
+    "serialization": null,
+    "type": "markup"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "default"
+      ],
+      "rgb": [
+        [
+          156,
+          66,
+          33
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "TOML",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue"
+      ],
+      "rgb": null
+    },
+    "name": "TSX",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "cyan",
+        "default"
+      ],
+      "rgb": [
+        [
+          0,
+          122,
+          204
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "TypeScript",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Vala",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "green",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "VHDL",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "green",
+        "black",
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Vim script",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "green",
+        "blue"
+      ],
+      "rgb": null
+    },
+    "name": "Vue",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "magenta",
+        "default"
+      ],
+      "rgb": [
+        [
+          101,
+          79,
+          240
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "WebAssembly",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "red",
+        "default",
+        "black"
+      ],
+      "rgb": [
+        [
+          255,
+          10,
+          1
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "name": "Wolfram",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "blue",
+        "default"
+      ],
+      "rgb": [
+        [
+          51,
+          120,
+          206
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "name": "XAML",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow",
+        "default",
+        "green"
+      ],
+      "rgb": null
+    },
+    "name": "XML",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "YAML",
+    "serialization": null,
+    "type": "data"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "yellow"
+      ],
+      "rgb": null
+    },
+    "name": "Zig",
+    "serialization": null,
+    "type": "programming"
+  },
+  {
+    "colors": {
+      "ansi": [
+        "default"
+      ],
+      "rgb": null
+    },
+    "name": "Zsh",
+    "serialization": null,
+    "type": "programming"
+  }
+]

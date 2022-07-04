@@ -31,10 +31,30 @@ pub enum LanguageType {
     Data,
 }
 
+impl Language {
+    pub fn jsonish(&self) -> serde_json::Value {
+        serde_json::json!({
+            "name": self.to_string(),
+            "type": self.type_str(),
+            "colors": self.get_colors_json(),
+            "serialization": self.serialize(),
+        })
+    }
+
+    pub fn type_str(&self) -> &'static str {
+        match self.get_type() {
+            LanguageType::Programming => "programming",
+            LanguageType::Markup => "markup",
+            LanguageType::Prose => "prose",
+            LanguageType::Data => "data",
+        }
+    }
+}
+
 macro_rules! define_languages {
     ($( { $name:ident, $type:ident, $ascii:literal, $colors:expr, $circle_color:ident($r:expr, $g:expr, $b:expr) $(, $serialize:literal )? } ),* ,) => {
 
-        #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
         #[allow(clippy::upper_case_acronyms)]
         #[clap(rename_all = "lowercase")]
         pub enum Language {
@@ -72,6 +92,17 @@ macro_rules! define_languages {
         }
 
         impl Language {
+
+            pub fn serialize(&self) -> Option<&'static str> {
+                match self {
+                    $(
+                        $(
+                            Language::$name => Some($serialize),
+                        )*
+                    )*
+                    _ => None,
+                }
+            }
             pub fn get_ascii_art(&self) -> &str {
                 match *self {
                     $( Language::$name => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii)), )*
@@ -86,6 +117,40 @@ macro_rules! define_languages {
                   Some( true_colors ) if true_color => true_colors,
                   _ => colors.basic_colors,
                 }
+            }
+
+            pub fn get_colors_json(&self) -> serde_json::Value {
+                use owo_colors::AnsiColors::*;
+                let colors = match *self {
+                    $( Language::$name => $colors, )*
+                };
+                let basic_colors: Vec<_> = colors.basic_colors.iter().map(|c| match c {
+                    DynColors::Ansi(c) => c,
+                    _ => unreachable!("Non-ANSI basic color"),
+                })
+                .map(|c| match c {
+                    Black => "black",
+                    Red => "red",
+                    Green => "green",
+                    Yellow => "yellow",
+                    Blue => "blue",
+                    Magenta => "magenta",
+                    Cyan => "cyan",
+                    White => "white",
+                    Default => "default",
+                    _ => unreachable!("Not 3- or 4-bit color"),
+                })
+                .collect();
+                let true_colors: Option<Vec<_>> = colors.true_colors.as_ref().map(|true_colors| {
+                    true_colors.iter().map(|c| match c {
+                        DynColors::Rgb(r, g, b) => [r, g, b],
+                        _ => unreachable!("Non-RGB true color"),
+                    }).collect()
+                });
+                return serde_json::json!({
+                    "ansi": basic_colors,
+                    "rgb": true_colors,
+                });
             }
 
             pub fn get_type(&self) -> LanguageType {

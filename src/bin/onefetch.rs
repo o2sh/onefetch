@@ -1,15 +1,12 @@
 #![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
 
-use crate::cli::Config;
 use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser};
-use info::{repo, Info};
+use onefetch::cli;
+use onefetch::cli::Config;
+use onefetch::info::{repo, Info};
+use onefetch::ui::printer::Printer;
 use std::io;
-use ui::printer::Printer;
-
-mod cli;
-mod info;
-mod ui;
 
 fn main() -> Result<()> {
     #[cfg(windows)]
