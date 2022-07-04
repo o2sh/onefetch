@@ -1,0 +1,948 @@
+Ada:
+  name: Ada
+  type: programming
+  ascii: ada.ascii
+  colors:
+    ansi:
+      - default
+      - cyan
+      - blue
+    rgb:
+      - [255, 255, 255]
+      - [0, 24, 201]
+      - [12, 10, 124]
+Assembly:
+  name: Assembly
+  type: programming
+  ascii: assembly.ascii
+  colors:
+    ansi:
+      - cyan
+AutoHotKey:
+  name: AutoHotKey
+  type: programming
+  ascii: autohotkey.ascii
+  colors:
+    ansi:
+      - default
+      - green
+    rgb:
+      - [255, 255, 255]
+      - [17, 152, 16]
+Bash:
+  name: BASH
+  type: programming
+  ascii: bash.ascii
+  colors:
+    ansi:
+      - default
+C:
+  name: C
+  type: programming
+  ascii: c.ascii
+  colors:
+    ansi:
+      - cyan
+      - blue
+      - blue
+      - default
+    rgb:
+      - [93, 108, 191]
+      - [41, 54, 147]
+      - [57, 73, 170]
+      - [255, 255, 255]
+CMake:
+  name: CMake
+  type: programming
+  ascii: cmake.ascii
+  colors:
+    ansi:
+      - blue
+      - green
+      - red
+      - black
+CSharp:
+  name: C#
+  type: programming
+  ascii: csharp.ascii
+  colors:
+    ansi:
+      - blue
+      - magenta
+      - magenta
+      - default
+    rgb:
+      - [155, 79, 151]
+      - [103, 33, 122]
+      - [128, 55, 136]
+      - [255, 255, 255]
+  serialization: c#
+Ceylon:
+  name: Ceylon
+  type: programming
+  ascii: ceylon.ascii
+  colors:
+    ansi:
+      - yellow
+      - yellow
+      - yellow
+      - yellow
+      - yellow
+    rgb:
+      - [194, 126, 16]
+      - [221, 161, 46]
+      - [209, 145, 31]
+      - [204, 139, 24]
+      - [171, 112, 8]
+Clojure:
+  name: Clojure
+  type: programming
+  ascii: clojure.ascii
+  colors:
+    ansi:
+      - cyan
+      - green
+CoffeeScript:
+  name: CoffeeScript
+  type: programming
+  ascii: coffeescript.ascii
+  colors:
+    ansi:
+      - red
+Coq:
+  name: Coq
+  type: programming
+  ascii: coq.ascii
+  colors:
+    ansi:
+      - yellow
+      - default
+    rgb:
+      - [191, 140, 94]
+      - [213, 190, 153]
+Cpp:
+  name: C++
+  type: programming
+  ascii: cpp.ascii
+  colors:
+    ansi:
+      - cyan
+      - blue
+      - blue
+      - default
+    rgb:
+      - [100, 154, 210]
+      - [0, 66, 131]
+      - [0, 89, 157]
+      - [255, 255, 255]
+  serialization: c++
+Crystal:
+  name: Crystal
+  type: programming
+  ascii: crystal.ascii
+  colors:
+    ansi:
+      - default
+      - black
+Css:
+  name: CSS
+  type: markup
+  ascii: css.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+D:
+  name: D
+  type: programming
+  ascii: d.ascii
+  colors:
+    ansi:
+      - red
+Dart:
+  name: Dart
+  type: programming
+  ascii: dart.ascii
+  colors:
+    ansi:
+      - blue
+      - cyan
+      - blue
+    rgb:
+      - [0, 163, 231]
+      - [66, 223, 205]
+      - [1, 89, 125]
+Dockerfile:
+  name: Dockerfile
+  type: programming
+  ascii: dockerfile.ascii
+  colors:
+    ansi:
+      - cyan
+      - default
+      - cyan
+Elisp:
+  name: Emacs Lisp
+  type: programming
+  ascii: emacslisp.ascii
+  colors:
+    ansi:
+      - magenta
+      - default
+  serialization: emacs-lisp
+Elixir:
+  name: Elixir
+  type: programming
+  ascii: elixir.ascii
+  colors:
+    ansi:
+      - magenta
+Elm:
+  name: Elm
+  type: programming
+  ascii: elm.ascii
+  colors:
+    ansi:
+      - blue
+      - green
+      - yellow
+      - cyan
+Emojicode:
+  name: Emojicode
+  type: programming
+  ascii: emojicode.ascii
+  colors:
+    ansi:
+      - green
+      - magenta
+      - magenta
+      - magenta
+    rgb:
+      - [119, 178, 85]
+      - [146, 102, 204]
+      - [170, 141, 216]
+      - [116, 78, 170]
+Erlang:
+  name: Erlang
+  type: programming
+  ascii: erlang.ascii
+  colors:
+    ansi:
+      - red
+FSharp:
+  name: F#
+  type: programming
+  ascii: fsharp.ascii
+  colors:
+    ansi:
+      - cyan
+      - cyan
+  serialization: f#
+Fish:
+  name: Fish
+  type: programming
+  ascii: fish.ascii
+  colors:
+    ansi:
+      - red
+      - yellow
+Forth:
+  name: Forth
+  type: programming
+  ascii: forth.ascii
+  colors:
+    ansi:
+      - red
+FortranLegacy:
+  name: FORTRAN Legacy
+  type: programming
+  ascii: f77.ascii
+  colors:
+    ansi:
+      - default
+      - green
+      - cyan
+      - yellow
+      - red
+  serialization: fortran-legacy
+FortranModern:
+  name: FORTRAN Modern
+  type: programming
+  ascii: f90.ascii
+  colors:
+    ansi:
+      - default
+      - green
+      - cyan
+      - yellow
+      - red
+  serialization: fortran
+GdScript:
+  name: GDScript
+  type: programming
+  ascii: gdscript.ascii
+  colors:
+    ansi:
+      - cyan
+      - default
+    rgb:
+      - [69, 141, 192]
+      - [255, 255, 255]
+Go:
+  name: Go
+  type: programming
+  ascii: go.ascii
+  colors:
+    ansi:
+      - cyan
+      - default
+      - yellow
+    rgb:
+      - [116, 205, 221]
+      - [255, 255, 255]
+      - [246, 210, 162]
+Graphql:
+  name: GraphQL
+  type: data
+  ascii: graphql.ascii
+  colors:
+    ansi:
+      - magenta
+Groovy:
+  name: Groovy
+  type: programming
+  ascii: groovy.ascii
+  colors:
+    ansi:
+      - cyan
+      - default
+Haskell:
+  name: Haskell
+  type: programming
+  ascii: haskell.ascii
+  colors:
+    ansi:
+      - cyan
+      - magenta
+      - blue
+    rgb:
+      - [69, 58, 98]
+      - [94, 80, 134]
+      - [143, 78, 139]
+Haxe:
+  name: Haxe
+  type: programming
+  ascii: haxe.ascii
+  colors:
+    ansi:
+      - yellow
+      - yellow
+      - yellow
+    rgb:
+      - [250, 178, 11]
+      - [246, 153, 18]
+      - [244, 114, 22]
+Hcl:
+  name: HCL
+  type: programming
+  ascii: hcl.ascii
+  colors:
+    ansi:
+      - magenta
+      - magenta
+    rgb:
+      - [95, 67, 233]
+      - [64, 64, 178]
+HolyC:
+  name: HolyC
+  type: programming
+  ascii: holyc.ascii
+  colors:
+    ansi:
+      - yellow
+      - cyan
+      - default
+    rgb:
+      - [251, 254, 103]
+      - [11, 68, 157]
+      - [255, 255, 255]
+Html:
+  name: HTML
+  type: markup
+  ascii: html.ascii
+  colors:
+    ansi:
+      - red
+      - default
+Idris:
+  name: Idris
+  type: programming
+  ascii: idris.ascii
+  colors:
+    ansi:
+      - red
+Java:
+  name: Java
+  type: programming
+  ascii: java.ascii
+  colors:
+    ansi:
+      - red
+      - blue
+    rgb:
+      - [244, 67, 54]
+      - [22, 101, 192]
+JavaScript:
+  name: JavaScript
+  type: programming
+  ascii: javascript.ascii
+  colors:
+    ansi:
+      - yellow
+    rgb:
+      - [236, 230, 83]
+Json:
+  name: JSON
+  type: data
+  ascii: json.ascii
+  colors:
+    ansi:
+      - default
+      - black
+Jsonnet:
+  name: Jsonnet
+  type: programming
+  ascii: jsonnet.ascii
+  colors:
+    ansi:
+      - default
+      - black
+Jsx:
+  name: JSX
+  type: programming
+  ascii: jsx.ascii
+  colors:
+    ansi:
+      - yellow
+Julia:
+  name: Julia
+  type: programming
+  ascii: julia.ascii
+  colors:
+    ansi:
+      - default
+      - blue
+      - green
+      - red
+      - magenta
+Jupyter:
+  name: Jupyter Notebooks
+  type: programming
+  ascii: jupyter.ascii
+  colors:
+    ansi:
+      - default
+      - yellow
+      - default
+    rgb:
+      - [255, 255, 255]
+      - [255, 112, 15]
+      - [158, 158, 158]
+  serialization: jupyter-notebooks
+Kotlin:
+  name: Kotlin
+  type: programming
+  ascii: kotlin.ascii
+  colors:
+    ansi:
+      - blue
+      - yellow
+      - magenta
+LLVM:
+  name: LLVM
+  type: programming
+  ascii: llvm.ascii
+  colors:
+    ansi:
+      - red
+    rgb:
+      - [152, 1, 46]
+Lisp:
+  name: Lisp
+  type: programming
+  ascii: lisp.ascii
+  colors:
+    ansi:
+      - default
+Lua:
+  name: Lua
+  type: programming
+  ascii: lua.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+      - default
+    rgb:
+      - [46, 0, 127]
+      - [128, 128, 128]
+      - [255, 255, 255]
+Markdown:
+  name: Markdown
+  type: prose
+  ascii: markdown.ascii
+  colors:
+    ansi:
+      - default
+      - red
+Nim:
+  name: Nim
+  type: programming
+  ascii: nim.ascii
+  colors:
+    ansi:
+      - yellow
+      - default
+Nix:
+  name: Nix
+  type: programming
+  ascii: nix.ascii
+  colors:
+    ansi:
+      - cyan
+      - blue
+OCaml:
+  name: OCaml
+  type: programming
+  ascii: ocaml.ascii
+  colors:
+    ansi:
+      - yellow
+ObjectiveC:
+  name: Objective-C
+  type: programming
+  ascii: objectivec.ascii
+  colors:
+    ansi:
+      - cyan
+      - blue
+  serialization: objective-c
+Org:
+  name: Org
+  type: prose
+  ascii: org.ascii
+  colors:
+    ansi:
+      - green
+      - red
+      - default
+Perl:
+  name: Perl
+  type: programming
+  ascii: perl.ascii
+  colors:
+    ansi:
+      - cyan
+Perl6:
+  name: Rakudo
+  type: programming
+  ascii: raku.ascii
+  colors:
+    ansi:
+      - blue
+      - red
+      - yellow
+      - default
+      - green
+    rgb:
+      - [91, 0, 253]
+      - [255, 0, 94]
+      - [243, 255, 39]
+      - [255, 255, 255]
+      - [0, 255, 57]
+  serialization: raku
+Php:
+  name: PHP
+  type: programming
+  ascii: php.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+    rgb:
+      - [119, 123, 179]
+      - [255, 255, 255]
+PowerShell:
+  name: PowerShell
+  type: programming
+  ascii: powershell.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+    rgb:
+      - [49, 108, 185]
+      - [255, 255, 255]
+Processing:
+  name: Processing
+  type: programming
+  ascii: processing.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+    rgb:
+      - [80, 80, 80]
+      - [255, 255, 255]
+Prolog:
+  name: Prolog
+  type: programming
+  ascii: prolog.ascii
+  colors:
+    ansi:
+      - default
+Protobuf:
+  name: Protocol Buffers
+  type: programming
+  ascii: protobuf.ascii
+  colors:
+    ansi:
+      - red
+      - blue
+      - green
+      - yellow
+  serialization: protocol-buffers
+PureScript:
+  name: PureScript
+  type: programming
+  ascii: purescript.ascii
+  colors:
+    ansi:
+      - default
+Python:
+  name: Python
+  type: programming
+  ascii: python.ascii
+  colors:
+    ansi:
+      - blue
+      - yellow
+    rgb:
+      - [47, 105, 162]
+      - [255, 217, 64]
+Qml:
+  name: QML
+  type: programming
+  ascii: qml.ascii
+  colors:
+    ansi:
+      - green
+      - default
+      - green
+    rgb:
+      - [128, 195, 66]
+      - [255, 255, 255]
+      - [77, 117, 40]
+R:
+  name: R
+  type: programming
+  ascii: r.ascii
+  colors:
+    ansi:
+      - default
+      - blue
+Racket:
+  name: Racket
+  type: programming
+  ascii: racket.ascii
+  colors:
+    ansi:
+      - red
+      - default
+      - blue
+Renpy:
+  name: Ren'Py
+  type: programming
+  ascii: renpy.ascii
+  colors:
+    ansi:
+      - default
+      - red
+      - default
+      - blue
+      - yellow
+      - default
+      - magenta
+    rgb:
+      - [234, 219, 204]
+      - [255, 127, 127]
+      - [251, 238, 226]
+      - [73, 95, 142]
+      - [250, 228, 90]
+      - [255, 255, 255]
+      - [181, 163, 150]
+Ruby:
+  name: Ruby
+  type: programming
+  ascii: ruby.ascii
+  colors:
+    ansi:
+      - red
+    rgb:
+      - [204, 52, 45]
+Rust:
+  name: Rust
+  type: programming
+  ascii: rust.ascii
+  colors:
+    ansi:
+      - red
+      - default
+    rgb:
+      - [228, 55, 23]
+      - [255, 255, 255]
+Sass:
+  name: Sass
+  type: markup
+  ascii: sass.ascii
+  colors:
+    ansi:
+      - magenta
+    rgb:
+      - [205, 103, 153]
+Scala:
+  name: Scala
+  type: programming
+  ascii: scala.ascii
+  colors:
+    ansi:
+      - red
+      - red
+    rgb:
+      - [223, 63, 61]
+      - [127, 12, 29]
+Scheme:
+  name: Scheme
+  type: programming
+  ascii: scheme.ascii
+  colors:
+    ansi:
+      - default
+    rgb:
+      - [85, 85, 85]
+Sh:
+  name: Shell
+  type: programming
+  ascii: shell.ascii
+  colors:
+    ansi:
+      - green
+  serialization: shell
+Solidity:
+  name: Solidity
+  type: programming
+  ascii: solidity.ascii
+  colors:
+    ansi:
+      - default
+      - black
+      - black
+      - black
+      - black
+    rgb:
+      - [255, 255, 255]
+      - [46, 46, 46]
+      - [26, 26, 26]
+      - [51, 51, 51]
+      - [81, 81, 81]
+Sql:
+  name: SQL
+  type: data
+  ascii: sql.ascii
+  colors:
+    ansi:
+      - cyan
+      - yellow
+Svelte:
+  name: Svelte
+  type: markup
+  ascii: svelte.ascii
+  colors:
+    ansi:
+      - red
+      - default
+    rgb:
+      - [255, 60, 0]
+      - [255, 255, 255]
+Swift:
+  name: Swift
+  type: programming
+  ascii: swift.ascii
+  colors:
+    ansi:
+      - red
+      - red
+      - red
+      - red
+      - red
+      - red
+      - red
+      - red
+      - red
+      - red
+    rgb:
+      - [248, 129, 52]
+      - [249, 119, 50]
+      - [249, 109, 48]
+      - [250, 99, 46]
+      - [250, 89, 44]
+      - [251, 80, 42]
+      - [251, 70, 40]
+      - [252, 60, 38]
+      - [252, 50, 36]
+      - [253, 40, 34]
+Tcl:
+  name: TCL
+  type: programming
+  ascii: tcl.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+      - cyan
+Tex:
+  name: TeX
+  type: markup
+  ascii: tex.ascii
+  colors:
+    ansi:
+      - default
+      - black
+Toml:
+  name: TOML
+  type: data
+  ascii: toml.ascii
+  colors:
+    ansi:
+      - red
+      - default
+    rgb:
+      - [156, 66, 33]
+      - [255, 255, 255]
+Tsx:
+  name: TSX
+  type: programming
+  ascii: tsx.ascii
+  colors:
+    ansi:
+      - blue
+TypeScript:
+  name: TypeScript
+  type: programming
+  ascii: typescript.ascii
+  colors:
+    ansi:
+      - cyan
+      - default
+    rgb:
+      - [0, 122, 204]
+      - [255, 255, 255]
+Vala:
+  name: Vala
+  type: programming
+  ascii: vala.ascii
+  colors:
+    ansi:
+      - magenta
+      - default
+Vhdl:
+  name: VHDL
+  type: programming
+  ascii: vhdl.ascii
+  colors:
+    ansi:
+      - yellow
+      - green
+      - default
+VimScript:
+  name: Vim script
+  type: programming
+  ascii: vimscript.ascii
+  colors:
+    ansi:
+      - green
+      - black
+      - default
+Vue:
+  name: Vue
+  type: programming
+  ascii: vue.ascii
+  colors:
+    ansi:
+      - green
+      - blue
+WebAssembly:
+  name: WebAssembly
+  type: programming
+  ascii: webassembly.ascii
+  colors:
+    ansi:
+      - magenta
+      - default
+    rgb:
+      - [101, 79, 240]
+      - [255, 255, 255]
+Wolfram:
+  name: Wolfram
+  type: programming
+  ascii: wolfram.ascii
+  colors:
+    ansi:
+      - red
+      - default
+      - black
+    rgb:
+      - [255, 10, 1]
+      - [255, 255, 255]
+      - [0, 0, 0]
+Xaml:
+  name: XAML
+  type: data
+  ascii: xaml.ascii
+  colors:
+    ansi:
+      - blue
+      - default
+    rgb:
+      - [51, 120, 206]
+      - [255, 255, 255]
+Xml:
+  name: XML
+  type: data
+  ascii: xml.ascii
+  colors:
+    ansi:
+      - yellow
+      - default
+      - green
+Yaml:
+  name: YAML
+  type: data
+  ascii: yaml.ascii
+  colors:
+    ansi:
+      - default
+Zig:
+  name: Zig
+  type: programming
+  ascii: zig.ascii
+  colors:
+    ansi:
+      - yellow
+Zsh:
+  name: Zsh
+  type: programming
+  ascii: zsh.ascii
+  colors:
+    ansi:
+      - default

@@ -1,11 +1,3 @@
-[[bin]]
-name = "onefetch"
-path = "src/bin/onefetch.rs"
-
-[[bin]]
-name = "export-langs"
-path = "src/bin/imlazy.rs"
-
 [package]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 categories = ["command-line-utilities"]
@@ -70,6 +62,11 @@ libc = "0.2.126"
 [dev-dependencies]
 more-asserts = "0.3.0"
 paste = "1.0.7"
+
+[build-dependencies]
+serde_json = "1"
+serde_yaml = "0.8"
+tera = { version = "1", default-features = false }
 
 [features]
 fail-on-deprecated = []

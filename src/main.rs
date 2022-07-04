@@ -2,11 +2,10 @@
 
 use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser};
-use onefetch::cli;
-use onefetch::cli::Config;
-use onefetch::info::{repo, Info};
-use onefetch::ui::printer::Printer;
+use cli::Config;
+use info::{repo, Info};
 use std::io;
+use ui::printer::Printer;
 
 fn main() -> Result<()> {
     #[cfg(windows)]
@@ -40,3 +39,7 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+
+mod cli;
+mod info;
+mod ui;

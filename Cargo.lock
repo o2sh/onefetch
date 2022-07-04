@@ -1715,6 +1715,7 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "strum",
+ "tera",
  "term_size",
  "time",
  "time-humanize",
