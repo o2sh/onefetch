@@ -37,6 +37,7 @@ impl Language {
         let json = serde_json::json!({
             "name": self.to_string(),
             "type": self.type_str(),
+            "ascii": self.get_ascii_name(),
             "colors": self.get_colors_json(),
             "serialization": self.serialize(),
         });
@@ -108,6 +109,12 @@ macro_rules! define_languages {
             pub fn get_ascii_art(&self) -> &str {
                 match *self {
                     $( Language::$name => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii)), )*
+                }
+            }
+
+            pub fn get_ascii_name(&self) -> &'static str {
+                match *self {
+                    $( Language::$name => $ascii, )*
                 }
             }
 

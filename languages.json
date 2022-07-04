@@ -1,5 +1,6 @@
 {
   "Ada": {
+    "ascii": "ada.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -29,6 +30,7 @@
     "type": "programming"
   },
   "Assembly": {
+    "ascii": "assembly.ascii",
     "colors": {
       "ansi": [
         "cyan"
@@ -40,6 +42,7 @@
     "type": "programming"
   },
   "AutoHotKey": {
+    "ascii": "autohotkey.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -63,6 +66,7 @@
     "type": "programming"
   },
   "Bash": {
+    "ascii": "bash.ascii",
     "colors": {
       "ansi": [
         "default"
@@ -74,6 +78,7 @@
     "type": "programming"
   },
   "C": {
+    "ascii": "c.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -109,6 +114,7 @@
     "type": "programming"
   },
   "CMake": {
+    "ascii": "cmake.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -123,6 +129,7 @@
     "type": "programming"
   },
   "CSharp": {
+    "ascii": "csharp.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -158,6 +165,7 @@
     "type": "programming"
   },
   "Ceylon": {
+    "ascii": "ceylon.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -199,6 +207,7 @@
     "type": "programming"
   },
   "Clojure": {
+    "ascii": "clojure.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -211,6 +220,7 @@
     "type": "programming"
   },
   "CoffeeScript": {
+    "ascii": "coffeescript.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -222,6 +232,7 @@
     "type": "programming"
   },
   "Coq": {
+    "ascii": "coq.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -245,6 +256,7 @@
     "type": "programming"
   },
   "Cpp": {
+    "ascii": "cpp.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -280,6 +292,7 @@
     "type": "programming"
   },
   "Crystal": {
+    "ascii": "crystal.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -292,6 +305,7 @@
     "type": "programming"
   },
   "Css": {
+    "ascii": "css.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -304,6 +318,7 @@
     "type": "markup"
   },
   "D": {
+    "ascii": "d.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -315,6 +330,7 @@
     "type": "programming"
   },
   "Dart": {
+    "ascii": "dart.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -344,6 +360,7 @@
     "type": "programming"
   },
   "Dockerfile": {
+    "ascii": "dockerfile.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -357,6 +374,7 @@
     "type": "programming"
   },
   "Elisp": {
+    "ascii": "emacslisp.ascii",
     "colors": {
       "ansi": [
         "magenta",
@@ -369,6 +387,7 @@
     "type": "programming"
   },
   "Elixir": {
+    "ascii": "elixir.ascii",
     "colors": {
       "ansi": [
         "magenta"
@@ -380,6 +399,7 @@
     "type": "programming"
   },
   "Elm": {
+    "ascii": "elm.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -394,6 +414,7 @@
     "type": "programming"
   },
   "Emojicode": {
+    "ascii": "emojicode.ascii",
     "colors": {
       "ansi": [
         "green",
@@ -429,6 +450,7 @@
     "type": "programming"
   },
   "Erlang": {
+    "ascii": "erlang.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -440,6 +462,7 @@
     "type": "programming"
   },
   "FSharp": {
+    "ascii": "fsharp.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -452,6 +475,7 @@
     "type": "programming"
   },
   "Fish": {
+    "ascii": "fish.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -464,6 +488,7 @@
     "type": "programming"
   },
   "Forth": {
+    "ascii": "forth.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -475,6 +500,7 @@
     "type": "programming"
   },
   "FortranLegacy": {
+    "ascii": "f77.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -490,6 +516,7 @@
     "type": "programming"
   },
   "FortranModern": {
+    "ascii": "f90.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -505,6 +532,7 @@
     "type": "programming"
   },
   "GdScript": {
+    "ascii": "gdscript.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -528,6 +556,7 @@
     "type": "programming"
   },
   "Go": {
+    "ascii": "go.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -557,6 +586,7 @@
     "type": "programming"
   },
   "Graphql": {
+    "ascii": "graphql.ascii",
     "colors": {
       "ansi": [
         "magenta"
@@ -568,6 +598,7 @@
     "type": "data"
   },
   "Groovy": {
+    "ascii": "groovy.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -580,6 +611,7 @@
     "type": "programming"
   },
   "Haskell": {
+    "ascii": "haskell.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -609,6 +641,7 @@
     "type": "programming"
   },
   "Haxe": {
+    "ascii": "haxe.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -638,6 +671,7 @@
     "type": "programming"
   },
   "Hcl": {
+    "ascii": "hcl.ascii",
     "colors": {
       "ansi": [
         "magenta",
@@ -661,6 +695,7 @@
     "type": "programming"
   },
   "HolyC": {
+    "ascii": "holyc.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -690,6 +725,7 @@
     "type": "programming"
   },
   "Html": {
+    "ascii": "html.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -702,6 +738,7 @@
     "type": "markup"
   },
   "Idris": {
+    "ascii": "idris.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -713,6 +750,7 @@
     "type": "programming"
   },
   "Java": {
+    "ascii": "java.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -736,6 +774,7 @@
     "type": "programming"
   },
   "JavaScript": {
+    "ascii": "javascript.ascii",
     "colors": {
       "ansi": [
         "yellow"
@@ -753,6 +792,7 @@
     "type": "programming"
   },
   "Json": {
+    "ascii": "json.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -765,6 +805,7 @@
     "type": "data"
   },
   "Jsonnet": {
+    "ascii": "jsonnet.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -777,6 +818,7 @@
     "type": "programming"
   },
   "Jsx": {
+    "ascii": "jsx.ascii",
     "colors": {
       "ansi": [
         "yellow"
@@ -788,6 +830,7 @@
     "type": "programming"
   },
   "Julia": {
+    "ascii": "julia.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -803,6 +846,7 @@
     "type": "programming"
   },
   "Jupyter": {
+    "ascii": "jupyter.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -832,6 +876,7 @@
     "type": "programming"
   },
   "Kotlin": {
+    "ascii": "kotlin.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -845,6 +890,7 @@
     "type": "programming"
   },
   "LLVM": {
+    "ascii": "llvm.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -862,6 +908,7 @@
     "type": "programming"
   },
   "Lisp": {
+    "ascii": "lisp.ascii",
     "colors": {
       "ansi": [
         "default"
@@ -873,6 +920,7 @@
     "type": "programming"
   },
   "Lua": {
+    "ascii": "lua.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -902,6 +950,7 @@
     "type": "programming"
   },
   "Markdown": {
+    "ascii": "markdown.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -914,6 +963,7 @@
     "type": "prose"
   },
   "Nim": {
+    "ascii": "nim.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -926,6 +976,7 @@
     "type": "programming"
   },
   "Nix": {
+    "ascii": "nix.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -938,6 +989,7 @@
     "type": "programming"
   },
   "OCaml": {
+    "ascii": "ocaml.ascii",
     "colors": {
       "ansi": [
         "yellow"
@@ -949,6 +1001,7 @@
     "type": "programming"
   },
   "ObjectiveC": {
+    "ascii": "objectivec.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -961,6 +1014,7 @@
     "type": "programming"
   },
   "Org": {
+    "ascii": "org.ascii",
     "colors": {
       "ansi": [
         "green",
@@ -974,6 +1028,7 @@
     "type": "prose"
   },
   "Perl": {
+    "ascii": "perl.ascii",
     "colors": {
       "ansi": [
         "cyan"
@@ -985,6 +1040,7 @@
     "type": "programming"
   },
   "Perl6": {
+    "ascii": "raku.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1026,6 +1082,7 @@
     "type": "programming"
   },
   "Php": {
+    "ascii": "php.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1049,6 +1106,7 @@
     "type": "programming"
   },
   "PowerShell": {
+    "ascii": "powershell.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1072,6 +1130,7 @@
     "type": "programming"
   },
   "Processing": {
+    "ascii": "processing.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1095,6 +1154,7 @@
     "type": "programming"
   },
   "Prolog": {
+    "ascii": "prolog.ascii",
     "colors": {
       "ansi": [
         "default"
@@ -1106,6 +1166,7 @@
     "type": "programming"
   },
   "Protobuf": {
+    "ascii": "protobuf.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1120,6 +1181,7 @@
     "type": "programming"
   },
   "PureScript": {
+    "ascii": "purescript.ascii",
     "colors": {
       "ansi": [
         "default"
@@ -1131,6 +1193,7 @@
     "type": "programming"
   },
   "Python": {
+    "ascii": "python.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1154,6 +1217,7 @@
     "type": "programming"
   },
   "Qml": {
+    "ascii": "qml.ascii",
     "colors": {
       "ansi": [
         "green",
@@ -1183,6 +1247,7 @@
     "type": "programming"
   },
   "R": {
+    "ascii": "r.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -1195,6 +1260,7 @@
     "type": "programming"
   },
   "Racket": {
+    "ascii": "racket.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1208,6 +1274,7 @@
     "type": "programming"
   },
   "Renpy": {
+    "ascii": "renpy.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -1261,6 +1328,7 @@
     "type": "programming"
   },
   "Ruby": {
+    "ascii": "ruby.ascii",
     "colors": {
       "ansi": [
         "red"
@@ -1278,6 +1346,7 @@
     "type": "programming"
   },
   "Rust": {
+    "ascii": "rust.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1301,6 +1370,7 @@
     "type": "programming"
   },
   "Sass": {
+    "ascii": "sass.ascii",
     "colors": {
       "ansi": [
         "magenta"
@@ -1318,6 +1388,7 @@
     "type": "markup"
   },
   "Scala": {
+    "ascii": "scala.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1341,6 +1412,7 @@
     "type": "programming"
   },
   "Scheme": {
+    "ascii": "scheme.ascii",
     "colors": {
       "ansi": [
         "default"
@@ -1358,6 +1430,7 @@
     "type": "programming"
   },
   "Sh": {
+    "ascii": "shell.ascii",
     "colors": {
       "ansi": [
         "green"
@@ -1369,6 +1442,7 @@
     "type": "programming"
   },
   "Solidity": {
+    "ascii": "solidity.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -1410,6 +1484,7 @@
     "type": "programming"
   },
   "Sql": {
+    "ascii": "sql.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -1422,6 +1497,7 @@
     "type": "data"
   },
   "Svelte": {
+    "ascii": "svelte.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1445,6 +1521,7 @@
     "type": "markup"
   },
   "Swift": {
+    "ascii": "swift.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1516,6 +1593,7 @@
     "type": "programming"
   },
   "Tcl": {
+    "ascii": "tcl.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1529,6 +1607,7 @@
     "type": "programming"
   },
   "Tex": {
+    "ascii": "tex.ascii",
     "colors": {
       "ansi": [
         "default",
@@ -1541,6 +1620,7 @@
     "type": "markup"
   },
   "Toml": {
+    "ascii": "toml.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1564,6 +1644,7 @@
     "type": "data"
   },
   "Tsx": {
+    "ascii": "tsx.ascii",
     "colors": {
       "ansi": [
         "blue"
@@ -1575,6 +1656,7 @@
     "type": "programming"
   },
   "TypeScript": {
+    "ascii": "typescript.ascii",
     "colors": {
       "ansi": [
         "cyan",
@@ -1598,6 +1680,7 @@
     "type": "programming"
   },
   "Vala": {
+    "ascii": "vala.ascii",
     "colors": {
       "ansi": [
         "magenta",
@@ -1610,6 +1693,7 @@
     "type": "programming"
   },
   "Vhdl": {
+    "ascii": "vhdl.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -1623,6 +1707,7 @@
     "type": "programming"
   },
   "VimScript": {
+    "ascii": "vimscript.ascii",
     "colors": {
       "ansi": [
         "green",
@@ -1636,6 +1721,7 @@
     "type": "programming"
   },
   "Vue": {
+    "ascii": "vue.ascii",
     "colors": {
       "ansi": [
         "green",
@@ -1648,6 +1734,7 @@
     "type": "programming"
   },
   "WebAssembly": {
+    "ascii": "webassembly.ascii",
     "colors": {
       "ansi": [
         "magenta",
@@ -1671,6 +1758,7 @@
     "type": "programming"
   },
   "Wolfram": {
+    "ascii": "wolfram.ascii",
     "colors": {
       "ansi": [
         "red",
@@ -1700,6 +1788,7 @@
     "type": "programming"
   },
   "Xaml": {
+    "ascii": "xaml.ascii",
     "colors": {
       "ansi": [
         "blue",
@@ -1723,6 +1812,7 @@
     "type": "data"
   },
   "Xml": {
+    "ascii": "xml.ascii",
     "colors": {
       "ansi": [
         "yellow",
@@ -1736,6 +1826,7 @@
     "type": "data"
   },
   "Yaml": {
+    "ascii": "yaml.ascii",
     "colors": {
       "ansi": [
         "default"
@@ -1747,6 +1838,7 @@
     "type": "data"
   },
   "Zig": {
+    "ascii": "zig.ascii",
     "colors": {
       "ansi": [
         "yellow"
@@ -1758,6 +1850,7 @@
     "type": "programming"
   },
   "Zsh": {
+    "ascii": "zsh.ascii",
     "colors": {
       "ansi": [
         "default"
