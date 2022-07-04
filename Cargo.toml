@@ -31,7 +31,7 @@ anyhow = "1.0.57"
 askalono = "0.4.5"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
-clap = {version = "3.2.5", features = ["derive"]}
+clap = {version = "3.2.8", features = ["derive"]}
 clap_complete = "3.2.1"
 color_quant = "1.1.0"
 git-repository = {version = "0.19.0", features = ["max-performance", "unstable", "serde1"]}
