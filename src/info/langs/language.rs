@@ -32,13 +32,15 @@ pub enum LanguageType {
 }
 
 impl Language {
-    pub fn jsonish(&self) -> serde_json::Value {
-        serde_json::json!({
+    pub fn jsonish(&self) -> (&'static str, serde_json::Value) {
+        let value = self.get_value_name();
+        let json = serde_json::json!({
             "name": self.to_string(),
             "type": self.type_str(),
             "colors": self.get_colors_json(),
             "serialization": self.serialize(),
-        })
+        });
+        return (value, json);
     }
 
     pub fn type_str(&self) -> &'static str {
@@ -106,6 +108,12 @@ macro_rules! define_languages {
             pub fn get_ascii_art(&self) -> &str {
                 match *self {
                     $( Language::$name => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", $ascii)), )*
+                }
+            }
+
+            pub fn get_value_name(&self) -> &'static str {
+                match *self {
+                    $( Language::$name => stringify!($name), )*
                 }
             }
 
