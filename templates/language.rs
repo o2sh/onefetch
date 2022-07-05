@@ -7,9 +7,6 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
-// TODO Render Rust code
-// Register filters to convert string values to Rust values (e.g. colors)
-
 #[derive(Clone, PartialEq, clap::ValueEnum)]
 pub enum LanguageType {
     Programming,
