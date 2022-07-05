@@ -51,32 +51,6 @@ C:
       - [41, 54, 147]
       - [57, 73, 170]
       - [255, 255, 255]
-CMake:
-  name: CMake
-  type: programming
-  ascii: cmake.ascii
-  colors:
-    ansi:
-      - blue
-      - green
-      - red
-      - black
-CSharp:
-  name: C#
-  type: programming
-  ascii: csharp.ascii
-  colors:
-    ansi:
-      - blue
-      - magenta
-      - magenta
-      - default
-    rgb:
-      - [155, 79, 151]
-      - [103, 33, 122]
-      - [128, 55, 136]
-      - [255, 255, 255]
-  serialization: c#
 Ceylon:
   name: Ceylon
   type: programming
@@ -102,6 +76,16 @@ Clojure:
     ansi:
       - cyan
       - green
+CMake:
+  name: CMake
+  type: programming
+  ascii: cmake.ascii
+  colors:
+    ansi:
+      - blue
+      - green
+      - red
+      - black
 CoffeeScript:
   name: CoffeeScript
   type: programming
@@ -144,6 +128,22 @@ Crystal:
     ansi:
       - default
       - black
+CSharp:
+  name: C#
+  type: programming
+  ascii: csharp.ascii
+  colors:
+    ansi:
+      - blue
+      - magenta
+      - magenta
+      - default
+    rgb:
+      - [155, 79, 151]
+      - [103, 33, 122]
+      - [128, 55, 136]
+      - [255, 255, 255]
+  serialization: c#
 Css:
   name: CSS
   type: markup
@@ -229,15 +229,6 @@ Erlang:
   colors:
     ansi:
       - red
-FSharp:
-  name: F#
-  type: programming
-  ascii: fsharp.ascii
-  colors:
-    ansi:
-      - cyan
-      - cyan
-  serialization: f#
 Fish:
   name: Fish
   type: programming
@@ -277,6 +268,15 @@ FortranModern:
       - yellow
       - red
   serialization: fortran
+FSharp:
+  name: F#
+  type: programming
+  ascii: fsharp.ascii
+  colors:
+    ansi:
+      - cyan
+      - cyan
+  serialization: f#
 GdScript:
   name: GDScript
   type: programming
@@ -458,6 +458,13 @@ Kotlin:
       - blue
       - yellow
       - magenta
+Lisp:
+  name: Lisp
+  type: programming
+  ascii: lisp.ascii
+  colors:
+    ansi:
+      - default
 LLVM:
   name: LLVM
   type: programming
@@ -467,13 +474,6 @@ LLVM:
       - red
     rgb:
       - [152, 1, 46]
-Lisp:
-  name: Lisp
-  type: programming
-  ascii: lisp.ascii
-  colors:
-    ansi:
-      - default
 Lua:
   name: Lua
   type: programming
@@ -511,13 +511,6 @@ Nix:
     ansi:
       - cyan
       - blue
-OCaml:
-  name: OCaml
-  type: programming
-  ascii: ocaml.ascii
-  colors:
-    ansi:
-      - yellow
 ObjectiveC:
   name: Objective-C
   type: programming
@@ -527,6 +520,13 @@ ObjectiveC:
       - cyan
       - blue
   serialization: objective-c
+OCaml:
+  name: OCaml
+  type: programming
+  ascii: ocaml.ascii
+  colors:
+    ansi:
+      - yellow
 Org:
   name: Org
   type: prose
