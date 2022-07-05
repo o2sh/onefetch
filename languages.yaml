@@ -1,5 +1,4 @@
 Ada:
-  name: Ada
   type: programming
   ascii: ada.ascii
   colors:
@@ -13,7 +12,6 @@ Ada:
       - [12, 10, 124]
     chip: [2, 248, 140]
 Assembly:
-  name: Assembly
   type: programming
   ascii: assembly.ascii
   colors:
@@ -21,7 +19,6 @@ Assembly:
       - cyan
     chip: [110, 76, 19]
 AutoHotKey:
-  name: AutoHotKey
   type: programming
   ascii: autohotkey.ascii
   colors:
@@ -33,7 +30,6 @@ AutoHotKey:
       - [17, 152, 16]
     chip: [101, 148, 185]
 Bash:
-  name: BASH
   type: programming
   ascii: bash.ascii
   colors:
@@ -41,7 +37,6 @@ Bash:
       - default
     chip: [137, 224, 81]
 C:
-  name: C
   type: programming
   ascii: c.ascii
   colors:
@@ -57,7 +52,6 @@ C:
       - [255, 255, 255]
     chip: [85, 85, 85]
 Ceylon:
-  name: Ceylon
   type: programming
   ascii: ceylon.ascii
   colors:
@@ -75,7 +69,6 @@ Ceylon:
       - [171, 112, 8]
     chip: [223, 165, 53]
 Clojure:
-  name: Clojure
   type: programming
   ascii: clojure.ascii
   colors:
@@ -84,7 +77,6 @@ Clojure:
       - green
     chip: [219, 88, 85]
 CMake:
-  name: CMake
   type: programming
   ascii: cmake.ascii
   colors:
@@ -95,7 +87,6 @@ CMake:
       - black
     chip: [218, 52, 52]
 CoffeeScript:
-  name: CoffeeScript
   type: programming
   ascii: coffeescript.ascii
   colors:
@@ -103,7 +94,6 @@ CoffeeScript:
       - red
     chip: [36, 71, 118]
 Coq:
-  name: Coq
   type: programming
   ascii: coq.ascii
   colors:
@@ -115,7 +105,6 @@ Coq:
       - [213, 190, 153]
     chip: [208, 182, 140]
 Cpp:
-  name: C++
   type: programming
   ascii: cpp.ascii
   colors:
@@ -132,7 +121,6 @@ Cpp:
     chip: [243, 75, 125]
   serialization: c++
 Crystal:
-  name: Crystal
   type: programming
   ascii: crystal.ascii
   colors:
@@ -141,7 +129,6 @@ Crystal:
       - black
     chip: [0, 1, 0]
 CSharp:
-  name: C#
   type: programming
   ascii: csharp.ascii
   colors:
@@ -158,7 +145,6 @@ CSharp:
     chip: [23, 134, 0]
   serialization: c#
 Css:
-  name: CSS
   type: markup
   ascii: css.ascii
   colors:
@@ -167,7 +153,6 @@ Css:
       - default
     chip: [86, 61, 124]
 D:
-  name: D
   type: programming
   ascii: d.ascii
   colors:
@@ -175,7 +160,6 @@ D:
       - red
     chip: [186, 89, 94]
 Dart:
-  name: Dart
   type: programming
   ascii: dart.ascii
   colors:
@@ -189,7 +173,6 @@ Dart:
       - [1, 89, 125]
     chip: [0, 180, 171]
 Dockerfile:
-  name: Dockerfile
   type: programming
   ascii: dockerfile.ascii
   colors:
@@ -199,7 +182,6 @@ Dockerfile:
       - cyan
     chip: [56, 77, 84]
 Elisp:
-  name: Emacs Lisp
   type: programming
   ascii: emacslisp.ascii
   colors:
@@ -209,7 +191,6 @@ Elisp:
     chip: [192, 101, 219]
   serialization: emacs-lisp
 Elixir:
-  name: Elixir
   type: programming
   ascii: elixir.ascii
   colors:
@@ -217,7 +198,6 @@ Elixir:
       - magenta
     chip: [110, 74, 126]
 Elm:
-  name: Elm
   type: programming
   ascii: elm.ascii
   colors:
@@ -228,7 +208,6 @@ Elm:
       - cyan
     chip: [96, 181, 204]
 Emojicode:
-  name: Emojicode
   type: programming
   ascii: emojicode.ascii
   colors:
@@ -244,7 +223,6 @@ Emojicode:
       - [116, 78, 170]
     chip: [96, 181, 204]
 Erlang:
-  name: Erlang
   type: programming
   ascii: erlang.ascii
   colors:
@@ -252,7 +230,6 @@ Erlang:
       - red
     chip: [184, 57, 152]
 Fish:
-  name: Fish
   type: programming
   ascii: fish.ascii
   colors:
@@ -261,7 +238,6 @@ Fish:
       - yellow
     chip: [74, 174, 71]
 Forth:
-  name: Forth
   type: programming
   ascii: forth.ascii
   colors:
@@ -269,7 +245,6 @@ Forth:
       - red
     chip: [52, 23, 8]
 FortranLegacy:
-  name: FORTRAN Legacy
   type: programming
   ascii: f77.ascii
   colors:
@@ -282,7 +257,6 @@ FortranLegacy:
     chip: [77, 65, 177]
   serialization: fortran-legacy
 FortranModern:
-  name: FORTRAN Modern
   type: programming
   ascii: f90.ascii
   colors:
@@ -295,7 +269,6 @@ FortranModern:
     chip: [77, 65, 177]
   serialization: fortran
 FSharp:
-  name: F#
   type: programming
   ascii: fsharp.ascii
   colors:
@@ -305,7 +278,6 @@ FSharp:
     chip: [184, 69, 252]
   serialization: f#
 GdScript:
-  name: GDScript
   type: programming
   ascii: gdscript.ascii
   colors:
@@ -317,7 +289,6 @@ GdScript:
       - [255, 255, 255]
     chip: [53, 85, 112]
 Go:
-  name: Go
   type: programming
   ascii: go.ascii
   colors:
@@ -331,7 +302,6 @@ Go:
       - [246, 210, 162]
     chip: [0, 173, 216]
 Graphql:
-  name: GraphQL
   type: data
   ascii: graphql.ascii
   colors:
@@ -339,7 +309,6 @@ Graphql:
       - magenta
     chip: [225, 0, 152]
 Groovy:
-  name: Groovy
   type: programming
   ascii: groovy.ascii
   colors:
@@ -348,7 +317,6 @@ Groovy:
       - default
     chip: [66, 152, 184]
 Haskell:
-  name: Haskell
   type: programming
   ascii: haskell.ascii
   colors:
@@ -362,7 +330,6 @@ Haskell:
       - [143, 78, 139]
     chip: [94, 80, 134]
 Haxe:
-  name: Haxe
   type: programming
   ascii: haxe.ascii
   colors:
@@ -376,7 +343,6 @@ Haxe:
       - [244, 114, 22]
     chip: [223, 121, 0]
 Hcl:
-  name: HCL
   type: programming
   ascii: hcl.ascii
   colors:
@@ -388,7 +354,6 @@ Hcl:
       - [64, 64, 178]
     chip: [170, 206, 96]
 HolyC:
-  name: HolyC
   type: programming
   ascii: holyc.ascii
   colors:
@@ -402,7 +367,6 @@ HolyC:
       - [255, 255, 255]
     chip: [255, 239, 175]
 Html:
-  name: HTML
   type: markup
   ascii: html.ascii
   colors:
@@ -411,7 +375,6 @@ Html:
       - default
     chip: [227, 76, 38]
 Idris:
-  name: Idris
   type: programming
   ascii: idris.ascii
   colors:
@@ -419,7 +382,6 @@ Idris:
       - red
     chip: [179, 0, 0]
 Java:
-  name: Java
   type: programming
   ascii: java.ascii
   colors:
@@ -431,7 +393,6 @@ Java:
       - [22, 101, 192]
     chip: [176, 114, 25]
 JavaScript:
-  name: JavaScript
   type: programming
   ascii: javascript.ascii
   colors:
@@ -441,7 +402,6 @@ JavaScript:
       - [236, 230, 83]
     chip: [241, 224, 90]
 Json:
-  name: JSON
   type: data
   ascii: json.ascii
   colors:
@@ -450,7 +410,6 @@ Json:
       - black
     chip: [41, 41, 41]
 Jsonnet:
-  name: Jsonnet
   type: programming
   ascii: jsonnet.ascii
   colors:
@@ -459,7 +418,6 @@ Jsonnet:
       - black
     chip: [0, 100, 189]
 Jsx:
-  name: JSX
   type: programming
   ascii: jsx.ascii
   colors:
@@ -467,7 +425,6 @@ Jsx:
       - yellow
     chip: [241, 224, 90]
 Julia:
-  name: Julia
   type: programming
   ascii: julia.ascii
   colors:
@@ -479,7 +436,6 @@ Julia:
       - magenta
     chip: [162, 112, 186]
 Jupyter:
-  name: Jupyter Notebooks
   type: programming
   ascii: jupyter.ascii
   colors:
@@ -494,7 +450,6 @@ Jupyter:
     chip: [218, 91, 11]
   serialization: jupyter-notebooks
 Kotlin:
-  name: Kotlin
   type: programming
   ascii: kotlin.ascii
   colors:
@@ -504,7 +459,6 @@ Kotlin:
       - magenta
     chip: [169, 123, 255]
 Lisp:
-  name: Lisp
   type: programming
   ascii: lisp.ascii
   colors:
@@ -512,7 +466,6 @@ Lisp:
       - default
     chip: [63, 182, 139]
 LLVM:
-  name: LLVM
   type: programming
   ascii: llvm.ascii
   colors:
@@ -522,7 +475,6 @@ LLVM:
       - [152, 1, 46]
     chip: [24, 86, 25]
 Lua:
-  name: Lua
   type: programming
   ascii: lua.ascii
   colors:
@@ -536,7 +488,6 @@ Lua:
       - [255, 255, 255]
     chip: [0, 0, 128]
 Markdown:
-  name: Markdown
   type: prose
   ascii: markdown.ascii
   colors:
@@ -545,7 +496,6 @@ Markdown:
       - red
     chip: [8, 63, 161]
 Nim:
-  name: Nim
   type: programming
   ascii: nim.ascii
   colors:
@@ -554,7 +504,6 @@ Nim:
       - default
     chip: [255, 194, 0]
 Nix:
-  name: Nix
   type: programming
   ascii: nix.ascii
   colors:
@@ -563,7 +512,6 @@ Nix:
       - blue
     chip: [126, 126, 255]
 ObjectiveC:
-  name: Objective-C
   type: programming
   ascii: objectivec.ascii
   colors:
@@ -573,7 +521,6 @@ ObjectiveC:
     chip: [67, 142, 255]
   serialization: objective-c
 OCaml:
-  name: OCaml
   type: programming
   ascii: ocaml.ascii
   colors:
@@ -581,7 +528,6 @@ OCaml:
       - yellow
     chip: [59, 225, 51]
 Org:
-  name: Org
   type: prose
   ascii: org.ascii
   colors:
@@ -591,7 +537,6 @@ Org:
       - default
     chip: [119, 170, 153]
 Perl:
-  name: Perl
   type: programming
   ascii: perl.ascii
   colors:
@@ -599,7 +544,6 @@ Perl:
       - cyan
     chip: [2, 152, 195]
 Perl6:
-  name: Rakudo
   type: programming
   ascii: raku.ascii
   colors:
@@ -618,7 +562,6 @@ Perl6:
     chip: [0, 0, 251]
   serialization: raku
 Php:
-  name: PHP
   type: programming
   ascii: php.ascii
   colors:
@@ -630,7 +573,6 @@ Php:
       - [255, 255, 255]
     chip: [79, 93, 149]
 PowerShell:
-  name: PowerShell
   type: programming
   ascii: powershell.ascii
   colors:
@@ -642,7 +584,6 @@ PowerShell:
       - [255, 255, 255]
     chip: [1, 36, 86]
 Processing:
-  name: Processing
   type: programming
   ascii: processing.ascii
   colors:
@@ -654,7 +595,6 @@ Processing:
       - [255, 255, 255]
     chip: [0, 150, 216]
 Prolog:
-  name: Prolog
   type: programming
   ascii: prolog.ascii
   colors:
@@ -662,7 +602,6 @@ Prolog:
       - default
     chip: [116, 40, 60]
 Protobuf:
-  name: Protocol Buffers
   type: programming
   ascii: protobuf.ascii
   colors:
@@ -674,7 +613,6 @@ Protobuf:
     chip: [116, 40, 60]
   serialization: protocol-buffers
 PureScript:
-  name: PureScript
   type: programming
   ascii: purescript.ascii
   colors:
@@ -682,7 +620,6 @@ PureScript:
       - default
     chip: [29, 34, 45]
 Python:
-  name: Python
   type: programming
   ascii: python.ascii
   colors:
@@ -694,7 +631,6 @@ Python:
       - [255, 217, 64]
     chip: [53, 114, 165]
 Qml:
-  name: QML
   type: programming
   ascii: qml.ascii
   colors:
@@ -708,7 +644,6 @@ Qml:
       - [77, 117, 40]
     chip: [68, 165, 28]
 R:
-  name: R
   type: programming
   ascii: r.ascii
   colors:
@@ -717,7 +652,6 @@ R:
       - blue
     chip: [25, 140, 231]
 Racket:
-  name: Racket
   type: programming
   ascii: racket.ascii
   colors:
@@ -727,7 +661,6 @@ Racket:
       - blue
     chip: [60, 92, 170]
 Renpy:
-  name: Ren'Py
   type: programming
   ascii: renpy.ascii
   colors:
@@ -749,7 +682,6 @@ Renpy:
       - [181, 163, 150]
     chip: [255, 127, 127]
 Ruby:
-  name: Ruby
   type: programming
   ascii: ruby.ascii
   colors:
@@ -759,7 +691,6 @@ Ruby:
       - [204, 52, 45]
     chip: [112, 21, 22]
 Rust:
-  name: Rust
   type: programming
   ascii: rust.ascii
   colors:
@@ -771,7 +702,6 @@ Rust:
       - [255, 255, 255]
     chip: [222, 165, 132]
 Sass:
-  name: Sass
   type: markup
   ascii: sass.ascii
   colors:
@@ -781,7 +711,6 @@ Sass:
       - [205, 103, 153]
     chip: [165, 59, 112]
 Scala:
-  name: Scala
   type: programming
   ascii: scala.ascii
   colors:
@@ -793,7 +722,6 @@ Scala:
       - [127, 12, 29]
     chip: [194, 45, 64]
 Scheme:
-  name: Scheme
   type: programming
   ascii: scheme.ascii
   colors:
@@ -803,7 +731,6 @@ Scheme:
       - [85, 85, 85]
     chip: [30, 74, 236]
 Sh:
-  name: Shell
   type: programming
   ascii: shell.ascii
   colors:
@@ -812,7 +739,6 @@ Sh:
     chip: [137, 224, 81]
   serialization: shell
 Solidity:
-  name: Solidity
   type: programming
   ascii: solidity.ascii
   colors:
@@ -830,7 +756,6 @@ Solidity:
       - [81, 81, 81]
     chip: [170, 103, 70]
 Sql:
-  name: SQL
   type: data
   ascii: sql.ascii
   colors:
@@ -839,7 +764,6 @@ Sql:
       - yellow
     chip: [227, 140, 0]
 Svelte:
-  name: Svelte
   type: markup
   ascii: svelte.ascii
   colors:
@@ -851,7 +775,6 @@ Svelte:
       - [255, 255, 255]
     chip: [255, 62, 0]
 Swift:
-  name: Swift
   type: programming
   ascii: swift.ascii
   colors:
@@ -879,7 +802,6 @@ Swift:
       - [253, 40, 34]
     chip: [240, 81, 56]
 Tcl:
-  name: TCL
   type: programming
   ascii: tcl.ascii
   colors:
@@ -889,7 +811,6 @@ Tcl:
       - cyan
     chip: [228, 204, 152]
 Tex:
-  name: TeX
   type: markup
   ascii: tex.ascii
   colors:
@@ -898,7 +819,6 @@ Tex:
       - black
     chip: [61, 97, 23]
 Toml:
-  name: TOML
   type: data
   ascii: toml.ascii
   colors:
@@ -910,7 +830,6 @@ Toml:
       - [255, 255, 255]
     chip: [156, 66, 33]
 Tsx:
-  name: TSX
   type: programming
   ascii: tsx.ascii
   colors:
@@ -918,7 +837,6 @@ Tsx:
       - blue
     chip: [43, 116, 137]
 TypeScript:
-  name: TypeScript
   type: programming
   ascii: typescript.ascii
   colors:
@@ -930,7 +848,6 @@ TypeScript:
       - [255, 255, 255]
     chip: [43, 116, 137]
 Vala:
-  name: Vala
   type: programming
   ascii: vala.ascii
   colors:
@@ -939,7 +856,6 @@ Vala:
       - default
     chip: [165, 109, 226]
 Vhdl:
-  name: VHDL
   type: programming
   ascii: vhdl.ascii
   colors:
@@ -949,7 +865,6 @@ Vhdl:
       - default
     chip: [173, 178, 203]
 VimScript:
-  name: Vim script
   type: programming
   ascii: vimscript.ascii
   colors:
@@ -959,7 +874,6 @@ VimScript:
       - default
     chip: [25, 159, 75]
 Vue:
-  name: Vue
   type: programming
   ascii: vue.ascii
   colors:
@@ -968,7 +882,6 @@ Vue:
       - blue
     chip: [25, 159, 75]
 WebAssembly:
-  name: WebAssembly
   type: programming
   ascii: webassembly.ascii
   colors:
@@ -980,7 +893,6 @@ WebAssembly:
       - [255, 255, 255]
     chip: [4, 19, 59]
 Wolfram:
-  name: Wolfram
   type: programming
   ascii: wolfram.ascii
   colors:
@@ -994,7 +906,6 @@ Wolfram:
       - [0, 0, 0]
     chip: [221, 17, 0]
 Xaml:
-  name: XAML
   type: data
   ascii: xaml.ascii
   colors:
@@ -1006,7 +917,6 @@ Xaml:
       - [255, 255, 255]
     chip: [0, 96, 172]
 Xml:
-  name: XML
   type: data
   ascii: xml.ascii
   colors:
@@ -1016,7 +926,6 @@ Xml:
       - green
     chip: [0, 96, 172]
 Yaml:
-  name: YAML
   type: data
   ascii: yaml.ascii
   colors:
@@ -1024,7 +933,6 @@ Yaml:
       - default
     chip: [203, 23, 30]
 Zig:
-  name: Zig
   type: programming
   ascii: zig.ascii
   colors:
@@ -1032,7 +940,6 @@ Zig:
       - yellow
     chip: [236, 145, 92]
 Zsh:
-  name: Zsh
   type: programming
   ascii: zsh.ascii
   colors:
