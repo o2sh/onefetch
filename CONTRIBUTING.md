@@ -11,11 +11,26 @@
 
 ### Adding support for a new language
 
-Adding support for a new Language consists in adding a new entry to the `define_language!` macro in [language.rs](src/info/langs/language.rs) and filling it in with the right data.
+Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.
 
 **Example**:
 
-`{ TypeScript, Programming, "typescript.ascii", define_colors!([Cyan, White] : [Rgb(0, 122, 204), Rgb(255, 255, 255)]), Rgb(43, 116, 137) }`
+```yaml
+TypeScript: # required, this will be the name of the enum variant for the language
+  type: programming # required, can be programming, data, markup, or prose
+  ascii: typescript.ascii # required, the name of the ASCII file in resources/ for the logo
+  colors:
+    ansi: # required, a list of the ANSI colors used for the logo
+      - cyan
+      - default
+    rgb: # optional, used to define RGB colors that can be used for the logo in terminals that support them
+      # [r, g, b]
+      - [0, 122, 204]
+      - [255, 255, 255]
+    chip: [43, 116, 137] # required, this is used for the language breakdown bar. [r, g, b]
+```
+
+**The name of the language must match a [tokei::LanguageType variant](https://docs.rs/tokei/12/tokei/enum.LanguageType.html)**
 
 The first item `TypeScript` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item refers to the language type as specified by [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml), only four values are possible: Programming, Markup, Prose and Data. The third item `typescript.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. Finally, the circle color used in the language distribution whose hex value can be found in [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml).
 
