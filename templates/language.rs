@@ -115,7 +115,7 @@ mod ascii_size {
     const MAX_WIDTH: usize = 40;
     const MAX_HEIGHT: usize = 25;
 
-    // TODO Make compiler errors
+    // TODO Make compiler errors when ASCII is available from context
     {% for language, attrs in languages -%}
         #[test]
         fn {{ language | lower }}_width() {
