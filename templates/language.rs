@@ -114,7 +114,7 @@ mod ascii_size {
     // TODO Make compiler errors
     {% for language, attrs in languages -%}
         #[test]
-        fn {{ language }}_width() {
+        fn {{ language | lower }}_width() {
             const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", "{{ attrs.ascii }}"));
             let lines: Vec<_> = ASCII.lines().skip_while(|line| line.is_empty()).collect();
             let (start, end) = get_min_start_max_end(&lines);
@@ -123,7 +123,7 @@ mod ascii_size {
         }
 
         #[test]
-        fn {{ language }}_height() {
+        fn {{ language | lower }}_height() {
             const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", "{{ attrs.ascii }}"));
             assert_le!(ASCII.lines().count(), MAX_HEIGHT, "{{ attrs.ascii }} is too tall.");
         }
