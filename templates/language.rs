@@ -19,7 +19,8 @@ pub enum LanguageType {
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
 pub enum Language {
-    {% for language, _ in languages -%}
+    {% for language, attrs in languages -%}
+        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif %}
         {{ language }},
     {% endfor %}
 }
