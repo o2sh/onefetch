@@ -89,8 +89,11 @@ impl Language {
     }
 
     pub fn get_circle_color(&self) -> DynColors {
-        // TODO
-        DynColors::Ansi(AnsiColors::White)
+        match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => Rgb({{ attrs.colors.chip | nth(n=0) }}, {{ attrs.colors.chip | nth(n=1) }}, {{ attrs.colors.chip | nth(n=2) }}),
+            {% endfor %}
+        }
     }
 }
 

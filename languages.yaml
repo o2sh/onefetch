@@ -11,6 +11,7 @@ Ada:
       - [255, 255, 255]
       - [0, 24, 201]
       - [12, 10, 124]
+    chip: [2, 248, 140]
 Assembly:
   name: Assembly
   type: programming
@@ -18,6 +19,7 @@ Assembly:
   colors:
     ansi:
       - cyan
+    chip: [110, 76, 19]
 AutoHotKey:
   name: AutoHotKey
   type: programming
@@ -29,6 +31,7 @@ AutoHotKey:
     rgb:
       - [255, 255, 255]
       - [17, 152, 16]
+    chip: [101, 148, 185]
 Bash:
   name: BASH
   type: programming
@@ -36,6 +39,7 @@ Bash:
   colors:
     ansi:
       - default
+    chip: [137, 224, 81]
 C:
   name: C
   type: programming
@@ -51,6 +55,7 @@ C:
       - [41, 54, 147]
       - [57, 73, 170]
       - [255, 255, 255]
+    chip: [85, 85, 85]
 Ceylon:
   name: Ceylon
   type: programming
@@ -68,6 +73,7 @@ Ceylon:
       - [209, 145, 31]
       - [204, 139, 24]
       - [171, 112, 8]
+    chip: [223, 165, 53]
 Clojure:
   name: Clojure
   type: programming
@@ -76,6 +82,7 @@ Clojure:
     ansi:
       - cyan
       - green
+    chip: [219, 88, 85]
 CMake:
   name: CMake
   type: programming
@@ -86,6 +93,7 @@ CMake:
       - green
       - red
       - black
+    chip: [218, 52, 52]
 CoffeeScript:
   name: CoffeeScript
   type: programming
@@ -93,6 +101,7 @@ CoffeeScript:
   colors:
     ansi:
       - red
+    chip: [36, 71, 118]
 Coq:
   name: Coq
   type: programming
@@ -104,6 +113,7 @@ Coq:
     rgb:
       - [191, 140, 94]
       - [213, 190, 153]
+    chip: [208, 182, 140]
 Cpp:
   name: C++
   type: programming
@@ -119,6 +129,7 @@ Cpp:
       - [0, 66, 131]
       - [0, 89, 157]
       - [255, 255, 255]
+    chip: [243, 75, 125]
   serialization: c++
 Crystal:
   name: Crystal
@@ -128,6 +139,7 @@ Crystal:
     ansi:
       - default
       - black
+    chip: [0, 1, 0]
 CSharp:
   name: C#
   type: programming
@@ -143,6 +155,7 @@ CSharp:
       - [103, 33, 122]
       - [128, 55, 136]
       - [255, 255, 255]
+    chip: [23, 134, 0]
   serialization: c#
 Css:
   name: CSS
@@ -152,6 +165,7 @@ Css:
     ansi:
       - blue
       - default
+    chip: [86, 61, 124]
 D:
   name: D
   type: programming
@@ -159,6 +173,7 @@ D:
   colors:
     ansi:
       - red
+    chip: [186, 89, 94]
 Dart:
   name: Dart
   type: programming
@@ -172,6 +187,7 @@ Dart:
       - [0, 163, 231]
       - [66, 223, 205]
       - [1, 89, 125]
+    chip: [0, 180, 171]
 Dockerfile:
   name: Dockerfile
   type: programming
@@ -181,6 +197,7 @@ Dockerfile:
       - cyan
       - default
       - cyan
+    chip: [56, 77, 84]
 Elisp:
   name: Emacs Lisp
   type: programming
@@ -189,6 +206,7 @@ Elisp:
     ansi:
       - magenta
       - default
+    chip: [192, 101, 219]
   serialization: emacs-lisp
 Elixir:
   name: Elixir
@@ -197,6 +215,7 @@ Elixir:
   colors:
     ansi:
       - magenta
+    chip: [110, 74, 126]
 Elm:
   name: Elm
   type: programming
@@ -207,6 +226,7 @@ Elm:
       - green
       - yellow
       - cyan
+    chip: [96, 181, 204]
 Emojicode:
   name: Emojicode
   type: programming
@@ -222,6 +242,7 @@ Emojicode:
       - [146, 102, 204]
       - [170, 141, 216]
       - [116, 78, 170]
+    chip: [96, 181, 204]
 Erlang:
   name: Erlang
   type: programming
@@ -229,6 +250,7 @@ Erlang:
   colors:
     ansi:
       - red
+    chip: [184, 57, 152]
 Fish:
   name: Fish
   type: programming
@@ -237,6 +259,7 @@ Fish:
     ansi:
       - red
       - yellow
+    chip: [74, 174, 71]
 Forth:
   name: Forth
   type: programming
@@ -244,6 +267,7 @@ Forth:
   colors:
     ansi:
       - red
+    chip: [52, 23, 8]
 FortranLegacy:
   name: FORTRAN Legacy
   type: programming
@@ -255,6 +279,7 @@ FortranLegacy:
       - cyan
       - yellow
       - red
+    chip: [77, 65, 177]
   serialization: fortran-legacy
 FortranModern:
   name: FORTRAN Modern
@@ -267,6 +292,7 @@ FortranModern:
       - cyan
       - yellow
       - red
+    chip: [77, 65, 177]
   serialization: fortran
 FSharp:
   name: F#
@@ -276,6 +302,7 @@ FSharp:
     ansi:
       - cyan
       - cyan
+    chip: [184, 69, 252]
   serialization: f#
 GdScript:
   name: GDScript
@@ -288,6 +315,7 @@ GdScript:
     rgb:
       - [69, 141, 192]
       - [255, 255, 255]
+    chip: [53, 85, 112]
 Go:
   name: Go
   type: programming
@@ -301,6 +329,7 @@ Go:
       - [116, 205, 221]
       - [255, 255, 255]
       - [246, 210, 162]
+    chip: [0, 173, 216]
 Graphql:
   name: GraphQL
   type: data
@@ -308,6 +337,7 @@ Graphql:
   colors:
     ansi:
       - magenta
+    chip: [225, 0, 152]
 Groovy:
   name: Groovy
   type: programming
@@ -316,6 +346,7 @@ Groovy:
     ansi:
       - cyan
       - default
+    chip: [66, 152, 184]
 Haskell:
   name: Haskell
   type: programming
@@ -329,6 +360,7 @@ Haskell:
       - [69, 58, 98]
       - [94, 80, 134]
       - [143, 78, 139]
+    chip: [94, 80, 134]
 Haxe:
   name: Haxe
   type: programming
@@ -342,6 +374,7 @@ Haxe:
       - [250, 178, 11]
       - [246, 153, 18]
       - [244, 114, 22]
+    chip: [223, 121, 0]
 Hcl:
   name: HCL
   type: programming
@@ -353,6 +386,7 @@ Hcl:
     rgb:
       - [95, 67, 233]
       - [64, 64, 178]
+    chip: [170, 206, 96]
 HolyC:
   name: HolyC
   type: programming
@@ -366,6 +400,7 @@ HolyC:
       - [251, 254, 103]
       - [11, 68, 157]
       - [255, 255, 255]
+    chip: [255, 239, 175]
 Html:
   name: HTML
   type: markup
@@ -374,6 +409,7 @@ Html:
     ansi:
       - red
       - default
+    chip: [227, 76, 38]
 Idris:
   name: Idris
   type: programming
@@ -381,6 +417,7 @@ Idris:
   colors:
     ansi:
       - red
+    chip: [179, 0, 0]
 Java:
   name: Java
   type: programming
@@ -392,6 +429,7 @@ Java:
     rgb:
       - [244, 67, 54]
       - [22, 101, 192]
+    chip: [176, 114, 25]
 JavaScript:
   name: JavaScript
   type: programming
@@ -401,6 +439,7 @@ JavaScript:
       - yellow
     rgb:
       - [236, 230, 83]
+    chip: [241, 224, 90]
 Json:
   name: JSON
   type: data
@@ -409,6 +448,7 @@ Json:
     ansi:
       - default
       - black
+    chip: [41, 41, 41]
 Jsonnet:
   name: Jsonnet
   type: programming
@@ -417,6 +457,7 @@ Jsonnet:
     ansi:
       - default
       - black
+    chip: [0, 100, 189]
 Jsx:
   name: JSX
   type: programming
@@ -424,6 +465,7 @@ Jsx:
   colors:
     ansi:
       - yellow
+    chip: [241, 224, 90]
 Julia:
   name: Julia
   type: programming
@@ -435,6 +477,7 @@ Julia:
       - green
       - red
       - magenta
+    chip: [162, 112, 186]
 Jupyter:
   name: Jupyter Notebooks
   type: programming
@@ -448,6 +491,7 @@ Jupyter:
       - [255, 255, 255]
       - [255, 112, 15]
       - [158, 158, 158]
+    chip: [218, 91, 11]
   serialization: jupyter-notebooks
 Kotlin:
   name: Kotlin
@@ -458,6 +502,7 @@ Kotlin:
       - blue
       - yellow
       - magenta
+    chip: [169, 123, 255]
 Lisp:
   name: Lisp
   type: programming
@@ -465,6 +510,7 @@ Lisp:
   colors:
     ansi:
       - default
+    chip: [63, 182, 139]
 LLVM:
   name: LLVM
   type: programming
@@ -474,6 +520,7 @@ LLVM:
       - red
     rgb:
       - [152, 1, 46]
+    chip: [24, 86, 25]
 Lua:
   name: Lua
   type: programming
@@ -487,6 +534,7 @@ Lua:
       - [46, 0, 127]
       - [128, 128, 128]
       - [255, 255, 255]
+    chip: [0, 0, 128]
 Markdown:
   name: Markdown
   type: prose
@@ -495,6 +543,7 @@ Markdown:
     ansi:
       - default
       - red
+    chip: [8, 63, 161]
 Nim:
   name: Nim
   type: programming
@@ -503,6 +552,7 @@ Nim:
     ansi:
       - yellow
       - default
+    chip: [255, 194, 0]
 Nix:
   name: Nix
   type: programming
@@ -511,6 +561,7 @@ Nix:
     ansi:
       - cyan
       - blue
+    chip: [126, 126, 255]
 ObjectiveC:
   name: Objective-C
   type: programming
@@ -519,6 +570,7 @@ ObjectiveC:
     ansi:
       - cyan
       - blue
+    chip: [67, 142, 255]
   serialization: objective-c
 OCaml:
   name: OCaml
@@ -527,6 +579,7 @@ OCaml:
   colors:
     ansi:
       - yellow
+    chip: [59, 225, 51]
 Org:
   name: Org
   type: prose
@@ -536,6 +589,7 @@ Org:
       - green
       - red
       - default
+    chip: [119, 170, 153]
 Perl:
   name: Perl
   type: programming
@@ -543,6 +597,7 @@ Perl:
   colors:
     ansi:
       - cyan
+    chip: [2, 152, 195]
 Perl6:
   name: Rakudo
   type: programming
@@ -560,6 +615,7 @@ Perl6:
       - [243, 255, 39]
       - [255, 255, 255]
       - [0, 255, 57]
+    chip: [0, 0, 251]
   serialization: raku
 Php:
   name: PHP
@@ -572,6 +628,7 @@ Php:
     rgb:
       - [119, 123, 179]
       - [255, 255, 255]
+    chip: [79, 93, 149]
 PowerShell:
   name: PowerShell
   type: programming
@@ -583,6 +640,7 @@ PowerShell:
     rgb:
       - [49, 108, 185]
       - [255, 255, 255]
+    chip: [1, 36, 86]
 Processing:
   name: Processing
   type: programming
@@ -594,6 +652,7 @@ Processing:
     rgb:
       - [80, 80, 80]
       - [255, 255, 255]
+    chip: [0, 150, 216]
 Prolog:
   name: Prolog
   type: programming
@@ -601,6 +660,7 @@ Prolog:
   colors:
     ansi:
       - default
+    chip: [116, 40, 60]
 Protobuf:
   name: Protocol Buffers
   type: programming
@@ -611,6 +671,7 @@ Protobuf:
       - blue
       - green
       - yellow
+    chip: [116, 40, 60]
   serialization: protocol-buffers
 PureScript:
   name: PureScript
@@ -619,6 +680,7 @@ PureScript:
   colors:
     ansi:
       - default
+    chip: [29, 34, 45]
 Python:
   name: Python
   type: programming
@@ -630,6 +692,7 @@ Python:
     rgb:
       - [47, 105, 162]
       - [255, 217, 64]
+    chip: [53, 114, 165]
 Qml:
   name: QML
   type: programming
@@ -643,6 +706,7 @@ Qml:
       - [128, 195, 66]
       - [255, 255, 255]
       - [77, 117, 40]
+    chip: [68, 165, 28]
 R:
   name: R
   type: programming
@@ -651,6 +715,7 @@ R:
     ansi:
       - default
       - blue
+    chip: [25, 140, 231]
 Racket:
   name: Racket
   type: programming
@@ -660,6 +725,7 @@ Racket:
       - red
       - default
       - blue
+    chip: [60, 92, 170]
 Renpy:
   name: Ren'Py
   type: programming
@@ -681,6 +747,7 @@ Renpy:
       - [250, 228, 90]
       - [255, 255, 255]
       - [181, 163, 150]
+    chip: [255, 127, 127]
 Ruby:
   name: Ruby
   type: programming
@@ -690,6 +757,7 @@ Ruby:
       - red
     rgb:
       - [204, 52, 45]
+    chip: [112, 21, 22]
 Rust:
   name: Rust
   type: programming
@@ -701,6 +769,7 @@ Rust:
     rgb:
       - [228, 55, 23]
       - [255, 255, 255]
+    chip: [222, 165, 132]
 Sass:
   name: Sass
   type: markup
@@ -710,6 +779,7 @@ Sass:
       - magenta
     rgb:
       - [205, 103, 153]
+    chip: [165, 59, 112]
 Scala:
   name: Scala
   type: programming
@@ -721,6 +791,7 @@ Scala:
     rgb:
       - [223, 63, 61]
       - [127, 12, 29]
+    chip: [194, 45, 64]
 Scheme:
   name: Scheme
   type: programming
@@ -730,6 +801,7 @@ Scheme:
       - default
     rgb:
       - [85, 85, 85]
+    chip: [30, 74, 236]
 Sh:
   name: Shell
   type: programming
@@ -737,6 +809,7 @@ Sh:
   colors:
     ansi:
       - green
+    chip: [137, 224, 81]
   serialization: shell
 Solidity:
   name: Solidity
@@ -755,6 +828,7 @@ Solidity:
       - [26, 26, 26]
       - [51, 51, 51]
       - [81, 81, 81]
+    chip: [170, 103, 70]
 Sql:
   name: SQL
   type: data
@@ -763,6 +837,7 @@ Sql:
     ansi:
       - cyan
       - yellow
+    chip: [227, 140, 0]
 Svelte:
   name: Svelte
   type: markup
@@ -774,6 +849,7 @@ Svelte:
     rgb:
       - [255, 60, 0]
       - [255, 255, 255]
+    chip: [255, 62, 0]
 Swift:
   name: Swift
   type: programming
@@ -801,6 +877,7 @@ Swift:
       - [252, 60, 38]
       - [252, 50, 36]
       - [253, 40, 34]
+    chip: [240, 81, 56]
 Tcl:
   name: TCL
   type: programming
@@ -810,6 +887,7 @@ Tcl:
       - blue
       - default
       - cyan
+    chip: [228, 204, 152]
 Tex:
   name: TeX
   type: markup
@@ -818,6 +896,7 @@ Tex:
     ansi:
       - default
       - black
+    chip: [61, 97, 23]
 Toml:
   name: TOML
   type: data
@@ -829,6 +908,7 @@ Toml:
     rgb:
       - [156, 66, 33]
       - [255, 255, 255]
+    chip: [156, 66, 33]
 Tsx:
   name: TSX
   type: programming
@@ -836,6 +916,7 @@ Tsx:
   colors:
     ansi:
       - blue
+    chip: [43, 116, 137]
 TypeScript:
   name: TypeScript
   type: programming
@@ -847,6 +928,7 @@ TypeScript:
     rgb:
       - [0, 122, 204]
       - [255, 255, 255]
+    chip: [43, 116, 137]
 Vala:
   name: Vala
   type: programming
@@ -855,6 +937,7 @@ Vala:
     ansi:
       - magenta
       - default
+    chip: [165, 109, 226]
 Vhdl:
   name: VHDL
   type: programming
@@ -864,6 +947,7 @@ Vhdl:
       - yellow
       - green
       - default
+    chip: [173, 178, 203]
 VimScript:
   name: Vim script
   type: programming
@@ -873,6 +957,7 @@ VimScript:
       - green
       - black
       - default
+    chip: [25, 159, 75]
 Vue:
   name: Vue
   type: programming
@@ -881,6 +966,7 @@ Vue:
     ansi:
       - green
       - blue
+    chip: [25, 159, 75]
 WebAssembly:
   name: WebAssembly
   type: programming
@@ -892,6 +978,7 @@ WebAssembly:
     rgb:
       - [101, 79, 240]
       - [255, 255, 255]
+    chip: [4, 19, 59]
 Wolfram:
   name: Wolfram
   type: programming
@@ -905,6 +992,7 @@ Wolfram:
       - [255, 10, 1]
       - [255, 255, 255]
       - [0, 0, 0]
+    chip: [221, 17, 0]
 Xaml:
   name: XAML
   type: data
@@ -916,6 +1004,7 @@ Xaml:
     rgb:
       - [51, 120, 206]
       - [255, 255, 255]
+    chip: [0, 96, 172]
 Xml:
   name: XML
   type: data
@@ -925,6 +1014,7 @@ Xml:
       - yellow
       - default
       - green
+    chip: [0, 96, 172]
 Yaml:
   name: YAML
   type: data
@@ -932,6 +1022,7 @@ Yaml:
   colors:
     ansi:
       - default
+    chip: [203, 23, 30]
 Zig:
   name: Zig
   type: programming
@@ -939,6 +1030,7 @@ Zig:
   colors:
     ansi:
       - yellow
+    chip: [236, 145, 92]
 Zsh:
   name: Zsh
   type: programming
@@ -946,3 +1038,4 @@ Zsh:
   colors:
     ansi:
       - default
+    chip: [137, 224, 81]
