@@ -1709,7 +1709,6 @@ dependencies = [
  "libc",
  "more-asserts",
  "owo-colors",
- "paste",
  "regex",
  "serde",
  "serde_json",

@@ -61,7 +61,6 @@ libc = "0.2.126"
 
 [dev-dependencies]
 more-asserts = "0.3.0"
-paste = "1.0.7"
 
 [build-dependencies]
 serde_json = "1"
