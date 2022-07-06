@@ -60,7 +60,7 @@ impl Language {
     pub fn get_ascii_art(&self) -> &'static str {
         match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", "{{ attrs.ascii }}")),
+                Language::{{ language }} => "{{ attrs.ascii | addslashes }}",
             {% endfor %}
         }
     }
@@ -107,29 +107,23 @@ impl Language {
     {% endif %}
 {% endfor %}
 
-#[cfg(test)]
-mod ascii_size {
-    use crate::ui::ascii_art::get_min_start_max_end;
-    use more_asserts::assert_le;
+{% set max_width = 40 %}
+{# NOTE Permitting trailing newline #}
+{% set max_height = 26 %}
 
-    const MAX_WIDTH: usize = 40;
-    const MAX_HEIGHT: usize = 25;
 
-    // TODO Make compiler errors when ASCII is available from context
-    {% for language, attrs in languages -%}
-        #[test]
-        fn {{ language | lower }}_width() {
-            const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", "{{ attrs.ascii }}"));
-            let lines: Vec<_> = ASCII.lines().skip_while(|line| line.is_empty()).collect();
-            let (start, end) = get_min_start_max_end(&lines);
-            assert!(start <= end);
-            assert_le!(end - start, MAX_WIDTH, "{{ attrs.ascii }} is too wide.");
-        }
+{% for language, attrs in languages -%}
+    {% set lines = attrs.ascii | split(pat="\n") %}
+    {% set height = lines | length %}
+    {% if height > max_height %}
+        compile_error!("{{ language }}: ascii art must have {{ max_height - 1 }} or less lines, has {{ height }}");
+    {% endif %}
 
-        #[test]
-        fn {{ language | lower }}_height() {
-            const ASCII: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/", "{{ attrs.ascii }}"));
-            assert_le!(ASCII.lines().count(), MAX_HEIGHT, "{{ attrs.ascii }} is too tall.");
-        }
+    {% for line in lines %}
+        {% set cleaned_line = line | strip_color_indices %}
+        {% set width = cleaned_line | length %}
+        {% if width > max_width %}
+            compile_error!("{{ language }}: ascii art line {{ loop.index }} must be {{ max_width }} or less characters wide");
+        {% endif %}
     {% endfor %}
-}
+{% endfor %}

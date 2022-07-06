@@ -1,6 +1,27 @@
 Ada:
   type: programming
-  ascii: ada.ascii
+  ascii: |
+    {0}                              *
+    {0}                              *
+    {0}                            * **
+    {0}   *                        *****
+    {0}   **                       ******
+    {0}    **                   ###********
+    {0}    ***          -******#'###*********
+    {0}     *****               #### *********
+    {0}      ****************************{1}XXX{0}**
+    {0}     ** ******************{1}XXXX{2}o{1}X{0}*{1}X{2}o{1}XXX{0}*
+    {0}      **** ***************{1}XXXX{2}ooooo{1}XX{0}*
+    {0}        *******************{1}XXXX{2}ooooo{1}X
+    {0}          *******************{1}XXX{2}ooo{1}X
+    {0}          ************************{1}XX{0}*
+    {0}             *************    ******
+    {0}  /| |                           ****
+    {0} /-|(|(|                     ********
+    {0}                        ************
+    {0}Time-tested, safe     *************
+    {0}and secure            ***********
+    {0}                         *****
   colors:
     ansi:
       - default
@@ -13,14 +34,38 @@ Ada:
     chip: [2, 248, 140]
 Assembly:
   type: programming
-  ascii: assembly.ascii
+  ascii: |
+    {0}                                  ____
+    {0}                                ,'  , `.
+    {0}                             ,-+-,.' _ |
+    {0}               .--.--.    ,-+-. ;   , ||
+    {0}   ,--.--.    /  /    '  ,--.'|'   |  ||
+    {0}  /       \  |  :  /`./ |   |  ,', |  |,
+    {0} .--.  .-. | |  :  ;_   |   | /  | |--'
+    {0}  \__\/: . .  \  \    `.|   : |  | ,
+    {0}  ," .--.; |   `----.   \   : |  |/
+    {0} /  /  ,.  |  /  /`--'  /   | |`-'
+    {0};  :   .'   \'--'.     /|   ;/
+    {0}|  ,     .-./  `--'---' '---'
+    {0} `--`---'
   colors:
     ansi:
       - cyan
     chip: [110, 76, 19]
 AutoHotKey:
   type: programming
-  ascii: autohotkey.ascii
+  ascii: |
+    {1} .----------------.
+    {1}| .--------------. |
+    {1}| | {0} ____  ____ {1} | |
+    {1}| | {0}|_   ||   _|{1} | |
+    {1}| | {0}  | |__| |  {1} | |
+    {1}| | {0}  |  __  |  {1} | |
+    {1}| | {0} _| |  | |_ {1} | |
+    {1}| | {0}|____||____|{1} | |
+    {1}| |              | |
+    {1}| '--------------' |
+    {1} '----------------'
   colors:
     ansi:
       - default
@@ -31,14 +76,60 @@ AutoHotKey:
     chip: [101, 148, 185]
 Bash:
   type: programming
-  ascii: bash.ascii
+  ascii: |
+    {0}                ;sh:'
+    {0}             :ba:sh:,ba;
+    {0}          ;sh,         ':ba;
+    {0}      ':ba                ':sh;
+    {0}   ,sh'                      ,ash,
+    {0} ,s:'                           ':h;
+    {0}'ba                              ,aoOk,
+    {0}:b,                           ;hkABASH:
+    {0}:b,                        ;oOBASHBASH:
+    {0}:b,                    ':bBASHBASHBASH:
+    {0}:b,                 ':AKBBBASHBASHBASH:
+    {0}:b,               ;okNBBB$BASHBASHBASH:
+    {0}:b,               oABASH$ $BBBBASHBASH:
+    {0}:b,               oBASH$   $BBBASHBASH:
+    {0}:b,               oBAS$  $BASHBAS  ASH:
+    {0};b;               oBASHB$  $BBB  HBASH;
+    {0} :ba'             oBAS$   $HH  SHBASHa
+    {0}  ':sh;           oBASH$ $BASHBASHBA'
+    {0}     ':ba:        oBASHB$BASHBAS:'
+    {0}         ;shh:,   oBASHBASHBA;
+    {0}            ,:ba;o0ABN0Aa,
+    {0}                ;sh:'
+    {0}
   colors:
     ansi:
       - default
     chip: [137, 224, 81]
 C:
   type: programming
-  ascii: c.ascii
+  ascii: |
+    {0}                 ++++++
+    {0}              ++++++++++++
+    {0}          ++++++++++++++++++++
+    {0}       ++++++++++++++++++++++++++
+    {0}    ++++++++++++++++++++++++++++++++
+    {0} +++++++++++++{3}************{0}+++++++++++++
+    {0}+++++++++++{3}******************{0}++++++++{2};;;
+    {0}+++++++++{3}**********************{0}++{2};;;;;;;
+    {0}++++++++{3}*********{0}++++++{3}******{2};;;;;;;;;;;
+    {0}+++++++{3}********{0}++++++++++{3}**{2};;;;;;;;;;;;;
+    {0}+++++++{3}*******{0}+++++++++{2};;;;;;;;;;;;;;;;;
+    {0}+++++++{3}******{0}+++++++{2};;;;;;;;;;;;;;;;;;;;
+    {0}+++++++{3}*******{0}+++{1}:::::{2};;;;;;;;;;;;;;;;;;
+    {0}+++++++{3}********{1}::::::::::{3}**{2};;;;;;;;;;;;;
+    {0}++++++++{3}*********{1}::::::{3}******{2};;;;;;;;;;;
+    {0}++++++{1}:::{3}**********************{1}::{2};;;;;;;
+    {0}+++{1}::::::::{3}******************{1}::::::::{2};;;
+    {1} :::::::::::::{3}************{1}:::::::::::::
+    {1}    ::::::::::::::::::::::::::::::::
+    {1}       ::::::::::::::::::::::::::
+    {1}          ::::::::::::::::::::
+    {1}              ::::::::::::
+    {1}                 ::::::
   colors:
     ansi:
       - cyan
@@ -53,7 +144,20 @@ C:
     chip: [85, 85, 85]
 Ceylon:
   type: programming
-  ascii: ceylon.ascii
+  ascii: |
+    {1}                                 @@
+    {1}                                 @@
+    {3}          @@@@@@@{1}@@@@@@@@@@@@@@   @@
+    {0}    @@@{3}@@@@@@@@@@{1}@@@@@@ /@@@@@@@@  @@@
+    {0}  @@@@@@{3}@@@@@@@@@@{1}@@@@ (@@@@ @@@@@  @@{2}@@
+    {0} @@@@@@@@{3}@@@@@@@@@@@{1}@@@ \@@@@@@@@@@@@{2}@@@
+    {0}@@@@@@@@@@@{3}@@@@@@@@@@@{1}@@@@@@@@@@@@@{2}@@@@
+    {0}|/ @@@@@@@@@@{3}@@@@@@@@@@@@{1}@
+    {0}   @@@@@@@@@@@@{3}@@@@@@@@@@
+    {0}   @@@@@@@@@@@@@@{3}@@@@@@@ {4}@@
+    {0}    @@@@@@@     @@@@@@@ {4}@@@
+    {0}    @@@@@@ {4}@@    {0}@@@@@ {4}@@@@
+    {0}     @@@@ {4}@@@    {0}@@@@@ {4}@@@@@
   colors:
     ansi:
       - yellow
@@ -70,7 +174,27 @@ Ceylon:
     chip: [223, 165, 53]
 Clojure:
   type: programming
-  ascii: clojure.ascii
+  ascii: |
+    {0}                ,....,
+    {0}           ,oooooooooooooo,
+    {0}       ,oooooooooooooooooooooo,
+    {0}     ,oooooooooooooooooooooooooo,
+    {0}    ,oooooo::'        '':ooooooooo,
+    {0}   '            '\\\\\:   :oooooooo,
+    {1}   .,,ooo'  :/:  {0}:\\\\\\\,  :ooooooo,
+    {1}  :,oooo:  :///:  {0}:\\\\\\\\,  :oooooo:
+    {1} :ooooo:  ://///:, {0}:\\\\\\\\,  :ooooo:
+    {1} 'ooooo: :///////:  {0}:\\\\\\\,  :ooooo:
+    {1} 'ooooo: ://////: : {0}:\\\\\\\,  :ooooo:
+    {1} 'ooooo:  :////: ::  {0}:\\\\\\,  :ooooo'
+    {1} 'oooooo:  ://: ://:  {0}:\\\\,  :ooooo'
+    {1}  `oooooo:  :' :////:  {0}:\\. ,;;;::'
+    {1}   `oooooo:,   ```````
+    {1}    `oooooo:::..        .::.,.,::'
+    {1}      `oooooooooOOooooOOoooooooo'
+    {1}        `ooooooooooooooooooooo'
+    {1}          `ooooooooooooooooo'
+    {1}              ````````````
   colors:
     ansi:
       - cyan
@@ -78,7 +202,20 @@ Clojure:
     chip: [219, 88, 85]
 CMake:
   type: programming
-  ascii: cmake.ascii
+  ascii: |
+    {0}            ;e{2}`
+    {0}           ;QD{2}?`
+    {0}          ;B#R{2}1r`
+    {0}         ;WRMK{2}S|r`
+    {0}        :O9KOK{2}S\\*`
+    {0}       :keXPk6{2}Zc7v|`
+    {0}      :ajyoaZe{3}m{2}JJ{]\`
+    {0}     :]z1x}f9{3}@@{2}yujSoc`
+    {0}    "7\/LvU{3}Q@@@{2}XoZemXv`
+    {0}   ,\**v{1}oo{3}qMBBB{2}kmXEkU9z`
+    {0}  ,\*}{1}Sx\||?|cFf{2}okqOdHDx`
+    {0} ,L]{1}jc\\\||?*>rr^^|zo{2}$MN]`
+    {0}-v{1}7????*>>rrr^^^;;;;;;^\{2}F^`
   colors:
     ansi:
       - blue
@@ -88,14 +225,45 @@ CMake:
     chip: [218, 52, 52]
 CoffeeScript:
   type: programming
-  ascii: coffeescript.ascii
+  ascii: |
+    {0}            #####    ######
+    {0}           ###    ###    ###
+    {0}   /A\      ######    #####      /A\
+    {0}   \AAAAA\                   /AAAAA/
+    {0}        \AAAAAAAAAAAAAAAAAAAAA/
+    {0}   \AA\                         /AA/
+    {0}    |\AAAAAAAAAAAAAAAAAAAAAAAAAAA/|
+    {0}   /\\llAAAAAAAAAAAAAAAAAAAAAAAll//
+    {0}  /#A\\llAAAAAAAAAAAAAAAAAAAAAll//
+    {0} |#A   \\llAAAAAAAAAAAAAAAAAAll//
+    {0}  \#A    \\llAAAAAAAAAAAAAAll//
+    {0}    \#A   \\llAAAAAAAAAAAAll//
+    {0}      \#A>  ||lAAAAAAAAAAl||
+    {0}             \;AAAAAAAAAA;/
   colors:
     ansi:
       - red
     chip: [36, 71, 118]
 Coq:
   type: programming
-  ascii: coq.ascii
+  ascii: |
+    {0}   ::::::::
+    {0} :::::::::::
+    {0} :::::::::::
+    {0} :::::{1}___{0}:::
+    {1}   ______ {0}:
+    {1}     ____   _________
+    {1}      ___  ___________
+    {1}      ___ ____________
+    {1}     _________________
+    {1}   ___________________
+    {1}______________ ______
+    {1}   ___________ ___
+    {1}      ______
+    {1}       ____
+    {1}     ______
+    {1}    ________
+    {1}    ________
   colors:
     ansi:
       - yellow
@@ -106,7 +274,30 @@ Coq:
     chip: [208, 182, 140]
 Cpp:
   type: programming
-  ascii: cpp.ascii
+  ascii: |
+    {0}                 ++++++
+    {0}              ++++++++++++
+    {0}          ++++++++++++++++++++
+    {0}       ++++++++++++++++++++++++++
+    {0}    ++++++++++++++++++++++++++++++++
+    {0} +++++++++++++{3}************{0}+++++++++++++
+    {0}+++++++++++{3}******************{0}++++++++{2};;;
+    {0}+++++++++{3}**********************{0}++{2};;;;;;;
+    {0}++++++++{3}*********{0}++++++{3}******{2};;;;;;;;;;;
+    {0}+++++++{3}********{0}++++++++++{3}**{2};;;;;;;;;;;;;
+    {0}+++++++{3}*******{0}+++++++++{2};;;;;;{3}**{2};;;;{3}**{2};;;
+    {0}+++++++{3}******{0}+++++++{2};;;;;;;;{3}****{2};;{3}****{2};;
+    {0}+++++++{3}*******{0}+++{1}:::::{2};;;;;;;{3}**{2};;;;{3}**{2};;;
+    {0}+++++++{3}********{1}::::::::::{3}**{2};;;;;;;;;;;;;
+    {0}++++++++{3}*********{1}::::::{3}******{2};;;;;;;;;;;
+    {0}++++++{1}:::{3}**********************{1}::{2};;;;;;;
+    {0}+++{1}::::::::{3}******************{1}::::::::{2};;;
+    {1} :::::::::::::{3}************{1}:::::::::::::
+    {1}    ::::::::::::::::::::::::::::::::
+    {1}       ::::::::::::::::::::::::::
+    {1}          ::::::::::::::::::::
+    {1}              ::::::::::::
+    {1}                 ::::::
   colors:
     ansi:
       - cyan
@@ -122,7 +313,27 @@ Cpp:
   serialization: c++
 Crystal:
   type: programming
-  ascii: crystal.ascii
+  ascii: |
+    {0}            ,loc;'..
+    {0}          ,xNMMMWNXK0kdl,..
+    {0}        ,xNMMMMMMMMMMMMMKOxoc;.
+    {0}      ,xNMMMMMMMMMMMMMMMMMMMMWX:
+    {0}    ,xNMMMMMMMMMMWNNWMMMMMMMMMMk.
+    {0}  ,xNMMMMMWX0kdlc;:lOMMMMMMMMMMNc
+    {0},xXK{1}..mmmMMMMMMMM'{0}0MMMMMMMMMMMMMO.
+    {0}0o;{1}MMMMMMMMMMMMMm{0}.MMMMMMMMMMMMMMWl
+    {0}0O:.{1}MMMMMMMMMMMM'{0}cMMMMMMMMMMMMMMM0'
+    {0}oWWO:.{1}MMMMMMMMMm{0}.OMMMMMMMMMMMMMMMWo
+    {0}'0MMWO:.{1}MMMMMMM'{0}lWMMMMMMMMMMMMMMMMK,
+    {0} lWMMMWO:.{1}MMMMm{0}'0MMMMMMMMMMMMMMMMMWd
+    {0} .OMMMMMW0c.{1}MM'{0}oWMMMMMMMMMMMMMMMMMWk.
+    {0}  cNMMMMMMW0c{1}'{0},KMMMMMMMMMMMMMMMMW0c.
+    {0}  .kMMMMMMMMW00WMMMMMMMMMMMMMMW0c.
+    {0}   cNMMMMMMMMMMMMMMMMMMMMMMMW0c.
+    {0}   .xWMMMMMMMMMMMMMMMMMMMMW0:.
+    {0}    .';coxOKNWMMMMMMMMMMWO:.
+    {0}           ..,:ldk0KXWMM:.
+    {0}               ...';c:
   colors:
     ansi:
       - default
@@ -130,7 +341,30 @@ Crystal:
     chip: [0, 1, 0]
 CSharp:
   type: programming
-  ascii: csharp.ascii
+  ascii: |
+    {0}                 ++++++
+    {0}              ++++++++++++
+    {0}          ++++++++++++++++++++
+    {0}       ++++++++++++++++++++++++++
+    {0}    ++++++++++++++++++++++++++++++++
+    {0} +++++++++++++{3}************{0}+++++++++++++
+    {0}+++++++++++{3}******************{0}++++++++{2};;;
+    {0}+++++++++{3}**********************{0}++{2};;;;;;;
+    {0}++++++++{3}*********{0}++++++{3}******{2};;;;;;;;;;;
+    {0}+++++++{3}********{0}++++++++++{3}**{2};;;{3}**{2};;;{3}**{2};;;
+    {0}+++++++{3}*******{0}+++++++++{2};;;;;;{3}*********{2}::
+    {0}+++++++{3}******{0}+++++++{2};;;;;;;;;;{3}**{2};;;{3}**{2};;;
+    {0}+++++++{3}*******{0}+++{1}:::::{2};;;;;;;{3}*********{2};;
+    {0}+++++++{3}********{1}::::::::::{3}**{2};;;{3}**{2};;;{3}**{2};;;
+    {0}++++++++{3}*********{1}::::::{3}******{2};;;;;;;;;;;
+    {0}++++++{1}:::{3}**********************{1}::{2};;;;;;;
+    {0}+++{1}::::::::{3}******************{1}::::::::{2};;;
+    {1} :::::::::::::{3}************{1}:::::::::::::
+    {1}    ::::::::::::::::::::::::::::::::
+    {1}       ::::::::::::::::::::::::::
+    {1}          ::::::::::::::::::::
+    {1}              ::::::::::::
+    {1}                 ::::::
   colors:
     ansi:
       - blue
@@ -146,7 +380,28 @@ CSharp:
   serialization: c#
 Css:
   type: markup
-  ascii: css.ascii
+  ascii: |
+    {1}        ####    ####    ####
+    {1}       ##  ##  ##      ##
+    {1}       ##       ####    ####
+    {1}       ##  ##      ##      ##
+    {1}        ####    ####    ####
+    {0}(((((((((((((((((((((((((((((((((((
+    {0}(((((((((((((((((/////////////(((((
+    {0}(((((((((((((((((/////////////(((((
+    {0}(((((((                    ///(((((
+    {0} ((((((                    ///((((
+    {0} ((((((((((((((((        /////((((
+    {0} (((((((((((        //////////((((
+    {0} (((((((                   ///((((
+    {0}  ((((((                   ///(((
+    {0}  (((((((((((((((//////    ///(((
+    {0}  (((((((    ((((//////    ///(((
+    {0}  (((((((                  ///(((
+    {0}   (((((((               /////((
+    {0}   ((((((((((((((/////////////((
+    {0}   ((((((((((((((//////(((((((((
+    {0}          (((((((((((((((
   colors:
     ansi:
       - blue
@@ -154,14 +409,47 @@ Css:
     chip: [86, 61, 124]
 D:
   type: programming
-  ascii: d.ascii
+  ascii: |
+    {0}                                    DDD
+    {0}DDDDDDDDDDDDDDDDDDDDDD             DDDDD
+    {0}DDDDDDDDDDDDDDDDDDDDDDDD            DDD
+    {0}DDDDDDDDDDDDDDDDDDDDDDDDDD     DDDDD
+    {0}DDDDDD               DDDDDDD DDDDDDDDD
+    {0}DDDDDD                DDDDDDDDDDDDDDDDD
+    {0}DDDDDD                 DDDDDDDDDDDDDDDD
+    {0}DDDDDD                 DDDDDDDDDDDDDD
+    {0}DDDDDD                 DDDDDDDDDDD
+    {0}DDDDDD                 DDDDDDD
+    {0}DDDDDD                DDDDDDD
+    {0}DDDDDD               DDDDDDD
+    {0}DDDDDDDDDDDDDDDDDDDDDDDDDDD
+    {0}DDDDDDDDDDDDDDDDDDDDDDDDD
+    {0}DDDDDDDDDDDDDDDDDDDDDD
   colors:
     ansi:
       - red
     chip: [186, 89, 94]
 Dart:
   type: programming
-  ascii: dart.ascii
+  ascii: |
+    {0}  #
+    {0}   ##
+    {0}    ###
+    {0}     ######              ###
+    {0}      #########        #######
+    {0}        ###########  ######{2}O{0}##{2}========-
+    {0}         #####################
+    {0}           ##################
+    {0}        ###############{1}+++++
+    {0}  ###################{1}+++++++
+    {0}          ##########{1}+++++++
+    {0}                 ##{1}+++++++
+    {0}                 ###{1}+++
+    {0}                 #####
+    {0}                 #######
+    {0}                 #########
+    {0}                  #######
+    {0}                   #####
   colors:
     ansi:
       - blue
@@ -174,7 +462,15 @@ Dart:
     chip: [0, 180, 171]
 Dockerfile:
   type: programming
-  ascii: dockerfile.ascii
+  ascii: |
+    {2}                  ##   {0}      .
+    {2}            ## ## ##   {0}     ==
+    {2}         ## ## ## ## ##{0}    ===
+    {0}     /"""""""""""""""""\___/ ===
+    {1}~~~ {0}{{1}~~ ~~~~ ~~~ ~~~~ ~~~ ~ {0}/  ===-{1} ~~~
+    {0}     \{1}______ o{0}           __/
+    {1}       \    \ {0}        __/
+    {1}        \____\{0}_______/
   colors:
     ansi:
       - cyan
@@ -183,7 +479,22 @@ Dockerfile:
     chip: [56, 77, 84]
 Elisp:
   type: programming
-  ascii: emacslisp.ascii
+  ascii: |
+    {0}         ':r\iv7i|r:'
+    {0}      :LFaZZZaaaoooo2t\:
+    {0}    ^]aZZZZaaw9DN{1}Q@Q{0}gojjv;
+    {0}  ,vaZZZaX69KOHRW#{1}@@@{0}Ouuuu/,
+    {0} _[ZZaaa{1}Q@@@@QBNMRD{0}dEuuufFFl,
+    {0}.7aaaooo{1}wB@@#{0}h2jjuuuufFF]]]]|-
+    {0}:yooooSSS2S${1}gQ@Q{0}8hjfFF]]]][tz"
+    {0};oooSS2ed#{1}Q@@@@@Q{0}N{0}Do]]][[ttt[:
+    {0}:uSS2mQ{1}@@@@Q{0}deuF]]]][[ttt[[[z~
+    {0}-/yjjO{1}@@@@Q{0}uFF]]][[tttt[[]]]?`
+    {0} ,vuuue&{1}Q@@@QQ#NNggg{0}&D9u[]i'
+    {0}  '/ffFF]]jek99OR{1}#Q@@Q{0}Hj]]|'
+    {0}   `;c]]][uaXUKO$wo]]]]L:`
+    {0}     `,>i1tt[[]]]]ti>,`
+    {0}        `.~;^>??>^;,-`
   colors:
     ansi:
       - magenta
@@ -192,14 +503,53 @@ Elisp:
   serialization: emacs-lisp
 Elixir:
   type: programming
-  ascii: elixir.ascii
+  ascii: |
+    {0}            x
+    {0}           WNX
+    {0}          Odc:xN
+    {0}        0ddko,oX
+    {0}       kokNWOllOW
+    {0}     KdoKWMMNKxl0W
+    {0}    0odXMMMMMMNxoON
+    {0}   0lxNMMMMMMMMW0dd0N
+    {0}  0oxNMMMMMMMMMMMNOodKW
+    {0}  odXMMMMMMMMMMMMMMXxokN
+    {0} xl0MMMMMMMMMMMMMMMMW0odX
+    {0}xoxWMMMMMMMMMMMMMMMMMMKodN
+    {0}0lOMMMMMMMMMMMMMMMMMMMWOlO
+    {0}OlOMWKXMMMMMMMMMMMMMMMMKlxW
+    {0}KlxWXodNMMMMMMMMMMMMMMM0lkW
+    {0}xxoKWOlkNMMMMMMMMMMMMMWkl0
+    {0} XooKN0ddkKNWWWMMMMMMWOlkW
+    {0}  XxokXN0kxxkkKMMMMN0doON
+    {0}   WKxdxk0KKKKXK0OxddkXW
+    {0}     WNKOxxxxxxxxkOXW
+    {0}         WWWWWWW
   colors:
     ansi:
       - magenta
     chip: [110, 74, 126]
 Elm:
   type: programming
-  ascii: elm.ascii
+  ascii: |
+    {0}   {1}ElmElmElmElm   {3}ElmElmElmElmElm
+    {0}El   {1}mElmElmElmEl   {3}mElmElmElmElm
+    {0}Elm   {1}ElmElmElmElmE   {3}lmElmElmElm
+    {0}ElmEl   {1}mElmElmElmElm   {3}ElmElmElm
+    {0}ElmElmE                   {3}mElmElm
+    {0}ElmElmElm   {2}ElmElmElmEl     {3}lmElm
+    {0}ElmElmElmEl   {2}mElmElm   {1}Elm   {3}Elm
+    {0}ElmElmElmElmE   {2}lmE   {1}lmElmEl   {3}m
+    {0}ElmElmElmElmElm     {1}mElmElmElmE
+    {0}ElmElmElmElmElmE    {1}mElmElmElm
+    {0}ElmElmElmElmEl   {3}mE   {1}lmElmE   {2}lm
+    {0}ElmElmElmElm   {3}ElmElm   {1}El   {2}mElm
+    {0}ElmElmElmE   {3}lmElmElmEl    {2}ElmElm
+    {0}ElmElmEl   {3}mElmElmElmElmE   {2}lmElm
+    {0}ElmElm   {3}ElmElmElmElmElmElm   {2}Elm
+    {0}ElmE   {3}lmElmElmElmElmElmElmEl   {2}m
+    {0}El   {3}mElmElmElmElmElmElmElmElmE
+    {0}   {3}ElmElmElmElmElmElmElmElmElmElm
   colors:
     ansi:
       - blue
@@ -209,7 +559,30 @@ Elm:
     chip: [96, 181, 204]
 Emojicode:
   type: programming
-  ascii: emojicode.ascii
+  ascii: |
+    {0} ~~
+    {0}  ~~
+    {0}   ~~
+    {0}    ~~{2}           ''''''''
+    {0}     ~~~{2}       ''''''''''''
+    {0}      {1}````````{2}''''''''''''''
+    {1}     `````````{2}''''''''''''''
+    {1}    `````````{2}'''''''''''''{3}~~~~~~~-
+    {1}    `````````{2}'''''''''''{3}~~~~~~~~~~~
+    {1}    ``````````{2}''{1}````````{3}~~~~~~~~~~~~
+    {1}    ``````````````````````{3}~~~~~~~~~~~
+    {1}    ```````````````````````{3}~~~~~~~~~~
+    {1}     ``{3}~~~~~{1}```````````````{3}~~~~~~~~~~
+    {3}    -~~~~~~~{1}```````````````{3}~~~~~~~~~
+    {3}   ~~~~~~~~~{1}```````````````````````
+    {3}   ~~~~~~~~~~{1}````````````````````````
+    {3}  ~~~~~~~~~~~~{1}`````````````````````````
+    {3}   ~~~~~~~~~~~~~~{1}``````{2}````````````````
+    {3}   ~~~~~~~~~~~~~~{2}'''''''{1}```````````````
+    {3}    ~~~~~~~~~~~~{2}''''''''{1}```````````````
+    {3}      ~~~~~~~~{2}'''''''''''{1}``````````````
+    {2}               {2}'''''''''''{1}````````````
+    {2}                 {2}''''''''   {1}````````
   colors:
     ansi:
       - green
@@ -224,14 +597,42 @@ Emojicode:
     chip: [96, 181, 204]
 Erlang:
   type: programming
-  ascii: erlang.ascii
+  ascii: |
+    {0}
+    {0}   EEEEEEEEEEEEE      EEEEEEEEEEEE
+    {0}  EEEEEEEEEEEE         EEEEEEEEEEEE
+    {0} EEEEEEEEEEEE           EEEEEEEEEEE
+    {0} EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    {0}EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    {0}EEEEEEEEEEEEE
+    {0}EEEEEEEEEEEEE
+    {0}EEEEEEEEEEEEE
+    {0} EEEEEEEEEEEEE                 E
+    {0} EEEEEEEEEEEEE                EEEEE
+    {0}  EEEEEEEEEEEEE             EEEEEEEEE
+    {0}   EEEEEEEEEEEEEE         EEEEEEEEEE
   colors:
     ansi:
       - red
     chip: [184, 57, 152]
 Fish:
   type: programming
-  ascii: fish.ascii
+  ascii: |
+    {0}                 ___
+    {0}  ___======____=-{1}-{0}-=)
+    {0}/T            \_{1}--={0}==)
+    {0}[ \ ({1}0{0})   \~    \_{1}-={0}=)
+    {0} \      / )J~~    \{1}-={0})
+    {0}  \\___/  )JJ~{1}~~{0}   \)
+    {0}   \_____/JJJ~~{1}~~{0}    \
+    {0}   / \  {1}, \{0}J~~~{1}~~{0}     \
+    {0}  (-{1}\){0}\=|{1}\\\{0}~~{1}~~{0}       L_{1}_
+    {0}  (\\)  ({1}\{0}\\)_           {1}\==__
+    {0}   \V    \\\) ===_____   {1}\\\\{0}\\
+    {0}          \V)     \_) \\{1}\\JJ\{0}J\)
+    {0}                      /J{1}\J{0}T\JJJJ)
+    {0}                      (JJJ| \UUU)
+    {0}                       (UU)
   colors:
     ansi:
       - red
@@ -239,14 +640,52 @@ Fish:
     chip: [74, 174, 71]
 Forth:
   type: programming
-  ascii: forth.ascii
+  ascii: |
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::          ::::::::          ::::::
+    {0}::::::          ::::::::         :::::::
+    {0}::::::::::::::::::::::::::     :::::::::
+    {0}::::::::::::::::::::::::     :::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::::::
   colors:
     ansi:
       - red
     chip: [52, 23, 8]
 FortranLegacy:
   type: programming
-  ascii: f77.ascii
+  ascii: |
+    {4}    _ {1}__ __
+    {4}  _|_ {1} /  /
+    {0}  o{4}|{1}  /  /
+    {0}      /\
+    {0}     /  \
+    {0}    |    |
+    {0}    |{2}NASA{0}|
+    {0}    |    |
+    {0}    |    |
+    {0}    |    |
+    {0}   '      '
+    {0}   |      |
+    {0}   |      |
+    {0}   |______|
+    {3}   /-`'-`.\
+    {3}  ; / . \'\.
+    {3} '/''( .'\.''
+    {3}'.'.;.;' ;'.;'
   colors:
     ansi:
       - default
@@ -258,7 +697,25 @@ FortranLegacy:
   serialization: fortran-legacy
 FortranModern:
   type: programming
-  ascii: f90.ascii
+  ascii: |
+    {4}    _{1} _  _
+    {4}  _|_{1}(_|/ \
+    {0}  o{4}| {1} _|\_/
+    {0}      /\
+    {0}     /  \
+    {0}    |    |
+    {0}    |{2}NASA{0}|
+    {0}    |    |
+    {0}    |    |
+    {0}    |    |
+    {0}   '      '
+    {0}   |      |
+    {0}   |      |
+    {0}   |______|
+    {3}   /-`'-`.\
+    {3}  ; / . \'\.
+    {3} '/''( .'\.''
+    {3}'.'.;.;' ;'.;'
   colors:
     ansi:
       - default
@@ -270,7 +727,25 @@ FortranModern:
   serialization: fortran
 FSharp:
   type: programming
-  ascii: fsharp.ascii
+  ascii: |
+    {0}                 /  {1}((
+    {0}               ///  {1}((((
+    {0}             /////  {1}((((((
+    {0}           ///////  {1}((((((((
+    {0}         /////////  {1}((((((((((
+    {0}       //////////   {1}  ((((((((((
+    {0}     //////////  /  {1}    ((((((((((
+    {0}   //////////  ///  {1}      ((((((((((
+    {0} //////////  /////  {1}        ((((((((((
+    {0}/////////   //////  {1}         ((((((((((
+    {0}  /////////   ////  {1}       ((((((((((
+    {0}    /////////   //  {1}     ((((((((((
+    {0}      /////////     {1}   ((((((((((
+    {0}        /////////   {1} ((((((((((
+    {0}          ////////  {1}(((((((((
+    {0}            //////  {1}(((((((
+    {0}              ////  {1}(((((
+    {0}                //  {1}(((
   colors:
     ansi:
       - cyan
@@ -279,7 +754,25 @@ FSharp:
   serialization: f#
 GdScript:
   type: programming
-  ascii: gdscript.ascii
+  ascii: |
+    {0}         _.aMb      dMe._
+    {0}        'H8888b,  ,d8888H'
+    {0}   .   .:88888d8888888888:.   .
+    {0} .d8b.dM888888888888888888Mb.d8b.
+    {0}d88888888888888888888888888888888b
+    {0}'V888888888888888888888888888888V'
+    {0} 88888888888888888888888888888888
+    {0} 8888P' {1}__{0} "V88888888V" {1}__{0} 'V8888
+    {0} 8888" {1}dMMb {0}'888{1}''{0}888' {1}d88b {0}"8888
+    {0} 8888b {1}:HH: {0}/888{1}  {0}888\ {1}:HH: {0}d8888
+    {0} 8888be._.ad8888{1}..{0}8888be._.ad8888
+    {0} WW8888888888888888888888888888WW
+    {0} {1}#######{0}YW88/{1}########{0}\88WY{1}#######
+    {0} MWbzxe{1}##{0}8MW;{1}##{0}8888{1}##{0};8MW{1}##{0}aezdWM
+    {0} 'Y8888b.{1}#####{0}/8888\{1}#####{0}.d8888Y'
+    {0}  "V8888888888888888888888888V"
+    {0}   '^YV8888888888888888888VP^'
+    {0}      '"^^VY888888888VY^^'
   colors:
     ansi:
       - cyan
@@ -290,7 +783,31 @@ GdScript:
     chip: [53, 85, 112]
 Go:
   type: programming
-  ascii: go.ascii
+  ascii: |
+    {0}           --==============--
+    {0}  .-==-.===oooo=oooooo=ooooo===--===-
+    {0} .==  =o={1}oGGGGGG{0}o=oo=o{1}GGGGGGG{0}G=o=  oo-
+    {0} -o= oo={1}G .=GGGGG{0}o=o={1}= .=GGGGG{0}=ooo o=-
+    {0}  .-=oo={1}o==oGGGGG{0}=oo={1}oooGGGGGo{0}=oooo.
+    {0}   -ooooo{1}=oooooo{0}={2}.   .{0}={1}=ooo=={0}oooooo-
+    {0}   -ooooooooooo{2}====_===={0}ooooooooooo=
+    {0}   -oooooooooooo{2}=={1}#{0}.{1}#{2}=={0}ooooooooooooo
+    {0}   -ooooooooooooo={1}#{0}.{1}#{0}=oooooooooooooo
+    {0}   .oooooooooooooooooooooooooooooooo.
+    {0}    oooooooooooooooooooooooooooooooo.
+    {2}  ..{0}oooooooooooooooooooooooooooooooo{2}..
+    {2}-=o-{0}=ooooooooooooooooooooooooooooooo{2}-oo.
+    {2}.=- {0}oooooooooooooooooooooooooooooooo{2}-.-
+    {0}   .oooooooooooooooooooooooooooooooo-
+    {0}   -oooooooooooooooooooooooooooooooo-
+    {0}   -oooooooooooooooooooooooooooooooo-
+    {0}   -oooooooooooooooooooooooooooooooo-
+    {0}   .oooooooooooooooooooooooooooooooo
+    {0}    =oooooooooooooooooooooooooooooo-
+    {0}    .=oooooooooooooooooooooooooooo-
+    {0}      -=oooooooooooooooooooooooo=.
+    {2}     =oo{0}====oooooooooooooooo==-{2}oo=-
+    {2}    .-==-    {0}.--=======---     {2}.==-
   colors:
     ansi:
       - cyan
@@ -303,14 +820,58 @@ Go:
     chip: [0, 173, 216]
 Graphql:
   type: data
-  ascii: graphql.ascii
+  ascii: |
+    {0}                 {}{}{}
+    {0}                {}{}{}{}
+    {0}                {}{}{}{}
+    {0}            {}   {}{}{}   {}
+    {0} {}{}{}  {}    {}      {}    {}  {}{}{}
+    {0}{}{}{}{}      {}        {}      {}{}{}{}
+    {0}{}{}{}{}     {}          {}     {}{}{}{}
+    {0} {}{}{}     {}            {}     {}{}{}
+    {0}   {}      {}              {}      {}
+    {0}   {}     {}                {}     {}
+    {0}   {}    {}                  {}    {}
+    {0}   {}   {}                    {}   {}
+    {0}   {}  {}                      {}  {}
+    {0} {}{}{}                          {}{}{}
+    {0}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+    {0}{}{}{}{}                        {}{}{}{}
+    {0} {}{}{}  {}                  {}  {}{}{}
+    {0}            {}   {}{}{}   {}
+    {0}                {}{}{}{}
+    {0}                {}{}{}{}
+    {0}                 {}{}{}
   colors:
     ansi:
       - magenta
     chip: [225, 0, 152]
 Groovy:
   type: programming
-  ascii: groovy.ascii
+  ascii: |
+    {0}                   *
+    {0}                  ***
+    {0}                 *****
+    {0}                *******
+    {0}               *********
+    {0}              ***********
+    {0}             *************
+    {0}*****************{1}@@@@@{0}*****************
+    {0}  *************{1}@{0}******{1}@{0}**************
+    {0}   ***********{1}@{0}**{1}@@{0}***{1}@{0}*************
+    {0}    *********{1}@{0}***{1}@@{0}**{1}@{0}**{1}@{0}**********
+    {0}      *******{1}@{0}****{1}@@{0}***{1}@@@{0}*******
+    {0}       *******{1}@{0}******{1}@@{0}**{1}@@{0}*****
+    {0}        *******{1}@@@@@@{0}**{1}@@@@{0}****
+    {0}         ************{1}@@@@@@{0}***
+    {0}         ******{1}@@@@@@@@@@@{0}****
+    {0}        ********{1}@@@@@@@@{0}*******
+    {0}       **********{1}@@{0}*************
+    {0}      ***************************
+    {0}     ***********       ***********
+    {0}    *********             *********
+    {0}   *****                       *****
+    {0}  *                                 *
   colors:
     ansi:
       - cyan
@@ -318,7 +879,20 @@ Groovy:
     chip: [66, 152, 184]
 Haskell:
   type: programming
-  ascii: haskell.ascii
+  ascii: |
+    {0}yyyyyy{1} xxxxxx
+    {0} yyyyyy{1} xxxxxx
+    {0}  yyyyyy{1} xxxxxx
+    {0}   yyyyyy{1} xxxxxx
+    {0}    yyyyyy{1} xxxxxx{2} yyyyyyyyyy
+    {0}     yyyyyy{1} xxxxxx{2} yyyyyyyyy
+    {0}      yyyyyy{1} xxxxxx
+    {0}     yyyyyy{1} xxxxxxxx{2} yyyyyyy
+    {0}    yyyyyy{1} xxxxxxxxxx{2} yyyyyy
+    {0}   yyyyyy{1} xxxxxxxxxxxx
+    {0}  yyyyyy{1} xxxxxx  xxxxxx
+    {0} yyyyyy{1} xxxxxx    xxxxxx
+    {0}yyyyyy{1} xxxxxx      xxxxxx
   colors:
     ansi:
       - cyan
@@ -331,7 +905,27 @@ Haskell:
     chip: [94, 80, 134]
 Haxe:
   type: programming
-  ascii: haxe.ascii
+  ascii: |
+    {0}#############              {2}@@@@@@@@@@@@@
+    {0}#################      {2}@@@@@@@@@@@@@@@@@
+    {0}###################{1}XX{2}@@@@@@@@@@@@@@@@@@@
+    {0}##################{1}XXXX{2}@@@@@@@@@@@@@@@@@@
+    {0}################{1}XXXXXXXX{2}@@@@@@@@@@@@@@@@
+    {0}##############{1}XXXXXXXXXXXX{2}@@@@@@@@@@@@@@
+    {0} ###########{1}XXXXXXXXXXXXXXXX{2}@@@@@@@@@@@
+    {0}  ########{1}XXXXXXXXXXXXXXXXXXXX{2}@@@@@@@@
+    {0}   #####{1}XXXXXXXXXXXXXXXXXXXXXXXX{2}@@@@@
+    {0}    ##{1}XXXXXXXXXXXXXXXXXXXXXXXXXXXX{2}@@
+    {0}    ##{1}XXXXXXXXXXXXXXXXXXXXXXXXXXXX{2}@@
+    {0}   #####{1}XXXXXXXXXXXXXXXXXXXXXXXX{2}@@@@@
+    {0}  ########{1}XXXXXXXXXXXXXXXXXXXX{2}@@@@@@@@
+    {0} ###########{1}XXXXXXXXXXXXXXXX{2}@@@@@@@@@@@
+    {0}##############{1}XXXXXXXXXXXX{2}@@@@@@@@@@@@@@
+    {0}################{1}XXXXXXXX{2}@@@@@@@@@@@@@@@@
+    {0}##################{1}XXXX{2}@@@@@@@@@@@@@@@@@@
+    {0}###################{1}XX{2}@@@@@@@@@@@@@@@@@@@
+    {0}#################      {2}@@@@@@@@@@@@@@@@@
+    {0}#############              {2}@@@@@@@@@@@@@
   colors:
     ansi:
       - yellow
@@ -344,7 +938,29 @@ Haxe:
     chip: [223, 121, 0]
 Hcl:
   type: programming
-  ascii: hcl.ascii
+  ascii: |
+    {0}::
+    {0}::::
+    {0}::::::
+    {0}::::::::
+    {0}::::::::::
+    {0}:::::::::: ::        {1}         ..
+    {0}  :::::::: ::::      {1}       ....
+    {0}    :::::: ::::::    {1}     ......
+    {0}      :::: ::::::::  {1}   ........
+    {0}        :: ::::::::::{1} ..........
+    {0}           ::::::::::{1} ..........
+    {0}             ::::::::{1} ........
+    {0}           ::  ::::::{1} ......
+    {0}           ::::  ::::{1} ....
+    {0}           ::::::  ::{1} ..
+    {0}           ::::::::
+    {0}           ::::::::::
+    {0}           ::::::::::
+    {0}             ::::::::
+    {0}               ::::::
+    {0}                 ::::
+    {0}                   ::
   colors:
     ansi:
       - magenta
@@ -355,7 +971,31 @@ Hcl:
     chip: [170, 206, 96]
 HolyC:
   type: programming
-  ascii: holyc.ascii
+  ascii: |
+    {0}             ========
+    {0}         ====        ====
+    {0}      ====              ====
+    {0}    ===                   ===
+    {0}   ===                     ===
+    {0}  ==           {1}***           {0}==
+    {0}  ==        {1}*********        {0}==
+    {0}   =    {1}*****************    {0}=
+    {1}    ********{0}*********{1}********
+    {1} ********{0}**{2}***********{0}**{1}********
+    {1}*******{0}*{2}******{0}*****{2}*****{0}*{1}********
+    {1}******{0}*{2}*****{0}**{1}*****{0}**{2}***{0}**{1}*******
+    {1}*****{0}*{2}*****{0}*{1}*********{0}***{1}*********
+    {1}*****{0}*{2}****{0}*{1}**********************
+    {1}*****{0}*{2}****{0}*{1}**********************
+    {1}*****{0}*{2}****{0}*{1}**********************
+    {1}*****{0}*{2}*****{0}*{1}*********{0}***{1}*********
+    {1}******{0}*{2}*****{0}**{1}*****{0}**{2}***{0}**{1}*******
+    {1}*******{0}*{2}******{0}*****{2}*****{0}*{1}********
+    {1} ********{0}**{2}***********{0}**{1}********
+    {1}     *******{0}*********{1}*******
+    {1}        *****************
+    {1}            *********
+    {1}               ***
   colors:
     ansi:
       - yellow
@@ -368,7 +1008,28 @@ HolyC:
     chip: [255, 239, 175]
 Html:
   type: markup
-  ascii: html.ascii
+  ascii: |
+    {1}  ##  ##  ######  ##   ##  ##
+    {1}  ##  ##    ##    ### ###  ##
+    {1}  ######    ##    ## # ##  ##
+    {1}  ##  ##    ##    ##   ##  ##
+    {1}  ##  ##    ##    ##   ##  ######
+    {0}(((((((((((((((((((((((((((((((((((
+    {0}(((((((((((((((((/////////////(((((
+    {0}(((((((((((((((((/////////////(((((
+    {0}(((((((                     //(((((
+    {0} ((((((                     //((((
+    {0} ((((((    ((((((/////////////((((
+    {0} ((((((     (((((/////////////((((
+    {0} ((((((                    ///((((
+    {0}  (((((                    ///(((
+    {0}  (((((((((((((((//////    ///(((
+    {0}  ((((((    (((((/////     ///(((
+    {0}  ((((((                   ///(((
+    {0}   (((((((               /////((
+    {0}   ((((((((((((((/////////////((
+    {0}   ((((((((((((((//////(((((((((
+    {0}          (((((((((((((((
   colors:
     ansi:
       - red
@@ -376,14 +1037,54 @@ Html:
     chip: [227, 76, 38]
 Idris:
   type: programming
-  ascii: idris.ascii
+  ascii: |
+    {0}       %
+    {0}          %
+    {0}   %&&&     %%
+    {0}        %%    %&
+    {0}&%%%&     %    %%
+    {0}     %%        %%
+    {0}       %       %%
+    {0} %%%          %%&
+    {0}   %%       %%%
+    {0}    %     &%%%
+    {0}         %%%&
+    {0}       &%%%
+    {0}      %%%%
+    {0}      %%%
+    {0}     %%%
+    {0}     %%%
+    {0}     &%%
+    {0}      %%%
   colors:
     ansi:
       - red
     chip: [179, 0, 0]
 Java:
   type: programming
-  ascii: java.ascii
+  ascii: |
+    {0}                  |
+    {0}                 ||
+    {0}               |||
+    {0}             ||||    ||
+    {0}           ||||| ||||
+    {0}          ||||  |||
+    {0}         ||||  |||
+    {0}         |||    |||
+    {0}          |||    |||
+    {0}            ||    ||
+    {0}              |   |
+    {1}   ####               #    ##
+    {1}    ################       ##
+    {1}       #                   ##
+    {1}      ################   ###
+    {1}
+    {1}       ##############
+    {1}####      #######          #
+    {1}#####                   ####
+    {1}   #####################      #
+    {1}                          ###
+    {1}          ###############
   colors:
     ansi:
       - red
@@ -394,7 +1095,25 @@ Java:
     chip: [176, 114, 25]
 JavaScript:
   type: programming
-  ascii: javascript.ascii
+  ascii: |
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJ    JSJSJ      JSJSJS
+    {0}JSJSJSJSJSJSJSJSJ    JSJ          JSJS
+    {0}JSJSJSJSJSJSJSJSJ    JSJ     JSJSJSJSJ
+    {0}JSJSJSJSJSJSJSJSJ    JSJS     SJSJSJSJ
+    {0}JSJSJSJSJSJSJSJSJ    JSJSJS     SJSJSJ
+    {0}JSJSJSJSJSJSJSJSJ    JSJSJSJS     JSJS
+    {0}JSJSJSJSJSJSJSJSJ    JSJSJSJSJ     JSJ
+    {0}JSJSJSJSJS     JS    SJSJ          JSJ
+    {0}JSJSJSJSJSJ          JSJSJS      SJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
+    {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
   colors:
     ansi:
       - yellow
@@ -403,7 +1122,25 @@ JavaScript:
     chip: [241, 224, 90]
 Json:
   type: data
-  ascii: json.ascii
+  ascii: |
+    {0}           `:+osyyyso+/:`
+    {0}        :smNNNmmmddddhhhmds:
+    {0}     .oNNNNNmmmddddhhhyyyym{1}MNs.
+    {0}    oNNNNNmmmddddhhhyyyysssh{1}MMMs`
+    {0}  .dNNNNmmmddmmmdyyyyysssoooh{1}MMMm.
+    {0} `mNNNmmmmm{1}NMMMy-{0}  .+ssoooo++N{1}MMMN.
+    {0} yNNmmmdm{1}MMMMN-  {0}    .ooo+++/d{1}MMMMd
+    {0}-Nmmmddm{1}MMMMM:   {0}     .+++///y{1}MMMMM-
+    {0}+mmdddd{1}MMMMMm    {0}      /////:y{1}MMMMM+
+    {0}+ddddhd{1}MMMMMm    {0}      ///:::m{1}MMMMM+
+    {0}-ddhhhd{1}MMMMMM-   {0}     `/::::y{1}MMMMMM-
+    {0} shhyyh{1}MMMMMMm-  {0}    `:::::h{1}MMMMMMh
+    {0} .yyyyyN{1}MMMMMMMs.{0}  `-:::/y{1}NMMMMMMm`
+    {0}  .osssh{1}MMMMMMMMMmhyyydNMMMMMMMMd.
+    {0}    :oood{1}MMMMMMMMMMMMMMMMMMMMMNo
+    {0}     `:++yN{1}MMMMMMMMMMMMMMMMMNs.
+    {0}        .-/ym{1}MMMMMMMMMMMMmy:
+    {0}            `-/oyhhhys+:`
   colors:
     ansi:
       - default
@@ -411,7 +1148,32 @@ Json:
     chip: [41, 41, 41]
 Jsonnet:
   type: programming
-  ascii: jsonnet.ascii
+  ascii: |
+    {0}        .       .
+    {0}       /{1}:{0}\     /{1}:{0}\
+    {0}      /{1}:::{0}\   /{1}:::{0}\
+    {0}     /{1}:::::{0}\ /{1}:::::{0}\
+    {0}   /|\{1}:::::{0}/|\{1}:::::{0}/|
+    {0}  /{1}:{0}|#\{1}:::{0}/{1}.{0}|#\{1}:::{0}/{1}.{0}|
+    {0} /{1}::{0}|##\{1}:{0}/{1}..{0}|##\{1}:{0}/{1}..{0}|
+    {0}|\{1}::{0}|###|{1}...{0}|###|{1}...{0}|
+    {0}|#\{1}:{0}|###|{1}...{0}|###|{1}...{0}|
+    {0}|##\|###|{1}...{0}|###|{1}...{0}|
+    {0}|#######|{1}..{0}/{1}:{0}\##|{1}..{0}/
+    {0}|#######|{1}.{0}/{1}:::{0}\#|{1}.{0}/
+    {0}|#######|/{1}:::::{0}\|/
+    {0} \#######\{1}:::::{0}/|\
+    {0}  \#######\{1}:::{0}/{1}.{0}|{1}:{0}\
+    {0}   \#######\{1}:{0}/{1}..{0}|{1}::{0}\
+    {0}    |#######|{1}...{0}|{1}::{0}/|
+    {0}    |#######|{1}...{0}|{1}:{0}/{1}.{0}|
+    {0}    |#######|{1}...{0}|/{1}..{0}|
+    {0}    |###|\##|{1}..{0}/|{1}...{0}|
+    {0}    |###|{1}.{0}\#|{1}.{0}/#|{1}...{0}|
+    {0}    |###|{1}..{0}\|/##|{1}...{0}|
+    {0}     \##|{1}..{0}/ \##|{1}..{0}/
+    {0}      \#|{1}.{0}/   \#|{1}.{0}/
+    {0}       \|/     \|/
   colors:
     ansi:
       - default
@@ -419,14 +1181,38 @@ Jsonnet:
     chip: [0, 100, 189]
 Jsx:
   type: programming
-  ascii: jsx.ascii
+  ascii: |
+    {0}          .REACT.    .REACT.
+    {0}        JS     .JSXJSX.     JS
+    {0}       JS       :JSJS:       JS
+    {0}       JS     .REACTJSX'     JS
+    {0}     'JSXJSXJSXJSXJSXJSXJSXJSXJS'
+    {0}  'REACTJSREACT        REACTJSREACT'
+    {0} 'JSX'  REACT'  :JSXJ:  'REACT  'JSX'
+    {0}'JS      JSX'  :JSXJSX:  'JSX      JS'
+    {0}'JS      JSX'  :JSXJSX:  'JSX      JS'
+    {0} 'JSX'  REACT'  :JSXJ:  'REACT  'JSX'
+    {0}  'REACTJSREACT        REACTJSREACT'
+    {0}     'JSXJSXJSXJSXJSXJSXJSXJSXJS'
+    {0}       JS     .REACTJSX'     JS
+    {0}       JS       :JSJS:       JS
+    {0}        JS     .JSXJSX.     JS
+    {0}          .REACT.    .REACT.
   colors:
     ansi:
       - yellow
     chip: [241, 224, 90]
 Julia:
   type: programming
-  ascii: julia.ascii
+  ascii: |
+    {0}               {2}_
+    {0}   {1}_       {0}_ {3}_{2}(_){4}_
+    {0}  {1}(_)     {0}| {3}(_) {4}(_)
+    {0}   _ _   _| |_  __ _
+    {0}  | | | | | | |/ _` |
+    {0}  | | |_| | | | (_| |
+    {0} _/ |\__'_|_|_|\__'_|
+    {0}|__/
   colors:
     ansi:
       - default
@@ -437,7 +1223,30 @@ Julia:
     chip: [162, 112, 186]
 Jupyter:
   type: programming
-  ascii: jupyter.ascii
+  ascii: |
+    {0}                                 +%%%+
+    {0}                                $$$$$$$
+    {0}  +%+                           $$$$$$$
+    {0} $$$$$           {1}******          {0}*%%%*
+    {0}  *%*       {1}****************
+    {1}        ************************
+    {1}     ********              ********
+    {1}   ***                            ***
+    {1}  *                       {0}_          {1}*
+    {0}  _  _   _  _ __   _   _ | |_  ___  _ _
+    {0} | || | | || '_ \ | | | || __|/ _ \| '_|
+    {0} | || |_| || |_) || |_| || |_ | __/| |
+    {0} | | \__,_|| .__/  \__, | \__|\___||_|
+    {0}/_/        |_|     |___/
+    {1}  *                                  *
+    {1}   ***                            ***
+    {1}     ********              ********
+    {1}        ************************
+    {1}            ****************
+    {0}    +%%%+        {1}******
+    {0}   $$$$$$$
+    {0}   $$$$$$$
+    {0}    *%%%*
   colors:
     ansi:
       - default
@@ -451,7 +1260,27 @@ Jupyter:
   serialization: jupyter-notebooks
 Kotlin:
   type: programming
-  ascii: kotlin.ascii
+  ascii: |
+    {0}KOTLIN{2}KOTLINKOTLINKO{1}TLINKOTLINKOTLINKOTL
+    {0}KOTLINKO{2}TLINKOTLIN{1}KOTLINKOTLINKOTLINKO
+    {0}KOTLINKOTL{2}INKOTL{1}INKOTLINKOTLINKOTLIN
+    {0}KOTLINKOTLIN{2}KO{1}TLINKOTLINKOTLINKOTL
+    {0}KOTLINKOTLIN{1}KOTLINKOTLINKOTLINKO
+    {0}KOTLINKOTL{1}INKOTLINKOTLINKOTLIN
+    {0}KOTLINKO{1}TLINKOTLINKOTLINKOTL
+    {0}KOTLIN{1}KOTLINKOTLINKOTLINKO
+    {0}KOTL{1}INKOTLINKOTLINKOTLIN
+    {0}KO{1}TLINKOTLINKOTLINKOTL
+    {1}KOTLINKOTLINKOTLINKO{2}TL
+    {2}KO{1}TLINKOTLINKOTLIN{2}KOTLIN
+    {2}KOTL{1}INKOTLINKOTL{2}INKOTLINKO
+    {2}KOTLIN{1}KOTLINKO{2}TLINKOTLINKOTL
+    {2}KOTLINKO{1}TLIN{0}K{2}OTLINKOTLINKOTLIN
+    {2}KOTLINKOTL{0}INKOT{2}LINKOTLINKOTLINKO
+    {2}KOTLINKO{0}TLINKOTLI{2}NKOTLINKOTLINKOTL
+    {2}KOTLIN{0}KOTLINKOTLINK{2}OTLINKOTLINKOTLIN
+    {2}KOTL{0}INKOTLINKOTLINKOT{2}LINKOTLINKOTLINKO
+    {2}KO{0}TLINKOTLINKOTLINKOTLI{2}NKOTLINKOTLINKOTL
   colors:
     ansi:
       - blue
@@ -460,14 +1289,53 @@ Kotlin:
     chip: [169, 123, 255]
 Lisp:
   type: programming
-  ascii: lisp.ascii
+  ascii: |
+    {0}              ............
+    {0}         ********..............
+    {0}       *************.............
+    {0}     ****************..............
+    {0}   *******************...***.........
+    {0}  **...********...*****...***.........
+    {0} ***...*******...******....***.........
+    {0}****...******...*******....****.........
+    {0}*****...****...*******.....*****........
+    {0}******...**...******.......******.......
+    {0}*******......******.......***..***......
+    {0}********.....*****.......***....***.....
+    {0}*********....****.......***......***....
+    {0} *********...****......***.......***...
+    {0}  *********...***.....***........***..
+    {0}   *********...***...................
+    {0}     **************................
+    {0}       *************.............
+    {0}         **************........
+    {0}              ************
   colors:
     ansi:
       - default
     chip: [63, 182, 139]
 LLVM:
   type: programming
-  ascii: llvm.ascii
+  ascii: |
+    {0}KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+    {0}KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+    {0}KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+    {0}KKKKKKKKK"              "KKKKKKKK
+    {0}KKKKKKK     KKKKKKKKKK     "KKKKK
+    {0}KKKKK     KKKKKKKKKKKKKKK    "KKK
+    {0}KKKK     KKKKKKKKKKKKKKKKK
+    {0}KKKK      KKKKKKKKKKKKKKKKK
+    {0}KKKK        KKKKKKKKKKKKKKKK
+    {0}KKKK           KKKKKKKKKKKKKK
+    {0}KKKK            KKKKKKKKKKKKK
+    {0}KKKK            ,KKKKKKKKKKKK
+    {0}KKKKKK,    ,     KKKKKKKKKKKK
+    {0}KKKKKKKK   KK,    `KKKKKKKKKK
+    {0}KKKKKKKKK  KKKKKKKKKKKKKKKKK
+    {0}KKKKKKKK,  ,KKKKKKKKKKKKKKK
+    {0} `KKKKKKKKKKKKKKKKKKKKKKK`
+    {0}   `KKKKKKKKKKKKKKKKKKK`
+    {0}      `KKKKKKKKKKKKKK`
   colors:
     ansi:
       - red
@@ -476,7 +1344,26 @@ LLVM:
     chip: [24, 86, 25]
 Lua:
   type: programming
-  ascii: lua.ascii
+  ascii: |
+    {1}                 -- --
+    {1}         --                 --{0} @@@@
+    {1}      --      {0}@@@@@@@@@@@     @@@@@@
+    {0}           @@@@@@@@@@@@@@@@@   @@@@
+    {1}  --     {0}@@@@@@@@@@@@@@{2}****{0}@@@     {1}--
+    {1} --    {0}@@@@@@@@@@@@@@@{2}******{0}@@@@    {1}--
+    {0}      @@@@@@@@@@@@@@@@@{2}****{0}@@@@@@
+    {1}--   {0}@@@{2}**{0}@@@@@@@@@@@@@@@@@@@@@@@@   {1}--
+    {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@@{2}******{0}@@@@   {1}--
+    {0}     @@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@{2}**{0}@@@{2}**{0}@@@@
+    {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@@@{2}*****{0}@@@@   {1}--
+    {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@{2}***{0}@@{2}**{0}@@@@   {1}--
+    {0}      @@{2}*******{0}@{2}******{0}@{2}********{0}@@
+    {1} --    {0}@@@@@@@@@@@@@@@@@@@@@@@@@    {1}--
+    {1}  --     {0}@@@@@@@@@@@@@@@@@@@@@     {1}--
+    {0}           @@@@@@@@@@@@@@@@@
+    {1}      --      {0}@@@@@@@@@@@      {1}--
+    {1}         --                 --
+    {1}                 -- --
   colors:
     ansi:
       - blue
@@ -489,7 +1376,24 @@ Lua:
     chip: [0, 0, 128]
 Markdown:
   type: prose
-  ascii: markdown.ascii
+  ascii: |
+    {0}#######  {1} ,#####. .#####.
+    {0}  ###    {1}########.########
+    {0}  ###    {1}#################
+    {0}  ###    {1}`###############'
+    {0}  ###    {1} `#############'
+    {0}  ###    {1}   `#########'
+    {0}  ###    {1}     `#####'
+    {0}#######	{1}        `#'
+    {0}
+    {0}####     ####     ###
+    {0}#####   #####     ###
+    {0}######.######     ###
+    {0}### ##### ###     ###
+    {0}###  ###  ###   #######
+    {0}###   #   ###    #####
+    {0}###       ###     ###
+    {0}###       ###      #
   colors:
     ansi:
       - default
@@ -497,7 +1401,25 @@ Markdown:
     chip: [8, 63, 161]
 Nim:
   type: programming
-  ascii: nim.ascii
+  ascii: |
+    {0}                   ++
+    {0}       ++        ++++++        ++
+    {0}      ++++++++++++++++++++++++++++
+    {0}     ++++++++++++++++++++++++++++++
+    {0}++  ++++++++++++++++++++++++++++++++  ++
+    {0} ++++++++++++++++++++++++++++++++++++++
+    {0}  +++++++++++              +++++++++++
+    {0}   ++++++++                  ++++++++
+    {0}    +++++                      +++++
+    {1} ?   {0}++                          ++   {1}?
+    {1}  ??             ??????             ??
+    {1}   ???         ??????????         ???
+    {1}    ????     ??????????????     ????
+    {1}     ??????????????????????????????
+    {1}      ????????????????????????????
+    {1}       ??????????????????????????
+    {1}         ??????????????????????
+    {1}           ??????????????????
   colors:
     ansi:
       - yellow
@@ -505,7 +1427,26 @@ Nim:
     chip: [255, 194, 0]
 Nix:
   type: programming
-  ascii: nix.ascii
+  ascii: |
+    {1}         :::.    {0}':::::     ::::'
+    {1}         '::::    {0}':::::.  ::::'
+    {1}           ::::     {0}'::::.:::::
+    {1}     ......:::::..... {0}::::::::
+    {1}    :::::::::::::::::. {0}::::::    {1}::::.
+    {1}   :::::::::::::::::::: {0}:::::.  {1}.::::'
+    {0}         .....           {0}::::' {1}:::::'
+    {0}        :::::            {0}'::' {1}:::::'
+    {0} ......:::::               {0}' {1}::::::::::.
+    {0}:::::::::::                 {1}::::::::::::
+    {0} ::::::::: {1}..              {1}:::::
+    {0}    .:::: {1}.:::            {1}:::::
+    {0}   .::::  {1}:::::          {1}'''''    {0}.....
+    {0}   ::::   {1}':::::.  {0}......:::::::::::::'
+    {0}    ::     {1}::::::. {0}':::::::::::::::::'
+    {1}           {1}.:::::::: {0}'::::::::::
+    {1}          {1}.::::''::::.     {0}'::::.
+    {1}         {1}.::::'   ::::.     {0}'::::.
+    {1}        {1}.::::      ::::      {0}'::::.
   colors:
     ansi:
       - cyan
@@ -513,7 +1454,24 @@ Nix:
     chip: [126, 126, 255]
 ObjectiveC:
   type: programming
-  ascii: objectivec.ascii
+  ascii: |
+    {0}
+    {0}
+    {0}
+    {0}888                                888
+    {0}8    8888   8       8        8888    8
+    {0}8   8    8  8               8    88  8
+    {0}8  8      8 8       8      8         8
+    {0}8  8      8 8 888   8      8         8
+    {0}8  8      8 88   8  8 ==== 8         8
+    {0}8  8      8 8    8  8      8      8  8
+    {0}8   8    8  88   8  8       8    88  8
+    {0}8    8888   8 888   8        88888   8
+    {0}888                 8              888
+    {0}                    8
+    {0}                  88Y
+    {0}
+    {0}
   colors:
     ansi:
       - cyan
@@ -522,14 +1480,45 @@ ObjectiveC:
   serialization: objective-c
 OCaml:
   type: programming
-  ascii: ocaml.ascii
+  ascii: |
+    {0}///////////////////////////////////////
+    {0}///////////////////////////////////////
+    {0}///////////////////////////////////////
+    {0}///////////////////////////////////////
+    {0}///////////////////////////////////////
+    {0}///   \////    \///////////////////////
+    {0}//      //      /////////     .////////
+    {0}/                ///////         \/////
+    {0}                  /////      //////////
+    {0}                            ///////////
+    {0}                           ////////////
+    {0}  //                    ///////////////
+    {0} /////////   ///   ////////////////////
+    {0}/////////  //////  ////////////////////
+    {0}////////  ///////  ////////////////////
+    {0}///////  ////////  ////////////////////
+    {0}//////  /////////  ////////////////////
   colors:
     ansi:
       - yellow
     chip: [59, 225, 51]
 Org:
   type: prose
-  ascii: org.ascii
+  ascii: |
+    {2}                    j
+    {2}                   eL
+    {0}                Q {2}kD
+    {0}            Nt{1}yew{2}kQ{0}y
+    {1}       :r/2K{0}@Q@@@#N@@Qmir
+    {1}  -cDBQB6XXe{0}Q@@@@@@@@@@@@@Q@@g
+    {1} =NQQQR6XwPee{0}6@@@@@@@@@@@QdRm
+    {1}?#QB#HKXej{0}D@QQRNkPD9|
+    {1}SQNHDXwmXq{0}@@@QDR
+    {1}=D6XwmSm{0}D@Q@@QDH
+    {1} tXaZe{0}H@QQ@@@@QRdz
+    {1}   u{0}QRQ@@@@@@@@@QDDd
+    {0}     B@@@@@@@@@@@QDHDd
+    {0}         Syz*:'--'~;\oM
   colors:
     ansi:
       - green
@@ -538,14 +1527,54 @@ Org:
     chip: [119, 170, 153]
 Perl:
   type: programming
-  ascii: perl.ascii
+  ascii: |
+    {0}                  ######
+    {0}    ###         #########
+    {0} ########      ##########
+    {0}#########     ############
+    {0}   ######   ###############
+    {0}  ####### ##################
+    {0}  ####### ###################
+    {0}  ############################
+    {0}  #############################
+    {0}  ########################### ##
+    {0}    ######################### ##
+    {0}     ###################  ### #
+    {0}          ##### #### ###  ### #
+    {0}          ####  #### ###   ##
+    {0}          ####  ###  ###    #
+    {0}           ##  ###   ###    #
+    {0}           ##   ##   ##     #
+    {0}           ##    #   #      #
+    {0}           #       ##       #
+    {0}           #       # #      #
+    {0}           #     ### ##     ##
+    {0}          ##
   colors:
     ansi:
       - cyan
     chip: [2, 152, 195]
 Perl6:
   type: programming
-  ascii: raku.ascii
+  ascii: |
+    {0} +@8DM#8W,
+    {0}#DM"{1},ypy,{0}"8#
+    {0}DDU {1}8M]N8u{0} DM
+    {0}8DD {1}TMD8M,{0}8M  {4}8
+    {0} 8D#=e@8MM^   {4}8
+    {0}  *MDw  {4},.,+#M`
+    {0}    "8#                   {0},e88DDDD8m,
+    {0}      "8 {3}x33#,           {0}z8D#M`9Dw "9DW
+    {3}        JE   E {2}BBW.     {0}DM {1}p#Kw {0}D8   {0}JDM
+    {1} #pp#pr {3} JRFMy{2}#EEF{3}y#Rr, {0}DM{1} MD]8 {0}9DM {4}`N
+    {1}Z#{0}8#D]{1}D# {2}EE#EEEEE{3}`EW  E {0}8M,{1}"RM`{0} 8DM  {4}D
+    {1}88{0}8]D]{1}D8 {2}EEM{1}#{2}EEE{1}E{2}Bp{3}TFF^  {0}*M888#`  {4}#M
+    {1}*#88EE8  {2} RRk{1}8BMM{2}#EEE,        {4}'^'
+    {1}   ``      {2}'"F*FFF*  {1},yw,
+    {1}                  ,#]{0}[D8{1}8W
+    {1}                  k8{0}]DDN8{1}8L
+    {1}                  '8E{0}$DE8{1}8M
+    {1}                    R#E#R^
   colors:
     ansi:
       - blue
@@ -563,7 +1592,17 @@ Perl6:
   serialization: raku
 Php:
   type: programming
-  ascii: php.ascii
+  ascii: |
+    {0}            ################
+    {0}      ##########{1}/  |{0}##############
+    {0}   #############{1}|  |{0}#################
+    {0} #####{1}/   __   \|   __   \/   __   \{0}###
+    {0}######{1}|  |{0}##{1}|  ||  |{0}##{1}|  ||  |{0}##{1}|  |{0}####
+    {0}######{1}|  |{0}##{1}/  ||  |{0}##{1}|  ||  |{0}##{1}/  |{0}####
+    {0} #####{1}|   ____ /|__|{0}##{1}|__||   ____ /{0}###
+    {0}   ###{1}|  |{0}################{1}|  |{0}#######
+    {1}      |_ /{0}################{1}|_ /{0}####
+    {0}            ################
   colors:
     ansi:
       - blue
@@ -574,7 +1613,17 @@ Php:
     chip: [79, 93, 149]
 PowerShell:
   type: programming
-  ascii: powershell.ascii
+  ascii: |
+    {0}         #########################
+    {0}        ####{1}####{0}#################
+    {0}       ######{1}####{0}###############
+    {0}      ########{1}####{0}#############
+    {0}     ##########{1}####{0}###########
+    {0}    #########{1}####{0}############
+    {0}   ########{1}####{0}#############
+    {0}  #######{1}####{0}##############
+    {0} ######{1}####{0}#####{1}######{0}####
+    {0}#########################
   colors:
     ansi:
       - blue
@@ -585,7 +1634,25 @@ PowerShell:
     chip: [1, 36, 86]
 Processing:
   type: programming
-  ascii: processing.ascii
+  ascii: |
+    {0}          PPPPPPPPPPPP
+    {0}      PPPPPPPPPPPPPPPPPPPP
+    {0}    PPPPPPPPPPPP{1}PPPPPP{0}PPPPPP
+    {0}   PPPPPPPPPPPPP{1}P{0}PPPP{1}PP{0}PPPPPP
+    {0}  PPPPPPPPPPPPPPPPPPP{1}PP{0}PPPPPPP
+    {0} PPPPPPPPPPPPPPPPPPP{1}PP{0}PPPPPPPPP
+    {0}PPPPPPPPPPP{1}PPPP{0}PP{1}PPPPP{0}PPPPPPPPPP
+    {0}PPPPPPPPPPPP{1}PPP{0}PPPPPP{1}PP{0}PPPPPPPPP
+    {0}PPPPPPPPPPPP{1}PPP{0}PPPPPP{1}PP{0}PPPPPPPPP
+    {0}PPPPPPPPPPPP{1}PPP{0}PP{1}PPPPP{0}PPPPPPPPPP
+    {0}PPPPPPPPPPPP{1}PPP{0}PPPPPPPPPPPPPPPPP
+    {0} PPPPPPPPPPP{1}PPP{0}PPPPPPPPPPPPPPPP
+    {0}  PPPPPPPPPP{1}PPP{0}PPPPPPPPPPPPPPP
+    {0}   PPPPPPP{1}PPPPPPP{0}PPPPPPPPPPPP
+    {0}    PPPPPPPPPPPPPPPPPPPPPPPP
+    {0}      PPPPPPPPPPPPPPPPPPPP
+    {0}          PPPPPPPPPPPP
+    {0}
   colors:
     ansi:
       - blue
@@ -596,14 +1663,44 @@ Processing:
     chip: [0, 150, 216]
 Prolog:
   type: programming
-  ascii: prolog.ascii
+  ascii: |
+    {0}            ############   #
+    {0}       #################   ####
+    {0}     ###################   ######
+    {0}   #####################   #######
+    {0}  ######################   ########
+    {0} #######         #######   #########
+    {0}######  ###        #####   ##########
+    {0}#####  ####      #  ####   ##########
+    {0}#####  #####    ##  ####   ##########
+    {0}#####   #########   ####   ##########
+    {0}#####     #####   #######    ########
+    {0} ####           ###########       ##
+    {0}  ###   ###########################
+    {0}    #   ##########################
+    {0}        ########################
+    {0}        ######################
+    {0}           ################
   colors:
     ansi:
       - default
     chip: [116, 40, 60]
 Protobuf:
   type: programming
-  ascii: protobuf.ascii
+  ascii: |
+    {0}      ;;;;;;;;     {2}::::::::
+    {0}     ;;;;;;;;       {2}::::::::
+    {0}    ;;;;;;;;         {2}::::::::
+    {1}   :{0};;;;;;;           {2}::::::::
+    {1}  :::{0};;;;;             {2}::::::::
+    {1} :::::{0};;;               {2}::::::::
+    {1}:::::::{0};                {3};{2}:::::::
+    {1}::::::::               {3};;;{2}:::::
+    {1} ::::::::             {3};;;;;{2}:::
+    {1}  ::::::::           {3};;;;;;;{2}:
+    {1}   ::::::::         {3};;;;;;;;
+    {1}    ::::::::       {3};;;;;;;;
+    {1}     ::::::::     {3};;;;;;;;
   colors:
     ansi:
       - red
@@ -614,14 +1711,45 @@ Protobuf:
   serialization: protocol-buffers
 PureScript:
   type: programming
-  ascii: purescript.ascii
+  ascii: |
+    {0}           \\\\\\\\\\\\\\    \\\\\
+    {0}            \\\\\\\\\\\\\\     \\\\\
+    {0}    /////                        \\\\\
+    {0}  /////      //////////////      /////
+    {0}/////       //////////////     /////
+    {0}\\\\\                        /////
+    {0}  \\\\\     \\\\\\\\\\\\\\
+    {0}    \\\\\    \\\\\\\\\\\\\\
   colors:
     ansi:
       - default
     chip: [29, 34, 45]
 Python:
   type: programming
-  ascii: python.ascii
+  ascii: |
+    {0}               =========
+    {0}            ===============
+    {0}           =================
+    {0}          ===  ==============
+    {0}          ===================
+    {0}                   ==========
+    {0}   ========================== {1}=======
+    {0} ============================ {1}========
+    {0}============================= {1}=========
+    {0}============================ {1}==========
+    {0}========================== {1}============
+    {0}============ {1}==========================
+    {0}========== {1}============================
+    {0}========= {1}=============================
+    {0} ======== {1}============================
+    {0}  ======= {1}==========================
+    {1}          ==========
+    {1}          ===================
+    {1}          ==============  ===
+    {1}           =================
+    {1}            ===============
+    {1}               =========
+    {1}
   colors:
     ansi:
       - blue
@@ -632,7 +1760,27 @@ Python:
     chip: [53, 114, 165]
 Qml:
   type: programming
-  ascii: qml.ascii
+  ascii: |
+    {0}****************************************
+    {0}****************************************
+    {0}****************************************
+    {0}****************************************
+    {0}****************************************
+    {0}*******{1}####{0}*****{1}###{0}*****{1}###{0}**{1}###{0}********
+    {0}*****{1}########{0}***{1}####{2},{0}**{1}####{2},{0}*{1}###{2},,{0}******
+    {0}****{1}###{2},,,,{1}###{2},{0}*{1}#####{2},{1}#####{2},,{1}###{2},,,,{0}****
+    {0}***{1}###{2},,,,,,{1}###{2},{1}###########{2},,{1}###{2},,,,,,{0}**
+    {0}***{1}###{2},,,,,,{1}###{2},{1}###{2},{1}###{2},{1}###{2},,{1}###{2},,,,,,,{0}*
+    {0}***{1}###{2},,,,,,{1}###{2},{1}###{2},,{1}#{2},,{1}###{2},,{1}###{2},,,,,,,,
+    {0}****{1}###{2},,,,{1}###{2},,{1}###{2},,,,,{1}###{2},,{1}###{2},,,,,,,,
+    {0}*****{1}########{2},,,{1}###{2},,,,,{1}###{2},,{1}########{2},,,
+    {0}*******{1}####{2},,,,,{1}###{2},,,,,{1}###{2},,{1}########{2},,,
+    {0}********{2},{1}#####{2},,,,,,,,,,,,,,,,,,,,,,,,,,
+    {0}*********{2},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    {0}***********{2},,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    {0}*************{2},,,,,,,,,,,,,,,,,,,,,,,,,,,
+    {0}***************{2},,,,,,,,,,,,,,,,,,,,,,,,,
+    {0}*****************{2},,,,,,,,,,,,,,,,,,,,,,,
   colors:
     ansi:
       - green
@@ -645,7 +1793,21 @@ Qml:
     chip: [68, 165, 28]
 R:
   type: programming
-  ascii: r.ascii
+  ascii: |
+    {0}             .,,,,,,,,,,,,,
+    {0}       ,,,,,,,,,,,,,,,,,********
+    {0}    ,,,,,,,,,,,,,,,,,**************
+    {0}  ,,,,,,,,,,,,                  *****
+    {0} ,,,,,,,,,      {1}RRRRRRRRRRRRRRRR   {0}***
+    {0},,,,,,,,,       {1}RRRRRRRRRRRRRRRRRRR {0}***
+    {0},,,,,,,,        {1}RRRRRRRRRRRRRRRRRRRR {0}//
+    {0},,,,,,*         {1}RRRRRRR      RRRRRRR {0}//
+    {0},,,*****        {1}RRRRRRR     RRRRRRR  {0}//
+    {0} ********       {1}RRRRRRRRRRRRRRRRRR  {0}//
+    {0}   *********    {1}RRRRRRRRRRRRRR    {0}//
+    {0}      **********{1}RRRRRRR   RRRRRRR
+    {0}         *******{1}RRRRRRR    RRRRRRR
+    {1}                RRRRRRR     RRRRRRRR
   colors:
     ansi:
       - default
@@ -653,7 +1815,27 @@ R:
     chip: [25, 140, 231]
 Racket:
   type: programming
-  ascii: racket.ascii
+  ascii: |
+    {0}            {2}.:--::////::--.`
+    {0}        {1}`/yNMMNho{2}////////////:.
+    {0}      {1}`+NMMMMMMMMmy{2}/////////////:`
+    {0}    `-:::{1}ohNMMMMMMMNy{2}/////////////:`
+    {0}   .::::::::{1}odMMMMMMMNy{2}/////////////-
+    {0}  -:::::::::::{1}/hMMMMMMMmo{2}////////////-
+    {0} .::::::::::::::{1}oMMMMMMMMh{2}////////////-
+    {0}`:::::::::::::{1}/dMMMMMMMMMMNo{2}///////////`
+    {0}-::::::::::::{1}sMMMMMMmMMMMMMMy{2}//////////-
+    {0}-::::::::::{1}/dMMMMMMs{0}:{1}+NMMMMMMd{2}/////////:
+    {0}-:::::::::{1}+NMMMMMm/{0}:::{1}/dMMMMMMm+{2}///////:
+    {0}-::::::::{1}sMMMMMMh{0}:::::::{1}dMMMMMMm+{2}//////-
+    {0}`:::::::{1}sMMMMMMy{0}:::::::::{1}dMMMMMMm+{2}/////`
+    {0} .:::::{1}sMMMMMMs{0}:::::::::::{1}mMMMMMMd{2}////-
+    {0}  -:::{1}sMMMMMMy{0}::::::::::::{1}/NMMMMMMh{2}//-
+    {0}   .:{1}+MMMMMMd{0}::::::::::::::{1}oMMMMMMMo{2}-
+    {0}    {1}`yMMMMMN/{0}:::::::::::::::{1}hMMMMMh.
+    {0}      {1}-yMMMo{0}::::::::::::::::{1}/MMMy-
+    {0}        {1}`/s{0}::::::::::::::::::{1}o/`
+    {0}            ``.---::::---..`
   colors:
     ansi:
       - red
@@ -662,7 +1844,32 @@ Racket:
     chip: [60, 92, 170]
 Renpy:
   type: programming
-  ascii: renpy.ascii
+  ascii: |
+    {0}       ++++++
+    {0}     ++++++++++
+    {0}    ++++++++++++
+    {0}   ++++++++++++++
+    {0}   ++++++++++++++++
+    {0}  +++++++++++++{1}***{0}+++
+    {0}  +++++++{1}***********
+    {0} +++++{1}**************
+    {0}+++{1}*****************
+    {0}++{1}********{2}#{1}**********
+    {1} *****{2}#{1}*{2}#{1}*{2}#{1}****{2}#{1}*{2}#{1}***
+    {1} *****{2}#{1}*{2}###{1}*{2}#{1}**{2}#{1}*{2}#{1}***
+    {1} *****{2}##########{1}*{2}#{1}***
+    {1} *****{2}##{3}**{2}####{3}**{2}##{1}***
+    {1} *****{2}##{3}**{2}####{3}**{2}##{1}***
+    {1} *****{2}############{1}***
+    {1} *****{2}#####{5}--{2}####{1}***
+    {1}  **{4}#####{2}#######{1}**
+    {4}   #{5}**{4}#{5}**{4}#{2}###{4}####
+    {4}   #{5}**{4}#{5}**{4}#{2}###{4}######
+    {4}   ##{5}*{4}#{5}*{4}##{6}++++{4}######
+    {4}    #####{6}++++++{4}#####
+    {4}     ###{6}++++++++{4}####
+    {6}     +++++++++++{4}####
+    {6}     ++++++++++{4}####
   colors:
     ansi:
       - default
@@ -683,7 +1890,24 @@ Renpy:
     chip: [255, 127, 127]
 Ruby:
   type: programming
-  ascii: ruby.ascii
+  ascii: |
+    {0}               `-+sdmhmMMhyhNMMddm`
+    {0}            .smdy+:`  `-smmNy/    :h\
+    {0}          -yNs.          mmhmo.    Md
+    {0}        -hNo`           oM- .oNh:  :s
+    {0}      :dm+`            .Ns    `/dmo.d
+    {0}     +Mo`              hN        yMMM
+    {0}   `sN/              /dMmsssoo++///NM
+    {0}  `hN-             +md/sM.        hNM
+    {0} .dm.            +mh:  .Ns      .dm+M
+    {0} +My          .oNy-     sM.    :Nd.+M
+    {0} +MM+     .:/sNd-       .Ns   sNo  sM
+    {0}`+MyMyhdddysmMoydmhs+:smdsM.+Nh-   hN
+    {0}`+M.MM:`   -Mo           hMNm/     md
+    {0}`+M  hm.   dm`         `+Nmdm+     My
+    {0}`/M:  md` /M/        -sNy:  -yNs. .Mo
+    {0} `Nh   Nh`Nh      :smd+.      .sNyoM/
+    {0}  -mh:mh:MmNss:+sdNds:-::///++oosyN-
   colors:
     ansi:
       - red
@@ -692,7 +1916,23 @@ Ruby:
     chip: [112, 21, 22]
 Rust:
   type: programming
-  ascii: rust.ascii
+  ascii: |
+    {0}                 R RR RR
+    {0}              R RRRRRRRR R          R
+    {0} R RR       R RRRRRRRRRRRRR R      RR
+    {0}rR RRR    R RRRRRRRRRRRRRRRRR R   RRR R
+    {0}RRR RR   RRRRRRRRRRRRRRRRRRRRRRR  RRRRR
+    {0} RRRRR  RRRRRRRRRRRRRRRRRRRRRRRR  RRRR
+    {0}  RRR RRRRRRRRRRRRRRRRRRRRRRRRRRRR RR
+    {0}    R  RRRRRRRRRR{1}=  {0}RR{1} = {0}RRRRRRRRRRR
+    {0}     RRRRRRRRRRRR{1}=  {0}RR{1} = {0}RRRRRRRRRR
+    {0}      RRRRRRRRRRR   RR   RRRRRRRRRR
+    {0}     RR==RRRRRRRRRRRRRRRRRRRRRR===RR
+    {0}     RR =  ==RRRRRRR  RRRRRR==  = RR
+    {0}      RR =     ===========     = RR
+    {0}       RR                        R
+    {0}        R                       R
+    {0}         R
   colors:
     ansi:
       - red
@@ -703,7 +1943,21 @@ Rust:
     chip: [222, 165, 132]
 Sass:
   type: markup
-  ascii: sass.ascii
+  ascii: |
+    {0}            ,wppbbbbbp,
+    {0}       ,wpb@KP"``` ``"T@b
+    {0}    ,pb@P"`            @@
+    {0}  ,b@P`               /@P
+    {0} p@b`               ,bK`
+    {0}{@@      'w,  ,,wpbP*`
+    {0} 0@b        ````      ,pp  ;@@
+    {0}  "0bw        ,bPK   ,K@L /PT@
+    {0}     "0b, ,,pbP  @b .b Tb{"  $bP"""*Tb,
+    {0}      ,/b@P &@  0@M.b  ,@K ,P @L      `b
+    {0}   ,pb"  Ib @@ &h@bP ,pCpP bb*`       /`
+    {0}  p@`   ,@` `bb` T"  ""`
+    {0}  @@w,pbK`
+    {0}  `***^
   colors:
     ansi:
       - magenta
@@ -712,7 +1966,27 @@ Sass:
     chip: [165, 59, 112]
 Scala:
   type: programming
-  ascii: scala.ascii
+  ascii: |
+    {0}                        +
+    {0}                   ++++++
+    {0}       ++++++++++++++++++
+    {0}+++++++++++++++++++++++++
+    {0}+++++++++++++++++++++++++
+    {0}+++++++++++++++++++++++{1}-
+    {0}+++++++++++++++{1}----------
+    {0}+{1}-------------------{0}+++++
+    {0}         ++++++++++++++++
+    {0}+++++++++++++++++++++++++
+    {0}+++++++++++++++++++++++++
+    {0}++++++++++++++++++++++++
+    {0}+++++++++++++++++{1}--------
+    {0}+++{1}------------------{0}++++
+    {0}        {1}----{0}+++++++++++++
+    {0}+++++++++++++++++++++++++
+    {0}+++++++++++++++++++++++++
+    {0}++++++++++++++++++++++++
+    {0}+++++++++++++++++++
+    {0}++++++
   colors:
     ansi:
       - red
@@ -723,7 +1997,20 @@ Scala:
     chip: [194, 45, 64]
 Scheme:
   type: programming
-  ascii: scheme.ascii
+  ascii: |
+    {0}  ////
+    {0} //  //
+    {0} /    //
+    {0}       //
+    {0}        //
+    {0}         //
+    {0}        ////
+    {0}       /// //
+    {0}      ///   //
+    {0}     ///     //
+    {0}    ///       //    /
+    {0}   ///         //  //
+    {0}  ///           ////
   colors:
     ansi:
       - default
@@ -732,7 +2019,21 @@ Scheme:
     chip: [30, 74, 236]
 Sh:
   type: programming
-  ascii: shell.ascii
+  ascii: |
+    {0}              ___       ___        ___
+    {0}             ####      ####       ####
+    {0}            ####      ####       ####
+    {0}      _____####______####___    ####
+    {0}     #######################   ####
+    {0}    #######################   ####
+    {0}        ####      ####       ####
+    {0}       ####      ####       ####
+    {0}  ____####______####____   ####
+    {0} #######################  ####
+    {0}#######################  ___
+    {0}   ####      ####       ####
+    {0}  ####      ####       ####
+    {0} ####      ####       ####
   colors:
     ansi:
       - green
@@ -740,7 +2041,28 @@ Sh:
   serialization: shell
 Solidity:
   type: programming
-  ascii: solidity.ascii
+  ascii: |
+    {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+    {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+    {0}MMMMMMMMMMMM{2}SS{3}SSSSSSSSSS{4}SS{0}MMMMMMMMMMMM
+    {0}MMMMMMMMMMM{2}SSSS{3}SSSSSSSS{4}SSSS{0}MMMMMMMMMMM
+    {0}MMMMMMMMMM{2}SSSSSS{3}SSSSSS{4}SSSSSS{0}MMMMMMMMMM
+    {0}MMMMMMMMM{2}SSSSSSSS{3}SSSS{4}SSSSSSSS{0}MMMMMMMMM
+    {0}MMMMMMMM{2}SSSSSSSSSS{3}SS{4}SSSSSSSSSS{0}MMMMMMMM
+    {0}MMMMMMMM{1}SSSSSSSSSS{0}MMMMMMMMMMMMMMMMMMMM
+    {0}MMMMMMMMM{1}SSSSSSSS{0}MMMMMMMMMMMMMMMMMMMMM
+    {0}MMMMMMMMMM{1}SSSSSS{0}MMMMMMMM{1}SS{0}MMMMMMMMMMMM
+    {0}MMMMMMMMMMM{1}SSSS{0}MMMMMMMM{1}SSSS{0}MMMMMMMMMMM
+    {0}MMMMMMMMMMMM{1}SS{0}MMMMMMMM{1}SSSSSS{0}MMMMMMMMMM
+    {0}MMMMMMMMMMMMMMMMMMMMM{1}SSSSSSSS{0}MMMMMMMMM
+    {0}MMMMMMMMMMMMMMMMMMMM{1}SSSSSSSSSS{0}MMMMMMMM
+    {0}MMMMMMMM{4}SSSSSSSSSS{3}SS{2}SSSSSSSSSS{0}MMMMMMMM
+    {0}MMMMMMMMM{4}SSSSSSSS{3}SSSS{2}SSSSSSSS{0}MMMMMMMMM
+    {0}MMMMMMMMMM{4}SSSSSS{3}SSSSSS{2}SSSSSS{0}MMMMMMMMMM
+    {0}MMMMMMMMMMM{4}SSSS{3}SSSSSSSS{2}SSSS{0}MMMMMMMMMMM
+    {0}MMMMMMMMMMMM{4}SS{3}SSSSSSSSSS{2}SS{0}MMMMMMMMMMMM
+    {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+    {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   colors:
     ansi:
       - default
@@ -757,7 +2079,20 @@ Solidity:
     chip: [170, 103, 70]
 Sql:
   type: data
-  ascii: sql.ascii
+  ascii: |
+    {0}   _..------.._
+    {0}.-~            ~-.
+    {0}|                |
+    {0}|"-..________..-"|
+    {0}|                | {1} ____   ___  _
+    {0}|                | {1}/ ___| / _ \| |
+    {0}|"-..________..-"| {1}\___ \| | | | |
+    {0}|                | {1} ___) | |_| | |___
+    {0}|                | {1}|____/ \__\_|_____|
+    {0}|"-..________..-"|
+    {0}|                |
+    {0}|                |
+    {0} "-..________..-"
   colors:
     ansi:
       - cyan
@@ -765,7 +2100,28 @@ Sql:
     chip: [227, 140, 0]
 Svelte:
   type: markup
-  ascii: svelte.ascii
+  ascii: |
+    {0}SSSSSSSSSSSSSSSSSS{1}sssssssssss{0}SSSSSSSS
+    {0}SSSSSSSSSSSSSSS{1}sssssssssssssssss{0}SSSSS
+    {0}SSSSSSSSSSS{1}sssssssssss{0}SSSS{1}ssssssss{0}SSS
+    {0}SSSSSSSS{1}ssssssssss{0}SSSSSSSSSSS{1}sssssss{0}S
+    {0}SSSSS{1}sssssssss{0}SSSSSSSSSSSSSSSSS{1}sssss{0}S
+    {0}SSS{1}ssssssss{0}SSSSSSSSSS{1}sssss{0}SSSSSS{1}ssss{0}S
+    {0}S{1}sssssss{0}SSSSSSSSSS{1}sssssssss{0}SSSSS{1}ssss{0}S
+    {0}S{1}sssss{0}SSSSSSSSS{1}sssssssssssssssssssss{0}S
+    {0}S{1}sssss{0}SSSSSS{1}ssssssss{0}SSSSSS{1}ssssssssss{0}S
+    {0}S{1}sssss{0}SSSSS{1}ssssss{0}SSSSSSSSSSSS{1}ssssss{0}SS
+    {0}S{1}sssss{0}SSSSSSSSSSSSSSSSSSSSSSSSS{1}sssss{0}S
+    {0}SS{1}ssssss{0}SSSSSSSSSSSS{1}ssssss{0}SSSSS{1}sssss{0}S
+    {0}S{1}ssssssssss{0}SSSSSS{1}ssssssss{0}SSSSSS{1}sssss{0}S
+    {0}S{1}sssssssssssssssssssss{0}SSSSSSSSS{1}sssss{0}S
+    {0}S{1}ssss{0}SSSSS{1}sssssssss{0}SSSSSSSSSS{1}ssssss{0}SS
+    {0}S{1}ssss{0}SSSSSS{1}sssss{0}SSSSSSSSSS{1}ssssssss{0}SSS
+    {0}S{1}sssss{0}SSSSSSSSSSSSSSSSS{1}sssssssss{0}SSSSS
+    {0}S{1}sssssss{0}SSSSSSSSSSS{1}ssssssssss{0}SSSSSSSS
+    {0}SSS{1}ssssssss{0}SSSS{1}sssssssssss{0}SSSSSSSSSSS
+    {0}SSSSS{1}sssssssssssssssss{0}SSSSSSSSSSSSSSS
+    {0}SSSSSSSS{1}sssssssssss{0}SSSSSSSSSSSSSSSSSS
   colors:
     ansi:
       - red
@@ -776,7 +2132,31 @@ Svelte:
     chip: [255, 62, 0]
 Swift:
   type: programming
-  ascii: swift.ascii
+  ascii: |
+    {0}                         :
+    {0}                          ::
+    {1}                           :::
+    {1}          :                ::::
+    {2}     :     :                ::::
+    {2}      :     ::              :::::
+    {3}       ::    :::             :::::
+    {3}        :::    :::           ::::::
+    {4}          :::   :::          :::::::
+    {4}           ::::  ::::        :::::::
+    {5}            :::::::::::      ::::::::
+    {5}              :::::::::::   :::::::::
+    {5}               ::::::::::::::::::::::
+    {6}                :::::::::::::::::::::
+    {6}                  :::::::::::::::::::
+    {6}:                   :::::::::::::::::
+    {7} ::                   ::::::::::::::
+    {7}   ::::              ::::::::::::::::
+    {7}    ::::::::::::::::::::::::::::::::::
+    {8}      :::::::::::::::::::::::::::::::::
+    {8}        :::::::::::::::::::::::::::::::
+    {8}          ::::::::::::::::::::::   :::::
+    {9}             .::::::::::::::.         ::
+    {9}
   colors:
     ansi:
       - red
@@ -803,7 +2183,24 @@ Swift:
     chip: [240, 81, 56]
 Tcl:
   type: programming
-  ascii: tcl.ascii
+  ascii: |
+    {0}          //
+    {2}      . /{0}////
+    {2}     /{0}/////// .
+    {2}     //{0}//{1}/{0}/////
+    {2}    //{0}//{1}/{0}/////
+    {2}  . //{0}/{1}//{0}////
+    {2}  //{0}//{1}//{0}////
+    {2}  //{0}/{1}//{0}/////
+    {2}  /{0}//{1}//{0}////
+    {2}  /{0}/{1}//{0}////  .
+    {2}. /{0}/{1}//{0}/////
+    {2} /{0}/{1}//{0}////
+    {2}  /{1}//{0}//
+    {0}   {1}//
+    {0}   {1}//
+    {0}    {1}/
+    {0}     {1}/
   colors:
     ansi:
       - blue
@@ -812,7 +2209,25 @@ Tcl:
     chip: [228, 204, 152]
 Tex:
   type: markup
-  ascii: tex.ascii
+  ascii: |
+    {0}$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    {0}$$$            $$$$$$$      $$$$$     $$
+    {0}$$  $$$$  $$$$  $$$$$$$$$  $$$$$$$ $$$$$
+    {0}$$ $$$$$  $$$$$ $$$$$$$$$$  $$$$$ $$$$$$
+    {0}$$ $$$$$  $$$          $$$$  $$$ $$$$$$$
+    {0}$$ $$$$$  $$$$$  $$$$$  $$$$  $ $$$$$$$$
+    {0}$$$$$$$$  $$$$$  $$$$$$ $$$$$  $$$$$$$$$
+    {0}$$$$$$$$  $$$$$  $$$$$$ $$$$$  $$$$$$$$$
+    {0}$$$$$$$$  $$$$$  $$$$$$$$$$$$   $$$$$$$$
+    {0}$$$$$$$$  $$$$$  $$$ $$$$$$$ $$  $$$$$$$
+    {0}$$$$$$$$  $$$$$      $$$$$$ $$$$  $$$$$$
+    {0}$$$$$$$$  $$$$$  $$$ $$$$$ $$$$$$  $$$$$
+    {0}$$$$$$$$  $$$$$  $$$$$$$$ $$$$$$$$  $$$$
+    {0}$$$$$        $$  $$$$$     $$$$$$     $$
+    {0}$$$$$$$$$$$$$$$  $$$$$$$ $$$$$$$$$$$$$$$
+    {0}$$$$$$$$$$$$$$$  $$$$$$ $$$$$$$$$$$$$$$$
+    {0}$$$$$$$$$$$$$           $$$$$$$$$$$$$$$$
+    {0}$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   colors:
     ansi:
       - default
@@ -820,7 +2235,25 @@ Tex:
     chip: [61, 97, 23]
 Toml:
   type: data
-  ascii: toml.ascii
+  ascii: |
+    {0}[[[[[[[[                    ]]]]]]]]
+    {0}[[[[[[[[                    ]]]]]]]]
+    {0}[[[[                            ]]]]
+    {0}[[[[      {1}TTTTTTTTTTTTTTTT{0}      ]]]]
+    {0}[[[[      {1}TTTTTTTTTTTTTTTT{0}      ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[            {1}TTTT{0}            ]]]]
+    {0}[[[[[[[[                    ]]]]]]]]
+    {0}[[[[[[[[                    ]]]]]]]]
   colors:
     ansi:
       - red
@@ -831,14 +2264,48 @@ Toml:
     chip: [156, 66, 33]
 Tsx:
   type: programming
-  ascii: tsx.ascii
+  ascii: |
+    {0}          .REACT.    .REACT.
+    {0}        TS     .TSXTSX.     TS
+    {0}       TS       :TSTS:       TS
+    {0}       TS     .REACTTSX'     TS
+    {0}     'TSXTSXTSXTSXTSXTSXTSXTSXTS'
+    {0}  'REACTTSREACT        REACTTSREACT'
+    {0} 'TSX'  REACT'  :TSXJ:  'REACT  'TSX'
+    {0}'TS      TSX'  :TSXTSX:  'TSX      TS'
+    {0}'TS      TSX'  :TSXTSX:  'TSX      TS'
+    {0} 'TSX'  REACT'  :TSXJ:  'REACT  'TSX'
+    {0}  'REACTTSREACT        REACTTSREACT'
+    {0}     'TSXTSXTSXTSXTSXTSXTSXTSXTS'
+    {0}       TS     .REACTTSX'     TS
+    {0}       TS       :TSTS:       TS
+    {0}        TS     .TSXTSX.     TS
+    {0}          .REACT.    .REACT.
   colors:
     ansi:
       - blue
     chip: [43, 116, 137]
 TypeScript:
   type: programming
-  ascii: typescript.ascii
+  ascii: |
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TSTS{1}TSTSTS{0}TSTSTS
+    {0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TS{1}TSTSTSTSTS{0}TSTS
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTST{1}TSTST{0}TSTSTSTST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTST{0}STSTSTST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTST{0}STSTST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTS{1}TSTST{0}TSTS
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTST{1}TSTST{0}TST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTSTSTSTS{0}TST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTSTS{0}STSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
   colors:
     ansi:
       - cyan
@@ -849,7 +2316,26 @@ TypeScript:
     chip: [43, 116, 137]
 Vala:
   type: programming
-  ascii: vala.ascii
+  ascii: |
+    {0} ###################################
+    {0}#####################################
+    {0}#####################################
+    {0}############{1}######{0}##########{1}##{0}#######
+    {0}##########{1}###{0}#{1}####{0}#########{1}##{0}########
+    {0}########{1}###{0}###{1}####{0}########{1}##{0}#########
+    {0}#######{1}###{0}####{1}####{0}#######{1}##{0}##########
+    {0}######{1}###{0}#####{1}####{0}######{1}##{0}###########
+    {0}######{1}###{0}#####{1}####{0}#####{1}##{0}############
+    {0}########{1}#{0}#####{1}####{0}####{1}##{0}#############
+    {0}##############{1}####{0}###{1}##{0}##############
+    {0}##############{1}####{0}##{1}##{0}###############
+    {0}##############{1}####{0}#{1}##{0}################
+    {0}##############{1}######{0}#################
+    {0}##############{1}#####{0}##################
+    {0}##############{1}####{0}###################
+    {0}#####################################
+    {0}#####################################
+    {0} ###################################
   colors:
     ansi:
       - magenta
@@ -857,7 +2343,20 @@ Vala:
     chip: [165, 109, 226]
 Vhdl:
   type: programming
-  ascii: vhdl.ascii
+  ascii: |
+    {0}         |  |  |  |
+    {0}        {1}------------
+    {0}     --{1}|    {2}----    {1}|{0}--
+    {0}     --{1}|   {2}|    |   {1}|{0}--
+    {0}     --{1}|   {2}|    |   {1}|{0}--
+    {0}     --{1}|    {2}----    {1}|{0}--
+    {0}        {1}------------
+    {0}         |  |  |  |
+    {2} __     ___   _ ____  _
+    {2} \ \   / / | | |  _ \| |
+    {2}  \ \ / /| |_| | | | | |
+    {2}   \ V / |  _  | |_| | |___
+    {2}    \_/  |_| |_|____/|_____|
   colors:
     ansi:
       - yellow
@@ -866,7 +2365,22 @@ Vhdl:
     chip: [173, 178, 203]
 VimScript:
   type: programming
-  ascii: vimscript.ascii
+  ascii: |
+    {1}        ________{0}  ++    {1}________
+    {1}       /{2}VVVVVVVV{1}\{0}++++  {1}/{2}VVVVVVVV{1}\
+    {1}       \{2}VVVVVVVV{1}/{0}++++++{1}\{2}VVVVVVVV{1}/
+    {1}        |{2}VVVVVV{1}|{0}++++++++{1}/{2}VVVVV{1}/'
+    {1}        |{2}VVVVVV{1}|{0}++++++{1}/{2}VVVVV{1}/'
+    {0}       +{1}|{2}VVVVVV{1}|{0}++++{1}/{2}VVVVV{1}/'{0}+
+    {0}     +++{1}|{2}VVVVVV{1}|{0}++{1}/{2}VVVVV{1}/'{0}+++++
+    {0}   +++++{1}|{2}VVVVVV{1}|/{2}VVV{1}___{0}++++++++++
+    {0}     +++{1}|{2}VVVVVVVVVV{1}/{2}##{1}/ {0}+{1}_{0}+{1}_{0}+{1}_{0}+{1}_
+    {0}       +{1}|{2}VVVVVVVVV{1}___ {0}+{1}/{2}#{1}_{2}#{1},{2}#{1}_{2}#{1},\
+    {1}        |{2}VVVVVVV{1}//{2}##{1}/{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/'/{2}#{1}/
+    {1}        |{2}VVVVV{1}/'{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/ /{2}#{1}/
+    {1}        |{2}VVV{1}/'{0}++{1}/{2}#{1}/{0}+{1}/{2}#{1}/ /{2}#{1}/ /{2}#{1}/
+    {1}        '{2}V{1}/'  /{2}##{1}//{2}##{1}//{2}##{1}//{2}###{1}/
+    {0}                 ++
   colors:
     ansi:
       - green
@@ -875,7 +2389,22 @@ VimScript:
     chip: [25, 159, 75]
 Vue:
   type: programming
-  ascii: vue.ascii
+  ascii: |
+    {0}VUE{1}\\\\\                /////{0}VUE
+    {0} VUE{1}\\\\\              /////{0}VUE
+    {0}  VUE{1}\\\\\            /////{0}VUE
+    {0}   VUE{1}\\\\\          /////{0}VUE
+    {0}    VUE{1}\\\\\        /////{0}VUE
+    {0}     VUE{1}\\\\\      /////{0}VUE
+    {0}      VUE{1}\\\\\    /////{0}VUE
+    {0}       VUE{1}\\\\\  /////{0}VUE
+    {0}        VUE{1}\\\\\/////{0}VUE
+    {0}         VUE{1}\\\\////{0}VUE
+    {0}          VUE{1}\\\///{0}VUE
+    {0}           VUE{1}\\//{0}VUE
+    {0}            VUE{1}||{0}VUE
+    {0}             VUEVUE
+    {0}              VUEV
   colors:
     ansi:
       - green
@@ -883,7 +2412,23 @@ Vue:
     chip: [25, 159, 75]
 WebAssembly:
   type: programming
-  ascii: webassembly.ascii
+  ascii: |
+    {0}:::::::::::             ::::::::::::
+    {0}::::::::::::           :::::::::::::
+    {0}:::::::::::::::     ::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::::::::::::::::::::::::::
+    {0}::::::::::::{1}WW{0}:::{1}WW{0}:::{1}WW{0}::::{1}AA{0}::::::
+    {0}::::::::::::{1}WW{0}:::{1}WW{0}:::{1}WW{0}:::{1}AAAA{0}:::::
+    {0}::::::::::::{1}WW{0}:::{1}WW{0}:::{1}WW{0}::{1}AA{0}::{1}AA{0}::::
+    {0}:::::::::::::{1}WW{0}:{1}WWWW{0}:{1}WW{0}::{1}AAAAAAAA{0}:::
+    {0}::::::::::::::{1}WWW{0}::{1}WWW{0}::{1}AA{0}::::::{1}AA{0}::
+    {0}::::::::::::::::::::::::::::::::::::
   colors:
     ansi:
       - magenta
@@ -894,7 +2439,27 @@ WebAssembly:
     chip: [4, 19, 59]
 Wolfram:
   type: programming
-  ascii: wolfram.ascii
+  ascii: |
+    {0}             OOOOOOOOOOOOOO
+    {0}         OOOOOO  OOOOOOOOOOOOOO
+    {0}       OOOOOO  {1}WW{0} OOOO OOOOOOOOOOO
+    {0}     OOOOOOO  {1}WWW {0}OOO {1}W{0} OOOOOOOOOOOO
+    {0}   OOOOOOOO  {1}WWWWW {0}O {1}WW{0} OOOOOOOOOOOOO
+    {0}  OOOOOOOO  {1}WWWWWW  WWW{0} OOOOOOOOOOOOOO
+    {0} OOOOOOOOO  {1}WWWWWWW WWW{0} OOOOOOOOOOOOOOO
+    {0} OOOOOOO  {1}WWWWWWWWWW WW{0} OOOOOOOOOOOOOOO
+    {0}OOOOOOO  {1}WWWWWWWWWWWWWW{0}  OOOOOOOOOOOOOOO
+    {0}OOOOOO  {1}WWWWWWWWWWWWWWWWW{0}   OOOOOOOOOOOO
+    {0}OOOOO  {1}WWW WWWWWWWWW   WWWWW{0}   OOOOOOOOO
+    {0}OOO   {1}WW  WWWWWWWWWWWWWWWWWWWWW{0}  OOOOOOO
+    {0} O   {1}WWWW  WWWWWWWWWWWWWWWWWWWWW{2}D{0}  OOOO
+    {0}    {1}WWWW  WWWWWWWWWWWWWWWWWWWWWW{0}  OOOOO
+    {1}   WWWWW..............  {0}.........OOOOO
+    {1}    WWWWWWWWWWWWWWWWWW{0}   OOOOOOOOOOOO
+    {1}     WWWWWWWWWWWWWWWWWW{0}    OOOOOOOO
+    {1}       WWWWWWWWWWWWWWWWW{0}    OOOOOO
+    {1}         WWWWWWWWWWWWWWWW{0}     OO
+    {1}             WWWWWWWWWWWWW{0}
   colors:
     ansi:
       - red
@@ -907,7 +2472,24 @@ Wolfram:
     chip: [221, 17, 0]
 Xaml:
   type: data
-  ascii: xaml.ascii
+  ascii: |
+    {0}        :::::::::::::::::::::..
+    {0}       :::{1}------{0}::::::::::::....
+    {0}      :::{1}------{0}::::::::::::..{1}-{0}...
+    {0}     :::{1}------{0}::::::::::::..{1}---{0}...
+    {0}    :::{1}------{0}::::::::::::..{1}-----{0}...
+    {0}   :::{1}------{0}::::::::::::...{1}------{0}...
+    {0}  :::{1}------{0}::::::::::::.....{1}------{0}...
+    {0} :::{1}------{0}::::::::::::.......{1}------{0}...
+    {0}:::{1}------{0}::::::::::::.........{1}------{0}...
+    {0} :::{1}------{0}::::::::::::.......{1}------{0}...
+    {0}  :::{1}------{0}::::::::::::.....{1}------{0}...
+    {0}   :::{1}------{0}::::::::::::...{1}------{0}...
+    {0}    :::{1}------{0}::::::::::::..{1}-----{0}...
+    {0}     :::{1}------{0}::::::::::::..{1}---{0}...
+    {0}      :::{1}------{0}::::::::::::..{1}-{0}...
+    {0}       :::{1}------{0}::::::::::::....
+    {0}        :::::::::::::::::::::..
   colors:
     ansi:
       - blue
@@ -918,7 +2500,11 @@ Xaml:
     chip: [0, 96, 172]
 Xml:
   type: data
-  ascii: xml.ascii
+  ascii: |
+    {0}  __{1} __  _  __ __  _    {2}   __{0}__
+    {0} / /{1} \ \/  |  \  \| |   {2}  / /{0}\ \
+    {0}< < {1}  \ \  |     || |_  {2} / / {0} > >
+    {0} \_\{1} _/\_\ |_|_|_||___| {2}/_/  {0}/_/
   colors:
     ansi:
       - yellow
@@ -927,21 +2513,59 @@ Xml:
     chip: [0, 96, 172]
 Yaml:
   type: data
-  ascii: yaml.ascii
+  ascii: |
+    {0} __    __  __   __    __   _
+    {0} \ \  / / /  | |  \  /  | | |
+    {0}  \ \/ / / | | | \ \/ / | | |.
+    {0}   \  / / /| | | |\__/| | | | .
+    {0}   / / / / | | | |    | | | |  .
+    {0}  / / / /  | | | |    | | | |___.
+    {0} /_/ /_/   |_| |_|    |_| |______\
   colors:
     ansi:
       - default
     chip: [203, 23, 30]
 Zig:
   type: programming
-  ascii: zig.ascii
+  ascii: |
+    {0}                                     z
+    {0}                                  zzz
+    {0}                             zzzzzz
+    {0}zzzzzzzzzzz  zzzzzzzzzzzzzzzzzzzz  zzz
+    {0}zzzzzzzzz  zzzzzzzzzzzzzzzzzzzz  zzzzz
+    {0}zzzzzzz  zzzzzzzzzzzzzzzzzzzz  zzzzzzz
+    {0}zzzzz                zzzzzz      zzzzz
+    {0}zzzzz              zzzzzz        zzzzz
+    {0}zzzzz            zzzzzz          zzzzz
+    {0}zzzzz          zzzzzz            zzzzz
+    {0}zzzzz        zzzzzz              zzzzz
+    {0}zzzzz      zzzzzz                zzzzz
+    {0}zzzzzzz  zzzzzzzzzzzzzzzzzzzz  zzzzzzz
+    {0}zzzzz  zzzzzzzzzzzzzzzzzzzz  zzzzzzzzz
+    {0}zzz  zzzzzzzzzzzzzzzzzzzz  zzzzzzzzzzz
+    {0}   zzzzzz
+    {0} zzz
+    {0}z
   colors:
     ansi:
       - yellow
     chip: [236, 145, 92]
 Zsh:
   type: programming
-  ascii: zsh.ascii
+  ascii: |
+    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
+    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
+    {0}ZSHZ     ZSHZSHZSHZSHZSHZSHZSHZS
+    {0}ZSHZSH     SHZSHZSHZSHZSHZSHZSHZ
+    {0}ZSHZSHZS     SHZSHZSHZSHZSHZSHZS
+    {0}ZSHZSHZSHZ     HZSHZSHZSHZSHZSHZ
+    {0}ZSHZSHZSHZSH     ZSHZSHZSHZSHZSH
+    {0}ZSHZSHZSHZ     SHZSHZSHZSHZSHZSH
+    {0}ZSHZSHZS     ZSHZSHZSHZSHZSHZSHZ
+    {0}ZSHZSH     SHZSHZSHZSHZSHZSHZSHZ
+    {0}ZSHZ     ZSHZSH             SHZS
+    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
+    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
   colors:
     ansi:
       - default
