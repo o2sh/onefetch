@@ -18,7 +18,27 @@ Adding support for a new Language consists in adding a new entry to [language.ya
 ```yaml
 TypeScript: # required, this will be the name of the enum variant for the language
   type: programming # required, can be programming, data, markup, or prose
-  ascii: typescript.ascii # required, the name of the ASCII file in resources/ for the logo
+
+  # required, this is the logo. If it's not within 25x40 bounds, you will get a compiler error. Use `{i}` to color the ascii with `i` the color index.
+  ascii: | 
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TSTS{1}TSTSTS{0}TSTSTS
+    {0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TS{1}TSTSTSTSTS{0}TSTS
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTST{1}TSTST{0}TSTSTSTST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTST{0}STSTSTST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTST{0}STSTST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTS{1}TSTST{0}TSTS
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTST{1}TSTST{0}TST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTSTSTSTS{0}TST
+    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTSTS{0}STSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
   colors:
     ansi: # required, a list of the ANSI colors used for the logo
       - cyan
@@ -33,36 +53,6 @@ TypeScript: # required, this will be the name of the enum variant for the langua
 **The name of the language must match a [tokei::LanguageType variant](https://docs.rs/tokei/12/tokei/enum.LanguageType.html)**
 
 The first item `TypeScript` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item refers to the language type as specified by [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml), only four values are possible: Programming, Markup, Prose and Data. The third item `typescript.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. Finally, the circle color used in the language distribution whose hex value can be found in [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml).
-
-#### Ascii logo
-
-```text
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TSTS{1}TSTSTS{0}TSTSTS
-{0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TS{1}TSTSTSTSTS{0}TSTS
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTST{1}TSTST{0}TSTSTSTST
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTST{0}STSTSTST
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTST{0}STSTST
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTS{1}TSTST{0}TSTS
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTST{1}TSTST{0}TST
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTSTSTSTS{0}TST
-{0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTSTS{0}STSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-{0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-```
-
-Remarks:
-
-- The ascii logo's dimensions must fall below `25*40` (height\*width); The CI will fail otherwise.
-- Use `{i}` to color the ascii with `i` the color index from the `vec!` of colors defined in `define_language!`.
-- Make sure to trim any unnecessary trailing whitespaces.
-- Optionally, you may provide a `vec!` of colors in `rgb` format as an alternative to basic colors for terminals that support [true colour](https://gist.github.com/XVilka/8346728).
 
 ### Adding support for a new package manager
 
