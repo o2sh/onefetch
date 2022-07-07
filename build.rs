@@ -9,7 +9,7 @@ use tera::{Context, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let out_dir = env::var("OUT_DIR").unwrap();
-    let mut tera = Tera::new("templates/**/*.rs")?;
+    let mut tera = Tera::new("src/**/*.tera.rs")?;
     tera.register_filter("strip_color_indices", strip_color_indices);
 
     let lang_data: serde_json::Value = serde_yaml::from_reader(File::open("languages.yaml")?)?;
@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let lang_out = Path::new(&out_dir).join("language.rs");
     eprintln!("creating {:?}", lang_out);
-    let rendered = tera.render("language.rs", &context)?;
+    let rendered = tera.render("info/langs/language.tera.rs", &context)?;
     fs::write(&lang_out, rendered)?;
 
     Ok(())
