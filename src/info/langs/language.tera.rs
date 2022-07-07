@@ -70,7 +70,14 @@ impl Language {
             {% for language, attrs in languages -%}
                 Language::{{ language }} => Colors {
                     basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | title }}),{% endfor %}],
-                    true_colors: {% if attrs.colors.rgb %}Some(vec![{%- for rgb in attrs.colors.rgb -%}Rgb({{ rgb | nth(n=0) }}, {{ rgb | nth(n=1) }}, {{ rgb | nth(n=2) }}),{% endfor %}]){% else %}None{% endif %},
+                    true_colors: {% if attrs.colors.hex -%}
+                        Some(vec![
+                            {%- for hex in attrs.colors.hex -%}
+                                {% set rgb = hex | hextorgb %}
+                                Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
+                            {% endfor %}])
+                    {% else -%}None
+                    {% endif %},
                 },
             {% endfor %}
         };
@@ -91,7 +98,8 @@ impl Language {
     pub fn get_circle_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => Rgb({{ attrs.colors.chip | nth(n=0) }}, {{ attrs.colors.chip | nth(n=1) }}, {{ attrs.colors.chip | nth(n=2) }}),
+                {% set rgb = attrs.colors.chip | hextorgb %}
+                Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
         }
     }

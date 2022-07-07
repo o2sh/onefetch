@@ -27,11 +27,11 @@ Ada:
       - default
       - cyan
       - blue
-    rgb:
-      - [255, 255, 255]
-      - [0, 24, 201]
-      - [12, 10, 124]
-    chip: [2, 248, 140]
+    hex:
+      - '#FFFFFF'
+      - '#0018C9'
+      - '#0C0A7C'
+    chip: '#02F88C'
 Assembly:
   type: programming
   ascii: |
@@ -51,7 +51,7 @@ Assembly:
   colors:
     ansi:
       - cyan
-    chip: [110, 76, 19]
+    chip: '#6E4C13'
 AutoHotKey:
   type: programming
   ascii: |
@@ -70,10 +70,10 @@ AutoHotKey:
     ansi:
       - default
       - green
-    rgb:
-      - [255, 255, 255]
-      - [17, 152, 16]
-    chip: [101, 148, 185]
+    hex:
+      - '#FFFFFF'
+      - '#119810'
+    chip: '#6594B9'
 Bash:
   type: programming
   ascii: |
@@ -103,7 +103,7 @@ Bash:
   colors:
     ansi:
       - default
-    chip: [137, 224, 81]
+    chip: '#89E051'
 C:
   type: programming
   ascii: |
@@ -136,12 +136,12 @@ C:
       - blue
       - blue
       - default
-    rgb:
-      - [93, 108, 191]
-      - [41, 54, 147]
-      - [57, 73, 170]
-      - [255, 255, 255]
-    chip: [85, 85, 85]
+    hex:
+      - '#5D6CBF'
+      - '#293693'
+      - '#3949AA'
+      - '#FFFFFF'
+    chip: '#555555'
 Ceylon:
   type: programming
   ascii: |
@@ -165,13 +165,13 @@ Ceylon:
       - yellow
       - yellow
       - yellow
-    rgb:
-      - [194, 126, 16]
-      - [221, 161, 46]
-      - [209, 145, 31]
-      - [204, 139, 24]
-      - [171, 112, 8]
-    chip: [223, 165, 53]
+    hex:
+      - '#C27E10'
+      - '#DDA12E'
+      - '#D1911F'
+      - '#CC8B18'
+      - '#AB7008'
+    chip: '#DFA535'
 Clojure:
   type: programming
   ascii: |
@@ -199,7 +199,7 @@ Clojure:
     ansi:
       - cyan
       - green
-    chip: [219, 88, 85]
+    chip: '#DB5855'
 CMake:
   type: programming
   ascii: |
@@ -222,7 +222,7 @@ CMake:
       - green
       - red
       - black
-    chip: [218, 52, 52]
+    chip: '#DA3434'
 CoffeeScript:
   type: programming
   ascii: |
@@ -243,7 +243,7 @@ CoffeeScript:
   colors:
     ansi:
       - red
-    chip: [36, 71, 118]
+    chip: '#244776'
 Coq:
   type: programming
   ascii: |
@@ -268,10 +268,10 @@ Coq:
     ansi:
       - yellow
       - default
-    rgb:
-      - [191, 140, 94]
-      - [213, 190, 153]
-    chip: [208, 182, 140]
+    hex:
+      - '#BF8C5E'
+      - '#D5BE99'
+    chip: '#D0B68C'
 Cpp:
   type: programming
   ascii: |
@@ -304,13 +304,12 @@ Cpp:
       - blue
       - blue
       - default
-    rgb:
-      - [100, 154, 210]
-      - [0, 66, 131]
-      - [0, 89, 157]
-      - [255, 255, 255]
-    chip: [243, 75, 125]
-  serialization: c++
+    hex:
+      - '#649AD2'
+      - '#004283'
+      - '#00599D'
+      - '#FFFFFF'
+    chip: '#F34B7D'
 Crystal:
   type: programming
   ascii: |
@@ -338,7 +337,7 @@ Crystal:
     ansi:
       - default
       - black
-    chip: [0, 1, 0]
+    chip: '#000100'
 CSharp:
   type: programming
   ascii: |
@@ -371,13 +370,12 @@ CSharp:
       - magenta
       - magenta
       - default
-    rgb:
-      - [155, 79, 151]
-      - [103, 33, 122]
-      - [128, 55, 136]
-      - [255, 255, 255]
-    chip: [23, 134, 0]
-  serialization: c#
+    hex:
+      - '#9B4F97'
+      - '#67217A'
+      - '#803788'
+      - '#FFFFFF'
+    chip: '#178600'
 Css:
   type: markup
   ascii: |
@@ -406,7 +404,7 @@ Css:
     ansi:
       - blue
       - default
-    chip: [86, 61, 124]
+    chip: '#563D7C'
 D:
   type: programming
   ascii: |
@@ -428,7 +426,7 @@ D:
   colors:
     ansi:
       - red
-    chip: [186, 89, 94]
+    chip: '#BA595E'
 Dart:
   type: programming
   ascii: |
@@ -455,11 +453,11 @@ Dart:
       - blue
       - cyan
       - blue
-    rgb:
-      - [0, 163, 231]
-      - [66, 223, 205]
-      - [1, 89, 125]
-    chip: [0, 180, 171]
+    hex:
+      - '#00A3E7'
+      - '#42DFCD'
+      - '#01597D'
+    chip: '#00B4AB'
 Dockerfile:
   type: programming
   ascii: |
@@ -476,7 +474,7 @@ Dockerfile:
       - cyan
       - default
       - cyan
-    chip: [56, 77, 84]
+    chip: '#384D54'
 Elisp:
   type: programming
   ascii: |
@@ -499,8 +497,7 @@ Elisp:
     ansi:
       - magenta
       - default
-    chip: [192, 101, 219]
-  serialization: emacs-lisp
+    chip: '#C065DB'
 Elixir:
   type: programming
   ascii: |
@@ -528,7 +525,7 @@ Elixir:
   colors:
     ansi:
       - magenta
-    chip: [110, 74, 126]
+    chip: '#6E4A7E'
 Elm:
   type: programming
   ascii: |
@@ -556,7 +553,7 @@ Elm:
       - green
       - yellow
       - cyan
-    chip: [96, 181, 204]
+    chip: '#60B5CC'
 Emojicode:
   type: programming
   ascii: |
@@ -589,12 +586,12 @@ Emojicode:
       - magenta
       - magenta
       - magenta
-    rgb:
-      - [119, 178, 85]
-      - [146, 102, 204]
-      - [170, 141, 216]
-      - [116, 78, 170]
-    chip: [96, 181, 204]
+    hex:
+      - '#77B255'
+      - '#9266CC'
+      - '#AA8DD8'
+      - '#744EAA'
+    chip: '#60B5CC'
 Erlang:
   type: programming
   ascii: |
@@ -614,7 +611,7 @@ Erlang:
   colors:
     ansi:
       - red
-    chip: [184, 57, 152]
+    chip: '#B83998'
 Fish:
   type: programming
   ascii: |
@@ -637,7 +634,7 @@ Fish:
     ansi:
       - red
       - yellow
-    chip: [74, 174, 71]
+    chip: '#4AAE47'
 Forth:
   type: programming
   ascii: |
@@ -664,7 +661,7 @@ Forth:
   colors:
     ansi:
       - red
-    chip: [52, 23, 8]
+    chip: '#341708'
 FortranLegacy:
   type: programming
   ascii: |
@@ -693,8 +690,7 @@ FortranLegacy:
       - cyan
       - yellow
       - red
-    chip: [77, 65, 177]
-  serialization: fortran-legacy
+    chip: '#4D41B1'
 FortranModern:
   type: programming
   ascii: |
@@ -723,8 +719,7 @@ FortranModern:
       - cyan
       - yellow
       - red
-    chip: [77, 65, 177]
-  serialization: fortran
+    chip: '#4D41B1'
 FSharp:
   type: programming
   ascii: |
@@ -750,8 +745,7 @@ FSharp:
     ansi:
       - cyan
       - cyan
-    chip: [184, 69, 252]
-  serialization: f#
+    chip: '#B845FC'
 GdScript:
   type: programming
   ascii: |
@@ -777,10 +771,10 @@ GdScript:
     ansi:
       - cyan
       - default
-    rgb:
-      - [69, 141, 192]
-      - [255, 255, 255]
-    chip: [53, 85, 112]
+    hex:
+      - '#458DC0'
+      - '#FFFFFF'
+    chip: '#355570'
 Go:
   type: programming
   ascii: |
@@ -813,11 +807,11 @@ Go:
       - cyan
       - default
       - yellow
-    rgb:
-      - [116, 205, 221]
-      - [255, 255, 255]
-      - [246, 210, 162]
-    chip: [0, 173, 216]
+    hex:
+      - '#74CDDD'
+      - '#FFFFFF'
+      - '#F6D2A2'
+    chip: '#00ADD8'
 Graphql:
   type: data
   ascii: |
@@ -845,7 +839,7 @@ Graphql:
   colors:
     ansi:
       - magenta
-    chip: [225, 0, 152]
+    chip: '#E10098'
 Groovy:
   type: programming
   ascii: |
@@ -876,7 +870,7 @@ Groovy:
     ansi:
       - cyan
       - default
-    chip: [66, 152, 184]
+    chip: '#4298B8'
 Haskell:
   type: programming
   ascii: |
@@ -898,11 +892,11 @@ Haskell:
       - cyan
       - magenta
       - blue
-    rgb:
-      - [69, 58, 98]
-      - [94, 80, 134]
-      - [143, 78, 139]
-    chip: [94, 80, 134]
+    hex:
+      - '#453A62'
+      - '#5E5086'
+      - '#8F4E8B'
+    chip: '#5E5086'
 Haxe:
   type: programming
   ascii: |
@@ -931,11 +925,11 @@ Haxe:
       - yellow
       - yellow
       - yellow
-    rgb:
-      - [250, 178, 11]
-      - [246, 153, 18]
-      - [244, 114, 22]
-    chip: [223, 121, 0]
+    hex:
+      - '#FAB20B'
+      - '#F69912'
+      - '#F47216'
+    chip: '#DF7900'
 Hcl:
   type: programming
   ascii: |
@@ -965,10 +959,10 @@ Hcl:
     ansi:
       - magenta
       - magenta
-    rgb:
-      - [95, 67, 233]
-      - [64, 64, 178]
-    chip: [170, 206, 96]
+    hex:
+      - '#5F43E9'
+      - '#4040B2'
+    chip: '#AACE60'
 HolyC:
   type: programming
   ascii: |
@@ -1001,11 +995,11 @@ HolyC:
       - yellow
       - cyan
       - default
-    rgb:
-      - [251, 254, 103]
-      - [11, 68, 157]
-      - [255, 255, 255]
-    chip: [255, 239, 175]
+    hex:
+      - '#FBFE67'
+      - '#0B449D'
+      - '#FFFFFF'
+    chip: '#FFEFAF'
 Html:
   type: markup
   ascii: |
@@ -1034,7 +1028,7 @@ Html:
     ansi:
       - red
       - default
-    chip: [227, 76, 38]
+    chip: '#E34C26'
 Idris:
   type: programming
   ascii: |
@@ -1059,7 +1053,7 @@ Idris:
   colors:
     ansi:
       - red
-    chip: [179, 0, 0]
+    chip: '#B30000'
 Java:
   type: programming
   ascii: |
@@ -1089,10 +1083,10 @@ Java:
     ansi:
       - red
       - blue
-    rgb:
-      - [244, 67, 54]
-      - [22, 101, 192]
-    chip: [176, 114, 25]
+    hex:
+      - '#F44336'
+      - '#1665C0'
+    chip: '#B07219'
 JavaScript:
   type: programming
   ascii: |
@@ -1117,9 +1111,9 @@ JavaScript:
   colors:
     ansi:
       - yellow
-    rgb:
-      - [236, 230, 83]
-    chip: [241, 224, 90]
+    hex:
+      - '#ECE653'
+    chip: '#F1E05A'
 Json:
   type: data
   ascii: |
@@ -1145,7 +1139,7 @@ Json:
     ansi:
       - default
       - black
-    chip: [41, 41, 41]
+    chip: '#292929'
 Jsonnet:
   type: programming
   ascii: |
@@ -1178,7 +1172,7 @@ Jsonnet:
     ansi:
       - default
       - black
-    chip: [0, 100, 189]
+    chip: '#0064BD'
 Jsx:
   type: programming
   ascii: |
@@ -1201,7 +1195,7 @@ Jsx:
   colors:
     ansi:
       - yellow
-    chip: [241, 224, 90]
+    chip: '#F1E05A'
 Julia:
   type: programming
   ascii: |
@@ -1220,7 +1214,7 @@ Julia:
       - green
       - red
       - magenta
-    chip: [162, 112, 186]
+    chip: '#A270BA'
 Jupyter:
   type: programming
   ascii: |
@@ -1252,12 +1246,11 @@ Jupyter:
       - default
       - yellow
       - default
-    rgb:
-      - [255, 255, 255]
-      - [255, 112, 15]
-      - [158, 158, 158]
-    chip: [218, 91, 11]
-  serialization: jupyter-notebooks
+    hex:
+      - '#FFFFFF'
+      - '#FF700F'
+      - '#9E9E9E'
+    chip: '#DA5B0B'
 Kotlin:
   type: programming
   ascii: |
@@ -1286,7 +1279,7 @@ Kotlin:
       - blue
       - yellow
       - magenta
-    chip: [169, 123, 255]
+    chip: '#A97BFF'
 Lisp:
   type: programming
   ascii: |
@@ -1313,7 +1306,7 @@ Lisp:
   colors:
     ansi:
       - default
-    chip: [63, 182, 139]
+    chip: '#3FB68B'
 LLVM:
   type: programming
   ascii: |
@@ -1339,66 +1332,68 @@ LLVM:
   colors:
     ansi:
       - red
-    rgb:
-      - [152, 1, 46]
-    chip: [24, 86, 25]
+    hex:
+      - '#98012E'
+    chip: '#185619'
 Lua:
   type: programming
-  ascii: |
+  ascii: >
     {1}                 -- --
+
     {1}         --                 --{0} @@@@
+
     {1}      --      {0}@@@@@@@@@@@     @@@@@@
+
     {0}           @@@@@@@@@@@@@@@@@   @@@@
+
     {1}  --     {0}@@@@@@@@@@@@@@{2}****{0}@@@     {1}--
+
     {1} --    {0}@@@@@@@@@@@@@@@{2}******{0}@@@@    {1}--
+
     {0}      @@@@@@@@@@@@@@@@@{2}****{0}@@@@@@
+
     {1}--   {0}@@@{2}**{0}@@@@@@@@@@@@@@@@@@@@@@@@   {1}--
+
     {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@@{2}******{0}@@@@   {1}--
+
     {0}     @@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@{2}**{0}@@@{2}**{0}@@@@
+
     {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@@@{2}*****{0}@@@@   {1}--
-    {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@{2}***{0}@@{2}**{0}@@@@   {1}--
+
+    {1}--   {0}@@@{2}**{0}@@@@@@{2}**{0}@@{2}**{0}@{2}***{0}@@{2}**{0}@@@@
+    {1}--
+
     {0}      @@{2}*******{0}@{2}******{0}@{2}********{0}@@
+
     {1} --    {0}@@@@@@@@@@@@@@@@@@@@@@@@@    {1}--
+
     {1}  --     {0}@@@@@@@@@@@@@@@@@@@@@     {1}--
+
     {0}           @@@@@@@@@@@@@@@@@
+
     {1}      --      {0}@@@@@@@@@@@      {1}--
+
     {1}         --                 --
+
     {1}                 -- --
   colors:
     ansi:
       - blue
       - default
       - default
-    rgb:
-      - [46, 0, 127]
-      - [128, 128, 128]
-      - [255, 255, 255]
-    chip: [0, 0, 128]
+    hex:
+      - '#2E007F'
+      - '#808080'
+      - '#FFFFFF'
+    chip: '#000080'
 Markdown:
   type: prose
-  ascii: |
-    {0}#######  {1} ,#####. .#####.
-    {0}  ###    {1}########.########
-    {0}  ###    {1}#################
-    {0}  ###    {1}`###############'
-    {0}  ###    {1} `#############'
-    {0}  ###    {1}   `#########'
-    {0}  ###    {1}     `#####'
-    {0}#######	{1}        `#'
-    {0}
-    {0}####     ####     ###
-    {0}#####   #####     ###
-    {0}######.######     ###
-    {0}### ##### ###     ###
-    {0}###  ###  ###   #######
-    {0}###   #   ###    #####
-    {0}###       ###     ###
-    {0}###       ###      #
+  ascii: "{0}#######  {1} ,#####. .#####.\n{0}  ###    {1}########.########\n{0}  ###    {1}#################\n{0}  ###    {1}`###############'\n{0}  ###    {1} `#############'\n{0}  ###    {1}   `#########'\n{0}  ###    {1}     `#####'\n{0}#######\t{1}        `#'\n{0}\n{0}####     ####     ###\n{0}#####   #####     ###\n{0}######.######     ###\n{0}### ##### ###     ###\n{0}###  ###  ###   #######\n{0}###   #   ###    #####\n{0}###       ###     ###\n{0}###       ###      #\n"
   colors:
     ansi:
       - default
       - red
-    chip: [8, 63, 161]
+    chip: '#083FA1'
 Nim:
   type: programming
   ascii: |
@@ -1424,7 +1419,7 @@ Nim:
     ansi:
       - yellow
       - default
-    chip: [255, 194, 0]
+    chip: '#FFC200'
 Nix:
   type: programming
   ascii: |
@@ -1451,7 +1446,7 @@ Nix:
     ansi:
       - cyan
       - blue
-    chip: [126, 126, 255]
+    chip: '#7E7EFF'
 ObjectiveC:
   type: programming
   ascii: |
@@ -1476,8 +1471,7 @@ ObjectiveC:
     ansi:
       - cyan
       - blue
-    chip: [67, 142, 255]
-  serialization: objective-c
+    chip: '#438EFF'
 OCaml:
   type: programming
   ascii: |
@@ -1501,7 +1495,7 @@ OCaml:
   colors:
     ansi:
       - yellow
-    chip: [59, 225, 51]
+    chip: '#3BE133'
 Org:
   type: prose
   ascii: |
@@ -1524,7 +1518,7 @@ Org:
       - green
       - red
       - default
-    chip: [119, 170, 153]
+    chip: '#77AA99'
 Perl:
   type: programming
   ascii: |
@@ -1553,7 +1547,7 @@ Perl:
   colors:
     ansi:
       - cyan
-    chip: [2, 152, 195]
+    chip: '#0298C3'
 Perl6:
   type: programming
   ascii: |
@@ -1582,14 +1576,13 @@ Perl6:
       - yellow
       - default
       - green
-    rgb:
-      - [91, 0, 253]
-      - [255, 0, 94]
-      - [243, 255, 39]
-      - [255, 255, 255]
-      - [0, 255, 57]
-    chip: [0, 0, 251]
-  serialization: raku
+    hex:
+      - '#5B00FD'
+      - '#FF005E'
+      - '#F3FF27'
+      - '#FFFFFF'
+      - '#00FF39'
+    chip: '#0000FB'
 Php:
   type: programming
   ascii: |
@@ -1607,10 +1600,10 @@ Php:
     ansi:
       - blue
       - default
-    rgb:
-      - [119, 123, 179]
-      - [255, 255, 255]
-    chip: [79, 93, 149]
+    hex:
+      - '#777BB3'
+      - '#FFFFFF'
+    chip: '#4F5D95'
 PowerShell:
   type: programming
   ascii: |
@@ -1628,10 +1621,10 @@ PowerShell:
     ansi:
       - blue
       - default
-    rgb:
-      - [49, 108, 185]
-      - [255, 255, 255]
-    chip: [1, 36, 86]
+    hex:
+      - '#316CB9'
+      - '#FFFFFF'
+    chip: '#012456'
 Processing:
   type: programming
   ascii: |
@@ -1657,10 +1650,10 @@ Processing:
     ansi:
       - blue
       - default
-    rgb:
-      - [80, 80, 80]
-      - [255, 255, 255]
-    chip: [0, 150, 216]
+    hex:
+      - '#505050'
+      - '#FFFFFF'
+    chip: '#0096D8'
 Prolog:
   type: programming
   ascii: |
@@ -1684,7 +1677,7 @@ Prolog:
   colors:
     ansi:
       - default
-    chip: [116, 40, 60]
+    chip: '#74283C'
 Protobuf:
   type: programming
   ascii: |
@@ -1707,8 +1700,7 @@ Protobuf:
       - blue
       - green
       - yellow
-    chip: [116, 40, 60]
-  serialization: protocol-buffers
+    chip: '#74283C'
 PureScript:
   type: programming
   ascii: |
@@ -1723,7 +1715,7 @@ PureScript:
   colors:
     ansi:
       - default
-    chip: [29, 34, 45]
+    chip: '#1D222D'
 Python:
   type: programming
   ascii: |
@@ -1754,43 +1746,62 @@ Python:
     ansi:
       - blue
       - yellow
-    rgb:
-      - [47, 105, 162]
-      - [255, 217, 64]
-    chip: [53, 114, 165]
+    hex:
+      - '#2F69A2'
+      - '#FFD940'
+    chip: '#3572A5'
 Qml:
   type: programming
-  ascii: |
+  ascii: >
     {0}****************************************
+
     {0}****************************************
+
     {0}****************************************
+
     {0}****************************************
+
     {0}****************************************
+
     {0}*******{1}####{0}*****{1}###{0}*****{1}###{0}**{1}###{0}********
+
     {0}*****{1}########{0}***{1}####{2},{0}**{1}####{2},{0}*{1}###{2},,{0}******
+
     {0}****{1}###{2},,,,{1}###{2},{0}*{1}#####{2},{1}#####{2},,{1}###{2},,,,{0}****
+
     {0}***{1}###{2},,,,,,{1}###{2},{1}###########{2},,{1}###{2},,,,,,{0}**
+
     {0}***{1}###{2},,,,,,{1}###{2},{1}###{2},{1}###{2},{1}###{2},,{1}###{2},,,,,,,{0}*
+
     {0}***{1}###{2},,,,,,{1}###{2},{1}###{2},,{1}#{2},,{1}###{2},,{1}###{2},,,,,,,,
+
     {0}****{1}###{2},,,,{1}###{2},,{1}###{2},,,,,{1}###{2},,{1}###{2},,,,,,,,
+
     {0}*****{1}########{2},,,{1}###{2},,,,,{1}###{2},,{1}########{2},,,
+
     {0}*******{1}####{2},,,,,{1}###{2},,,,,{1}###{2},,{1}########{2},,,
+
     {0}********{2},{1}#####{2},,,,,,,,,,,,,,,,,,,,,,,,,,
+
     {0}*********{2},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
     {0}***********{2},,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
     {0}*************{2},,,,,,,,,,,,,,,,,,,,,,,,,,,
+
     {0}***************{2},,,,,,,,,,,,,,,,,,,,,,,,,
+
     {0}*****************{2},,,,,,,,,,,,,,,,,,,,,,,
   colors:
     ansi:
       - green
       - default
       - green
-    rgb:
-      - [128, 195, 66]
-      - [255, 255, 255]
-      - [77, 117, 40]
-    chip: [68, 165, 28]
+    hex:
+      - '#80C342'
+      - '#FFFFFF'
+      - '#4D7528'
+    chip: '#44A51C'
 R:
   type: programming
   ascii: |
@@ -1812,7 +1823,7 @@ R:
     ansi:
       - default
       - blue
-    chip: [25, 140, 231]
+    chip: '#198CE7'
 Racket:
   type: programming
   ascii: |
@@ -1841,7 +1852,7 @@ Racket:
       - red
       - default
       - blue
-    chip: [60, 92, 170]
+    chip: '#3C5CAA'
 Renpy:
   type: programming
   ascii: |
@@ -1879,15 +1890,15 @@ Renpy:
       - yellow
       - default
       - magenta
-    rgb:
-      - [234, 219, 204]
-      - [255, 127, 127]
-      - [251, 238, 226]
-      - [73, 95, 142]
-      - [250, 228, 90]
-      - [255, 255, 255]
-      - [181, 163, 150]
-    chip: [255, 127, 127]
+    hex:
+      - '#EADBCC'
+      - '#FF7F7F'
+      - '#FBEEE2'
+      - '#495F8E'
+      - '#FAE45A'
+      - '#FFFFFF'
+      - '#B5A396'
+    chip: '#FF7F7F'
 Ruby:
   type: programming
   ascii: |
@@ -1911,9 +1922,9 @@ Ruby:
   colors:
     ansi:
       - red
-    rgb:
-      - [204, 52, 45]
-    chip: [112, 21, 22]
+    hex:
+      - '#CC342D'
+    chip: '#701516'
 Rust:
   type: programming
   ascii: |
@@ -1937,10 +1948,10 @@ Rust:
     ansi:
       - red
       - default
-    rgb:
-      - [228, 55, 23]
-      - [255, 255, 255]
-    chip: [222, 165, 132]
+    hex:
+      - '#E43717'
+      - '#FFFFFF'
+    chip: '#DEA584'
 Sass:
   type: markup
   ascii: |
@@ -1961,9 +1972,9 @@ Sass:
   colors:
     ansi:
       - magenta
-    rgb:
-      - [205, 103, 153]
-    chip: [165, 59, 112]
+    hex:
+      - '#CD6799'
+    chip: '#A53B70'
 Scala:
   type: programming
   ascii: |
@@ -1991,10 +2002,10 @@ Scala:
     ansi:
       - red
       - red
-    rgb:
-      - [223, 63, 61]
-      - [127, 12, 29]
-    chip: [194, 45, 64]
+    hex:
+      - '#DF3F3D'
+      - '#7F0C1D'
+    chip: '#C22D40'
 Scheme:
   type: programming
   ascii: |
@@ -2014,9 +2025,9 @@ Scheme:
   colors:
     ansi:
       - default
-    rgb:
-      - [85, 85, 85]
-    chip: [30, 74, 236]
+    hex:
+      - '#555555'
+    chip: '#1E4AEC'
 Sh:
   type: programming
   ascii: |
@@ -2037,8 +2048,7 @@ Sh:
   colors:
     ansi:
       - green
-    chip: [137, 224, 81]
-  serialization: shell
+    chip: '#89E051'
 Solidity:
   type: programming
   ascii: |
@@ -2070,13 +2080,13 @@ Solidity:
       - black
       - black
       - black
-    rgb:
-      - [255, 255, 255]
-      - [46, 46, 46]
-      - [26, 26, 26]
-      - [51, 51, 51]
-      - [81, 81, 81]
-    chip: [170, 103, 70]
+    hex:
+      - '#FFFFFF'
+      - '#2E2E2E'
+      - '#1A1A1A'
+      - '#333333'
+      - '#515151'
+    chip: '#AA6746'
 Sql:
   type: data
   ascii: |
@@ -2097,7 +2107,7 @@ Sql:
     ansi:
       - cyan
       - yellow
-    chip: [227, 140, 0]
+    chip: '#E38C00'
 Svelte:
   type: markup
   ascii: |
@@ -2126,10 +2136,10 @@ Svelte:
     ansi:
       - red
       - default
-    rgb:
-      - [255, 60, 0]
-      - [255, 255, 255]
-    chip: [255, 62, 0]
+    hex:
+      - '#FF3C00'
+      - '#FFFFFF'
+    chip: '#FF3E00'
 Swift:
   type: programming
   ascii: |
@@ -2169,18 +2179,18 @@ Swift:
       - red
       - red
       - red
-    rgb:
-      - [248, 129, 52]
-      - [249, 119, 50]
-      - [249, 109, 48]
-      - [250, 99, 46]
-      - [250, 89, 44]
-      - [251, 80, 42]
-      - [251, 70, 40]
-      - [252, 60, 38]
-      - [252, 50, 36]
-      - [253, 40, 34]
-    chip: [240, 81, 56]
+    hex:
+      - '#F88134'
+      - '#F97732'
+      - '#F96D30'
+      - '#FA632E'
+      - '#FA592C'
+      - '#FB502A'
+      - '#FB4628'
+      - '#FC3C26'
+      - '#FC3224'
+      - '#FD2822'
+    chip: '#F05138'
 Tcl:
   type: programming
   ascii: |
@@ -2206,7 +2216,7 @@ Tcl:
       - blue
       - default
       - cyan
-    chip: [228, 204, 152]
+    chip: '#E4CC98'
 Tex:
   type: markup
   ascii: |
@@ -2232,7 +2242,7 @@ Tex:
     ansi:
       - default
       - black
-    chip: [61, 97, 23]
+    chip: '#3D6117'
 Toml:
   type: data
   ascii: |
@@ -2258,10 +2268,10 @@ Toml:
     ansi:
       - red
       - default
-    rgb:
-      - [156, 66, 33]
-      - [255, 255, 255]
-    chip: [156, 66, 33]
+    hex:
+      - '#9C4221'
+      - '#FFFFFF'
+    chip: '#9C4221'
 Tsx:
   type: programming
   ascii: |
@@ -2284,7 +2294,7 @@ Tsx:
   colors:
     ansi:
       - blue
-    chip: [43, 116, 137]
+    chip: '#2B7489'
 TypeScript:
   type: programming
   ascii: |
@@ -2310,10 +2320,10 @@ TypeScript:
     ansi:
       - cyan
       - default
-    rgb:
-      - [0, 122, 204]
-      - [255, 255, 255]
-    chip: [43, 116, 137]
+    hex:
+      - '#007ACC'
+      - '#FFFFFF'
+    chip: '#2B7489'
 Vala:
   type: programming
   ascii: |
@@ -2340,7 +2350,7 @@ Vala:
     ansi:
       - magenta
       - default
-    chip: [165, 109, 226]
+    chip: '#A56DE2'
 Vhdl:
   type: programming
   ascii: |
@@ -2362,31 +2372,47 @@ Vhdl:
       - yellow
       - green
       - default
-    chip: [173, 178, 203]
+    chip: '#ADB2CB'
 VimScript:
   type: programming
-  ascii: |
+  ascii: >
     {1}        ________{0}  ++    {1}________
+
     {1}       /{2}VVVVVVVV{1}\{0}++++  {1}/{2}VVVVVVVV{1}\
+
     {1}       \{2}VVVVVVVV{1}/{0}++++++{1}\{2}VVVVVVVV{1}/
+
     {1}        |{2}VVVVVV{1}|{0}++++++++{1}/{2}VVVVV{1}/'
+
     {1}        |{2}VVVVVV{1}|{0}++++++{1}/{2}VVVVV{1}/'
+
     {0}       +{1}|{2}VVVVVV{1}|{0}++++{1}/{2}VVVVV{1}/'{0}+
+
     {0}     +++{1}|{2}VVVVVV{1}|{0}++{1}/{2}VVVVV{1}/'{0}+++++
+
     {0}   +++++{1}|{2}VVVVVV{1}|/{2}VVV{1}___{0}++++++++++
+
     {0}     +++{1}|{2}VVVVVVVVVV{1}/{2}##{1}/ {0}+{1}_{0}+{1}_{0}+{1}_{0}+{1}_
+
     {0}       +{1}|{2}VVVVVVVVV{1}___ {0}+{1}/{2}#{1}_{2}#{1},{2}#{1}_{2}#{1},\
-    {1}        |{2}VVVVVVV{1}//{2}##{1}/{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/'/{2}#{1}/
-    {1}        |{2}VVVVV{1}/'{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/ /{2}#{1}/
+
+    {1}
+    |{2}VVVVVVV{1}//{2}##{1}/{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/'/{2}#{1}/
+
+    {1}        |{2}VVVVV{1}/'{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/{0}+{1}/{2}#{1}/
+    /{2}#{1}/
+
     {1}        |{2}VVV{1}/'{0}++{1}/{2}#{1}/{0}+{1}/{2}#{1}/ /{2}#{1}/ /{2}#{1}/
+
     {1}        '{2}V{1}/'  /{2}##{1}//{2}##{1}//{2}##{1}//{2}###{1}/
+
     {0}                 ++
   colors:
     ansi:
       - green
       - black
       - default
-    chip: [25, 159, 75]
+    chip: '#199F4B'
 Vue:
   type: programming
   ascii: |
@@ -2409,7 +2435,7 @@ Vue:
     ansi:
       - green
       - blue
-    chip: [25, 159, 75]
+    chip: '#199F4B'
 WebAssembly:
   type: programming
   ascii: |
@@ -2433,10 +2459,10 @@ WebAssembly:
     ansi:
       - magenta
       - default
-    rgb:
-      - [101, 79, 240]
-      - [255, 255, 255]
-    chip: [4, 19, 59]
+    hex:
+      - '#654FF0'
+      - '#FFFFFF'
+    chip: '#04133B'
 Wolfram:
   type: programming
   ascii: |
@@ -2465,11 +2491,11 @@ Wolfram:
       - red
       - default
       - black
-    rgb:
-      - [255, 10, 1]
-      - [255, 255, 255]
-      - [0, 0, 0]
-    chip: [221, 17, 0]
+    hex:
+      - '#FF0A01'
+      - '#FFFFFF'
+      - '#000000'
+    chip: '#DD1100'
 Xaml:
   type: data
   ascii: |
@@ -2494,10 +2520,10 @@ Xaml:
     ansi:
       - blue
       - default
-    rgb:
-      - [51, 120, 206]
-      - [255, 255, 255]
-    chip: [0, 96, 172]
+    hex:
+      - '#3378CE'
+      - '#FFFFFF'
+    chip: '#0060AC'
 Xml:
   type: data
   ascii: |
@@ -2510,7 +2536,7 @@ Xml:
       - yellow
       - default
       - green
-    chip: [0, 96, 172]
+    chip: '#0060AC'
 Yaml:
   type: data
   ascii: |
@@ -2524,7 +2550,7 @@ Yaml:
   colors:
     ansi:
       - default
-    chip: [203, 23, 30]
+    chip: '#CB171E'
 Zig:
   type: programming
   ascii: |
@@ -2549,7 +2575,7 @@ Zig:
   colors:
     ansi:
       - yellow
-    chip: [236, 145, 92]
+    chip: '#EC915C'
 Zsh:
   type: programming
   ascii: |
@@ -2569,4 +2595,4 @@ Zsh:
   colors:
     ansi:
       - default
-    chip: [137, 224, 81]
+    chip: '#89E051'
