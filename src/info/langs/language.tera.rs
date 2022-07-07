@@ -20,7 +20,7 @@ pub enum LanguageType {
 #[clap(rename_all = "lowercase")]
 pub enum Language {
     {% for language, attrs in languages -%}
-        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif %}
+        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif -%}
         {{ language }},
     {% endfor %}
 }
