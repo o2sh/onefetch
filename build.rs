@@ -53,14 +53,14 @@ fn hex_to_rgb(
         tera::Value::String(s) => s,
         _ => return Err(tera::Error::msg("expected string")),
     };
-    let hex_string = match hex_string.strip_prefix("#") {
+    let hex_string = match hex_string.strip_prefix('#') {
         Some(s) => s,
         None => return Err(tera::Error::msg("expected hex string starting with `#`")),
     };
     if hex_string.len() != 6 {
         return Err(tera::Error::msg("expected a 6 digit hex string"));
     }
-    let channel_bytes = match u32::from_str_radix(&hex_string, 16) {
+    let channel_bytes = match u32::from_str_radix(hex_string, 16) {
         Ok(n) => n,
         Err(_) => return Err(tera::Error::msg("expected a valid hex string")),
     };
