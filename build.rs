@@ -8,26 +8,26 @@ use std::path::Path;
 use tera::{Context, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let mut tera = Tera::new("src/**/*.tera.rs")?;
-    tera.register_filter("strip_color_indices", strip_color_indices);
-    tera.register_filter("hextorgb", hex_to_rgb);
+    let out_dir = env::var_os("OUT_DIR").expect("No OUT_DIR variable.");
+    let mut tera = Tera::default();
+    tera.register_filter("strip_color_tokens", strip_color_tokens_filter);
+    tera.register_filter("hex_to_rgb", hex_to_rgb_filter);
 
     let lang_data: serde_json::Value = serde_yaml::from_reader(File::open("languages.yaml")?)?;
-    let context = Context::from_value(serde_json::json!({
-        "languages": lang_data,
-    }))?;
 
-    let lang_out = Path::new(&out_dir).join("language.rs");
-    eprintln!("creating {:?}", lang_out);
-    let rendered = tera.render("info/langs/language.tera.rs", &context)?;
-    fs::write(&lang_out, rendered)?;
+    let output_path = Path::new(&out_dir).join("language.rs");
+
+    let rust_code = tera.render_str(
+        &std::fs::read_to_string("src/info/langs/language.tera.rs")?,
+        &Context::from_value(serde_json::json!({ "languages": lang_data, }))?,
+    )?;
+    fs::write(&output_path, rust_code)?;
 
     Ok(())
 }
 
 /// Strips out `{n}` from the given string.
-fn strip_color_indices(
+fn strip_color_tokens_filter(
     value: &tera::Value,
     _args: &HashMap<String, tera::Value>,
 ) -> tera::Result<tera::Value> {
@@ -43,8 +43,8 @@ fn strip_color_indices(
     ));
 }
 
-/// Converts a hex string to an object with keys `r`, `g`, `b`.
-fn hex_to_rgb(
+
+fn hex_to_rgb_filter(
     value: &tera::Value,
     _args: &HashMap<String, tera::Value>,
 ) -> tera::Result<tera::Value> {

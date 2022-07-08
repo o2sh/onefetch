@@ -73,7 +73,7 @@ impl Language {
                     true_colors: {% if attrs.colors.hex -%}
                         Some(vec![
                             {%- for hex in attrs.colors.hex -%}
-                                {% set rgb = hex | hextorgb %}
+                                {% set rgb = hex | hex_to_rgb %}
                                 Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
                             {% endfor %}])
                     {% else -%}None
@@ -98,7 +98,7 @@ impl Language {
     pub fn get_circle_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
-                {% set rgb = attrs.colors.chip | hextorgb %}
+                {% set rgb = attrs.colors.chip | hex_to_rgb %}
                 Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
         }
@@ -128,7 +128,7 @@ impl Language {
     {% endif %}
 
     {% for line in lines %}
-        {% set cleaned_line = line | strip_color_indices %}
+        {% set cleaned_line = line | strip_color_tokens %}
         {% set width = cleaned_line | length %}
         {% if width > max_width %}
             compile_error!("{{ language }}: ascii art line {{ loop.index }} must be {{ max_width }} or less characters wide");
