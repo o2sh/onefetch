@@ -1,13 +1,3 @@
-# How to Contribute
-
-- [How to Contribute](#how-to-contribute)
-  - [Contributing via Pull Requests](#contributing-via-pull-requests)
-    - [Adding support for a new language](#adding-support-for-a-new-language)
-    - [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
-    - [Adding translation for README.md](#adding-translation-for-readmemd)
-
-## Contributing via Pull Requests
-
 ### Adding support for a new language
 
 Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.
