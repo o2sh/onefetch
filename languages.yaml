@@ -310,6 +310,7 @@ Cpp:
       - '#00599D'
       - '#FFFFFF'
     chip: '#F34B7D'
+  serialization: c++
 Crystal:
   type: programming
   ascii: |
@@ -376,6 +377,7 @@ CSharp:
       - '#803788'
       - '#FFFFFF'
     chip: '#178600'
+  serialization: c#
 Css:
   type: markup
   ascii: |
@@ -498,6 +500,7 @@ Elisp:
       - magenta
       - white
     chip: '#C065DB'
+  serialization: emacs-lisp
 Elixir:
   type: programming
   ascii: |
@@ -691,6 +694,7 @@ FortranLegacy:
       - yellow
       - red
     chip: '#4D41B1'
+  serialization: fortran
 FortranModern:
   type: programming
   ascii: |
@@ -746,6 +750,7 @@ FSharp:
       - cyan
       - cyan
     chip: '#B845FC'
+  serialization: f#
 GdScript:
   type: programming
   ascii: |
@@ -1251,6 +1256,7 @@ Jupyter:
       - '#FF700F'
       - '#9E9E9E'
     chip: '#DA5B0B'
+  serialization: jupyter-notebooks
 Kotlin:
   type: programming
   ascii: |
@@ -1470,6 +1476,7 @@ ObjectiveC:
       - cyan
       - blue
     chip: '#438EFF'
+  serialization: objective-c
 OCaml:
   type: programming
   ascii: |
@@ -1581,6 +1588,7 @@ Perl6:
       - '#FFFFFF'
       - '#00FF39'
     chip: '#0000FB'
+  serialization: raku
 Php:
   type: programming
   ascii: |
@@ -1699,6 +1707,7 @@ Protobuf:
       - green
       - yellow
     chip: '#74283C'
+  serialization: protocol-buffers
 PureScript:
   type: programming
   ascii: |
@@ -2028,6 +2037,7 @@ Sh:
     ansi:
       - green
     chip: '#89E051'
+  serialization: shell
 Solidity:
   type: programming
   ascii: |
