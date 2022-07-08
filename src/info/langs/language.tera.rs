@@ -73,7 +73,7 @@ impl Language {
                     true_colors: {% if attrs.colors.hex -%}
                         Some(vec![
                             {%- for hex in attrs.colors.hex -%}
-                                {% set rgb = hex | hex_to_rgb %}
+                                {% set rgb = hex | hex_to_rgb -%}
                                 Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
                             {% endfor %}])
                     {% else -%}None
@@ -98,7 +98,7 @@ impl Language {
     pub fn get_circle_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
-                {% set rgb = attrs.colors.chip | hex_to_rgb %}
+                {% set rgb = attrs.colors.chip | hex_to_rgb -%}
                 Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
         }
@@ -107,31 +107,31 @@ impl Language {
 
 {% for language, attrs in languages -%}
     {% if attrs.colors.rgb %}
-        {% set ansi_length = attrs.colors.ansi | length %}
+        {% set ansi_length = attrs.colors.ansi | length -%}
         {% set rgb_length = attrs.colors.rgb | length %}
         {% if ansi_length != rgb_length %}
             compile_error!("{{ language }}: ansi and rgb colors must be the same length");
         {% endif %}
-    {% endif %}
-{% endfor %}
+    {% endif -%}
+{% endfor -%}
 
-{% set max_width = 40 %}
+{% set max_width = 40 -%}
 {# NOTE Permitting trailing newline #}
-{% set max_height = 26 %}
+{% set max_height = 26 -%}
 
 
 {% for language, attrs in languages -%}
-    {% set lines = attrs.ascii | split(pat="\n") %}
-    {% set height = lines | length %}
+    {% set lines = attrs.ascii | split(pat="\n") -%}
+    {% set height = lines | length -%}
     {% if height > max_height %}
         compile_error!("{{ language }}: ascii art must have {{ max_height - 1 }} or less lines, has {{ height }}");
-    {% endif %}
+    {% endif -%}
 
-    {% for line in lines %}
-        {% set cleaned_line = line | strip_color_tokens %}
-        {% set width = cleaned_line | length %}
+    {% for line in lines -%}
+        {% set cleaned_line = line | strip_color_tokens -%}
+        {% set width = cleaned_line | length -%}
         {% if width > max_width %}
             compile_error!("{{ language }}: ascii art line {{ loop.index }} must be {{ max_width }} or less characters wide");
-        {% endif %}
-    {% endfor %}
-{% endfor %}
+        {% endif -%}
+    {% endfor -%}
+{% endfor -%}
