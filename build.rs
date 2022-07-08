@@ -43,7 +43,6 @@ fn strip_color_tokens_filter(
     ));
 }
 
-
 fn hex_to_rgb_filter(
     value: &tera::Value,
     _args: &HashMap<String, tera::Value>,
