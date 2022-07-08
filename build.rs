@@ -12,7 +12,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut tera = Tera::new("src/**/*.tera.rs")?;
     tera.register_filter("strip_color_indices", strip_color_indices);
     tera.register_filter("hextorgb", hex_to_rgb);
-    tera.register_filter("cleanansi", clean_color);
 
     let lang_data: serde_json::Value = serde_yaml::from_reader(File::open("languages.yaml")?)?;
     let context = Context::from_value(serde_json::json!({
@@ -73,28 +72,4 @@ fn hex_to_rgb(
         "g": g,
         "b": b,
     }))
-}
-
-/// Converts ansi colors to their their owo counterparts. Also remaps `white`
-/// to `Default`.
-fn clean_color(
-    value: &tera::Value,
-    _args: &HashMap<String, tera::Value>,
-) -> tera::Result<tera::Value> {
-    let ansi = match value {
-        tera::Value::String(s) => s,
-        _ => return Err(tera::Error::msg("expected string")),
-    };
-    let owo_var = match ansi.as_str() {
-        "black" => "Black",
-        "red" => "Red",
-        "green" => "Green",
-        "yellow" => "Yellow",
-        "blue" => "Blue",
-        "magenta" => "Magenta",
-        "cyan" => "Cyan",
-        "white" => "Default",
-        _ => return Err(tera::Error::msg("unexpected ansi color")),
-    };
-    Ok(tera::Value::String(owo_var.to_string()))
 }

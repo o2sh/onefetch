@@ -69,7 +69,7 @@ impl Language {
         let colors = match self {
             {% for language, attrs in languages -%}
                 Language::{{ language }} => Colors {
-                    basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | cleanansi }}),{% endfor %}],
+                    basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | capitalize | replace(from="White", to="Default") }}),{% endfor %}],
                     true_colors: {% if attrs.colors.hex -%}
                         Some(vec![
                             {%- for hex in attrs.colors.hex -%}
