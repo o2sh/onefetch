@@ -24,7 +24,7 @@ Ada:
     {0}                         *****
   colors:
     ansi:
-      - default
+      - white
       - cyan
       - blue
     hex:
@@ -68,7 +68,7 @@ AutoHotKey:
     {1} '----------------'
   colors:
     ansi:
-      - default
+      - white
       - green
     hex:
       - '#FFFFFF'
@@ -102,7 +102,7 @@ Bash:
     {0}
   colors:
     ansi:
-      - default
+      - white
     chip: '#89E051'
 C:
   type: programming
@@ -135,7 +135,7 @@ C:
       - cyan
       - blue
       - blue
-      - default
+      - white
     hex:
       - '#5D6CBF'
       - '#293693'
@@ -267,7 +267,7 @@ Coq:
   colors:
     ansi:
       - yellow
-      - default
+      - white
     hex:
       - '#BF8C5E'
       - '#D5BE99'
@@ -303,7 +303,7 @@ Cpp:
       - cyan
       - blue
       - blue
-      - default
+      - white
     hex:
       - '#649AD2'
       - '#004283'
@@ -335,7 +335,7 @@ Crystal:
     {0}               ...';c:
   colors:
     ansi:
-      - default
+      - white
       - black
     chip: '#000100'
 CSharp:
@@ -369,7 +369,7 @@ CSharp:
       - blue
       - magenta
       - magenta
-      - default
+      - white
     hex:
       - '#9B4F97'
       - '#67217A'
@@ -403,7 +403,7 @@ Css:
   colors:
     ansi:
       - blue
-      - default
+      - white
     chip: '#563D7C'
 D:
   type: programming
@@ -472,7 +472,7 @@ Dockerfile:
   colors:
     ansi:
       - cyan
-      - default
+      - white
       - cyan
     chip: '#384D54'
 Elisp:
@@ -496,7 +496,7 @@ Elisp:
   colors:
     ansi:
       - magenta
-      - default
+      - white
     chip: '#C065DB'
 Elixir:
   type: programming
@@ -685,7 +685,7 @@ FortranLegacy:
     {3}'.'.;.;' ;'.;'
   colors:
     ansi:
-      - default
+      - white
       - green
       - cyan
       - yellow
@@ -714,7 +714,7 @@ FortranModern:
     {3}'.'.;.;' ;'.;'
   colors:
     ansi:
-      - default
+      - white
       - green
       - cyan
       - yellow
@@ -770,7 +770,7 @@ GdScript:
   colors:
     ansi:
       - cyan
-      - default
+      - white
     hex:
       - '#458DC0'
       - '#FFFFFF'
@@ -805,7 +805,7 @@ Go:
   colors:
     ansi:
       - cyan
-      - default
+      - white
       - yellow
     hex:
       - '#74CDDD'
@@ -869,7 +869,7 @@ Groovy:
   colors:
     ansi:
       - cyan
-      - default
+      - white
     chip: '#4298B8'
 Haskell:
   type: programming
@@ -994,7 +994,7 @@ HolyC:
     ansi:
       - yellow
       - cyan
-      - default
+      - white
     hex:
       - '#FBFE67'
       - '#0B449D'
@@ -1027,7 +1027,7 @@ Html:
   colors:
     ansi:
       - red
-      - default
+      - white
     chip: '#E34C26'
 Idris:
   type: programming
@@ -1137,7 +1137,7 @@ Json:
     {0}            `-/oyhhhys+:`
   colors:
     ansi:
-      - default
+      - white
       - black
     chip: '#292929'
 Jsonnet:
@@ -1170,7 +1170,7 @@ Jsonnet:
     {0}       \|/     \|/
   colors:
     ansi:
-      - default
+      - white
       - black
     chip: '#0064BD'
 Jsx:
@@ -1209,7 +1209,7 @@ Julia:
     {0}|__/
   colors:
     ansi:
-      - default
+      - white
       - blue
       - green
       - red
@@ -1243,9 +1243,9 @@ Jupyter:
     {0}    *%%%*
   colors:
     ansi:
-      - default
+      - white
       - yellow
-      - default
+      - white
     hex:
       - '#FFFFFF'
       - '#FF700F'
@@ -1305,7 +1305,7 @@ Lisp:
     {0}              ************
   colors:
     ansi:
-      - default
+      - white
     chip: '#3FB68B'
 LLVM:
   type: programming
@@ -1379,8 +1379,8 @@ Lua:
   colors:
     ansi:
       - blue
-      - default
-      - default
+      - white
+      - white
     hex:
       - '#2E007F'
       - '#808080'
@@ -1391,7 +1391,7 @@ Markdown:
   ascii: "{0}#######  {1} ,#####. .#####.\n{0}  ###    {1}########.########\n{0}  ###    {1}#################\n{0}  ###    {1}`###############'\n{0}  ###    {1} `#############'\n{0}  ###    {1}   `#########'\n{0}  ###    {1}     `#####'\n{0}#######\t{1}        `#'\n{0}\n{0}####     ####     ###\n{0}#####   #####     ###\n{0}######.######     ###\n{0}### ##### ###     ###\n{0}###  ###  ###   #######\n{0}###   #   ###    #####\n{0}###       ###     ###\n{0}###       ###      #\n"
   colors:
     ansi:
-      - default
+      - white
       - red
     chip: '#083FA1'
 Nim:
@@ -1418,7 +1418,7 @@ Nim:
   colors:
     ansi:
       - yellow
-      - default
+      - white
     chip: '#FFC200'
 Nix:
   type: programming
@@ -1517,7 +1517,7 @@ Org:
     ansi:
       - green
       - red
-      - default
+      - white
     chip: '#77AA99'
 Perl:
   type: programming
@@ -1574,7 +1574,7 @@ Perl6:
       - blue
       - red
       - yellow
-      - default
+      - white
       - green
     hex:
       - '#5B00FD'
@@ -1599,7 +1599,7 @@ Php:
   colors:
     ansi:
       - blue
-      - default
+      - white
     hex:
       - '#777BB3'
       - '#FFFFFF'
@@ -1620,7 +1620,7 @@ PowerShell:
   colors:
     ansi:
       - blue
-      - default
+      - white
     hex:
       - '#316CB9'
       - '#FFFFFF'
@@ -1649,7 +1649,7 @@ Processing:
   colors:
     ansi:
       - blue
-      - default
+      - white
     hex:
       - '#505050'
       - '#FFFFFF'
@@ -1676,7 +1676,7 @@ Prolog:
     {0}           ################
   colors:
     ansi:
-      - default
+      - white
     chip: '#74283C'
 Protobuf:
   type: programming
@@ -1714,7 +1714,7 @@ PureScript:
     {0}    \\\\\    \\\\\\\\\\\\\\
   colors:
     ansi:
-      - default
+      - white
     chip: '#1D222D'
 Python:
   type: programming
@@ -1795,7 +1795,7 @@ Qml:
   colors:
     ansi:
       - green
-      - default
+      - white
       - green
     hex:
       - '#80C342'
@@ -1821,7 +1821,7 @@ R:
     {1}                RRRRRRR     RRRRRRRR
   colors:
     ansi:
-      - default
+      - white
       - blue
     chip: '#198CE7'
 Racket:
@@ -1850,7 +1850,7 @@ Racket:
   colors:
     ansi:
       - red
-      - default
+      - white
       - blue
     chip: '#3C5CAA'
 Renpy:
@@ -1883,12 +1883,12 @@ Renpy:
     {6}     ++++++++++{4}####
   colors:
     ansi:
-      - default
+      - white
       - red
-      - default
+      - white
       - blue
       - yellow
-      - default
+      - white
       - magenta
     hex:
       - '#EADBCC'
@@ -1947,7 +1947,7 @@ Rust:
   colors:
     ansi:
       - red
-      - default
+      - white
     hex:
       - '#E43717'
       - '#FFFFFF'
@@ -2024,7 +2024,7 @@ Scheme:
     {0}  ///           ////
   colors:
     ansi:
-      - default
+      - white
     hex:
       - '#555555'
     chip: '#1E4AEC'
@@ -2075,7 +2075,7 @@ Solidity:
     {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   colors:
     ansi:
-      - default
+      - white
       - black
       - black
       - black
@@ -2135,7 +2135,7 @@ Svelte:
   colors:
     ansi:
       - red
-      - default
+      - white
     hex:
       - '#FF3C00'
       - '#FFFFFF'
@@ -2214,7 +2214,7 @@ Tcl:
   colors:
     ansi:
       - blue
-      - default
+      - white
       - cyan
     chip: '#E4CC98'
 Tex:
@@ -2240,7 +2240,7 @@ Tex:
     {0}$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   colors:
     ansi:
-      - default
+      - white
       - black
     chip: '#3D6117'
 Toml:
@@ -2267,7 +2267,7 @@ Toml:
   colors:
     ansi:
       - red
-      - default
+      - white
     hex:
       - '#9C4221'
       - '#FFFFFF'
@@ -2319,7 +2319,7 @@ TypeScript:
   colors:
     ansi:
       - cyan
-      - default
+      - white
     hex:
       - '#007ACC'
       - '#FFFFFF'
@@ -2349,7 +2349,7 @@ Vala:
   colors:
     ansi:
       - magenta
-      - default
+      - white
     chip: '#A56DE2'
 Vhdl:
   type: programming
@@ -2371,7 +2371,7 @@ Vhdl:
     ansi:
       - yellow
       - green
-      - default
+      - white
     chip: '#ADB2CB'
 VimScript:
   type: programming
@@ -2411,7 +2411,7 @@ VimScript:
     ansi:
       - green
       - black
-      - default
+      - white
     chip: '#199F4B'
 Vue:
   type: programming
@@ -2458,7 +2458,7 @@ WebAssembly:
   colors:
     ansi:
       - magenta
-      - default
+      - white
     hex:
       - '#654FF0'
       - '#FFFFFF'
@@ -2489,7 +2489,7 @@ Wolfram:
   colors:
     ansi:
       - red
-      - default
+      - white
       - black
     hex:
       - '#FF0A01'
@@ -2519,7 +2519,7 @@ Xaml:
   colors:
     ansi:
       - blue
-      - default
+      - white
     hex:
       - '#3378CE'
       - '#FFFFFF'
@@ -2534,7 +2534,7 @@ Xml:
   colors:
     ansi:
       - yellow
-      - default
+      - white
       - green
     chip: '#0060AC'
 Yaml:
@@ -2549,7 +2549,7 @@ Yaml:
     {0} /_/ /_/   |_| |_|    |_| |______\
   colors:
     ansi:
-      - default
+      - white
     chip: '#CB171E'
 Zig:
   type: programming
@@ -2594,5 +2594,5 @@ Zsh:
     {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
   colors:
     ansi:
-      - default
+      - white
     chip: '#89E051'
