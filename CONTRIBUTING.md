@@ -3,7 +3,6 @@
 - [How to Contribute](#how-to-contribute)
   - [Contributing via Pull Requests](#contributing-via-pull-requests)
     - [Adding support for a new language](#adding-support-for-a-new-language)
-      - [Ascii logo](#ascii-logo)
     - [Adding support for a new package manager](#adding-support-for-a-new-package-manager)
     - [Adding translation for README.md](#adding-translation-for-readmemd)
 
@@ -15,44 +14,52 @@ Adding support for a new Language consists in adding a new entry to [language.ya
 
 **Example**:
 
-```yaml
-TypeScript: # required, this will be the name of the enum variant for the language
-  type: programming # required, can be programming, data, markup, or prose
-
+```
+CSharp: # required, this will be the name of the enum variant for the language as specified by tokei (link 1)
+  type: programming # required, can be programming, data, markup, or prose as specified by linguist (link 2)
+  
   # required, this is the logo. If it's not within 25x40 bounds, you will get a compiler error. Use `{i}` to color the ascii with `i` the color index.
-  ascii: | 
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TSTS{1}TSTSTS{0}TSTSTS
-    {0}TSTSTSTS{1}TSTSTSTSTSTSTS{0}TS{1}TSTSTSTSTS{0}TSTS
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTST{1}TSTST{0}TSTSTSTST
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTST{0}STSTSTST
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTST{0}STSTST
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTS{1}TSTST{0}TSTS
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTSTST{1}TSTST{0}TST
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTS{1}TSTSTSTSTS{0}TST
-    {0}TSTSTSTSTSTST{1}TSTS{0}TSTSTSTSTS{1}TSTSTS{0}STSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
-    {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
+  ascii: |
+    {0}                 ++++++
+    {0}              ++++++++++++
+    {0}          ++++++++++++++++++++
+    {0}       ++++++++++++++++++++++++++
+    {0}    ++++++++++++++++++++++++++++++++
+    {0} +++++++++++++{3}************{0}+++++++++++++
+    {0}+++++++++++{3}******************{0}++++++++{2};;;
+    {0}+++++++++{3}**********************{0}++{2};;;;;;;
+    {0}++++++++{3}*********{0}++++++{3}******{2};;;;;;;;;;;
+    {0}+++++++{3}********{0}++++++++++{3}**{2};;;{3}**{2};;;{3}**{2};;;
+    {0}+++++++{3}*******{0}+++++++++{2};;;;;;{3}*********{2}::
+    {0}+++++++{3}******{0}+++++++{2};;;;;;;;;;{3}**{2};;;{3}**{2};;;
+    {0}+++++++{3}*******{0}+++{1}:::::{2};;;;;;;{3}*********{2};;
+    {0}+++++++{3}********{1}::::::::::{3}**{2};;;{3}**{2};;;{3}**{2};;;
+    {0}++++++++{3}*********{1}::::::{3}******{2};;;;;;;;;;;
+    {0}++++++{1}:::{3}**********************{1}::{2};;;;;;;
+    {0}+++{1}::::::::{3}******************{1}::::::::{2};;;
+    {1} :::::::::::::{3}************{1}:::::::::::::
+    {1}    ::::::::::::::::::::::::::::::::
+    {1}       ::::::::::::::::::::::::::
+    {1}          ::::::::::::::::::::
+    {1}              ::::::::::::
+    {1}                 ::::::
   colors:
-    ansi: # required, a list of the ANSI colors used for the logo
-      - cyan
-      - default
-    rgb: # optional, used to define RGB colors that can be used for the logo in terminals that support them
-      # [r, g, b]
-      - [0, 122, 204]
-      - [255, 255, 255]
-    chip: [43, 116, 137] # required, this is used for the language breakdown bar. [r, g, b]
+    ansi: # required, a list of the ANSI colors used to colorize the logo
+      - blue
+      - magenta
+      - magenta
+      - white
+    hex: # optional, alternative to basic colors for terminals that support true colour.
+      - '#9B4F97'
+      - '#67217A'
+      - '#803788'
+      - '#FFFFFF'
+    chip: '#178600' # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+  serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
-**The name of the language must match a [tokei::LanguageType variant](https://docs.rs/tokei/12/tokei/enum.LanguageType.html)**
-
-The first item `TypeScript` corresponds to the name of the language as defined in [tokei](https://github.com/XAMPPRocky/tokei). The second item refers to the language type as specified by [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml), only four values are possible: Programming, Markup, Prose and Data. The third item `typescript.ascii` is the name of the file containing the ascii logo: this file has to be placed in the _./resources_ folder (more info below). Then we have the colors used to customize the look of the ascii logo when displayed to the screen. Finally, the circle color used in the language distribution whose hex value can be found in [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml).
+- link 1: https://github.com/XAMPPRocky/tokei#supported-languages
+- link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
 
 ### Adding support for a new package manager
 
