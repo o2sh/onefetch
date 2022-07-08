@@ -8,7 +8,7 @@ use std::path::Path;
 use tera::{Context, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let out_dir = env::var_os("OUT_DIR").expect("No OUT_DIR variable.");
+    let out_dir = env::var("OUT_DIR").expect("No OUT_DIR variable.");
     let mut tera = Tera::default();
     tera.register_filter("strip_color_tokens", strip_color_tokens_filter);
     tera.register_filter("hex_to_rgb", hex_to_rgb_filter);
