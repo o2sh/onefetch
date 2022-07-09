@@ -99,7 +99,6 @@ Bash:
     {0}         ;shh:,   oBASHBASHBA;
     {0}            ,:ba;o0ABN0Aa,
     {0}                ;sh:'
-    {0}
   colors:
     ansi:
       - white
@@ -1454,9 +1453,6 @@ Nix:
 ObjectiveC:
   type: programming
   ascii: |
-    {0}
-    {0}
-    {0}
     {0}888                                888
     {0}8    8888   8       8        8888    8
     {0}8   8    8  8               8    88  8
@@ -1469,8 +1465,6 @@ ObjectiveC:
     {0}888                 8              888
     {0}                    8
     {0}                  88Y
-    {0}
-    {0}
   colors:
     ansi:
       - cyan
@@ -1651,7 +1645,6 @@ Processing:
     {0}    PPPPPPPPPPPPPPPPPPPPPPPP
     {0}      PPPPPPPPPPPPPPPPPPPP
     {0}          PPPPPPPPPPPP
-    {0}
   colors:
     ansi:
       - blue
@@ -1748,7 +1741,6 @@ Python:
     {1}           =================
     {1}            ===============
     {1}               =========
-    {1}
   colors:
     ansi:
       - blue
