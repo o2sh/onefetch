@@ -59,9 +59,12 @@ ansi_term = "0.12.1"
 base64 = "0.13.0"
 libc = "0.2.126"
 
-[dev-dependencies]
-more-asserts = "0.3.0"
-paste = "1.0.7"
+[build-dependencies]
+lazy_static = "1"
+regex = "1"
+serde_json = "1"
+serde_yaml = "0.8"
+tera = { version = "1", default-features = false }
 
 [features]
 fail-on-deprecated = []

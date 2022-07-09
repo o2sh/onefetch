@@ -1,0 +1,137 @@
+use owo_colors::{AnsiColors, DynColors::{self, Rgb, Ansi}};
+use std::fmt;
+use strum::EnumIter;
+
+pub struct Colors {
+    basic_colors: Vec<DynColors>,
+    true_colors: Option<Vec<DynColors>>,
+}
+
+#[derive(Clone, PartialEq, clap::ValueEnum)]
+pub enum LanguageType {
+    Programming,
+    Markup,
+    Prose,
+    Data,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
+#[allow(clippy::upper_case_acronyms)]
+#[clap(rename_all = "lowercase")]
+pub enum Language {
+    {% for language, attrs in languages -%}
+        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif -%}
+        {{ language }},
+    {% endfor %}
+}
+
+impl fmt::Display for Language {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            {% for language, _ in languages -%}
+                Self::{{ language }} => write!(f, "{}", tokei::LanguageType::{{ language }}.name()),
+            {% endfor %}
+        }
+    }
+}
+
+impl From<tokei::LanguageType> for Language {
+    fn from(language: tokei::LanguageType) -> Self {
+        match language {
+            {% for language, _ in languages -%}
+                tokei::LanguageType::{{ language }} => Self::{{ language }},
+            {% endfor %}
+            _ => unimplemented!("Language {:?}", language),
+        }
+    }
+}
+
+impl From<Language> for tokei::LanguageType {
+    fn from(language: Language) -> Self {
+        match language {
+            {% for language, _ in languages -%}
+                Language::{{ language }} => tokei::LanguageType::{{ language }},
+            {% endfor %}
+        }
+    }
+}
+
+impl Language {
+    pub fn get_ascii_art(&self) -> &'static str {
+        match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => "{{ attrs.ascii | addslashes }}",
+            {% endfor %}
+        }
+    }
+
+    pub fn get_colors(&self, true_color: bool) -> Vec<DynColors> {
+        let colors = match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => Colors {
+                    basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | capitalize | replace(from="White", to="Default") }}),{% endfor %}],
+                    true_colors: {% if attrs.colors.hex -%}
+                        Some(vec![
+                            {%- for hex in attrs.colors.hex -%}
+                                {% set rgb = hex | hex_to_rgb -%}
+                                Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
+                            {% endfor %}])
+                    {% else -%}None
+                    {% endif %},
+                },
+            {% endfor %}
+        };
+        match colors.true_colors {
+            Some(true_colors) if true_color => true_colors,
+            _ => colors.basic_colors,
+        }
+    }
+
+    pub fn get_type(&self) -> LanguageType {
+        match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => LanguageType::{{ attrs.type | title }},
+            {% endfor %}
+        }
+    }
+
+    pub fn get_circle_color(&self) -> DynColors {
+        match self {
+            {% for language, attrs in languages -%}
+                {% set rgb = attrs.colors.chip | hex_to_rgb -%}
+                Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
+            {% endfor %}
+        }
+    }
+}
+
+{% for language, attrs in languages -%}
+    {% if attrs.colors.rgb %}
+        {% set ansi_length = attrs.colors.ansi | length -%}
+        {% set rgb_length = attrs.colors.rgb | length %}
+        {% if ansi_length != rgb_length %}
+            compile_error!("{{ language }}: ansi and rgb colors must be the same length");
+        {% endif %}
+    {% endif -%}
+{% endfor -%}
+
+{% set max_width = 40 -%}
+{# NOTE Permitting trailing newline #}
+{% set max_height = 26 -%}
+
+
+{% for language, attrs in languages -%}
+    {% set lines = attrs.ascii | split(pat="\n") -%}
+    {% set height = lines | length -%}
+    {% if height > max_height %}
+        compile_error!("{{ language }}: ascii art must have {{ max_height - 1 }} or less lines, has {{ height }}");
+    {% endif -%}
+
+    {% for line in lines -%}
+        {% set cleaned_line = line | strip_color_tokens -%}
+        {% set width = cleaned_line | length -%}
+        {% if width > max_width %}
+            compile_error!("{{ language }}: ascii art line {{ loop.index }} must be {{ max_width }} or less characters wide");
+        {% endif -%}
+    {% endfor -%}
+{% endfor -%}

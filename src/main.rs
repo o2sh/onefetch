@@ -1,15 +1,11 @@
 #![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
 
-use crate::cli::Config;
 use anyhow::{bail, Result};
 use clap::{CommandFactory, Parser};
+use cli::Config;
 use info::{repo, Info};
 use std::io;
 use ui::printer::Printer;
-
-mod cli;
-mod info;
-mod ui;
 
 fn main() -> Result<()> {
     #[cfg(windows)]
@@ -43,3 +39,7 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+
+mod cli;
+mod info;
+mod ui;
