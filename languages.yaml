@@ -597,7 +597,6 @@ Emojicode:
 Erlang:
   type: programming
   ascii: |
-    {0}
     {0}   EEEEEEEEEEEEE      EEEEEEEEEEEE
     {0}  EEEEEEEEEEEE         EEEEEEEEEEEE
     {0} EEEEEEEEEEEE           EEEEEEEEEEE
