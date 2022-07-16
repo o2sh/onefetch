@@ -1,5 +1,9 @@
 # Onefetch Web
 
+## API
+
+- `/api/language[/:key]`
+
 ## Development
 
 ```bash
