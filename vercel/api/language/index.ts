@@ -1,8 +1,5 @@
-import { readFileSync } from 'fs';
-import { load } from 'js-yaml';
+import data from '../../languages.json';
 import type { VercelRequest as Request, VercelResponse as Response } from '@vercel/node';
-
-const data = load(readFileSync('../../languages.yaml', 'utf8'));
 const stringified = JSON.stringify(data);
 
 export default (_request: Request, response: Response) => {
