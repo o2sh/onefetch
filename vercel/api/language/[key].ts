@@ -8,7 +8,6 @@ export default (request: Request, response: Response) => {
   if (language == null) {
     return response.status(404).send({ error: 'Language not found', key });
   }
-  const stringified = JSON.stringify(language);
 
-  response.status(200).send(stringified);
+  response.status(200).send(data);
 };
