@@ -2,7 +2,7 @@
 
 ## API
 
-- `/api/language[/:key]`
+- `/api/languages[/:key]`
 
 ## Development
 
