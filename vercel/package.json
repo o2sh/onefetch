@@ -23,5 +23,8 @@
     "tslib": "^2.4.0",
     "typescript": "^4.6.4",
     "vite": "^3.0.0"
+  },
+  "dependencies": {
+    "sakura.css": "^1.3.1"
   }
 }
