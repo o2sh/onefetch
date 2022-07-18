@@ -1,6 +1,5 @@
 <script lang="ts">
   import Nav from './lib/Nav.svelte'
-  import type { Languages } from './types';
 </script>
 
 <main>

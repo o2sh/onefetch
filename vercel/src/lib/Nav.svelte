@@ -11,6 +11,10 @@
       href: "/",
     },
     {
+      name: "ASCII Preview",
+      href: "/ascii-preview",
+    },
+    {
       name: "GitHub",
       href: "https://github.com/o2sh/onefetch",
     },
