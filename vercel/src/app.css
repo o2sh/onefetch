@@ -1,0 +1,36 @@
+/*
+ * Global stylings that may be set programmatically (and therefore can't be
+ * encapsulated in Svelte components)
+ */
+.text-light {
+  color: gray;
+}
+
+/* TODO Use CSS preprocessor to reduce repetition */
+.text-ansi-black {
+  color: black;
+}
+.text-ansi-red {
+  color: red;
+}
+.text-ansi-green {
+  color: green;
+}
+.text-ansi-yellow {
+  color: yellow;
+}
+.text-ansi-blue {
+  color: blue;
+}
+.text-ansi-magenta {
+  color: magenta;
+}
+.text-ansi-cyan {
+  color: cyan;
+}
+.text-ansi-white {
+  color: #4a4a4a;
+}
+.dark .text-ansi-white {
+  color: #c9c9c9;
+}
