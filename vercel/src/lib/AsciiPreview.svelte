@@ -54,6 +54,10 @@
     align-items: baseline;
   }
 
+  pre {
+    line-height: 1.1;
+  }
+
   pre.dark {
     background-color: #4a4a4a;
     color: #c9c9c9;
