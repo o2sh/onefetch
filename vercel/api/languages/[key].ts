@@ -9,5 +9,5 @@ export default (request: Request, response: Response) => {
     return response.status(404).send({ error: 'Language not found', key });
   }
 
-  response.status(200).send(data);
+  response.status(200).send(language);
 };
