@@ -59,7 +59,7 @@
   }
 
   pre.dark {
-    background-color: #4a4a4a;
+    background-color: black;
     color: #c9c9c9;
   }
 </style>
