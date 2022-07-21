@@ -1,9 +1,11 @@
 <script lang="ts">
+  import Chip from './Chip.svelte';
   import type { LanguageColors } from '../types';
 
   export let name: string;
   export let ansi: string[];
   export let hex: string[] | null = null;
+  export let chip: string;
   export let ascii: string = '';
 
   let dark = true;
@@ -29,7 +31,7 @@
 
 <div class="title-row">
   <!-- TODO Fix a11y warning for form label + control -->
-  <h3>{name}</h3>
+  <h3><div class="chip"><Chip color={chip} width={24} height={24} /></div>{name}</h3>
   <label>
     <input type="checkbox" bind:checked={dark} />
     Dark
@@ -61,5 +63,10 @@
   pre.dark {
     background-color: black;
     color: #c9c9c9;
+  }
+
+  .chip {
+    display: inline-block;
+    margin-right: 1.5rem;
   }
 </style>

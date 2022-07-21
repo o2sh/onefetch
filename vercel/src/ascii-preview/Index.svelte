@@ -33,6 +33,7 @@
         ansi={language.ansi}
         hex={language.hex}
         ascii={language.ascii}
+        chip={language.chip}
       />
     {/each}
   {:catch error}
