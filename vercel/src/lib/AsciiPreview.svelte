@@ -31,7 +31,10 @@
 
 <div class="title-row">
   <!-- TODO Fix a11y warning for form label + control -->
-  <h3><div class="chip"><Chip color={chip} width={24} height={24} /></div>{name}</h3>
+   <div class="name-with-chip">
+    <Chip color={chip} width={24} height={24} />
+    <h3>{name}</h3>
+  </div>
   <label>
     <input type="checkbox" bind:checked={dark} />
     Dark
