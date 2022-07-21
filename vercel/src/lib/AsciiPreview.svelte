@@ -68,6 +68,13 @@
     color: #c9c9c9;
   }
 
+  .name-with-chip {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 1.5rem;
+  }
+
   .chip {
     display: inline-block;
     margin-right: 1.5rem;
