@@ -23,10 +23,10 @@
   <div class="card">
     <Nav active="/ascii-preview" />
   </div>
-  <h2>Languages</h2>
   {#await languages}
     <p>Fetching languages...</p>
   {:then result}
+    <h2>Languages ({result.length})</h2>
     {#each result as language}
       <AsciiPreview
         name={language.name}
