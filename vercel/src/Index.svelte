@@ -4,10 +4,7 @@
 
 <main>
   <h1>Onefetch</h1>
-
-  <div class="card">
-    <Nav active="/" />
-  </div>
+  <Nav active="/" />
   <div class="spacer"></div>
   <p>
     Get Onefetch from
