@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 languages.json
+
+.vercel

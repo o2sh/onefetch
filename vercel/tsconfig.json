@@ -9,7 +9,8 @@
     "baseUrl": ".",
     "allowJs": true,
     "checkJs": true,
+    "esModuleInterop": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "vite.config.ts"],
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "vite.config.ts", "languages.json"],
 }

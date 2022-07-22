@@ -1,49 +1,32 @@
 <script lang="ts">
-  import Nav from '../lib/Nav.svelte'
-  import AsciiPreview from '../lib/AsciiPreview.svelte';
-  import type { Languages } from '../types';
-  import  getLanguages  from '../get-languages';
+  import Nav from "../lib/Nav.svelte";
+  import AsciiPreview from "../lib/AsciiPreview.svelte";
+  import data from "../../languages.json";
 
-  const languages = (async () => {
-    const languageObject = await getLanguages();
+  const languages =
     // HACK This looks unnecessary to destructure and restructure, but Svelte
     // was freaking out about accessing colors.property in the template.
-    return Object.entries(languageObject).map(([name, { ascii, colors }]) => ({
-      name,
-      ascii,
-      ...colors,
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-  })();
+    Object.entries(data)
+      .map(([name, { ascii, colors }]) => ({
+        name,
+        ascii,
+        ...colors,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
 <main>
   <h1>ASCII Preview</h1>
-
   <Nav active="ascii-preview/" />
-  {#await languages}
-    <p>Fetching languages...</p>
-  {:then result}
-    <h2>Languages ({result.length})</h2>
-    {#each result as language}
-      <AsciiPreview
-        name={language.name}
-        ansi={language.ansi}
-        hex={language.hex}
-        ascii={language.ascii}
-        chip={language.chip}
-      />
-    {/each}
-  {:catch error}
-    <p class="danger">
-      <strong>Couldn't fetch languages:</strong>
-      <code>{error.message}</code>
-    </p>
-  {/await}
-</main>
+  <h2>Languages ({languages.length})</h2>
 
-<style>
-  .danger {
-    color: red;
-  }
-</style>
+  {#each languages as language}
+    <AsciiPreview
+      name={language.name}
+      ansi={language.ansi}
+      hex={language.hex}
+      ascii={language.ascii}
+      chip={language.chip}
+    />
+  {/each}
+</main>
