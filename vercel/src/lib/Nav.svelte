@@ -38,7 +38,6 @@
     justify-content: space-around;
     align-items: center;
     padding: 0.5rem;
-    background-color: #fafafa;
     border-bottom: 1px solid #ccc;
   }
 
