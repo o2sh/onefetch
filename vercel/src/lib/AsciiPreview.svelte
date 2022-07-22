@@ -20,7 +20,7 @@
         const i = Number.parseInt(index, 10);
         const spanText = trueColor
           ? `<span style="color: ${hex[i]}">`
-          : `<span class="text-ansi-${ansi[i]}">`;
+          : `<span style="color: ${ansi[i]}">`;
         spanCount++;
         return spanText;
       });
@@ -31,7 +31,7 @@
 
 <div class="title-row">
   <!-- TODO Fix a11y warning for form label + control -->
-   <div class="name-with-chip">
+   <div class="language-name">
     <Chip color={chip} width={24} height={24} />
     <h3>{name}</h3>
   </div>
@@ -65,18 +65,12 @@
 
   pre.dark {
     background-color: black;
-    color: #c9c9c9;
   }
 
-  .name-with-chip {
+  .language-name {
     display: flex;
     flex-direction: row;
     align-items: baseline;
     gap: 1.5rem;
-  }
-
-  .chip {
-    display: inline-block;
-    margin-right: 1.5rem;
   }
 </style>
