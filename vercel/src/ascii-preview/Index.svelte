@@ -1,7 +1,7 @@
 <script lang="ts">
   import Nav from "../lib/Nav.svelte";
   import AsciiPreview from "../lib/AsciiPreview.svelte";
-  import data from "../../languages.json";
+  import data from "../../../languages.yaml";
 
   const languages =
     // HACK This looks unnecessary to destructure and restructure, but Svelte
