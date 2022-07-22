@@ -12,7 +12,7 @@
     },
     {
       name: "ASCII Preview",
-      href: "/ascii-preview",
+      href: "ascii-preview/",
     },
     {
       name: "GitHub",
