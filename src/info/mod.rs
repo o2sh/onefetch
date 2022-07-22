@@ -209,7 +209,7 @@ impl Info {
         let (repo_name, repo_url) = repo.get_name_and_url()?;
         let head_refs = repo.get_head_refs()?;
         let version = repo.get_version()?;
-        let git_username = repo.get_git_username()?;
+        let git_username = repo.get_git_username();
         let number_of_tags = repo.get_number_of_tags()?;
         let number_of_branches = repo.get_number_of_branches()?;
         let (repo_size, file_count) = repo.get_repo_size();

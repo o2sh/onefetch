@@ -191,14 +191,11 @@ impl Repo {
         Ok(number_of_branches)
     }
 
-    pub fn get_git_username(&self) -> Result<String> {
-        let config = self.git2_repo.config()?;
-        let username = match config.get_entry("user.name") {
-            Ok(v) => v.value().unwrap_or("").into(),
-            Err(_) => "".into(),
-        };
-
-        Ok(username)
+    pub fn get_git_username(&self) -> String {
+        self.repo
+            .committer()
+            .map(|c| c.name.to_string())
+            .unwrap_or_default()
     }
 
     pub fn get_version(&self) -> Result<String> {
