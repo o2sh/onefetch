@@ -20,9 +20,7 @@
 <main>
   <h1>ASCII Preview</h1>
 
-  <div class="card">
-    <Nav active="/ascii-preview" />
-  </div>
+  <Nav active="ascii-preview/" />
   {#await languages}
     <p>Fetching languages...</p>
   {:then result}
