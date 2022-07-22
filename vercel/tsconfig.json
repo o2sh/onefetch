@@ -1,10 +1,10 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "resolveJsonModule": true,
+    "moduleResolution": "node",
     "baseUrl": ".",
     /**
      * Typecheck JS in `.svelte` and `.js` files by default.
