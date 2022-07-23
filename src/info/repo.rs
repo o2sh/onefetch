@@ -241,23 +241,16 @@ impl Repo {
             None => return Ok(Default::default()),
         };
 
-        let mut repository_name = String::new();
-        let name_parts: Vec<&str> = remote_url.split('/').collect();
-        if !name_parts.is_empty() {
-            let mut i = 1;
-            while repository_name.is_empty() && i <= name_parts.len() {
-                repository_name = name_parts[name_parts.len() - i].to_string();
-                i += 1;
-            }
-        }
+        let url = git::url::parse(remote_url.as_bytes())?;
+        let path = git::path::from_bstr(url.path.as_bstr());
+        let repo_name = path
+            .with_extension("")
+            .file_name()
+            .expect("non-empty path")
+            .to_string_lossy()
+            .into_owned();
 
-        if repository_name.contains(".git") {
-            let repo_name = repository_name.clone();
-            let parts: Vec<&str> = repo_name.split(".git").collect();
-            repository_name = parts[0].to_string();
-        }
-
-        Ok((repository_name, remote_url))
+        Ok((repo_name, remote_url))
     }
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
