@@ -221,38 +221,31 @@ impl Repo {
     }
 
     pub fn get_name_and_url(&self) -> Result<(String, String)> {
-        let config = self.git2_repo.config()?;
-        let mut remote_origin_url: Option<String> = None;
-        let mut remote_url_fallback = String::new();
-        let mut repository_name = String::new();
-        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url")?;
+        let config = self.repo.config_snapshot();
+        let remotes = match config.plumbing().sections_by_name("remote") {
+            Some(sections) => sections,
+            None => return Ok(Default::default()),
+        };
 
-        for entry in &config.entries(None)? {
-            let entry = entry?;
-            let entry_name = entry.name().with_context(|| "Could not read entry name")?;
-            if entry_name == "remote.origin.url" {
-                remote_origin_url = Some(
-                    entry
-                        .value()
-                        .with_context(|| "Could not read remote origin url")?
-                        .to_string(),
-                );
-            } else if remote_regex.is_match(entry_name) {
-                remote_url_fallback = entry
-                    .value()
-                    .with_context(|| "Could not read remote origin url fallback")?
-                    .to_string()
+        let mut remote_url: Option<String> = None;
+        for (name, url) in remotes.filter_map(|section| {
+            let remote_name = section.header().subsection_name()?;
+            let url = section.value("url")?;
+            (remote_name, url).into()
+        }) {
+            remote_url = url.to_string().into();
+            if name == "origin" {
+                break;
             }
         }
 
-        let remote_url = if let Some(url) = remote_origin_url {
-            url
-        } else {
-            remote_url_fallback
+        let remote_url = match remote_url {
+            Some(url) => url,
+            None => return Ok(Default::default()),
         };
 
+        let mut repository_name = String::new();
         let name_parts: Vec<&str> = remote_url.split('/').collect();
-
         if !name_parts.is_empty() {
             let mut i = 1;
             while repository_name.is_empty() && i <= name_parts.len() {
