@@ -61,6 +61,7 @@
 
   pre {
     line-height: 1.1;
+    background-color: white;
   }
 
   pre.dark {
