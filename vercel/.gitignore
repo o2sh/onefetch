@@ -23,6 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-languages.json
-
 .vercel
