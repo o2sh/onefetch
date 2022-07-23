@@ -1,37 +1,46 @@
 <script lang="ts">
-  import Chip from './Chip.svelte';
-  import type { LanguageColors } from '../types';
+  import Chip from "./Chip.svelte";
+  import type { LanguageColors } from "../types";
 
   export let name: string;
   export let ansi: string[];
   export let hex: string[] | null = null;
   export let chip: string;
-  export let ascii: string = '';
+  export let ascii: string = "";
 
   let dark = true;
   let trueColor = hex != null;
 
   $: html = ascii
-    .split('\n')
+    .split("\n")
     .map((line) => {
       // TODO Clean up, this is hard to read
       let spanCount = 0;
       const htmlLine = line.replace(/\{(\d+)\}/g, (_match, index) => {
         const i = Number.parseInt(index, 10);
         const spanText = trueColor
-          ? `<span style="color: ${hex[i]}">`
-          : `<span style="color: ${ansi[i]}">`;
+          ? `<span style="color: ${mapToDefaultTerminalFgColor(hex[i], dark)}">`
+          : `<span style="color: ${mapToDefaultTerminalFgColor(
+              ansi[i],
+              dark
+            )}">`;
         spanCount++;
         return spanText;
       });
-      return `${htmlLine}${'</span>'.repeat(spanCount)}`;
+      return `${htmlLine}${"</span>".repeat(spanCount)}`;
     })
-    .join('\n');
+    .join("\n");
+
+  function mapToDefaultTerminalFgColor(color: string, dark: boolean): string {
+    return (color === "white" || color === "#FFFFFF") && !dark
+      ? "black"
+      : color;
+  }
 </script>
 
 <div class="title-row">
   <!-- TODO Fix a11y warning for form label + control -->
-   <div class="language-name">
+  <div class="language-name">
     <Chip color={chip} width={24} height={24} />
     <h3>{name}</h3>
   </div>
