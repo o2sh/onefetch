@@ -5,7 +5,7 @@ use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
 use author::Author;
 use deps::DependencyDetector;
-use git2::Repository;
+use git_repository as git;
 use head_refs::HeadRefs;
 use langs::language::Language;
 use license::Detector;
@@ -165,11 +165,14 @@ impl std::fmt::Display for Info {
 impl Info {
     pub fn new(config: &Config) -> Result<Self> {
         let git_version = cli::get_git_version();
-        let repo = Repository::discover(&config.input)?;
-        let workdir = repo.workdir().expect("non-bare repo").to_owned();
+        let repo = git::discover(&config.input)?;
+        let workdir = repo
+            .work_dir()
+            .context("a non-bare repository is needed")?
+            .to_owned();
 
         let pending_changes = std::thread::spawn({
-            let git_dir = repo.path().to_owned();
+            let git_dir = repo.git_dir().to_owned();
             move || {
                 let repo = git2::Repository::open(git_dir)?;
                 repo::get_pending_changes(&repo)

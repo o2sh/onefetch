@@ -25,7 +25,6 @@ pub struct Commits {
 }
 
 pub struct Repo {
-    git2_repo: Repository,
     repo: git::Repository,
 }
 
@@ -155,10 +154,8 @@ impl Commits {
 }
 
 impl Repo {
-    pub fn new(git2_repo: Repository) -> Result<Self> {
-        let repo = git::open(git2_repo.path())?;
-
-        Ok(Self { repo, git2_repo })
+    pub fn new(repo: git::Repository) -> Result<Self> {
+        Ok(Self { repo })
     }
 
     pub fn gitoxide(&self) -> git::Repository {
