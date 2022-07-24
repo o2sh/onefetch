@@ -19,7 +19,7 @@
       const htmlLine = line.replace(/\{(\d+)\}/g, (_match, index) => {
         const i = Number.parseInt(index, 10);
         const spanText = trueColor
-          ? `<span style="color: ${mapToDefaultTerminalFgColor(hex[i], dark)}">`
+          ? `<span style="color: ${hex[i]}">`
           : `<span style="color: ${mapToDefaultTerminalFgColor(
               ansi[i],
               dark
@@ -32,9 +32,7 @@
     .join("\n");
 
   function mapToDefaultTerminalFgColor(color: string, dark: boolean): string {
-    return (color === "white" || color === "#FFFFFF") && !dark
-      ? "black"
-      : color;
+    return color === "white" && !dark ? "black" : color;
   }
 </script>
 
