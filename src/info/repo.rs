@@ -25,7 +25,6 @@ pub struct Commits {
 }
 
 pub struct Repo {
-    git2_repo: Repository,
     repo: git::Repository,
 }
 
@@ -155,10 +154,8 @@ impl Commits {
 }
 
 impl Repo {
-    pub fn new(git2_repo: Repository) -> Result<Self> {
-        let repo = git::open(git2_repo.path())?;
-
-        Ok(Self { repo, git2_repo })
+    pub fn new(repo: git::Repository) -> Result<Self> {
+        Ok(Self { repo })
     }
 
     pub fn gitoxide(&self) -> git::Repository {
@@ -191,14 +188,11 @@ impl Repo {
         Ok(number_of_branches)
     }
 
-    pub fn get_git_username(&self) -> Result<String> {
-        let config = self.git2_repo.config()?;
-        let username = match config.get_entry("user.name") {
-            Ok(v) => v.value().unwrap_or("").into(),
-            Err(_) => "".into(),
-        };
-
-        Ok(username)
+    pub fn get_git_username(&self) -> String {
+        self.repo
+            .committer()
+            .map(|c| c.name.to_string())
+            .unwrap_or_default()
     }
 
     pub fn get_version(&self) -> Result<String> {
@@ -224,53 +218,39 @@ impl Repo {
     }
 
     pub fn get_name_and_url(&self) -> Result<(String, String)> {
-        let config = self.git2_repo.config()?;
-        let mut remote_origin_url: Option<String> = None;
-        let mut remote_url_fallback = String::new();
-        let mut repository_name = String::new();
-        let remote_regex = Regex::new(r"remote\.[a-zA-Z0-9]+\.url")?;
-
-        for entry in &config.entries(None)? {
-            let entry = entry?;
-            let entry_name = entry.name().with_context(|| "Could not read entry name")?;
-            if entry_name == "remote.origin.url" {
-                remote_origin_url = Some(
-                    entry
-                        .value()
-                        .with_context(|| "Could not read remote origin url")?
-                        .to_string(),
-                );
-            } else if remote_regex.is_match(entry_name) {
-                remote_url_fallback = entry
-                    .value()
-                    .with_context(|| "Could not read remote origin url fallback")?
-                    .to_string()
-            }
-        }
-
-        let remote_url = if let Some(url) = remote_origin_url {
-            url
-        } else {
-            remote_url_fallback
+        let config = self.repo.config_snapshot();
+        let remotes = match config.plumbing().sections_by_name("remote") {
+            Some(sections) => sections,
+            None => return Ok(Default::default()),
         };
 
-        let name_parts: Vec<&str> = remote_url.split('/').collect();
-
-        if !name_parts.is_empty() {
-            let mut i = 1;
-            while repository_name.is_empty() && i <= name_parts.len() {
-                repository_name = name_parts[name_parts.len() - i].to_string();
-                i += 1;
+        let mut remote_url: Option<String> = None;
+        for (name, url) in remotes.filter_map(|section| {
+            let remote_name = section.header().subsection_name()?;
+            let url = section.value("url")?;
+            (remote_name, url).into()
+        }) {
+            remote_url = url.to_string().into();
+            if name == "origin" {
+                break;
             }
         }
 
-        if repository_name.contains(".git") {
-            let repo_name = repository_name.clone();
-            let parts: Vec<&str> = repo_name.split(".git").collect();
-            repository_name = parts[0].to_string();
-        }
+        let remote_url = match remote_url {
+            Some(url) => url,
+            None => return Ok(Default::default()),
+        };
 
-        Ok((repository_name, remote_url))
+        let url = git::url::parse(remote_url.as_bytes())?;
+        let path = git::path::from_bstr(url.path.as_bstr());
+        let repo_name = path
+            .with_extension("")
+            .file_name()
+            .expect("non-empty path")
+            .to_string_lossy()
+            .into_owned();
+
+        Ok((repo_name, remote_url))
     }
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {
