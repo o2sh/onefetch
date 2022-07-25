@@ -45,13 +45,8 @@
     Dark
   </div>
   <div>
-    {#if hex != null}
-      <input type="checkbox" bind:checked={trueColor} />
-      True Color
-    {:else}
-      <input type="checkbox" disabled />
-      <span class="text-light">True Color</span>
-    {/if}
+    <input type="checkbox" disabled={hex == null} bind:checked={trueColor} />
+    True Color
   </div>
 </div>
 <pre class:dark>{@html html}</pre>
