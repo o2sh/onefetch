@@ -1,6 +1,5 @@
 <script lang="ts">
   import Chip from "./Chip.svelte";
-  import type { LanguageColors } from "../types";
 
   export let name: string;
   export let ansi: string[];
@@ -37,16 +36,15 @@
 </script>
 
 <div class="title-row">
-  <!-- TODO Fix a11y warning for form label + control -->
   <div class="language-name">
     <Chip color={chip} width={24} height={24} />
     <h3>{name}</h3>
   </div>
-  <label>
+  <div>
     <input type="checkbox" bind:checked={dark} />
     Dark
-  </label>
-  <label>
+  </div>
+  <div>
     {#if hex != null}
       <input type="checkbox" bind:checked={trueColor} />
       True Color
@@ -54,7 +52,7 @@
       <input type="checkbox" disabled />
       <span class="text-light">True Color</span>
     {/if}
-  </label>
+  </div>
 </div>
 <pre class:dark>{@html html}</pre>
 
