@@ -1,13 +1,13 @@
 export interface LanguageColors {
-  ansi: string[];
-  hex?: string[];
-  chip: string;
+  ansi: string[]
+  hex?: string[]
+  chip: string
 }
 
 export interface Language {
-  type: string;
-  ascii: string;
-  colors: LanguageColors;
+  type: string
+  ascii: string
+  colors: LanguageColors
 }
 
-export type Languages = Record<string, Language>;
+export type Languages = Record<string, Language>
