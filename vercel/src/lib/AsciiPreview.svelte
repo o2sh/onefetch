@@ -1,37 +1,37 @@
 <script lang="ts">
-  import Chip from './Chip.svelte'
+  import Chip from './Chip.svelte';
 
-  export let name: string
-  export let ansi: string[]
-  export let hex: string[] | null = null
-  export let chip: string
-  export let ascii: string = ''
+  export let name: string;
+  export let ansi: string[];
+  export let hex: string[] | null = null;
+  export let chip: string;
+  export let ascii: string = '';
 
-  let dark = true
-  let trueColor = hex != null
+  let dark = true;
+  let trueColor = hex != null;
 
   $: html = ascii
     .split('\n')
     .map((line) => {
       // TODO Clean up, this is hard to read
-      let spanCount = 0
+      let spanCount = 0;
       const htmlLine = line.replace(/\{(\d+)\}/g, (_match, index) => {
-        const i = Number.parseInt(index, 10)
+        const i = Number.parseInt(index, 10);
         const spanText = trueColor
           ? `<span style="color: ${hex[i]}">`
           : `<span style="color: ${mapToDefaultTerminalFgColor(
               ansi[i],
               dark
-            )}">`
-        spanCount++
-        return spanText
-      })
-      return `${htmlLine}${'</span>'.repeat(spanCount)}`
+            )}">`;
+        spanCount++;
+        return spanText;
+      });
+      return `${htmlLine}${'</span>'.repeat(spanCount)}`;
     })
-    .join('\n')
+    .join('\n');
 
   function mapToDefaultTerminalFgColor(color: string, dark: boolean): string {
-    return color === 'white' && !dark ? 'black' : color
+    return color === 'white' && !dark ? 'black' : color;
   }
 </script>
 

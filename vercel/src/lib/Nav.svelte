@@ -1,27 +1,27 @@
 <script lang="ts">
   interface NavItem {
-    name: string
-    href: string
+    name: string;
+    href: string;
   }
 
-  export let active: null | NavItem['name'] | NavItem['href'] = null
+  export let active: null | NavItem['name'] | NavItem['href'] = null;
   const nav: NavItem[] = [
     {
       name: 'Home',
       href: '/',
     },
     {
-      name: 'ASCII Preview',
+      name: '✨ ASCII Preview ✨',
       href: 'ascii-preview/',
     },
     {
       name: 'GitHub',
       href: 'https://github.com/o2sh/onefetch',
     },
-  ]
+  ];
 
   function isActive(item: NavItem): boolean {
-    return active === item.name || active === item.href
+    return active === item.name || active === item.href;
   }
 </script>
 

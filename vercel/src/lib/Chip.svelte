@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let color: string
-  export let width: number
-  export let height: number
+  export let color: string;
+  export let width: number;
+  export let height: number;
 </script>
 
 <svg
@@ -12,7 +12,6 @@
   {height}
   fill={color}
   stroke="black"
-  stroke-width="5"
->
+  stroke-width="5">
   <circle cx="50" cy="50" r="45" />
 </svg>
