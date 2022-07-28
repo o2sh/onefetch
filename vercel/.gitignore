@@ -3,3 +3,4 @@
 /build
 /.vercel_build_output
 .vercel
+dist/
