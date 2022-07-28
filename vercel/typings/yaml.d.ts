@@ -1,4 +1,4 @@
-declare module '*.yaml' {
+declare module '*/languages.yaml' {
   export interface LanguageColors {
     ansi: string[];
     hex?: string[];
