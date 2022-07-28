@@ -12,6 +12,4 @@ declare module '*/languages.yaml' {
   }
 
   export type Languages = Record<string, Language>;
-  const languages: Languages;
-  export default languages;
 }

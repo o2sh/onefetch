@@ -6,7 +6,7 @@
   <h1>Onefetch</h1>
   <Nav active="/" />
   <div class="spacer" />
-  <p>Get Onefetch from</p>
+  <p>Get onefetch from</p>
   <ul>
     <li>
       <a href="https://github.com/o2sh/onefetch/releases/latest"

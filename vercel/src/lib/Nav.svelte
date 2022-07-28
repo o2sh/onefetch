@@ -42,7 +42,7 @@
   }
 
   .active {
-    color: #982c61;
+    color: #006994;
     border-bottom: 2px solid #4a4a4a;
   }
 </style>

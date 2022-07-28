@@ -15,8 +15,8 @@ body {
   line-height: 1.618;
   max-width: 38em;
   margin: auto;
-  color: #4a4a4a;
-  background-color: #f9f9f9;
+  color: #222222;
+  background-color: #ffffff;
   padding: 13px;
 }
 
@@ -84,19 +84,19 @@ sup {
 }
 
 hr {
-  border-color: #1d7484;
+  border-color: #007559;
 }
 
 a {
   text-decoration: none;
-  color: #1d7484;
+  color: #007559;
 }
 a:visited {
-  color: #144f5a;
+  color: #004232;
 }
 a:hover {
-  color: #982c61;
-  border-bottom: 2px solid #4a4a4a;
+  color: #006994;
+  border-bottom: 2px solid #222222;
 }
 
 ul {
@@ -116,9 +116,9 @@ blockquote {
   padding-top: 0.8em;
   padding-bottom: 0.8em;
   padding-right: 0.8em;
-  border-left: 5px solid #1d7484;
+  border-left: 5px solid #007559;
   margin-bottom: 2.5rem;
-  background-color: #f1f1f1;
+  background-color: #f7f7f7;
 }
 
 blockquote p {
@@ -135,7 +135,7 @@ video {
 
 /* Pre and Code */
 pre {
-  background-color: #f1f1f1;
+  background-color: #f7f7f7;
   display: block;
   padding: 1em;
   overflow-x: auto;
@@ -149,7 +149,7 @@ kbd,
 samp {
   font-size: 0.9em;
   padding: 0 0.5em;
-  background-color: #f1f1f1;
+  background-color: #f7f7f7;
   white-space: pre-wrap;
 }
 
@@ -170,17 +170,17 @@ table {
 td,
 th {
   padding: 0.5em;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid #f7f7f7;
 }
 
 /* Buttons, forms and input */
 input,
 textarea {
-  border: 1px solid #4a4a4a;
+  border: 1px solid #222222;
 }
 input:focus,
 textarea:focus {
-  border: 1px solid #1d7484;
+  border: 1px solid #007559;
 }
 
 textarea {
@@ -197,10 +197,10 @@ input[type='button'] {
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
-  background-color: #1d7484;
-  color: #f9f9f9;
+  background-color: #007559;
+  color: #ffffff;
   border-radius: 1px;
-  border: 1px solid #1d7484;
+  border: 1px solid #007559;
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -222,20 +222,20 @@ input[type='reset']:focus:enabled,
 input[type='reset']:hover:enabled,
 input[type='button']:focus:enabled,
 input[type='button']:hover:enabled {
-  background-color: #982c61;
-  border-color: #982c61;
-  color: #f9f9f9;
+  background-color: #006994;
+  border-color: #006994;
+  color: #ffffff;
   outline: 0;
 }
 
 textarea,
 select,
 input {
-  color: #4a4a4a;
+  color: #222222;
   padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
   margin-bottom: 10px;
-  background-color: #f1f1f1;
-  border: 1px solid #f1f1f1;
+  background-color: #f7f7f7;
+  border: 1px solid #f7f7f7;
   border-radius: 4px;
   box-shadow: none;
   box-sizing: border-box;
@@ -243,12 +243,12 @@ input {
 textarea:focus,
 select:focus,
 input:focus {
-  border: 1px solid #1d7484;
+  border: 1px solid #007559;
   outline: 0;
 }
 
 input[type='checkbox']:focus {
-  outline: 1px dotted #1d7484;
+  outline: 1px dotted #007559;
 }
 
 label,
