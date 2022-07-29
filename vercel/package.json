@@ -13,7 +13,7 @@
     "@rollup/plugin-yaml": "^3.1.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
     "@tsconfig/svelte": "^3.0.0",
-    "@vercel/node": "^2.4.4",
+    "@vercel/node": "^2.5.1",
     "eslint": "^8.20.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "prettier": "^2.7.1",
