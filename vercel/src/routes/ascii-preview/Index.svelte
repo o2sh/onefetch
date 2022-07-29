@@ -18,12 +18,13 @@
   <Nav active="ascii-preview/" />
   <h2>Languages ({languages.length})</h2>
 
-  {#each languages as language}
+  {#each languages as language, index}
     <AsciiPreview
       name={language.name}
       ansi={language.ansi}
       hex={language.hex}
       ascii={language.ascii}
-      chip={language.chip} />
+      chip={language.chip}
+      key={index} />
   {/each}
 </main>
