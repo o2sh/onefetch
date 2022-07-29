@@ -1,0 +1,34 @@
+name: Vercel Deployment CI
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "vercel/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "vercel/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vercel
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: npm
+          cache-dependency-path: vercel/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+      # NOTE Since build is automated by vercel, it's probably
+      # redundant to test it here, too
+      - name: Svelte Check
+        run: npm run svelte-check
