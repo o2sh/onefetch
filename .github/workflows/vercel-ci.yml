@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 16.x
           cache: npm
-          cache-dependency-path: vercel/package-lock.json
+          cache-dependency-path: docs/vercel/package-lock.json
 
       - name: Install Dependencies
         run: npm ci
