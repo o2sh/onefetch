@@ -18,7 +18,7 @@
   <Nav active="ascii-preview/" />
   <h2>Languages ({languages.length})</h2>
 
-  {#each languages as language, index}
+  {#each languages as language}
     <AsciiPreview
       name={language.name}
       ansi={language.ansi}
