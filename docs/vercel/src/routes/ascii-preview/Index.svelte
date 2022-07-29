@@ -1,8 +1,8 @@
 <script lang="ts">
   import Nav from '../../lib/Nav.svelte';
   import AsciiPreview from '../../lib/AsciiPreview.svelte';
-  import data from '../../../../languages.yaml';
-  import type { Languages } from '../../../../languages.yaml';
+  import data from '../../../../../languages.yaml';
+  import type { Languages } from '../../../../../languages.yaml';
 
   const languages = Object.entries(data as Languages).map(
     ([name, { ascii, colors }]) => ({

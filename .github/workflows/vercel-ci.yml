@@ -3,11 +3,11 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "vercel/**"
+      - "docs/vercel/**"
   pull_request:
     branches: [main]
     paths:
-      - "vercel/**"
+      - "docs/vercel/**"
 
 jobs:
   check:

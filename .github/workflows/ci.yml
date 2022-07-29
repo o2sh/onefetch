@@ -5,13 +5,13 @@ on:
     paths-ignore:
       - "docs/**"
       - "**.md"
-      - "vercel/**"
+      - "docs/vercel/**"
   pull_request:
     branches: [main]
     paths-ignore:
       - "docs/**"
       - "**.md"
-      - "vercel/**"
+      - "docs/vercel/**"
 
 jobs:
   build:

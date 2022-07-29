@@ -9,6 +9,6 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: npm
-    directory: vercel
+    directory: /docs/vercel
     schedule:
       interval: monthly
