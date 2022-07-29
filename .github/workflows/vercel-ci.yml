@@ -10,7 +10,8 @@ on:
       - "vercel/**"
 
 jobs:
-  build:
+  check:
+    name: Check Vercel Code Quality
     runs-on: ubuntu-latest
     defaults:
       run:
