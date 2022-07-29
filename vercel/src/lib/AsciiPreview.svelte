@@ -44,11 +44,11 @@
   </div>
   <div>
     <input id="dark-checkbox-{key}" type="checkbox" bind:checked={dark} />
-    <label for="dark-checkbox-{key}">Dark</label>
+    <label class="checkbox-label" for="dark-checkbox-{key}">Dark</label>
   </div>
   <div>
     <input id="hex-checkbox-{key}" type="checkbox" disabled={hex == null} bind:checked={trueColor} />
-    <label for="hex-checkbox-{key}">True Color</label>
+    <label class="checkbox-label" for="hex-checkbox-{key}">True Color</label>
   </div>
 </div>
 <pre class:dark>{@html html}</pre>
@@ -75,5 +75,9 @@
     flex-direction: row;
     align-items: baseline;
     gap: 1.5rem;
+  }
+
+  .checkbox-label {
+    display: inline-block;
   }
 </style>
