@@ -8,3 +8,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: npm
+    directory: vercel
+    schedule:
+      interval: monthly

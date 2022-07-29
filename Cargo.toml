@@ -3,7 +3,7 @@ authors = ["o2sh <ossama-hjaji@live.fr>"]
 categories = ["command-line-utilities"]
 description = "Git repository summary on your terminal"
 edition = "2018"
-exclude = ["assets/*"]
+exclude = ["assets/*", "vercel/*"]
 keywords = [
   "git",
   "cli",
