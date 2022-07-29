@@ -31,4 +31,4 @@ jobs:
       # NOTE Since build is automated by vercel, it's probably
       # redundant to test it here, too
       - name: Svelte Check
-        run: npm run check
+        run: npm run check -- --fail-on-warnings --fail-on-hints
