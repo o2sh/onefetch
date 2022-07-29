@@ -5,3 +5,4 @@
 /templates/language.rs @spenserblack
 /src/info/deps/ @HallerPatrick @o2sh
 /src/cli.rs @spenserblack @o2sh
+/vercel/ @spenserblack
