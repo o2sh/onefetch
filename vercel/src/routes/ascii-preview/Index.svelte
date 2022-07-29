@@ -24,7 +24,6 @@
       ansi={language.ansi}
       hex={language.hex}
       ascii={language.ascii}
-      chip={language.chip}
-      key={index} />
+      chip={language.chip} />
   {/each}
 </main>

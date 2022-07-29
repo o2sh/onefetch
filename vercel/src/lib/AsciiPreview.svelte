@@ -1,8 +1,6 @@
 <script lang="ts">
   import Chip from './Chip.svelte';
 
-  // A unique value for identifying this preview
-  export let key: number;
   export let name: string;
   export let ansi: string[];
   export let hex: string[] | null = null;
@@ -42,13 +40,17 @@
     <Chip color={chip} width={24} height={24} />
     <h3>{name}</h3>
   </div>
-  <div>
-    <input id="dark-checkbox-{key}" type="checkbox" bind:checked={dark} />
-    <label class="checkbox-label" for="dark-checkbox-{key}">Dark</label>
+  <div class="checkbox">
+    <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />
+    <label for="dark-checkbox-{name}">Dark</label>
   </div>
-  <div>
-    <input id="hex-checkbox-{key}" type="checkbox" disabled={hex == null} bind:checked={trueColor} />
-    <label class="checkbox-label" for="hex-checkbox-{key}">True Color</label>
+  <div class="checkbox">
+    <input
+      id="hex-checkbox-{name}"
+      type="checkbox"
+      disabled={hex == null}
+      bind:checked={trueColor} />
+    <label for="hex-checkbox-{name}">True Color</label>
   </div>
 </div>
 <pre class:dark>{@html html}</pre>
@@ -77,7 +79,9 @@
     gap: 1.5rem;
   }
 
-  .checkbox-label {
-    display: inline-block;
+  .checkbox {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
   }
 </style>
