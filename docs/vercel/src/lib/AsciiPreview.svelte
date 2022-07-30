@@ -17,12 +17,9 @@
       let spanCount = 0;
       const htmlLine = line.replace(/\{(\d+)\}/g, (_match, index) => {
         const i = Number.parseInt(index, 10);
-        const spanText = trueColor
-          ? `<span style="color: ${hex[i]}">`
-          : `<span style="color: ${mapToDefaultTerminalFgColor(
-              ansi[i],
-              dark
-            )}">`;
+        const spanText = `<span style="font-weight: bold; color: ${
+          trueColor ? hex[i] : mapToDefaultTerminalFgColor(ansi[i], dark)
+        }">`;
         spanCount++;
         return spanText;
       });
