@@ -76,12 +76,12 @@
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .checkbox {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: 0.1rem;
   }
 </style>
