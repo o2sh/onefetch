@@ -76,7 +76,7 @@
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .checkbox {
