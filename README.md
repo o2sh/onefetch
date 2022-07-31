@@ -29,7 +29,7 @@ It automatically detects open source licenses from texts and provides the user w
 
 Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc.
 
-As of now, onefetch supports more than 50 different programming languages; if your language of choice isn't supported: Open up an issue and support will be added.
+As of now, onefetch supports more than [50 different programming languages](https://onefetch.dev/ascii-preview/); if your language of choice isn't supported: Open up an issue and support will be added.
 
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
