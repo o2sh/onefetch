@@ -50,9 +50,20 @@
     <label for="hex-checkbox-{name}">True Color</label>
   </div>
 </div>
-<pre class:dark>{@html html}</pre>
+<div class="logo-container" class:dark>
+  <pre class:dark>{@html html}</pre>
+</div>
 
 <style>
+  .logo-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .logo-container.dark {
+    background-color: black;
+  }
+
   .title-row {
     display: flex;
     flex-direction: row;
@@ -63,6 +74,8 @@
   pre {
     line-height: 1.1;
     background-color: white;
+    display: inline-block;
+    margin-bottom: 0px;
   }
 
   pre.dark {
