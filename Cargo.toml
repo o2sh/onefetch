@@ -27,7 +27,7 @@ priority = "optional"
 section = "utility"
 
 [dependencies]
-anyhow = "1.0.58"
+anyhow = "1.0.59"
 askalono = "0.4.5"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
@@ -41,7 +41,7 @@ owo-colors = "3.4.0"
 regex = "1.6.0"
 serde = "1.0.137"
 serde_json = "1.0.81"
-serde_yaml = "0.8.24"
+serde_yaml = "0.8.26"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum = {version = "0.24.1", features = ["derive"]}
