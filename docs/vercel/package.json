@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "check:svelte && check:prettier && check:eslint",
+    "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
+    "check:prettier": "prettier --check 'src/**/*.{ts,js,svelte}'",
+    "check:lint": "eslint 'src/**/*.{ts,js,svelte}'"
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^3.1.0",
