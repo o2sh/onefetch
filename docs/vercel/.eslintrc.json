@@ -17,6 +17,6 @@
     }
   ],
   "settings": {
-      "svelte3/typescript": true
+    "svelte3/typescript": true
   }
 }
