@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "check": "check:svelte && check:prettier && check:eslint",
     "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
-    "check:prettier": "prettier --check 'src/**/*.{ts,js,svelte}'",
+    "check:prettier": "prettier --check **/*.{ts,js,svelte,css,html,json}",
     "check:lint": "eslint 'src/**/*.{ts,js,svelte}'"
   },
   "devDependencies": {
