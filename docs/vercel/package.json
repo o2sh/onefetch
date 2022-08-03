@@ -18,7 +18,7 @@
     "@tsconfig/svelte": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
-    "@vercel/node": "^2.4.4",
+    "@vercel/node": "^2.5.3",
     "eslint": "^8.20.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "prettier": "^2.7.1",
