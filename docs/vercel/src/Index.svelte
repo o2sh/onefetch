@@ -33,8 +33,8 @@
 </header>
 <main>
   <p>
-    This page shows you an ASCII preview of all the languages supported by
-    onefetch. Like the binary, the data is taken from the <a
+    This page shows you an ASCII preview for all the programming languages
+    supported by onefetch. Like the binary, the data is taken from the <a
       href="https://raw.githubusercontent.com/o2sh/onefetch/main/languages.yaml"
       ><code>Languages.yaml</code></a> file and the layout is meant to mimic the
     way the logo would be displayed inside a terminal.
