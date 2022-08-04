@@ -5,7 +5,7 @@
 <p align="center">
 	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
 	<a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
-  <a href="https://onefetch.dev/ascii-preview/"><img src="assets/language-badge.svg"></a>
+  <a href="https://onefetch.dev"><img src="assets/language-badge.svg"></a>
 	<a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 	<img src="assets/msrv-badge.svg">
@@ -29,7 +29,7 @@ It automatically detects open source licenses from texts and provides the user w
 
 Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc.
 
-As of now, onefetch supports more than [50 different programming languages](https://onefetch.dev/ascii-preview/); if your language of choice isn't supported: Open up an issue and support will be added.
+As of now, onefetch supports more than [50 different programming languages](https://onefetch.dev); if your language of choice isn't supported: Open up an issue and support will be added.
 
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
