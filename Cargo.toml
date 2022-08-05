@@ -41,7 +41,7 @@ owo-colors = "3.4.0"
 regex = "1.6.0"
 serde = "1.0.142"
 serde_json = "1.0.81"
-serde_yaml = "0.8.24"
+serde_yaml = "0.9.4"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum = {version = "0.24.1", features = ["derive"]}
@@ -63,7 +63,7 @@ libc = "0.2.126"
 lazy_static = "1"
 regex = "1"
 serde_json = "1"
-serde_yaml = "0.8"
+serde_yaml = "0.9"
 tera = { version = "1", default-features = false }
 
 [features]
