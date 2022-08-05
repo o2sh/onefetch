@@ -61,9 +61,9 @@ checksum = "8da52d66c7071e2e3fa2a1e5c6d088fec47b593032b254f5e980de8ea54454d6"
 
 [[package]]
 name = "askalono"
-version = "0.4.5"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7879369837894f69379c8dd743e6e1fab77200f729dea91f9d27de4c081fd739"
+checksum = "44b5d702bda44c54cef36c81456389719711127ad83e46b9d06fda469bd2e6d7"
 dependencies = [
  "anyhow",
  "flate2",
