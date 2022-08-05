@@ -36,7 +36,7 @@ clap_complete = "3.2.3"
 color_quant = "1.1.0"
 git-repository = {version = "0.20.0", features = ["max-performance", "unstable", "serde1"]}
 git2 = {version = "0.15.0", default-features = false}
-image = "0.24.2"
+image = "0.24.3"
 owo-colors = "3.4.0"
 regex = "1.6.0"
 serde = "1.0.142"
