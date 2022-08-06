@@ -42,3 +42,45 @@ impl TextColors {
         text_colors
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn no_custom_colors() {
+        let primary_color = DynColors::Ansi(AnsiColors::Blue);
+        let text_colors = TextColors::new(&[], primary_color);
+        assert_eq!(text_colors.title, primary_color);
+        assert_eq!(text_colors.tilde, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.underline, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.subtitle, primary_color);
+        assert_eq!(text_colors.colon, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.info, DynColors::Ansi(AnsiColors::Default));
+    }
+
+    #[test]
+    fn with_custom_colors() {
+        let custom_colors = vec![0, 1, 2, 3, 4, 5];
+        let text_colors = TextColors::new(&custom_colors, DynColors::Ansi(AnsiColors::Blue));
+        assert_eq!(text_colors.title, num_to_color(&custom_colors[0]));
+        assert_eq!(text_colors.tilde, num_to_color(&custom_colors[1]));
+        assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
+        assert_eq!(text_colors.subtitle, num_to_color(&custom_colors[3]));
+        assert_eq!(text_colors.colon, num_to_color(&custom_colors[4]));
+        assert_eq!(text_colors.info, num_to_color(&custom_colors[5]));
+    }
+
+    #[test]
+    fn with_some_custom_colors() {
+        let custom_colors = vec![0, 1, 2];
+        let primary_color = DynColors::Ansi(AnsiColors::Blue);
+        let text_colors = TextColors::new(&custom_colors, primary_color);
+        assert_eq!(text_colors.title, num_to_color(&custom_colors[0]));
+        assert_eq!(text_colors.tilde, num_to_color(&custom_colors[1]));
+        assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
+        assert_eq!(text_colors.subtitle, primary_color);
+        assert_eq!(text_colors.colon, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.info, DynColors::Ansi(AnsiColors::Default));
+    }
+}
