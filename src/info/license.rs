@@ -26,12 +26,6 @@ impl Detector {
     }
 
     pub fn get_license(&self, dir: &Path) -> Result<String> {
-        fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
-            LICENSE_FILES
-                .iter()
-                .any(|&name| file_name.as_ref().starts_with(name))
-        }
-
         let mut output = fs::read_dir(dir)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
@@ -62,5 +56,40 @@ impl Detector {
         } else {
             None
         }
+    }
+}
+
+fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
+    LICENSE_FILES
+        .iter()
+        .any(|&name| file_name.as_ref().starts_with(name))
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test_get_license() {
+        let license = Detector::new()
+            .unwrap()
+            .get_license(Path::new("."))
+            .unwrap();
+        assert_eq!(license, "MIT");
+    }
+
+    #[test]
+    fn test_is_license_file() {
+        for file_name in LICENSE_FILES.iter() {
+            assert_eq!(is_license_file(file_name), true);
+        }
+        assert_eq!(is_license_file("NOT_LICENSE"), false);
+    }
+
+    #[test]
+    fn test_analyze() {
+        let license = Detector::new()
+            .unwrap()
+            .analyze(&fs::read_to_string(Path::new("LICENSE.md")).unwrap());
+        assert_eq!(license, Some(String::from("MIT")));
     }
 }
