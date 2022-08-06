@@ -69,12 +69,11 @@ fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
 mod test {
     use super::*;
     #[test]
-    fn test_get_license() {
-        let license = Detector::new()
-            .unwrap()
-            .get_license(Path::new("."))
-            .unwrap();
+    fn test_get_license() -> Result<()> {
+        let detector = Detector::new()?;
+        let license = detector.get_license(Path::new("."))?;
         assert_eq!(license, "MIT");
+        Ok(())
     }
 
     #[test]
@@ -86,10 +85,11 @@ mod test {
     }
 
     #[test]
-    fn test_analyze() {
-        let license = Detector::new()
-            .unwrap()
-            .analyze(&fs::read_to_string(Path::new("LICENSE.md")).unwrap());
+    fn test_analyze() -> Result<()> {
+        let detector = Detector::new()?;
+        let license_text = fs::read_to_string(Path::new("LICENSE.md"))?;
+        let license = detector.analyze(&license_text);
         assert_eq!(license, Some(String::from("MIT")));
+        Ok(())
     }
 }
