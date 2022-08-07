@@ -246,7 +246,7 @@ impl Info {
             true_color,
         );
         let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
-        let disabled_fields = InfoFieldOff::from_info_fields(&config.disabled_fields);
+        let disabled_fields = InfoFieldOff::from(&config.disabled_fields);
 
         Ok(Self {
             git_username,

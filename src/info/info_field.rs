@@ -43,9 +43,8 @@ pub struct InfoFieldOff {
     pub license: bool,
 }
 
-impl InfoFieldOff {
-    pub fn from_info_fields(fields_to_hide: &[InfoField]) -> Self {
-        // TODO Implement using From trait instead?
+impl From<&Vec<InfoField>> for InfoFieldOff {
+    fn from(fields_to_hide: &Vec<InfoField>) -> Self {
         let mut info_field_off = InfoFieldOff {
             ..Default::default()
         };
