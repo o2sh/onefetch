@@ -54,3 +54,51 @@ fn num_to_color(num: &u8) -> DynColors {
         _ => DynColors::Ansi(AnsiColors::Default),
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_num_to_color() {
+        assert_eq!(num_to_color(&2), DynColors::Ansi(AnsiColors::Green));
+        assert_eq!(num_to_color(&u8::MAX), DynColors::Ansi(AnsiColors::Default));
+    }
+
+    #[test]
+    fn get_ascii_colors_no_custom_language_no_custom_colors_no_true_color() {
+        let colors = get_ascii_colors(&None, &Language::Rust, &[], false);
+        assert_eq!(colors.len(), 2);
+        assert_eq!(
+            colors,
+            vec![
+                DynColors::Ansi(AnsiColors::Red),
+                DynColors::Ansi(AnsiColors::Default)
+            ]
+        );
+    }
+
+    #[test]
+    fn get_ascii_colors_no_custom_language_no_custom_colors_true_color() {
+        let colors = get_ascii_colors(&None, &Language::Rust, &[], true);
+        assert_eq!(colors.len(), 2);
+        assert_eq!(
+            colors,
+            vec![DynColors::Rgb(228, 55, 23), DynColors::Rgb(255, 255, 255)]
+        );
+    }
+
+    #[test]
+    fn get_ascii_colors_custom_language_no_custom_colors_no_true_color() {
+        let colors = get_ascii_colors(&Some(Language::Sh), &Language::Rust, &[], false);
+        assert_eq!(colors.len(), 1);
+        assert_eq!(colors, vec![DynColors::Ansi(AnsiColors::Green)]);
+    }
+
+    #[test]
+    fn get_ascii_colors_no_custom_language_custom_colors_no_true_color() {
+        let colors = get_ascii_colors(&None, &Language::Rust, &[2, 3], false);
+        assert_eq!(colors.len(), 2);
+        assert_eq!(colors, vec![num_to_color(&2), num_to_color(&3)]);
+    }
+}
