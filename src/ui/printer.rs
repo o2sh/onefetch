@@ -8,9 +8,10 @@ use anyhow::{Context, Result};
 use image::DynamicImage;
 use std::fmt::Write as _;
 use std::io::Write;
+use terminal_size::{terminal_size, Width};
 
 const CENTER_PAD_LENGTH: usize = 3;
-const MAX_TERM_WIDTH: usize = 95;
+const MAX_TERM_WIDTH: u16 = 95;
 
 #[derive(Clone, clap::ArgEnum)]
 pub enum SerializationFormat {
@@ -37,7 +38,7 @@ impl<W: Write> Printer<W> {
             When::Always => false,
             When::Never => true,
             When::Auto => {
-                if let Some((width, _)) = term_size::dimensions_stdout() {
+                if let Some((Width(width), _)) = terminal_size() {
                     width < MAX_TERM_WIDTH
                 } else {
                     false
