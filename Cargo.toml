@@ -45,7 +45,7 @@ serde_yaml = "0.9.4"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum = {version = "0.24.1", features = ["derive"]}
-term_size = "0.3.2"
+terminal_size = "0.2"
 time = {version = "0.3.11", features = ["formatting"]}
 time-humanize = {version = "0.1.3", features = ["time"]}
 tokei = "12.1.2"
