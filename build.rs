@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let output_path = Path::new(&out_dir).join("language.rs");
 
     let rust_code = tera.render_str(
-        &std::fs::read_to_string("src/info/langs/language.tera.rs")?,
+        &std::fs::read_to_string("src/info/langs/language.tera")?,
         &Context::from_value(serde_json::json!({ "languages": lang_data, }))?,
     )?;
     fs::write(&output_path, rust_code)?;
