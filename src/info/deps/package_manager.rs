@@ -125,3 +125,124 @@ fn pub_packages(contents: &str) -> Result<usize> {
         Err(_) => Ok(0),
     }
 }
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_cargo() -> Result<()> {
+        let data = r#"
+[dependencies]
+bytecount = "0.6.3"
+clap = {version = "3.2.16", features = ["derive"]}
+clap_complete = "3.2.3"
+color_quant = "1.1.0"
+git-repository = {version = "0.20.0", features = ["max-performance", "unstable", "serde1"]}
+# Comment
+git2 = {version = "0.15.0", default-features = false}"#;
+
+        let number_of_deps = cargo(data)?;
+        assert_eq!(number_of_deps, 6);
+        Ok(())
+    }
+
+    #[test]
+    fn test_go_modules() -> Result<()> {
+        let data = r#"
+require (
+    golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+    golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e
+)
+"#;
+
+        let number_of_deps = go_modules(data)?;
+        assert_eq!(number_of_deps, 2);
+        Ok(())
+    }
+
+    #[test]
+    fn test_npm() -> Result<()> {
+        let data = r#"
+{
+    "dependencies": {
+        "@rollup/plugin-yaml": "^3.1.0",
+        "@sveltejs/vite-plugin-svelte": "^1.0.1",
+        "@tsconfig/svelte": "^3.0.0"
+    }
+}"#;
+
+        let number_of_deps = npm(data)?;
+        assert_eq!(number_of_deps, 3);
+        Ok(())
+    }
+
+    #[test]
+    fn test_pip_requirement() -> Result<()> {
+        let data = r#"
+cycler==0.10.0
+matplotlib==3.2.1
+numpy==1.18.5
+pandas==1.0.4
+pyparsing==2.4.7
+python-dateutil==2.8.1
+pytz==2020.1
+scipy==1.4.1"#;
+        let number_of_deps = pip_requirement(data)?;
+        assert_eq!(number_of_deps, 8);
+        Ok(())
+    }
+
+    #[test]
+    fn test_pip_pyproject() -> Result<()> {
+        let data = r#"
+[tool.poetry.dependencies]
+python = ">=3.7,<3.10"
+boto3 = "^1.12"
+requests = "^2.23"
+attrs = ">=19.3,<22.2"
+jsonpickle = ">=1.3,<2.3"
+redis = ">=3.4,<5.0"
+numpy = ">=1.19.2,<1.20.0"
+scipy = ">=1.4.1,<1.8.0"
+absl-py = ">=0.9,<1.3""#;
+
+        let number_of_deps = pip_pyproject(data)?;
+        assert_eq!(number_of_deps, 9);
+        Ok(())
+    }
+
+    #[test]
+    fn test_pip_pipfile() -> Result<()> {
+        let data = r#"
+[packages]
+requests = { extras = ['socks'] }
+records = '>0.5.0'
+django = { git = 'https://github.com/django/django.git', ref = '1.11.4', editable = true }
+"e682b37" = {file = "https://github.com/divio/django-cms/archive/release/3.4.x.zip"}
+"e1839a8" = {path = ".", editable = true}
+pywinusb = { version = "*", os_name = "=='nt'", index="pypi"}"#;
+
+        let number_of_deps = pip_pipfile(data)?;
+        assert_eq!(number_of_deps, 6);
+        Ok(())
+    }
+
+    #[test]
+    fn test_pub_packages() -> Result<()> {
+        let data = r#"
+dependencies:
+  # To update these, use "flutter update-packages --force-upgrade".
+  archive: 3.3.1
+  args: 2.3.1
+  browser_launcher: 1.1.1
+  dds: 2.2.6
+  dwds: 15.0.0
+  completion: 1.0.0
+  coverage: 1.5.0
+  crypto: 3.0.2"#;
+
+        let number_of_deps = pub_packages(data)?;
+        assert_eq!(number_of_deps, 8);
+        Ok(())
+    }
+}

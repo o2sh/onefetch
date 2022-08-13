@@ -68,6 +68,7 @@ fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
 #[cfg(test)]
 mod test {
     use super::*;
+
     #[test]
     fn test_get_license() -> Result<()> {
         let detector = Detector::new()?;
