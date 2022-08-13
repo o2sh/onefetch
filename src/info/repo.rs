@@ -2,6 +2,7 @@ use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
+use git::bstr::BString;
 use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
@@ -69,14 +70,14 @@ impl Commits {
                 continue;
             }
 
-            if is_bot(commit.author, bot_regex_pattern) {
+            let sig = Sig::from(mailmap.resolve(commit.author));
+
+            if is_bot(&sig.name, bot_regex_pattern) {
                 continue;
             }
             num_commits += 1;
 
-            let author_nbr_of_commits = author_to_number_of_commits
-                .entry(Sig::from(mailmap.resolve(commit.author)))
-                .or_insert(0);
+            let author_nbr_of_commits = author_to_number_of_commits.entry(sig).or_insert(0);
             *author_nbr_of_commits += 1;
             total_nbr_of_commits += 1;
 
@@ -270,10 +271,10 @@ impl Repo {
     }
 }
 
-fn is_bot(author: git::actor::SignatureRef<'_>, bot_regex_pattern: &Option<Regex>) -> bool {
+fn is_bot(author_name: &BString, bot_regex_pattern: &Option<Regex>) -> bool {
     bot_regex_pattern
         .as_ref()
-        .map(|regex| regex.is_match(author.name.to_str_lossy().as_ref()))
+        .map(|regex| regex.is_match(author_name.to_str_lossy().as_ref()))
         .unwrap_or(false)
 }
 
