@@ -1,6 +1,6 @@
 <h3 align="center"><img src="../assets/onefetch.svg" height="130px"></h3>
 
-<h5 align="center">Терминальная утилита для выведения информации о Git
+<h5 align="center">Терминальная утилита для вывода информации о Git
 репозиториях, написанная на Rust</h5>
 
 <p align="center">
