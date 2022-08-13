@@ -18,7 +18,7 @@ use strum::IntoEnumIterator;
 #[clap(global_setting(AppSettings::DeriveDisplayOrder))]
 pub struct Config {
     /// Run as if onefetch was started in <input> instead of the current working directory
-    #[clap(default_value = ".", value_parser, hide_default_value = true, value_hint = ValueHint::DirPath)]
+    #[clap(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
     pub input: PathBuf,
     /// Takes a non-empty STRING as input to replace the ASCII logo
     ///
@@ -27,14 +27,14 @@ pub struct Config {
     /// For example:
     ///
     /// '--ascii-input "$(fortune | cowsay -W 25)'
-    #[clap(long, value_name = "STRING", value_parser, value_hint = ValueHint::CommandString)]
+    #[clap(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
     #[clap(
         long,
         short,
         value_name = "LANGUAGE",
-        value_parser,
+        arg_enum,
         hide_possible_values = true
     )]
     pub ascii_language: Option<Language>,
@@ -52,69 +52,62 @@ pub struct Config {
         long,
         short,
         multiple_values = true,
-        value_name = "FIELD",
-        value_parser
+        hide_possible_values = true,
+        arg_enum,
+        value_name = "FIELD"
     )]
     pub disabled_fields: Vec<InfoField>,
     /// Path to the IMAGE file
-    #[clap(long, short, value_parser, value_hint = ValueHint::FilePath)]
+    #[clap(long, short, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
     /// Which image protocol to use
-    #[clap(long, value_parser, requires = "image")]
+    #[clap(long, arg_enum, requires = "image")]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[clap(
         long,
         value_name = "VALUE",
-        value_parser,
         requires = "image",
         default_value_t = 16usize,
         possible_values = ["16", "32", "64", "128", "256"],
-        value_parser
     )]
     pub color_resolution: usize,
     /// Turns off bold formatting
-    #[clap(long, action)]
+    #[clap(long)]
     pub no_bold: bool,
     /// Ignores merge commits
-    #[clap(long, action)]
+    #[clap(long)]
     pub no_merges: bool,
     /// Hides the color palette
-    #[clap(long, action)]
+    #[clap(long)]
     pub no_color_palette: bool,
     /// NUM of authors to be shown
-    #[clap(
-        long,
-        short,
-        default_value_t = 3usize,
-        value_name = "NUM",
-        value_parser
-    )]
+    #[clap(long, short, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
     /// gnore all files & directories matching EXCLUDE
-    #[clap(long, multiple_values = true, short, value_parser, value_hint = ValueHint::AnyPath)]
+    #[clap(long, multiple_values = true, short, value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
-    #[clap(long, value_name = "REGEX", value_parser)]
+    #[clap(long, value_name = "REGEX")]
     pub no_bots: Option<Option<Regex>>,
     /// Prints out supported languages
-    #[clap(long, short, action)]
+    #[clap(long, short)]
     pub languages: bool,
     /// Prints out supported package managers
-    #[clap(long, short, action)]
+    #[clap(long, short)]
     pub package_managers: bool,
     /// Outputs Onefetch in a specific format
-    #[clap(long, short, value_name = "FORMAT", value_parser)]
+    #[clap(long, short, value_name = "FORMAT", arg_enum)]
     pub output: Option<SerializationFormat>,
     /// Specify when to use true color
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
-    #[clap(long, default_value = "auto", value_name = "WHEN", value_parser)]
+    #[clap(long, default_value = "auto", value_name = "WHEN", arg_enum)]
     pub true_color: When,
     /// Specify when to show the logo
     ///
     /// If set to auto: the logo will be hidden if the terminal's width < 95
-    #[clap(long, default_value = "always", value_name = "WHEN", value_parser)]
+    #[clap(long, default_value = "always", value_name = "WHEN", arg_enum)]
     pub show_logo: When,
     /// Changes the text colors (X X X...)
     ///
@@ -147,11 +140,11 @@ pub struct Config {
         multiple_values = true,
         default_values = &["programming", "markup"],
         short = 'T',
-        value_parser,
+        arg_enum,
     )]
     pub r#type: Vec<LanguageType>,
     /// If provided, outputs the completion file for given SHELL
-    #[clap(long = "generate", value_name = "SHELL", value_parser)]
+    #[clap(long = "generate", value_name = "SHELL", arg_enum)]
     pub completion: Option<Shell>,
 }
 

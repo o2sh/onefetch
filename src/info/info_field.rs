@@ -1,9 +1,4 @@
-use strum::{EnumCount, EnumIter, EnumString, IntoStaticStr};
-
-#[derive(
-    Clone, Copy, PartialEq, Eq, EnumString, EnumCount, EnumIter, IntoStaticStr, clap::ValueEnum,
-)]
-#[strum(serialize_all = "snake_case")]
+#[derive(Clone, clap::ValueEnum)]
 pub enum InfoField {
     GitInfo,
     Project,
