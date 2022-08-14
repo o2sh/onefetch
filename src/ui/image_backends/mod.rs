@@ -1,7 +1,7 @@
 use anyhow::Result;
 use image::DynamicImage;
 
-#[derive(clap::ValueEnum, Clone)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
 pub enum ImageProtocol {
     Kitty,
     Sixel,

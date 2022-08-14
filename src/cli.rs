@@ -11,9 +11,10 @@ use regex::Regex;
 use std::env;
 use std::io;
 use std::path::PathBuf;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 
-#[derive(Parser)]
+#[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[clap(version, about, long_about = None, rename_all = "kebab-case")]
 #[clap(global_setting(AppSettings::DeriveDisplayOrder))]
 pub struct Config {
@@ -89,7 +90,7 @@ pub struct Config {
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[clap(long, value_name = "REGEX")]
-    pub no_bots: Option<Option<Regex>>,
+    pub no_bots: Option<Option<MyRegex>>,
     /// Prints out supported languages
     #[clap(long, short)]
     pub languages: bool,
@@ -126,13 +127,13 @@ pub struct Config {
     )]
     pub text_colors: Vec<u8>,
     /// Use ISO 8601 formatted timestamps
-    #[clap(long, short = 'z', action)]
+    #[clap(long, short = 'z')]
     pub iso_time: bool,
     /// Show the email address of each author
-    #[clap(long, short = 'E', action)]
+    #[clap(long, short = 'E')]
     pub email: bool,
     /// Count hidden files and directories
-    #[clap(long, action)]
+    #[clap(long)]
     pub include_hidden: bool,
     /// Filters output by language type
     #[clap(
@@ -183,9 +184,69 @@ pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
-#[derive(clap::ValueEnum, Clone)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
 pub enum When {
     Auto,
     Never,
     Always,
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_default_config() {
+        let config = get_default_config();
+        assert_eq!(config, Config::parse_from(&[""]))
+    }
+
+    fn get_default_config() -> Config {
+        Config {
+            input: PathBuf::from("."),
+            ascii_input: Default::default(),
+            ascii_language: Default::default(),
+            ascii_colors: Default::default(),
+            disabled_fields: Default::default(),
+            image: Default::default(),
+            image_protocol: Default::default(),
+            color_resolution: 16,
+            no_bold: Default::default(),
+            no_merges: Default::default(),
+            no_color_palette: Default::default(),
+            number_of_authors: 3,
+            exclude: Default::default(),
+            no_bots: Default::default(),
+            languages: Default::default(),
+            package_managers: Default::default(),
+            output: Default::default(),
+            true_color: When::Auto,
+            show_logo: When::Always,
+            text_colors: Default::default(),
+            iso_time: Default::default(),
+            email: Default::default(),
+            include_hidden: Default::default(),
+            r#type: vec![LanguageType::Programming, LanguageType::Markup],
+            completion: Default::default(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct MyRegex(pub Regex);
+
+impl Eq for MyRegex {}
+
+impl PartialEq for MyRegex {
+    fn eq(&self, other: &MyRegex) -> bool {
+        self.0.as_str() == other.0.as_str()
+    }
+}
+
+impl FromStr for MyRegex {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Ok(MyRegex(Regex::new(s)?))
+    }
 }

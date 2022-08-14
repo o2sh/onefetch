@@ -1,3 +1,4 @@
+use crate::cli::MyRegex;
 use crate::info::author::Author;
 use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
@@ -6,7 +7,6 @@ use git::bstr::BString;
 use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
-use regex::Regex;
 use std::collections::HashMap;
 use std::path::Path;
 use std::path::PathBuf;
@@ -45,7 +45,7 @@ impl Commits {
     pub fn new(
         mut repo: git::Repository,
         no_merges: bool,
-        bot_regex_pattern: &Option<Regex>,
+        bot_regex_pattern: &Option<MyRegex>,
         number_of_authors_to_display: usize,
     ) -> Result<Self> {
         // assure that objects we just traversed are coming from cache
@@ -271,10 +271,10 @@ impl Repo {
     }
 }
 
-fn is_bot(author_name: &BString, bot_regex_pattern: &Option<Regex>) -> bool {
+fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
     bot_regex_pattern
         .as_ref()
-        .map(|regex| regex.is_match(author_name.to_str_lossy().as_ref()))
+        .map(|regex| regex.0.is_match(author_name.to_str_lossy().as_ref()))
         .unwrap_or(false)
 }
 

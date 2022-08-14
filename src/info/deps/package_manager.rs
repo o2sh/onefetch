@@ -125,6 +125,7 @@ fn pub_packages(contents: &str) -> Result<usize> {
         Err(_) => Ok(0),
     }
 }
+
 #[cfg(test)]
 mod test {
     use super::*;

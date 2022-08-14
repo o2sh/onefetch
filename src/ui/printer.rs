@@ -13,7 +13,7 @@ use terminal_size::{terminal_size, Width};
 const CENTER_PAD_LENGTH: usize = 3;
 const MAX_TERM_WIDTH: u16 = 95;
 
-#[derive(Clone, clap::ValueEnum)]
+#[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
     Json,
     Yaml,

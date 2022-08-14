@@ -7,7 +7,7 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
-#[derive(Clone, PartialEq, clap::ValueEnum)]
+#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
 pub enum LanguageType {
     Programming,
     Markup,
@@ -15,7 +15,7 @@ pub enum LanguageType {
     Data,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug)]
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
 pub enum Language {

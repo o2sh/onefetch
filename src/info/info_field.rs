@@ -1,4 +1,4 @@
-#[derive(Clone, clap::ValueEnum)]
+#[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
 pub enum InfoField {
     GitInfo,
     Project,

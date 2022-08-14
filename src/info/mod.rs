@@ -1,4 +1,4 @@
-use crate::cli::{self, is_truecolor_terminal, Config, When};
+use crate::cli::{self, is_truecolor_terminal, Config, MyRegex, When};
 use crate::info::info_field::InfoFieldOff;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
@@ -196,7 +196,7 @@ impl Info {
         let no_bots = if let Some(r) = config.no_bots.clone() {
             match r {
                 Some(p) => Some(p),
-                None => Some(Regex::from_str(r"(b|B)ot")?),
+                None => Some(MyRegex(Regex::from_str(r"(b|B)ot")?)),
             }
         } else {
             None
