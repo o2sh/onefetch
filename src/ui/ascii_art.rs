@@ -29,13 +29,14 @@ impl<'a> AsciiArt<'a> {
             end,
         }
     }
+
     pub fn width(&self) -> usize {
         assert!(self.end >= self.start);
         self.end - self.start
     }
 }
 
-pub fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
+fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
     lines
         .iter()
         .map(|line| {
@@ -238,6 +239,18 @@ fn char_token(s: &str) -> ParseResult<Token> {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_get_min_start_max_end() {
+        let lines = [
+            "                     xxx",
+            "   xxx",
+            "         oo",
+            "     o",
+            "                           xx",
+        ];
+        assert_eq!(get_min_start_max_end(&lines), (3, 29));
+    }
 
     #[test]
     fn space_parses() {
