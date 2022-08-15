@@ -48,3 +48,19 @@ impl DependencyDetector {
         Ok(output)
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use regex::Regex;
+
+    #[test]
+    fn test_get_dependencies() -> Result<()> {
+        let dependency_detector = DependencyDetector::new();
+        let deps = dependency_detector.get_dependencies(Path::new("."))?;
+        let re = Regex::new(r"^\d+ \(cargo\)$")?;
+        assert!(re.is_match(&deps));
+
+        Ok(())
+    }
+}
