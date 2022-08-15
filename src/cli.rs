@@ -235,8 +235,23 @@ mod test {
     }
 
     #[test]
-    fn test_fail_config_with_image_protocol_but_no_image() {
+    fn test_config_with_image_protocol_but_no_image() {
         assert!(Config::try_parse_from(&["onefetch", "--image-protocol", "sixel"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_color_resolution_but_no_image() {
+        assert!(Config::try_parse_from(&["onefetch", "--color-resolution", "32"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_ascii_colors_but_out_of_bounds() {
+        assert!(Config::try_parse_from(&["onefetch", "--ascii-colors", "17"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_text_colors_but_out_of_bounds() {
+        assert!(Config::try_parse_from(&["onefetch", "--text-colors", "17"]).is_err())
     }
 
     fn get_default_config() -> Config {
