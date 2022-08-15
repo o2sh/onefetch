@@ -59,3 +59,44 @@ impl Serialize for Author {
         state.end()
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_author() {
+        let author = Author::new(
+            "John Doe".into(),
+            Some("john.doe@email.com".into()),
+            1500,
+            2000,
+        );
+
+        assert_eq!(
+            format!("{}", author),
+            "75% John Doe <john.doe@email.com> 1500"
+        );
+    }
+
+    #[test]
+    fn test_display_author_with_no_email() {
+        let author = Author::new("John Doe".into(), None, 1500, 2000);
+
+        assert_eq!(format!("{}", author), "75% John Doe 1500");
+    }
+
+    #[test]
+    fn test_clear_email() {
+        let mut author = Author::new(
+            "John Doe".into(),
+            Some("john.doe@email.com".into()),
+            1500,
+            2000,
+        );
+
+        author.clear_email();
+
+        assert!(author.email.is_none());
+    }
+}

@@ -48,13 +48,13 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_head_refs() {
+    fn test_display_head_refs() {
         let head = HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]);
         assert_eq!(format!("{}", head), "be561d5 (main, origin/main)")
     }
 
     #[test]
-    fn test_head_refs_with_no_refs() {
+    fn test_display_head_refs_with_no_refs() {
         let head = HeadRefs::new("be561d5".into(), vec![]);
         assert_eq!(format!("{}", head), "be561d5")
     }
