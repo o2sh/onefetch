@@ -198,7 +198,45 @@ mod test {
     #[test]
     fn test_default_config() {
         let config = get_default_config();
-        assert_eq!(config, Config::parse_from(&[""]))
+        assert_eq!(config, Config::parse_from(&["onefetch"]))
+    }
+
+    #[test]
+    fn test_custom_config() {
+        let mut config = get_default_config();
+        config.number_of_authors = 4;
+        config.input = PathBuf::from("/tmp/folder");
+        config.no_merges = true;
+        config.ascii_colors = vec![5, 0];
+        config.disabled_fields = vec![InfoField::Version, InfoField::Repo];
+        config.show_logo = When::Never;
+        config.ascii_language = Some(Language::Lisp);
+
+        assert_eq!(
+            config,
+            Config::parse_from(&[
+                "onefetch",
+                "/tmp/folder",
+                "--number-of-authors",
+                "4",
+                "--no-merges",
+                "--ascii-colors",
+                "5",
+                "0",
+                "--disabled-fields",
+                "version",
+                "repo",
+                "--show-logo",
+                "never",
+                "--ascii-language",
+                "lisp"
+            ])
+        )
+    }
+
+    #[test]
+    fn test_fail_config_with_image_protocol_but_no_image() {
+        assert!(Config::try_parse_from(&["onefetch", "--image-protocol", "sixel"]).is_err())
     }
 
     fn get_default_config() -> Config {
