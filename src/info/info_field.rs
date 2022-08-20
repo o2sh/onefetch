@@ -46,7 +46,7 @@ impl From<&Vec<InfoField>> for InfoFieldOff {
 
         for field in fields_to_hide.iter() {
             match field {
-                InfoField::Title=> info_field_off.title= true,
+                InfoField::Title => info_field_off.title = true,
                 InfoField::Project => info_field_off.project = true,
                 InfoField::Head => info_field_off.head = true,
                 InfoField::Pending => info_field_off.pending = true,
