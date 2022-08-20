@@ -59,7 +59,7 @@ pub struct Info {
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if !self.disabled_fields.git_info
+        if !self.disabled_fields.title
             && (!&self.git_username.is_empty() || !&self.git_version.is_empty())
         {
             let (git_info_field_str, git_info_field_len) = self.get_git_info_field();

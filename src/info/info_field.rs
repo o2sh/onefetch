@@ -1,6 +1,6 @@
 #[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
 pub enum InfoField {
-    GitInfo,
+    Title,
     Project,
     Head,
     Pending,
@@ -20,7 +20,7 @@ pub enum InfoField {
 
 #[derive(Default)]
 pub struct InfoFieldOff {
-    pub git_info: bool,
+    pub title: bool,
     pub project: bool,
     pub head: bool,
     pub pending: bool,
@@ -46,7 +46,7 @@ impl From<&Vec<InfoField>> for InfoFieldOff {
 
         for field in fields_to_hide.iter() {
             match field {
-                InfoField::GitInfo => info_field_off.git_info = true,
+                InfoField::Title=> info_field_off.title= true,
                 InfoField::Project => info_field_off.project = true,
                 InfoField::Head => info_field_off.head = true,
                 InfoField::Pending => info_field_off.pending = true,
@@ -78,7 +78,7 @@ mod test {
         let fields_to_hide = vec![InfoField::Version, InfoField::Repo];
         let info_field_off = InfoFieldOff::from(&fields_to_hide);
 
-        assert!(!info_field_off.git_info);
+        assert!(!info_field_off.title);
         assert!(!info_field_off.project);
         assert!(!info_field_off.head);
         assert!(!info_field_off.pending);
