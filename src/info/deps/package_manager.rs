@@ -8,7 +8,7 @@ use yaml_rust::YamlLoader;
 macro_rules! define_package_managers {
     ($( { $name:ident, $display:literal, [$(($file:literal, $parser:expr))+] } ),+ ,) => {
 
-        #[derive(PartialEq, EnumIter)]
+        #[derive(PartialEq, Eq, EnumIter)]
         pub enum PackageManager {
             $(
                 $name ,
