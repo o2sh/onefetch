@@ -57,12 +57,16 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
       - uses: actions/checkout@v3
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           components: rustfmt
+
+      - name: Run rustfmt 
       - run: cargo fmt -- --check
 
   coverage:
@@ -74,7 +78,7 @@ jobs:
       - name: Install nightly toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable 
           override: true
 
       - name: Install cargo-tarpaulin
@@ -82,7 +86,6 @@ jobs:
         with:
           crate: cargo-tarpaulin
           version: latest
-          use-tool-cache: true
 
       - name: Coverage with tarpaulin
         run: cargo tarpaulin --out Lcov -- --test-threads 1
