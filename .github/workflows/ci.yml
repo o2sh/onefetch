@@ -69,7 +69,7 @@ jobs:
           components: rustfmt
 
       - name: Run rustfmt 
-      - run: cargo fmt -- --check
+        run: cargo fmt -- --check
 
   coverage:
     runs-on: ubuntu-latest
