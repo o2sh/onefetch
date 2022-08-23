@@ -1052,9 +1052,9 @@ dependencies = [
 
 [[package]]
 name = "git-path"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f054752f9f73d557f4ef0a4e48f2f7e01454abd7accdef9f85f0ef4fa2c6e8f"
+checksum = "eb95b96097d742975f700c6a125ab447b051787eec322e3f6e59e83c867dea40"
 dependencies = [
  "bstr",
  "thiserror",
