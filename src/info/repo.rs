@@ -4,12 +4,10 @@ use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
 use git::bstr::BString;
-use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
+use git2::{Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
 use std::collections::HashMap;
-use std::path::Path;
-use std::path::PathBuf;
 use time::format_description::well_known::Rfc3339;
 use time::OffsetDateTime;
 
@@ -297,11 +295,6 @@ where
     T: Into<OffsetDateTime>,
 {
     dt.into().format(&Rfc3339).unwrap()
-}
-
-pub fn is_valid(repo_path: &PathBuf) -> Result<bool> {
-    let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
-    Ok(!repo?.is_bare())
 }
 
 #[cfg(test)]
