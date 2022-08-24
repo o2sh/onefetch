@@ -240,7 +240,7 @@ impl Repo {
             None => return Ok(Default::default()),
         };
 
-        let url = git::url::parse(remote_url.as_bytes())?;
+        let url = git::url::parse(remote_url.as_str().into())?;
         let path = git::path::from_bstr(url.path.as_bstr());
         let repo_name = path
             .with_extension("")
