@@ -4,12 +4,10 @@ use crate::info::head_refs::HeadRefs;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
 use git::bstr::BString;
-use git2::{Repository, RepositoryOpenFlags, Status, StatusOptions, StatusShow};
+use git2::{Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
 use std::collections::HashMap;
-use std::path::Path;
-use std::path::PathBuf;
 use time::format_description::well_known::Rfc3339;
 use time::OffsetDateTime;
 
@@ -57,7 +55,7 @@ impl Commits {
         let mut commit_iter = repo.head_commit()?.ancestors().all()?;
         let mut commit_iter_peekable = commit_iter.by_ref().peekable();
 
-        let mailmap = repo.load_mailmap();
+        let mailmap = repo.open_mailmap();
         let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
         let mut total_nbr_of_commits = 0;
 
@@ -165,8 +163,8 @@ impl Repo {
 
     // This collects the repo size excluding .git
     pub fn get_repo_size(&self) -> (String, u64) {
-        let (repo_size, file_count) = match self.repo.load_index() {
-            Some(Ok(index)) => {
+        let (repo_size, file_count) = match self.repo.index() {
+            Ok(index) => {
                 let repo_size = index.entries().iter().map(|e| e.stat.size as u128).sum();
                 (repo_size, index.entries().len() as u64)
             }
@@ -242,7 +240,7 @@ impl Repo {
             None => return Ok(Default::default()),
         };
 
-        let url = git::url::parse(remote_url.as_bytes())?;
+        let url = git::url::parse(remote_url.as_str().into())?;
         let path = git::path::from_bstr(url.path.as_bstr());
         let repo_name = path
             .with_extension("")
@@ -297,11 +295,6 @@ where
     T: Into<OffsetDateTime>,
 {
     dt.into().format(&Rfc3339).unwrap()
-}
-
-pub fn is_valid(repo_path: &PathBuf) -> Result<bool> {
-    let repo = Repository::open_ext(repo_path, RepositoryOpenFlags::empty(), Vec::<&Path>::new());
-    Ok(!repo?.is_bare())
 }
 
 #[cfg(test)]

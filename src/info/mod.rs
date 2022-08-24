@@ -168,7 +168,7 @@ impl Info {
         let repo = git::discover(&config.input)?;
         let workdir = repo
             .work_dir()
-            .context("a non-bare repository is needed")?
+            .context("please run onefetch inside of a non-bare git repository")?
             .to_owned();
 
         let pending_changes = std::thread::spawn({
