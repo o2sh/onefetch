@@ -161,7 +161,6 @@ dependencies = [
  "lazy_static",
  "memchr",
  "regex-automata",
- "serde",
 ]
 
 [[package]]
@@ -369,7 +368,6 @@ dependencies = [
  "castaway",
  "itoa 1.0.3",
  "ryu",
- "serde",
 ]
 
 [[package]]
@@ -730,7 +728,6 @@ dependencies = [
  "itoa 1.0.3",
  "nom",
  "quick-error",
- "serde",
 ]
 
 [[package]]
@@ -745,7 +742,6 @@ dependencies = [
  "git-glob",
  "git-path",
  "git-quote",
- "serde",
  "thiserror",
  "unicode-bom",
 ]
@@ -808,7 +804,6 @@ checksum = "1d58ccaaf783384a6ad68a6abf84942a3f88e34970ced3b34dc68183be50996d"
 dependencies = [
  "bstr",
  "itoa 1.0.3",
- "serde",
  "time",
 ]
 
@@ -867,7 +862,6 @@ checksum = "3d1879e27b5cb57bee828ea57a1ce9a004e9ae51fa71a2d4fb031175386df246"
 dependencies = [
  "bitflags",
  "bstr",
- "serde",
 ]
 
 [[package]]
@@ -878,7 +872,6 @@ checksum = "42611c78e4545531ae2078b7599f23dbec4e0f03d42adbe0cfd1189866ea09a5"
 dependencies = [
  "hex",
  "quick-error",
- "serde",
 ]
 
 [[package]]
@@ -897,7 +890,6 @@ dependencies = [
  "git-object",
  "itoa 1.0.3",
  "memmap2 0.5.3",
- "serde",
  "smallvec",
  "thiserror",
 ]
@@ -922,7 +914,6 @@ dependencies = [
  "bstr",
  "git-actor",
  "quick-error",
- "serde",
 ]
 
 [[package]]
@@ -941,7 +932,6 @@ dependencies = [
  "itoa 1.0.3",
  "nom",
  "quick-error",
- "serde",
  "smallvec",
 ]
 
@@ -959,7 +949,6 @@ dependencies = [
  "git-path",
  "git-quote",
  "parking_lot 0.12.0",
- "serde",
  "tempfile",
  "thiserror",
 ]
@@ -984,21 +973,9 @@ dependencies = [
  "hash_hasher",
  "memmap2 0.5.3",
  "parking_lot 0.12.0",
- "serde",
  "smallvec",
  "thiserror",
  "uluru",
-]
-
-[[package]]
-name = "git-packetline"
-version = "0.12.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f80cbb5c48737d89cfb2ba74b8b62df2c36a4ce98ad8225e4125be37453c7fde"
-dependencies = [
- "bstr",
- "hex",
- "quick-error",
 ]
 
 [[package]]
@@ -1008,24 +985,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eb95b96097d742975f700c6a125ab447b051787eec322e3f6e59e83c867dea40"
 dependencies = [
  "bstr",
- "thiserror",
-]
-
-[[package]]
-name = "git-protocol"
-version = "0.19.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "724cd5b3aa601b83937f116bb27dd5f6cb5de521aa103bc803230f9d0fb5edd4"
-dependencies = [
- "bstr",
- "btoi",
- "git-credentials",
- "git-features",
- "git-hash",
- "git-transport",
- "maybe-async",
- "nom",
- "serde",
  "thiserror",
 ]
 
@@ -1057,7 +1016,6 @@ dependencies = [
  "memmap2 0.5.3",
  "nom",
  "quick-error",
- "serde",
 ]
 
 [[package]]
@@ -1098,19 +1056,16 @@ dependencies = [
  "git-odb",
  "git-pack",
  "git-path",
- "git-protocol",
  "git-ref",
  "git-refspec",
  "git-revision",
  "git-sec",
  "git-tempfile",
- "git-transport",
  "git-traverse",
  "git-url",
  "git-validate",
  "git-worktree",
  "log",
- "serde",
  "signal-hook",
  "smallvec",
  "thiserror",
@@ -1128,7 +1083,6 @@ dependencies = [
  "git-hash",
  "git-object",
  "hash_hasher",
- "serde",
  "thiserror",
 ]
 
@@ -1158,21 +1112,6 @@ dependencies = [
  "signal-hook",
  "signal-hook-registry",
  "tempfile",
-]
-
-[[package]]
-name = "git-transport"
-version = "0.19.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f482f64944993d0a461be8a7d3fcf3a29cf2e8e91f94fa2359820e67813d6a8"
-dependencies = [
- "bstr",
- "git-features",
- "git-packetline",
- "git-sec",
- "git-url",
- "serde",
- "thiserror",
 ]
 
 [[package]]
@@ -1595,17 +1534,6 @@ name = "matches"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
-
-[[package]]
-name = "maybe-async"
-version = "0.2.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6007f9dad048e0a224f27ca599d669fca8cfa0dac804725aab542b2eb032bce6"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
 
 [[package]]
 name = "memchr"
@@ -2325,9 +2253,6 @@ name = "smallvec"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "spin"

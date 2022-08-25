@@ -4,11 +4,7 @@ categories = ["command-line-utilities"]
 description = "Git repository summary on your terminal"
 edition = "2018"
 exclude = ["assets/*", "docs/vercel/*"]
-keywords = [
-  "git",
-  "cli",
-  "terminal",
-]
+keywords = ["git", "cli", "terminal"]
 license = "MIT"
 name = "onefetch"
 readme = "README.md"
@@ -31,11 +27,14 @@ anyhow = "1.0.59"
 askalono = "0.4.6"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
-clap = {version = "3.2.17", features = ["derive"]}
+clap = { version = "3.2.17", features = ["derive"] }
 clap_complete = "3.2.4"
 color_quant = "1.1.0"
-git-repository = {version = "0.22.1", default-features = false, features = ["max-performance-safe", "unstable", "serde1"]}
-git2 = {version = "0.15.0", default-features = false}
+git-repository = { version = "0.22.1", default-features = false, features = [
+  "max-performance-safe",
+  "unstable",
+] }
+git2 = { version = "0.15.0", default-features = false }
 image = "0.24.3"
 owo-colors = "3.4.0"
 regex = "1.6.0"
@@ -44,10 +43,10 @@ serde_json = "1.0.83"
 serde_yaml = "0.9.4"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
-strum = {version = "0.24.1", features = ["derive"]}
+strum = { version = "0.24.1", features = ["derive"] }
 terminal_size = "0.2"
-time = {version = "0.3.13", features = ["formatting"]}
-time-humanize = {version = "0.1.3", features = ["time"]}
+time = { version = "0.3.13", features = ["formatting"] }
+time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "12.1.2"
 toml = "0.5.9"
 yaml-rust = "0.4.5"

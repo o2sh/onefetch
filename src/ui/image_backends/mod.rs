@@ -35,6 +35,7 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     None
 }
 
+#[allow(unused_variables)]
 pub fn get_image_backend(image_protocol: ImageProtocol) -> Option<Box<dyn ImageBackend>> {
     #[cfg(not(windows))]
     let backend = Some(match image_protocol {
