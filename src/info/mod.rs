@@ -194,7 +194,10 @@ impl Info {
                 info_color: text_colors.info,
             }),
             Box::new(DependenciesInfoField { dependencies }),
-            Box::new(AuthorsInfoField { authors }),
+            Box::new(AuthorsInfoField {
+                authors,
+                info_color: text_colors.info,
+            }),
             Box::new(RepoLastChangeInfoField { last_change }),
             Box::new(RepoContributorsInfoField { contributors }),
             Box::new(RepoUrlInfoField { repo_url }),

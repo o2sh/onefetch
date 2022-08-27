@@ -15,7 +15,7 @@ impl std::fmt::Display for LanguagesInfoField {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut language_field = String::from("");
         let language_bar_length = 26;
-        let pad = "Languages".len() + 2;
+        let pad = FieldType::Languages.as_str().len() + 2;
         let color_palette = vec![
             DynColors::Ansi(AnsiColors::Red),
             DynColors::Ansi(AnsiColors::Green),
@@ -93,7 +93,7 @@ impl InfoField for LanguagesInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Languages,
-            value: format!("{}", &self),
+            value: self.to_string(),
         }
     }
 }

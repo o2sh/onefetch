@@ -1,5 +1,6 @@
 use super::info_field::{FieldType, InfoField, InfoFieldValue};
 use git_repository as git;
+use owo_colors::{DynColors, OwoColorize};
 use serde::ser::SerializeStruct;
 use serde::Serialize;
 use std::fmt::Write;
@@ -64,19 +65,22 @@ impl Serialize for Author {
 
 pub struct AuthorsInfoField {
     pub authors: Vec<Author>,
+    pub info_color: DynColors,
 }
 
 impl std::fmt::Display for AuthorsInfoField {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut author_field = String::from("");
 
-        let pad = "Authors".len() + 2;
+        let pad = FieldType::Authors.as_str().len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
+            let author_str = author.color(self.info_color);
+
             if i == 0 {
-                let _ = write!(author_field, "{}", author);
+                let _ = write!(author_field, "{}", author_str);
             } else {
-                let _ = write!(author_field, "\n{:<width$}{}", "", author, width = pad);
+                let _ = write!(author_field, "\n{:<width$}{}", "", author_str, width = pad);
             }
         }
 
