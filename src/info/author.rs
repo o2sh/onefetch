@@ -1,6 +1,8 @@
+use super::info_field::{InfoField, InfoFieldType, InfoFieldValue};
 use git_repository as git;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
+use std::fmt::Write;
 
 pub struct Author {
     name: String,
@@ -57,6 +59,37 @@ impl Serialize for Author {
         let mut state = serializer.serialize_struct("Author", 1)?;
         state.serialize_field("name", &self.name)?;
         state.end()
+    }
+}
+
+pub struct AuthorsInfoField {
+    pub authors: Vec<Author>,
+}
+
+impl std::fmt::Display for AuthorsInfoField {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut author_field = String::from("");
+
+        let pad = "Authors".len() + 2;
+
+        for (i, author) in self.authors.iter().enumerate() {
+            if i == 0 {
+                let _ = write!(author_field, "{}", author);
+            } else {
+                let _ = write!(author_field, "\n{:<width$}{}", "", author, width = pad);
+            }
+        }
+
+        write!(f, "{}", author_field)
+    }
+}
+
+impl InfoField for AuthorsInfoField {
+    fn value(&self) -> InfoFieldValue {
+        InfoFieldValue {
+            r#type: InfoFieldType::Authors,
+            value: format!("{}", &self),
+        }
     }
 }
 

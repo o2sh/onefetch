@@ -1,3 +1,4 @@
+use super::info_field::{InfoField, InfoFieldType, InfoFieldValue};
 use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
@@ -46,6 +47,19 @@ impl DependencyDetector {
         let output = deps.join(", ");
 
         Ok(output)
+    }
+}
+
+pub struct DependenciesInfoField {
+    pub dependencies: String,
+}
+
+impl InfoField for DependenciesInfoField {
+    fn value(&self) -> InfoFieldValue {
+        InfoFieldValue {
+            r#type: InfoFieldType::Dependencies,
+            value: format!("{}", &self.dependencies),
+        }
     }
 }
 

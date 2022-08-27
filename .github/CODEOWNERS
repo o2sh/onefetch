@@ -1,6 +1,6 @@
 /.github/ @spenserblack @o2sh
 /src/ui/image_backends/ @CephalonRho @yoichi
-/src/info/repo.rs @Byron
+/src/info/git.rs @Byron
 /languages.yaml @spenserblack @o2sh
 /templates/language.rs @spenserblack
 /src/info/deps/ @HallerPatrick @o2sh
