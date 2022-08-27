@@ -88,7 +88,7 @@ impl InfoField for AuthorsInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Authors,
-            value: format!("{}", &self),
+            value: self.to_string(),
         }
     }
 }

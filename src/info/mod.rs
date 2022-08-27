@@ -52,7 +52,7 @@ impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         //Title
         if !self.disabled_fields.contains(&FieldType::Title) {
-            writeln!(f, "{}", self.title)?;
+            write!(f, "{}", self.title)?;
         }
 
         //Info fields
