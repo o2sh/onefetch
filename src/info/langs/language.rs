@@ -1,6 +1,6 @@
 use owo_colors::OwoColorize;
 
-use crate::info::info_field::{InfoField, InfoFieldType, InfoFieldValue};
+use crate::info::info_field::{FieldType, InfoField, InfoFieldValue};
 use std::fmt::Write;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
@@ -92,7 +92,7 @@ impl std::fmt::Display for LanguagesInfoField {
 impl InfoField for LanguagesInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Languages,
+            r#type: FieldType::Languages,
             value: format!("{}", &self),
         }
     }

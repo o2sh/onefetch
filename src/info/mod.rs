@@ -1,5 +1,5 @@
 use crate::cli::{self, is_truecolor_terminal, Config, MyRegex, When};
-use crate::info::info_field::{InfoField, InfoFieldType, InfoFieldValueGetter};
+use crate::info::info_field::{FieldType, InfoField, InfoFieldValueGetter};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -41,7 +41,7 @@ mod title;
 pub struct Info {
     title: Title,
     info_fields: Vec<Box<dyn InfoField>>,
-    disabled_fields: Vec<InfoFieldType>,
+    disabled_fields: Vec<FieldType>,
     text_colors: TextColors,
     no_color_palette: bool,
     no_bold: bool,
@@ -52,7 +52,9 @@ pub struct Info {
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         //Title
-        writeln!(f, "{}", self.title)?;
+        if !self.disabled_fields.contains(&FieldType::Title) {
+            writeln!(f, "{}", self.title)?;
+        }
 
         //Info fields
         for info_field in self.info_fields.iter() {

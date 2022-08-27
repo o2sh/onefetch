@@ -1,4 +1,4 @@
-use super::info_field::{InfoField, InfoFieldType, InfoFieldValue};
+use super::info_field::{FieldType, InfoField, InfoFieldValue};
 use git_repository as git;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
@@ -87,7 +87,7 @@ impl std::fmt::Display for AuthorsInfoField {
 impl InfoField for AuthorsInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Authors,
+            r#type: FieldType::Authors,
             value: format!("{}", &self),
         }
     }

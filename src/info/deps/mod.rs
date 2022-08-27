@@ -1,4 +1,4 @@
-use super::info_field::{InfoField, InfoFieldType, InfoFieldValue};
+use super::info_field::{FieldType, InfoField, InfoFieldValue};
 use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
@@ -57,7 +57,7 @@ pub struct DependenciesInfoField {
 impl InfoField for DependenciesInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Dependencies,
+            r#type: FieldType::Dependencies,
             value: format!("{}", &self.dependencies),
         }
     }

@@ -1,4 +1,4 @@
-use super::info_field::{InfoField, InfoFieldType, InfoFieldValue};
+use super::info_field::{FieldType, InfoField, InfoFieldValue};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use std::path::Path;
@@ -73,7 +73,7 @@ pub struct LicenseInfoField {
 impl InfoField for LicenseInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::License,
+            r#type: FieldType::License,
             value: format!("{}", &self.license),
         }
     }

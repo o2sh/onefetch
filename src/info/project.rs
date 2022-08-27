@@ -1,4 +1,4 @@
-use super::info_field::{InfoField, InfoFieldType, InfoFieldValue};
+use super::info_field::{FieldType, InfoField, InfoFieldValue};
 
 pub struct ProjectInfoField {
     pub repo_name: String,
@@ -33,7 +33,7 @@ impl std::fmt::Display for ProjectInfoField {
 impl InfoField for ProjectInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Project,
+            r#type: FieldType::Project,
             value: format!("{}", self),
         }
     }

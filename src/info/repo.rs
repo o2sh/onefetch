@@ -1,6 +1,6 @@
 use super::{
     head::HeadRefs,
-    info_field::{InfoField, InfoFieldType, InfoFieldValue},
+    info_field::{FieldType, InfoField, InfoFieldValue},
 };
 
 pub struct RepoUrlInfoField {
@@ -10,7 +10,7 @@ pub struct RepoUrlInfoField {
 impl InfoField for RepoUrlInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Repo,
+            r#type: FieldType::Repo,
             value: format!("{}", &self.repo_url),
         }
     }
@@ -23,7 +23,7 @@ pub struct RepoCreatedInfoField {
 impl InfoField for RepoCreatedInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Created,
+            r#type: FieldType::Created,
             value: format!("{}", &self.creation_date),
         }
     }
@@ -36,7 +36,7 @@ pub struct RepoPendingInfoField {
 impl InfoField for RepoPendingInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Pending,
+            r#type: FieldType::Pending,
             value: format!("{}", &self.pending_changes),
         }
     }
@@ -49,7 +49,7 @@ pub struct RepoLastChangeInfoField {
 impl InfoField for RepoLastChangeInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::LastChange,
+            r#type: FieldType::LastChange,
             value: format!("{}", &self.last_change),
         }
     }
@@ -62,7 +62,7 @@ pub struct RepoCommitsInfoField {
 impl InfoField for RepoCommitsInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Commits,
+            r#type: FieldType::Commits,
             value: format!("{}", &self.number_of_commits),
         }
     }
@@ -87,7 +87,7 @@ impl std::fmt::Display for RepoSizeInfoField {
 impl InfoField for RepoSizeInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Size,
+            r#type: FieldType::Size,
             value: format!("{}", &self),
         }
     }
@@ -100,7 +100,7 @@ pub struct RepoLocInfoField {
 impl InfoField for RepoLocInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::LinesOfCode,
+            r#type: FieldType::LinesOfCode,
             value: format!("{}", &self.lines_of_code),
         }
     }
@@ -113,7 +113,7 @@ pub struct RepoHeadInfoField {
 impl InfoField for RepoHeadInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Head,
+            r#type: FieldType::Head,
             value: format!("{}", &self.head_refs),
         }
     }
@@ -126,7 +126,7 @@ pub struct RepoVersionInfoField {
 impl InfoField for RepoVersionInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Version,
+            r#type: FieldType::Version,
             value: format!("{}", &self.version),
         }
     }
@@ -139,7 +139,7 @@ pub struct RepoContributorsInfoField {
 impl InfoField for RepoContributorsInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: InfoFieldType::Contributors,
+            r#type: FieldType::Contributors,
             value: format!("{}", &self.contributors),
         }
     }
