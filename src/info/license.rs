@@ -74,7 +74,7 @@ impl InfoField for LicenseInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::License,
-            value: format!("{}", &self.license),
+            value: self.license.to_string(),
         }
     }
 }

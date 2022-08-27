@@ -6,7 +6,6 @@ use anyhow::{Context, Result};
 use deps::DependencyDetector;
 use git::Commits;
 use git::Repo;
-use git_repository;
 use langs::language::Language;
 use license::Detector;
 use owo_colors::{DynColors, OwoColorize, Style};
@@ -179,33 +178,34 @@ impl Info {
             underline_color: text_colors.underline,
             is_bold: !config.no_bold,
         };
-        let mut info_fields: Vec<Box<dyn InfoField>> = Vec::new();
-        info_fields.push(Box::new(ProjectInfoField {
-            repo_name,
-            number_of_tags,
-            number_of_branches,
-        }));
-        info_fields.push(Box::new(RepoHeadInfoField { head_refs }));
-        info_fields.push(Box::new(RepoPendingInfoField { pending_changes }));
-        info_fields.push(Box::new(RepoVersionInfoField { version }));
-        info_fields.push(Box::new(RepoCreatedInfoField { creation_date }));
-        info_fields.push(Box::new(LanguagesInfoField {
-            languages,
-            true_color,
-            info_color: text_colors.info,
-        }));
-        info_fields.push(Box::new(DependenciesInfoField { dependencies }));
-        info_fields.push(Box::new(AuthorsInfoField { authors }));
-        info_fields.push(Box::new(RepoLastChangeInfoField { last_change }));
-        info_fields.push(Box::new(RepoContributorsInfoField { contributors }));
-        info_fields.push(Box::new(RepoUrlInfoField { repo_url }));
-        info_fields.push(Box::new(RepoCommitsInfoField { number_of_commits }));
-        info_fields.push(Box::new(RepoLocInfoField { lines_of_code }));
-        info_fields.push(Box::new(RepoSizeInfoField {
-            repo_size,
-            file_count,
-        }));
-        info_fields.push(Box::new(LicenseInfoField { license }));
+        let info_fields: Vec<Box<dyn InfoField>> = vec![
+            Box::new(ProjectInfoField {
+                repo_name,
+                number_of_tags,
+                number_of_branches,
+            }),
+            Box::new(RepoHeadInfoField { head_refs }),
+            Box::new(RepoPendingInfoField { pending_changes }),
+            Box::new(RepoVersionInfoField { version }),
+            Box::new(RepoCreatedInfoField { creation_date }),
+            Box::new(LanguagesInfoField {
+                languages,
+                true_color,
+                info_color: text_colors.info,
+            }),
+            Box::new(DependenciesInfoField { dependencies }),
+            Box::new(AuthorsInfoField { authors }),
+            Box::new(RepoLastChangeInfoField { last_change }),
+            Box::new(RepoContributorsInfoField { contributors }),
+            Box::new(RepoUrlInfoField { repo_url }),
+            Box::new(RepoCommitsInfoField { number_of_commits }),
+            Box::new(RepoLocInfoField { lines_of_code }),
+            Box::new(RepoSizeInfoField {
+                repo_size,
+                file_count,
+            }),
+            Box::new(LicenseInfoField { license }),
+        ];
 
         Ok(Self {
             title,

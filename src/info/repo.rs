@@ -11,7 +11,7 @@ impl InfoField for RepoUrlInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Repo,
-            value: format!("{}", &self.repo_url),
+            value: self.repo_url.to_string(),
         }
     }
 }
@@ -24,7 +24,7 @@ impl InfoField for RepoCreatedInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Created,
-            value: format!("{}", &self.creation_date),
+            value: self.creation_date.to_string(),
         }
     }
 }
@@ -37,7 +37,7 @@ impl InfoField for RepoPendingInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Pending,
-            value: format!("{}", &self.pending_changes),
+            value: self.pending_changes.to_string(),
         }
     }
 }
@@ -50,7 +50,7 @@ impl InfoField for RepoLastChangeInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::LastChange,
-            value: format!("{}", &self.last_change),
+            value: self.last_change.to_string(),
         }
     }
 }
@@ -63,7 +63,7 @@ impl InfoField for RepoCommitsInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Commits,
-            value: format!("{}", &self.number_of_commits),
+            value: self.number_of_commits.to_string(),
         }
     }
 }
@@ -88,7 +88,7 @@ impl InfoField for RepoSizeInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Size,
-            value: format!("{}", &self),
+            value: self.to_string(),
         }
     }
 }
@@ -101,7 +101,7 @@ impl InfoField for RepoLocInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::LinesOfCode,
-            value: format!("{}", &self.lines_of_code),
+            value: self.lines_of_code.to_string(),
         }
     }
 }
@@ -114,7 +114,7 @@ impl InfoField for RepoHeadInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Head,
-            value: format!("{}", &self.head_refs),
+            value: self.head_refs.to_string(),
         }
     }
 }
@@ -127,7 +127,7 @@ impl InfoField for RepoVersionInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Version,
-            value: format!("{}", &self.version),
+            value: self.version.to_string(),
         }
     }
 }
@@ -140,7 +140,7 @@ impl InfoField for RepoContributorsInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Contributors,
-            value: format!("{}", &self.contributors),
+            value: self.contributors.to_string(),
         }
     }
 }

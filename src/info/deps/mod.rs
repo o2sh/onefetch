@@ -58,7 +58,7 @@ impl InfoField for DependenciesInfoField {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: FieldType::Dependencies,
-            value: format!("{}", &self.dependencies),
+            value: self.dependencies.to_string(),
         }
     }
 }
