@@ -214,7 +214,20 @@ impl Repo {
         Ok(version_name)
     }
 
-    pub fn get_name_and_url(&self) -> Result<(String, String)> {
+    pub fn get_name(&self) -> Result<String> {
+        let remote_url = self.get_url()?;
+        let url = git::url::parse(remote_url.as_str().into())?;
+        let path = git::path::from_bstr(url.path.as_bstr());
+        let repo_name = path
+            .with_extension("")
+            .file_name()
+            .expect("non-empty path")
+            .to_string_lossy()
+            .into_owned();
+        Ok(repo_name)
+    }
+
+    pub fn get_url(&self) -> Result<String> {
         let config = self.repo.config_snapshot();
         let remotes = match config.plumbing().sections_by_name("remote") {
             Some(sections) => sections,
@@ -238,16 +251,7 @@ impl Repo {
             None => return Ok(Default::default()),
         };
 
-        let url = git::url::parse(remote_url.as_str().into())?;
-        let path = git::path::from_bstr(url.path.as_bstr());
-        let repo_name = path
-            .with_extension("")
-            .file_name()
-            .expect("non-empty path")
-            .to_string_lossy()
-            .into_owned();
-
-        Ok((repo_name, remote_url))
+        Ok(remote_url)
     }
 
     pub fn get_head_refs(&self) -> Result<HeadRefs> {

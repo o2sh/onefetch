@@ -1,9 +1,26 @@
-use super::info_field::{InfoField, InfoFieldValue, InfoType};
+use super::{
+    git::Repo,
+    info_field::{InfoField, InfoFieldValue, InfoType},
+};
+use anyhow::Result;
 
 pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_tags: usize,
     pub number_of_branches: usize,
+}
+
+impl ProjectInfo {
+    pub fn new(repo: &Repo) -> Result<Self> {
+        let repo_name = repo.get_name()?;
+        let number_of_tags = repo.get_number_of_tags()?;
+        let number_of_branches = repo.get_number_of_branches()?;
+        Ok(Self {
+            repo_name,
+            number_of_tags,
+            number_of_branches,
+        })
+    }
 }
 
 impl std::fmt::Display for ProjectInfo {

@@ -1,10 +1,18 @@
 use super::{
+    git::Repo,
     head::HeadRefs,
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
+use anyhow::Result;
 
 pub struct UrlInfo {
     pub repo_url: String,
+}
+impl UrlInfo {
+    pub fn new(repo: &Repo) -> Result<Self> {
+        let repo_url = repo.get_url()?;
+        Ok(Self { repo_url })
+    }
 }
 
 impl InfoField for UrlInfo {
@@ -129,6 +137,13 @@ impl InfoField for LocInfo {
 
 pub struct HeadInfo {
     pub head_refs: HeadRefs,
+}
+
+impl HeadInfo {
+    pub fn new(repo: &Repo) -> Result<Self> {
+        let head_refs = repo.get_head_refs()?;
+        Ok(Self { head_refs })
+    }
 }
 
 impl InfoField for HeadInfo {

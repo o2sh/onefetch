@@ -8,13 +8,14 @@ use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
 use self::license::Detector;
 use self::license::LicenseInfo;
+use self::pending::PendingInfo;
 use self::project::ProjectInfo;
 use self::repo::{
-    CommitsInfo, ContributorsInfo, CreatedInfo, HeadInfo, LastChangeInfo, LocInfo, PendingInfo,
-    SizeInfo, UrlInfo, VersionInfo,
+    CommitsInfo, ContributorsInfo, CreatedInfo, HeadInfo, LastChangeInfo, LocInfo, SizeInfo,
+    UrlInfo, VersionInfo,
 };
 use self::title::Title;
-use crate::cli::{self, is_truecolor_terminal, Config, MyRegex, When};
+use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -31,6 +32,7 @@ mod head;
 pub mod info_field;
 pub mod langs;
 mod license;
+mod pending;
 mod project;
 mod repo;
 mod title;
@@ -166,20 +168,12 @@ impl std::fmt::Display for Info {
 
 impl Info {
     pub fn new(config: &Config) -> Result<Self> {
-        let git_version = cli::get_git_version();
-        let repo = git_repository::discover(&config.input)?;
-        let workdir = repo
+        let git_repo = git_repository::discover(&config.input)?;
+        let workdir = git_repo
             .work_dir()
             .context("please run onefetch inside of a non-bare git repository")?
             .to_owned();
 
-        let pending_changes = std::thread::spawn({
-            let git_dir = repo.git_dir().to_owned();
-            move || {
-                let repo = git2::Repository::open(git_dir)?;
-                git::get_pending_changes(&repo)
-            }
-        });
         let languages_handle = std::thread::spawn({
             let ignored_directories = config.exclude.clone();
             let language_types = config.r#type.clone();
@@ -204,7 +198,8 @@ impl Info {
             None
         };
 
-        let repo = Repo::new(repo)?;
+        let pending = PendingInfo::new(&git_repo)?;
+        let repo = Repo::new(git_repo)?;
         let mut commits = Commits::new(
             repo.gitoxide(),
             config.no_merges,
@@ -212,12 +207,7 @@ impl Info {
             config.number_of_authors,
             config.email,
         )?;
-        let (repo_name, repo_url) = repo.get_name_and_url()?;
-        let head_refs = repo.get_head_refs()?;
         let version = repo.get_version()?;
-        let git_username = repo.get_git_username();
-        let number_of_tags = repo.get_number_of_tags()?;
-        let number_of_branches = repo.get_number_of_branches()?;
         let (repo_size, file_count) = repo.get_repo_size();
         let license = Detector::new()?.get_license(&workdir)?;
         let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
@@ -226,11 +216,6 @@ impl Info {
         let number_of_commits = commits.count();
         let (authors, contributors) = commits.take_authors();
         let last_change = commits.get_date_of_last_commit(config.iso_time);
-
-        let pending_changes = pending_changes
-            .join()
-            .ok()
-            .context("BUG: panic in pending-changes thread")??;
 
         let (languages, lines_of_code) = languages_handle
             .join()
@@ -249,21 +234,15 @@ impl Info {
             true_color,
         );
         let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
-        let title = Title {
-            git_username,
-            git_version,
-            title_color: text_colors.title,
-            tilde_color: text_colors.tilde,
-            underline_color: text_colors.underline,
-            is_bold: !config.no_bold,
-        };
-        let project = ProjectInfo {
-            repo_name,
-            number_of_tags,
-            number_of_branches,
-        };
-        let head = HeadInfo { head_refs };
-        let pending = PendingInfo { pending_changes };
+        let title = Title::new(
+            &repo,
+            text_colors.title,
+            text_colors.tilde,
+            text_colors.underline,
+            !config.no_bold,
+        );
+        let project = ProjectInfo::new(&repo)?;
+        let head = HeadInfo::new(&repo)?;
         let version = VersionInfo { version };
         let created = CreatedInfo { creation_date };
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
@@ -274,7 +253,7 @@ impl Info {
         };
         let last_change = LastChangeInfo { last_change };
         let contributors = ContributorsInfo { contributors };
-        let repo = UrlInfo { repo_url };
+        let repo = UrlInfo::new(&repo)?;
         let commits = CommitsInfo { number_of_commits };
         let lines_of_code = LocInfo { lines_of_code };
         let size = SizeInfo {
