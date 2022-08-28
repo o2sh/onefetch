@@ -1,46 +1,46 @@
-use super::info_field::{FieldType, InfoField, InfoFieldValue};
+use super::info_field::{InfoField, InfoFieldValue, InfoType};
 use git_repository as git;
 use owo_colors::{DynColors, OwoColorize};
-use serde::ser::SerializeStruct;
 use serde::Serialize;
 use std::fmt::Write;
 
+#[derive(Serialize)]
 pub struct Author {
     name: String,
-    email: Option<String>,
+    email: String,
     nbr_of_commits: usize,
     contribution: usize,
+    #[serde(skip_serializing)]
+    show_email: bool,
 }
 
 impl Author {
     pub fn new(
         name: git::bstr::BString,
-        email: Option<git::bstr::BString>,
+        email: git::bstr::BString,
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
+        show_email: bool,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
             name: name.to_string(),
-            email: email.map(|e| e.to_string()),
+            email: email.to_string(),
             nbr_of_commits,
             contribution,
+            show_email,
         }
-    }
-
-    pub fn clear_email(&mut self) {
-        self.email = None;
     }
 }
 
 impl std::fmt::Display for Author {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if let Some(email) = &self.email {
+        if self.show_email {
             write!(
                 f,
                 "{}% {} <{}> {}",
-                self.contribution, self.name, email, self.nbr_of_commits
+                self.contribution, self.name, self.email, self.nbr_of_commits
             )
         } else {
             write!(
@@ -52,48 +52,45 @@ impl std::fmt::Display for Author {
     }
 }
 
-impl Serialize for Author {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_struct("Author", 1)?;
-        state.serialize_field("name", &self.name)?;
-        state.end()
-    }
-}
-
-pub struct AuthorsInfoField {
+pub struct AuthorsInfo {
     pub authors: Vec<Author>,
     pub info_color: DynColors,
 }
 
-impl std::fmt::Display for AuthorsInfoField {
+impl std::fmt::Display for AuthorsInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut author_field = String::from("");
+        let mut authors_info = String::from("");
 
-        let pad = FieldType::Authors.as_str().len() + 2;
+        let pad = self.title().len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
             let author_str = author.color(self.info_color);
 
             if i == 0 {
-                let _ = write!(author_field, "{}", author_str);
+                let _ = write!(authors_info, "{}", author_str);
             } else {
-                let _ = write!(author_field, "\n{:<width$}{}", "", author_str, width = pad);
+                let _ = write!(authors_info, "\n{:<width$}{}", "", author_str, width = pad);
             }
         }
 
-        write!(f, "{}", author_field)
+        write!(f, "{}", authors_info)
     }
 }
 
-impl InfoField for AuthorsInfoField {
+impl InfoField for AuthorsInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Authors,
+            r#type: InfoType::Authors,
             value: self.to_string(),
         }
+    }
+
+    fn title(&self) -> String {
+        let mut title = String::from("Author");
+        if self.authors.len() > 1 {
+            title.push('s')
+        }
+        title
     }
 }
 
@@ -105,9 +102,10 @@ mod test {
     fn test_display_author() {
         let author = Author::new(
             "John Doe".into(),
-            Some("john.doe@email.com".into()),
+            "john.doe@email.com".into(),
             1500,
             2000,
+            true,
         );
 
         assert_eq!(
@@ -118,22 +116,14 @@ mod test {
 
     #[test]
     fn test_display_author_with_no_email() {
-        let author = Author::new("John Doe".into(), None, 1500, 2000);
-
-        assert_eq!(format!("{}", author), "75% John Doe 1500");
-    }
-
-    #[test]
-    fn test_clear_email() {
-        let mut author = Author::new(
+        let author = Author::new(
             "John Doe".into(),
-            Some("john.doe@email.com".into()),
+            "john.doe@email.com".into(),
             1500,
             2000,
+            false,
         );
 
-        author.clear_email();
-
-        assert!(author.email.is_none());
+        assert_eq!(format!("{}", author), "75% John Doe 1500");
     }
 }

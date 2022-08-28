@@ -1,79 +1,94 @@
 use super::{
     head::HeadRefs,
-    info_field::{FieldType, InfoField, InfoFieldValue},
+    info_field::{InfoField, InfoFieldValue, InfoType},
 };
 
-pub struct RepoUrlInfoField {
+pub struct UrlInfo {
     pub repo_url: String,
 }
 
-impl InfoField for RepoUrlInfoField {
+impl InfoField for UrlInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Repo,
+            r#type: InfoType::Repo,
             value: self.repo_url.to_string(),
         }
     }
+    fn title(&self) -> String {
+        String::from("Repo")
+    }
 }
 
-pub struct RepoCreatedInfoField {
+pub struct CreatedInfo {
     pub creation_date: String,
 }
 
-impl InfoField for RepoCreatedInfoField {
+impl InfoField for CreatedInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Created,
+            r#type: InfoType::Created,
             value: self.creation_date.to_string(),
         }
     }
+    fn title(&self) -> String {
+        String::from("Created")
+    }
 }
 
-pub struct RepoPendingInfoField {
+pub struct PendingInfo {
     pub pending_changes: String,
 }
 
-impl InfoField for RepoPendingInfoField {
+impl InfoField for PendingInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Pending,
+            r#type: InfoType::Pending,
             value: self.pending_changes.to_string(),
         }
     }
+    fn title(&self) -> String {
+        String::from("Pending")
+    }
 }
 
-pub struct RepoLastChangeInfoField {
+pub struct LastChangeInfo {
     pub last_change: String,
 }
 
-impl InfoField for RepoLastChangeInfoField {
+impl InfoField for LastChangeInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::LastChange,
+            r#type: InfoType::LastChange,
             value: self.last_change.to_string(),
         }
     }
-}
-
-pub struct RepoCommitsInfoField {
-    pub number_of_commits: String,
-}
-
-impl InfoField for RepoCommitsInfoField {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: FieldType::Commits,
-            value: self.number_of_commits.to_string(),
-        }
+    fn title(&self) -> String {
+        String::from("Last change")
     }
 }
 
-pub struct RepoSizeInfoField {
+pub struct CommitsInfo {
+    pub number_of_commits: String,
+}
+
+impl InfoField for CommitsInfo {
+    fn value(&self) -> InfoFieldValue {
+        InfoFieldValue {
+            r#type: InfoType::Commits,
+            value: self.number_of_commits.to_string(),
+        }
+    }
+    fn title(&self) -> String {
+        String::from("Commits")
+    }
+}
+
+pub struct SizeInfo {
     pub repo_size: String,
     pub file_count: u64,
 }
 
-impl std::fmt::Display for RepoSizeInfoField {
+impl std::fmt::Display for SizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.file_count {
             0 => write!(f, "{}", &self.repo_size),
@@ -84,63 +99,78 @@ impl std::fmt::Display for RepoSizeInfoField {
     }
 }
 
-impl InfoField for RepoSizeInfoField {
+impl InfoField for SizeInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Size,
+            r#type: InfoType::Size,
             value: self.to_string(),
         }
     }
+    fn title(&self) -> String {
+        String::from("Size")
+    }
 }
 
-pub struct RepoLocInfoField {
+pub struct LocInfo {
     pub lines_of_code: usize,
 }
 
-impl InfoField for RepoLocInfoField {
+impl InfoField for LocInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::LinesOfCode,
+            r#type: InfoType::LinesOfCode,
             value: self.lines_of_code.to_string(),
         }
     }
+    fn title(&self) -> String {
+        String::from("Lines of code")
+    }
 }
 
-pub struct RepoHeadInfoField {
+pub struct HeadInfo {
     pub head_refs: HeadRefs,
 }
 
-impl InfoField for RepoHeadInfoField {
+impl InfoField for HeadInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Head,
+            r#type: InfoType::Head,
             value: self.head_refs.to_string(),
         }
     }
-}
-
-pub struct RepoVersionInfoField {
-    pub version: String,
-}
-
-impl InfoField for RepoVersionInfoField {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: FieldType::Version,
-            value: self.version.to_string(),
-        }
+    fn title(&self) -> String {
+        String::from("HEAD")
     }
 }
 
-pub struct RepoContributorsInfoField {
+pub struct VersionInfo {
+    pub version: String,
+}
+
+impl InfoField for VersionInfo {
+    fn value(&self) -> InfoFieldValue {
+        InfoFieldValue {
+            r#type: InfoType::Version,
+            value: self.version.to_string(),
+        }
+    }
+    fn title(&self) -> String {
+        String::from("Version")
+    }
+}
+
+pub struct ContributorsInfo {
     pub contributors: usize,
 }
 
-impl InfoField for RepoContributorsInfoField {
+impl InfoField for ContributorsInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Contributors,
+            r#type: InfoType::Contributors,
             value: self.contributors.to_string(),
         }
+    }
+    fn title(&self) -> String {
+        String::from("Contributors")
     }
 }

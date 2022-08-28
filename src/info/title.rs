@@ -1,13 +1,19 @@
 use owo_colors::{DynColors, OwoColorize};
+use serde::Serialize;
 
 use super::get_style;
 
+#[derive(Serialize)]
 pub struct Title {
     pub git_username: String,
     pub git_version: String,
+    #[serde(skip_serializing)]
     pub title_color: DynColors,
+    #[serde(skip_serializing)]
     pub tilde_color: DynColors,
+    #[serde(skip_serializing)]
     pub underline_color: DynColors,
+    #[serde(skip_serializing)]
     pub is_bold: bool,
 }
 

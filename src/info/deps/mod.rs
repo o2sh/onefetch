@@ -1,4 +1,4 @@
-use super::info_field::{FieldType, InfoField, InfoFieldValue};
+use super::info_field::{InfoField, InfoFieldValue, InfoType};
 use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
@@ -50,16 +50,19 @@ impl DependencyDetector {
     }
 }
 
-pub struct DependenciesInfoField {
+pub struct DependenciesInfo {
     pub dependencies: String,
 }
 
-impl InfoField for DependenciesInfoField {
+impl InfoField for DependenciesInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Dependencies,
+            r#type: InfoType::Dependencies,
             value: self.dependencies.to_string(),
         }
+    }
+    fn title(&self) -> String {
+        String::from("Dependencies")
     }
 }
 

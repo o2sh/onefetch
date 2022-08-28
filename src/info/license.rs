@@ -1,4 +1,4 @@
-use super::info_field::{FieldType, InfoField, InfoFieldValue};
+use super::info_field::{InfoField, InfoFieldValue, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use std::path::Path;
@@ -66,16 +66,20 @@ fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
         .any(|&name| file_name.as_ref().starts_with(name))
 }
 
-pub struct LicenseInfoField {
+pub struct LicenseInfo {
     pub license: String,
 }
 
-impl InfoField for LicenseInfoField {
+impl InfoField for LicenseInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::License,
+            r#type: InfoType::License,
             value: self.license.to_string(),
         }
+    }
+
+    fn title(&self) -> String {
+        String::from("License")
     }
 }
 

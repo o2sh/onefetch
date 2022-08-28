@@ -1,21 +1,43 @@
+use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
 use owo_colors::OwoColorize;
-
-use crate::info::info_field::{FieldType, InfoField, InfoFieldValue};
-use std::fmt::Write;
+use serde::Serialize;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
-pub struct LanguagesInfoField {
-    pub languages: Vec<(Language, f64)>,
+#[derive(Serialize)]
+pub struct LanguageWithPercentage {
+    pub language: Language,
+    pub percentage: f64,
+}
+
+pub struct LanguagesInfo {
+    pub languages_with_percentage: Vec<LanguageWithPercentage>,
     pub true_color: bool,
     pub info_color: DynColors,
 }
 
-impl std::fmt::Display for LanguagesInfoField {
+impl LanguagesInfo {
+    pub fn new(languages: Vec<(Language, f64)>, true_color: bool, info_color: DynColors) -> Self {
+        let languages_with_percentage = languages
+            .into_iter()
+            .map(|(language, percentage)| LanguageWithPercentage {
+                language,
+                percentage,
+            })
+            .collect();
+        Self {
+            languages_with_percentage,
+            true_color,
+            info_color,
+        }
+    }
+}
+
+impl std::fmt::Display for LanguagesInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut language_field = String::from("");
+        let mut languages_info = String::from("");
         let language_bar_length = 26;
-        let pad = FieldType::Languages.as_str().len() + 2;
+        let pad = self.title().len() + 2;
         let color_palette = vec![
             DynColors::Ansi(AnsiColors::Red),
             DynColors::Ansi(AnsiColors::Green),
@@ -26,19 +48,23 @@ impl std::fmt::Display for LanguagesInfoField {
         ];
 
         let languages: Vec<(String, f64, DynColors)> = {
-            let mut iter = self
-                .languages
-                .iter()
-                .enumerate()
-                .map(|(i, (language, perc))| {
+            let mut iter = self.languages_with_percentage.iter().enumerate().map(
+                |(
+                    i,
+                    &LanguageWithPercentage {
+                        language,
+                        percentage,
+                    },
+                )| {
                     let circle_color = if self.true_color {
                         language.get_circle_color()
                     } else {
                         color_palette[i % color_palette.len()]
                     };
-                    (language.to_string(), *perc, circle_color)
-                });
-            if self.languages.len() > 6 {
+                    (language.to_string(), percentage, circle_color)
+                },
+            );
+            if self.languages_with_percentage.len() > 6 {
                 let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
                 let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
                 languages.push((
@@ -63,7 +89,7 @@ impl std::fmt::Display for LanguagesInfoField {
             })
             .collect();
 
-        language_field.push_str(&language_bar);
+        languages_info.push_str(&language_bar);
 
         for (i, (language, perc, circle_color)) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, perc);
@@ -75,25 +101,32 @@ impl std::fmt::Display for LanguagesInfoField {
             );
             if i % 2 == 0 {
                 let _ = write!(
-                    language_field,
+                    languages_info,
                     "\n{:<width$}{}",
                     "",
                     language_str,
                     width = pad
                 );
             } else {
-                language_field.push_str(&language_str.to_string());
+                languages_info.push_str(&language_str.to_string());
             }
         }
-        write!(f, "{}", language_field)
+        write!(f, "{}", languages_info)
     }
 }
 
-impl InfoField for LanguagesInfoField {
+impl InfoField for LanguagesInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Languages,
+            r#type: InfoType::Languages,
             value: self.to_string(),
         }
+    }
+    fn title(&self) -> String {
+        let mut title = String::from("Language");
+        if self.languages_with_percentage.len() > 1 {
+            title.push('s')
+        }
+        title
     }
 }

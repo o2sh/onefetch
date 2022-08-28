@@ -1,5 +1,9 @@
-use owo_colors::{AnsiColors, DynColors::{self, Rgb, Ansi}};
+use owo_colors::{
+    AnsiColors,
+    DynColors::{self, Ansi, Rgb},
+};
 use std::fmt;
+use std::fmt::Write;
 use strum::EnumIter;
 
 pub struct Colors {
@@ -15,7 +19,7 @@ pub enum LanguageType {
     Data,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize)]
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
 pub enum Language {

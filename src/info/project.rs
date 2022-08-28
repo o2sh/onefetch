@@ -1,12 +1,12 @@
-use super::info_field::{FieldType, InfoField, InfoFieldValue};
+use super::info_field::{InfoField, InfoFieldValue, InfoType};
 
-pub struct ProjectInfoField {
+pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_tags: usize,
     pub number_of_branches: usize,
 }
 
-impl std::fmt::Display for ProjectInfoField {
+impl std::fmt::Display for ProjectInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let branches_str = match self.number_of_branches {
             0 => String::new(),
@@ -30,11 +30,14 @@ impl std::fmt::Display for ProjectInfoField {
     }
 }
 
-impl InfoField for ProjectInfoField {
+impl InfoField for ProjectInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
-            r#type: FieldType::Project,
+            r#type: InfoType::Project,
             value: format!("{}", self),
         }
+    }
+    fn title(&self) -> String {
+        String::from("Project")
     }
 }

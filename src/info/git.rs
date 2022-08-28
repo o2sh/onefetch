@@ -46,6 +46,7 @@ impl Commits {
         no_merges: bool,
         bot_regex_pattern: &Option<MyRegex>,
         number_of_authors_to_display: usize,
+        show_email: bool,
     ) -> Result<Self> {
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
@@ -100,9 +101,10 @@ impl Commits {
                 let email = author.email;
                 Author::new(
                     author.name,
-                    email.into(),
+                    email,
                     author_nbr_of_commits,
                     total_nbr_of_commits,
+                    show_email,
                 )
             })
             .take(number_of_authors_to_display)
@@ -139,12 +141,7 @@ impl Commits {
         )
     }
 
-    pub fn take_authors(&mut self, show_email: bool) -> (Vec<Author>, usize) {
-        if !show_email {
-            for author in &mut self.authors {
-                author.clear_email();
-            }
-        }
+    pub fn take_authors(&mut self) -> (Vec<Author>, usize) {
         (std::mem::take(&mut self.authors), self.total_num_authors)
     }
 

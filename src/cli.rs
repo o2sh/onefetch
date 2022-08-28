@@ -1,5 +1,5 @@
 use crate::info::deps::package_manager::PackageManager;
-use crate::info::info_field::FieldType;
+use crate::info::info_field::InfoType;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::ui::image_backends::ImageProtocol;
 use crate::ui::printer::SerializationFormat;
@@ -57,7 +57,7 @@ pub struct Config {
         arg_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<FieldType>,
+    pub disabled_fields: Vec<InfoType>,
     /// Path to the IMAGE file
     #[clap(long, short, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
@@ -208,7 +208,7 @@ mod test {
         config.input = PathBuf::from("/tmp/folder");
         config.no_merges = true;
         config.ascii_colors = vec![5, 0];
-        config.disabled_fields = vec![FieldType::Version, FieldType::Repo];
+        config.disabled_fields = vec![InfoType::Version, InfoType::Repo];
         config.show_logo = When::Never;
         config.ascii_language = Some(Language::Lisp);
 
