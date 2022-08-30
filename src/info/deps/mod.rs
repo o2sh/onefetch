@@ -54,6 +54,13 @@ pub struct DependenciesInfo {
     pub dependencies: String,
 }
 
+impl DependenciesInfo {
+    pub fn new(repo_path: &Path) -> Result<Self> {
+        let dependencies = DependencyDetector::new().get_dependencies(repo_path)?;
+        Ok(Self { dependencies })
+    }
+}
+
 impl InfoField for DependenciesInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {

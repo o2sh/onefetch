@@ -1,5 +1,5 @@
 use super::{
-    git::Repo,
+    git::{Commits, Repo},
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 use anyhow::Result;
@@ -28,6 +28,13 @@ impl InfoField for UrlInfo {
 
 pub struct CreatedInfo {
     pub creation_date: String,
+}
+
+impl CreatedInfo {
+    pub fn new(iso_time: bool, commits: &Commits) -> Self {
+        let creation_date = commits.get_creation_date(iso_time);
+        Self { creation_date }
+    }
 }
 
 impl InfoField for CreatedInfo {
@@ -62,6 +69,14 @@ pub struct LastChangeInfo {
     pub last_change: String,
 }
 
+impl LastChangeInfo {
+    pub fn new(iso_time: bool, commits: &Commits) -> Self {
+        let last_change = commits.get_date_of_last_commit(iso_time);
+
+        Self { last_change }
+    }
+}
+
 impl InfoField for LastChangeInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
@@ -78,6 +93,12 @@ pub struct CommitsInfo {
     pub number_of_commits: String,
 }
 
+impl CommitsInfo {
+    pub fn new(commits: &Commits) -> Self {
+        let number_of_commits = commits.count();
+        Self { number_of_commits }
+    }
+}
 impl InfoField for CommitsInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
@@ -95,6 +116,15 @@ pub struct SizeInfo {
     pub file_count: u64,
 }
 
+impl SizeInfo {
+    pub fn new(repo: &Repo) -> Self {
+        let (repo_size, file_count) = repo.get_repo_size();
+        Self {
+            repo_size,
+            file_count,
+        }
+    }
+}
 impl std::fmt::Display for SizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.file_count {
@@ -138,6 +168,12 @@ pub struct VersionInfo {
     pub version: String,
 }
 
+impl VersionInfo {
+    pub fn new(repo: &Repo) -> Result<Self> {
+        let version = repo.get_version()?;
+        Ok(Self { version })
+    }
+}
 impl InfoField for VersionInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
@@ -151,14 +187,22 @@ impl InfoField for VersionInfo {
 }
 
 pub struct ContributorsInfo {
-    pub contributors: usize,
+    pub number_of_contributors: usize,
 }
 
+impl ContributorsInfo {
+    pub fn new(commits: &Commits) -> Self {
+        let contributors = commits.number_of_contributors();
+        Self {
+            number_of_contributors: contributors,
+        }
+    }
+}
 impl InfoField for ContributorsInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: InfoType::Contributors,
-            value: self.contributors.to_string(),
+            value: self.number_of_contributors.to_string(),
         }
     }
     fn title(&self) -> String {

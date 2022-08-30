@@ -1,13 +1,11 @@
 use self::author::AuthorsInfo;
 use self::deps::DependenciesInfo;
-use self::deps::DependencyDetector;
 use self::git::Commits;
 use self::git::Repo;
 use self::head::HeadInfo;
 use self::info_field::{InfoField, InfoFieldValueGetter, InfoType};
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
-use self::license::Detector;
 use self::license::LicenseInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
@@ -170,7 +168,7 @@ impl std::fmt::Display for Info {
 impl Info {
     pub fn new(config: &Config) -> Result<Self> {
         let git_repo = git_repository::discover(&config.input)?;
-        let workdir = git_repo
+        let repo_path = git_repo
             .work_dir()
             .context("please run onefetch inside of a non-bare git repository")?
             .to_owned();
@@ -179,7 +177,7 @@ impl Info {
             let ignored_directories = config.exclude.clone();
             let language_types = config.r#type.clone();
             let include_hidden = config.include_hidden;
-            let workdir = workdir.clone();
+            let workdir = repo_path.clone();
             move || {
                 langs::get_language_statistics(
                     &workdir,
@@ -208,15 +206,6 @@ impl Info {
             config.number_of_authors,
             config.email,
         )?;
-        let version = repo.get_version()?;
-        let (repo_size, file_count) = repo.get_repo_size();
-        let license = Detector::new()?.get_license(&workdir)?;
-        let dependencies = DependencyDetector::new().get_dependencies(&workdir)?;
-
-        let creation_date = commits.get_creation_date(config.iso_time);
-        let number_of_commits = commits.count();
-        let (authors, contributors) = commits.take_authors();
-        let last_change = commits.get_date_of_last_commit(config.iso_time);
 
         let (languages, lines_of_code) = languages_handle
             .join()
@@ -244,24 +233,18 @@ impl Info {
         );
         let project = ProjectInfo::new(&repo)?;
         let head = HeadInfo::new(&repo)?;
-        let version = VersionInfo { version };
-        let created = CreatedInfo { creation_date };
+        let version = VersionInfo::new(&repo)?;
+        let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
-        let dependencies = DependenciesInfo { dependencies };
-        let authors = AuthorsInfo {
-            authors,
-            info_color: text_colors.info,
-        };
-        let last_change = LastChangeInfo { last_change };
-        let contributors = ContributorsInfo { contributors };
-        let repo = UrlInfo::new(&repo)?;
-        let commits = CommitsInfo { number_of_commits };
+        let dependencies = DependenciesInfo::new(&repo_path)?;
+        let authors = AuthorsInfo::new(text_colors.info, &mut commits);
+        let last_change = LastChangeInfo::new(config.iso_time, &commits);
+        let contributors = ContributorsInfo::new(&commits);
+        let repo_url = UrlInfo::new(&repo)?;
+        let size = SizeInfo::new(&repo);
+        let commits = CommitsInfo::new(&commits);
         let lines_of_code = LocInfo { lines_of_code };
-        let size = SizeInfo {
-            repo_size,
-            file_count,
-        };
-        let license = LicenseInfo { license };
+        let license = LicenseInfo::new(&repo_path)?;
 
         Ok(Self {
             title,
@@ -275,7 +258,7 @@ impl Info {
             authors,
             last_change,
             contributors,
-            repo,
+            repo: repo_url,
             commits,
             lines_of_code,
             size,
@@ -343,7 +326,7 @@ impl Serialize for Info {
         state.serialize_field("dependencies", &self.dependencies.dependencies)?;
         state.serialize_field("authors", &self.authors.authors)?;
         state.serialize_field("lastChange", &self.last_change.last_change)?;
-        state.serialize_field("contributors", &self.contributors.contributors)?;
+        state.serialize_field("contributors", &self.contributors.number_of_contributors)?;
         state.serialize_field("repoUrl", &self.repo.repo_url)?;
         state.serialize_field("numberOfCommits", &self.commits.number_of_commits)?;
         state.serialize_field("linesOfCode", &self.lines_of_code.lines_of_code)?;

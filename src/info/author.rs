@@ -1,4 +1,7 @@
-use super::info_field::{InfoField, InfoFieldValue, InfoType};
+use super::{
+    git::Commits,
+    info_field::{InfoField, InfoFieldValue, InfoType},
+};
 use git_repository as git;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
@@ -55,6 +58,16 @@ impl std::fmt::Display for Author {
 pub struct AuthorsInfo {
     pub authors: Vec<Author>,
     pub info_color: DynColors,
+}
+
+impl AuthorsInfo {
+    pub fn new(info_color: DynColors, commits: &mut Commits) -> Self {
+        let authors = commits.authors();
+        Self {
+            authors,
+            info_color,
+        }
+    }
 }
 
 impl std::fmt::Display for AuthorsInfo {

@@ -70,6 +70,13 @@ pub struct LicenseInfo {
     pub license: String,
 }
 
+impl LicenseInfo {
+    pub fn new(repo_path: &Path) -> Result<Self> {
+        let license = Detector::new()?.get_license(repo_path)?;
+        Ok(Self { license })
+    }
+}
+
 impl InfoField for LicenseInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {

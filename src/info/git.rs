@@ -141,8 +141,12 @@ impl Commits {
         )
     }
 
-    pub fn take_authors(&mut self) -> (Vec<Author>, usize) {
-        (std::mem::take(&mut self.authors), self.total_num_authors)
+    pub fn authors(&mut self) -> Vec<Author> {
+        std::mem::take(&mut self.authors)
+    }
+
+    pub fn number_of_contributors(&self) -> usize {
+        self.total_num_authors
     }
 
     pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
