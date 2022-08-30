@@ -3,6 +3,7 @@ use self::deps::DependenciesInfo;
 use self::deps::DependencyDetector;
 use self::git::Commits;
 use self::git::Repo;
+use self::head::HeadInfo;
 use self::info_field::{InfoField, InfoFieldValueGetter, InfoType};
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
@@ -11,8 +12,8 @@ use self::license::LicenseInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
 use self::repo::{
-    CommitsInfo, ContributorsInfo, CreatedInfo, HeadInfo, LastChangeInfo, LocInfo, SizeInfo,
-    UrlInfo, VersionInfo,
+    CommitsInfo, ContributorsInfo, CreatedInfo, LastChangeInfo, LocInfo, SizeInfo, UrlInfo,
+    VersionInfo,
 };
 use self::title::Title;
 use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
@@ -334,8 +335,20 @@ impl Serialize for Info {
         let mut state = serializer.serialize_struct("Info", 4)?;
         state.serialize_field("gitUsername", &self.title.git_username)?;
         state.serialize_field("gitVersion", &self.title.git_version)?;
-        state.serialize_field("authors", &self.authors.authors)?;
+        state.serialize_field("project", &self.project)?;
+        state.serialize_field("head", &self.head.head_refs)?;
+        state.serialize_field("version", &self.version.version)?;
+        state.serialize_field("created", &self.created.creation_date)?;
         state.serialize_field("languages", &self.languages.languages_with_percentage)?;
+        state.serialize_field("dependencies", &self.dependencies.dependencies)?;
+        state.serialize_field("authors", &self.authors.authors)?;
+        state.serialize_field("lastChange", &self.last_change.last_change)?;
+        state.serialize_field("contributors", &self.contributors.contributors)?;
+        state.serialize_field("repoUrl", &self.repo.repo_url)?;
+        state.serialize_field("numberOfCommits", &self.commits.number_of_commits)?;
+        state.serialize_field("linesOfCode", &self.lines_of_code.lines_of_code)?;
+        state.serialize_field("repoSize", &self.size.repo_size)?;
+        state.serialize_field("license", &self.license.license)?;
 
         state.end()
     }

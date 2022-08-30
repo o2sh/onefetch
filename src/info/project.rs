@@ -3,7 +3,9 @@ use super::{
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 use anyhow::Result;
+use serde::Serialize;
 
+#[derive(Serialize)]
 pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_tags: usize,

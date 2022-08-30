@@ -1,6 +1,12 @@
-use serde::ser::SerializeStruct;
+use anyhow::Result;
 use serde::Serialize;
 
+use super::{
+    git::Repo,
+    info_field::{InfoField, InfoFieldValue, InfoType},
+};
+
+#[derive(Serialize)]
 pub struct HeadRefs {
     short_commit_id: String,
     refs: Vec<String>,
@@ -31,15 +37,26 @@ impl std::fmt::Display for HeadRefs {
     }
 }
 
-impl Serialize for HeadRefs {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_struct("HeadRefs", 2)?;
-        state.serialize_field("refs", &self.refs)?;
-        state.serialize_field("oid", &self.short_commit_id)?;
-        state.end()
+pub struct HeadInfo {
+    pub head_refs: HeadRefs,
+}
+
+impl HeadInfo {
+    pub fn new(repo: &Repo) -> Result<Self> {
+        let head_refs = repo.get_head_refs()?;
+        Ok(Self { head_refs })
+    }
+}
+
+impl InfoField for HeadInfo {
+    fn value(&self) -> InfoFieldValue {
+        InfoFieldValue {
+            r#type: InfoType::Head,
+            value: self.head_refs.to_string(),
+        }
+    }
+    fn title(&self) -> String {
+        String::from("HEAD")
     }
 }
 

@@ -1,6 +1,5 @@
 use super::{
     git::Repo,
-    head::HeadRefs,
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 use anyhow::Result;
@@ -132,29 +131,6 @@ impl InfoField for LocInfo {
     }
     fn title(&self) -> String {
         String::from("Lines of code")
-    }
-}
-
-pub struct HeadInfo {
-    pub head_refs: HeadRefs,
-}
-
-impl HeadInfo {
-    pub fn new(repo: &Repo) -> Result<Self> {
-        let head_refs = repo.get_head_refs()?;
-        Ok(Self { head_refs })
-    }
-}
-
-impl InfoField for HeadInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Head,
-            value: self.head_refs.to_string(),
-        }
-    }
-    fn title(&self) -> String {
-        String::from("HEAD")
     }
 }
 
