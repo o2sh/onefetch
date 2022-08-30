@@ -31,7 +31,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 11 commits contributed to the release.
  - 5 days passed between releases.
- - 3 commits where understood as [conventional](https://www.conventionalcommits.org).
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
@@ -62,7 +62,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 137 commits contributed to the release over the course of 125 calendar days.
  - 125 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 51 unique issues were worked on: [#545](https://github.com/o2sh/onefetch/issues/545), [#546](https://github.com/o2sh/onefetch/issues/546), [#547](https://github.com/o2sh/onefetch/issues/547), [#548](https://github.com/o2sh/onefetch/issues/548), [#549](https://github.com/o2sh/onefetch/issues/549), [#550](https://github.com/o2sh/onefetch/issues/550), [#551](https://github.com/o2sh/onefetch/issues/551), [#554](https://github.com/o2sh/onefetch/issues/554), [#555](https://github.com/o2sh/onefetch/issues/555), [#556](https://github.com/o2sh/onefetch/issues/556), [#557](https://github.com/o2sh/onefetch/issues/557), [#558](https://github.com/o2sh/onefetch/issues/558), [#559](https://github.com/o2sh/onefetch/issues/559), [#560](https://github.com/o2sh/onefetch/issues/560), [#561](https://github.com/o2sh/onefetch/issues/561), [#562](https://github.com/o2sh/onefetch/issues/562), [#563](https://github.com/o2sh/onefetch/issues/563), [#566](https://github.com/o2sh/onefetch/issues/566), [#568](https://github.com/o2sh/onefetch/issues/568), [#569](https://github.com/o2sh/onefetch/issues/569), [#573](https://github.com/o2sh/onefetch/issues/573), [#576](https://github.com/o2sh/onefetch/issues/576), [#580](https://github.com/o2sh/onefetch/issues/580), [#583](https://github.com/o2sh/onefetch/issues/583), [#585](https://github.com/o2sh/onefetch/issues/585), [#590](https://github.com/o2sh/onefetch/issues/590), [#591](https://github.com/o2sh/onefetch/issues/591), [#598](https://github.com/o2sh/onefetch/issues/598), [#599](https://github.com/o2sh/onefetch/issues/599), [#600](https://github.com/o2sh/onefetch/issues/600), [#601](https://github.com/o2sh/onefetch/issues/601), [#602](https://github.com/o2sh/onefetch/issues/602), [#604](https://github.com/o2sh/onefetch/issues/604), [#606](https://github.com/o2sh/onefetch/issues/606), [#607](https://github.com/o2sh/onefetch/issues/607), [#608](https://github.com/o2sh/onefetch/issues/608), [#609](https://github.com/o2sh/onefetch/issues/609), [#610](https://github.com/o2sh/onefetch/issues/610), [#613](https://github.com/o2sh/onefetch/issues/613), [#614](https://github.com/o2sh/onefetch/issues/614), [#616](https://github.com/o2sh/onefetch/issues/616), [#617](https://github.com/o2sh/onefetch/issues/617), [#620](https://github.com/o2sh/onefetch/issues/620), [#622](https://github.com/o2sh/onefetch/issues/622), [#623](https://github.com/o2sh/onefetch/issues/623), [#624](https://github.com/o2sh/onefetch/issues/624), [#625](https://github.com/o2sh/onefetch/issues/625), [#626](https://github.com/o2sh/onefetch/issues/626), [#630](https://github.com/o2sh/onefetch/issues/630), [#632](https://github.com/o2sh/onefetch/issues/632), [#634](https://github.com/o2sh/onefetch/issues/634)
 
 ### Thanks Clippy
@@ -289,7 +289,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 123 commits contributed to the release over the course of 142 calendar days.
  - 142 days passed between releases.
- - 2 commits where understood as [conventional](https://www.conventionalcommits.org).
+ - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 55 unique issues were worked on: [#460](https://github.com/o2sh/onefetch/issues/460), [#461](https://github.com/o2sh/onefetch/issues/461), [#463](https://github.com/o2sh/onefetch/issues/463), [#465](https://github.com/o2sh/onefetch/issues/465), [#466](https://github.com/o2sh/onefetch/issues/466), [#469](https://github.com/o2sh/onefetch/issues/469), [#470](https://github.com/o2sh/onefetch/issues/470), [#473](https://github.com/o2sh/onefetch/issues/473), [#474](https://github.com/o2sh/onefetch/issues/474), [#475](https://github.com/o2sh/onefetch/issues/475), [#476](https://github.com/o2sh/onefetch/issues/476), [#477](https://github.com/o2sh/onefetch/issues/477), [#478](https://github.com/o2sh/onefetch/issues/478), [#479](https://github.com/o2sh/onefetch/issues/479), [#480](https://github.com/o2sh/onefetch/issues/480), [#481](https://github.com/o2sh/onefetch/issues/481), [#482](https://github.com/o2sh/onefetch/issues/482), [#483](https://github.com/o2sh/onefetch/issues/483), [#484](https://github.com/o2sh/onefetch/issues/484), [#485](https://github.com/o2sh/onefetch/issues/485), [#486](https://github.com/o2sh/onefetch/issues/486), [#487](https://github.com/o2sh/onefetch/issues/487), [#488](https://github.com/o2sh/onefetch/issues/488), [#489](https://github.com/o2sh/onefetch/issues/489), [#491](https://github.com/o2sh/onefetch/issues/491), [#492](https://github.com/o2sh/onefetch/issues/492), [#494](https://github.com/o2sh/onefetch/issues/494), [#495](https://github.com/o2sh/onefetch/issues/495), [#496](https://github.com/o2sh/onefetch/issues/496), [#497](https://github.com/o2sh/onefetch/issues/497), [#498](https://github.com/o2sh/onefetch/issues/498), [#499](https://github.com/o2sh/onefetch/issues/499), [#500](https://github.com/o2sh/onefetch/issues/500), [#501](https://github.com/o2sh/onefetch/issues/501), [#502](https://github.com/o2sh/onefetch/issues/502), [#503](https://github.com/o2sh/onefetch/issues/503), [#505](https://github.com/o2sh/onefetch/issues/505), [#506](https://github.com/o2sh/onefetch/issues/506), [#507](https://github.com/o2sh/onefetch/issues/507), [#508](https://github.com/o2sh/onefetch/issues/508), [#509](https://github.com/o2sh/onefetch/issues/509), [#511](https://github.com/o2sh/onefetch/issues/511), [#513](https://github.com/o2sh/onefetch/issues/513), [#514](https://github.com/o2sh/onefetch/issues/514), [#518](https://github.com/o2sh/onefetch/issues/518), [#519](https://github.com/o2sh/onefetch/issues/519), [#527](https://github.com/o2sh/onefetch/issues/527), [#528](https://github.com/o2sh/onefetch/issues/528), [#529](https://github.com/o2sh/onefetch/issues/529), [#530](https://github.com/o2sh/onefetch/issues/530), [#531](https://github.com/o2sh/onefetch/issues/531), [#532](https://github.com/o2sh/onefetch/issues/532), [#537](https://github.com/o2sh/onefetch/issues/537), [#541](https://github.com/o2sh/onefetch/issues/541), [#542](https://github.com/o2sh/onefetch/issues/542)
 
 ### Commit Details
@@ -486,8 +486,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 <csr-read-only-do-not-edit/>
 
  - 2 commits contributed to the release.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -507,8 +507,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 <csr-read-only-do-not-edit/>
 
  - 2 commits contributed to the release.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -535,7 +535,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 148 commits contributed to the release over the course of 160 calendar days.
  - 168 days passed between releases.
- - 1 commit where understood as [conventional](https://www.conventionalcommits.org).
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 25 unique issues were worked on: [#380](https://github.com/o2sh/onefetch/issues/380), [#394](https://github.com/o2sh/onefetch/issues/394), [#404](https://github.com/o2sh/onefetch/issues/404), [#412](https://github.com/o2sh/onefetch/issues/412), [#416](https://github.com/o2sh/onefetch/issues/416), [#417](https://github.com/o2sh/onefetch/issues/417), [#418](https://github.com/o2sh/onefetch/issues/418), [#421](https://github.com/o2sh/onefetch/issues/421), [#422](https://github.com/o2sh/onefetch/issues/422), [#425](https://github.com/o2sh/onefetch/issues/425), [#426](https://github.com/o2sh/onefetch/issues/426), [#427](https://github.com/o2sh/onefetch/issues/427), [#429](https://github.com/o2sh/onefetch/issues/429), [#430](https://github.com/o2sh/onefetch/issues/430), [#431](https://github.com/o2sh/onefetch/issues/431), [#435](https://github.com/o2sh/onefetch/issues/435), [#436](https://github.com/o2sh/onefetch/issues/436), [#437](https://github.com/o2sh/onefetch/issues/437), [#438](https://github.com/o2sh/onefetch/issues/438), [#439](https://github.com/o2sh/onefetch/issues/439), [#443](https://github.com/o2sh/onefetch/issues/443), [#445](https://github.com/o2sh/onefetch/issues/445), [#452](https://github.com/o2sh/onefetch/issues/452), [#454](https://github.com/o2sh/onefetch/issues/454), [#456](https://github.com/o2sh/onefetch/issues/456)
 
 ### Commit Details
@@ -728,7 +728,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 7 commits contributed to the release over the course of 1 calendar day.
  - 2 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 2 unique issues were worked on: [#375](https://github.com/o2sh/onefetch/issues/375), [#376](https://github.com/o2sh/onefetch/issues/376)
 
 ### Commit Details
@@ -757,7 +757,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 67 commits contributed to the release over the course of 25 calendar days.
  - 27 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 4 unique issues were worked on: [#360](https://github.com/o2sh/onefetch/issues/360), [#362](https://github.com/o2sh/onefetch/issues/362), [#370](https://github.com/o2sh/onefetch/issues/370), [#373](https://github.com/o2sh/onefetch/issues/373)
 
 ### Commit Details
@@ -848,8 +848,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 62 commits contributed to the release over the course of 24 calendar days.
  - 24 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -929,8 +929,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 <csr-read-only-do-not-edit/>
 
  - 9 commits contributed to the release.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -972,8 +972,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 33 commits contributed to the release over the course of 7 calendar days.
  - 13 days passed between releases.
- - 2 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1024,8 +1024,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 <csr-read-only-do-not-edit/>
 
  - 7 commits contributed to the release.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1056,8 +1056,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 41 commits contributed to the release over the course of 2 calendar days.
  - 3 days passed between releases.
- - 2 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1148,8 +1148,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 162 commits contributed to the release over the course of 16 calendar days.
  - 15 days passed between releases.
- - 11 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 11 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1335,8 +1335,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 169 commits contributed to the release over the course of 14 calendar days.
  - 15 days passed between releases.
- - 1 commit where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1524,7 +1524,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 92 commits contributed to the release over the course of 61 calendar days.
  - 61 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 3 unique issues were worked on: [#189](https://github.com/o2sh/onefetch/issues/189), [#201](https://github.com/o2sh/onefetch/issues/201), [#210](https://github.com/o2sh/onefetch/issues/210)
 
 ### Commit Details
@@ -1688,8 +1688,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 29 commits contributed to the release over the course of 46 calendar days.
  - 55 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1737,8 +1737,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 23 commits contributed to the release.
  - 3 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1779,8 +1779,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 <csr-read-only-do-not-edit/>
 
  - 13 commits contributed to the release.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1812,8 +1812,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 45 commits contributed to the release over the course of 6 calendar days.
  - 7 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -1887,8 +1887,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 149 commits contributed to the release over the course of 17 calendar days.
  - 19 days passed between releases.
- - 2 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2097,8 +2097,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 22 commits contributed to the release over the course of 3 calendar days.
  - 83 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2139,8 +2139,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 16 commits contributed to the release over the course of 96 calendar days.
  - 97 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2175,8 +2175,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 5 commits contributed to the release over the course of 28 calendar days.
  - 29 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2200,8 +2200,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 9 commits contributed to the release over the course of 20 calendar days.
  - 20 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2229,8 +2229,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 7 commits contributed to the release over the course of 8 calendar days.
  - 8 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2256,8 +2256,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 9 commits contributed to the release over the course of 8 calendar days.
  - 8 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2285,8 +2285,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 28 commits contributed to the release over the course of 46 calendar days.
  - 46 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2333,8 +2333,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 
  - 27 commits contributed to the release over the course of 41 calendar days.
  - 42 days passed between releases.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
@@ -2379,8 +2379,8 @@ allocations and switching to `gitoxide` for the most taxing tasks.
 <csr-read-only-do-not-edit/>
 
  - 57 commits contributed to the release over the course of 48 calendar days.
- - 0 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
