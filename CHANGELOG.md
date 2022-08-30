@@ -32,7 +32,7 @@ allocations and switching to `gitoxide` for the most taxing tasks.
  - 11 commits contributed to the release.
  - 5 days passed between releases.
  - 3 commits where understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
 
