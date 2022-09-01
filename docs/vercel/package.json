@@ -16,7 +16,7 @@
     "@rollup/plugin-yaml": "^3.1.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
     "@tsconfig/svelte": "^3.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.32.0",
     "eslint": "^8.23.0",
     "eslint-plugin-svelte3": "^4.0.0",
