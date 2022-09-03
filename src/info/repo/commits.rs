@@ -13,6 +13,7 @@ impl CommitsInfo {
         Self { number_of_commits }
     }
 }
+
 impl InfoField for CommitsInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
@@ -22,5 +23,19 @@ impl InfoField for CommitsInfo {
     }
     fn title(&self) -> String {
         String::from("Commits")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_commits_info() {
+        let commits_info = CommitsInfo {
+            number_of_commits: "3".to_string(),
+        };
+
+        assert_eq!(commits_info.value().value, "3".to_string());
     }
 }

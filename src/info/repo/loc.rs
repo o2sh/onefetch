@@ -1,4 +1,5 @@
 use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+
 pub struct LocInfo {
     pub lines_of_code: usize,
 }
@@ -12,5 +13,19 @@ impl InfoField for LocInfo {
     }
     fn title(&self) -> String {
         String::from("Lines of code")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_loc_info() {
+        let loc_info = LocInfo {
+            lines_of_code: 1235,
+        };
+
+        assert_eq!(loc_info.value().value, "1235".to_string());
     }
 }

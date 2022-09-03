@@ -25,3 +25,17 @@ impl InfoField for VersionInfo {
         String::from("Version")
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_version_info() {
+        let version_info = VersionInfo {
+            version: "v.1.50.0".to_string(),
+        };
+
+        assert_eq!(version_info.value().value, "v.1.50.0".to_string(),);
+    }
+}

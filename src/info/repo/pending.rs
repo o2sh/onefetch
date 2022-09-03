@@ -28,3 +28,17 @@ impl InfoField for PendingInfo {
         String::from("Pending")
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_pending_info() {
+        let pending_info = PendingInfo {
+            pending_changes: "4+-".to_string(),
+        };
+
+        assert_eq!(pending_info.value().value, "4+-".to_string());
+    }
+}

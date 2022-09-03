@@ -87,4 +87,12 @@ mod test {
 
         Ok(())
     }
+    #[test]
+    fn test_display_dependencies_info() {
+        let dependencies_info = DependenciesInfo {
+            dependencies: "22 (npm)".to_string(),
+        };
+
+        assert_eq!(dependencies_info.value().value, "22 (npm)".to_string(),);
+    }
 }

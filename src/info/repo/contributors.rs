@@ -25,3 +25,17 @@ impl InfoField for ContributorsInfo {
         String::from("Contributors")
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_contributors_info() {
+        let contributors_info = ContributorsInfo {
+            number_of_contributors: 12,
+        };
+
+        assert_eq!(contributors_info.value().value, "12".to_string());
+    }
+}

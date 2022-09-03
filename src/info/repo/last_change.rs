@@ -26,3 +26,17 @@ impl InfoField for LastChangeInfo {
         String::from("Last change")
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_last_change_info() {
+        let last_change_info = LastChangeInfo {
+            last_change: "34 minutes ago".to_string(),
+        };
+
+        assert_eq!(last_change_info.value().value, "34 minutes ago".to_string());
+    }
+}

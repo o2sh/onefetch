@@ -8,19 +8,19 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub struct ProjectInfo {
     pub repo_name: String,
-    pub number_of_tags: usize,
     pub number_of_branches: usize,
+    pub number_of_tags: usize,
 }
 
 impl ProjectInfo {
     pub fn new(repo: &Repo) -> Result<Self> {
         let repo_name = repo.get_name()?;
-        let number_of_tags = repo.get_number_of_tags()?;
         let number_of_branches = repo.get_number_of_branches()?;
+        let number_of_tags = repo.get_number_of_tags()?;
         Ok(Self {
             repo_name,
-            number_of_tags,
             number_of_branches,
+            number_of_tags,
         })
     }
 }
@@ -58,5 +58,74 @@ impl InfoField for ProjectInfo {
     }
     fn title(&self) -> String {
         String::from("Project")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_project_info() {
+        let project_info = ProjectInfo {
+            repo_name: "onefetch".to_string(),
+            number_of_branches: 3,
+            number_of_tags: 2,
+        };
+
+        assert_eq!(
+            project_info.value().value,
+            "onefetch (3 branches, 2 tags)".to_string()
+        );
+    }
+
+    #[test]
+    fn test_display_project_info_no_branches_no_tags() {
+        let project_info = ProjectInfo {
+            repo_name: "onefetch".to_string(),
+            number_of_branches: 0,
+            number_of_tags: 0,
+        };
+
+        assert_eq!(project_info.value().value, "onefetch".to_string());
+    }
+
+    #[test]
+    fn test_display_project_info_no_tags() {
+        let project_info = ProjectInfo {
+            repo_name: "onefetch".to_string(),
+            number_of_branches: 3,
+            number_of_tags: 0,
+        };
+
+        assert_eq!(
+            project_info.value().value,
+            "onefetch (3 branches)".to_string()
+        );
+    }
+
+    #[test]
+    fn test_display_project_info_no_branches() {
+        let project_info = ProjectInfo {
+            repo_name: "onefetch".to_string(),
+            number_of_branches: 0,
+            number_of_tags: 2,
+        };
+
+        assert_eq!(project_info.value().value, "onefetch (2 tags)".to_string());
+    }
+
+    #[test]
+    fn test_display_project_info_one_branche_one_tag() {
+        let project_info = ProjectInfo {
+            repo_name: "onefetch".to_string(),
+            number_of_branches: 1,
+            number_of_tags: 1,
+        };
+
+        assert_eq!(
+            project_info.value().value,
+            "onefetch (1 branch, 1 tag)".to_string()
+        );
     }
 }

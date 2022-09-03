@@ -25,3 +25,17 @@ impl InfoField for CreatedInfo {
         String::from("Created")
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_created_info() {
+        let created_info = CreatedInfo {
+            creation_date: "2 years ago".to_string(),
+        };
+
+        assert_eq!(created_info.value().value, "2 years ago".to_string());
+    }
+}

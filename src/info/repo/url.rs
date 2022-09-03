@@ -25,3 +25,20 @@ impl InfoField for UrlInfo {
         String::from("Repo")
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_url_info() {
+        let url_info = UrlInfo {
+            repo_url: "git@github.com:o2sh/onefetch.git".to_string(),
+        };
+
+        assert_eq!(
+            url_info.value().value,
+            "git@github.com:o2sh/onefetch.git".to_string()
+        );
+    }
+}
