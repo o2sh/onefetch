@@ -292,7 +292,7 @@ fn gitoxide_time_to_formatted_time(time: git::actor::Time, iso_time: bool) -> St
         to_rfc3339(HumanTime::from(time.seconds_since_unix_epoch as i64))
     } else {
         let ht = HumanTime::from_duration_since_timestamp(time.seconds_since_unix_epoch as u64);
-        format!("{}", ht)
+        ht.to_string()
     }
 }
 

@@ -53,7 +53,7 @@ impl InfoField for ProjectInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {
             r#type: InfoType::Project,
-            value: format!("{}", self),
+            value: self.to_string(),
         }
     }
     fn title(&self) -> String {

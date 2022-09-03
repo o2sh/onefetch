@@ -121,10 +121,7 @@ mod test {
             true,
         );
 
-        assert_eq!(
-            format!("{}", author),
-            "75% John Doe <john.doe@email.com> 1500"
-        );
+        assert_eq!(author.to_string(), "75% John Doe <john.doe@email.com> 1500");
     }
 
     #[test]
@@ -137,6 +134,6 @@ mod test {
             false,
         );
 
-        assert_eq!(format!("{}", author), "75% John Doe 1500");
+        assert_eq!(author.to_string(), "75% John Doe 1500");
     }
 }

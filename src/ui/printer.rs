@@ -86,7 +86,7 @@ impl<W: Write> Printer<W> {
             },
             None => {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
-                let info_str = format!("{}", &self.info);
+                let info_str = self.info.to_string();
                 let mut info_lines = info_str.lines();
                 let mut buf = String::new();
 
