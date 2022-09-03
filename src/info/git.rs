@@ -13,11 +13,11 @@ use super::repo::author::Author;
 
 pub struct Commits {
     authors: Vec<Author>,
-    total_num_authors: usize,
+    pub total_num_authors: usize,
     pub num_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
     pub is_shallow: bool,
-    time_of_most_recent_commit: git::actor::Time,
+    pub time_of_most_recent_commit: git::actor::Time,
     pub time_of_first_commit: git::actor::Time,
 }
 
@@ -124,14 +124,6 @@ impl Commits {
 
     pub fn authors(&mut self) -> Vec<Author> {
         std::mem::take(&mut self.authors)
-    }
-
-    pub fn number_of_contributors(&self) -> usize {
-        self.total_num_authors
-    }
-
-    pub fn get_date_of_last_commit(&self, iso_time: bool) -> String {
-        gitoxide_time_to_formatted_time(self.time_of_most_recent_commit, iso_time)
     }
 }
 

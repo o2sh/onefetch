@@ -1,5 +1,5 @@
 use crate::info::{
-    git::Commits,
+    git::{gitoxide_time_to_formatted_time, Commits},
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 
@@ -9,10 +9,14 @@ pub struct LastChangeInfo {
 
 impl LastChangeInfo {
     pub fn new(iso_time: bool, commits: &Commits) -> Self {
-        let last_change = commits.get_date_of_last_commit(iso_time);
+        let last_change = get_date_of_last_commit(commits, iso_time);
 
         Self { last_change }
     }
+}
+
+pub fn get_date_of_last_commit(commits: &Commits, iso_time: bool) -> String {
+    gitoxide_time_to_formatted_time(commits.time_of_most_recent_commit, iso_time)
 }
 
 impl InfoField for LastChangeInfo {

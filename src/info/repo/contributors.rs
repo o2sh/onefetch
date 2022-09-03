@@ -9,13 +9,18 @@ pub struct ContributorsInfo {
 
 impl ContributorsInfo {
     pub fn new(commits: &Commits, number_of_authors_to_display: usize) -> Self {
-        let contributors = commits.number_of_contributors();
+        let contributors = number_of_contributors(commits);
         Self {
             number_of_contributors: contributors,
             number_of_authors_to_display,
         }
     }
 }
+
+pub fn number_of_contributors(commits: &Commits) -> usize {
+    commits.total_num_authors
+}
+
 impl InfoField for ContributorsInfo {
     fn value(&self) -> InfoFieldValue {
         let number_of_contributors =
