@@ -336,3 +336,51 @@ impl Serialize for Info {
         state.end()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ui::num_to_color;
+    use clap::Parser;
+    use owo_colors::AnsiColors;
+
+    #[test]
+    fn test_get_style() -> Result<()> {
+        let style = get_style(true, DynColors::Ansi(AnsiColors::Cyan));
+        assert_eq!(
+            style,
+            Style::new().color(DynColors::Ansi(AnsiColors::Cyan)).bold()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_get_style_no_bold() -> Result<()> {
+        let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
+        assert_eq!(style, Style::new().color(DynColors::Ansi(AnsiColors::Cyan)));
+        Ok(())
+    }
+
+    #[test]
+    fn test_style_subtitle() -> Result<()> {
+        let info = Info::new(&Config::parse_from(&[
+            "onefetch",
+            "--text-colors",
+            "0",
+            "0",
+            "0",
+            "3",
+            "4",
+        ]))?;
+        let styled_subtitle = info.style_subtitle("test");
+        assert_eq!(
+            styled_subtitle,
+            format!(
+                "{}{}",
+                "test".style(Style::new().color(num_to_color(&3)).bold()),
+                ":".style(Style::new().color(num_to_color(&4)).bold())
+            )
+        );
+        Ok(())
+    }
+}
