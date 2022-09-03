@@ -4,6 +4,8 @@ use serde::Serialize;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
+const LANGUAGES_BAR_LENGTH: usize = 26;
+
 #[derive(Serialize)]
 pub struct LanguageWithPercentage {
     pub language: Language,
@@ -36,7 +38,6 @@ impl LanguagesInfo {
 impl std::fmt::Display for LanguagesInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut languages_info = String::from("");
-        let language_bar_length = 26;
         let pad = self.title().len() + 2;
         let color_palette = vec![
             DynColors::Ansi(AnsiColors::Red),
@@ -82,7 +83,7 @@ impl std::fmt::Display for LanguagesInfo {
             .iter()
             .map(|(_, perc, circle_color)| {
                 let bar_width = std::cmp::max(
-                    (perc / 100. * language_bar_length as f64).round() as usize,
+                    (perc / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
                     1,
                 );
                 format!("{:<width$}", "".on_color(*circle_color), width = bar_width)
@@ -128,5 +129,33 @@ impl InfoField for LanguagesInfo {
             title.push('s')
         }
         title
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_display_languages_info() {
+        let languages_info = LanguagesInfo {
+            languages_with_percentage: vec![LanguageWithPercentage {
+                language: Language::Go,
+                percentage: 100_f64,
+            }],
+            true_color: false,
+            info_color: DynColors::Ansi(AnsiColors::White),
+        };
+        let expected_languages_info = format!(
+            "{:<width$}\n{:<pad$}{} {} ",
+            "".on_color(DynColors::Ansi(AnsiColors::Red)),
+            "",
+            "\u{25CF}".color(DynColors::Ansi(AnsiColors::Red)),
+            "Go (100.0 %)".color(DynColors::Ansi(AnsiColors::White)),
+            width = LANGUAGES_BAR_LENGTH,
+            pad = "Language".len() + 2
+        );
+
+        assert_eq!(languages_info.value().value, expected_languages_info);
     }
 }
