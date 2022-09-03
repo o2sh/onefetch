@@ -56,6 +56,6 @@ mod test {
             number_of_authors_to_display: 3,
         };
 
-        assert_eq!(contributors_info.value().value, "".to_string());
+        assert!(contributors_info.value().value.is_empty());
     }
 }
