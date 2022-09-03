@@ -238,7 +238,7 @@ impl Info {
         let dependencies = DependenciesInfo::new(&repo_path)?;
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
-        let contributors = ContributorsInfo::new(&commits);
+        let contributors = ContributorsInfo::new(&commits, config.number_of_authors);
         let repo_url = UrlInfo::new(&repo)?;
         let size = SizeInfo::new(&repo);
         let commits = CommitsInfo::new(&commits);
