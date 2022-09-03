@@ -1,8 +1,6 @@
 use crate::cli::MyRegex;
-use anyhow::{Context, Result};
-use byte_unit::Byte;
+use anyhow::Result;
 use git::bstr::BString;
-use git2::{Status, StatusOptions, StatusShow};
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
 use std::collections::HashMap;
@@ -12,20 +10,15 @@ use time::OffsetDateTime;
 use time_humanize::HumanTime;
 
 use super::repo::author::Author;
-use super::repo::head::HeadRefs;
 
 pub struct Commits {
     authors: Vec<Author>,
     total_num_authors: usize,
-    num_commits: usize,
+    pub num_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
-    is_shallow: bool,
+    pub is_shallow: bool,
     time_of_most_recent_commit: git::actor::Time,
-    time_of_first_commit: git::actor::Time,
-}
-
-pub struct Repo {
-    repo: git::Repository,
+    pub time_of_first_commit: git::actor::Time,
 }
 
 #[derive(Hash, PartialOrd, Ord, Eq, PartialEq)]
@@ -129,18 +122,6 @@ impl Commits {
         })
     }
 
-    pub fn get_creation_date(&self, iso_time: bool) -> String {
-        gitoxide_time_to_formatted_time(self.time_of_first_commit, iso_time)
-    }
-
-    pub fn count(&self) -> String {
-        format!(
-            "{}{}",
-            self.num_commits,
-            self.is_shallow.then(|| " (shallow)").unwrap_or_default()
-        )
-    }
-
     pub fn authors(&mut self) -> Vec<Author> {
         std::mem::take(&mut self.authors)
     }
@@ -154,127 +135,6 @@ impl Commits {
     }
 }
 
-impl Repo {
-    pub fn new(repo: git::Repository) -> Result<Self> {
-        Ok(Self { repo })
-    }
-
-    pub fn gitoxide(&self) -> git::Repository {
-        self.repo.clone()
-    }
-
-    // This collects the repo size excluding .git
-    pub fn get_repo_size(&self) -> (String, u64) {
-        let (repo_size, file_count) = match self.repo.index() {
-            Ok(index) => {
-                let repo_size = index.entries().iter().map(|e| e.stat.size as u128).sum();
-                (repo_size, index.entries().len() as u64)
-            }
-            _ => (0, 0),
-        };
-
-        (bytes_to_human_readable(repo_size), file_count)
-    }
-
-    pub fn get_number_of_tags(&self) -> Result<usize> {
-        Ok(self.repo.references()?.tags()?.count())
-    }
-
-    pub fn get_number_of_branches(&self) -> Result<usize> {
-        let mut number_of_branches = self.repo.references()?.remote_branches()?.count();
-        if number_of_branches > 0 {
-            //Exclude origin/HEAD -> origin/main
-            number_of_branches -= 1;
-        }
-        Ok(number_of_branches)
-    }
-
-    pub fn get_git_username(&self) -> String {
-        self.repo
-            .committer()
-            .map(|c| c.name.to_string())
-            .unwrap_or_default()
-    }
-
-    pub fn get_version(&self) -> Result<String> {
-        let mut version_name = String::new();
-        let mut most_recent = 0;
-
-        for tag in self
-            .repo
-            .references()?
-            .tags()?
-            .peeled()
-            .filter_map(Result::ok)
-        {
-            if let Ok(commit) = tag.id().object()?.try_into_commit() {
-                let current_time = commit.time()?.seconds();
-                if current_time > most_recent {
-                    most_recent = current_time;
-                    version_name = tag.name().shorten().to_string();
-                }
-            }
-        }
-        Ok(version_name)
-    }
-
-    pub fn get_name(&self) -> Result<String> {
-        let remote_url = self.get_url()?;
-        let url = git::url::parse(remote_url.as_str().into())?;
-        let path = git::path::from_bstr(url.path.as_bstr());
-        let repo_name = path
-            .with_extension("")
-            .file_name()
-            .expect("non-empty path")
-            .to_string_lossy()
-            .into_owned();
-        Ok(repo_name)
-    }
-
-    pub fn get_url(&self) -> Result<String> {
-        let config = self.repo.config_snapshot();
-        let remotes = match config.plumbing().sections_by_name("remote") {
-            Some(sections) => sections,
-            None => return Ok(Default::default()),
-        };
-
-        let mut remote_url: Option<String> = None;
-        for (name, url) in remotes.filter_map(|section| {
-            let remote_name = section.header().subsection_name()?;
-            let url = section.value("url")?;
-            (remote_name, url).into()
-        }) {
-            remote_url = url.to_string().into();
-            if name == "origin" {
-                break;
-            }
-        }
-
-        let remote_url = match remote_url {
-            Some(url) => url,
-            None => return Ok(Default::default()),
-        };
-
-        Ok(remote_url)
-    }
-
-    pub fn get_head_refs(&self) -> Result<HeadRefs> {
-        let head_oid = self.repo.head_id().context("Could not read HEAD")?;
-        let refs_info = self
-            .repo
-            .references()?
-            .all()?
-            .filter_map(Result::ok)
-            .filter_map(|reference: git::Reference<'_>| {
-                (reference.target().try_id() == Some(&head_oid)
-                    && reference.name().category() != Some(git::reference::Category::Tag))
-                .then(|| reference.name().shorten().to_string())
-            })
-            .collect();
-        Ok(HeadRefs::new(head_oid.shorten()?.to_string(), refs_info))
-    }
-}
-
 fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
     bot_regex_pattern
         .as_ref()
@@ -282,12 +142,7 @@ fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
         .unwrap_or(false)
 }
 
-fn bytes_to_human_readable(bytes: u128) -> String {
-    let byte = Byte::from_bytes(bytes);
-    byte.get_appropriate_unit(true).to_string()
-}
-
-fn gitoxide_time_to_formatted_time(time: git::actor::Time, iso_time: bool) -> String {
+pub fn gitoxide_time_to_formatted_time(time: git::actor::Time, iso_time: bool) -> String {
     if iso_time {
         to_rfc3339(HumanTime::from(time.seconds_since_unix_epoch as i64))
     } else {
@@ -347,44 +202,4 @@ mod tests {
         let result = gitoxide_time_to_formatted_time(time, true);
         assert_eq!(result, "1970-01-01T00:00:00Z");
     }
-}
-
-pub fn get_pending_changes(repo: &git2::Repository) -> Result<String> {
-    let statuses = repo.statuses(Some(
-        StatusOptions::default()
-            .show(StatusShow::Workdir)
-            .update_index(true)
-            .include_untracked(true)
-            .renames_head_to_index(true)
-            .recurse_untracked_dirs(true),
-    ))?;
-
-    let (added, deleted, modified) =
-        statuses
-            .iter()
-            .fold((0, 0, 0), |(added, deleted, modified), e| {
-                let s: Status = e.status();
-                if s.is_index_new() || s.is_wt_new() {
-                    (added + 1, deleted, modified)
-                } else if s.is_index_deleted() || s.is_wt_deleted() {
-                    (added, deleted + 1, modified)
-                } else {
-                    (added, deleted, modified + 1)
-                }
-            });
-
-    let mut result = String::new();
-    if modified > 0 {
-        result = format!("{}+-", modified)
-    }
-
-    if added > 0 {
-        result = format!("{} {}+", result, added);
-    }
-
-    if deleted > 0 {
-        result = format!("{} {}-", result, deleted);
-    }
-
-    Ok(result.trim().into())
 }

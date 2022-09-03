@@ -1,6 +1,5 @@
 use self::deps::DependenciesInfo;
 use self::git::Commits;
-use self::git::Repo;
 use self::info_field::{InfoField, InfoFieldValueGetter, InfoType};
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
@@ -195,17 +194,6 @@ impl Info {
         } else {
             None
         };
-
-        let pending = PendingInfo::new(&git_repo)?;
-        let repo = Repo::new(git_repo)?;
-        let mut commits = Commits::new(
-            repo.gitoxide(),
-            config.no_merges,
-            &no_bots,
-            config.number_of_authors,
-            config.email,
-        )?;
-
         let (languages, lines_of_code) = languages_handle
             .join()
             .ok()
@@ -222,28 +210,38 @@ impl Info {
             &config.ascii_colors,
             true_color,
         );
+
         let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
         let title = Title::new(
-            &repo,
+            &git_repo,
             text_colors.title,
             text_colors.tilde,
             text_colors.underline,
             !config.no_bold,
         );
-        let project = ProjectInfo::new(&repo)?;
-        let head = HeadInfo::new(&repo)?;
-        let version = VersionInfo::new(&repo)?;
+        let pending = PendingInfo::new(&git_repo)?;
+        let repo_url = UrlInfo::new(&git_repo)?;
+        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url)?;
+        let head = HeadInfo::new(&git_repo)?;
+        let version = VersionInfo::new(&git_repo)?;
+        let size = SizeInfo::new(&git_repo);
+        let license = LicenseInfo::new(&repo_path)?;
+        let mut commits = Commits::new(
+            git_repo,
+            config.no_merges,
+            &no_bots,
+            config.number_of_authors,
+            config.email,
+        )?;
+
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
         let dependencies = DependenciesInfo::new(&repo_path)?;
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
         let contributors = ContributorsInfo::new(&commits, config.number_of_authors);
-        let repo_url = UrlInfo::new(&repo)?;
-        let size = SizeInfo::new(&repo);
         let commits = CommitsInfo::new(&commits);
         let lines_of_code = LocInfo { lines_of_code };
-        let license = LicenseInfo::new(&repo_path)?;
 
         Ok(Self {
             title,

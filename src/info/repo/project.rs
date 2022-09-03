@@ -1,8 +1,6 @@
-use crate::info::{
-    git::Repo,
-    info_field::{InfoField, InfoFieldValue, InfoType},
-};
+use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
 use anyhow::Result;
+use git_repository::{bstr::ByteSlice, Repository};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -13,16 +11,41 @@ pub struct ProjectInfo {
 }
 
 impl ProjectInfo {
-    pub fn new(repo: &Repo) -> Result<Self> {
-        let repo_name = repo.get_name()?;
-        let number_of_branches = repo.get_number_of_branches()?;
-        let number_of_tags = repo.get_number_of_tags()?;
+    pub fn new(repo: &Repository, repo_url: &str) -> Result<Self> {
+        let repo_name = get_name(repo_url)?;
+        let number_of_branches = get_number_of_branches(repo)?;
+        let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
             repo_name,
             number_of_branches,
             number_of_tags,
         })
     }
+}
+pub fn get_name(repo_url: &str) -> Result<String> {
+    let url = git_repository::url::parse(repo_url.into())?;
+    let path = git_repository::path::from_bstr(url.path.as_bstr());
+    let repo_name = path
+        .with_extension("")
+        .file_name()
+        .expect("non-empty path")
+        .to_string_lossy()
+        .into_owned();
+    Ok(repo_name)
+}
+
+// This collects the repo size excluding .git
+pub fn get_number_of_tags(repo: &Repository) -> Result<usize> {
+    Ok(repo.references()?.tags()?.count())
+}
+
+pub fn get_number_of_branches(repo: &Repository) -> Result<usize> {
+    let mut number_of_branches = repo.references()?.remote_branches()?.count();
+    if number_of_branches > 0 {
+        //Exclude origin/HEAD -> origin/main
+        number_of_branches -= 1;
+    }
+    Ok(number_of_branches)
 }
 
 impl std::fmt::Display for ProjectInfo {

@@ -1,18 +1,32 @@
-use crate::info::{
-    git::Repo,
-    info_field::{InfoField, InfoFieldValue, InfoType},
-};
+use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
 use anyhow::Result;
+use git_repository::Repository;
 
 pub struct VersionInfo {
     pub version: String,
 }
 
 impl VersionInfo {
-    pub fn new(repo: &Repo) -> Result<Self> {
-        let version = repo.get_version()?;
+    pub fn new(repo: &Repository) -> Result<Self> {
+        let version = get_version(repo)?;
         Ok(Self { version })
     }
+}
+
+pub fn get_version(repo: &Repository) -> Result<String> {
+    let mut version_name = String::new();
+    let mut most_recent = 0;
+
+    for tag in repo.references()?.tags()?.peeled().filter_map(Result::ok) {
+        if let Ok(commit) = tag.id().object()?.try_into_commit() {
+            let current_time = commit.time()?.seconds();
+            if current_time > most_recent {
+                most_recent = current_time;
+                version_name = tag.name().shorten().to_string();
+            }
+        }
+    }
+    Ok(version_name)
 }
 impl InfoField for VersionInfo {
     fn value(&self) -> InfoFieldValue {

@@ -1,9 +1,8 @@
+use super::get_style;
+use crate::cli;
+use git_repository::Repository;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
-
-use crate::cli;
-
-use super::{get_style, git::Repo};
 
 #[derive(Serialize)]
 pub struct Title {
@@ -21,13 +20,13 @@ pub struct Title {
 
 impl Title {
     pub fn new(
-        repo: &Repo,
+        repo: &Repository,
         title_color: DynColors,
         tilde_color: DynColors,
         underline_color: DynColors,
         is_bold: bool,
     ) -> Self {
-        let git_username = repo.get_git_username();
+        let git_username = get_git_username(repo);
         let git_version = cli::get_git_version();
         Self {
             git_username,
@@ -38,6 +37,11 @@ impl Title {
             is_bold,
         }
     }
+}
+pub fn get_git_username(repo: &Repository) -> String {
+    repo.committer()
+        .map(|c| c.name.to_string())
+        .unwrap_or_default()
 }
 
 impl std::fmt::Display for Title {

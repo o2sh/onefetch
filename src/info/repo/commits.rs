@@ -9,11 +9,18 @@ pub struct CommitsInfo {
 
 impl CommitsInfo {
     pub fn new(commits: &Commits) -> Self {
-        let number_of_commits = commits.count();
+        let number_of_commits = count(commits);
         Self { number_of_commits }
     }
 }
 
+pub fn count(commits: &Commits) -> String {
+    format!(
+        "{}{}",
+        commits.num_commits,
+        commits.is_shallow.then(|| " (shallow)").unwrap_or_default()
+    )
+}
 impl InfoField for CommitsInfo {
     fn value(&self) -> InfoFieldValue {
         InfoFieldValue {

@@ -1,5 +1,5 @@
 use crate::info::{
-    git::Commits,
+    git::{gitoxide_time_to_formatted_time, Commits},
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 
@@ -9,9 +9,13 @@ pub struct CreatedInfo {
 
 impl CreatedInfo {
     pub fn new(iso_time: bool, commits: &Commits) -> Self {
-        let creation_date = commits.get_creation_date(iso_time);
+        let creation_date = get_creation_date(commits, iso_time);
         Self { creation_date }
     }
+}
+
+pub fn get_creation_date(commits: &Commits, iso_time: bool) -> String {
+    gitoxide_time_to_formatted_time(commits.time_of_first_commit, iso_time)
 }
 
 impl InfoField for CreatedInfo {

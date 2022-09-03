@@ -1,8 +1,6 @@
-use crate::info::{
-    git::Repo,
-    info_field::{InfoField, InfoFieldValue, InfoType},
-};
-use anyhow::Result;
+use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use anyhow::{Context, Result};
+use git_repository::{reference::Category, Reference, Repository};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -41,10 +39,25 @@ pub struct HeadInfo {
 }
 
 impl HeadInfo {
-    pub fn new(repo: &Repo) -> Result<Self> {
-        let head_refs = repo.get_head_refs()?;
+    pub fn new(repo: &Repository) -> Result<Self> {
+        let head_refs = get_head_refs(repo)?;
         Ok(Self { head_refs })
     }
+}
+
+pub fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
+    let head_oid = repo.head_id().context("Could not read HEAD")?;
+    let refs_info = repo
+        .references()?
+        .all()?
+        .filter_map(Result::ok)
+        .filter_map(|reference: Reference<'_>| {
+            (reference.target().try_id() == Some(&head_oid)
+                && reference.name().category() != Some(Category::Tag))
+            .then(|| reference.name().shorten().to_string())
+        })
+        .collect();
+    Ok(HeadRefs::new(head_oid.shorten()?.to_string(), refs_info))
 }
 
 impl InfoField for HeadInfo {

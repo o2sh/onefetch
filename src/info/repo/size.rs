@@ -1,7 +1,6 @@
-use crate::info::{
-    git::Repo,
-    info_field::{InfoField, InfoFieldValue, InfoType},
-};
+use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use byte_unit::Byte;
+use git_repository::Repository;
 
 pub struct SizeInfo {
     pub repo_size: String,
@@ -9,14 +8,32 @@ pub struct SizeInfo {
 }
 
 impl SizeInfo {
-    pub fn new(repo: &Repo) -> Self {
-        let (repo_size, file_count) = repo.get_repo_size();
+    pub fn new(repo: &Repository) -> Self {
+        let (repo_size, file_count) = get_repo_size(repo);
         Self {
             repo_size,
             file_count,
         }
     }
 }
+
+fn get_repo_size(repo: &Repository) -> (String, u64) {
+    let (repo_size, file_count) = match repo.index() {
+        Ok(index) => {
+            let repo_size = index.entries().iter().map(|e| e.stat.size as u128).sum();
+            (repo_size, index.entries().len() as u64)
+        }
+        _ => (0, 0),
+    };
+
+    (bytes_to_human_readable(repo_size), file_count)
+}
+
+fn bytes_to_human_readable(bytes: u128) -> String {
+    let byte = Byte::from_bytes(bytes);
+    byte.get_appropriate_unit(true).to_string()
+}
+
 impl std::fmt::Display for SizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.file_count {
