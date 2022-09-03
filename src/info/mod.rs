@@ -1,18 +1,22 @@
-use self::author::AuthorsInfo;
 use self::deps::DependenciesInfo;
 use self::git::Commits;
 use self::git::Repo;
-use self::head::HeadInfo;
 use self::info_field::{InfoField, InfoFieldValueGetter, InfoType};
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
-use self::license::LicenseInfo;
-use self::pending::PendingInfo;
-use self::project::ProjectInfo;
-use self::repo::{
-    CommitsInfo, ContributorsInfo, CreatedInfo, LastChangeInfo, LocInfo, SizeInfo, UrlInfo,
-    VersionInfo,
-};
+use self::repo::author::AuthorsInfo;
+use self::repo::commits::CommitsInfo;
+use self::repo::contributors::ContributorsInfo;
+use self::repo::created::CreatedInfo;
+use self::repo::head::HeadInfo;
+use self::repo::last_change::LastChangeInfo;
+use self::repo::license::LicenseInfo;
+use self::repo::loc::LocInfo;
+use self::repo::pending::PendingInfo;
+use self::repo::project::ProjectInfo;
+use self::repo::size::SizeInfo;
+use self::repo::url::UrlInfo;
+use self::repo::version::VersionInfo;
 use self::title::Title;
 use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
 use crate::ui::get_ascii_colors;
@@ -24,15 +28,10 @@ use serde::ser::SerializeStruct;
 use serde::Serialize;
 use std::str::FromStr;
 
-mod author;
 pub mod deps;
 mod git;
-mod head;
 pub mod info_field;
 pub mod langs;
-mod license;
-mod pending;
-mod project;
 mod repo;
 mod title;
 

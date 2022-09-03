@@ -1,4 +1,4 @@
-use super::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use std::path::Path;

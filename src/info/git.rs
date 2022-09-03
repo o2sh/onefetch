@@ -1,5 +1,4 @@
 use crate::cli::MyRegex;
-use crate::info::author::Author;
 use anyhow::{Context, Result};
 use byte_unit::Byte;
 use git::bstr::BString;
@@ -12,7 +11,8 @@ use time::OffsetDateTime;
 
 use time_humanize::HumanTime;
 
-use super::head::HeadRefs;
+use super::repo::author::Author;
+use super::repo::head::HeadRefs;
 
 pub struct Commits {
     authors: Vec<Author>,

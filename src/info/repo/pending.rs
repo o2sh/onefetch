@@ -1,5 +1,5 @@
-use super::{
-    git,
+use crate::info::{
+    git::get_pending_changes,
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 use anyhow::Result;
@@ -12,7 +12,7 @@ impl PendingInfo {
     pub fn new(repo: &git_repository::Repository) -> Result<Self> {
         let git_dir = repo.git_dir().to_owned();
         let repo = git2::Repository::open(git_dir)?;
-        let pending_changes = git::get_pending_changes(&repo)?;
+        let pending_changes = get_pending_changes(&repo)?;
         Ok(Self { pending_changes })
     }
 }

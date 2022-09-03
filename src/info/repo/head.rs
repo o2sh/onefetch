@@ -1,10 +1,9 @@
-use anyhow::Result;
-use serde::Serialize;
-
-use super::{
+use crate::info::{
     git::Repo,
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
+use anyhow::Result;
+use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct HeadRefs {

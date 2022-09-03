@@ -1,4 +1,4 @@
-use super::{
+use crate::info::{
     git::Commits,
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
