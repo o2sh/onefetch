@@ -1,10 +1,10 @@
 name: onefetch
 base: core18 # the base snap is the execution environment for this snap
 adopt-info: onefetch
-summary: Git repository summary on your terminal
+summary: Git repository summary in your terminal
 description: |
   Onefetch is a command-line Git information tool that displays project information
-  and code statistics for a local Git repository directly on your terminal.
+  and code statistics for a local Git repository directly in your terminal.
 
 grade: stable
 confinement: strict
