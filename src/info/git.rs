@@ -12,7 +12,7 @@ use time_humanize::HumanTime;
 use super::repo::author::Author;
 
 pub struct Commits {
-    authors: Vec<Author>,
+    pub authors: Vec<Author>,
     pub total_num_authors: usize,
     pub num_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
@@ -120,10 +120,6 @@ impl Commits {
             time_of_first_commit,
             time_of_most_recent_commit,
         })
-    }
-
-    pub fn authors(&mut self) -> Vec<Author> {
-        std::mem::take(&mut self.authors)
     }
 }
 

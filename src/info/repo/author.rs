@@ -7,7 +7,7 @@ use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 use std::fmt::Write;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 pub struct Author {
     name: String,
     email: String,
@@ -62,7 +62,7 @@ pub struct AuthorsInfo {
 
 impl AuthorsInfo {
     pub fn new(info_color: DynColors, commits: &mut Commits) -> Self {
-        let authors = commits.authors();
+        let authors = commits.authors.clone();
         Self {
             authors,
             info_color,
