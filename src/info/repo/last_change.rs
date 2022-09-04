@@ -1,5 +1,6 @@
+use super::gitoxide_time_to_formatted_time;
 use crate::info::{
-    git::{gitoxide_time_to_formatted_time, Commits},
+    git::Commits,
     info_field::{InfoField, InfoFieldValue, InfoType},
 };
 
