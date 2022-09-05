@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::{bstr::ByteSlice, Repository};
 use serde::Serialize;
@@ -73,12 +73,12 @@ impl std::fmt::Display for ProjectInfo {
 }
 
 impl InfoField for ProjectInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Project,
-            value: self.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Project;
+
+    fn value(&self) -> String {
+        self.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Project")
     }
@@ -97,7 +97,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value().value,
+            project_info.value(),
             "onefetch (3 branches, 2 tags)".to_string()
         );
     }
@@ -110,7 +110,7 @@ mod test {
             number_of_tags: 0,
         };
 
-        assert_eq!(project_info.value().value, "onefetch".to_string());
+        assert_eq!(project_info.value(), "onefetch".to_string());
     }
 
     #[test]
@@ -121,10 +121,7 @@ mod test {
             number_of_tags: 0,
         };
 
-        assert_eq!(
-            project_info.value().value,
-            "onefetch (3 branches)".to_string()
-        );
+        assert_eq!(project_info.value(), "onefetch (3 branches)".to_string());
     }
 
     #[test]
@@ -135,7 +132,7 @@ mod test {
             number_of_tags: 2,
         };
 
-        assert_eq!(project_info.value().value, "onefetch (2 tags)".to_string());
+        assert_eq!(project_info.value(), "onefetch (2 tags)".to_string());
     }
 
     #[test]
@@ -147,7 +144,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value().value,
+            project_info.value(),
             "onefetch (1 branch, 1 tag)".to_string()
         );
     }

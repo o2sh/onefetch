@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::Repository;
 
@@ -29,12 +29,12 @@ pub fn get_version(repo: &Repository) -> Result<String> {
     Ok(version_name)
 }
 impl InfoField for VersionInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Version,
-            value: self.version.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Version;
+
+    fn value(&self) -> String {
+        self.version.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Version")
     }
@@ -50,6 +50,6 @@ mod test {
             version: "v.1.50.0".to_string(),
         };
 
-        assert_eq!(version_info.value().value, "v.1.50.0".to_string(),);
+        assert_eq!(version_info.value(), "v.1.50.0".to_string(),);
     }
 }

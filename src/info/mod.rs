@@ -1,6 +1,6 @@
 use self::deps::DependenciesInfo;
 use self::git::Commits;
-use self::info_field::{InfoField, InfoFieldValueGetter, InfoType};
+use self::info_field::{InfoField, InfoType};
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
 use self::repo::author::AuthorsInfo;
@@ -68,79 +68,63 @@ impl std::fmt::Display for Info {
 
         //Info lines
         if let Some(project_info_value) = self.project.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.project.title(), &project_info_value.value, f)?;
+            self.write_styled_info_line(&self.project.title(), &project_info_value, f)?;
         }
 
         if let Some(head_info_value) = self.head.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.head.title(), &head_info_value.value, f)?;
+            self.write_styled_info_line(&self.head.title(), &head_info_value, f)?;
         }
 
         if let Some(pending_info_value) = self.pending.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.pending.title(), &pending_info_value.value, f)?;
+            self.write_styled_info_line(&self.pending.title(), &pending_info_value, f)?;
         }
 
         if let Some(version_info_value) = self.version.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.version.title(), &version_info_value.value, f)?;
+            self.write_styled_info_line(&self.version.title(), &version_info_value, f)?;
         }
 
         if let Some(created_info_value) = self.created.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.created.title(), &created_info_value.value, f)?;
+            self.write_styled_info_line(&self.created.title(), &created_info_value, f)?;
         }
 
         if let Some(languages_info_value) = self.languages.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.languages.title(), &languages_info_value.value, f)?;
+            self.write_styled_info_line(&self.languages.title(), &languages_info_value, f)?;
         }
 
         if let Some(dependencies_info_value) = self.dependencies.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                &self.dependencies.title(),
-                &dependencies_info_value.value,
-                f,
-            )?;
+            self.write_styled_info_line(&self.dependencies.title(), &dependencies_info_value, f)?;
         }
 
         if let Some(authors_info_value) = self.authors.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.authors.title(), &authors_info_value.value, f)?;
+            self.write_styled_info_line(&self.authors.title(), &authors_info_value, f)?;
         }
 
         if let Some(last_change_info_value) = self.last_change.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                &self.last_change.title(),
-                &last_change_info_value.value,
-                f,
-            )?;
+            self.write_styled_info_line(&self.last_change.title(), &last_change_info_value, f)?;
         }
 
         if let Some(contributors_info_value) = self.contributors.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                &self.contributors.title(),
-                &contributors_info_value.value,
-                f,
-            )?;
+            self.write_styled_info_line(&self.contributors.title(), &contributors_info_value, f)?;
         }
 
         if let Some(repo_info_value) = self.repo.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.repo.title(), &repo_info_value.value, f)?;
+            self.write_styled_info_line(&self.repo.title(), &repo_info_value, f)?;
         }
 
         if let Some(commits_info_value) = self.commits.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.commits.title(), &commits_info_value.value, f)?;
+            self.write_styled_info_line(&self.commits.title(), &commits_info_value, f)?;
         }
 
         if let Some(lines_of_code_info_value) = self.lines_of_code.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                &self.lines_of_code.title(),
-                &lines_of_code_info_value.value,
-                f,
-            )?;
+            self.write_styled_info_line(&self.lines_of_code.title(), &lines_of_code_info_value, f)?;
         }
 
         if let Some(size_info_value) = self.size.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.size.title(), &size_info_value.value, f)?;
+            self.write_styled_info_line(&self.size.title(), &size_info_value, f)?;
         }
 
         if let Some(license_info_value) = self.license.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.license.title(), &license_info_value.value, f)?;
+            self.write_styled_info_line(&self.license.title(), &license_info_value, f)?;
         }
 
         //Palette

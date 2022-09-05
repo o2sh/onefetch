@@ -1,4 +1,4 @@
-use super::info_field::{InfoField, InfoFieldValue, InfoType};
+use super::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
@@ -62,12 +62,12 @@ impl DependenciesInfo {
 }
 
 impl InfoField for DependenciesInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Dependencies,
-            value: self.dependencies.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Dependencies;
+
+    fn value(&self) -> String {
+        self.dependencies.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Dependencies")
     }
@@ -93,6 +93,6 @@ mod test {
             dependencies: "22 (npm)".to_string(),
         };
 
-        assert_eq!(dependencies_info.value().value, "22 (npm)".to_string(),);
+        assert_eq!(dependencies_info.value(), "22 (npm)".to_string(),);
     }
 }

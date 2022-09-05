@@ -1,7 +1,7 @@
 use super::gitoxide_time_to_formatted_time;
 use crate::info::{
     git::Commits,
-    info_field::{InfoField, InfoFieldValue, InfoType},
+    info_field::{InfoField, InfoType},
 };
 
 pub struct LastChangeInfo {
@@ -21,12 +21,12 @@ pub fn get_date_of_last_commit(commits: &Commits, iso_time: bool) -> String {
 }
 
 impl InfoField for LastChangeInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::LastChange,
-            value: self.last_change.to_string(),
-        }
+    const TYPE: InfoType = InfoType::LastChange;
+
+    fn value(&self) -> String {
+        self.last_change.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Last change")
     }
@@ -42,6 +42,6 @@ mod test {
             last_change: "34 minutes ago".to_string(),
         };
 
-        assert_eq!(last_change_info.value().value, "34 minutes ago".to_string());
+        assert_eq!(last_change_info.value(), "34 minutes ago".to_string());
     }
 }

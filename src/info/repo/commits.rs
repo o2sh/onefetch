@@ -1,6 +1,6 @@
 use crate::info::{
     git::Commits,
-    info_field::{InfoField, InfoFieldValue, InfoType},
+    info_field::{InfoField, InfoType},
 };
 
 pub struct CommitsInfo {
@@ -22,12 +22,12 @@ pub fn count(commits: &Commits) -> String {
     )
 }
 impl InfoField for CommitsInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Commits,
-            value: self.number_of_commits.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Commits;
+
+    fn value(&self) -> String {
+        self.number_of_commits.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Commits")
     }
@@ -43,6 +43,6 @@ mod test {
             number_of_commits: "3".to_string(),
         };
 
-        assert_eq!(commits_info.value().value, "3".to_string());
+        assert_eq!(commits_info.value(), "3".to_string());
     }
 }

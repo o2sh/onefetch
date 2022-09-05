@@ -1,6 +1,6 @@
 use crate::info::{
     git::Commits,
-    info_field::{InfoField, InfoFieldValue, InfoType},
+    info_field::{InfoField, InfoType},
 };
 use git_repository as git;
 use owo_colors::{DynColors, OwoColorize};
@@ -91,11 +91,10 @@ impl std::fmt::Display for AuthorsInfo {
 }
 
 impl InfoField for AuthorsInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Authors,
-            value: self.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Authors;
+
+    fn value(&self) -> String {
+        self.to_string()
     }
 
     fn title(&self) -> String {

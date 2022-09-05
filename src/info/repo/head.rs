@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::{Context, Result};
 use git_repository::{reference::Category, Reference, Repository};
 use serde::Serialize;
@@ -61,12 +61,12 @@ pub fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
 }
 
 impl InfoField for HeadInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Head,
-            value: self.head_refs.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Head;
+
+    fn value(&self) -> String {
+        self.head_refs.to_string()
     }
+
     fn title(&self) -> String {
         String::from("HEAD")
     }

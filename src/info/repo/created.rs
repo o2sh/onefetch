@@ -1,7 +1,7 @@
 use super::gitoxide_time_to_formatted_time;
 use crate::info::{
     git::Commits,
-    info_field::{InfoField, InfoFieldValue, InfoType},
+    info_field::{InfoField, InfoType},
 };
 
 pub struct CreatedInfo {
@@ -20,12 +20,12 @@ pub fn get_creation_date(commits: &Commits, iso_time: bool) -> String {
 }
 
 impl InfoField for CreatedInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Created,
-            value: self.creation_date.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Created;
+
+    fn value(&self) -> String {
+        self.creation_date.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Created")
     }
@@ -41,6 +41,6 @@ mod test {
             creation_date: "2 years ago".to_string(),
         };
 
-        assert_eq!(created_info.value().value, "2 years ago".to_string());
+        assert_eq!(created_info.value(), "2 years ago".to_string());
     }
 }

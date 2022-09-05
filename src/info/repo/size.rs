@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use byte_unit::Byte;
 use git_repository::Repository;
 
@@ -47,11 +47,10 @@ impl std::fmt::Display for SizeInfo {
 }
 
 impl InfoField for SizeInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Size,
-            value: self.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Size;
+
+    fn value(&self) -> String {
+        self.to_string()
     }
     fn title(&self) -> String {
         String::from("Size")
@@ -69,7 +68,7 @@ mod test {
             file_count: 123,
         };
 
-        assert_eq!(size_info.value().value, "2.40 MiB (123 files)".to_string());
+        assert_eq!(size_info.value(), "2.40 MiB (123 files)".to_string());
     }
 
     #[test]
@@ -79,7 +78,7 @@ mod test {
             file_count: 0,
         };
 
-        assert_eq!(size_info.value().value, "2.40 MiB".to_string());
+        assert_eq!(size_info.value(), "2.40 MiB".to_string());
     }
 
     #[test]
@@ -89,6 +88,6 @@ mod test {
             file_count: 1,
         };
 
-        assert_eq!(size_info.value().value, "2.40 MiB (1 file)".to_string());
+        assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());
     }
 }

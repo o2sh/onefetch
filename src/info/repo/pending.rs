@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git2::{Status, StatusOptions, StatusShow};
 use git_repository::Repository;
@@ -57,12 +57,12 @@ fn get_pending_changes(repo: &git2::Repository) -> Result<String> {
 }
 
 impl InfoField for PendingInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Pending,
-            value: self.pending_changes.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Pending;
+
+    fn value(&self) -> String {
+        self.pending_changes.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Pending")
     }
@@ -78,6 +78,6 @@ mod test {
             pending_changes: "4+-".to_string(),
         };
 
-        assert_eq!(pending_info.value().value, "4+-".to_string());
+        assert_eq!(pending_info.value(), "4+-".to_string());
     }
 }

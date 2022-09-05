@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use std::path::Path;
@@ -78,11 +78,10 @@ impl LicenseInfo {
 }
 
 impl InfoField for LicenseInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::License,
-            value: self.license.to_string(),
-        }
+    const TYPE: InfoType = InfoType::License;
+
+    fn value(&self) -> String {
+        self.license.to_string()
     }
 
     fn title(&self) -> String {

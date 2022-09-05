@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::Repository;
 
@@ -40,12 +40,12 @@ pub fn get_url(repo: &Repository) -> Result<String> {
 }
 
 impl InfoField for UrlInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Repo,
-            value: self.repo_url.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Repo;
+
+    fn value(&self) -> String {
+        self.repo_url.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Repo")
     }
@@ -62,7 +62,7 @@ mod test {
         };
 
         assert_eq!(
-            url_info.value().value,
+            url_info.value(),
             "git@github.com:o2sh/onefetch.git".to_string()
         );
     }

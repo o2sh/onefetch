@@ -1,16 +1,16 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 
 pub struct LocInfo {
     pub lines_of_code: usize,
 }
 
 impl InfoField for LocInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::LinesOfCode,
-            value: self.lines_of_code.to_string(),
-        }
+    const TYPE: InfoType = InfoType::LinesOfCode;
+
+    fn value(&self) -> String {
+        self.lines_of_code.to_string()
     }
+
     fn title(&self) -> String {
         String::from("Lines of code")
     }
@@ -26,6 +26,6 @@ mod test {
             lines_of_code: 1235,
         };
 
-        assert_eq!(loc_info.value().value, "1235".to_string());
+        assert_eq!(loc_info.value(), "1235".to_string());
     }
 }

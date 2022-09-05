@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoFieldValue, InfoType};
+use crate::info::info_field::{InfoField, InfoType};
 use owo_colors::OwoColorize;
 use serde::Serialize;
 
@@ -117,12 +117,12 @@ impl std::fmt::Display for LanguagesInfo {
 }
 
 impl InfoField for LanguagesInfo {
-    fn value(&self) -> InfoFieldValue {
-        InfoFieldValue {
-            r#type: InfoType::Languages,
-            value: self.to_string(),
-        }
+    const TYPE: InfoType = InfoType::Languages;
+
+    fn value(&self) -> String {
+        self.to_string()
     }
+
     fn title(&self) -> String {
         let mut title = String::from("Language");
         if self.languages_with_percentage.len() > 1 {
@@ -156,6 +156,6 @@ mod test {
             pad = "Language".len() + 2
         );
 
-        assert_eq!(languages_info.value().value, expected_languages_info);
+        assert_eq!(languages_info.value(), expected_languages_info);
     }
 }

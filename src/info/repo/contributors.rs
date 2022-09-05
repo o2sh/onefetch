@@ -1,6 +1,6 @@
 use crate::info::{
     git::Commits,
-    info_field::{InfoField, InfoFieldValue, InfoType},
+    info_field::{InfoField, InfoType},
 };
 pub struct ContributorsInfo {
     pub number_of_contributors: usize,
@@ -22,19 +22,16 @@ pub fn number_of_contributors(commits: &Commits) -> usize {
 }
 
 impl InfoField for ContributorsInfo {
-    fn value(&self) -> InfoFieldValue {
-        let number_of_contributors =
-            if self.number_of_contributors > self.number_of_authors_to_display {
-                self.number_of_contributors.to_string()
-            } else {
-                "".to_string()
-            };
+    const TYPE: InfoType = InfoType::Contributors;
 
-        InfoFieldValue {
-            r#type: InfoType::Contributors,
-            value: number_of_contributors,
+    fn value(&self) -> String {
+        if self.number_of_contributors > self.number_of_authors_to_display {
+            self.number_of_contributors.to_string()
+        } else {
+            "".to_string()
         }
     }
+
     fn title(&self) -> String {
         String::from("Contributors")
     }
@@ -51,7 +48,7 @@ mod test {
             number_of_authors_to_display: 2,
         };
 
-        assert_eq!(contributors_info.value().value, "12".to_string());
+        assert_eq!(contributors_info.value(), "12".to_string());
     }
 
     #[test]
@@ -61,6 +58,6 @@ mod test {
             number_of_authors_to_display: 3,
         };
 
-        assert!(contributors_info.value().value.is_empty());
+        assert!(contributors_info.value().is_empty());
     }
 }
