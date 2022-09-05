@@ -23,7 +23,7 @@ priority = "optional"
 section = "utility"
 
 [dependencies]
-anyhow = "1.0.59"
+anyhow = "1.0.64"
 askalono = "0.4.6"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
