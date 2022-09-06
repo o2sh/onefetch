@@ -33,7 +33,7 @@ pub fn get_ascii_colors(
     }
 }
 
-fn num_to_color(num: &u8) -> DynColors {
+pub fn num_to_color(num: &u8) -> DynColors {
     match num {
         0 => DynColors::Ansi(AnsiColors::Black),
         1 => DynColors::Ansi(AnsiColors::Red),

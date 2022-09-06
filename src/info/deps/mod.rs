@@ -1,3 +1,4 @@
+use super::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
@@ -49,6 +50,29 @@ impl DependencyDetector {
     }
 }
 
+pub struct DependenciesInfo {
+    pub dependencies: String,
+}
+
+impl DependenciesInfo {
+    pub fn new(repo_path: &Path) -> Result<Self> {
+        let dependencies = DependencyDetector::new().get_dependencies(repo_path)?;
+        Ok(Self { dependencies })
+    }
+}
+
+impl InfoField for DependenciesInfo {
+    const TYPE: InfoType = InfoType::Dependencies;
+
+    fn value(&self) -> String {
+        self.dependencies.to_string()
+    }
+
+    fn title(&self) -> String {
+        String::from("Dependencies")
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -62,5 +86,13 @@ mod test {
         assert!(re.is_match(&deps));
 
         Ok(())
+    }
+    #[test]
+    fn test_display_dependencies_info() {
+        let dependencies_info = DependenciesInfo {
+            dependencies: "22 (npm)".to_string(),
+        };
+
+        assert_eq!(dependencies_info.value(), "22 (npm)".to_string(),);
     }
 }

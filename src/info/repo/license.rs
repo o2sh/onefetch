@@ -1,3 +1,4 @@
+use crate::info::info_field::{InfoField, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use std::path::Path;
@@ -63,6 +64,29 @@ fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
     LICENSE_FILES
         .iter()
         .any(|&name| file_name.as_ref().starts_with(name))
+}
+
+pub struct LicenseInfo {
+    pub license: String,
+}
+
+impl LicenseInfo {
+    pub fn new(repo_path: &Path) -> Result<Self> {
+        let license = Detector::new()?.get_license(repo_path)?;
+        Ok(Self { license })
+    }
+}
+
+impl InfoField for LicenseInfo {
+    const TYPE: InfoType = InfoType::License;
+
+    fn value(&self) -> String {
+        self.license.to_string()
+    }
+
+    fn title(&self) -> String {
+        String::from("License")
+    }
 }
 
 #[cfg(test)]
