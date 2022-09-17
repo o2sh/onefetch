@@ -52,7 +52,7 @@ toml = "0.5.9"
 yaml-rust = "0.4.5"
 
 [target.'cfg(windows)'.dependencies]
-ansi_term = "0.12.1"
+enable-ansi-support = "0.1.2"
 
 [target.'cfg(not(windows))'.dependencies]
 base64 = "0.13.0"

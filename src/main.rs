@@ -9,7 +9,7 @@ use ui::printer::Printer;
 
 fn main() -> Result<()> {
     #[cfg(windows)]
-    let _ = ansi_term::enable_ansi_support();
+    let _ = enable_ansi_support::enable_ansi_support();
 
     let config = Config::parse();
 
