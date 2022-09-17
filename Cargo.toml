@@ -40,7 +40,7 @@ owo-colors = "3.4.0"
 regex = "1.6.0"
 serde = "1.0.143"
 serde_json = "1.0.83"
-serde_yaml = "0.9.4"
+serde_yaml = "0.9.13"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum = { version = "0.24.1", features = ["derive"] }
@@ -52,7 +52,7 @@ toml = "0.5.9"
 yaml-rust = "0.4.5"
 
 [target.'cfg(windows)'.dependencies]
-ansi_term = "0.12.1"
+enable-ansi-support = "0.1.2"
 
 [target.'cfg(not(windows))'.dependencies]
 base64 = "0.13.0"
