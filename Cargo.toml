@@ -28,7 +28,7 @@ askalono = "0.4.6"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
 clap = { version = "3.2.17", features = ["derive"] }
-clap_complete = "3.2.4"
+clap_complete = "3.2.5"
 color_quant = "1.1.0"
 git-repository = { version = "0.22.1", default-features = false, features = [
   "max-performance-safe",
