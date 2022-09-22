@@ -55,10 +55,9 @@
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
   }
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: 684px) {
     #hide-on-small-display {
-      opacity: 0;
-      visibility: hidden;
+      display: none;
     }
   }
   .back-to-top.hidden {
