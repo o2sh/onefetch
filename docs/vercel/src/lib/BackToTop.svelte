@@ -30,7 +30,7 @@
   id="hide-on-small-display"
   on:click={goTop}
   class:hidden>
-  ⬆
+  <i class="arrow up" />
 </div>
 
 <style>
@@ -40,11 +40,20 @@
     position: fixed;
     right: 20px;
     bottom: 20px;
-    color: white;
-    padding: 10px;
+    padding: 5px 10px;
     border-radius: 10px;
     background-color: black;
     cursor: pointer;
+  }
+  .arrow {
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+  }
+  .up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
   }
   @media only screen and (max-width: 800px) {
     #hide-on-small-display {
