@@ -2,6 +2,7 @@
   import AsciiPreview from './lib/AsciiPreview.svelte';
   import data from '../../../languages.yaml';
   import type { Languages } from '../../../languages.yaml';
+  import BackToTop from './lib/BackToTop.svelte';
 
   const languages = Object.entries(data as Languages).map(
     ([name, { ascii, colors }]) => ({
@@ -52,6 +53,8 @@
       ascii={language.ascii}
       chip={language.chip} />
   {/each}
+
+  <BackToTop />
 </main>
 
 <style>
