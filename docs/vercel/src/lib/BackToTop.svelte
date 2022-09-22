@@ -40,7 +40,7 @@
     position: fixed;
     right: 20px;
     bottom: 20px;
-    padding: 5px 10px;
+    padding: 5px 15px;
     border-radius: 10px;
     background-color: black;
     cursor: pointer;
