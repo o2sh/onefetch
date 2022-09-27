@@ -77,6 +77,10 @@
     height: 24px;
   }
 
+  .language-name a:focus {
+    outline: none;
+  }
+
   pre {
     line-height: 1.1;
     background-color: white;
