@@ -34,9 +34,7 @@
 
 <div class="title-row">
   <div class="language-name">
-    <!-- svelte-ignore a11y-missing-content -->
-    <a class="anchor" id={name} href="#{name}" />
-    <Chip color={chip} width={24} height={24} />
+    <Chip id={name} color={chip} width={24} height={24} />
     <h3>{name}</h3>
   </div>
   <div class="checkbox">
@@ -71,14 +69,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: baseline;
-  }
-
-  .anchor {
-    height: 24px;
-  }
-
-  .language-name a:focus {
-    outline: none;
   }
 
   pre {
