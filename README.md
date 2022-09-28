@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="docs/README.ja.md"><img title="日本語" alt="日本語" src="assets/flags/jp.svg" height="18"></a> &nbsp;
+  <a href="docs/README.ja.md"><img title="日本語" alt="日本語" src="assets/flags/jp.svg" height="18"></a>&nbsp;
   <a href="docs/README.fa.md"><img title="فارسی" alt="فارسی" src="assets/flags/ir.svg" height="18"></a>&nbsp;
   <a href="docs/README.cn.md"><img title="简体中文" title="简体中文" src="assets/flags/cn.svg" height="18"></a>&nbsp;
   <a href="docs/README.ru.md"><img title="Русский" title="Русский" src="assets/flags/ru.svg" height="18"></a>&nbsp;
