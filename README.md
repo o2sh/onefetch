@@ -12,12 +12,12 @@
 </p>
 
 <p align="center">
-  <a href="docs/README.ja.md"><img title="日本語" alt="日本語" src="assets/flags/jp.svg" height="18"></a> &nbsp; 
+  <a href="docs/README.ja.md"><img title="日本語" alt="日本語" src="assets/flags/jp.svg" height="18"></a> &nbsp;
   <a href="docs/README.fa.md"><img title="فارسی" alt="فارسی" src="assets/flags/ir.svg" height="18"></a>&nbsp;
   <a href="docs/README.cn.md"><img title="简体中文" title="简体中文" src="assets/flags/cn.svg" height="18"></a>&nbsp;
   <a href="docs/README.ru.md"><img title="Русский" title="Русский" src="assets/flags/ru.svg" height="18"></a>&nbsp;
   <a href="docs/README.es.md"><img title="Español" title="Español" src="assets/flags/es.svg" height="18"></a>&nbsp;
-  <a href="docs/README.fr.md"><img title="Français" title="Français" src="assets/flags/fr.svg" height="18"></a> 
+  <a href="docs/README.fr.md"><img title="Français" title="Français" src="assets/flags/fr.svg" height="18"></a>
 </p>
 
 <img src="assets/screenshot-1.png" align="right" height="240px">
