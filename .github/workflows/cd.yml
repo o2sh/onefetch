@@ -55,7 +55,7 @@ jobs:
           formula-name: onefetch
 
       - name: Publish executable to WinGet
-        uses: vedantmgoyal2009/winget-releaser@latest
+        uses: vedantmgoyal2009/winget-releaser@v1
         if: matrix.os == 'windows-latest'
         with:
           identifier: o2sh.onefetch
