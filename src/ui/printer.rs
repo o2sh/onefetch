@@ -6,6 +6,7 @@ use crate::ui::image_backends::ImageBackend;
 use crate::ui::Language;
 use anyhow::{Context, Result};
 use image::DynamicImage;
+use serde::{Deserialize, Serialize};
 use std::fmt::Write as _;
 use std::io::Write;
 use terminal_size::{terminal_size, Width};
@@ -13,7 +14,7 @@ use terminal_size::{terminal_size, Width};
 const CENTER_PAD_LENGTH: usize = 3;
 const MAX_TERM_WIDTH: u16 = 95;
 
-#[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
+#[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub enum SerializationFormat {
     Json,
     Yaml,

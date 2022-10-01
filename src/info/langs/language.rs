@@ -1,6 +1,5 @@
 use crate::info::info_field::{InfoField, InfoType};
 use owo_colors::OwoColorize;
-use serde::Serialize;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 

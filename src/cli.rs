@@ -8,13 +8,16 @@ use clap::AppSettings;
 use clap::{Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use regex::Regex;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::de::{self, Visitor};
 use std::env;
 use std::io;
+use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 
-#[derive(Clone, Debug, Parser, PartialEq, Eq)]
+#[derive(Clone, Debug, Parser, PartialEq, Eq, Deserialize, Serialize)]
 #[clap(version, about, long_about = None, rename_all = "kebab-case")]
 #[clap(global_setting(AppSettings::DeriveDisplayOrder))]
 pub struct Config {
@@ -146,6 +149,7 @@ pub struct Config {
     pub r#type: Vec<LanguageType>,
     /// If provided, outputs the completion file for given SHELL
     #[clap(long = "generate", value_name = "SHELL", arg_enum)]
+    #[serde(skip)]
     pub completion: Option<Shell>,
 }
 
@@ -184,7 +188,7 @@ pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub enum When {
     Auto,
     Never,
@@ -301,5 +305,43 @@ impl FromStr for MyRegex {
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(MyRegex(Regex::new(s)?))
+    }
+}
+
+impl Serialize for MyRegex {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(self.0.as_str())
+    }
+}
+
+struct MyRegexVisitor;
+
+impl<'de> Visitor<'de> for MyRegexVisitor {
+    type Value = MyRegex;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a str representation of a regex")
+    }
+
+    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        match MyRegex::from_str(s) {
+            Ok(regex) => Ok(regex),
+            Err(error) => Err(de::Error::custom(error))
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for MyRegex {
+    fn deserialize<D>(deserializer: D) -> Result<MyRegex, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_str(MyRegexVisitor)
     }
 }

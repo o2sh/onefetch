@@ -2,6 +2,7 @@ use owo_colors::{
     AnsiColors,
     DynColors::{self, Ansi, Rgb},
 };
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::fmt::Write;
 use strum::EnumIter;
@@ -11,7 +12,7 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
-#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
+#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum, Deserialize, Serialize)]
 pub enum LanguageType {
     Programming,
     Markup,
@@ -19,7 +20,7 @@ pub enum LanguageType {
     Data,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Deserialize, Serialize)]
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
 pub enum Language {
