@@ -1179,25 +1179,41 @@ Jsonnet:
 Jsx:
   type: programming
   ascii: |
-    {0}          .REACT.    .REACT.
-    {0}        JS     .JSXJSX.     JS
-    {0}       JS       :JSJS:       JS
-    {0}       JS     .REACTJSX'     JS
-    {0}     'JSXJSXJSXJSXJSXJSXJSXJSXJS'
-    {0}  'REACTJSREACT        REACTJSREACT'
-    {0} 'JSX'  REACT'  :JSXJ:  'REACT  'JSX'
-    {0}'JS      JSX'  :JSXJSX:  'JSX      JS'
-    {0}'JS      JSX'  :JSXJSX:  'JSX      JS'
-    {0} 'JSX'  REACT'  :JSXJ:  'REACT  'JSX'
-    {0}  'REACTJSREACT        REACTJSREACT'
-    {0}     'JSXJSXJSXJSXJSXJSXJSXJSXJS'
-    {0}       JS     .REACTJSX'     JS
-    {0}       JS       :JSJS:       JS
-    {0}        JS     .JSXJSX.     JS
-    {0}          .REACT.    .REACT.
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQQQ{5}b{0}bbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQQQ{0})bbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQQQ{0}qbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQQ{5}O{0}bbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQQ{0})bbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQ{6}({0}pbbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQ{0}obbbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQQ{0})bbbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQ{5}D{0}bbbbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQQ{0})bbbbbbbbbbbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQQQD{0}pbbbbbbbbbbbbb
+    {1}QQQQQQQQQQ{4}//{1})QQC{4}/{3}///J{1}DQQQ{0}D){2}PDP{0}ob){2}DDP{0}bbbb
+    {1}QQQQQQQQQQ{3}//{5}){1}Qb{3}//{1}DD{5}uGDQQD{0})bb{2}JDD{0}q{2}DDD{0}bbbbb
+    {1}QQQQQQQQQQ{3}//{5}){1}QD{4}/{3}///{5}J{1}PQQQD{0}bbbb){2}DDD{0})bbbbbb
+    {1}QQQQQQQQQQ{3}//{5}){1}QQQDD{4}u{3}///{1}QQ{0})bbbq{2}DDPDD{0}obbbbb
+    {1}QQQQQD{4}//{1}PC{3}//{1}SQ{4}/{3}/J{1}PP{4}C{3}//{1}DQ{0}qbbe{2}DD{0})b{2}JDD{0}pbbbb
+    {1}QQQQQQb{4}uuue{1}DQQDb{4}uuuud{1}DQ{5}D{0}bbP{2}PP{0})bbb){2}PP{0}Pbbb
+    {1}QQQQQQQQQQQQQQQQQQQQQQQ{0})bbbbbbbbbbbbbbbb
   colors:
     ansi:
+      - magenta
       - yellow
+      - white
+      - black
+      - black
+      - yellow
+      - magenta
+    hex:
+      - '#B684D3'
+      - '#FAE354'
+      - '#F3EAF8'
+      - '#9F9D92'
+      - '#B8B382'
+      - '#CFB97E'
+      - '#E4C484'
     chip: '#F1E05A'
 Julia:
   type: programming
