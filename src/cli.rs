@@ -153,6 +153,36 @@ pub struct Config {
     pub completion: Option<Shell>,
 }
 
+impl Default for Config {
+    fn default() -> Self { Config {
+        input: PathBuf::from("."),
+        ascii_input: Default::default(),
+        ascii_language: Default::default(),
+        ascii_colors: Default::default(),
+        disabled_fields: Default::default(),
+        image: Default::default(),
+        image_protocol: Default::default(),
+        color_resolution: 16,
+        no_bold: Default::default(),
+        no_merges: Default::default(),
+        no_color_palette: Default::default(),
+        number_of_authors: 3,
+        exclude: Default::default(),
+        no_bots: Default::default(),
+        languages: Default::default(),
+        package_managers: Default::default(),
+        output: Default::default(),
+        true_color: When::Auto,
+        show_logo: When::Always,
+        text_colors: Default::default(),
+        iso_time: Default::default(),
+        email: Default::default(),
+        include_hidden: Default::default(),
+        r#type: vec![LanguageType::Programming, LanguageType::Markup],
+        completion: Default::default(),
+    } }
+}
+
 pub fn print_supported_languages() -> Result<()> {
     for l in Language::iter() {
         println!("{}", l);
@@ -201,13 +231,13 @@ mod test {
 
     #[test]
     fn test_default_config() {
-        let config = get_default_config();
+        let config = Config::default();
         assert_eq!(config, Config::parse_from(&["onefetch"]))
     }
 
     #[test]
     fn test_custom_config() {
-        let mut config = get_default_config();
+        let mut config = Config::default();
         config.number_of_authors = 4;
         config.input = PathBuf::from("/tmp/folder");
         config.no_merges = true;
@@ -256,36 +286,6 @@ mod test {
     #[test]
     fn test_config_with_text_colors_but_out_of_bounds() {
         assert!(Config::try_parse_from(&["onefetch", "--text-colors", "17"]).is_err())
-    }
-
-    fn get_default_config() -> Config {
-        Config {
-            input: PathBuf::from("."),
-            ascii_input: Default::default(),
-            ascii_language: Default::default(),
-            ascii_colors: Default::default(),
-            disabled_fields: Default::default(),
-            image: Default::default(),
-            image_protocol: Default::default(),
-            color_resolution: 16,
-            no_bold: Default::default(),
-            no_merges: Default::default(),
-            no_color_palette: Default::default(),
-            number_of_authors: 3,
-            exclude: Default::default(),
-            no_bots: Default::default(),
-            languages: Default::default(),
-            package_managers: Default::default(),
-            output: Default::default(),
-            true_color: When::Auto,
-            show_logo: When::Always,
-            text_colors: Default::default(),
-            iso_time: Default::default(),
-            email: Default::default(),
-            include_hidden: Default::default(),
-            r#type: vec![LanguageType::Programming, LanguageType::Markup],
-            completion: Default::default(),
-        }
     }
 }
 
