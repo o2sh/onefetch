@@ -1202,9 +1202,9 @@ Jsx:
       - magenta
       - white
     hex:
-      - '#FAE354'
+      - '#ECE653'
       - '#B684D3'
-      - '#F3EAF8'
+      - '#FFFFFF'
     chip: '#F1E05A'
 Julia:
   type: programming
