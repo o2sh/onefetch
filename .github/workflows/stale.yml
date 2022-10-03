@@ -29,4 +29,3 @@ jobs:
           stale-issue-label: "stale"
           stale-pr-label: "stale"
           exempt-draft-pr: "true"
-          close-issue-reason: "not_planned"
