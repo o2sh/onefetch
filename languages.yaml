@@ -2518,7 +2518,7 @@ XSL:
   colors:
     ansi:
       - cyan
-    chip: '#58A7D7'
+    chip: '#EB8CEB'
 Yaml:
   type: data
   ascii: |
