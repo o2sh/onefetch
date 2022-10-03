@@ -37,6 +37,7 @@ git-repository = { version = "0.23.1", default-features = false, features = [
 ] }
 git2 = { version = "0.15.0", default-features = false }
 image = "0.24.3"
+merge = "0.1.0"
 owo-colors = "3.5.0"
 regex = "1.6.0"
 serde = "1.0.144"
