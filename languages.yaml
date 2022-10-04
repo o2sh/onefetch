@@ -1907,7 +1907,7 @@ Ruby:
   colors:
     ansi:
       - red
-      - white
+      - black
       - red
       - red
       - red
