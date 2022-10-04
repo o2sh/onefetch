@@ -2502,7 +2502,7 @@ Xml:
       - green
     chip: '#0060AC'
 XSL:
-  type: markup
+  type: programming
   ascii: |
     {0}                       :::
     {0}       :::::          :::  :::::
