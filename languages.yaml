@@ -77,31 +77,35 @@ AutoHotKey:
 Bash:
   type: programming
   ascii: |
-    {0}                ;sh:'
-    {0}             :ba:sh:,ba;
-    {0}          ;sh,         ':ba;
-    {0}      ':ba                ':sh;
-    {0}   ,sh'                      ,ash,
-    {0} ,s:'                           ':h;
-    {0}'ba                              ,aoOk,
-    {0}:b,                           ;hkABASH:
-    {0}:b,                        ;oOBASHBASH:
-    {0}:b,                    ':bBASHBASHBASH:
-    {0}:b,                 ':AKBBBASHBASHBASH:
-    {0}:b,               ;okNBBB$BASHBASHBASH:
-    {0}:b,               oABASH$ $BBBBASHBASH:
-    {0}:b,               oBASH$   $BBBASHBASH:
-    {0}:b,               oBAS$  $BASHBAS  ASH:
-    {0};b;               oBASHB$  $BBB  HBASH;
-    {0} :ba'             oBAS$   $HH  SHBASHa
-    {0}  ':sh;           oBASH$ $BASHBASHBA'
-    {0}     ':ba:        oBASHB$BASHBAS:'
-    {0}         ;shh:,   oBASHBASHBA;
-    {0}            ,:ba;o0ABN0Aa,
-    {0}                ;sh:'
+    {0}                shbas
+    {0}             hbashbashba
+    {0}          bash         ashba
+    {0}      bash                bashb
+    {0}   ashb                      hbas
+    {0} hbas                           shba
+    {0}'hb                              hbash,
+    {0}:h,                           ;ASHBASH:
+    {0}:h,                        ;sHBASHBASH:
+    {0}:h,                     :hBASHBASHBASH:
+    {0}:h,                  :BASHBASHBASHBASH:
+    {0}:h,               ;aSHBAS$BASHBASHBASH:
+    {0}:h,               bASHBA$ $ASHBASHBASH:
+    {0}:h,               bASHB$   $SHBASHBASH:
+    {0}:h,               bASH$  $BASHBASHBASH:
+    {0};h,               bASHBA$  $SHBA{1}SHB{0}ASH;
+    {0} :ba'             bASH$   $AS{1}HBA{0}SHBASh
+    {0}  ':sh;           bASHB$ $BASHBASHBA'
+    {0}     'bas:        bASHBA$HBASHBAS'
+    {0}         ;bas:,   bASHBASHBAS;
+    {0}            ,:bashbASHBAs,
+    {0}                ;hba'
   colors:
     ansi:
       - white
+      - green
+    hex:
+      - '#FFFFFF'
+      - '#4DA825'
     chip: '#89E051'
 C:
   type: programming
