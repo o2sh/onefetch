@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 pub trait InfoField {
     const TYPE: InfoType;
     fn value(&self) -> String;
@@ -11,7 +13,7 @@ pub trait InfoField {
     }
 }
 
-#[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
+#[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum InfoType {
     Title,
     Project,

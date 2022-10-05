@@ -4,6 +4,6 @@
 *.snap
 /parts
 /prime
-.gitignore.swp
+*.swp
 .DS_Store
 result

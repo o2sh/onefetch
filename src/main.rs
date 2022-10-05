@@ -11,7 +11,7 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
 
-    let config = Config::parse();
+    let config = configuration::populate_config(Config::parse());
 
     if config.languages {
         return cli::print_supported_languages();
@@ -36,5 +36,6 @@ fn main() -> Result<()> {
 }
 
 mod cli;
+mod configuration;
 mod info;
 mod ui;
