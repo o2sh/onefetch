@@ -4,8 +4,9 @@ use crate::info::langs::language::{Language, LanguageType};
 use crate::ui::image_backends::ImageProtocol;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::AppSettings;
-use clap::{Command, Parser, ValueHint};
+use clap::builder::PossibleValuesParser;
+use clap::builder::TypedValueParser as _;
+use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use regex::Regex;
 use std::env;
@@ -14,12 +15,13 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 
+const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
+
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[clap(version, about, long_about = None, rename_all = "kebab-case")]
-#[clap(global_setting(AppSettings::DeriveDisplayOrder))]
+#[command(version, about, long_about = None, rename_all = "kebab-case")]
 pub struct Config {
     /// Run as if onefetch was started in <input> instead of the current working directory
-    #[clap(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
+    #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
     pub input: PathBuf,
     /// Takes a non-empty STRING as input to replace the ASCII logo
     ///
@@ -28,87 +30,88 @@ pub struct Config {
     /// For example:
     ///
     /// '--ascii-input "$(fortune | cowsay -W 25)'
-    #[clap(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
+    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
-    #[clap(
+    #[arg(
         long,
         short,
         value_name = "LANGUAGE",
-        arg_enum,
+        value_enum,
         hide_possible_values = true
     )]
     pub ascii_language: Option<Language>,
     /// Colors (X X X...) to print the ascii art
-    #[clap(
+    #[arg(
         long,
-        multiple_values = true,
+        num_args = 1..,
         value_name = "X",
         short = 'c',
-        value_parser = clap::value_parser!(u8).range(..16),
+        value_parser = value_parser!(u8).range(..16),
     )]
     pub ascii_colors: Vec<u8>,
     /// Allows you to disable FIELD(s) from appearing in the output
-    #[clap(
+    #[arg(
         long,
         short,
-        multiple_values = true,
+        num_args = 1..,
         hide_possible_values = true,
-        arg_enum,
+        value_enum,
         value_name = "FIELD"
     )]
     pub disabled_fields: Vec<InfoType>,
     /// Path to the IMAGE file
-    #[clap(long, short, value_hint = ValueHint::FilePath)]
+    #[arg(long, short, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
     /// Which image protocol to use
-    #[clap(long, arg_enum, requires = "image")]
+    #[arg(long, value_enum, requires = "image")]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
-    #[clap(
+    #[arg(
         long,
         value_name = "VALUE",
         requires = "image",
         default_value_t = 16usize,
-        possible_values = ["16", "32", "64", "128", "256"],
+        value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
+            .map(|s| s.parse::<usize>().unwrap())
     )]
     pub color_resolution: usize,
     /// Turns off bold formatting
-    #[clap(long)]
+    #[arg(long)]
     pub no_bold: bool,
     /// Ignores merge commits
-    #[clap(long)]
+    #[arg(long)]
     pub no_merges: bool,
     /// Hides the color palette
-    #[clap(long)]
+    #[arg(long)]
     pub no_color_palette: bool,
     /// NUM of authors to be shown
-    #[clap(long, short, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, short, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
     /// gnore all files & directories matching EXCLUDE
-    #[clap(long, multiple_values = true, short, value_hint = ValueHint::AnyPath)]
+    #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
-    #[clap(long, value_name = "REGEX")]
+    #[arg(long, value_name = "REGEX")]
     pub no_bots: Option<Option<MyRegex>>,
     /// Prints out supported languages
-    #[clap(long, short)]
+    #[arg(long, short)]
     pub languages: bool,
     /// Prints out supported package managers
-    #[clap(long, short)]
+    #[arg(long, short)]
     pub package_managers: bool,
     /// Outputs Onefetch in a specific format
-    #[clap(long, short, value_name = "FORMAT", arg_enum)]
+    #[arg(long, short, value_name = "FORMAT", value_enum)]
     pub output: Option<SerializationFormat>,
     /// Specify when to use true color
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
-    #[clap(long, default_value = "auto", value_name = "WHEN", arg_enum)]
+    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
     pub true_color: When,
     /// Specify when to show the logo
     ///
     /// If set to auto: the logo will be hidden if the terminal's width < 95
-    #[clap(long, default_value = "always", value_name = "WHEN", arg_enum)]
+    #[arg(long, default_value = "always", value_name = "WHEN", value_enum)]
     pub show_logo: When,
     /// Changes the text colors (X X X...)
     ///
@@ -117,35 +120,34 @@ pub struct Config {
     /// For example:
     ///
     /// '--text-colors 9 10 11 12 13 14'
-    #[clap(
+    #[arg(
         long,
         short = 't',
-        multiple_values = true,
         value_name = "X",
-        value_parser = clap::value_parser!(u8).range(..16),
-        max_values = 6
+        value_parser = value_parser!(u8).range(..16),
+        num_args = 1..=6
     )]
     pub text_colors: Vec<u8>,
     /// Use ISO 8601 formatted timestamps
-    #[clap(long, short = 'z')]
+    #[arg(long, short = 'z')]
     pub iso_time: bool,
     /// Show the email address of each author
-    #[clap(long, short = 'E')]
+    #[arg(long, short = 'E')]
     pub email: bool,
     /// Count hidden files and directories
-    #[clap(long)]
+    #[arg(long)]
     pub include_hidden: bool,
     /// Filters output by language type
-    #[clap(
+    #[arg(
         long,
-        multiple_values = true,
+        num_args = 1..,
         default_values = &["programming", "markup"],
         short = 'T',
-        arg_enum,
+        value_enum,
     )]
     pub r#type: Vec<LanguageType>,
     /// If provided, outputs the completion file for given SHELL
-    #[clap(long = "generate", value_name = "SHELL", arg_enum)]
+    #[arg(long = "generate", value_name = "SHELL", value_enum)]
     pub completion: Option<Shell>,
 }
 
