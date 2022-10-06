@@ -2221,8 +2221,8 @@ SystemVerilog:
     {0}  _.._    _.._    _.._    _.._
   colors:
     ansi:
-      - white
       - blue
+      - white
     chip: '#DAE1C2'
 Tcl:
   type: programming
