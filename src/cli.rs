@@ -5,6 +5,7 @@ use crate::ui::image_backends::ImageProtocol;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
+use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use regex::Regex;
@@ -14,7 +15,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 
-static COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
+const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about, long_about = None, rename_all = "kebab-case")]
@@ -71,7 +72,8 @@ pub struct Config {
         value_name = "VALUE",
         requires = "image",
         default_value_t = 16usize,
-        //value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
+        value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
+            .map(|s| s.parse::<usize>().unwrap())
     )]
     pub color_resolution: usize,
     /// Turns off bold formatting
