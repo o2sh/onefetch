@@ -17,7 +17,7 @@
     "@sveltejs/vite-plugin-svelte": "^1.0.8",
     "@tsconfig/svelte": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
-    "@typescript-eslint/parser": "^5.32.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "eslint": "^8.24.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "prettier": "^2.7.1",
