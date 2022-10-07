@@ -35,14 +35,13 @@ pub enum InfoType {
 mod test {
     use super::*;
 
-    struct InfoFieldImpl {
-        pub val: String,
-    }
+    struct InfoFieldImpl(&'static str);
+
     impl InfoField for InfoFieldImpl {
         const TYPE: InfoType = InfoType::Project;
 
         fn value(&self) -> String {
-            self.val.clone()
+            self.0.into()
         }
 
         fn title(&self) -> String {
@@ -52,28 +51,19 @@ mod test {
 
     #[test]
     fn test_info_field_get() {
-        let info = InfoFieldImpl {
-            val: String::from("test"),
-        };
-
+        let info = InfoFieldImpl("test");
         assert_eq!(info.get(&[]), Some(String::from("test")));
     }
 
     #[test]
     fn test_info_field_get_none_when_type_disabled() {
-        let info = InfoFieldImpl {
-            val: String::from("test"),
-        };
-
+        let info = InfoFieldImpl("test");
         assert_eq!(info.get(&[InfoType::Project]), None);
     }
 
     #[test]
     fn test_info_field_get_none_when_value_is_empty() {
-        let info = InfoFieldImpl {
-            val: String::from(""),
-        };
-
+        let info = InfoFieldImpl("");
         assert_eq!(info.get(&[]), None);
     }
 }
