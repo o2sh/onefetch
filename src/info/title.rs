@@ -134,6 +134,22 @@ mod tests {
         ]
         .join("");
         assert_eq!(format!("{}", title), expected_title);
+
+        title.git_version = "".to_string();
+        let expected_title = [
+            "\u{1b}[31;1monefetch-committer-name",
+            "\u{1b}[0m",
+            "\u{1b}[31;1m",
+            "\u{1b}[0m\n",
+            "\u{1b}[34m-----------------------\u{1b}[39m\n",
+        ]
+        .join("");
+        assert_eq!(format!("{}", title), expected_title);
+
+        title.git_username = "".to_string();
+        let expected_title = "".to_string();
+        assert_eq!(format!("{}", title), expected_title);
+
         Ok(())
     }
 }
