@@ -81,3 +81,34 @@ impl std::fmt::Display for Title {
         }
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use git_repository::{open, Repository, ThreadSafeRepository};
+    use git_testtools;
+
+    pub type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+    pub fn restricted() -> open::Options {
+        open::Options::isolated()
+    }
+
+    pub fn repo(name: &str) -> Result<ThreadSafeRepository> {
+        let repo_path = git_testtools::scripted_fixture_repo_read_only(name)?;
+        Ok(ThreadSafeRepository::open_opts(repo_path, restricted())?)
+    }
+
+    fn basic_repo() -> Result<Repository> {
+        repo("make_basic_repo.sh").map(|r| r.to_thread_local())
+    }
+
+    #[test]
+    fn test_get_git_username() -> Result<()> {
+        // See file ../tests/fixtures/make_basic_repo.sh for specific repo values
+        let repo = basic_repo()?;
+        let username = get_git_username(&repo);
+        assert_eq!(username, "onefetch-committer-name");
+        Ok(())
+    }
+}
+

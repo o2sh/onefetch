@@ -22,6 +22,9 @@ maintainer = "o2sh <ossama-hjaji@live.fr>"
 priority = "optional"
 section = "utility"
 
+[dev-dependencies]
+git-testtools = "0.9.0"
+
 [dependencies]
 anyhow = "1.0.65"
 askalono = "0.4.6"
