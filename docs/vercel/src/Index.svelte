@@ -38,7 +38,7 @@
     supported by onefetch. Like the binary, the data is taken from the <a
       href="https://raw.githubusercontent.com/o2sh/onefetch/main/languages.yaml"
       ><code>Languages.yaml</code></a> file and the layout is meant to mimic the
-    way the logo would be displayed inside a terminal.
+    way the logo would look inside a terminal.
   </p>
   <p>
     Suggestions and PRs are welcome at <a
