@@ -25,7 +25,7 @@ ABNF:
     ansi:
       - white
     hex:
-      - '#555555'
+      - '#888888'
     chip: '#555e25'
 Ada:
   type: programming
