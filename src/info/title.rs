@@ -86,38 +86,7 @@ mod tests {
     use super::*;
     use git_repository::{open, Repository, ThreadSafeRepository};
     use git_testtools;
-
-    pub type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
-
-    pub fn restricted() -> open::Options {
-        open::Options::isolated()
-    }
-
-    pub fn repo(name: &str) -> Result<ThreadSafeRepository> {
-        let repo_path = git_testtools::scripted_fixture_repo_read_only(name)?;
-        Ok(ThreadSafeRepository::open_opts(repo_path, restricted())?)
-    }
-
-    fn basic_repo() -> Result<Repository> {
-        repo("make_basic_repo.sh").map(|r| r.to_thread_local())
-    }
-
-    #[test]
-    fn test_get_git_username() -> Result<()> {
-        // See file ../tests/fixtures/make_basic_repo.sh for specific repo values
-        let repo = basic_repo()?;
-        let username = get_git_username(&repo);
-        assert_eq!(username, "onefetch-committer-name");
-        Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use git_repository::{open, Repository, ThreadSafeRepository};
     use owo_colors::AnsiColors;
-    use git_testtools;
 
     pub type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -161,8 +130,10 @@ mod tests {
             "\u{1b}[0m \u{1b}[37;1m~\u{1b}[0m ",
             "\u{1b}[31;1mgit version 2.37.2",
             "\u{1b}[0m\n",
-            "\u{1b}[34m--------------------------------------------\u{1b}[39m\n" ].join("");
-        assert_eq!(format!("{}",title), expected_title);
+            "\u{1b}[34m--------------------------------------------\u{1b}[39m\n",
+        ]
+        .join("");
+        assert_eq!(format!("{}", title), expected_title);
         Ok(())
     }
 }
