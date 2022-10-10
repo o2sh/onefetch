@@ -45,4 +45,23 @@ mod test {
 
         assert_eq!(commits_info.value(), "3".to_string());
     }
+
+    #[test]
+    fn test_display_commits_info_shallow() {
+        use crate::info::git::Commits;
+        use git_repository::actor::Time;
+
+        let timestamp = Time::now_utc();
+        let commits = Commits {
+            authors: vec![],
+            total_num_authors: 0,
+            num_commits: 2,
+            is_shallow: true,
+            time_of_most_recent_commit: timestamp,
+            time_of_first_commit: timestamp,
+        };
+
+        let info = CommitsInfo::new(&commits);
+        assert_eq!(info.value(), "2 (shallow)".to_string());
+    }
 }
