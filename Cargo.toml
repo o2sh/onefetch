@@ -42,7 +42,7 @@ image = "0.24.4"
 owo-colors = "3.5.0"
 regex = "1.6.0"
 serde = "1.0.145"
-serde_json = "1.0.85"
+serde_json = "1.0.86"
 serde_yaml = "0.9.13"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
