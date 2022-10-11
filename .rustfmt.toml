@@ -1,0 +1,3 @@
+# See also https://rust-lang.github.io/rustfmt for more settings.
+edition = "2021"
+newline_style = "Unix"
