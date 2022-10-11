@@ -102,7 +102,10 @@ mod tests {
         // See file ../tests/fixtures/basic_repo.sh for specific repo values
         let repo = basic_repo()?;
         let username = get_git_username(&repo);
-        assert_eq!(username, "onefetch-committer-name", "see git repo local config committer.name");
+        assert_eq!(
+            username, "onefetch-committer-name",
+            "see git repo local config committer.name"
+        );
         Ok(())
     }
 
