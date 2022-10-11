@@ -43,12 +43,22 @@ mod test {
 
     #[test]
     fn test_display_contributors_info() {
-        let contributors_info = ContributorsInfo {
-            number_of_contributors: 12,
-            number_of_authors_to_display: 2,
+        use crate::info::git::Commits;
+        use git_repository::actor::Time;
+
+        let timestamp = Time::now_utc();
+        let commits = Commits {
+            authors: vec![],
+            total_num_authors: 12,
+            num_commits: 2,
+            is_shallow: true,
+            time_of_most_recent_commit: timestamp,
+            time_of_first_commit: timestamp,
         };
 
+        let contributors_info = ContributorsInfo::new(&commits, 2);
         assert_eq!(contributors_info.value(), "12".to_string());
+        assert_eq!(contributors_info.title(), "Contributors".to_string());
     }
 
     #[test]
