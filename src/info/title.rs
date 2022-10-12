@@ -88,7 +88,7 @@ mod tests {
     use git_testtools;
     use owo_colors::AnsiColors;
 
-    pub type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
+    type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
 
     fn basic_repo() -> Result<Repository> {
         let name = "basic_repo.sh".to_string();
