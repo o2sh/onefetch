@@ -324,6 +324,8 @@ mod tests {
     use crate::ui::num_to_color;
     use clap::Parser;
     use owo_colors::AnsiColors;
+    use git_testtools;
+    use git_repository::{open, Repository, ThreadSafeRepository};
 
     #[test]
     fn test_get_style() -> Result<()> {
@@ -362,6 +364,26 @@ mod tests {
                 ":".style(Style::new().color(num_to_color(&4)).bold())
             )
         );
+        Ok(())
+    }
+
+    type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+    fn test_repo( name: &str ) -> Result<Repository> {
+        let repo_path = git_testtools::scripted_fixture_repo_read_only(name)?;
+        let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
+        Ok(safe_repo.to_thread_local())
+    }
+
+    #[test]
+    fn test_bare_repo() -> Result<()> {
+        let repo = test_repo(&"bare_repo.sh".to_string())?;
+        let mut config = Config::parse_from(&["."]);
+        config.input = repo.path().to_path_buf();
+        let _info = match Info::new(&config) {
+            Ok(_info) => assert!(false, "oops, info was returned on a bare git repo"),
+            Err(error) => assert_eq!( "please run onefetch inside of a non-bare git repository", error.to_string() ),
+        };
         Ok(())
     }
 }
