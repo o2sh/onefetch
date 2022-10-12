@@ -11,7 +11,7 @@ Abap:
       - blue
       - white
     hex:
-      - '#000088'
+      - '#0000FF'
       - '#888888'
     chip: '#E8274B'
 ABNF:
