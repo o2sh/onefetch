@@ -807,6 +807,41 @@ GdScript:
       - '#458DC0'
       - '#FFFFFF'
     chip: '#355570'
+Glsl:
+  type: programming
+  ascii: |
+    {0}                    oooo.
+    {0}          coooooooooooooooo
+    {0}        coooooccccccccccccooooo
+    {0}       oooocoooccooooooooooooooooo
+    {0}     ooooooooooooo          CooooDD
+    {0}   coooooooooo                  oooo
+    {0}   ooOooooo.{1}__     _      _____    _
+    {0} .oOooo  {1}/:::::\  |:|    /::::\\  |:|
+    {0} .ooooo {1}/::::..:| |:|   /:::**||  |:|
+    {0} oooooS {1}|::|  |*| |:|   |::|  */  |:|
+    {0} ooooo  {1}|::|  /// |:|   |:::\ //  |:|
+    {0} ooooo  {1}|::|      |:|    \:::\    |:|
+    {0} ooooo  {1}|::| ///* |:|      \:::\  |:|
+    {0} ooooo  {1}|::|  |:| |:|    // \:::\ |:|
+    {0} oooooS {1}\::\  |:| |:|_  /*  |:::| |:|_
+    {0} ooooo   {1}\::.:::| |:::| ||**/::/  |:::|
+    {0} .oSoooSS {1}\::::/  |:::|  \::::/   |:::|
+    {0}   oocooooo..                       .
+    {0}   coooooooooo                  oooo
+    {0}     ooooooo_oooo.          ooooood
+    {0}       oooocoooocooooooooooooooood
+    {0}         Soooooccccccccccccooooo
+    {0}           Soooooooooooooood
+    {0}                 ooood
+  colors:
+    ansi:
+      - blue
+      - magenta
+    hex:
+      - '#5487a6'
+      - '#bc258e'
+    chip: '#5686a5'
 Go:
   type: programming
   ascii: |
