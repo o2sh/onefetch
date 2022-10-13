@@ -1,3 +1,21 @@
+Abap:
+  type: programming
+  ascii: |
+    {0}xxxxxxxxxxxxxxxxxxxx
+    {0}xx{1}###{0}xxx{1}##{0}xx{1}####{0}xxx{1} ##  ####   ##  ####
+    {0}x{1}#{0}xxxxx{1}#{0}xx{1}#{0}x{1}#{0}xxx{1}#{0}x{1} #  # #   # #  # #   #
+    {0}xx{1}###{0}xx{1}####{0}x{1}####{0}x{1}  #### ####  #### ####
+    {0}xxxxx{1}#{0}x{1}#{0}xx{1}#{0}x{1}#{0}xxx{1}   #  # #   # #  # #
+    {0}x{1}####{0}xx{1}#{0}xx{1}#{0}x{1}#{0}xx{1}    #  # ####  #  # #
+    {0}xxxxxxxxxxxxxx
+  colors:
+    ansi:
+      - blue
+      - white
+    hex:
+      - '#1B387D'
+      - '#EEEEEE'
+    chip: '#E8274B'
 ABNF:
   type: data
   ascii: |
