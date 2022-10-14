@@ -110,7 +110,7 @@ mod tests {
     }
 
     #[test]
-    fn test_title_format() -> Result<()> {
+    fn test_title_format() -> Result {
         let repo = basic_repo()?;
         let mut title = Title::new(
             &repo,
