@@ -7,3 +7,4 @@
 .gitignore.swp
 .DS_Store
 result
+**/generated-*

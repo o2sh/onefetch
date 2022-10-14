@@ -81,3 +81,72 @@ impl std::fmt::Display for Title {
         }
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use git_repository::{open, Repository, ThreadSafeRepository};
+    use git_testtools;
+    use owo_colors::AnsiColors;
+
+    type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+    fn basic_repo() -> Result<Repository> {
+        let name = "basic_repo.sh".to_string();
+        let repo_path = git_testtools::scripted_fixture_repo_read_only(name)?;
+        let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
+        Ok(safe_repo.to_thread_local())
+    }
+
+    #[test]
+    fn test_get_git_username() -> Result {
+        // See file ../tests/fixtures/basic_repo.sh for specific repo values
+        let repo = basic_repo()?;
+        let username = get_git_username(&repo);
+        assert_eq!(
+            username, "onefetch-committer-name",
+            "see git repo local config committer.name"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_title_format() -> Result {
+        let repo = basic_repo()?;
+        let mut title = Title::new(
+            &repo,
+            DynColors::Ansi(AnsiColors::Red),
+            DynColors::Ansi(AnsiColors::White),
+            DynColors::Ansi(AnsiColors::Blue),
+            true,
+        );
+        // git version is collected from command line call to git --version
+        // setting git_version to known value
+        title.git_version = "git version 2.37.2".to_string();
+        let expected_title = [
+            "\u{1b}[31;1monefetch-committer-name",
+            "\u{1b}[0m \u{1b}[37;1m~\u{1b}[0m ",
+            "\u{1b}[31;1mgit version 2.37.2",
+            "\u{1b}[0m\n",
+            "\u{1b}[34m--------------------------------------------\u{1b}[39m\n",
+        ]
+        .join("");
+        assert_eq!(format!("{}", title), expected_title);
+
+        title.git_version = "".to_string();
+        let expected_title = [
+            "\u{1b}[31;1monefetch-committer-name",
+            "\u{1b}[0m",
+            "\u{1b}[31;1m",
+            "\u{1b}[0m\n",
+            "\u{1b}[34m-----------------------\u{1b}[39m\n",
+        ]
+        .join("");
+        assert_eq!(format!("{}", title), expected_title);
+
+        title.git_username = "".to_string();
+        let expected_title = "".to_string();
+        assert_eq!(format!("{}", title), expected_title);
+
+        Ok(())
+    }
+}
