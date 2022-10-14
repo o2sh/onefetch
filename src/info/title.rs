@@ -98,7 +98,7 @@ mod tests {
     }
 
     #[test]
-    fn test_get_git_username() -> Result<()> {
+    fn test_get_git_username() -> Result {
         // See file ../tests/fixtures/basic_repo.sh for specific repo values
         let repo = basic_repo()?;
         let username = get_git_username(&repo);
