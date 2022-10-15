@@ -77,35 +77,27 @@ AutoHotKey:
 Bash:
   type: programming
   ascii: |
-    {0}                shbas
-    {0}             hbashbashba
-    {0}          bash         ashba
-    {0}      bash                bashb
-    {0}   ashb                      hbas
-    {0} hbas                           shba
-    {0}'hb                              hbash,
-    {0}:h,                           ;ASHBASH:
-    {0}:h,                        ;sHBASHBASH:
-    {0}:h,                     :hBASHBASHBASH:
-    {0}:h,                  :BASHBASHBASHBASH:
-    {0}:h,               ;aSHBAS$BASHBASHBASH:
-    {0}:h,               bASHBA$ $ASHBASHBASH:
-    {0}:h,               bASHB$   $SHBASHBASH:
-    {0}:h,               bASH$  $BASHBASHBASH:
-    {0};h,               bASHBA$  $SHBA{1}SHB{0}ASH;
-    {0} :ba'             bASH$   $AS{1}HBA{0}SHBASh
-    {0}  ':sh;           bASHB$ $BASHBASHBA'
-    {0}     'bas:        bASHBA$HBASHBAS'
-    {0}         ;bas:,   bASHBASHBAS;
-    {0}            ,:bashbASHBAs,
-    {0}                ;hba'
+    {0}             _._
+    {0}         _.-'   '-._
+    {0}     _.-'           '-._
+    {0} _.-'                   '-._
+    {0}|                        _,-|
+    {0}|                    _,-'+++|
+    {0}|                _,-'+++++++|
+    {0}|             ,-'+++++++++++|
+    {0}|             |++++ ++++++++|
+    {0}|             |+++   +++++++|
+    {0}|             |++  +++++++++|
+    {0}|             |++++  +++{1}**{0}++|
+    {0}|             |++   ++{1}**{0}++++|
+    {0}'-,_          |+++ ++++++_,-'
+    {0}    '-,_      |++++++_,-'
+    {0}        '-,_  |++_,-'
+    {0}            '-|-'
   colors:
     ansi:
       - white
       - green
-    hex:
-      - '#FFFFFF'
-      - '#4DA825'
     chip: '#89E051'
 C:
   type: programming
