@@ -82,22 +82,32 @@ Ada:
 Assembly:
   type: programming
   ascii: |
-    {0}                                  ____
-    {0}                                ,'  , `.
-    {0}                             ,-+-,.' _ |
-    {0}               .--.--.    ,-+-. ;   , ||
-    {0}   ,--.--.    /  /    '  ,--.'|'   |  ||
-    {0}  /       \  |  :  /`./ |   |  ,', |  |,
-    {0} .--.  .-. | |  :  ;_   |   | /  | |--'
-    {0}  \__\/: . .  \  \    `.|   : |  | ,
-    {0}  ," .--.; |   `----.   \   : |  |/
-    {0} /  /  ,.  |  /  /`--'  /   | |`-'
-    {0};  :   .'   \'--'.     /|   ;/
-    {0}|  ,     .-./  `--'---' '---'
-    {0} `--`---'
+    {0} 1  {1}; -----------------
+    {0} 2  {1}; Writes "onefetch"
+    {0} 3  {1}; -----------------
+    {0} 4
+    {0} 5             {2}global    {0}_start
+    {0} 6
+    {0} 7             {2}section   {0}.text
+    {0} 8   _start:   {3}mov       {4}rax{0}, 1
+    {0} 9             {3}mov       {4}rdi{0}, 1
+    {0}10             {3}mov       {4}rsi{0}, message
+    {0}11             {3}mov       {4}rdx{0}, 9
+    {0}12             {3}syscall
+    {0}13             {3}mov       {4}rax{0}, 60
+    {0}14             {3}xor       {4}rdi{0}, {4}rdi
+    {0}15             {3}syscall
+    {0}16
+    {0}17             {2}section   {0}.data
+    {0}18   message:  {2}db        {5}"onefetch"{0}, 10
   colors:
     ansi:
+      - white
+      - green
       - cyan
+      - magenta
+      - yellow
+      - blue
     chip: '#6E4C13'
 AutoHotKey:
   type: programming
