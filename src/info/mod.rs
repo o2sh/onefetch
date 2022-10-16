@@ -148,12 +148,17 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: &Config) -> Result<Self> {
-        let git_repo = git_repository::discover(&config.input)?;
-        let repo_path = git_repo
+    pub fn init_repo_path(repo: &git_repository::Repository) -> Result<std::path::PathBuf> {
+        Ok( repo
             .work_dir()
             .context("please run onefetch inside of a non-bare git repository")?
-            .to_owned();
+            .to_owned()
+        )
+    }
+
+    pub fn new(config: &Config) -> Result<Self> {
+        let git_repo = git_repository::discover(&config.input)?;
+        let repo_path = Info::init_repo_path(&git_repo)?;
 
         let languages_handle = std::thread::spawn({
             let ignored_directories = config.exclude.clone();
@@ -376,11 +381,9 @@ mod tests {
     }
 
     #[test]
-    fn test_bare_repo() -> Result<()> {
+    fn test_bare_repo() -> Result {
         let repo = test_repo(&"bare_repo.sh".to_string())?;
-        let mut config = Config::parse_from(&["."]);
-        config.input = repo.path().to_path_buf();
-        let _info = match Info::new(&config) {
+        match Info::init_repo_path(&repo) {
             Ok(_info) => assert!(false, "oops, info was returned on a bare git repo"),
             Err(error) => assert_eq!(
                 "please run onefetch inside of a non-bare git repository",
