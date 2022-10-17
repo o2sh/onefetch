@@ -122,26 +122,14 @@ mod tests {
         // git version is collected from command line call to git --version
         // setting git_version to known value
         title.git_version = "git version 2.37.2".to_string();
-        let expected_title = [
-            "\u{1b}[31;1monefetch-committer-name",
-            "\u{1b}[0m \u{1b}[37;1m~\u{1b}[0m ",
-            "\u{1b}[31;1mgit version 2.37.2",
-            "\u{1b}[0m\n",
-            "\u{1b}[34m--------------------------------------------\u{1b}[39m\n",
-        ]
-        .join("");
-        assert_eq!(format!("{}", title), expected_title);
+        assert!(title.to_string().contains("onefetch-committer-name"));
+        assert!(title.to_string().contains("~"));
+        assert!(title.to_string().contains("git version 2.37.2"));
 
         title.git_version = "".to_string();
-        let expected_title = [
-            "\u{1b}[31;1monefetch-committer-name",
-            "\u{1b}[0m",
-            "\u{1b}[31;1m",
-            "\u{1b}[0m\n",
-            "\u{1b}[34m-----------------------\u{1b}[39m\n",
-        ]
-        .join("");
-        assert_eq!(format!("{}", title), expected_title);
+        assert!(title.to_string().contains("onefetch-committer-name"));
+        assert!(!title.to_string().contains("~"));
+        assert!(!title.to_string().contains("git version 2.37.2"));
 
         title.git_username = "".to_string();
         let expected_title = "".to_string();
