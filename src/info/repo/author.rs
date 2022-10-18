@@ -135,4 +135,97 @@ mod test {
 
         assert_eq!(author.to_string(), "75% John Doe 1500");
     }
+
+    #[test]
+    fn test_authors_info_title_with_one_author() {
+        let author = Author::new(
+            "John Doe".into(),
+            "john.doe@email.com".into(),
+            1500,
+            2000,
+            true,
+        );
+
+        let authors_info = AuthorsInfo {
+            info_color: DynColors::Rgb(255, 0, 0),
+            authors: vec![author],
+        };
+
+        assert_eq!(authors_info.title(), "Author");
+    }
+
+    #[test]
+    fn test_authors_info_title_with_two_authors() {
+        let author = Author::new(
+            "John Doe".into(),
+            "john.doe@email.com".into(),
+            1500,
+            2000,
+            true,
+        );
+
+        let author_2 = Author::new(
+            "Roberto Berto".into(),
+            "bertolone2000@email.com".into(),
+            240,
+            300,
+            false,
+        );
+
+        let authors_info = AuthorsInfo {
+            info_color: DynColors::Rgb(255, 0, 0),
+            authors: vec![author, author_2],
+        };
+
+        assert_eq!(authors_info.title(), "Authors");
+    }
+
+    #[test]
+    fn test_author_info_value_with_one_author() {
+        let author = Author::new(
+            "John Doe".into(),
+            "john.doe@email.com".into(),
+            1500,
+            2000,
+            true,
+        );
+
+        let authors_info = AuthorsInfo {
+            info_color: DynColors::Rgb(255, 0, 0),
+            authors: vec![author],
+        };
+
+        assert!(authors_info
+            .value()
+            .contains("75% John Doe <john.doe@email.com> 1500"));
+    }
+
+    #[test]
+    fn test_author_info_value_with_two_authors() {
+        let author = Author::new(
+            "John Doe".into(),
+            "john.doe@email.com".into(),
+            1500,
+            2000,
+            true,
+        );
+
+        let author_2 = Author::new(
+            "Roberto Berto".into(),
+            "bertolone2000@email.com".into(),
+            240,
+            300,
+            false,
+        );
+
+        let authors_info = AuthorsInfo {
+            info_color: DynColors::Rgb(255, 0, 0),
+            authors: vec![author, author_2],
+        };
+
+        assert!(authors_info
+            .value()
+            .contains("75% John Doe <john.doe@email.com> 1500"));
+        assert!(authors_info.value().contains("80% Roberto Berto 240"));
+    }
 }
