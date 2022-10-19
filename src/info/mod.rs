@@ -395,8 +395,12 @@ mod tests {
 
     #[test]
     fn test_language_repo() -> Result {
-        let repo_path = git_testtools::scripted_fixture_repo_read_only_with_args("language_repo.sh", ["verilog"])?;
-        let safe_repo = ThreadSafeRepository::open_opts(repo_path.join("verilog"), open::Options::isolated())?;
+        let repo_path = git_testtools::scripted_fixture_repo_read_only_with_args(
+            "language_repo.sh",
+            ["verilog"],
+        )?;
+        let safe_repo =
+            ThreadSafeRepository::open_opts(repo_path.join("verilog"), open::Options::isolated())?;
         let repo = safe_repo.to_thread_local();
         let mut config = Config::parse_from(&["."]);
         config.input = repo.path().to_path_buf();
@@ -406,4 +410,3 @@ mod tests {
         Ok(())
     }
 }
-
