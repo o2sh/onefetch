@@ -324,15 +324,13 @@ impl Serialize for Info {
 
 #[cfg(test)]
 mod tests {
-    use self::langs::language::LanguageWithPercentage;
-    use self::repo::author::Author;
-    use self::repo::head::HeadRefs;
     use super::*;
     use crate::ui::num_to_color;
     use clap::Parser;
     use git_repository::{open, Repository, ThreadSafeRepository};
     use git_testtools;
     use owo_colors::AnsiColors;
+    use std::fs;
 
     #[test]
     fn test_get_style() -> Result<()> {
@@ -374,116 +372,6 @@ mod tests {
         Ok(())
     }
 
-    #[test]
-    fn test_info_display_fmt() -> Result {
-        let info = Info {
-            title: Title {
-                git_username: String::from("info test title git_username"),
-                git_version: String::from("info test title git_version"),
-                title_color: DynColors::Ansi(AnsiColors::White),
-                tilde_color: DynColors::Ansi(AnsiColors::White),
-                underline_color: DynColors::Ansi(AnsiColors::White),
-                is_bold: true,
-            },
-            project: ProjectInfo {
-                repo_name: String::from("info test project repo_name"),
-                number_of_branches: 100,
-                number_of_tags: 100,
-            },
-            head: HeadInfo {
-                head_refs: HeadRefs::new(
-                    String::from("info test head head_refs short_commit_id"),
-                    vec![String::from("ref1"), String::from("ref2")],
-                ),
-            },
-            pending: PendingInfo {
-                pending_changes: String::from("info test pending pending_changes"),
-            },
-            version: VersionInfo {
-                version: String::from("info test version version"),
-            },
-            created: CreatedInfo {
-                creation_date: String::from("info test created creation_date"),
-            },
-            languages: LanguagesInfo {
-                languages_with_percentage: vec![LanguageWithPercentage {
-                    language: Language::Go,
-                    percentage: 100_f64,
-                }],
-                true_color: false,
-                info_color: DynColors::Ansi(AnsiColors::White),
-            },
-            dependencies: DependenciesInfo {
-                dependencies: String::from("info test dependencies dependencies"),
-            },
-            authors: AuthorsInfo {
-                authors: vec![Author::new(
-                    git_repository::bstr::BString::from("author1 name"),
-                    git_repository::bstr::BString::from("author1 email"),
-                    100,
-                    100,
-                    false,
-                )],
-                info_color: DynColors::Ansi(AnsiColors::White),
-            },
-            last_change: LastChangeInfo {
-                last_change: String::from("info test last_change last_change"),
-            },
-            contributors: ContributorsInfo {
-                number_of_contributors: 100,
-                number_of_authors_to_display: 100,
-            },
-            repo: UrlInfo {
-                repo_url: String::from("info test repo repo_url"),
-            },
-            commits: CommitsInfo {
-                number_of_commits: String::from("info test commits number_of_commits"),
-            },
-            lines_of_code: LocInfo { lines_of_code: 100 },
-            size: SizeInfo {
-                repo_size: String::from("info test size repo_size"),
-                file_count: 100,
-            },
-            license: LicenseInfo {
-                license: String::from("info test license license"),
-            },
-            disabled_fields: vec![],
-            text_colors: TextColors {
-                title: DynColors::Ansi(AnsiColors::White),
-                tilde: DynColors::Ansi(AnsiColors::White),
-                underline: DynColors::Ansi(AnsiColors::White),
-                subtitle: DynColors::Ansi(AnsiColors::White),
-                colon: DynColors::Ansi(AnsiColors::White),
-                info: DynColors::Ansi(AnsiColors::White),
-            },
-            no_color_palette: true,
-            no_bold: true,
-            dominant_language: Language::Go,
-            ascii_colors: vec![DynColors::Ansi(AnsiColors::White)],
-        };
-        let expected_info =
-            [
-                "\u{1b}[37;1minfo test title git_username\u{1b}[0m \u{1b}[37;1m~\u{1b}[0m \u{1b}[37;1minfo test title git_version\u{1b}[0m\n",
-                "\u{1b}[37m----------------------------------------------------------\u{1b}[39m\n",
-                "\u{1b}[37mProject\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test project repo_name (100 branches, 100 tags)\u{1b}[39m\n",
-                "\u{1b}[37mHEAD\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test head head_refs short_commit_id (ref1, ref2)\u{1b}[39m\n",
-                "\u{1b}[37mPending\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test pending pending_changes\u{1b}[39m\n",
-                "\u{1b}[37mVersion\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test version version\u{1b}[39m\n",
-                "\u{1b}[37mCreated\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test created creation_date\u{1b}[39m\n",
-                "\u{1b}[37mLanguage\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37m\u{1b}[41m                          \u{1b}[49m\n",
-                "          \u{1b}[31m\u{25CF}\u{1b}[39m \u{1b}[37mGo (100.0 %)\u{1b}[39m \u{1b}[39m\n",
-                "\u{1b}[37mDependencies\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test dependencies dependencies\u{1b}[39m\n",
-                "\u{1b}[37mAuthor\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37m\u{1b}[37m100% author1 name 100\u{1b}[39m\u{1b}[39m\n",
-                "\u{1b}[37mLast change\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test last_change last_change\u{1b}[39m\n",
-                "\u{1b}[37mRepo\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test repo repo_url\u{1b}[39m\n",
-                "\u{1b}[37mCommits\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test commits number_of_commits\u{1b}[39m\n",
-                "\u{1b}[37mLines of code\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37m100\u{1b}[39m\n",
-                "\u{1b}[37mSize\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test size repo_size (100 files)\u{1b}[39m\n",
-                "\u{1b}[37mLicense\u{1b}[0m\u{1b}[37m:\u{1b}[0m \u{1b}[37minfo test license license\u{1b}[39m\n" ].join("");
-        assert_eq!(format!("{}", info), expected_info);
-        Ok(())
-    }
-
     type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
 
     fn test_repo(name: &str) -> Result<Repository> {
@@ -494,7 +382,7 @@ mod tests {
 
     #[test]
     fn test_bare_repo() -> Result {
-        let repo = test_repo(&"bare_repo.sh".to_string())?;
+        let repo = test_repo(&"bare_repo.sh")?;
         match Info::init_repo_path(&repo) {
             Ok(_info) => assert!(false, "oops, info was returned on a bare git repo"),
             Err(error) => assert_eq!(
@@ -504,4 +392,18 @@ mod tests {
         };
         Ok(())
     }
+
+    #[test]
+    fn test_language_repo() -> Result {
+        let repo_path = git_testtools::scripted_fixture_repo_read_only_with_args("language_repo.sh", ["verilog"])?;
+        let safe_repo = ThreadSafeRepository::open_opts(repo_path.join("verilog"), open::Options::isolated())?;
+        let repo = safe_repo.to_thread_local();
+        let mut config = Config::parse_from(&["."]);
+        config.input = repo.path().to_path_buf();
+        let info = Info::new(&config)?;
+        let expected_info = fs::read_to_string(repo.path().join("..").join("expected"))?;
+        assert_eq!(format!("{}", info), expected_info);
+        Ok(())
+    }
 }
+
