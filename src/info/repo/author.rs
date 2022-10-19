@@ -195,9 +195,12 @@ mod test {
             authors: vec![author],
         };
 
-        assert!(authors_info
-            .value()
-            .contains("75% John Doe <john.doe@email.com> 1500"));
+        assert_eq!(
+            authors_info.value(),
+            "75% John Doe <john.doe@email.com> 1500"
+                .color(DynColors::Rgb(255, 0, 0))
+                .to_string()
+        );
     }
 
     #[test]
@@ -223,9 +226,16 @@ mod test {
             authors: vec![author, author_2],
         };
 
-        assert!(authors_info
-            .value()
-            .contains("75% John Doe <john.doe@email.com> 1500"));
-        assert!(authors_info.value().contains("80% Roberto Berto 240"));
+        assert!(authors_info.value().contains(
+            &"75% John Doe <john.doe@email.com> 1500"
+                .color(DynColors::Rgb(255, 0, 0))
+                .to_string()
+        ));
+
+        assert!(authors_info.value().contains(
+            &"80% Roberto Berto 240"
+                .color(DynColors::Rgb(255, 0, 0))
+                .to_string()
+        ));
     }
 }
