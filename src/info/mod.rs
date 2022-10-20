@@ -410,7 +410,8 @@ mod tests {
         let info_str = format!("{}", info);
         let expected_info = fs::read_to_string(repo.path().join("..").join("expected"))?;
         let escaped_expected_info = regex::escape(&expected_info);
-        let expected_info_expression = escaped_expected_info.replace("MATCH_UNTIL_END_OF_LINE", ".*");
+        let expected_info_expression =
+            escaped_expected_info.replace("MATCH_UNTIL_END_OF_LINE", ".*");
         let re = Regex::new(format!(r#"{}"#, expected_info_expression).as_str()).unwrap();
         if !re.is_match(&info_str) {
             assert_eq!(info_str, expected_info);
