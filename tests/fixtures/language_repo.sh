@@ -46,8 +46,8 @@ git commit -q -am c2
 case "${1}" in
   verilog)
 cat >expected << '__expected_output__'
-[39;1monefetch-committer-name[0m [39;1m~[0m [39;1mgit version REGEX_ANYTHING[0m
-[39m--------------------------------------------[39m
+[39;1monefetch-committer-name[0m [39;1m~[0m [39;1mgit version MATCH_UNTIL_END_OF_LINE
+[39m--------------------------------------------MATCH_UNTIL_END_OF_LINE
 [39;1mProject[0m[39;1m:[0m [39mrepo[39m
 [39;1mHEAD[0m[39;1m:[0m [39m671ed7b (main)[39m
 [39;1mPending[0m[39;1m:[0m [39m1+[39m
