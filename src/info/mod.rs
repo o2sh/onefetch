@@ -330,6 +330,8 @@ mod tests {
     use git_repository::{open, Repository, ThreadSafeRepository};
     use git_testtools;
     use owo_colors::AnsiColors;
+    use pretty_assertions::{assert_eq, assert_ne};
+    use regex::Regex;
     use std::fs;
 
     #[test]
@@ -405,8 +407,14 @@ mod tests {
         let mut config = Config::parse_from(&["."]);
         config.input = repo.path().to_path_buf();
         let info = Info::new(&config)?;
+        let info_str = format!("{}", info);
         let expected_info = fs::read_to_string(repo.path().join("..").join("expected"))?;
-        assert_eq!(format!("{}", info), expected_info);
+        let escaped_expected_info = regex::escape(&expected_info);
+        let expected_info_expression = escaped_expected_info.replace("REGEX_ANYTHING", ".*");
+        let re = Regex::new(format!(r#"{}"#, expected_info_expression).as_str()).unwrap();
+        if !re.is_match(&info_str) {
+            assert_eq!(info_str, expected_info);
+        }
         Ok(())
     }
 }

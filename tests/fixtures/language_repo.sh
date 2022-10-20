@@ -39,13 +39,14 @@ git commit -q -am c2
 
 #
 # expected output generated using this command in repo directory
-# onefetch --show-logo never --ascii-language <language>
+# onefetch --show-logo never --ascii-language <language> | sed 's/%/%%/g' 
+# REGEX_ANYTHING manually inserted to handle git version numbers on different servers
 #
 
 case "${1}" in
   verilog)
 cat >expected << '__expected_output__'
-[39;1monefetch-committer-name[0m [39;1m~[0m [39;1mgit version 2.37.2[0m
+[39;1monefetch-committer-name[0m [39;1m~[0m [39;1mgit version REGEX_ANYTHING[0m
 [39m--------------------------------------------[39m
 [39;1mProject[0m[39;1m:[0m [39mrepo[39m
 [39;1mHEAD[0m[39;1m:[0m [39m671ed7b (main)[39m
