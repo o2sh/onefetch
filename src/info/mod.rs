@@ -330,9 +330,7 @@ mod tests {
     use git_repository::{open, Repository, ThreadSafeRepository};
     use git_testtools;
     use owo_colors::AnsiColors;
-    use pretty_assertions::{assert_eq, assert_ne};
     use regex::Regex;
-    use std::fs;
 
     #[test]
     fn test_get_style() -> Result<()> {
@@ -408,13 +406,31 @@ mod tests {
         config.input = repo.path().to_path_buf();
         let info = Info::new(&config)?;
         let info_str = format!("{}", info);
-        let expected_info = fs::read_to_string(repo.path().join("..").join("expected"))?;
-        let escaped_expected_info = regex::escape(&expected_info);
-        let expected_info_expression =
-            escaped_expected_info.replace("MATCH_UNTIL_END_OF_LINE", ".*");
-        let re = Regex::new(format!(r#"{}"#, expected_info_expression).as_str()).unwrap();
-        if !re.is_match(&info_str) {
-            assert_eq!(info_str, expected_info);
+        let info_u8 = strip_ansi_escapes::strip(&info_str)?;
+        let simple_info_str = std::str::from_utf8(&info_u8)?;
+        let expected_info = [
+            r"(?s)onefetch-committer-name ~ git version .+",
+            r"-{37,}",
+            r"Project: repo",
+            r"HEAD: .+ \(main\)",
+            r"Created: 22 years ago",
+            r"Language:",
+            r".+Verilog \(100.0 %\).+",
+            r"Author: 100% author 2",
+            r"Last change: 22 years ago",
+            r"Repo: https://github.com/user/repo.git",
+            r"Commits: 2",
+            r"Lines of code: 1",
+            r"Size: 6 B \(1 file\)",
+        ]
+        .join(".");
+        let re = Regex::new(&expected_info)?;
+        if !re.is_match(&simple_info_str) {
+            assert!(
+                false,
+                "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
+                expected_info, simple_info_str
+            );
         }
         Ok(())
     }

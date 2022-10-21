@@ -37,31 +37,3 @@ git commit -q -m c1
 echo hello >> code.${LANG_EXT}
 git commit -q -am c2
 
-#
-# expected output generated using this command in repo directory
-# onefetch --show-logo never --ascii-language <language> | sed 's/%/%%/g' 
-# REGEX_ANYTHING manually inserted to handle git version numbers on different servers
-#
-
-case "${1}" in
-  verilog)
-cat >expected << '__expected_output__'
-[39;1monefetch-committer-name[0m [39;1m~[0m [39;1mgit version MATCH_UNTIL_END_OF_LINE
-[39m--------------------------------------------MATCH_UNTIL_END_OF_LINE
-[39;1mProject[0m[39;1m:[0m [39mrepo[39m
-[39;1mHEAD[0m[39;1m:[0m [39m671ed7b (main)[39m
-[39;1mPending[0m[39;1m:[0m [39m1+[39m
-[39;1mCreated[0m[39;1m:[0m [39m22 years ago[39m
-[39;1mLanguage[0m[39;1m:[0m [39m[41m                          [49m
-          [31m●[39m [39mVerilog (100.0 %)[39m [39m
-[39;1mAuthor[0m[39;1m:[0m [39m[39m100% author 2[39m[39m
-[39;1mLast change[0m[39;1m:[0m [39m22 years ago[39m
-[39;1mRepo[0m[39;1m:[0m [39mhttps://github.com/user/repo.git[39m
-[39;1mCommits[0m[39;1m:[0m [39m2[39m
-[39;1mLines of code[0m[39;1m:[0m [39m1[39m
-[39;1mSize[0m[39;1m:[0m [39m6 B (1 file)[39m
-
-[40m   [49m[41m   [49m[42m   [49m[43m   [49m[44m   [49m[45m   [49m[46m   [49m[47m   [49m
-__expected_output__
-      ;;
-esac
