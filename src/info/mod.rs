@@ -424,7 +424,7 @@ mod tests {
             r"Size: 6 B \(1 file\)",
         ]
         .join(".");
-        let re = Regex::new(&expected_info)?;
+        let re = Regex::new(&expected_info).unwrap();
         assert!(
             re.is_match(&simple_info_str),
             "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
