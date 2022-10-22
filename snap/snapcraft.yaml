@@ -14,6 +14,8 @@ parts:
     plugin: rust
     source: .
     build-packages:
+      - cargo
+      - rustc
       - cmake
 
 plugs:
