@@ -13,6 +13,8 @@ parts:
   onefetch:
     plugin: rust
     source: .
+    build-packages:
+      - cmake
     stage-packages:
       - git
     override-build: |
