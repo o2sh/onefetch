@@ -398,7 +398,8 @@ mod tests {
         let repo_path = git_testtools::scripted_fixture_repo_read_only_with_args(
             "language_repo.sh",
             ["verilog"],
-        )?;
+        )
+        .unwrap();
         let safe_repo =
             ThreadSafeRepository::open_opts(repo_path.join("verilog"), open::Options::isolated())?;
         let repo = safe_repo.to_thread_local();
@@ -408,27 +409,16 @@ mod tests {
         let info_str = format!("{}", info);
         let info_u8 = strip_ansi_escapes::strip(&info_str)?;
         let simple_info_str = std::str::from_utf8(&info_u8)?;
-        let expected_info = [
-            r"(?s)onefetch-committer-name ~ git version .+",
-            r"-{37,}",
-            r"Project: repo",
-            r"HEAD: .+ \(main\)",
-            r"Created: 22 years ago",
-            r"Language:",
-            r".+Verilog \(100.0 %\).+",
-            r"Author: 100% author 2",
-            r"Last change: 22 years ago",
-            r"Repo: https://github.com/user/repo.git",
-            r"Commits: 2",
-            r"Lines of code: 1",
-            r"Size: 6 B \(1 file\)",
-        ]
-        .join(".");
-        let re = Regex::new(&expected_info).unwrap();
+        #[cfg(windows)]
+        let expected_regex = include_str!("..\\..\\tests\\regex\\test_verilog_repo.stdout.regex");
+        #[cfg(unix)]
+        let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
+        let re = Regex::new(&expected_regex).unwrap();
         assert!(
             re.is_match(&simple_info_str),
             "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
-            expected_info, simple_info_str
+            expected_regex,
+            simple_info_str
         );
         Ok(())
     }
