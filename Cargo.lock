@@ -1955,7 +1955,7 @@ checksum = "e82dad04139b71a90c080c8463fe0dc7902db5192d939bd0950f074d014339e1"
 
 [[package]]
 name = "onefetch"
-version = "2.12.0"
+version = "2.13.0"
 dependencies = [
  "anyhow",
  "askalono",
