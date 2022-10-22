@@ -16,8 +16,8 @@
 <header>
   <div class="banner">
     <small
-      >v2.12.0 is available 🎉 go check the <a
-        href="https://github.com/o2sh/onefetch/releases/tag/v2.12.0"
+      >👉 v2.13.0 is available 🎉 go check the <a
+        href="https://github.com/o2sh/onefetch/releases/tag/v2.13.0"
         >release notes</a
       >!!</small>
   </div>

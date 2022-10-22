@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 2 commits contributed to the release.
+ - 4 commits contributed to the release.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' where seen in commit messages
 
@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - update changelog ([`b0cff95`](https://github.com/o2sh/onefetch/commit/b0cff959ecf52e2acea9a4f27e2ded980803b08b))
+    - update changelog ([`cf5775d`](https://github.com/o2sh/onefetch/commit/cf5775d1e3cd55f1f23d37bf06720e06d464b195))
     - update changelog ([`fd22b84`](https://github.com/o2sh/onefetch/commit/fd22b847cc0e2779535d4fb28bd6c3ff01c2b474))
     - update Cargo.lock ([`5c01e18`](https://github.com/o2sh/onefetch/commit/5c01e1824cbd8801e1c99a0a41ce751d2f4bf37c))
 </details>
