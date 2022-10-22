@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 5 commits contributed to the release.
+ - 1 commit contributed to the release.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' where seen in commit messages
 
@@ -28,6 +28,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - update vercel banner ([`a5555ac`](https://github.com/o2sh/onefetch/commit/a5555acf763365ae20bf235d532102a0d44ceba6))
+</details>
+
+## 2.13.1 (2022-10-22)
+
+### Other
+
+
+- [ci/cd] fix Snapcraft release
+- [misc] fix Cargo.lock
+
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 14 commits contributed to the release.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' where seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - bump version ([`d5fbb3d`](https://github.com/o2sh/onefetch/commit/d5fbb3dc797aec968f8ae5e33cbfb4ae30cadb9e))
+    - update vercel banner ([`d3b12aa`](https://github.com/o2sh/onefetch/commit/d3b12aa75dffa6cab49ee6ed6b164c94f65cbecf))
+    - update snapcraft.yaml ([`6175380`](https://github.com/o2sh/onefetch/commit/61753807b0e5ff8f7d82583a464c23a36f3b2a9a))
+    - update snapcraft.yaml ([`5b62716`](https://github.com/o2sh/onefetch/commit/5b6271684c1cd01e8ae14b2c11eeac4c7fe154e1))
+    - update snapcraft ([`d42be8e`](https://github.com/o2sh/onefetch/commit/d42be8efe380b14e4f33f5be22877f15865cbc71))
+    - update snapcraft ([`fed0fa1`](https://github.com/o2sh/onefetch/commit/fed0fa128896af261ebafc13207442948fc2854e))
+    - update snapcraft.yaml ([`073d399`](https://github.com/o2sh/onefetch/commit/073d399f4d41c239e699e62ad13e11bccc77e5bc))
+    - add cmake build dependency for snap ([`126d6fd`](https://github.com/o2sh/onefetch/commit/126d6fd968f7eb0ef6eb2bf2cc154d5cabb565b3))
+    - update CHANGELOG ([`46ac62c`](https://github.com/o2sh/onefetch/commit/46ac62cc244463a9e0892fba469be4c75549b8f4))
     - update banner onefetch.dev ([`1f7116f`](https://github.com/o2sh/onefetch/commit/1f7116f4e4a6dcab1ebcb38790c6348f9904b1c9))
     - update changelog ([`b0cff95`](https://github.com/o2sh/onefetch/commit/b0cff959ecf52e2acea9a4f27e2ded980803b08b))
     - update changelog ([`cf5775d`](https://github.com/o2sh/onefetch/commit/cf5775d1e3cd55f1f23d37bf06720e06d464b195))
