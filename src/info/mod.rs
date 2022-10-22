@@ -425,13 +425,11 @@ mod tests {
         ]
         .join(".");
         let re = Regex::new(&expected_info)?;
-        if !re.is_match(&simple_info_str) {
-            assert!(
-                false,
-                "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
-                expected_info, simple_info_str
-            );
-        }
+        assert!(
+            re.is_match(&simple_info_str),
+            "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
+            expected_info, simple_info_str
+        );
         Ok(())
     }
 }
