@@ -49,14 +49,6 @@ A new web interface [onefetch.dev](https://onefetch.dev) was developed where use
 
 - <csr-id-d43fa9acbbc93cfee2e59faf3652e7893de55ffa/> tokei is now an exempted pr label
 - <csr-id-5e4d02552beea1a998239360fe61b8465437884a/> tokei is now an exempted issue label
-
-### Fixes
-
-- Commits replaced with `git replace` are now followed. This can be turned off by setting the
-  `GIT_NO_REPLACE_OBJECTS` environment variable.
-- Shallow clones are now detected and displayed as such. Previously it might have appeared that
-  the commit count is the real even though it was truncated due to the shallow-ness of the
-  repository.
 - [chore] reducing allocations and switching to gitoxide from libgit2 #635 @Byron
 - [docs] add README translation for Spanish #631 @JakeRoggenbuck @practicatto
 - [docs] add Changelog generated using cargo-smart-release #637 @Byron
@@ -90,6 +82,13 @@ A new web interface [onefetch.dev](https://onefetch.dev) was developed where use
 - [language] improve assembly logo @o2sh
 - [test] add unit tests for author.rs #829 @gallottino @Oniryu95
 
+### Fixes
+
+- Commits replaced with `git replace` are now followed. This can be turned off by setting the
+  `GIT_NO_REPLACE_OBJECTS` environment variable.
+- Shallow clones are now detected and displayed as such. Previously it might have appeared that
+  the commit count is the real even though it was truncated due to the shallow-ness of the
+  repository.
   If a repository is shallow, `(shallow)` will appear after the commit count.
 
 ### Refactor
