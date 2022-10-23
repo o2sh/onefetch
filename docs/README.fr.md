@@ -1,6 +1,6 @@
 <h3 align="center"><img src="../assets/onefetch.svg" height="130px"></h3>
 
-<h5 align="center">Un outil Git en ligne de commande écrit en Rust</h5>
+<h5 align="center">Outil Git en ligne de commande écrit en Rust</h5>
 
 <p align="center">
 	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>

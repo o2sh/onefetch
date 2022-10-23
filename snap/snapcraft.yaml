@@ -1,7 +1,7 @@
 name: onefetch
 base: core22
 adopt-info: onefetch
-summary: A command-line Git information tool
+summary: Command-line Git information tool
 description: |
   Onefetch is a command-line Git information tool that displays project information
   and code statistics for a local Git repository directly to your terminal.

@@ -1,6 +1,6 @@
 <h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
 
-<h5 align="center">A command-line Git information tool written in Rust</h5>
+<h5 align="center">Command-line Git information tool written in Rust</h5>
 
 <p align="center">
 	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
