@@ -85,7 +85,7 @@ impl std::fmt::Display for Title {
 mod tests {
     use super::*;
     use git_repository::{open, Repository, ThreadSafeRepository};
-    
+
     use owo_colors::AnsiColors;
 
     type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
