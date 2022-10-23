@@ -417,6 +417,13 @@ mod tests {
             expected_regex,
             simple_info_str
         );
+
+        let v = serde_json::to_value(info).unwrap();
+        let expected_json: serde_json::Value = serde_json::from_str(
+            &include_str!("../../tests/json/test_verilog_repo.serialize.json"),
+        ).unwrap();
+        assert_eq!(v, expected_json);
+
         Ok(())
     }
 }
