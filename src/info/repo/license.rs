@@ -104,9 +104,9 @@ mod test {
     #[test]
     fn test_is_license_file() {
         for file_name in LICENSE_FILES.iter() {
-            assert_eq!(is_license_file(file_name), true);
+            assert!(is_license_file(file_name));
         }
-        assert_eq!(is_license_file("NOT_LICENSE"), false);
+        assert!(!is_license_file("NOT_LICENSE"));
     }
 
     #[test]
