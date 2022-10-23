@@ -409,9 +409,6 @@ mod tests {
         let info_str = format!("{}", info);
         let info_u8 = strip_ansi_escapes::strip(&info_str)?;
         let simple_info_str = std::str::from_utf8(&info_u8)?;
-        #[cfg(windows)]
-        let expected_regex = include_str!("..\\..\\tests\\regex\\test_verilog_repo.stdout.regex");
-        #[cfg(unix)]
         let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
         let re = Regex::new(&expected_regex).unwrap();
         assert!(
