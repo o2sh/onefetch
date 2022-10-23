@@ -330,7 +330,7 @@ mod tests {
     use git_repository::{open, Repository, ThreadSafeRepository};
     use git_testtools;
     use owo_colors::AnsiColors;
-    use regex::Regex;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_get_style() -> Result<()> {
@@ -383,13 +383,12 @@ mod tests {
     #[test]
     fn test_bare_repo() -> Result {
         let repo = test_repo(&"bare_repo.sh")?;
-        match Info::init_repo_path(&repo) {
-            Ok(_info) => assert!(false, "oops, info was returned on a bare git repo"),
-            Err(error) => assert_eq!(
-                "please run onefetch inside of a non-bare git repository",
-                error.to_string()
-            ),
-        };
+        let res = Info::init_repo_path(&repo);
+        assert!(res.is_err(), "oops, info was returned on a bare git repo");
+        assert_eq!(
+            res.unwrap_err().to_string(),
+            "please run onefetch inside of a non-bare git repository"
+        );
         Ok(())
     }
 
