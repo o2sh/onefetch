@@ -85,7 +85,7 @@ impl std::fmt::Display for Title {
 mod tests {
     use super::*;
     use git_repository::{open, Repository, ThreadSafeRepository};
-    use git_testtools;
+
     use owo_colors::AnsiColors;
 
     type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
@@ -123,12 +123,12 @@ mod tests {
         // setting git_version to known value
         title.git_version = "git version 2.37.2".to_string();
         assert!(title.to_string().contains("onefetch-committer-name"));
-        assert!(title.to_string().contains("~"));
+        assert!(title.to_string().contains('~'));
         assert!(title.to_string().contains("git version 2.37.2"));
 
         title.git_version = "".to_string();
         assert!(title.to_string().contains("onefetch-committer-name"));
-        assert!(!title.to_string().contains("~"));
+        assert!(!title.to_string().contains('~'));
         assert!(!title.to_string().contains("git version 2.37.2"));
 
         title.git_username = "".to_string();
