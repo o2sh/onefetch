@@ -1,13 +1,14 @@
-(?s)onefetch-committer-name ~ git version ([^\r\n]+)\r?\n(?x) # MATCH LINE 1 CAPTURE GIT VERSION
-(?-x)-{37,}\r?\n(?x)                                    # MATCH LINE 2
-(?-x)Project: repo\r?\n(?x)                             # MATCH LINE 3
-(?-x)HEAD: ([^ ]+) \(main\)\r?\n(?x)                    # MATCH LINE 4 CAPTURE HEAD SHORT HASH
-(?-x)Created: 22 years ago\r?\n(?x)                     # MATCH LINE 5
-(?-x)Language:[^\r\n]+\r?\n(?x)                         # MATCH LINE 6 SKIP JUNK AFTER COLON
-(?-x)[^V]+Verilog \(100.0 %\)[^\r\n]+\r?\n(?x)          # MATCH LINE 7 SKIP JUNK BEFORE VERILOG
-(?-x)Author: 100% author 2\r?\n(?x)                     # MATCH LINE 8
-(?-x)Last change: 22 years ago\r?\n(?x)                 # MATCH LINE 9
-(?-x)Repo: https://github.com/user/repo.git\r?\n(?x)    # MATCH LINE 10
-(?-x)Commits: 2\r?\n(?x)                                # MATCH LINE 11
-(?-x)Lines of code: 1\r?\n(?x)                          # MATCH LINE 12
-(?-x)Size: 6 B \(1 file\)(?x)                           # MATCH LINE 13
+(?x)# ESCAPED SPACES ARE USED WHEN A SPACE MATCH IS EXPLICITLY NEEDED
+onefetch-committer-name\ ~\ git\ version\ ([^\r\n]+)\r?\n # MATCH LINE 1 CAPTURE GIT VERSION
+-{37,}\r?\n                                    # MATCH LINE 2
+Project:\ repo\r?\n                            # MATCH LINE 3
+HEAD:\ ([^\ ]+)\ \(main\)\r?\n                  # MATCH LINE 4 CAPTURE HEAD SHORT HASH
+Created:\ 22\ years\ ago\r?\n                  # MATCH LINE 5
+Language:[^\r\n]+\r?\n                         # MATCH LINE 6 SKIP JUNK AFTER COLON
+[^V]+Verilog\ \(100.0\ %\)[^\r\n]+\r?\n        # MATCH LINE 7 SKIP JUNK BEFORE VERILOG
+Author:\ 100%\ author\ 2\r?\n                  # MATCH LINE 8
+Last\ change:\ 22\ years\ ago\r?\n             # MATCH LINE 9
+Repo:\ https://github.com/user/repo.git\r?\n   # MATCH LINE 10
+Commits:\ 2\r?\n                               # MATCH LINE 11
+Lines\ of\ code:\ 1\r?\n                       # MATCH LINE 12
+Size:\ 6\ B\ \(1\ file\)                       # MATCH LINE 13
