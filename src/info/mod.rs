@@ -327,7 +327,7 @@ mod tests {
     use super::*;
     use crate::ui::num_to_color;
     use clap::Parser;
-    use git_repository::{open, Repository, ThreadSafeRepository};
+    use git_repository::{open, ThreadSafeRepository};
     use git_testtools;
     use owo_colors::AnsiColors;
     use pretty_assertions::assert_eq;
@@ -374,15 +374,12 @@ mod tests {
 
     type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
 
-    fn test_repo(name: &str) -> Result<Repository> {
-        let repo_path = git_testtools::scripted_fixture_repo_read_only(name)?;
-        let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
-        Ok(safe_repo.to_thread_local())
-    }
-
     #[test]
     fn test_bare_repo() -> Result {
-        let repo = test_repo(&"bare_repo.sh")?;
+        let repo_path = git_testtools::scripted_fixture_repo_read_only("bare_repo.sh").unwrap();
+        let safe_repo =
+            ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
+        let repo = safe_repo.to_thread_local();
         let res = Info::init_repo_path(&repo);
         assert!(res.is_err(), "oops, info was returned on a bare git repo");
         assert_eq!(
@@ -390,6 +387,19 @@ mod tests {
             "please run onefetch inside of a non-bare git repository"
         );
         Ok(())
+    }
+
+    fn test_language_repo_again(config: &Config, re: &Regex) {
+        let info = Info::new(config).unwrap();
+        let info_str = format!("{}", info);
+        let info_u8 = strip_ansi_escapes::strip(&info_str).unwrap();
+        let simple_info_str = std::str::from_utf8(&info_u8).unwrap();
+        assert!(
+            re.is_match(&simple_info_str),
+            "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
+            re.to_string(),
+            simple_info_str
+        );
     }
 
     #[test]
@@ -402,21 +412,11 @@ mod tests {
         let safe_repo =
             ThreadSafeRepository::open_opts(repo_path.join("verilog"), open::Options::isolated())?;
         let repo = safe_repo.to_thread_local();
+
+        // TEST JSON SERILIZER FIRST
         let mut config = Config::parse_from(&["."]);
         config.input = repo.path().to_path_buf();
-        let info = Info::new(&config)?;
-        let info_str = format!("{}", info);
-        let info_u8 = strip_ansi_escapes::strip(&info_str)?;
-        let simple_info_str = std::str::from_utf8(&info_u8)?;
-        let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
-        let re = Regex::new(&expected_regex).unwrap();
-        assert!(
-            re.is_match(&simple_info_str),
-            "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
-            expected_regex,
-            simple_info_str
-        );
-
+        let info = Info::new(&config).unwrap();
         let mut v = serde_json::to_value(info).unwrap();
         let expected_json: serde_json::Value = serde_json::from_str(&include_str!(
             "../../tests/json/test_verilog_repo.serialize.json"
@@ -425,6 +425,29 @@ mod tests {
         v["gitVersion"] = serde_json::Value::String("git version".to_string());
         v["head"]["short_commit_id"] = serde_json::Value::String("short commit id".to_string());
         assert_eq!(v, expected_json);
+
+        // TEST FORMAT FUNCTION DEFAULT Config
+        let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
+        let re = Regex::new(&expected_regex).unwrap();
+        test_language_repo_again(&config, &re);
+
+        // TEST FORMAT FUNCTION Config true_color Always
+        config.true_color = When::Always;
+        test_language_repo_again(&config, &re);
+
+        // TEST FORMAT FUNCTION Config true_color Never
+        config.true_color = When::Never;
+        test_language_repo_again(&config, &re);
+
+        // TEST FORMAT FUNCTION Config no_bots default regex
+        config.no_bots.replace(None);
+        test_language_repo_again(&config, &re);
+
+        // TEST FORMAT FUNCTION Config no_bots user provided regex
+        config
+            .no_bots
+            .replace(Some(MyRegex(Regex::from_str(r"(b|B)ot")?)));
+        test_language_repo_again(&config, &re);
 
         Ok(())
     }
