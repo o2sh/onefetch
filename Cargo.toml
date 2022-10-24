@@ -26,7 +26,7 @@ section = "utility"
 git-testtools = "0.9.0"
 
 [dependencies]
-anyhow = "1.0.65"
+anyhow = "1.0.66"
 askalono = "0.4.6"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
