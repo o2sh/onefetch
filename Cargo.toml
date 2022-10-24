@@ -62,7 +62,7 @@ enable-ansi-support = "0.1.2"
 
 [target.'cfg(not(windows))'.dependencies]
 base64 = "0.13.0"
-libc = "0.2.134"
+libc = "0.2.136"
 
 [build-dependencies]
 lazy_static = "1"
