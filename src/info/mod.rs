@@ -423,6 +423,7 @@ mod tests {
         ))
         .unwrap();
         v["gitVersion"] = serde_json::Value::String("git version".to_string());
+        v["head"]["short_commit_id"] = serde_json::Value::String("short commit id".to_string());
         assert_eq!(v, expected_json);
 
         Ok(())
