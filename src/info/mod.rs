@@ -415,8 +415,10 @@ mod tests {
         let repo = safe_repo.to_thread_local();
 
         // TEST JSON SERILIZER FIRST
-        let mut config = Config::parse_from(&["."]);
-        config.input = repo.path().to_path_buf();
+        let mut config: Config = Config {
+            input: repo.path().to_path_buf(),
+            ..Default::default()
+        };
         let info = Info::new(&config).unwrap();
         assert_json_snapshot!(
             serde_json::to_value(info).unwrap(),
