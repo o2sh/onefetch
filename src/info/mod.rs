@@ -329,6 +329,7 @@ mod tests {
     use clap::Parser;
     use git_repository::{open, ThreadSafeRepository};
     use git_testtools;
+    use insta::assert_json_snapshot;
     use owo_colors::AnsiColors;
     use pretty_assertions::assert_eq;
 
@@ -417,11 +418,13 @@ mod tests {
         let mut config = Config::parse_from(&["."]);
         config.input = repo.path().to_path_buf();
         let info = Info::new(&config).unwrap();
-        let mut v = serde_json::to_value(info).unwrap();
-        v["gitVersion"] = serde_json::Value::String("git version".to_string());
-        v["head"]["short_commit_id"] = serde_json::Value::String("short commit id".to_string());
-        let expected_json = include_str!("../../tests/json/test_verilog_repo.snapshot.json").trim();
-        assert_eq!(serde_json::to_string_pretty(&v).unwrap(), expected_json);
+        assert_json_snapshot!(
+            serde_json::to_value(info).unwrap(),
+            {
+                ".gitVersion" => "git version",
+                ".head.short_commit_id" => "short commit"
+            }
+        );
 
         // TEST FORMAT FUNCTION DEFAULT Config
         let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
