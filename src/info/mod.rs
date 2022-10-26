@@ -418,13 +418,10 @@ mod tests {
         config.input = repo.path().to_path_buf();
         let info = Info::new(&config).unwrap();
         let mut v = serde_json::to_value(info).unwrap();
-        let expected_json: serde_json::Value = serde_json::from_str(&include_str!(
-            "../../tests/json/test_verilog_repo.snapshot.json"
-        ))
-        .unwrap();
         v["gitVersion"] = serde_json::Value::String("git version".to_string());
         v["head"]["short_commit_id"] = serde_json::Value::String("short commit id".to_string());
-        assert_eq!(v, expected_json);
+        let expected_json = include_str!("../../tests/json/test_verilog_repo.snapshot.json").trim();
+        assert_eq!(serde_json::to_string_pretty(&v).unwrap(), expected_json);
 
         // TEST FORMAT FUNCTION DEFAULT Config
         let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
