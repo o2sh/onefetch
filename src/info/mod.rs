@@ -419,7 +419,7 @@ mod tests {
         let info = Info::new(&config).unwrap();
         let mut v = serde_json::to_value(info).unwrap();
         let expected_json: serde_json::Value = serde_json::from_str(&include_str!(
-            "../../tests/json/test_verilog_repo.serialize.json"
+            "../../tests/json/test_verilog_repo.snapshot.json"
         ))
         .unwrap();
         v["gitVersion"] = serde_json::Value::String("git version".to_string());
