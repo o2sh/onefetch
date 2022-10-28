@@ -390,7 +390,7 @@ mod tests {
         Ok(())
     }
 
-    fn test_language_repo_again(config: &Config, re: &Regex) {
+    fn assert_info_str_matches(config: &Config, re: &Regex) {
         let info = Info::new(config).unwrap();
         let info_str = format!("{}", info);
         let info_u8 = strip_ansi_escapes::strip(&info_str).unwrap();
@@ -431,25 +431,25 @@ mod tests {
         // TEST FORMAT FUNCTION DEFAULT Config
         let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
         let re = Regex::new(&expected_regex).unwrap();
-        test_language_repo_again(&config, &re);
+        assert_info_str_matches(&config, &re);
 
         // TEST FORMAT FUNCTION Config true_color Always
         config.true_color = When::Always;
-        test_language_repo_again(&config, &re);
+        assert_info_str_matches(&config, &re);
 
         // TEST FORMAT FUNCTION Config true_color Never
         config.true_color = When::Never;
-        test_language_repo_again(&config, &re);
+        assert_info_str_matches(&config, &re);
 
         // TEST FORMAT FUNCTION Config no_bots default regex
         config.no_bots.replace(None);
-        test_language_repo_again(&config, &re);
+        assert_info_str_matches(&config, &re);
 
         // TEST FORMAT FUNCTION Config no_bots user provided regex
         config
             .no_bots
             .replace(Some(MyRegex(Regex::from_str(r"(b|B)ot")?)));
-        test_language_repo_again(&config, &re);
+        assert_info_str_matches(&config, &re);
 
         Ok(())
     }
