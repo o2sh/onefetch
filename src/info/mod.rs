@@ -421,7 +421,7 @@ mod tests {
         };
         let info = Info::new(&config).unwrap();
         assert_json_snapshot!(
-            serde_json::to_value(info).unwrap(),
+            info,
             {
                 ".gitVersion" => "git version",
                 ".head.short_commit_id" => "short commit"

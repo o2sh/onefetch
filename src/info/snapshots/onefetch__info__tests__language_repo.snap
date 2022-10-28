@@ -1,55 +1,55 @@
 ---
 source: src/info/mod.rs
-expression: v
+expression: info
 ---
 {
-  "authors": [
-    {
-      "contribution": 25,
-      "email": "author4@example.org",
-      "name": "Author Four",
-      "nbr_of_commits": 1
-    },
-    {
-      "contribution": 25,
-      "email": "author1@example.org",
-      "name": "Author One",
-      "nbr_of_commits": 1
-    },
-    {
-      "contribution": 25,
-      "email": "author3@example.org",
-      "name": "Author Three",
-      "nbr_of_commits": 1
-    }
-  ],
-  "contributors": 4,
-  "created": "22 years ago",
-  "dependencies": "1 (cargo)",
   "gitUsername": "onefetch-committer-name",
   "gitVersion": "git version",
+  "project": {
+    "repo_name": "repo",
+    "number_of_branches": 0,
+    "number_of_tags": 1
+  },
   "head": {
+    "short_commit_id": "short commit",
     "refs": [
       "main"
-    ],
-    "short_commit_id": "short commit"
+    ]
   },
+  "version": "tag1",
+  "created": "22 years ago",
   "languages": [
     {
       "language": "Verilog",
       "percentage": 100.0
     }
   ],
+  "dependencies": "1 (cargo)",
+  "authors": [
+    {
+      "name": "Author Four",
+      "email": "author4@example.org",
+      "nbr_of_commits": 1,
+      "contribution": 25
+    },
+    {
+      "name": "Author One",
+      "email": "author1@example.org",
+      "nbr_of_commits": 1,
+      "contribution": 25
+    },
+    {
+      "name": "Author Three",
+      "email": "author3@example.org",
+      "nbr_of_commits": 1,
+      "contribution": 25
+    }
+  ],
   "lastChange": "22 years ago",
-  "license": "MIT",
-  "linesOfCode": 4,
-  "numberOfCommits": "4",
-  "project": {
-    "number_of_branches": 0,
-    "number_of_tags": 1,
-    "repo_name": "repo"
-  },
-  "repoSize": "22 B",
+  "contributors": 4,
   "repoUrl": "https://github.com/user/repo.git",
-  "version": "tag1"
+  "numberOfCommits": "4",
+  "linesOfCode": 4,
+  "repoSize": "22 B",
+  "license": "MIT"
 }
