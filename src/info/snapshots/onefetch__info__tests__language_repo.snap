@@ -1,0 +1,55 @@
+---
+source: src/info/mod.rs
+expression: info
+---
+{
+  "gitUsername": "onefetch-committer-name",
+  "gitVersion": "git version",
+  "project": {
+    "repo_name": "repo",
+    "number_of_branches": 0,
+    "number_of_tags": 1
+  },
+  "head": {
+    "short_commit_id": "short commit",
+    "refs": [
+      "main"
+    ]
+  },
+  "version": "tag1",
+  "created": "22 years ago",
+  "languages": [
+    {
+      "language": "Verilog",
+      "percentage": 100.0
+    }
+  ],
+  "dependencies": "1 (cargo)",
+  "authors": [
+    {
+      "name": "Author Four",
+      "email": "author4@example.org",
+      "nbr_of_commits": 1,
+      "contribution": 25
+    },
+    {
+      "name": "Author One",
+      "email": "author1@example.org",
+      "nbr_of_commits": 1,
+      "contribution": 25
+    },
+    {
+      "name": "Author Three",
+      "email": "author3@example.org",
+      "nbr_of_commits": 1,
+      "contribution": 25
+    }
+  ],
+  "lastChange": "22 years ago",
+  "contributors": 4,
+  "repoUrl": "https://github.com/user/repo.git",
+  "numberOfCommits": "4",
+  "linesOfCode": 4,
+  "repoSize": "22 B",
+  "license": "MIT"
+}
