@@ -1,5 +1,5 @@
 ---
-source: src/info/mod.rs
+source: tests/repo.rs
 expression: info
 ---
 {
@@ -20,7 +20,7 @@ expression: info
   "created": "22 years ago",
   "languages": [
     {
-      "language": "Verilog",
+      "language": "Rust",
       "percentage": 100.0
     }
   ],

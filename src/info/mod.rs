@@ -32,7 +32,9 @@ mod git;
 pub mod info_field;
 pub mod langs;
 mod repo;
-mod title;
+#[cfg(test)]
+pub mod test;
+pub mod title;
 
 pub struct Info {
     title: Title,
@@ -327,9 +329,6 @@ mod tests {
     use super::*;
     use crate::ui::num_to_color;
     use clap::Parser;
-    use git_repository::{open, ThreadSafeRepository};
-    use git_testtools;
-    use insta::assert_json_snapshot;
     use owo_colors::AnsiColors;
     use pretty_assertions::assert_eq;
 
@@ -370,87 +369,6 @@ mod tests {
                 ":".style(Style::new().color(num_to_color(&4)).bold())
             )
         );
-        Ok(())
-    }
-
-    type Result<T = ()> = std::result::Result<T, Box<dyn std::error::Error>>;
-
-    #[test]
-    fn test_bare_repo() -> Result {
-        let repo_path = git_testtools::scripted_fixture_repo_read_only("bare_repo.sh").unwrap();
-        let safe_repo =
-            ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
-        let repo = safe_repo.to_thread_local();
-        let res = Info::init_repo_path(&repo);
-        assert!(res.is_err(), "oops, info was returned on a bare git repo");
-        assert_eq!(
-            res.unwrap_err().to_string(),
-            "please run onefetch inside of a non-bare git repository"
-        );
-        Ok(())
-    }
-
-    fn assert_info_str_matches(config: &Config, re: &Regex) {
-        let info = Info::new(config).unwrap();
-        let info_str = format!("{}", info);
-        let info_u8 = strip_ansi_escapes::strip(&info_str).unwrap();
-        let simple_info_str = std::str::from_utf8(&info_u8).unwrap();
-        assert!(
-            re.is_match(&simple_info_str),
-            "OOPS, REGEX\n{}\nDOESNT MATCH\n{}",
-            re.to_string(),
-            simple_info_str
-        );
-    }
-
-    #[test]
-    fn test_language_repo() -> Result {
-        let repo_path = git_testtools::scripted_fixture_repo_read_only_with_args(
-            "language_repo.sh",
-            ["verilog"],
-        )
-        .unwrap();
-        let safe_repo =
-            ThreadSafeRepository::open_opts(repo_path.join("verilog"), open::Options::isolated())?;
-        let repo = safe_repo.to_thread_local();
-
-        // TEST JSON SERILIZER FIRST
-        let mut config: Config = Config {
-            input: repo.path().to_path_buf(),
-            ..Default::default()
-        };
-        let info = Info::new(&config).unwrap();
-        assert_json_snapshot!(
-            info,
-            {
-                ".gitVersion" => "git version",
-                ".head.short_commit_id" => "short commit"
-            }
-        );
-
-        // TEST FORMAT FUNCTION DEFAULT Config
-        let expected_regex = include_str!("../../tests/regex/test_verilog_repo.stdout.regex");
-        let re = Regex::new(&expected_regex).unwrap();
-        assert_info_str_matches(&config, &re);
-
-        // TEST FORMAT FUNCTION Config true_color Always
-        config.true_color = When::Always;
-        assert_info_str_matches(&config, &re);
-
-        // TEST FORMAT FUNCTION Config true_color Never
-        config.true_color = When::Never;
-        assert_info_str_matches(&config, &re);
-
-        // TEST FORMAT FUNCTION Config no_bots default regex
-        config.no_bots.replace(None);
-        assert_info_str_matches(&config, &re);
-
-        // TEST FORMAT FUNCTION Config no_bots user provided regex
-        config
-            .no_bots
-            .replace(Some(MyRegex(Regex::from_str(r"(b|B)ot")?)));
-        assert_info_str_matches(&config, &re);
-
         Ok(())
     }
 }

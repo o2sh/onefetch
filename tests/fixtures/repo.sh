@@ -1,21 +1,6 @@
 #!/bin/bash
 set -eu -o pipefail
 
-case "${1}" in
-  verilog)
-      LANG_DIR="verilog"
-      LANG_EXT="vg"
-      ;;
-  *)
-      echo "OOPS, ARGUMENT EXPECTED TO BE ONE OF THESE VALUES:"
-      echo "  verilog  for language type verilog"
-      exit
-      ;;
-esac
-
-mkdir ${LANG_DIR}
-cd ${LANG_DIR}
-
 git init -q
 
 # BOTH NAME AND EMAIL ARE NEEDED FOR RECOGNITION
@@ -31,20 +16,20 @@ git config --local --add "author.email" "onefetch-author-email@onefetch.com"
 git remote add origin https://github.com/user/repo.git
 
 git checkout -b main
-touch code.${LANG_EXT}
-git add code.${LANG_EXT}
+touch code.rs
+git add code.rs
 git commit -q -m c1 --author="Author One <author1@example.org>"
 git tag tag1
-echo hello >> code.${LANG_EXT}
-git add code.${LANG_EXT}
+echo hello >> code.rs
+git add code.rs
 git commit -q -m c2 --author="Author Two <author2@example.org>"
-echo world >> code.${LANG_EXT}
-git add code.${LANG_EXT}
+echo world >> code.rs
+git add code.rs
 git commit -q -m c3 --author="Author Three <author3@example.org>"
-echo something >> code.${LANG_EXT}
-git add code.${LANG_EXT}
+echo something >> code.rs
+git add code.rs
 git commit -q -m c4 --author="Author Four <author4@example.org>"
-echo more >> code.${LANG_EXT}
+echo more >> code.rs
 
 echo "[dependencies]" > Cargo.toml
 echo 'anyhow = "1.0.65"' >> Cargo.toml
