@@ -29,7 +29,7 @@ fn test_repo() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = Info::new(&config).unwrap();
+    let info = Info::new(&config)?;
     insta::assert_json_snapshot!(
         info,
         {
@@ -44,8 +44,12 @@ fn test_repo() -> Result<()> {
 #[test]
 fn test_repo_without_remote() -> Result<()> {
     let repo = repo("basic_repo.sh")?;
-    let res = Info::init_repo_path(&repo);
-    assert!(res.is_ok());
+    let config: Config = Config {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let info = Info::new(&config);
+    assert!(info.is_ok());
 
     Ok(())
 }

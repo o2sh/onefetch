@@ -14,8 +14,8 @@ git config --local --add "author.name" "onefetch-author-name"
 git config --local --add "author.email" "onefetch-author-email@onefetch.com"
 
 git checkout -b main
-touch this
-git add this
+touch this.rs
+git add this.rs
 git commit -q -m c1
-echo hello >> this
+echo hello >> this.rs
 git commit -q -am c2
