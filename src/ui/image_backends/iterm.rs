@@ -17,6 +17,12 @@ impl ITermBackend {
     }
 }
 
+impl Default for ITermBackend {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl super::ImageBackend for ITermBackend {
     fn add_image(
         &self,

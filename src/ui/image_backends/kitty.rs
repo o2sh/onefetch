@@ -77,6 +77,12 @@ impl KittyBackend {
     }
 }
 
+impl Default for KittyBackend {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl super::ImageBackend for KittyBackend {
     fn add_image(
         &self,

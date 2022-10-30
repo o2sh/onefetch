@@ -71,6 +71,12 @@ impl SixelBackend {
     }
 }
 
+impl Default for SixelBackend {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl super::ImageBackend for SixelBackend {
     #[allow(clippy::map_entry)]
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String> {
