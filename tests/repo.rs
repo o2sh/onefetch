@@ -40,3 +40,12 @@ fn test_repo() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_repo_without_remote() -> Result<()> {
+    let repo = repo("basic_repo.sh")?;
+    let res = Info::init_repo_path(&repo);
+    assert!(res.is_ok());
+
+    Ok(())
+}

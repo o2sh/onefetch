@@ -13,7 +13,7 @@ pub struct ProjectInfo {
 
 impl ProjectInfo {
     pub fn new(repo: &Repository, repo_url: &str) -> Result<Self> {
-        let repo_name = get_name(repo_url)?.unwrap_or_default();
+        let repo_name = get_repo_name(repo_url)?.unwrap_or_default();
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
@@ -23,7 +23,8 @@ impl ProjectInfo {
         })
     }
 }
-pub fn get_name(repo_url: &str) -> Result<Option<String>> {
+
+fn get_repo_name(repo_url: &str) -> Result<Option<String>> {
     let url = git_repository::url::parse(repo_url.into())?;
     let path = git_repository::path::from_bstr(url.path.as_bstr());
     let repo_name = path
@@ -35,11 +36,11 @@ pub fn get_name(repo_url: &str) -> Result<Option<String>> {
 }
 
 // This collects the repo size excluding .git
-pub fn get_number_of_tags(repo: &Repository) -> Result<usize> {
+fn get_number_of_tags(repo: &Repository) -> Result<usize> {
     Ok(repo.references()?.tags()?.count())
 }
 
-pub fn get_number_of_branches(repo: &Repository) -> Result<usize> {
+fn get_number_of_branches(repo: &Repository) -> Result<usize> {
     let mut number_of_branches = repo.references()?.remote_branches()?.count();
     if number_of_branches > 0 {
         //Exclude origin/HEAD -> origin/main
@@ -90,8 +91,6 @@ impl InfoField for ProjectInfo {
 
 #[cfg(test)]
 mod test {
-    use crate::info::test::utils::repo;
-
     use super::*;
 
     #[test]
@@ -109,7 +108,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_no_branches_no_tags() {
+    fn test_display_project_info_when_no_branches_no_tags() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
@@ -120,7 +119,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_no_tags() {
+    fn test_display_project_info_when_no_tags() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 3,
@@ -131,7 +130,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_no_branches() {
+    fn test_display_project_info_when_no_branches() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
@@ -142,7 +141,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_one_branche_one_tag() {
+    fn test_display_project_info_when_one_branche_one_tag() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 1,
@@ -156,11 +155,21 @@ mod test {
     }
 
     #[test]
-    fn test_repo_without_remote() -> Result<()> {
-        let repo = repo("basic_repo.sh")?;
-        let project_info = ProjectInfo::new(&repo, "")?;
-        assert!(project_info.value().is_empty());
+    fn test_get_repo_name_when_no_remote() -> Result<()> {
+        let repo_name = get_repo_name("")?;
+        assert!(repo_name.is_none());
 
         Ok(())
+    }
+
+    #[test]
+    fn test_display_project_info_when_no_repo_name() {
+        let project_info = ProjectInfo {
+            repo_name: "".to_string(),
+            number_of_branches: 0,
+            number_of_tags: 0,
+        };
+
+        assert!(project_info.value().is_empty());
     }
 }
