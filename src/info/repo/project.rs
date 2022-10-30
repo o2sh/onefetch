@@ -2,6 +2,7 @@ use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::{bstr::ByteSlice, Repository};
 use serde::Serialize;
+use std::ffi::OsStr;
 
 #[derive(Serialize)]
 pub struct ProjectInfo {
@@ -12,7 +13,7 @@ pub struct ProjectInfo {
 
 impl ProjectInfo {
     pub fn new(repo: &Repository, repo_url: &str) -> Result<Self> {
-        let repo_name = get_name(repo_url)?;
+        let repo_name = get_name(repo_url)?.unwrap_or_default();
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
@@ -22,15 +23,14 @@ impl ProjectInfo {
         })
     }
 }
-pub fn get_name(repo_url: &str) -> Result<String> {
+pub fn get_name(repo_url: &str) -> Result<Option<String>> {
     let url = git_repository::url::parse(repo_url.into())?;
     let path = git_repository::path::from_bstr(url.path.as_bstr());
     let repo_name = path
         .with_extension("")
         .file_name()
-        .expect("non-empty path")
-        .to_string_lossy()
-        .into_owned();
+        .map(OsStr::to_string_lossy)
+        .map(|s| s.into_owned());
     Ok(repo_name)
 }
 
@@ -50,24 +50,28 @@ pub fn get_number_of_branches(repo: &Repository) -> Result<usize> {
 
 impl std::fmt::Display for ProjectInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let branches_str = match self.number_of_branches {
-            0 => String::new(),
-            1 => String::from("1 branch"),
-            _ => format!("{} branches", self.number_of_branches),
-        };
-
-        let tags_str = match self.number_of_tags {
-            0 => String::new(),
-            1 => String::from("1 tag"),
-            _ => format!("{} tags", self.number_of_tags),
-        };
-
-        if tags_str.is_empty() && branches_str.is_empty() {
-            write!(f, "{}", self.repo_name)
-        } else if branches_str.is_empty() || tags_str.is_empty() {
-            write!(f, "{} ({}{})", self.repo_name, tags_str, branches_str)
+        if self.repo_name.is_empty() {
+            Ok(())
         } else {
-            write!(f, "{} ({}, {})", self.repo_name, branches_str, tags_str)
+            let branches_str = match self.number_of_branches {
+                0 => String::new(),
+                1 => String::from("1 branch"),
+                _ => format!("{} branches", self.number_of_branches),
+            };
+
+            let tags_str = match self.number_of_tags {
+                0 => String::new(),
+                1 => String::from("1 tag"),
+                _ => format!("{} tags", self.number_of_tags),
+            };
+
+            if tags_str.is_empty() && branches_str.is_empty() {
+                write!(f, "{}", self.repo_name)
+            } else if branches_str.is_empty() || tags_str.is_empty() {
+                write!(f, "{} ({}{})", self.repo_name, tags_str, branches_str)
+            } else {
+                write!(f, "{} ({}, {})", self.repo_name, branches_str, tags_str)
+            }
         }
     }
 }
@@ -86,6 +90,8 @@ impl InfoField for ProjectInfo {
 
 #[cfg(test)]
 mod test {
+    use crate::info::test::utils::repo;
+
     use super::*;
 
     #[test]
@@ -147,5 +153,14 @@ mod test {
             project_info.value(),
             "onefetch (1 branch, 1 tag)".to_string()
         );
+    }
+
+    #[test]
+    fn test_repo_without_remote() -> Result<()> {
+        let repo = repo("basic_repo.sh")?;
+        let project_info = ProjectInfo::new(&repo, "")?;
+        assert!(project_info.value().is_empty());
+
+        Ok(())
     }
 }
