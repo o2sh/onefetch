@@ -24,10 +24,7 @@ fn test_bare_repo() -> Result<()> {
 
 #[test]
 fn test_repo() -> Result<()> {
-    let repo_path = git_testtools::scripted_fixture_repo_read_only("repo.sh").unwrap();
-    let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
-    let repo = safe_repo.to_thread_local();
-
+    let repo = repo("repo.sh")?;
     let config: Config = Config {
         input: repo.path().to_path_buf(),
         ..Default::default()
