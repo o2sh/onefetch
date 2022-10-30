@@ -45,7 +45,7 @@ impl HeadInfo {
     }
 }
 
-pub fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
+fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
     let head_oid = repo.head_id().context("Could not read HEAD")?;
     let refs_info = repo
         .references()?

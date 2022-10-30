@@ -15,7 +15,7 @@ impl CreatedInfo {
     }
 }
 
-pub fn get_creation_date(commits: &Commits, iso_time: bool) -> String {
+fn get_creation_date(commits: &Commits, iso_time: bool) -> String {
     gitoxide_time_to_formatted_time(commits.time_of_first_commit, iso_time)
 }
 

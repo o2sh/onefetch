@@ -26,7 +26,7 @@ impl Detector {
         }
     }
 
-    pub fn get_license(&self, dir: &Path) -> Result<String> {
+    fn get_license(&self, dir: &Path) -> Result<String> {
         let mut output = fs::read_dir(dir)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())

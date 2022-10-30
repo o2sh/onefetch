@@ -289,7 +289,7 @@ impl Info {
     }
 }
 
-pub fn get_style(is_bold: bool, color: DynColors) -> Style {
+fn get_style(is_bold: bool, color: DynColors) -> Style {
     let mut style = Style::new().color(color);
     if is_bold {
         style = style.bold();

@@ -12,7 +12,7 @@ impl UrlInfo {
     }
 }
 
-pub fn get_url(repo: &Repository) -> Result<String> {
+fn get_url(repo: &Repository) -> Result<String> {
     let config = repo.config_snapshot();
     let remotes = match config.plumbing().sections_by_name("remote") {
         Some(sections) => sections,

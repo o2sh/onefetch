@@ -13,7 +13,7 @@ impl VersionInfo {
     }
 }
 
-pub fn get_version(repo: &Repository) -> Result<String> {
+fn get_version(repo: &Repository) -> Result<String> {
     let mut version_name = String::new();
     let mut most_recent = 0;
 

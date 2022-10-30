@@ -9,12 +9,12 @@ pub struct CommitsInfo {
 
 impl CommitsInfo {
     pub fn new(commits: &Commits) -> Self {
-        let number_of_commits = count(commits);
+        let number_of_commits = number_of_commits(commits);
         Self { number_of_commits }
     }
 }
 
-pub fn count(commits: &Commits) -> String {
+fn number_of_commits(commits: &Commits) -> String {
     format!(
         "{}{}",
         commits.num_commits,

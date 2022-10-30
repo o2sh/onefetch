@@ -16,7 +16,7 @@ impl LastChangeInfo {
     }
 }
 
-pub fn get_date_of_last_commit(commits: &Commits, iso_time: bool) -> String {
+fn get_date_of_last_commit(commits: &Commits, iso_time: bool) -> String {
     gitoxide_time_to_formatted_time(commits.time_of_most_recent_commit, iso_time)
 }
 

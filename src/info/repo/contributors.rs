@@ -17,7 +17,7 @@ impl ContributorsInfo {
     }
 }
 
-pub fn number_of_contributors(commits: &Commits) -> usize {
+fn number_of_contributors(commits: &Commits) -> usize {
     commits.total_num_authors
 }
 
