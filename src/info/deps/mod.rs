@@ -15,7 +15,6 @@ pub struct DependencyDetector {
 impl DependencyDetector {
     pub fn new() -> Self {
         let package_managers = package_manager::build();
-
         DependencyDetector { package_managers }
     }
 
@@ -47,6 +46,12 @@ impl DependencyDetector {
         let output = deps.join(", ");
 
         Ok(output)
+    }
+}
+
+impl Default for DependencyDetector {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
