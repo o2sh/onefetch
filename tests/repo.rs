@@ -29,7 +29,7 @@ fn test_repo() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = Info::new(&config).unwrap();
+    let info = Info::new(&config)?;
     insta::assert_json_snapshot!(
         info,
         {
@@ -37,6 +37,19 @@ fn test_repo() -> Result<()> {
             ".head.short_commit_id" => "short commit"
         }
     );
+
+    Ok(())
+}
+
+#[test]
+fn test_repo_without_remote() -> Result<()> {
+    let repo = repo("basic_repo.sh")?;
+    let config: Config = Config {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let info = Info::new(&config);
+    assert!(info.is_ok());
 
     Ok(())
 }

@@ -2,6 +2,7 @@ use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::{bstr::ByteSlice, Repository};
 use serde::Serialize;
+use std::ffi::OsStr;
 
 #[derive(Serialize)]
 pub struct ProjectInfo {
@@ -12,7 +13,7 @@ pub struct ProjectInfo {
 
 impl ProjectInfo {
     pub fn new(repo: &Repository, repo_url: &str) -> Result<Self> {
-        let repo_name = get_name(repo_url)?;
+        let repo_name = get_repo_name(repo_url)?.unwrap_or_default();
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
@@ -22,24 +23,24 @@ impl ProjectInfo {
         })
     }
 }
-pub fn get_name(repo_url: &str) -> Result<String> {
+
+fn get_repo_name(repo_url: &str) -> Result<Option<String>> {
     let url = git_repository::url::parse(repo_url.into())?;
     let path = git_repository::path::from_bstr(url.path.as_bstr());
     let repo_name = path
         .with_extension("")
         .file_name()
-        .expect("non-empty path")
-        .to_string_lossy()
-        .into_owned();
+        .map(OsStr::to_string_lossy)
+        .map(|s| s.into_owned());
     Ok(repo_name)
 }
 
 // This collects the repo size excluding .git
-pub fn get_number_of_tags(repo: &Repository) -> Result<usize> {
+fn get_number_of_tags(repo: &Repository) -> Result<usize> {
     Ok(repo.references()?.tags()?.count())
 }
 
-pub fn get_number_of_branches(repo: &Repository) -> Result<usize> {
+fn get_number_of_branches(repo: &Repository) -> Result<usize> {
     let mut number_of_branches = repo.references()?.remote_branches()?.count();
     if number_of_branches > 0 {
         //Exclude origin/HEAD -> origin/main
@@ -50,24 +51,28 @@ pub fn get_number_of_branches(repo: &Repository) -> Result<usize> {
 
 impl std::fmt::Display for ProjectInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let branches_str = match self.number_of_branches {
-            0 => String::new(),
-            1 => String::from("1 branch"),
-            _ => format!("{} branches", self.number_of_branches),
-        };
-
-        let tags_str = match self.number_of_tags {
-            0 => String::new(),
-            1 => String::from("1 tag"),
-            _ => format!("{} tags", self.number_of_tags),
-        };
-
-        if tags_str.is_empty() && branches_str.is_empty() {
-            write!(f, "{}", self.repo_name)
-        } else if branches_str.is_empty() || tags_str.is_empty() {
-            write!(f, "{} ({}{})", self.repo_name, tags_str, branches_str)
+        if self.repo_name.is_empty() {
+            Ok(())
         } else {
-            write!(f, "{} ({}, {})", self.repo_name, branches_str, tags_str)
+            let branches_str = match self.number_of_branches {
+                0 => String::new(),
+                1 => String::from("1 branch"),
+                _ => format!("{} branches", self.number_of_branches),
+            };
+
+            let tags_str = match self.number_of_tags {
+                0 => String::new(),
+                1 => String::from("1 tag"),
+                _ => format!("{} tags", self.number_of_tags),
+            };
+
+            if tags_str.is_empty() && branches_str.is_empty() {
+                write!(f, "{}", self.repo_name)
+            } else if branches_str.is_empty() || tags_str.is_empty() {
+                write!(f, "{} ({}{})", self.repo_name, tags_str, branches_str)
+            } else {
+                write!(f, "{} ({}, {})", self.repo_name, branches_str, tags_str)
+            }
         }
     }
 }
@@ -103,7 +108,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_no_branches_no_tags() {
+    fn test_display_project_info_when_no_branches_no_tags() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
@@ -114,7 +119,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_no_tags() {
+    fn test_display_project_info_when_no_tags() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 3,
@@ -125,7 +130,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_no_branches() {
+    fn test_display_project_info_when_no_branches() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
@@ -136,7 +141,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_one_branche_one_tag() {
+    fn test_display_project_info_when_one_branche_one_tag() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 1,
@@ -147,5 +152,24 @@ mod test {
             project_info.value(),
             "onefetch (1 branch, 1 tag)".to_string()
         );
+    }
+
+    #[test]
+    fn test_get_repo_name_when_no_remote() -> Result<()> {
+        let repo_name = get_repo_name("")?;
+        assert!(repo_name.is_none());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_display_project_info_when_no_repo_name() {
+        let project_info = ProjectInfo {
+            repo_name: "".to_string(),
+            number_of_branches: 0,
+            number_of_tags: 0,
+        };
+
+        assert!(project_info.value().is_empty());
     }
 }
