@@ -18,8 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <csr-read-only-do-not-edit/>
 
  - 1 commit contributed to the release.
+ - 1 day passed between releases.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' where seen in commit messages
+ - 1 unique issue was worked on: [#844](https://github.com/o2sh/onefetch/issues/844)
 
 ### Commit Details
 
@@ -27,7 +28,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <details><summary>view details</summary>
 
+ * **[#844](https://github.com/o2sh/onefetch/issues/844)**
+    - Bump clap_complete from 4.0.2 to 4.0.3 ([`1ab98bf`](https://github.com/o2sh/onefetch/commit/1ab98bf6c61eeafb67d568de53b1695419dd2687))
+</details>
+
+## 2.13.2 (2022-10-30)
+
+### Other
+
+- [fix] Repo without remote should not fail #841 @o2sh
+- [chore] Add integration tests with snapshot testing for Info struct #827 @atluft
+- [chore] Refactor test expressions #831 @saguywalker
+
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 17 commits contributed to the release over the course of 7 calendar days.
+ - 8 days passed between releases.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 5 unique issues were worked on: [#827](https://github.com/o2sh/onefetch/issues/827), [#831](https://github.com/o2sh/onefetch/issues/831), [#834](https://github.com/o2sh/onefetch/issues/834), [#836](https://github.com/o2sh/onefetch/issues/836), [#841](https://github.com/o2sh/onefetch/issues/841)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **[#827](https://github.com/o2sh/onefetch/issues/827)**
+    - Add test info mod rs ([`a1f1987`](https://github.com/o2sh/onefetch/commit/a1f198712feddb693ebb5f4ba2985819ad2b2eff))
+ * **[#831](https://github.com/o2sh/onefetch/issues/831)**
+    - Refactor test expressions ([`e94a273`](https://github.com/o2sh/onefetch/commit/e94a273c331712360b6f13c85b36710a5d83fccb))
+ * **[#834](https://github.com/o2sh/onefetch/issues/834)**
+    - Bump anyhow from 1.0.65 to 1.0.66 ([`efd7847`](https://github.com/o2sh/onefetch/commit/efd7847e35269299281c64d2bf50e2370ea9b141))
+ * **[#836](https://github.com/o2sh/onefetch/issues/836)**
+    - Bump serde from 1.0.145 to 1.0.147 ([`5d552fb`](https://github.com/o2sh/onefetch/commit/5d552fba4a486133fb819088de7668755560b633))
+ * **[#841](https://github.com/o2sh/onefetch/issues/841)**
+    - Repo without remote should not fail ([`e72f371`](https://github.com/o2sh/onefetch/commit/e72f371e504851f3f6edaab2b0dd73e99aa7fb18))
  * **Uncategorized**
+    - bump version ([`a6e5ebb`](https://github.com/o2sh/onefetch/commit/a6e5ebb8eb90571f952b47c7d10b25dd8e43d55a))
+    - cargo clippy ([`82ce8e9`](https://github.com/o2sh/onefetch/commit/82ce8e96b20474d99cfef5269075c280ef37ef24))
+    - cargo clipppy ([`6b88ac7`](https://github.com/o2sh/onefetch/commit/6b88ac7abf0a190aeddf413fadb9259b7aaecace))
+    - fix access modifiers ([`fdd17d3`](https://github.com/o2sh/onefetch/commit/fdd17d35a11ad89fcd7fb294b79e556bc48f7c60))
+    - use repo func in integration test ([`713030f`](https://github.com/o2sh/onefetch/commit/713030f7dac46ea4c1551d3432add2a72e3a6a61))
+    - add comment ([`1f99437`](https://github.com/o2sh/onefetch/commit/1f99437d40b4414dbfd049bf2d10238fa602da0f))
+    - move integration tests to separate folder ([`6b852c8`](https://github.com/o2sh/onefetch/commit/6b852c82fb5bfbb10990f31c97e7359f3dfed872))
+    - Merge branch 'main' of github.com:o2sh/onefetch ([`3a3b1c6`](https://github.com/o2sh/onefetch/commit/3a3b1c6c04907d5461deb6ed609a2543f5be3776))
+    - update banner ([`7f37df1`](https://github.com/o2sh/onefetch/commit/7f37df15cb91bd7e59e7378ef3ab20186989a922))
+    - fix phrasing description ([`4dc3fa3`](https://github.com/o2sh/onefetch/commit/4dc3fa3ef77cd76db6482b12a5cb7318878ae7ba))
+    - update CHANGELOG ([`3baf7be`](https://github.com/o2sh/onefetch/commit/3baf7be4814557d8ccae35568fd08f78af3f7b5f))
     - update vercel banner ([`a5555ac`](https://github.com/o2sh/onefetch/commit/a5555acf763365ae20bf235d532102a0d44ceba6))
 </details>
 
