@@ -60,7 +60,6 @@ jobs:
         with:
           identifier: o2sh.onefetch
           installers-regex: '\.exe$'
-          delete-previous-version: 'true'
           token: ${{ secrets.WINGET_TOKEN }}
 
   cargo-publish:
