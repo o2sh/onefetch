@@ -7,6 +7,7 @@ use self::repo::author::AuthorsInfo;
 use self::repo::commits::CommitsInfo;
 use self::repo::contributors::ContributorsInfo;
 use self::repo::created::CreatedInfo;
+use self::repo::description::DescriptionInfo;
 use self::repo::head::HeadInfo;
 use self::repo::last_change::LastChangeInfo;
 use self::repo::license::LicenseInfo;
@@ -21,10 +22,12 @@ use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
+use manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize, Style};
 use regex::Regex;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
+use std::path::Path;
 use std::str::FromStr;
 
 pub mod deps;
@@ -39,6 +42,7 @@ pub mod title;
 pub struct Info {
     title: Title,
     project: ProjectInfo,
+    description: DescriptionInfo,
     head: HeadInfo,
     pending: PendingInfo,
     version: VersionInfo,
@@ -71,6 +75,10 @@ impl std::fmt::Display for Info {
         //Info lines
         if let Some(project_info_value) = self.project.get(&self.disabled_fields) {
             self.write_styled_info_line(&self.project.title(), &project_info_value, f)?;
+        }
+
+        if let Some(description_info_value) = self.description.get(&self.disabled_fields) {
+            self.write_styled_info_line(&self.description.title(), &description_info_value, f)?;
         }
 
         if let Some(head_info_value) = self.head.get(&self.disabled_fields) {
@@ -209,6 +217,8 @@ impl Info {
             text_colors.underline,
             !config.no_bold,
         );
+        let manifest = Self::get_manifest(&repo_path)?;
+        let description = DescriptionInfo::new(&manifest)?;
         let pending = PendingInfo::new(&git_repo)?;
         let repo_url = UrlInfo::new(&git_repo)?;
         let project = ProjectInfo::new(&git_repo, &repo_url.repo_url)?;
@@ -236,6 +246,7 @@ impl Info {
         Ok(Self {
             title,
             project,
+            description,
             head,
             pending,
             version,
@@ -257,6 +268,16 @@ impl Info {
             no_color_palette: config.no_color_palette,
             no_bold: config.no_bold,
         })
+    }
+
+    fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
+        let manifests = manifest::get_manifests(&repo_path)?;
+
+        if manifests.is_empty() {
+            Ok(None)
+        } else {
+            Ok(manifests.first().cloned())
+        }
     }
 
     fn write_styled_info_line(

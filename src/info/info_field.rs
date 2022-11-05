@@ -15,6 +15,7 @@ pub trait InfoField {
 pub enum InfoType {
     Title,
     Project,
+    Description,
     Head,
     Pending,
     Version,
