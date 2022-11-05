@@ -31,8 +31,15 @@ git add code.rs
 git commit -q -m c4 --author="Author Four <author4@example.org>"
 echo more >> code.rs
 
-echo "[dependencies]" > Cargo.toml
-echo 'anyhow = "1.0.65"' >> Cargo.toml
+cat > Cargo.toml << EOF
+[package]
+name = "repo"
+version = "0.1.0"
+description = "Amazing tool"
+
+[dependencies]
+anyhow = "1.0.65"
+EOF
 
 cat > LICENSE << '__LICENSE__'
 MIT License

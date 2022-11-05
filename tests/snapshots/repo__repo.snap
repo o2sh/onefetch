@@ -10,6 +10,7 @@ expression: info
     "number_of_branches": 0,
     "number_of_tags": 1
   },
+  "description": "Amazing tool",
   "head": {
     "short_commit_id": "short commit",
     "refs": [
@@ -24,7 +25,7 @@ expression: info
       "percentage": 100.0
     }
   ],
-  "dependencies": "1 (cargo)",
+  "dependencies": "1 (Cargo)",
   "authors": [
     {
       "name": "Author Four",

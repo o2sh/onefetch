@@ -322,10 +322,11 @@ impl Serialize for Info {
     where
         S: serde::Serializer,
     {
-        let mut state = serializer.serialize_struct("Info", 4)?;
+        let mut state = serializer.serialize_struct("Info", 17)?;
         state.serialize_field("gitUsername", &self.title.git_username)?;
         state.serialize_field("gitVersion", &self.title.git_version)?;
         state.serialize_field("project", &self.project)?;
+        state.serialize_field("description", &self.description.description)?;
         state.serialize_field("head", &self.head.head_refs)?;
         state.serialize_field("version", &self.version.version)?;
         state.serialize_field("created", &self.created.creation_date)?;

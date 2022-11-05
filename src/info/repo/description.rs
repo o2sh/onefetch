@@ -37,10 +37,13 @@ mod test {
 
     #[test]
     fn test_display_description_info() {
-        let loc_info = DescriptionInfo {
-            description: Some(String::from("")),
-        };
+        let description_info = DescriptionInfo::new(&Some(Manifest {
+            manifest_type: manifest::ManifestType::Cargo,
+            name: String::new(),
+            description: Some(String::from("test")),
+            number_of_dependencies: 0,
+        }));
 
-        assert_eq!(loc_info.value(), "1235".to_string());
+        assert_eq!(description_info.value(), "test".to_string());
     }
 }
