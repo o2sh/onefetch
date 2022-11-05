@@ -1869,6 +1869,7 @@ dependencies = [
  "cargo_toml",
  "lazy_static",
  "npm-package-json",
+ "strum",
 ]
 
 [[package]]
@@ -2069,7 +2070,6 @@ dependencies = [
  "time",
  "time-humanize",
  "tokei",
- "toml",
  "yaml-rust",
 ]
 

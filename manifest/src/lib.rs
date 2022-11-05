@@ -3,6 +3,7 @@ use npm_package_json::Package;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::{ffi::OsStr, fs};
+use strum::{Display, EnumIter};
 
 #[macro_use]
 extern crate lazy_static;
@@ -18,13 +19,13 @@ lazy_static! {
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Manifest {
-    manifest_type: ManifestType,
-    number_of_dependencies: usize,
-    name: String,
+    pub manifest_type: ManifestType,
+    pub number_of_dependencies: usize,
+    pub name: String,
     pub description: Option<String>,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Display, Clone, Copy, PartialEq, Eq, Debug, EnumIter)]
 pub enum ManifestType {
     Npm,
     Cargo,

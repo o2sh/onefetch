@@ -1,4 +1,3 @@
-use self::deps::DependenciesInfo;
 use self::git::Commits;
 use self::info_field::{InfoField, InfoType};
 use self::langs::language::Language;
@@ -7,6 +6,7 @@ use self::repo::author::AuthorsInfo;
 use self::repo::commits::CommitsInfo;
 use self::repo::contributors::ContributorsInfo;
 use self::repo::created::CreatedInfo;
+use self::repo::dependencies::DependenciesInfo;
 use self::repo::description::DescriptionInfo;
 use self::repo::head::HeadInfo;
 use self::repo::last_change::LastChangeInfo;
@@ -30,7 +30,6 @@ use serde::Serialize;
 use std::path::Path;
 use std::str::FromStr;
 
-pub mod deps;
 mod git;
 pub mod info_field;
 pub mod langs;
@@ -218,10 +217,10 @@ impl Info {
             !config.no_bold,
         );
         let manifest = Self::get_manifest(&repo_path)?;
-        let description = DescriptionInfo::new(&manifest)?;
+        let description = DescriptionInfo::new(&manifest);
         let pending = PendingInfo::new(&git_repo)?;
         let repo_url = UrlInfo::new(&git_repo)?;
-        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url)?;
+        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url, &manifest)?;
         let head = HeadInfo::new(&git_repo)?;
         let version = VersionInfo::new(&git_repo)?;
         let size = SizeInfo::new(&git_repo);
@@ -236,7 +235,7 @@ impl Info {
 
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
-        let dependencies = DependenciesInfo::new(&repo_path)?;
+        let dependencies = DependenciesInfo::new(&manifest);
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
         let contributors = ContributorsInfo::new(&commits, config.number_of_authors);

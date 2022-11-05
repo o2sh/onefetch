@@ -6,6 +6,7 @@ pub mod author;
 pub mod commits;
 pub mod contributors;
 pub mod created;
+pub mod dependencies;
 pub mod description;
 pub mod head;
 pub mod last_change;

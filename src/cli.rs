@@ -1,4 +1,3 @@
-use crate::info::deps::package_manager::PackageManager;
 use crate::info::info_field::InfoType;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::ui::image_backends::ImageProtocol;
@@ -8,6 +7,7 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
+use manifest::ManifestType;
 use regex::Regex;
 use std::env;
 use std::io;
@@ -192,7 +192,7 @@ pub fn print_supported_languages() -> Result<()> {
 }
 
 pub fn print_supported_package_managers() -> Result<()> {
-    for p in PackageManager::iter() {
+    for p in ManifestType::iter() {
         println!("{}", p);
     }
 

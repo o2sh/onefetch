@@ -1,5 +1,4 @@
 use crate::info::info_field::{InfoField, InfoType};
-use anyhow::Result;
 use manifest::Manifest;
 
 pub struct DescriptionInfo {
@@ -7,13 +6,13 @@ pub struct DescriptionInfo {
 }
 
 impl DescriptionInfo {
-    pub fn new(manifest: &Option<Manifest>) -> Result<Self> {
+    pub fn new(manifest: &Option<Manifest>) -> Self {
         let description = match manifest {
             Some(m) => m.description.clone(),
             None => None,
         };
 
-        Ok(Self { description })
+        Self { description }
     }
 }
 
