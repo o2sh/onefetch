@@ -6,7 +6,7 @@ pub struct DescriptionInfo {
 }
 
 impl DescriptionInfo {
-    pub fn new(manifest: &Option<Manifest>) -> Self {
+    pub fn new(manifest: Option<&Manifest>) -> Self {
         let description = match manifest {
             Some(m) => m.description.clone(),
             None => None,
@@ -37,7 +37,7 @@ mod test {
 
     #[test]
     fn test_display_description_info() {
-        let description_info = DescriptionInfo::new(&Some(Manifest {
+        let description_info = DescriptionInfo::new(Some(&Manifest {
             manifest_type: manifest::ManifestType::Cargo,
             name: String::new(),
             description: Some(String::from("test")),

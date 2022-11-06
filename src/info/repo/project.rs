@@ -13,7 +13,7 @@ pub struct ProjectInfo {
 }
 
 impl ProjectInfo {
-    pub fn new(repo: &Repository, repo_url: &str, manifest: &Option<Manifest>) -> Result<Self> {
+    pub fn new(repo: &Repository, repo_url: &str, manifest: Option<&Manifest>) -> Result<Self> {
         let repo_name = get_repo_name(repo_url, manifest)?.unwrap_or_default();
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
@@ -25,7 +25,7 @@ impl ProjectInfo {
     }
 }
 
-fn get_repo_name(repo_url: &str, manifest: &Option<Manifest>) -> Result<Option<String>> {
+fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<Option<String>> {
     let repo_name_from_manifest = match manifest {
         Some(m) => m.name.clone(),
         None => String::new(),
@@ -165,7 +165,7 @@ mod test {
 
     #[test]
     fn test_get_repo_name_when_no_remote() -> Result<()> {
-        let repo_name = get_repo_name("", &None)?;
+        let repo_name = get_repo_name("", None)?;
         assert!(repo_name.is_none());
 
         Ok(())

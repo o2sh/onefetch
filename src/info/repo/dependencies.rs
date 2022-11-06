@@ -6,7 +6,7 @@ pub struct DependenciesInfo {
 }
 
 impl DependenciesInfo {
-    pub fn new(manifest: &Option<Manifest>) -> Self {
+    pub fn new(manifest: Option<&Manifest>) -> Self {
         let dependencies = manifest
             .as_ref()
             .and_then(|m| {

@@ -217,10 +217,10 @@ impl Info {
             !config.no_bold,
         );
         let manifest = Self::get_manifest(&repo_path)?;
-        let description = DescriptionInfo::new(&manifest);
+        let description = DescriptionInfo::new(manifest.as_ref());
         let pending = PendingInfo::new(&git_repo)?;
         let repo_url = UrlInfo::new(&git_repo)?;
-        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url, &manifest)?;
+        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url, manifest.as_ref())?;
         let head = HeadInfo::new(&git_repo)?;
         let version = VersionInfo::new(&git_repo)?;
         let size = SizeInfo::new(&git_repo);
@@ -235,7 +235,7 @@ impl Info {
 
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
-        let dependencies = DependenciesInfo::new(&manifest);
+        let dependencies = DependenciesInfo::new(manifest.as_ref());
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
         let contributors = ContributorsInfo::new(&commits, config.number_of_authors);
