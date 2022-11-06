@@ -21,13 +21,13 @@ impl InfoField for DescriptionInfo {
 
     fn value(&self) -> String {
         match &self.description {
-            Some(v) => v.to_string(),
-            None => String::from(""),
+            Some(v) => v.into(),
+            None => String::new(),
         }
     }
 
     fn title(&self) -> String {
-        String::from("Description")
+        "Description".into()
     }
 }
 
@@ -40,8 +40,9 @@ mod test {
         let description_info = DescriptionInfo::new(Some(&Manifest {
             manifest_type: manifest::ManifestType::Cargo,
             name: String::new(),
-            description: Some(String::from("test")),
+            description: Some("test".into()),
             number_of_dependencies: 0,
+            version: "0.1.0".into(),
         }));
 
         assert_eq!(description_info.value(), "test".to_string());

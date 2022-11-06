@@ -9,6 +9,7 @@ pub struct Manifest {
     pub number_of_dependencies: usize,
     pub name: String,
     pub description: Option<String>,
+    pub version: String,
 }
 
 #[derive(Display, Clone, Copy, PartialEq, Eq, Debug, EnumIter)]
@@ -46,7 +47,7 @@ fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
     let m = cargo_toml::Manifest::from_path(path.as_path())?;
     let package = m.package();
     let description = match package.description() {
-        Some(v) => Some(String::from(v)),
+        Some(v) => Some(v.into()),
         None => None,
     };
 
@@ -55,6 +56,7 @@ fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
         number_of_dependencies: m.dependencies.len(),
         name: package.name.clone(),
         description,
+        version: package.version().into(),
     })
 }
 
@@ -65,6 +67,7 @@ fn parse_npm_manifest(path: &PathBuf) -> Result<Manifest> {
         number_of_dependencies: package.dependencies.len(),
         name: package.name,
         description: package.description,
+        version: package.version,
     })
 }
 
