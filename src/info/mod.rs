@@ -232,7 +232,6 @@ impl Info {
             config.number_of_authors,
             config.email,
         )?;
-
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
         let dependencies = DependenciesInfo::new(manifest.as_ref());

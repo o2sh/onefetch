@@ -7,7 +7,6 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-lazy_static = "1.4.0"
 anyhow = "1.0"
 cargo_toml = "0.13.0"
 npm-package-json = "0.1.3"

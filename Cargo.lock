@@ -1867,7 +1867,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "cargo_toml",
- "lazy_static",
  "npm-package-json",
  "strum",
 ]
