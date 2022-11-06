@@ -14,7 +14,7 @@ pub struct ProjectInfo {
 
 impl ProjectInfo {
     pub fn new(repo: &Repository, repo_url: &str, manifest: Option<&Manifest>) -> Result<Self> {
-        let repo_name = get_repo_name(repo_url, manifest)?.unwrap_or_default();
+        let repo_name = get_repo_name(repo_url, manifest)?;
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
@@ -25,22 +25,24 @@ impl ProjectInfo {
     }
 }
 
-fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<Option<String>> {
-    let repo_name_from_manifest = match manifest {
-        Some(m) => m.name.clone(),
-        None => String::new(),
-    };
-    if repo_name_from_manifest.is_empty() {
-        let url = git_repository::url::parse(repo_url.into())?;
-        let path = git_repository::path::from_bstr(url.path.as_bstr());
-        let repo_name = path
-            .with_extension("")
-            .file_name()
-            .map(OsStr::to_string_lossy)
-            .map(|s| s.into_owned());
-        Ok(repo_name)
+fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> {
+    let url = git_repository::url::parse(repo_url.into())?;
+    let path = git_repository::path::from_bstr(url.path.as_bstr());
+    let repo_name = path
+        .with_extension("")
+        .file_name()
+        .map(OsStr::to_string_lossy)
+        .map(|s| s.into_owned())
+        .unwrap_or_default();
+
+    if repo_name.is_empty() {
+        let repo_name_from_manifest = match manifest {
+            Some(m) => m.name.clone(),
+            None => String::new(),
+        };
+        Ok(repo_name_from_manifest)
     } else {
-        Ok(Some(repo_name_from_manifest))
+        Ok(repo_name)
     }
 }
 
@@ -166,7 +168,7 @@ mod test {
     #[test]
     fn test_get_repo_name_when_no_remote() -> Result<()> {
         let repo_name = get_repo_name("", None)?;
-        assert!(repo_name.is_none());
+        assert!(repo_name.is_empty());
 
         Ok(())
     }
