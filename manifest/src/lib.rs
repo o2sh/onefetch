@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Result, Context};
 use std::fs;
 use std::path::{Path, PathBuf};
 use strum::{Display, EnumIter};
@@ -45,7 +45,7 @@ pub fn get_manifests<P: AsRef<Path>>(path: P) -> Result<Vec<Manifest>> {
 
 fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
     let m = cargo_toml::Manifest::from_path(path.as_path())?;
-    let package = m.package();
+    let package = m.package.context("Not a package (only a workspace)")?;
     let description = match package.description() {
         Some(v) => Some(v.into()),
         None => None,
@@ -58,6 +58,7 @@ fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
         description,
         version: package.version().into(),
     })
+
 }
 
 fn parse_npm_manifest(path: &PathBuf) -> Result<Manifest> {
