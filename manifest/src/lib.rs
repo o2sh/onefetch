@@ -1,5 +1,4 @@
 use anyhow::Result;
-use npm_package_json::Package;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::{ffi::OsStr, fs};
@@ -87,7 +86,7 @@ fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
 }
 
 fn parse_npm_manifest(path: &PathBuf) -> Result<Manifest> {
-    let package = Package::from_path(path)?;
+    let package = npm_package_json::Package::from_path(path)?;
     Ok(Manifest {
         manifest_type: ManifestType::Npm,
         number_of_dependencies: package.dependencies.len(),

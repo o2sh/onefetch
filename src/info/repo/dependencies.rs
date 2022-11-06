@@ -7,16 +7,13 @@ pub struct DependenciesInfo {
 
 impl DependenciesInfo {
     pub fn new(manifest: &Option<Manifest>) -> Self {
-        let dependencies = match manifest {
-            Some(m) => {
-                if m.number_of_dependencies == 0 {
-                    String::new()
-                } else {
-                    format!("{} ({})", m.number_of_dependencies, m.manifest_type)
-                }
-            }
-            None => String::new(),
-        };
+        let dependencies = manifest
+            .as_ref()
+            .and_then(|m| {
+                (m.number_of_dependencies != 0)
+                    .then(|| format!("{} ({})", m.number_of_dependencies, m.manifest_type))
+            })
+            .unwrap_or_default();
 
         Self { dependencies }
     }
@@ -30,6 +27,6 @@ impl InfoField for DependenciesInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Dependencies")
+        "Dependencies".into()
     }
 }
