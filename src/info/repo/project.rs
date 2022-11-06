@@ -13,7 +13,7 @@ pub struct ProjectInfo {
 
 impl ProjectInfo {
     pub fn new(repo: &Repository, repo_url: &str) -> Result<Self> {
-        let repo_name = get_repo_name(repo_url)?.unwrap_or_default();
+        let repo_name = get_repo_name(repo_url)?;
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
@@ -24,14 +24,16 @@ impl ProjectInfo {
     }
 }
 
-fn get_repo_name(repo_url: &str) -> Result<Option<String>> {
+fn get_repo_name(repo_url: &str) -> Result<String> {
     let url = git_repository::url::parse(repo_url.into())?;
     let path = git_repository::path::from_bstr(url.path.as_bstr());
     let repo_name = path
         .with_extension("")
         .file_name()
         .map(OsStr::to_string_lossy)
-        .map(|s| s.into_owned());
+        .map(|s| s.into_owned())
+        .unwrap_or_default();
+
     Ok(repo_name)
 }
 
@@ -157,7 +159,7 @@ mod test {
     #[test]
     fn test_get_repo_name_when_no_remote() -> Result<()> {
         let repo_name = get_repo_name("")?;
-        assert!(repo_name.is_none());
+        assert!(repo_name.is_empty());
 
         Ok(())
     }
