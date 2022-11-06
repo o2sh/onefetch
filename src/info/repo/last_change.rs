@@ -28,7 +28,7 @@ impl InfoField for LastChangeInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Last change")
+        "Last change".into()
     }
 }
 

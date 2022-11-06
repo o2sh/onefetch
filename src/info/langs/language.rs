@@ -37,7 +37,7 @@ impl LanguagesInfo {
 
 impl std::fmt::Display for LanguagesInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut languages_info = String::from("");
+        let mut languages_info = String::new();
         let pad = self.title().len() + 2;
         let color_palette = vec![
             DynColors::Ansi(AnsiColors::Red),
@@ -124,7 +124,7 @@ impl InfoField for LanguagesInfo {
     }
 
     fn title(&self) -> String {
-        let mut title = String::from("Language");
+        let mut title: String = "Language".into();
         if self.languages_with_percentage.len() > 1 {
             title.push('s')
         }

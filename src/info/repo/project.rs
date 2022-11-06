@@ -65,13 +65,13 @@ impl std::fmt::Display for ProjectInfo {
         } else {
             let branches_str = match self.number_of_branches {
                 0 => String::new(),
-                1 => String::from("1 branch"),
+                1 => "1 branch".into(),
                 _ => format!("{} branches", self.number_of_branches),
             };
 
             let tags_str = match self.number_of_tags {
                 0 => String::new(),
-                1 => String::from("1 tag"),
+                1 => "1 tag".into(),
                 _ => format!("{} tags", self.number_of_tags),
             };
 
@@ -94,7 +94,7 @@ impl InfoField for ProjectInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Project")
+        "Project".into()
     }
 }
 

@@ -33,7 +33,7 @@ impl InfoField for ContributorsInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Contributors")
+        "Contributors".into()
     }
 }
 

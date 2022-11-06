@@ -36,7 +36,7 @@ impl InfoField for VersionInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Version")
+        "Version".into()
     }
 }
 

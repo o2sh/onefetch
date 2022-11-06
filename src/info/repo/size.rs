@@ -53,7 +53,7 @@ impl InfoField for SizeInfo {
         self.to_string()
     }
     fn title(&self) -> String {
-        String::from("Size")
+        "Size".into()
     }
 }
 

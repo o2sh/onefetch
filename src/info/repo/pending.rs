@@ -64,7 +64,7 @@ impl InfoField for PendingInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Pending")
+        "Pending".into()
     }
 }
 

@@ -12,7 +12,7 @@ impl InfoField for LocInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Lines of code")
+        "Lines of code".into()
     }
 }
 

@@ -27,7 +27,7 @@ impl InfoField for CreatedInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Created")
+        "Created".into()
     }
 }
 

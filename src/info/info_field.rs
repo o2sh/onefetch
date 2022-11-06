@@ -46,14 +46,14 @@ mod test {
         }
 
         fn title(&self) -> String {
-            String::from("title")
+            "title".into()
         }
     }
 
     #[test]
     fn test_info_field_get() {
         let info = InfoFieldImpl("test");
-        assert_eq!(info.get(&[]), Some(String::from("test")));
+        assert_eq!(info.get(&[]), Some("test".into()));
     }
 
     #[test]
