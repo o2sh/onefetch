@@ -222,7 +222,7 @@ impl Info {
         let repo_url = UrlInfo::new(&git_repo)?;
         let project = ProjectInfo::new(&git_repo, &repo_url.repo_url, manifest.as_ref())?;
         let head = HeadInfo::new(&git_repo)?;
-        let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
+        let version = VersionInfo::new(&git_repo)?;
         let size = SizeInfo::new(&git_repo);
         let license = LicenseInfo::new(&repo_path)?;
         let mut commits = Commits::new(
