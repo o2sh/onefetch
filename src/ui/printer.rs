@@ -96,7 +96,7 @@ impl<W: Write> Printer<W> {
                     let image_backend = self
                         .image_backend
                         .as_ref()
-                        .with_context(|| "Could not detect a supported image backend")?;
+                        .context("Could not detect a supported image backend")?;
 
                     buf.push_str(
                         &image_backend
@@ -105,7 +105,7 @@ impl<W: Write> Printer<W> {
                                 custom_image,
                                 self.color_resolution,
                             )
-                            .with_context(|| "Error while drawing image")?,
+                            .context("Error while drawing image")?,
                     );
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.ascii_input {

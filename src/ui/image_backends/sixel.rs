@@ -105,7 +105,7 @@ impl super::ImageBackend for SixelBackend {
         // reduce the amount of colors using dithering
         let pixels = flat_samples
             .image_slice()
-            .with_context(|| "Error while slicing the image")?;
+            .context("Error while slicing the image")?;
         colorops::dither(&mut rgba_image, &NeuQuant::new(10, colors, pixels));
 
         let rgb_image = ImageBuffer::from_fn(rgba_image.width(), rgba_image.height(), |x, y| {
