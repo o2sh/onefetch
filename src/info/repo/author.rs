@@ -72,7 +72,7 @@ impl AuthorsInfo {
 
 impl std::fmt::Display for AuthorsInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut authors_info = String::from("");
+        let mut authors_info = String::new();
 
         let pad = self.title().len() + 2;
 
@@ -98,7 +98,7 @@ impl InfoField for AuthorsInfo {
     }
 
     fn title(&self) -> String {
-        let mut title = String::from("Author");
+        let mut title: String = "Author".into();
         if self.authors.len() > 1 {
             title.push('s')
         }

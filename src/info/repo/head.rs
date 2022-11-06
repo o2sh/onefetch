@@ -68,7 +68,7 @@ impl InfoField for HeadInfo {
     }
 
     fn title(&self) -> String {
-        String::from("HEAD")
+        "HEAD".into()
     }
 }
 

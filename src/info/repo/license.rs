@@ -85,7 +85,7 @@ impl InfoField for LicenseInfo {
     }
 
     fn title(&self) -> String {
-        String::from("License")
+        "License".into()
     }
 }
 
@@ -114,7 +114,7 @@ mod test {
         let detector = Detector::new()?;
         let license_text = fs::read_to_string(Path::new("LICENSE.md"))?;
         let license = detector.analyze(&license_text);
-        assert_eq!(license, Some(String::from("MIT")));
+        assert_eq!(license, Some("MIT".into()));
         Ok(())
     }
 }

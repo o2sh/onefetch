@@ -29,7 +29,7 @@ impl InfoField for CommitsInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Commits")
+        "Commits".into()
     }
 }
 

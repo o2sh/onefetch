@@ -47,7 +47,7 @@ impl InfoField for UrlInfo {
     }
 
     fn title(&self) -> String {
-        String::from("Repo")
+        "Repo".into()
     }
 }
 
