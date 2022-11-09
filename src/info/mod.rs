@@ -352,8 +352,6 @@ impl Serialize for Info {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ui::num_to_color;
-    use clap::Parser;
     use owo_colors::AnsiColors;
 
     #[test]
