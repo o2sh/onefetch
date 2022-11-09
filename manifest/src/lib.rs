@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use strum::{Display, EnumIter};
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -24,14 +24,11 @@ pub fn get_manifests<P: AsRef<Path>>(path: P) -> Result<Vec<Manifest>> {
         .map(|entry| entry.path())
         .filter(|entry| entry.is_file())
         .filter_map(|file_path| {
-            let filename = file_path
+            let file_name = file_path
                 .file_name()
                 .and_then(|name| name.to_str())
                 .unwrap_or_default();
-            match file_name_to_manifest_type(filename) {
-                Some(manifest_type) => Some((file_path, manifest_type)),
-                None => None,
-            }
+            file_name_to_manifest_type(file_name).map(|manifest_type| (file_path, manifest_type))
         })
         .map(|(file_path, manifest_type)| match manifest_type {
             ManifestType::Cargo => parse_cargo_manifest(&file_path),
@@ -43,13 +40,10 @@ pub fn get_manifests<P: AsRef<Path>>(path: P) -> Result<Vec<Manifest>> {
     Ok(manifest_paths)
 }
 
-fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
-    let m = cargo_toml::Manifest::from_path(path.as_path())?;
+fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
+    let m = cargo_toml::Manifest::from_path(path)?;
     let package = m.package.context("Not a package (only a workspace)")?;
-    let description = match package.description() {
-        Some(v) => Some(v.into()),
-        None => None,
-    };
+    let description = package.description().map(|v| v.into());
 
     Ok(Manifest {
         manifest_type: ManifestType::Cargo,
@@ -60,7 +54,7 @@ fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
     })
 }
 
-fn parse_npm_manifest(path: &PathBuf) -> Result<Manifest> {
+fn parse_npm_manifest(path: &Path) -> Result<Manifest> {
     let package = npm_package_json::Package::from_path(path)?;
     Ok(Manifest {
         manifest_type: ManifestType::Npm,
@@ -72,12 +66,11 @@ fn parse_npm_manifest(path: &PathBuf) -> Result<Manifest> {
 }
 
 fn file_name_to_manifest_type(filename: &str) -> Option<ManifestType> {
-    let manifest_type = match filename {
+    match filename {
         "Cargo.toml" => Some(ManifestType::Cargo),
         "package.json" => Some(ManifestType::Npm),
         _ => None,
-    };
-    manifest_type
+    }
 }
 
 #[cfg(test)]

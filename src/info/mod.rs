@@ -269,7 +269,7 @@ impl Info {
     }
 
     fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
-        let manifests = onefetch_manifest::get_manifests(&repo_path)?;
+        let manifests = onefetch_manifest::get_manifests(repo_path)?;
 
         if manifests.is_empty() {
             Ok(None)
