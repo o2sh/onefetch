@@ -25,7 +25,7 @@ impl InfoField for DescriptionInfo {
     fn value(&self) -> String {
         match &self.description {
             Some(value) => {
-                if !value.is_empty() && value.contains(' ') {
+                if value.contains(' ') {
                     let pad = self.title().len() + 2;
                     let words = value.trim().split(' ');
                     let mut description = String::new();
