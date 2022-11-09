@@ -7,7 +7,7 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
-use manifest::ManifestType;
+use onefetch_manifest::ManifestType;
 use regex::Regex;
 use std::env;
 use std::io;

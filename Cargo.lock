@@ -1862,16 +1862,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "manifest"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cargo_toml",
- "npm-package-json",
- "strum",
-]
-
-[[package]]
 name = "matches"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2056,7 +2046,7 @@ dependencies = [
  "insta",
  "lazy_static",
  "libc",
- "manifest",
+ "onefetch-manifest",
  "owo-colors",
  "pretty_assertions",
  "regex",
@@ -2070,6 +2060,16 @@ dependencies = [
  "time-humanize",
  "tokei",
  "yaml-rust",
+]
+
+[[package]]
+name = "onefetch-manifest"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "cargo_toml",
+ "npm-package-json",
+ "strum",
 ]
 
 [[package]]

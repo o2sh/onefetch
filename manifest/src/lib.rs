@@ -1,4 +1,4 @@
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use std::fs;
 use std::path::{Path, PathBuf};
 use strum::{Display, EnumIter};
@@ -58,7 +58,6 @@ fn parse_cargo_manifest(path: &PathBuf) -> Result<Manifest> {
         description,
         version: package.version().into(),
     })
-
 }
 
 fn parse_npm_manifest(path: &PathBuf) -> Result<Manifest> {
@@ -85,7 +84,5 @@ fn file_name_to_manifest_type(filename: &str) -> Option<ManifestType> {
 mod tests {
 
     #[test]
-    fn test_get_manifest() {
-        let toto = get_manifest(Path::from_str("."));
-    }
+    fn test_get_manifest() {}
 }

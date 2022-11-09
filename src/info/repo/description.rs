@@ -1,5 +1,5 @@
 use crate::info::info_field::{InfoField, InfoType};
-use manifest::Manifest;
+use onefetch_manifest::Manifest;
 
 pub struct DescriptionInfo {
     pub description: Option<String>,
@@ -34,11 +34,12 @@ impl InfoField for DescriptionInfo {
 #[cfg(test)]
 mod test {
     use super::*;
+    use onefetch_manifest::ManifestType;
 
     #[test]
     fn test_display_description_info() {
         let description_info = DescriptionInfo::new(Some(&Manifest {
-            manifest_type: manifest::ManifestType::Cargo,
+            manifest_type: ManifestType::Cargo,
             name: String::new(),
             description: Some("test".into()),
             number_of_dependencies: 0,

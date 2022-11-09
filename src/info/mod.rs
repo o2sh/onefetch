@@ -22,7 +22,7 @@ use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
-use manifest::Manifest;
+use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize, Style};
 use regex::Regex;
 use serde::ser::SerializeStruct;
@@ -269,7 +269,7 @@ impl Info {
     }
 
     fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
-        let manifests = manifest::get_manifests(&repo_path)?;
+        let manifests = onefetch_manifest::get_manifests(&repo_path)?;
 
         if manifests.is_empty() {
             Ok(None)

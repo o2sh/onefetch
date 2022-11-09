@@ -1,5 +1,5 @@
 use crate::info::info_field::{InfoField, InfoType};
-use manifest::Manifest;
+use onefetch_manifest::Manifest;
 
 pub struct DependenciesInfo {
     pub dependencies: String,

@@ -1,7 +1,7 @@
 use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::Repository;
-use manifest::Manifest;
+use onefetch_manifest::Manifest;
 
 pub struct VersionInfo {
     pub version: String,

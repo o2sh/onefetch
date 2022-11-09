@@ -1,6 +1,6 @@
 [package]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
-name = "manifest"
+name = "onefetch-manifest"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
