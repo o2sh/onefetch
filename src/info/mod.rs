@@ -73,7 +73,7 @@ impl std::fmt::Display for Info {
 
         //Info lines
         if let Some(project_info_value) = self.project.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.project.title(), &project_info_value, f)?;
+            self.write_styled_info_line(f, &self.project.title(), &project_info_value, true)?;
         }
 
         if let Some(description_info_value) = self.description.get(&self.disabled_fields) {
@@ -81,59 +81,79 @@ impl std::fmt::Display for Info {
         }
 
         if let Some(head_info_value) = self.head.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.head.title(), &head_info_value, f)?;
+            self.write_styled_info_line(f, &self.head.title(), &head_info_value, true)?;
         }
 
         if let Some(pending_info_value) = self.pending.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.pending.title(), &pending_info_value, f)?;
+            self.write_styled_info_line(f, &self.pending.title(), &pending_info_value, true)?;
         }
 
         if let Some(version_info_value) = self.version.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.version.title(), &version_info_value, f)?;
+            self.write_styled_info_line(f, &self.version.title(), &version_info_value, true)?;
         }
 
         if let Some(created_info_value) = self.created.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.created.title(), &created_info_value, f)?;
+            self.write_styled_info_line(f, &self.created.title(), &created_info_value, true)?;
         }
 
         if let Some(languages_info_value) = self.languages.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.languages.title(), &languages_info_value, f)?;
+            self.write_styled_info_line(f, &self.languages.title(), &languages_info_value, false)?;
         }
 
         if let Some(dependencies_info_value) = self.dependencies.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.dependencies.title(), &dependencies_info_value, f)?;
+            self.write_styled_info_line(
+                f,
+                &self.dependencies.title(),
+                &dependencies_info_value,
+                true,
+            )?;
         }
 
         if let Some(authors_info_value) = self.authors.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.authors.title(), &authors_info_value, f)?;
+            self.write_styled_info_line(f, &self.authors.title(), &authors_info_value, false)?;
         }
 
         if let Some(last_change_info_value) = self.last_change.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.last_change.title(), &last_change_info_value, f)?;
+            self.write_styled_info_line(
+                f,
+                &self.last_change.title(),
+                &last_change_info_value,
+                true,
+            )?;
         }
 
         if let Some(contributors_info_value) = self.contributors.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.contributors.title(), &contributors_info_value, f)?;
+            self.write_styled_info_line(
+                f,
+                &self.contributors.title(),
+                &contributors_info_value,
+                true,
+            )?;
         }
 
         if let Some(repo_info_value) = self.repo.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.repo.title(), &repo_info_value, f)?;
+            self.write_styled_info_line(f, &self.repo.title(), &repo_info_value, true)?;
         }
 
         if let Some(commits_info_value) = self.commits.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.commits.title(), &commits_info_value, f)?;
+            self.write_styled_info_line(f, &self.commits.title(), &commits_info_value, true)?;
         }
 
         if let Some(lines_of_code_info_value) = self.lines_of_code.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.lines_of_code.title(), &lines_of_code_info_value, f)?;
+            self.write_styled_info_line(
+                f,
+                &self.lines_of_code.title(),
+                &lines_of_code_info_value,
+                true,
+            )?;
         }
 
         if let Some(size_info_value) = self.size.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.size.title(), &size_info_value, f)?;
+            self.write_styled_info_line(f, &self.size.title(), &size_info_value, true)?;
         }
 
         if let Some(license_info_value) = self.license.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.license.title(), &license_info_value, f)?;
+            self.write_styled_info_line(f, &self.license.title(), &license_info_value, true)?;
         }
 
         //Palette
@@ -280,21 +300,26 @@ impl Info {
 
     fn write_styled_info_line(
         &self,
+        f: &mut std::fmt::Formatter,
         subtitle: &str,
         info: &str,
-        f: &mut std::fmt::Formatter,
+        should_color_info: bool,
     ) -> std::fmt::Result {
-        let colored_info = info.color(self.text_colors.info);
-        self.write_info_line(subtitle, &colored_info.to_string(), f)
+        writeln!(
+            f,
+            "{} {}",
+            &self.style_subtitle(subtitle),
+            &self.style_info(info, should_color_info)
+        )
     }
 
-    fn write_info_line(
-        &self,
-        subtitle: &str,
-        info: &str,
-        f: &mut std::fmt::Formatter,
-    ) -> std::fmt::Result {
-        writeln!(f, "{} {}", &self.style_subtitle(subtitle), info)
+    fn style_info(&self, info: &str, with_color: bool) -> String {
+        if with_color {
+            let info_style = get_style(false, self.text_colors.info);
+            info.style(info_style).to_string()
+        } else {
+            info.into()
+        }
     }
 
     fn style_subtitle(&self, subtitle: &str) -> String {
@@ -350,7 +375,6 @@ mod tests {
     use crate::ui::num_to_color;
     use clap::Parser;
     use owo_colors::AnsiColors;
-    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_get_style() -> Result<()> {
@@ -374,21 +398,59 @@ mod tests {
         let info = Info::new(&Config::parse_from(&[
             "onefetch",
             "--text-colors",
-            "0",
-            "0",
-            "0",
-            "3",
-            "4",
+            "0", // title
+            "0", // tilde
+            "0", // underline
+            "3", // subtitle
+            "4", // colon
+            "0", // info
         ]))?;
-        let styled_subtitle = info.style_subtitle("test");
+        let styled_subtitle = info.style_subtitle("subtitle");
         assert_eq!(
             styled_subtitle,
             format!(
                 "{}{}",
-                "test".style(Style::new().color(num_to_color(&3)).bold()),
+                "subtitle".style(Style::new().color(num_to_color(&3)).bold()),
                 ":".style(Style::new().color(num_to_color(&4)).bold())
             )
         );
+        Ok(())
+    }
+
+    #[test]
+    fn test_style_info_with_color() -> Result<()> {
+        let info = Info::new(&Config::parse_from(&[
+            "onefetch",
+            "--text-colors",
+            "0", // title
+            "0", // tilde
+            "0", // underline
+            "0", // subtitle
+            "0", // colon
+            "2", // info
+        ]))?;
+        let styled_info = info.style_info("info", true);
+        assert_eq!(
+            styled_info,
+            format!("{}", "info".style(Style::new().color(num_to_color(&2))))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_style_info_without_color() -> Result<()> {
+        let info = Info::new(&Config::parse_from(&[
+            "onefetch",
+            "--text-colors",
+            "0", // title
+            "0", // tilde
+            "0", // underline
+            "0", // subtitle
+            "0", // colon
+            "2", // info
+        ]))?;
+        let styled_info = info.style_info("info", false);
+        assert_eq!(styled_info, "info");
         Ok(())
     }
 }

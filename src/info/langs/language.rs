@@ -109,7 +109,7 @@ impl std::fmt::Display for LanguagesInfo {
                     width = pad
                 );
             } else {
-                languages_info.push_str(&language_str.to_string());
+                languages_info.push_str(&language_str.trim_end());
             }
         }
         write!(f, "{}", languages_info)
