@@ -77,7 +77,12 @@ impl std::fmt::Display for Info {
         }
 
         if let Some(description_info_value) = self.description.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.description.title(), &description_info_value, f)?;
+            self.write_styled_info_line(
+                f,
+                &self.description.title(),
+                &description_info_value,
+                true,
+            )?;
         }
 
         if let Some(head_info_value) = self.head.get(&self.disabled_fields) {

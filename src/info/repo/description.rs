@@ -1,5 +1,8 @@
 use crate::info::info_field::{InfoField, InfoType};
 use onefetch_manifest::Manifest;
+use std::fmt::Write;
+
+const NUMBER_OF_WORDS_PER_LINE: usize = 5;
 
 pub struct DescriptionInfo {
     pub description: Option<String>,
@@ -21,7 +24,24 @@ impl InfoField for DescriptionInfo {
 
     fn value(&self) -> String {
         match &self.description {
-            Some(v) => v.into(),
+            Some(value) => {
+                if !value.is_empty() && value.contains(' ') {
+                    let pad = self.title().len() + 2;
+                    let words = value.trim().split(' ');
+                    let mut description = String::new();
+                    for (i, word) in words.enumerate() {
+                        if i != 0 && i % NUMBER_OF_WORDS_PER_LINE == 0 {
+                            let _ = write!(description, "\n{:<width$}{} ", "", word, width = pad);
+                        } else {
+                            let _ = write!(description, "{} ", word);
+                        }
+                    }
+
+                    description.trim_end().into()
+                } else {
+                    value.into()
+                }
+            }
             None => String::new(),
         }
     }
