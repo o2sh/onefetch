@@ -297,7 +297,7 @@ impl Info {
     fn style_info(&self, info: &str, with_color: bool) -> String {
         if with_color {
             let info_style = get_style(false, self.text_colors.info);
-            info.style(info_style).to_string()
+            format!("{}", info.style(info_style))
         } else {
             info.into()
         }
