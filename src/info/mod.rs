@@ -321,7 +321,7 @@ impl Info {
     fn style_info(&self, info: &str, with_color: bool) -> String {
         if with_color {
             let info_style = get_style(false, self.text_colors.info);
-            info.style(info_style).to_string()
+            format!("{}", info.style(info_style))
         } else {
             info.into()
         }
@@ -377,8 +377,6 @@ impl Serialize for Info {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ui::num_to_color;
-    use clap::Parser;
     use owo_colors::AnsiColors;
 
     #[test]
@@ -395,67 +393,6 @@ mod tests {
     fn test_get_style_no_bold() -> Result<()> {
         let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
         assert_eq!(style, Style::new().color(DynColors::Ansi(AnsiColors::Cyan)));
-        Ok(())
-    }
-
-    #[test]
-    fn test_style_subtitle() -> Result<()> {
-        let info = Info::new(&Config::parse_from(&[
-            "onefetch",
-            "--text-colors",
-            "0", // title
-            "0", // tilde
-            "0", // underline
-            "3", // subtitle
-            "4", // colon
-            "0", // info
-        ]))?;
-        let styled_subtitle = info.style_subtitle("subtitle");
-        assert_eq!(
-            styled_subtitle,
-            format!(
-                "{}{}",
-                "subtitle".style(Style::new().color(num_to_color(&3)).bold()),
-                ":".style(Style::new().color(num_to_color(&4)).bold())
-            )
-        );
-        Ok(())
-    }
-
-    #[test]
-    fn test_style_info_with_color() -> Result<()> {
-        let info = Info::new(&Config::parse_from(&[
-            "onefetch",
-            "--text-colors",
-            "0", // title
-            "0", // tilde
-            "0", // underline
-            "0", // subtitle
-            "0", // colon
-            "2", // info
-        ]))?;
-        let styled_info = info.style_info("info", true);
-        assert_eq!(
-            styled_info,
-            format!("{}", "info".style(Style::new().color(num_to_color(&2))))
-        );
-        Ok(())
-    }
-
-    #[test]
-    fn test_style_info_without_color() -> Result<()> {
-        let info = Info::new(&Config::parse_from(&[
-            "onefetch",
-            "--text-colors",
-            "0", // title
-            "0", // tilde
-            "0", // underline
-            "0", // subtitle
-            "0", // colon
-            "2", // info
-        ]))?;
-        let styled_info = info.style_info("info", false);
-        assert_eq!(styled_info, "info");
         Ok(())
     }
 }
