@@ -118,7 +118,7 @@ impl super::ImageBackend for KittyBackend {
             raw_image.len()
         );
 
-        let encoded_image = base64::encode(&raw_image); // image data is base64 encoded
+        let encoded_image = base64::encode(raw_image); // image data is base64 encoded
         let mut image_data = Vec::<u8>::new();
         for chunk in encoded_image.as_bytes().chunks(4096) {
             // send a 4096 byte chunk of base64 encoded rgba image data

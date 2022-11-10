@@ -35,12 +35,11 @@ bytecount = "0.6.3"
 clap = { version = "4.0.22", features = ["derive"] }
 clap_complete = "4.0.3"
 color_quant = "1.1.0"
-git-features-for-configuration-only = { package = "git-features", version = "0.22.4", features = [
+git-features-for-configuration-only = { package = "git-features", version = "0.23.1", features = [
     "zlib-ng-compat",
 ] }
-git-repository = { version = "0.23.1", default-features = false, features = [
+git-repository = { version = "0.27.0", default-features = false, features = [
     "max-performance-safe",
-    "unstable",
 ] }
 git2 = { version = "0.15.0", default-features = false }
 image = "0.24.4"
