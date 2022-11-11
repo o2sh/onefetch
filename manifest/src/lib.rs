@@ -10,6 +10,7 @@ pub struct Manifest {
     pub name: String,
     pub description: Option<String>,
     pub version: String,
+    pub license: Option<String>,
 }
 
 #[derive(Display, Clone, Copy, PartialEq, Eq, Debug, EnumIter)]
@@ -51,6 +52,7 @@ fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
         name: package.name.clone(),
         description,
         version: package.version().into(),
+        license: package.license().map(|x| x.into()),
     })
 }
 
@@ -62,6 +64,7 @@ fn parse_npm_manifest(path: &Path) -> Result<Manifest> {
         name: package.name,
         description: package.description,
         version: package.version,
+        license: package.license,
     })
 }
 

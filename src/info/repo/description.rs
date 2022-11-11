@@ -64,6 +64,7 @@ mod test {
             description: Some("test".into()),
             number_of_dependencies: 0,
             version: "0.1.0".into(),
+            license: None,
         }));
 
         assert_eq!(description_info.value(), "test".to_string());

@@ -1,6 +1,7 @@
 use crate::info::info_field::{InfoField, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
+use onefetch_manifest::Manifest;
 use std::path::Path;
 use std::{ffi::OsStr, fs};
 
@@ -26,7 +27,7 @@ impl Detector {
         }
     }
 
-    fn get_license(&self, dir: &Path) -> Result<String> {
+    fn get_license(&self, dir: &Path, manifest: Option<&Manifest>) -> Result<String> {
         let mut output = fs::read_dir(dir)?
             .filter_map(std::result::Result::ok)
             .map(|entry| entry.path())
@@ -46,7 +47,15 @@ impl Detector {
 
         output.sort();
         output.dedup();
-        Ok(output.join(", "))
+        let license = output.join(", ");
+
+        if license.is_empty() {
+            let license_from_manifest =
+                manifest.and_then(|m| m.license.clone()).unwrap_or_default();
+            Ok(license_from_manifest)
+        } else {
+            Ok(license)
+        }
     }
 
     fn analyze(&self, text: &str) -> Option<String> {
@@ -71,8 +80,8 @@ pub struct LicenseInfo {
 }
 
 impl LicenseInfo {
-    pub fn new(repo_path: &Path) -> Result<Self> {
-        let license = Detector::new()?.get_license(repo_path)?;
+    pub fn new(repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
+        let license = Detector::new()?.get_license(repo_path, manifest)?;
         Ok(Self { license })
     }
 }
@@ -96,7 +105,7 @@ mod test {
     #[test]
     fn test_get_license() -> Result<()> {
         let detector = Detector::new()?;
-        let license = detector.get_license(Path::new("."))?;
+        let license = detector.get_license(Path::new("."), None)?;
         assert_eq!(license, "MIT");
         Ok(())
     }

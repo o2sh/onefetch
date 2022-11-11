@@ -8,7 +8,6 @@ pub struct DependenciesInfo {
 impl DependenciesInfo {
     pub fn new(manifest: Option<&Manifest>) -> Self {
         let dependencies = manifest
-            .as_ref()
             .and_then(|m| {
                 (m.number_of_dependencies != 0)
                     .then(|| format!("{} ({})", m.number_of_dependencies, m.manifest_type))

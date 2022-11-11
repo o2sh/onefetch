@@ -249,7 +249,7 @@ impl Info {
         let head = HeadInfo::new(&git_repo)?;
         let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
         let size = SizeInfo::new(&git_repo);
-        let license = LicenseInfo::new(&repo_path)?;
+        let license = LicenseInfo::new(&repo_path, manifest.as_ref())?;
         let mut commits = Commits::new(
             git_repo,
             config.no_merges,
