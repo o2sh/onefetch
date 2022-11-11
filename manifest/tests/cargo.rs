@@ -2,7 +2,7 @@ use anyhow::Result;
 use onefetch_manifest::{get_manifests, ManifestType};
 
 #[test]
-fn test_parse_cargo_manifest() -> Result<()> {
+fn should_detect_and_parse_cargo_manifest() -> Result<()> {
     let manifests = get_manifests("tests/fixtures/cargo")?;
     assert_eq!(manifests.len(), 1);
     let cargo_manifest = manifests.first().unwrap();

@@ -75,10 +75,3 @@ fn file_name_to_manifest_type(filename: &str) -> Option<ManifestType> {
         _ => None,
     }
 }
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn test_get_manifest() {}
-}
