@@ -7,7 +7,6 @@ Adding support for a new Language consists in adding a new entry to [language.ya
 ```
 CSharp: # required, this will be the name of the enum variant for the language as specified by tokei (link 1)
   type: programming # required, can be programming, data, markup, or prose as specified by linguist (link 2)
-
   # required, this is the logo. If it's not within 25x40 bounds, you will get a compiler error. Use `{i}` to color the ascii with `i` the color index.
   ascii: |
     {0}                 ++++++
