@@ -77,7 +77,7 @@ mod test {
             name: String::new(),
             description: Some("This is a very long description with a lot of text".into()),
             number_of_dependencies: 0,
-            version: "0.1.0".into(),
+            version: String::new(),
             license: None,
         }));
 

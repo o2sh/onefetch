@@ -29,3 +29,23 @@ impl InfoField for DependenciesInfo {
         "Dependencies".into()
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use onefetch_manifest::ManifestType;
+
+    #[test]
+    fn should_display_license() {
+        let dependencies_info = DependenciesInfo::new(Some(&Manifest {
+            manifest_type: ManifestType::Cargo,
+            name: String::new(),
+            description: None,
+            number_of_dependencies: 21,
+            version: String::new(),
+            license: None,
+        }));
+
+        assert_eq!(dependencies_info.value(), "21 (Cargo)".to_string());
+    }
+}
