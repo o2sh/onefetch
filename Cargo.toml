@@ -13,12 +13,10 @@ rust-version = "1.60.0"
 version = "2.13.2"
 
 [workspace]
-members = [
-    "manifest"
-]
+members = ["manifest"]
 
 [dependencies]
-onefetch-manifest = { path = "manifest", version = "0.1.0" }
+onefetch-manifest = { path = "manifest", version = "2.13.2" }
 anyhow = "1.0.66"
 askalono = "0.4.6"
 byte-unit = "4.0.14"

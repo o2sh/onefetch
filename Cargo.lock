@@ -2064,7 +2064,7 @@ dependencies = [
 
 [[package]]
 name = "onefetch-manifest"
-version = "0.1.0"
+version = "2.13.2"
 dependencies = [
  "anyhow",
  "cargo_toml",
