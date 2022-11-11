@@ -1,0 +1,20 @@
+[package]
+name = "project"
+version = "0.1.0"
+edition = "2018"
+description = "this is a description"
+license = "MIT"
+
+[dependencies]
+cortex-m-rtic = "0.6.0-alpha.1"
+anyhow = "1.0"
+
+[dependencies.cortex-m]
+version = "0.7.1"
+
+[dependencies.cortex-m-rt]
+version = "0.6.11"
+
+[dependencies.stm32f4xx-hal]
+version = "0.8.3"
+features = ["rt", "stm32f401"]
