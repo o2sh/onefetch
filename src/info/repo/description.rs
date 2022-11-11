@@ -57,7 +57,7 @@ mod test {
     use onefetch_manifest::ManifestType;
 
     #[test]
-    fn test_display_description_info() {
+    fn should_display_description() {
         let description_info = DescriptionInfo::new(Some(&Manifest {
             manifest_type: ManifestType::Cargo,
             name: String::new(),
@@ -68,5 +68,24 @@ mod test {
         }));
 
         assert_eq!(description_info.value(), "test".to_string());
+    }
+
+    #[test]
+    fn should_split_long_description_into_multiple_lines() {
+        let description_info = DescriptionInfo::new(Some(&Manifest {
+            manifest_type: ManifestType::Cargo,
+            name: String::new(),
+            description: Some("This is a very long description with a lot of text".into()),
+            number_of_dependencies: 0,
+            version: "0.1.0".into(),
+            license: None,
+        }));
+
+        assert_eq!(
+            description_info.value().lines().count(),
+            (description_info.description.unwrap().split(' ').count() as f32
+                / NUMBER_OF_WORDS_PER_LINE as f32)
+                .ceil() as usize
+        );
     }
 }
