@@ -1,6 +1,7 @@
 use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::{bstr::ByteSlice, Repository};
+use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
 
@@ -12,8 +13,8 @@ pub struct ProjectInfo {
 }
 
 impl ProjectInfo {
-    pub fn new(repo: &Repository, repo_url: &str) -> Result<Self> {
-        let repo_name = get_repo_name(repo_url)?;
+    pub fn new(repo: &Repository, repo_url: &str, manifest: Option<&Manifest>) -> Result<Self> {
+        let repo_name = get_repo_name(repo_url, manifest)?;
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
         Ok(Self {
@@ -24,7 +25,7 @@ impl ProjectInfo {
     }
 }
 
-fn get_repo_name(repo_url: &str) -> Result<String> {
+fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> {
     let url = git_repository::url::parse(repo_url.into())?;
     let path = git_repository::path::from_bstr(url.path.as_bstr());
     let repo_name = path
@@ -34,7 +35,15 @@ fn get_repo_name(repo_url: &str) -> Result<String> {
         .map(|s| s.into_owned())
         .unwrap_or_default();
 
-    Ok(repo_name)
+    if repo_name.is_empty() {
+        let repo_name_from_manifest = match manifest {
+            Some(m) => m.name.clone(),
+            None => String::new(),
+        };
+        Ok(repo_name_from_manifest)
+    } else {
+        Ok(repo_name)
+    }
 }
 
 // This collects the repo size excluding .git
@@ -158,7 +167,7 @@ mod test {
 
     #[test]
     fn test_get_repo_name_when_no_remote() -> Result<()> {
-        let repo_name = get_repo_name("")?;
+        let repo_name = get_repo_name("", None)?;
         assert!(repo_name.is_empty());
 
         Ok(())

@@ -1,4 +1,3 @@
-use self::deps::DependenciesInfo;
 use self::git::Commits;
 use self::info_field::{InfoField, InfoType};
 use self::langs::language::Language;
@@ -7,6 +6,8 @@ use self::repo::author::AuthorsInfo;
 use self::repo::commits::CommitsInfo;
 use self::repo::contributors::ContributorsInfo;
 use self::repo::created::CreatedInfo;
+use self::repo::dependencies::DependenciesInfo;
+use self::repo::description::DescriptionInfo;
 use self::repo::head::HeadInfo;
 use self::repo::last_change::LastChangeInfo;
 use self::repo::license::LicenseInfo;
@@ -21,13 +22,14 @@ use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
+use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize, Style};
 use regex::Regex;
 use serde::ser::SerializeStruct;
 use serde::Serialize;
+use std::path::Path;
 use std::str::FromStr;
 
-pub mod deps;
 mod git;
 pub mod info_field;
 pub mod langs;
@@ -39,6 +41,7 @@ pub mod title;
 pub struct Info {
     title: Title,
     project: ProjectInfo,
+    description: DescriptionInfo,
     head: HeadInfo,
     pending: PendingInfo,
     version: VersionInfo,
@@ -71,6 +74,15 @@ impl std::fmt::Display for Info {
         //Info lines
         if let Some(project_info_value) = self.project.get(&self.disabled_fields) {
             self.write_styled_info_line(f, &self.project.title(), &project_info_value, true)?;
+        }
+
+        if let Some(description_info_value) = self.description.get(&self.disabled_fields) {
+            self.write_styled_info_line(
+                f,
+                &self.description.title(),
+                &description_info_value,
+                true,
+            )?;
         }
 
         if let Some(head_info_value) = self.head.get(&self.disabled_fields) {
@@ -229,13 +241,15 @@ impl Info {
             text_colors.underline,
             !config.no_bold,
         );
+        let manifest = Self::get_manifest(&repo_path)?;
+        let description = DescriptionInfo::new(manifest.as_ref());
         let pending = PendingInfo::new(&git_repo)?;
         let repo_url = UrlInfo::new(&git_repo)?;
-        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url)?;
+        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url, manifest.as_ref())?;
         let head = HeadInfo::new(&git_repo)?;
-        let version = VersionInfo::new(&git_repo)?;
+        let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
         let size = SizeInfo::new(&git_repo);
-        let license = LicenseInfo::new(&repo_path)?;
+        let license = LicenseInfo::new(&repo_path, manifest.as_ref())?;
         let mut commits = Commits::new(
             git_repo,
             config.no_merges,
@@ -243,10 +257,9 @@ impl Info {
             config.number_of_authors,
             config.email,
         )?;
-
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
-        let dependencies = DependenciesInfo::new(&repo_path)?;
+        let dependencies = DependenciesInfo::new(manifest.as_ref());
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
         let contributors = ContributorsInfo::new(&commits, config.number_of_authors);
@@ -256,6 +269,7 @@ impl Info {
         Ok(Self {
             title,
             project,
+            description,
             head,
             pending,
             version,
@@ -277,6 +291,16 @@ impl Info {
             no_color_palette: config.no_color_palette,
             no_bold: config.no_bold,
         })
+    }
+
+    fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
+        let manifests = onefetch_manifest::get_manifests(repo_path)?;
+
+        if manifests.is_empty() {
+            Ok(None)
+        } else {
+            Ok(manifests.first().cloned())
+        }
     }
 
     fn write_styled_info_line(
@@ -327,10 +351,11 @@ impl Serialize for Info {
     where
         S: serde::Serializer,
     {
-        let mut state = serializer.serialize_struct("Info", 4)?;
+        let mut state = serializer.serialize_struct("Info", 17)?;
         state.serialize_field("gitUsername", &self.title.git_username)?;
         state.serialize_field("gitVersion", &self.title.git_version)?;
         state.serialize_field("project", &self.project)?;
+        state.serialize_field("description", &self.description.description)?;
         state.serialize_field("head", &self.head.head_refs)?;
         state.serialize_field("version", &self.version.version)?;
         state.serialize_field("created", &self.created.creation_date)?;
