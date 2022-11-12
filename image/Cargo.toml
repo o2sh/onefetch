@@ -1,0 +1,16 @@
+[package]
+authors = ["o2sh <ossama-hjaji@live.fr>"]
+name = "onefetch-image"
+version = "2.13.2"
+edition = "2021"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+image = "0.24.4"
+anyhow = "1.0"
+clap = "4.0.22"
+
+[target.'cfg(not(windows))'.dependencies]
+base64 = "0.13.0"
+libc = "0.2.134"

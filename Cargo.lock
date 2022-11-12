@@ -2046,6 +2046,7 @@ dependencies = [
  "insta",
  "lazy_static",
  "libc",
+ "onefetch-image",
  "onefetch-manifest",
  "owo-colors",
  "pretty_assertions",
@@ -2060,6 +2061,17 @@ dependencies = [
  "time-humanize",
  "tokei",
  "yaml-rust",
+]
+
+[[package]]
+name = "onefetch-image"
+version = "2.13.2"
+dependencies = [
+ "anyhow",
+ "base64",
+ "clap 4.0.22",
+ "image",
+ "libc",
 ]
 
 [[package]]

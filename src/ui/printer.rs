@@ -1,11 +1,10 @@
 use crate::cli::{Config, When};
 use crate::info::Info;
 use crate::ui::ascii_art::AsciiArt;
-use crate::ui::image_backends;
-use crate::ui::image_backends::ImageBackend;
 use crate::ui::Language;
 use anyhow::{Context, Result};
 use image::DynamicImage;
+use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 use std::io::Write;
 use terminal_size::{terminal_size, Width};
@@ -53,8 +52,8 @@ impl<W: Write> Printer<W> {
         let image_backend = if image.is_some() {
             config
                 .image_protocol
-                .map_or_else(image_backends::get_best_backend, |s| {
-                    image_backends::get_image_backend(s)
+                .map_or_else(onefetch_image::get_best_backend, |s| {
+                    onefetch_image::get_image_backend(s)
                 })
         } else {
             None
