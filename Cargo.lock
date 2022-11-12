@@ -2031,12 +2031,10 @@ version = "2.13.2"
 dependencies = [
  "anyhow",
  "askalono",
- "base64",
  "byte-unit",
  "bytecount",
  "clap 4.0.22",
  "clap_complete",
- "color_quant",
  "enable-ansi-support",
  "git-features 0.23.1",
  "git-repository",
@@ -2045,7 +2043,6 @@ dependencies = [
  "image",
  "insta",
  "lazy_static",
- "libc",
  "onefetch-image",
  "onefetch-manifest",
  "owo-colors",
@@ -2070,6 +2067,7 @@ dependencies = [
  "anyhow",
  "base64",
  "clap 4.0.22",
+ "color_quant",
  "image",
  "libc",
 ]
