@@ -14,4 +14,4 @@ clap = "4.0.22"
 [target.'cfg(not(windows))'.dependencies]
 color_quant = "1.1.0"
 base64 = "0.13.0"
-libc = "0.2.134"
+libc = "0.2.137"
