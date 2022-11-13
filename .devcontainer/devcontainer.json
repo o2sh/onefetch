@@ -1,0 +1,9 @@
+{
+  "name": "Rust",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": { "VARIANT": "buster" }
+  },
+  "extensions": ["EditorConfig.EditorConfig"],
+  "remoteUser": "vscode"
+}
