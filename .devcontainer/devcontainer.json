@@ -4,6 +4,7 @@
     "dockerfile": "Dockerfile",
     "args": { "VARIANT": "buster" }
   },
+  "postCreateCommand": "git config --global --add safe.directory $PWD",
   "extensions": ["EditorConfig.EditorConfig"],
   "remoteUser": "vscode"
 }
