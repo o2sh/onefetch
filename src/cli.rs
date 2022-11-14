@@ -237,14 +237,16 @@ mod test {
 
     #[test]
     fn test_custom_config() {
-        let mut config: Config = Default::default();
-        config.number_of_authors = 4;
-        config.input = PathBuf::from("/tmp/folder");
-        config.no_merges = true;
-        config.ascii_colors = vec![5, 0];
-        config.disabled_fields = vec![InfoType::Version, InfoType::Repo];
-        config.show_logo = When::Never;
-        config.ascii_language = Some(Language::Lisp);
+        let config: Config = Config {
+            number_of_authors: 4,
+            input: PathBuf::from("/tmp/folder"),
+            no_merges: true,
+            ascii_colors: vec![5, 0],
+            disabled_fields: vec![InfoType::Version, InfoType::Repo],
+            show_logo: When::Never,
+            ascii_language: Some(Language::Lisp),
+            ..Default::default()
+        };
 
         assert_eq!(
             config,
