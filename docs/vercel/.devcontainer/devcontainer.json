@@ -1,12 +1,9 @@
 {
-	"name": "Node.js & TypeScript",
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:16-bullseye",
-	"extensions": [
-		"esbenp.prettier-vscode",
-		"svelte.svelte-vscode"
-	],
-	"postCreateCommand": "npm ci",
-	"settings": {
-		"editor.formatOnSave": true
-	}
+  "name": "Node.js & TypeScript",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:16-bullseye",
+  "extensions": ["esbenp.prettier-vscode", "svelte.svelte-vscode"],
+  "postCreateCommand": "npm ci",
+  "settings": {
+    "editor.formatOnSave": true
+  }
 }
