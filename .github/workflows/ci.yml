@@ -27,14 +27,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Restore cargo cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
