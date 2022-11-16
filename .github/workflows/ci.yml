@@ -78,6 +78,7 @@ jobs:
         with:
           toolchain: stable
           override: true
+          components: clippy
 
       - name: Cache
         uses: Swatinem/rust-cache@v2
