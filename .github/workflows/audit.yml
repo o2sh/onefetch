@@ -11,6 +11,7 @@ on:
       - "**/Cargo.toml"
       - "**/Cargo.lock"
   schedule:
+    # Once week at midnight UTC
     - cron: "0 0 * * 0"
   workflow_dispatch:
 
