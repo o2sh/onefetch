@@ -79,6 +79,9 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+
       - name: Install cargo-tarpaulin
         uses: actions-rs/install@v0.1
         with:
