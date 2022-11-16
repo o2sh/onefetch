@@ -88,7 +88,7 @@ pub struct Config {
     /// NUM of authors to be shown
     #[arg(long, short, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
-    /// gnore all files & directories matching EXCLUDE
+    /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
