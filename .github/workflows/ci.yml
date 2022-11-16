@@ -12,6 +12,8 @@ on:
       - "docs/**"
       - "**.md"
       - "docs/vercel/**"
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
@@ -68,7 +70,7 @@ jobs:
           toolchain: stable
           components: rustfmt
 
-      - name: Run rustfmt 
+      - name: Run rustfmt
         run: cargo fmt -- --check
 
   coverage:
@@ -80,7 +82,7 @@ jobs:
       - name: Install nightly toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable 
+          toolchain: stable
           override: true
 
       - name: Install cargo-tarpaulin
