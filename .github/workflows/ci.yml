@@ -31,7 +31,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
-          default: true
           profile: minimal
           components: clippy
 
@@ -62,6 +61,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          profile: minimal
           components: rustfmt
 
       - name: Run rustfmt
@@ -73,13 +73,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install nightly toolchain
+      - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          default: true
           profile: minimal
-          components: clippy
 
       - name: Cache
         uses: Swatinem/rust-cache@v2
