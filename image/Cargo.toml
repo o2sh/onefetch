@@ -8,7 +8,7 @@ readme = "README.md"
 
 [dependencies]
 anyhow = "1.0"
-clap = "4.0.22"
+clap = "4.0.26"
 image = "0.24.4"
 
 [target.'cfg(not(windows))'.dependencies]
