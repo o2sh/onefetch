@@ -27,9 +27,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Cache
-        uses: Swatinem/rust-cache@v2
-
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -37,6 +34,9 @@ jobs:
           default: true
           profile: minimal
           components: clippy
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Build Debug
         run: |
