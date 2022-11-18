@@ -1,7 +1,7 @@
 {
   "name": "Node.js & TypeScript",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:16-bullseye",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   "workspaceFolder": "/workspace/onefetch/docs/vercel",
   "extensions": ["esbenp.prettier-vscode", "svelte.svelte-vscode"],
   "postCreateCommand": "npm ci",
