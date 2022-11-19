@@ -14,12 +14,18 @@ pub struct LanguageWithPercentage {
 
 pub struct LanguagesInfo {
     pub languages_with_percentage: Vec<LanguageWithPercentage>,
-    pub true_color: bool,
-    pub info_color: DynColors,
+    true_color: bool,
+    number_of_languages: usize,
+    info_color: DynColors,
 }
 
 impl LanguagesInfo {
-    pub fn new(languages: Vec<(Language, f64)>, true_color: bool, info_color: DynColors) -> Self {
+    pub fn new(
+        languages: Vec<(Language, f64)>,
+        true_color: bool,
+        number_of_languages: usize,
+        info_color: DynColors,
+    ) -> Self {
         let languages_with_percentage = languages
             .into_iter()
             .map(|(language, percentage)| LanguageWithPercentage {
@@ -30,6 +36,7 @@ impl LanguagesInfo {
         Self {
             languages_with_percentage,
             true_color,
+            number_of_languages,
             info_color,
         }
     }
@@ -65,8 +72,11 @@ impl std::fmt::Display for LanguagesInfo {
                     (language.to_string(), percentage, circle_color)
                 },
             );
-            if self.languages_with_percentage.len() > 6 {
-                let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
+            if self.languages_with_percentage.len() > self.number_of_languages {
+                let mut languages = iter
+                    .by_ref()
+                    .take(self.number_of_languages)
+                    .collect::<Vec<_>>();
                 let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
                 languages.push((
                     "Other".to_string(),
@@ -144,6 +154,7 @@ mod test {
                 percentage: 100_f64,
             }],
             true_color: false,
+            number_of_languages: 6,
             info_color: DynColors::Ansi(AnsiColors::White),
         };
         let expected_languages_info = format!(
@@ -157,5 +168,48 @@ mod test {
         );
 
         assert_eq!(languages_info.value(), expected_languages_info);
+    }
+
+    #[test]
+    fn should_display_correct_number_of_languages() {
+        let languages_info = LanguagesInfo {
+            languages_with_percentage: vec![
+                LanguageWithPercentage {
+                    language: Language::Go,
+                    percentage: 30_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Erlang,
+                    percentage: 40_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Java,
+                    percentage: 20_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Rust,
+                    percentage: 10_f64,
+                },
+            ],
+            true_color: false,
+            number_of_languages: 2,
+            info_color: DynColors::Ansi(AnsiColors::White),
+        };
+
+        assert!(languages_info.value().contains(
+            &"Go (30.0 %)"
+                .color(DynColors::Ansi(AnsiColors::White))
+                .to_string()
+        ));
+        assert!(languages_info.value().contains(
+            &"Erlang (40.0 %)"
+                .color(DynColors::Ansi(AnsiColors::White))
+                .to_string()
+        ));
+        assert!(languages_info.value().contains(
+            &"Other (30.0 %)"
+                .color(DynColors::Ansi(AnsiColors::White))
+                .to_string()
+        ));
     }
 }

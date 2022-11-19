@@ -258,7 +258,12 @@ impl Info {
             config.email,
         )?;
         let created = CreatedInfo::new(config.iso_time, &commits);
-        let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
+        let languages = LanguagesInfo::new(
+            languages,
+            true_color,
+            config.number_of_languages,
+            text_colors.info,
+        );
         let dependencies = DependenciesInfo::new(manifest.as_ref());
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);

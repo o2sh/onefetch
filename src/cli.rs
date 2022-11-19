@@ -85,9 +85,12 @@ pub struct Config {
     /// Hides the color palette
     #[arg(long)]
     pub no_color_palette: bool,
-    /// NUM of authors to be shown
-    #[arg(long, short, default_value_t = 3usize, value_name = "NUM")]
+    /// Maximum NUM of authors to be shown
+    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
+    /// Maximum NUM of languages to be shown
+    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    pub number_of_languages: usize,
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
@@ -166,6 +169,7 @@ impl Default for Config {
             no_merges: Default::default(),
             no_color_palette: Default::default(),
             number_of_authors: 3,
+            number_of_languages: 6,
             exclude: Default::default(),
             no_bots: Default::default(),
             languages: Default::default(),
