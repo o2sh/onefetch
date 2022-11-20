@@ -18,6 +18,7 @@
   <a href="docs/README.ru.md"><img title="Русский" title="Русский" src="assets/flags/ru.svg" height="18"></a>&nbsp;
   <a href="docs/README.es.md"><img title="Español" title="Español" src="assets/flags/es.svg" height="18"></a>&nbsp;
   <a href="docs/README.fr.md"><img title="Français" title="Français" src="assets/flags/fr.svg" height="18"></a>
+  <a href="docs/README.ko.md"><img title="한국어" alt="한국어" src="assets/flags/ko.svg" height="18"></a>
 </p>
 
 <img src="assets/screenshot-1.png" align="right" height="240px">
