@@ -10,7 +10,7 @@ name = "onefetch"
 readme = "README.md"
 repository = "https://github.com/o2sh/onefetch"
 rust-version = "1.61.0"
-version = "2.14.0"
+version = "2.14.1"
 
 [workspace]
 members = ["image", "manifest"]
