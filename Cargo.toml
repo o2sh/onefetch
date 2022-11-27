@@ -10,7 +10,7 @@ name = "onefetch"
 readme = "README.md"
 repository = "https://github.com/o2sh/onefetch"
 rust-version = "1.61.0"
-version = "2.13.2"
+version = "2.14.0"
 
 [workspace]
 members = ["image", "manifest"]
@@ -63,7 +63,6 @@ winres = "0.1"
 
 [target.'cfg(windows)'.dependencies]
 enable-ansi-support = "0.1.2"
-
 
 [features]
 fail-on-deprecated = []
