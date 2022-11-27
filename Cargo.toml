@@ -58,6 +58,9 @@ serde_json = "1"
 serde_yaml = "0.9"
 tera = { version = "1", default-features = false }
 
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+
 [target.'cfg(windows)'.dependencies]
 enable-ansi-support = "0.1.2"
 

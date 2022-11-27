@@ -8,6 +8,12 @@ use std::path::Path;
 use tera::{Context, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
+    #[cfg(windows)]
+    {
+        let mut res = winres::WindowsResource::new();
+        res.set_icon("assets/onefetch.ico");
+        res.compile()?;
+    }
     let out_dir = env::var("OUT_DIR").expect("No OUT_DIR variable.");
     let mut tera = Tera::default();
     tera.register_filter("strip_color_tokens", strip_color_tokens_filter);
