@@ -13,5 +13,5 @@ image = "0.24.4"
 
 [target.'cfg(not(windows))'.dependencies]
 color_quant = "1.1.0"
-base64 = "0.13.0"
+base64 = "0.13.1"
 libc = "0.2.137"
