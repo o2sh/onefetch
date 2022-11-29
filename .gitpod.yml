@@ -1,0 +1,9 @@
+vscode:
+  extensions:
+    - 'EditorConfig.EditorConfig'
+tasks:
+  - name: Build Onefetch
+    init: cargo build
+  - name: onefetch.dev
+    init: cd docs/vercel && npm install
+    command: cd docs/vercel && npm run dev -- --port 3000
