@@ -3,7 +3,7 @@ vscode:
     - 'EditorConfig.EditorConfig'
 tasks:
   - name: Build Onefetch
-    before: sudo apt install cmake
+    before: sudo apt install -y cmake
     init: cargo build
   - name: onefetch.dev
     init: cd $GITPOD_REPO_ROOT/docs/vercel && npm install
