@@ -7,3 +7,8 @@ tasks:
   - name: onefetch.dev
     init: cd $GITPOD_REPO_ROOT/docs/vercel && npm install
     command: cd $GITPOD_REPO_ROOT/docs/vercel && npm run dev -- --port 3000
+ports:
+  - name: onefetch.dev
+    description: Web preview of onefetch ASCII art
+    port: 3000
+    onOpen: notify
