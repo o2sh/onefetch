@@ -5,5 +5,5 @@ tasks:
   - name: Build Onefetch
     init: cargo build
   - name: onefetch.dev
-    init: cd docs/vercel && npm install
-    command: cd docs/vercel && npm run dev -- --port 3000
+    init: cd $GITPOD_REPO_ROOT/docs/vercel && npm install
+    command: cd $GITPOD_REPO_ROOT/docs/vercel && npm run dev -- --port 3000
