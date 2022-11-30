@@ -12,4 +12,4 @@ ports:
   - name: onefetch.dev
     description: Web preview of onefetch ASCII art
     port: 3000
-    onOpen: notify
+    onOpen: open-preview
