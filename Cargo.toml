@@ -21,7 +21,7 @@ anyhow = "1.0.66"
 askalono = "0.4.6"
 byte-unit = "4.0.14"
 bytecount = "0.6.3"
-clap = { version = "4.0.26", features = ["derive"] }
+clap = { version = "4.0.29", features = ["derive"] }
 clap_complete = "4.0.3"
 git-features-for-configuration-only = { package = "git-features", version = "0.23.1", features = [
     "zlib-ng-compat",
