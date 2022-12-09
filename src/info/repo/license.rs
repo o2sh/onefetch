@@ -28,33 +28,31 @@ impl Detector {
     }
 
     fn get_license(&self, dir: &Path, manifest: Option<&Manifest>) -> Result<String> {
-        let mut output = fs::read_dir(dir)?
-            .filter_map(std::result::Result::ok)
-            .map(|entry| entry.path())
-            .filter(|entry| {
-                entry.is_file()
-                    && entry
-                        .file_name()
-                        .map(OsStr::to_string_lossy)
-                        .map(is_license_file)
-                        .unwrap_or_default()
-            })
-            .filter_map(|entry| {
-                let contents = fs::read_to_string(entry).unwrap_or_default();
-                self.analyze(&contents)
-            })
-            .collect::<Vec<_>>();
+        let license_from_manifest = manifest.and_then(|m| m.license.clone()).unwrap_or_default();
+        if license_from_manifest.is_empty() {
+            let mut output = fs::read_dir(dir)?
+                .filter_map(std::result::Result::ok)
+                .map(|entry| entry.path())
+                .filter(|entry| {
+                    entry.is_file()
+                        && entry
+                            .file_name()
+                            .map(OsStr::to_string_lossy)
+                            .map(is_license_file)
+                            .unwrap_or_default()
+                })
+                .filter_map(|entry| {
+                    let contents = fs::read_to_string(entry).unwrap_or_default();
+                    self.analyze(&contents)
+                })
+                .collect::<Vec<_>>();
 
-        output.sort();
-        output.dedup();
-        let license = output.join(", ");
-
-        if license.is_empty() {
-            let license_from_manifest =
-                manifest.and_then(|m| m.license.clone()).unwrap_or_default();
-            Ok(license_from_manifest)
-        } else {
+            output.sort();
+            output.dedup();
+            let license = output.join(", ");
             Ok(license)
+        } else {
+            Ok(license_from_manifest)
         }
     }
 
@@ -100,6 +98,8 @@ impl InfoField for LicenseInfo {
 
 #[cfg(test)]
 mod test {
+    use onefetch_manifest::ManifestType;
+
     use super::*;
 
     #[test]
@@ -124,6 +124,23 @@ mod test {
         let license_text = fs::read_to_string(Path::new("LICENSE.md"))?;
         let license = detector.analyze(&license_text);
         assert_eq!(license, Some("MIT".into()));
+        Ok(())
+    }
+
+    #[test]
+    fn should_read_from_manifest_first() -> Result<()> {
+        let license_info = LicenseInfo::new(
+            Path::new("."),
+            Some(&Manifest {
+                manifest_type: ManifestType::Cargo,
+                name: String::new(),
+                description: None,
+                number_of_dependencies: 0,
+                version: String::new(),
+                license: Some("LICENSE".into()),
+            }),
+        )?;
+        assert_eq!(license_info.value(), "LICENSE");
         Ok(())
     }
 }
