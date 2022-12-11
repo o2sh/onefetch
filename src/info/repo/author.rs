@@ -1,6 +1,10 @@
-use crate::info::{
-    git::Commits,
-    info_field::{InfoField, InfoType},
+use crate::{
+    cli::Format,
+    info::{
+        format_number,
+        git::Commits,
+        info_field::{InfoField, InfoType},
+    },
 };
 use git_repository as git;
 use owo_colors::{DynColors, OwoColorize};
@@ -11,7 +15,7 @@ use std::fmt::Write;
 pub struct Author {
     name: String,
     email: String,
-    nbr_of_commits: usize,
+    nbr_of_commits: String,
     contribution: usize,
     #[serde(skip_serializing)]
     show_email: bool,
@@ -24,13 +28,14 @@ impl Author {
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
         show_email: bool,
+        format: Option<&Format>,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
             name: name.to_string(),
             email: email.to_string(),
-            nbr_of_commits,
+            nbr_of_commits: format_number(nbr_of_commits, format),
             contribution,
             show_email,
         }
@@ -118,6 +123,7 @@ mod test {
             1500,
             2000,
             true,
+            None,
         );
 
         assert_eq!(author.to_string(), "75% John Doe <john.doe@email.com> 1500");
@@ -131,6 +137,7 @@ mod test {
             1500,
             2000,
             false,
+            None,
         );
 
         assert_eq!(author.to_string(), "75% John Doe 1500");
@@ -144,6 +151,7 @@ mod test {
             1500,
             2000,
             true,
+            None,
         );
 
         let authors_info = AuthorsInfo {
@@ -162,6 +170,7 @@ mod test {
             1500,
             2000,
             true,
+            None,
         );
 
         let author_2 = Author::new(
@@ -170,6 +179,7 @@ mod test {
             240,
             300,
             false,
+            None,
         );
 
         let authors_info = AuthorsInfo {
@@ -188,6 +198,7 @@ mod test {
             1500,
             2000,
             true,
+            None,
         );
 
         let authors_info = AuthorsInfo {
@@ -211,6 +222,7 @@ mod test {
             1500,
             2000,
             true,
+            None,
         );
 
         let author_2 = Author::new(
@@ -219,6 +231,7 @@ mod test {
             240,
             300,
             false,
+            None,
         );
 
         let authors_info = AuthorsInfo {

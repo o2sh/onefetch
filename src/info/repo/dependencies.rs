@@ -1,4 +1,10 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::{
+    cli::Format,
+    info::{
+        format_number,
+        info_field::{InfoField, InfoType},
+    },
+};
 use onefetch_manifest::Manifest;
 
 pub struct DependenciesInfo {
@@ -6,11 +12,16 @@ pub struct DependenciesInfo {
 }
 
 impl DependenciesInfo {
-    pub fn new(manifest: Option<&Manifest>) -> Self {
+    pub fn new(manifest: Option<&Manifest>, format: Option<&Format>) -> Self {
         let dependencies = manifest
             .and_then(|m| {
-                (m.number_of_dependencies != 0)
-                    .then(|| format!("{} ({})", m.number_of_dependencies, m.manifest_type))
+                (m.number_of_dependencies != 0).then(|| {
+                    format!(
+                        "{} ({})",
+                        format_number(m.number_of_dependencies, format),
+                        m.manifest_type
+                    )
+                })
             })
             .unwrap_or_default();
 
@@ -37,14 +48,17 @@ mod test {
 
     #[test]
     fn should_display_license() {
-        let dependencies_info = DependenciesInfo::new(Some(&Manifest {
-            manifest_type: ManifestType::Cargo,
-            name: String::new(),
-            description: None,
-            number_of_dependencies: 21,
-            version: String::new(),
-            license: None,
-        }));
+        let dependencies_info = DependenciesInfo::new(
+            Some(&Manifest {
+                manifest_type: ManifestType::Cargo,
+                name: String::new(),
+                description: None,
+                number_of_dependencies: 21,
+                version: String::new(),
+                license: None,
+            }),
+            None,
+        );
 
         assert_eq!(dependencies_info.value(), "21 (Cargo)".to_string());
     }

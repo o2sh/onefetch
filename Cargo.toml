@@ -32,6 +32,7 @@ git-repository = { version = "0.29.0", default-features = false, features = [
 git2 = { version = "0.15.0", default-features = false }
 human-panic = "1.0.3"
 image = "0.24.4"
+num-format = "0.4.4"
 onefetch-image = { path = "image", version = "2.13.2" }
 onefetch-manifest = { path = "manifest", version = "2.13.2" }
 owo-colors = "3.5.0"

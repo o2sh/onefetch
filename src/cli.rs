@@ -6,6 +6,7 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
+use num_format::Locale;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
@@ -125,7 +126,7 @@ pub struct Config {
     /// '--text-colors 9 10 11 12 13 14'
     #[arg(
         long,
-        short = 't',
+        short,
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6
@@ -134,6 +135,9 @@ pub struct Config {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
+    /// Format numbers according to international standards
+    #[arg(long, short, value_name = "FORMAT", value_enum)]
+    pub format_numbers: Option<Format>,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -179,6 +183,7 @@ impl Default for Config {
             show_logo: When::Always,
             text_colors: Default::default(),
             iso_time: Default::default(),
+            format_numbers: Default::default(),
             email: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
@@ -227,6 +232,21 @@ pub enum When {
     Auto,
     Never,
     Always,
+}
+
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+pub enum Format {
+    Fr,
+    En,
+}
+
+impl Format {
+    pub fn get_locale(&self) -> Locale {
+        match self {
+            Self::Fr => Locale::fr,
+            Self::En => Locale::en,
+        }
+    }
 }
 
 #[cfg(test)]

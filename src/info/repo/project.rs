@@ -1,4 +1,10 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::{
+    cli::Format,
+    info::{
+        format_number,
+        info_field::{InfoField, InfoType},
+    },
+};
 use anyhow::Result;
 use git_repository::{bstr::ByteSlice, Repository};
 use onefetch_manifest::Manifest;
@@ -8,15 +14,20 @@ use std::ffi::OsStr;
 #[derive(Serialize)]
 pub struct ProjectInfo {
     pub repo_name: String,
-    pub number_of_branches: usize,
-    pub number_of_tags: usize,
+    pub number_of_branches: String,
+    pub number_of_tags: String,
 }
 
 impl ProjectInfo {
-    pub fn new(repo: &Repository, repo_url: &str, manifest: Option<&Manifest>) -> Result<Self> {
+    pub fn new(
+        repo: &Repository,
+        repo_url: &str,
+        manifest: Option<&Manifest>,
+        format: Option<&Format>,
+    ) -> Result<Self> {
         let repo_name = get_repo_name(repo_url, manifest)?;
-        let number_of_branches = get_number_of_branches(repo)?;
-        let number_of_tags = get_number_of_tags(repo)?;
+        let number_of_branches = format_number(get_number_of_branches(repo)?, format);
+        let number_of_tags = format_number(get_number_of_tags(repo)?, format);
         Ok(Self {
             repo_name,
             number_of_branches,
@@ -65,15 +76,15 @@ impl std::fmt::Display for ProjectInfo {
         if self.repo_name.is_empty() {
             Ok(())
         } else {
-            let branches_str = match self.number_of_branches {
-                0 => String::new(),
-                1 => "1 branch".into(),
+            let branches_str = match self.number_of_branches.as_str() {
+                "0" => String::new(),
+                "1" => "1 branch".into(),
                 _ => format!("{} branches", self.number_of_branches),
             };
 
-            let tags_str = match self.number_of_tags {
-                0 => String::new(),
-                1 => "1 tag".into(),
+            let tags_str = match self.number_of_tags.as_str() {
+                "0" => String::new(),
+                "1" => "1 tag".into(),
                 _ => format!("{} tags", self.number_of_tags),
             };
 
@@ -108,8 +119,8 @@ mod test {
     fn test_display_project_info() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
-            number_of_branches: 3,
-            number_of_tags: 2,
+            number_of_branches: "3".to_string(),
+            number_of_tags: "2".to_string(),
         };
 
         assert_eq!(
@@ -122,8 +133,8 @@ mod test {
     fn test_display_project_info_when_no_branches_no_tags() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
-            number_of_branches: 0,
-            number_of_tags: 0,
+            number_of_branches: "0".to_string(),
+            number_of_tags: "0".to_string(),
         };
 
         assert_eq!(project_info.value(), "onefetch".to_string());
@@ -133,8 +144,8 @@ mod test {
     fn test_display_project_info_when_no_tags() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
-            number_of_branches: 3,
-            number_of_tags: 0,
+            number_of_branches: "3".to_string(),
+            number_of_tags: "0".to_string(),
         };
 
         assert_eq!(project_info.value(), "onefetch (3 branches)".to_string());
@@ -144,8 +155,8 @@ mod test {
     fn test_display_project_info_when_no_branches() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
-            number_of_branches: 0,
-            number_of_tags: 2,
+            number_of_branches: "0".to_string(),
+            number_of_tags: "2".to_string(),
         };
 
         assert_eq!(project_info.value(), "onefetch (2 tags)".to_string());
@@ -155,8 +166,8 @@ mod test {
     fn test_display_project_info_when_one_branche_one_tag() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
-            number_of_branches: 1,
-            number_of_tags: 1,
+            number_of_branches: "1".to_string(),
+            number_of_tags: "1".to_string(),
         };
 
         assert_eq!(
@@ -177,8 +188,8 @@ mod test {
     fn test_display_project_info_when_no_repo_name() {
         let project_info = ProjectInfo {
             repo_name: "".to_string(),
-            number_of_branches: 0,
-            number_of_tags: 0,
+            number_of_branches: "0".to_string(),
+            number_of_tags: "0".to_string(),
         };
 
         assert!(project_info.value().is_empty());

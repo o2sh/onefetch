@@ -1,6 +1,10 @@
-use crate::info::{
-    git::Commits,
-    info_field::{InfoField, InfoType},
+use crate::{
+    cli::Format,
+    info::{
+        format_number,
+        git::Commits,
+        info_field::{InfoField, InfoType},
+    },
 };
 
 pub struct CommitsInfo {
@@ -8,16 +12,16 @@ pub struct CommitsInfo {
 }
 
 impl CommitsInfo {
-    pub fn new(commits: &Commits) -> Self {
-        let number_of_commits = number_of_commits(commits);
+    pub fn new(commits: &Commits, format: Option<&Format>) -> Self {
+        let number_of_commits = number_of_commits(commits, format);
         Self { number_of_commits }
     }
 }
 
-fn number_of_commits(commits: &Commits) -> String {
+fn number_of_commits(commits: &Commits, format: Option<&Format>) -> String {
     format!(
         "{}{}",
-        commits.num_commits,
+        format_number(commits.num_commits, format),
         commits.is_shallow.then(|| " (shallow)").unwrap_or_default()
     )
 }
@@ -61,7 +65,7 @@ mod test {
             time_of_first_commit: timestamp,
         };
 
-        let info = CommitsInfo::new(&commits);
+        let info = CommitsInfo::new(&commits, None);
         assert_eq!(info.value(), "2 (shallow)".to_string());
     }
 }

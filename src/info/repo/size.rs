@@ -1,18 +1,24 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::{
+    cli::Format,
+    info::{
+        format_number,
+        info_field::{InfoField, InfoType},
+    },
+};
 use byte_unit::Byte;
 use git_repository::Repository;
 
 pub struct SizeInfo {
     pub repo_size: String,
-    pub file_count: u64,
+    pub file_count: String,
 }
 
 impl SizeInfo {
-    pub fn new(repo: &Repository) -> Self {
+    pub fn new(repo: &Repository, format: Option<&Format>) -> Self {
         let (repo_size, file_count) = get_repo_size(repo);
         Self {
             repo_size,
-            file_count,
+            file_count: format_number(file_count, format),
         }
     }
 }
@@ -36,9 +42,9 @@ fn bytes_to_human_readable(bytes: u128) -> String {
 
 impl std::fmt::Display for SizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.file_count {
-            0 => write!(f, "{}", &self.repo_size),
-            1 => write!(f, "{} (1 file)", self.repo_size),
+        match self.file_count.as_str() {
+            "0" => write!(f, "{}", &self.repo_size),
+            "1" => write!(f, "{} (1 file)", self.repo_size),
             _ => {
                 write!(f, "{} ({} files)", self.repo_size, self.file_count)
             }
@@ -65,7 +71,7 @@ mod test {
     fn test_display_size_info() {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
-            file_count: 123,
+            file_count: "123".to_string(),
         };
 
         assert_eq!(size_info.value(), "2.40 MiB (123 files)".to_string());
@@ -75,7 +81,7 @@ mod test {
     fn test_display_size_info_no_files() {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
-            file_count: 0,
+            file_count: "0".to_string(),
         };
 
         assert_eq!(size_info.value(), "2.40 MiB".to_string());
@@ -85,7 +91,7 @@ mod test {
     fn test_display_size_info_one_files() {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
-            file_count: 1,
+            file_count: "1".to_string(),
         };
 
         assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());

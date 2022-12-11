@@ -7,8 +7,8 @@ expression: info
   "gitVersion": "git version",
   "project": {
     "repo_name": "repo",
-    "number_of_branches": 0,
-    "number_of_tags": 1
+    "number_of_branches": "0",
+    "number_of_tags": "1"
   },
   "description": "Amazing tool",
   "head": {
@@ -30,27 +30,27 @@ expression: info
     {
       "name": "Author Four",
       "email": "author4@example.org",
-      "nbr_of_commits": 1,
+      "nbr_of_commits": "1",
       "contribution": 25
     },
     {
       "name": "Author One",
       "email": "author1@example.org",
-      "nbr_of_commits": 1,
+      "nbr_of_commits": "1",
       "contribution": 25
     },
     {
       "name": "Author Three",
       "email": "author3@example.org",
-      "nbr_of_commits": 1,
+      "nbr_of_commits": "1",
       "contribution": 25
     }
   ],
   "lastChange": "22 years ago",
-  "contributors": 4,
+  "contributors": "4",
   "repoUrl": "https://github.com/user/repo.git",
   "numberOfCommits": "4",
-  "linesOfCode": 4,
+  "linesOfCode": "4",
   "repoSize": "22 B",
   "license": "MIT"
 }
