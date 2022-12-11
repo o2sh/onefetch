@@ -6,7 +6,7 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
-use num_format::Locale;
+use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
@@ -135,9 +135,9 @@ pub struct Config {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
-    /// Format numbers according to international standards
+    /// Which FORMAT to use for the thousands separator.
     #[arg(long, short, value_name = "FORMAT", value_enum)]
-    pub format_numbers: Option<Format>,
+    pub format_numbers: Option<NumberFormat>,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -235,17 +235,27 @@ pub enum When {
 }
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
-pub enum Format {
-    Fr,
-    En,
+pub enum NumberFormat {
+    Commas,
+    Spaces,
+    Underscores,
 }
 
-impl Format {
-    pub fn get_locale(&self) -> Locale {
+impl NumberFormat {
+    fn separator(&self) -> &'static str {
         match self {
-            Self::Fr => Locale::fr,
-            Self::En => Locale::en,
+            Self::Commas => ",",
+            Self::Spaces => "\u{202f}",
+            Self::Underscores => "_",
         }
+    }
+
+    pub fn get_format(&self) -> CustomFormat {
+        num_format::CustomFormat::builder()
+            .grouping(num_format::Grouping::Standard)
+            .separator(self.separator())
+            .build()
+            .unwrap()
     }
 }
 

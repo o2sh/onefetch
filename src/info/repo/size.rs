@@ -1,5 +1,5 @@
 use crate::{
-    cli::Format,
+    cli::NumberFormat,
     info::{
         format_number,
         info_field::{InfoField, InfoType},
@@ -14,11 +14,11 @@ pub struct SizeInfo {
 }
 
 impl SizeInfo {
-    pub fn new(repo: &Repository, format: Option<&Format>) -> Self {
+    pub fn new(repo: &Repository, number_format: Option<&NumberFormat>) -> Self {
         let (repo_size, file_count) = get_repo_size(repo);
         Self {
             repo_size,
-            file_count: format_number(file_count, format),
+            file_count: format_number(file_count, number_format),
         }
     }
 }

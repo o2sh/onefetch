@@ -18,7 +18,7 @@ use self::repo::size::SizeInfo;
 use self::repo::url::UrlInfo;
 use self::repo::version::VersionInfo;
 use self::title::Title;
-use crate::cli::{is_truecolor_terminal, Config, Format, MyRegex, When};
+use crate::cli::{is_truecolor_terminal, Config, MyRegex, NumberFormat, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -356,10 +356,10 @@ impl Info {
 
 fn format_number<T: ToFormattedString + std::fmt::Display>(
     number: T,
-    format: Option<&Format>,
+    number_format: Option<&NumberFormat>,
 ) -> String {
-    match format {
-        Some(f) => number.to_formatted_string(&f.get_locale()),
+    match number_format {
+        Some(f) => number.to_formatted_string(&f.get_format()),
         None => number.to_string(),
     }
 }
@@ -424,10 +424,17 @@ mod tests {
 
     #[test]
     fn test_format_number() {
-        assert_eq!(&format_number(1_000_000, Some(&Format::En)), "1,000,000");
         assert_eq!(
-            &format_number(1_000_000, Some(&Format::Fr)),
+            &format_number(1_000_000, Some(&NumberFormat::Commas)),
+            "1,000,000"
+        );
+        assert_eq!(
+            &format_number(1_000_000, Some(&NumberFormat::Spaces)),
             "1\u{202f}000\u{202f}000"
+        );
+        assert_eq!(
+            &format_number(1_000_000, Some(&NumberFormat::Underscores)),
+            "1_000_000"
         );
         assert_eq!(&format_number(1_000_000, None), "1000000");
     }

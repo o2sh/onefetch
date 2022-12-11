@@ -1,5 +1,5 @@
 use super::repo::author::Author;
-use crate::cli::{Format, MyRegex};
+use crate::cli::{MyRegex, NumberFormat};
 use anyhow::Result;
 use git::bstr::BString;
 use git_repository as git;
@@ -35,7 +35,7 @@ impl Commits {
         bot_regex_pattern: &Option<MyRegex>,
         number_of_authors_to_display: usize,
         show_email: bool,
-        format: Option<&Format>,
+        number_format: Option<&NumberFormat>,
     ) -> Result<Self> {
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
@@ -94,7 +94,7 @@ impl Commits {
                     author_nbr_of_commits,
                     total_nbr_of_commits,
                     show_email,
-                    format,
+                    number_format,
                 )
             })
             .take(number_of_authors_to_display)
