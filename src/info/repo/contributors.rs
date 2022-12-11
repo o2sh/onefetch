@@ -1,5 +1,5 @@
 use crate::{
-    cli::NumberFormat,
+    cli::ThousandsSeparator,
     info::{
         format_number,
         git::Commits,
@@ -14,12 +14,12 @@ impl ContributorsInfo {
     pub fn new(
         commits: &Commits,
         number_of_authors_to_display: usize,
-        number_format: Option<&NumberFormat>,
+        thousands_separator: Option<&ThousandsSeparator>,
     ) -> Self {
         let number_of_contributors = number_of_contributors(
             commits.total_num_authors,
             number_of_authors_to_display,
-            number_format,
+            thousands_separator,
         );
         Self {
             number_of_contributors,
@@ -30,10 +30,10 @@ impl ContributorsInfo {
 fn number_of_contributors(
     total_num_authors: usize,
     number_of_authors_to_display: usize,
-    number_format: Option<&NumberFormat>,
+    thousands_separator: Option<&ThousandsSeparator>,
 ) -> String {
     if total_num_authors > number_of_authors_to_display {
-        format_number(total_num_authors, number_format)
+        format_number(total_num_authors, thousands_separator)
     } else {
         "".to_string()
     }

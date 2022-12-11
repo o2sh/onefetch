@@ -1,5 +1,5 @@
 use crate::{
-    cli::NumberFormat,
+    cli::ThousandsSeparator,
     info::{
         format_number,
         info_field::{InfoField, InfoType},
@@ -12,13 +12,16 @@ pub struct DependenciesInfo {
 }
 
 impl DependenciesInfo {
-    pub fn new(manifest: Option<&Manifest>, number_format: Option<&NumberFormat>) -> Self {
+    pub fn new(
+        manifest: Option<&Manifest>,
+        thousands_separator: Option<&ThousandsSeparator>,
+    ) -> Self {
         let dependencies = manifest
             .and_then(|m| {
                 (m.number_of_dependencies != 0).then(|| {
                     format!(
                         "{} ({})",
-                        format_number(m.number_of_dependencies, number_format),
+                        format_number(m.number_of_dependencies, thousands_separator),
                         m.manifest_type
                     )
                 })

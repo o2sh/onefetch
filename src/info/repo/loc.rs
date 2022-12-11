@@ -1,5 +1,5 @@
 use crate::{
-    cli::NumberFormat,
+    cli::ThousandsSeparator,
     info::{
         format_number,
         info_field::{InfoField, InfoType},
@@ -11,9 +11,9 @@ pub struct LocInfo {
 }
 
 impl LocInfo {
-    pub fn new(lines_of_code: usize, number_format: Option<&NumberFormat>) -> Self {
+    pub fn new(lines_of_code: usize, thousands_separator: Option<&ThousandsSeparator>) -> Self {
         Self {
-            lines_of_code: format_number(lines_of_code, number_format),
+            lines_of_code: format_number(lines_of_code, thousands_separator),
         }
     }
 }

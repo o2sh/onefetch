@@ -1,5 +1,5 @@
 use crate::{
-    cli::NumberFormat,
+    cli::ThousandsSeparator,
     info::{
         format_number,
         git::Commits,
@@ -12,16 +12,19 @@ pub struct CommitsInfo {
 }
 
 impl CommitsInfo {
-    pub fn new(commits: &Commits, number_format: Option<&NumberFormat>) -> Self {
-        let number_of_commits = number_of_commits(commits, number_format);
+    pub fn new(commits: &Commits, thousands_separator: Option<&ThousandsSeparator>) -> Self {
+        let number_of_commits = number_of_commits(commits, thousands_separator);
         Self { number_of_commits }
     }
 }
 
-fn number_of_commits(commits: &Commits, number_format: Option<&NumberFormat>) -> String {
+fn number_of_commits(
+    commits: &Commits,
+    thousands_separator: Option<&ThousandsSeparator>,
+) -> String {
     format!(
         "{}{}",
-        format_number(commits.num_commits, number_format),
+        format_number(commits.num_commits, thousands_separator),
         commits.is_shallow.then(|| " (shallow)").unwrap_or_default()
     )
 }

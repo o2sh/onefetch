@@ -135,9 +135,9 @@ pub struct Config {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
-    /// Which FORMAT to use for the thousands separator.
-    #[arg(long, short, value_name = "FORMAT", value_enum)]
-    pub format_numbers: Option<NumberFormat>,
+    /// Which thousands SEPARATOR to use
+    #[arg(long, short, value_name = "SEPARATOR", value_enum)]
+    pub format_numbers: Option<ThousandsSeparator>,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -235,13 +235,13 @@ pub enum When {
 }
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
-pub enum NumberFormat {
+pub enum ThousandsSeparator {
     Commas,
     Spaces,
     Underscores,
 }
 
-impl NumberFormat {
+impl ThousandsSeparator {
     fn separator(&self) -> &'static str {
         match self {
             Self::Commas => ",",
