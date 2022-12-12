@@ -1,5 +1,5 @@
 use crate::{
-    cli::ThousandsSeparator,
+    cli::NumberSeparator,
     info::{
         format_number,
         git::Commits,
@@ -28,14 +28,14 @@ impl Author {
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
         show_email: bool,
-        thousands_separator: Option<&ThousandsSeparator>,
+        number_separator: Option<&NumberSeparator>,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
             name: name.to_string(),
             email: email.to_string(),
-            nbr_of_commits: format_number(nbr_of_commits, thousands_separator),
+            nbr_of_commits: format_number(nbr_of_commits, number_separator),
             contribution,
             show_email,
         }

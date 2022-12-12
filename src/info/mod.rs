@@ -18,7 +18,7 @@ use self::repo::size::SizeInfo;
 use self::repo::url::UrlInfo;
 use self::repo::version::VersionInfo;
 use self::title::Title;
-use crate::cli::{is_truecolor_terminal, Config, MyRegex, ThousandsSeparator, When};
+use crate::cli::{is_truecolor_terminal, Config, MyRegex, NumberSeparator, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -250,11 +250,11 @@ impl Info {
             &git_repo,
             &repo_url.repo_url,
             manifest.as_ref(),
-            config.format_numbers.as_ref(),
+            config.number_separator.as_ref(),
         )?;
         let head = HeadInfo::new(&git_repo)?;
         let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
-        let size = SizeInfo::new(&git_repo, config.format_numbers.as_ref());
+        let size = SizeInfo::new(&git_repo, config.number_separator.as_ref());
         let license = LicenseInfo::new(&repo_path, manifest.as_ref())?;
         let mut commits = Commits::new(
             git_repo,
@@ -262,7 +262,7 @@ impl Info {
             &no_bots,
             config.number_of_authors,
             config.email,
-            config.format_numbers.as_ref(),
+            config.number_separator.as_ref(),
         )?;
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(
@@ -271,16 +271,17 @@ impl Info {
             config.number_of_languages,
             text_colors.info,
         );
-        let dependencies = DependenciesInfo::new(manifest.as_ref(), config.format_numbers.as_ref());
+        let dependencies =
+            DependenciesInfo::new(manifest.as_ref(), config.number_separator.as_ref());
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
         let contributors = ContributorsInfo::new(
             &commits,
             config.number_of_authors,
-            config.format_numbers.as_ref(),
+            config.number_separator.as_ref(),
         );
-        let commits = CommitsInfo::new(&commits, config.format_numbers.as_ref());
-        let lines_of_code = LocInfo::new(lines_of_code, config.format_numbers.as_ref());
+        let commits = CommitsInfo::new(&commits, config.number_separator.as_ref());
+        let lines_of_code = LocInfo::new(lines_of_code, config.number_separator.as_ref());
 
         Ok(Self {
             title,
@@ -356,9 +357,9 @@ impl Info {
 
 fn format_number<T: ToFormattedString + std::fmt::Display>(
     number: T,
-    thousands_separator: Option<&ThousandsSeparator>,
+    number_separator: Option<&NumberSeparator>,
 ) -> String {
-    match thousands_separator {
+    match number_separator {
         Some(v) => number.to_formatted_string(&v.get_format()),
         None => number.to_string(),
     }
@@ -425,15 +426,15 @@ mod tests {
     #[test]
     fn test_format_number() {
         assert_eq!(
-            &format_number(1_000_000, Some(&ThousandsSeparator::Commas)),
+            &format_number(1_000_000, Some(&NumberSeparator::Comma)),
             "1,000,000"
         );
         assert_eq!(
-            &format_number(1_000_000, Some(&ThousandsSeparator::Spaces)),
+            &format_number(1_000_000, Some(&NumberSeparator::Space)),
             "1\u{202f}000\u{202f}000"
         );
         assert_eq!(
-            &format_number(1_000_000, Some(&ThousandsSeparator::Underscores)),
+            &format_number(1_000_000, Some(&NumberSeparator::Underscore)),
             "1_000_000"
         );
         assert_eq!(&format_number(1_000_000, None), "1000000");

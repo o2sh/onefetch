@@ -1,5 +1,5 @@
 use crate::{
-    cli::ThousandsSeparator,
+    cli::NumberSeparator,
     info::{
         format_number,
         info_field::{InfoField, InfoType},
@@ -23,11 +23,11 @@ impl ProjectInfo {
         repo: &Repository,
         repo_url: &str,
         manifest: Option<&Manifest>,
-        thousands_separator: Option<&ThousandsSeparator>,
+        number_separator: Option<&NumberSeparator>,
     ) -> Result<Self> {
         let repo_name = get_repo_name(repo_url, manifest)?;
-        let number_of_branches = format_number(get_number_of_branches(repo)?, thousands_separator);
-        let number_of_tags = format_number(get_number_of_tags(repo)?, thousands_separator);
+        let number_of_branches = format_number(get_number_of_branches(repo)?, number_separator);
+        let number_of_tags = format_number(get_number_of_tags(repo)?, number_separator);
         Ok(Self {
             repo_name,
             number_of_branches,

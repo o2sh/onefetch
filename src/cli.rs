@@ -136,8 +136,8 @@ pub struct Config {
     #[arg(long, short = 'z')]
     pub iso_time: bool,
     /// Which thousands SEPARATOR to use
-    #[arg(long, short, value_name = "SEPARATOR", value_enum)]
-    pub format_numbers: Option<ThousandsSeparator>,
+    #[arg(long, value_name = "SEPARATOR", value_enum)]
+    pub number_separator: Option<NumberSeparator>,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -183,7 +183,7 @@ impl Default for Config {
             show_logo: When::Always,
             text_colors: Default::default(),
             iso_time: Default::default(),
-            format_numbers: Default::default(),
+            number_separator: Default::default(),
             email: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
@@ -235,18 +235,18 @@ pub enum When {
 }
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
-pub enum ThousandsSeparator {
-    Commas,
-    Spaces,
-    Underscores,
+pub enum NumberSeparator {
+    Comma,
+    Space,
+    Underscore,
 }
 
-impl ThousandsSeparator {
+impl NumberSeparator {
     fn separator(&self) -> &'static str {
         match self {
-            Self::Commas => ",",
-            Self::Spaces => "\u{202f}",
-            Self::Underscores => "_",
+            Self::Comma => ",",
+            Self::Space => "\u{202f}",
+            Self::Underscore => "_",
         }
     }
 
