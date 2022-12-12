@@ -1,18 +1,26 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::{
+    cli::NumberSeparator,
+    info::{
+        format_number,
+        info_field::{InfoField, InfoType},
+    },
+};
 use byte_unit::Byte;
 use git_repository::Repository;
 
 pub struct SizeInfo {
     pub repo_size: String,
     pub file_count: u64,
+    number_separator: NumberSeparator,
 }
 
 impl SizeInfo {
-    pub fn new(repo: &Repository) -> Self {
+    pub fn new(repo: &Repository, number_separator: NumberSeparator) -> Self {
         let (repo_size, file_count) = get_repo_size(repo);
         Self {
             repo_size,
             file_count,
+            number_separator,
         }
     }
 }
@@ -40,7 +48,12 @@ impl std::fmt::Display for SizeInfo {
             0 => write!(f, "{}", &self.repo_size),
             1 => write!(f, "{} (1 file)", self.repo_size),
             _ => {
-                write!(f, "{} ({} files)", self.repo_size, self.file_count)
+                write!(
+                    f,
+                    "{} ({} files)",
+                    self.repo_size,
+                    format_number(self.file_count, self.number_separator)
+                )
             }
         }
     }
@@ -66,6 +79,7 @@ mod test {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 123,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(size_info.value(), "2.40 MiB (123 files)".to_string());
@@ -76,6 +90,7 @@ mod test {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 0,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(size_info.value(), "2.40 MiB".to_string());
@@ -86,6 +101,7 @@ mod test {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 1,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());

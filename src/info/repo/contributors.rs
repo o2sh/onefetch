@@ -1,18 +1,28 @@
-use crate::info::{
-    git::Commits,
-    info_field::{InfoField, InfoType},
+use crate::{
+    cli::NumberSeparator,
+    info::{
+        format_number,
+        git::Commits,
+        info_field::{InfoField, InfoType},
+    },
 };
 pub struct ContributorsInfo {
     pub number_of_contributors: usize,
     pub number_of_authors_to_display: usize,
+    number_separator: NumberSeparator,
 }
 
 impl ContributorsInfo {
-    pub fn new(commits: &Commits, number_of_authors_to_display: usize) -> Self {
+    pub fn new(
+        commits: &Commits,
+        number_of_authors_to_display: usize,
+        number_separator: NumberSeparator,
+    ) -> Self {
         let contributors = number_of_contributors(commits);
         Self {
             number_of_contributors: contributors,
             number_of_authors_to_display,
+            number_separator,
         }
     }
 }
@@ -26,7 +36,7 @@ impl InfoField for ContributorsInfo {
 
     fn value(&self) -> String {
         if self.number_of_contributors > self.number_of_authors_to_display {
-            self.number_of_contributors.to_string()
+            format_number(self.number_of_contributors, self.number_separator)
         } else {
             "".to_string()
         }
@@ -56,7 +66,7 @@ mod test {
             time_of_first_commit: timestamp,
         };
 
-        let contributors_info = ContributorsInfo::new(&commits, 2);
+        let contributors_info = ContributorsInfo::new(&commits, 2, NumberSeparator::Plain);
         assert_eq!(contributors_info.value(), "12".to_string());
         assert_eq!(contributors_info.title(), "Contributors".to_string());
     }
@@ -66,6 +76,7 @@ mod test {
         let contributors_info = ContributorsInfo {
             number_of_contributors: 1,
             number_of_authors_to_display: 3,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert!(contributors_info.value().is_empty());

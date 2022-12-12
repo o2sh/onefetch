@@ -1,14 +1,30 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::{
+    cli::NumberSeparator,
+    info::{
+        format_number,
+        info_field::{InfoField, InfoType},
+    },
+};
 
 pub struct LocInfo {
     pub lines_of_code: usize,
+    number_separator: NumberSeparator,
+}
+
+impl LocInfo {
+    pub fn new(lines_of_code: usize, number_separator: NumberSeparator) -> Self {
+        Self {
+            lines_of_code,
+            number_separator,
+        }
+    }
 }
 
 impl InfoField for LocInfo {
     const TYPE: InfoType = InfoType::LinesOfCode;
 
     fn value(&self) -> String {
-        self.lines_of_code.to_string()
+        format_number(self.lines_of_code, self.number_separator)
     }
 
     fn title(&self) -> String {
@@ -24,6 +40,7 @@ mod test {
     fn test_display_loc_info() {
         let loc_info = LocInfo {
             lines_of_code: 1235,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(loc_info.value(), "1235".to_string());

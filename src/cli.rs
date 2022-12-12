@@ -6,9 +6,11 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
+use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
+use serde::Serialize;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -125,7 +127,7 @@ pub struct Config {
     /// '--text-colors 9 10 11 12 13 14'
     #[arg(
         long,
-        short = 't',
+        short,
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6
@@ -134,6 +136,9 @@ pub struct Config {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
+    /// Which thousands SEPARATOR to use
+    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    pub number_separator: NumberSeparator,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -179,6 +184,7 @@ impl Default for Config {
             show_logo: When::Always,
             text_colors: Default::default(),
             iso_time: Default::default(),
+            number_separator: NumberSeparator::Plain,
             email: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
@@ -227,6 +233,33 @@ pub enum When {
     Auto,
     Never,
     Always,
+}
+
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+pub enum NumberSeparator {
+    Plain,
+    Comma,
+    Space,
+    Underscore,
+}
+
+impl NumberSeparator {
+    fn separator(&self) -> &'static str {
+        match self {
+            Self::Plain => "",
+            Self::Comma => ",",
+            Self::Space => "\u{202f}",
+            Self::Underscore => "_",
+        }
+    }
+
+    pub fn get_format(&self) -> CustomFormat {
+        num_format::CustomFormat::builder()
+            .grouping(num_format::Grouping::Standard)
+            .separator(self.separator())
+            .build()
+            .unwrap()
+    }
 }
 
 #[cfg(test)]

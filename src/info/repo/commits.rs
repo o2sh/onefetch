@@ -1,31 +1,37 @@
-use crate::info::{
-    git::Commits,
-    info_field::{InfoField, InfoType},
+use crate::{
+    cli::NumberSeparator,
+    info::{
+        format_number,
+        git::Commits,
+        info_field::{InfoField, InfoType},
+    },
 };
 
 pub struct CommitsInfo {
-    pub number_of_commits: String,
+    pub number_of_commits: usize,
+    is_shallow: bool,
+    number_separator: NumberSeparator,
 }
 
 impl CommitsInfo {
-    pub fn new(commits: &Commits) -> Self {
-        let number_of_commits = number_of_commits(commits);
-        Self { number_of_commits }
+    pub fn new(commits: &Commits, number_separator: NumberSeparator) -> Self {
+        Self {
+            number_of_commits: commits.num_commits,
+            is_shallow: commits.is_shallow,
+            number_separator,
+        }
     }
 }
 
-fn number_of_commits(commits: &Commits) -> String {
-    format!(
-        "{}{}",
-        commits.num_commits,
-        commits.is_shallow.then(|| " (shallow)").unwrap_or_default()
-    )
-}
 impl InfoField for CommitsInfo {
     const TYPE: InfoType = InfoType::Commits;
 
     fn value(&self) -> String {
-        self.number_of_commits.to_string()
+        format!(
+            "{}{}",
+            format_number(self.number_of_commits, self.number_separator),
+            self.is_shallow.then(|| " (shallow)").unwrap_or_default()
+        )
     }
 
     fn title(&self) -> String {
@@ -40,7 +46,9 @@ mod test {
     #[test]
     fn test_display_commits_info() {
         let commits_info = CommitsInfo {
-            number_of_commits: "3".to_string(),
+            number_of_commits: 3,
+            is_shallow: false,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(commits_info.value(), "3".to_string());
@@ -48,20 +56,12 @@ mod test {
 
     #[test]
     fn test_display_commits_info_shallow() {
-        use crate::info::git::Commits;
-        use git_repository::actor::Time;
-
-        let timestamp = Time::now_utc();
-        let commits = Commits {
-            authors: vec![],
-            total_num_authors: 0,
-            num_commits: 2,
+        let commits_info = CommitsInfo {
+            number_of_commits: 2,
             is_shallow: true,
-            time_of_most_recent_commit: timestamp,
-            time_of_first_commit: timestamp,
+            number_separator: NumberSeparator::Plain,
         };
 
-        let info = CommitsInfo::new(&commits);
-        assert_eq!(info.value(), "2 (shallow)".to_string());
+        assert_eq!(commits_info.value(), "2 (shallow)".to_string());
     }
 }

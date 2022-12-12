@@ -49,7 +49,7 @@ expression: info
   "lastChange": "22 years ago",
   "contributors": 4,
   "repoUrl": "https://github.com/user/repo.git",
-  "numberOfCommits": "4",
+  "numberOfCommits": 4,
   "linesOfCode": 4,
   "repoSize": "22 B",
   "license": "MIT"

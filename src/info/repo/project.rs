@@ -1,4 +1,10 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::{
+    cli::NumberSeparator,
+    info::{
+        format_number,
+        info_field::{InfoField, InfoType},
+    },
+};
 use anyhow::Result;
 use git_repository::{bstr::ByteSlice, Repository};
 use onefetch_manifest::Manifest;
@@ -10,10 +16,17 @@ pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_branches: usize,
     pub number_of_tags: usize,
+    #[serde(skip_serializing)]
+    number_separator: NumberSeparator,
 }
 
 impl ProjectInfo {
-    pub fn new(repo: &Repository, repo_url: &str, manifest: Option<&Manifest>) -> Result<Self> {
+    pub fn new(
+        repo: &Repository,
+        repo_url: &str,
+        manifest: Option<&Manifest>,
+        number_separator: NumberSeparator,
+    ) -> Result<Self> {
         let repo_name = get_repo_name(repo_url, manifest)?;
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
@@ -21,6 +34,7 @@ impl ProjectInfo {
             repo_name,
             number_of_branches,
             number_of_tags,
+            number_separator,
         })
     }
 }
@@ -68,13 +82,19 @@ impl std::fmt::Display for ProjectInfo {
             let branches_str = match self.number_of_branches {
                 0 => String::new(),
                 1 => "1 branch".into(),
-                _ => format!("{} branches", self.number_of_branches),
+                _ => format!(
+                    "{} branches",
+                    format_number(self.number_of_branches, self.number_separator)
+                ),
             };
 
             let tags_str = match self.number_of_tags {
                 0 => String::new(),
                 1 => "1 tag".into(),
-                _ => format!("{} tags", self.number_of_tags),
+                _ => format!(
+                    "{} tags",
+                    format_number(self.number_of_tags, self.number_separator)
+                ),
             };
 
             if tags_str.is_empty() && branches_str.is_empty() {
@@ -110,6 +130,7 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 3,
             number_of_tags: 2,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(
@@ -124,6 +145,7 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
             number_of_tags: 0,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(project_info.value(), "onefetch".to_string());
@@ -135,6 +157,7 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 3,
             number_of_tags: 0,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(project_info.value(), "onefetch (3 branches)".to_string());
@@ -146,6 +169,7 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
             number_of_tags: 2,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(project_info.value(), "onefetch (2 tags)".to_string());
@@ -157,6 +181,7 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 1,
             number_of_tags: 1,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(
@@ -179,6 +204,7 @@ mod test {
             repo_name: "".to_string(),
             number_of_branches: 0,
             number_of_tags: 0,
+            number_separator: NumberSeparator::Plain,
         };
 
         assert!(project_info.value().is_empty());
