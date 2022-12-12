@@ -16,6 +16,7 @@ pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_branches: usize,
     pub number_of_tags: usize,
+    #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 

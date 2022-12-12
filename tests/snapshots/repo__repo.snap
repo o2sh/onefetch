@@ -8,8 +8,7 @@ expression: info
   "project": {
     "repo_name": "repo",
     "number_of_branches": 0,
-    "number_of_tags": 1,
-    "number_separator": "Plain"
+    "number_of_tags": 1
   },
   "description": "Amazing tool",
   "head": {
