@@ -18,17 +18,12 @@ impl ContributorsInfo {
         number_of_authors_to_display: usize,
         number_separator: NumberSeparator,
     ) -> Self {
-        let contributors = number_of_contributors(commits);
         Self {
-            number_of_contributors: contributors,
+            number_of_contributors: commits.total_num_authors,
             number_of_authors_to_display,
             number_separator,
         }
     }
-}
-
-fn number_of_contributors(commits: &Commits) -> usize {
-    commits.total_num_authors
 }
 
 impl InfoField for ContributorsInfo {
