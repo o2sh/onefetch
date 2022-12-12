@@ -250,11 +250,11 @@ impl Info {
             &git_repo,
             &repo_url.repo_url,
             manifest.as_ref(),
-            config.number_separator.as_ref(),
+            config.number_separator,
         )?;
         let head = HeadInfo::new(&git_repo)?;
         let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
-        let size = SizeInfo::new(&git_repo, config.number_separator.as_ref());
+        let size = SizeInfo::new(&git_repo, config.number_separator);
         let license = LicenseInfo::new(&repo_path, manifest.as_ref())?;
         let mut commits = Commits::new(
             git_repo,
@@ -262,7 +262,7 @@ impl Info {
             &no_bots,
             config.number_of_authors,
             config.email,
-            config.number_separator.as_ref(),
+            config.number_separator,
         )?;
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(
@@ -271,17 +271,13 @@ impl Info {
             config.number_of_languages,
             text_colors.info,
         );
-        let dependencies =
-            DependenciesInfo::new(manifest.as_ref(), config.number_separator.as_ref());
+        let dependencies = DependenciesInfo::new(manifest.as_ref(), config.number_separator);
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
-        let contributors = ContributorsInfo::new(
-            &commits,
-            config.number_of_authors,
-            config.number_separator.as_ref(),
-        );
-        let commits = CommitsInfo::new(&commits, config.number_separator.as_ref());
-        let lines_of_code = LocInfo::new(lines_of_code, config.number_separator.as_ref());
+        let contributors =
+            ContributorsInfo::new(&commits, config.number_of_authors, config.number_separator);
+        let commits = CommitsInfo::new(&commits, config.number_separator);
+        let lines_of_code = LocInfo::new(lines_of_code, config.number_separator);
 
         Ok(Self {
             title,
@@ -357,12 +353,9 @@ impl Info {
 
 fn format_number<T: ToFormattedString + std::fmt::Display>(
     number: T,
-    number_separator: Option<&NumberSeparator>,
+    number_separator: NumberSeparator,
 ) -> String {
-    match number_separator {
-        Some(v) => number.to_formatted_string(&v.get_format()),
-        None => number.to_string(),
-    }
+    number.to_formatted_string(&number_separator.get_format())
 }
 
 fn get_style(is_bold: bool, color: DynColors) -> Style {
@@ -426,17 +419,17 @@ mod tests {
     #[test]
     fn test_format_number() {
         assert_eq!(
-            &format_number(1_000_000, Some(&NumberSeparator::Comma)),
+            &format_number(1_000_000, NumberSeparator::Comma),
             "1,000,000"
         );
         assert_eq!(
-            &format_number(1_000_000, Some(&NumberSeparator::Space)),
+            &format_number(1_000_000, NumberSeparator::Space),
             "1\u{202f}000\u{202f}000"
         );
         assert_eq!(
-            &format_number(1_000_000, Some(&NumberSeparator::Underscore)),
+            &format_number(1_000_000, NumberSeparator::Underscore),
             "1_000_000"
         );
-        assert_eq!(&format_number(1_000_000, None), "1000000");
+        assert_eq!(&format_number(1_000_000, NumberSeparator::Plain), "1000000");
     }
 }

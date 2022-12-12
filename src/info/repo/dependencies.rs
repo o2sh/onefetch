@@ -12,7 +12,7 @@ pub struct DependenciesInfo {
 }
 
 impl DependenciesInfo {
-    pub fn new(manifest: Option<&Manifest>, number_separator: Option<&NumberSeparator>) -> Self {
+    pub fn new(manifest: Option<&Manifest>, number_separator: NumberSeparator) -> Self {
         let dependencies = manifest
             .and_then(|m| {
                 (m.number_of_dependencies != 0).then(|| {
@@ -57,7 +57,7 @@ mod test {
                 version: String::new(),
                 license: None,
             }),
-            None,
+            NumberSeparator::Plain,
         );
 
         assert_eq!(dependencies_info.value(), "21 (Cargo)".to_string());

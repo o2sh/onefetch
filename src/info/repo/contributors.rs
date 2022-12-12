@@ -7,43 +7,39 @@ use crate::{
     },
 };
 pub struct ContributorsInfo {
-    pub number_of_contributors: String,
+    pub number_of_contributors: usize,
+    pub number_of_authors_to_display: usize,
+    number_separator: NumberSeparator,
 }
 
 impl ContributorsInfo {
     pub fn new(
         commits: &Commits,
         number_of_authors_to_display: usize,
-        number_separator: Option<&NumberSeparator>,
+        number_separator: NumberSeparator,
     ) -> Self {
-        let number_of_contributors = number_of_contributors(
-            commits.total_num_authors,
+        let contributors = number_of_contributors(commits);
+        Self {
+            number_of_contributors: contributors,
             number_of_authors_to_display,
             number_separator,
-        );
-        Self {
-            number_of_contributors,
         }
     }
 }
 
-fn number_of_contributors(
-    total_num_authors: usize,
-    number_of_authors_to_display: usize,
-    number_separator: Option<&NumberSeparator>,
-) -> String {
-    if total_num_authors > number_of_authors_to_display {
-        format_number(total_num_authors, number_separator)
-    } else {
-        "".to_string()
-    }
+fn number_of_contributors(commits: &Commits) -> usize {
+    commits.total_num_authors
 }
 
 impl InfoField for ContributorsInfo {
     const TYPE: InfoType = InfoType::Contributors;
 
     fn value(&self) -> String {
-        self.number_of_contributors.clone()
+        if self.number_of_contributors > self.number_of_authors_to_display {
+            format_number(self.number_of_contributors, self.number_separator)
+        } else {
+            "".to_string()
+        }
     }
 
     fn title(&self) -> String {
@@ -54,11 +50,12 @@ impl InfoField for ContributorsInfo {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::git::Commits;
-    use git_repository::actor::Time;
 
     #[test]
     fn test_display_contributors_info() {
+        use crate::info::git::Commits;
+        use git_repository::actor::Time;
+
         let timestamp = Time::now_utc();
         let commits = Commits {
             authors: vec![],
@@ -69,24 +66,18 @@ mod test {
             time_of_first_commit: timestamp,
         };
 
-        let contributors_info = ContributorsInfo::new(&commits, 2, None);
+        let contributors_info = ContributorsInfo::new(&commits, 2, NumberSeparator::Plain);
         assert_eq!(contributors_info.value(), "12".to_string());
         assert_eq!(contributors_info.title(), "Contributors".to_string());
     }
 
     #[test]
     fn test_display_contributors_less_than_authors_to_display() {
-        let timestamp = Time::now_utc();
-        let commits = Commits {
-            authors: vec![],
-            total_num_authors: 1,
-            num_commits: 2,
-            is_shallow: true,
-            time_of_most_recent_commit: timestamp,
-            time_of_first_commit: timestamp,
+        let contributors_info = ContributorsInfo {
+            number_of_contributors: 1,
+            number_of_authors_to_display: 3,
+            number_separator: NumberSeparator::Plain,
         };
-
-        let contributors_info = ContributorsInfo::new(&commits, 2, None);
 
         assert!(contributors_info.value().is_empty());
     }

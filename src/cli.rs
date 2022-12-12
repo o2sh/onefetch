@@ -10,6 +10,7 @@ use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
+use serde::Serialize;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -136,8 +137,8 @@ pub struct Config {
     #[arg(long, short = 'z')]
     pub iso_time: bool,
     /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", value_enum)]
-    pub number_separator: Option<NumberSeparator>,
+    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    pub number_separator: NumberSeparator,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -183,7 +184,7 @@ impl Default for Config {
             show_logo: When::Always,
             text_colors: Default::default(),
             iso_time: Default::default(),
-            number_separator: Default::default(),
+            number_separator: NumberSeparator::Plain,
             email: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
@@ -234,8 +235,9 @@ pub enum When {
     Always,
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
 pub enum NumberSeparator {
+    Plain,
     Comma,
     Space,
     Underscore,
@@ -244,6 +246,7 @@ pub enum NumberSeparator {
 impl NumberSeparator {
     fn separator(&self) -> &'static str {
         match self {
+            Self::Plain => "",
             Self::Comma => ",",
             Self::Space => "\u{202f}",
             Self::Underscore => "_",

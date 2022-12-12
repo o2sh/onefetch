@@ -15,10 +15,12 @@ use std::fmt::Write;
 pub struct Author {
     name: String,
     email: String,
-    nbr_of_commits: String,
+    nbr_of_commits: usize,
     contribution: usize,
     #[serde(skip_serializing)]
     show_email: bool,
+    #[serde(skip_serializing)]
+    number_separator: NumberSeparator,
 }
 
 impl Author {
@@ -28,16 +30,17 @@ impl Author {
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
         show_email: bool,
-        number_separator: Option<&NumberSeparator>,
+        number_separator: NumberSeparator,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
             name: name.to_string(),
             email: email.to_string(),
-            nbr_of_commits: format_number(nbr_of_commits, number_separator),
+            nbr_of_commits,
             contribution,
             show_email,
+            number_separator,
         }
     }
 }
@@ -48,13 +51,18 @@ impl std::fmt::Display for Author {
             write!(
                 f,
                 "{}% {} <{}> {}",
-                self.contribution, self.name, self.email, self.nbr_of_commits
+                self.contribution,
+                self.name,
+                self.email,
+                format_number(self.nbr_of_commits, self.number_separator)
             )
         } else {
             write!(
                 f,
                 "{}% {} {}",
-                self.contribution, self.name, self.nbr_of_commits
+                self.contribution,
+                self.name,
+                format_number(self.nbr_of_commits, self.number_separator)
             )
         }
     }
@@ -123,7 +131,7 @@ mod test {
             1500,
             2000,
             true,
-            None,
+            NumberSeparator::Plain,
         );
 
         assert_eq!(author.to_string(), "75% John Doe <john.doe@email.com> 1500");
@@ -137,7 +145,7 @@ mod test {
             1500,
             2000,
             false,
-            None,
+            NumberSeparator::Plain,
         );
 
         assert_eq!(author.to_string(), "75% John Doe 1500");
@@ -151,7 +159,7 @@ mod test {
             1500,
             2000,
             true,
-            None,
+            NumberSeparator::Plain,
         );
 
         let authors_info = AuthorsInfo {
@@ -170,7 +178,7 @@ mod test {
             1500,
             2000,
             true,
-            None,
+            NumberSeparator::Plain,
         );
 
         let author_2 = Author::new(
@@ -179,7 +187,7 @@ mod test {
             240,
             300,
             false,
-            None,
+            NumberSeparator::Plain,
         );
 
         let authors_info = AuthorsInfo {
@@ -198,7 +206,7 @@ mod test {
             1500,
             2000,
             true,
-            None,
+            NumberSeparator::Plain,
         );
 
         let authors_info = AuthorsInfo {
@@ -222,7 +230,7 @@ mod test {
             1500,
             2000,
             true,
-            None,
+            NumberSeparator::Plain,
         );
 
         let author_2 = Author::new(
@@ -231,7 +239,7 @@ mod test {
             240,
             300,
             false,
-            None,
+            NumberSeparator::Plain,
         );
 
         let authors_info = AuthorsInfo {

@@ -35,7 +35,7 @@ impl Commits {
         bot_regex_pattern: &Option<MyRegex>,
         number_of_authors_to_display: usize,
         show_email: bool,
-        number_separator: Option<&NumberSeparator>,
+        number_separator: NumberSeparator,
     ) -> Result<Self> {
         // assure that objects we just traversed are coming from cache
         // when we read the commit right after.
