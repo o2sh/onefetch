@@ -1,7 +1,7 @@
 name: CD
 on:
   release:
-    types: [published]
+    types: [released]
 
 jobs:
   deploy:
@@ -12,13 +12,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-          profile: minimal
           components: clippy
 
       - name: Build
@@ -42,13 +41,23 @@ jobs:
           files: |
             ./release/*.tar.gz
             ./release/*.zip
+            ./onefetch-setup.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump homebrew-core formula
-        uses: mislav/bump-homebrew-formula-action@v1
+        uses: mislav/bump-homebrew-formula-action@v2
         if: matrix.os == 'macos-latest'
         env:
           COMMITTER_TOKEN: ${{ secrets.BREW_TOKEN }}
         with:
-          formula-name: onefetch 
+          formula-name: onefetch
+
+      - name: Publish executable to WinGet
+        uses: vedantmgoyal2009/winget-releaser@v1
+        if: matrix.os == 'windows-latest'
+        with:
+          identifier: o2sh.onefetch
+          installers-regex: '\.exe$'
+          version: ${{ github.event.release.tag_name }}
+          token: ${{ secrets.WINGET_TOKEN }}

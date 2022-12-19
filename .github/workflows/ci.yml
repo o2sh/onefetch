@@ -2,8 +2,20 @@ name: CI
 on:
   push:
     branches: ["*"]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - "docs/vercel/**"
+      - ".gitpod.yml"
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - "docs/vercel/**"
+      - ".gitpod.yml"
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
@@ -14,24 +26,17 @@ jobs:
         rust: [stable, nightly]
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Restore cargo cache
-        uses: actions/cache@v2.1.6
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
-          default: true
-          profile: minimal
           components: clippy
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Build Debug
         run: |
@@ -44,14 +49,46 @@ jobs:
       - name: Run clippy
         run: cargo clippy
 
-  rustfmt:
-    name: Rustfmt
+      - name: Run onefetch
+        run: cargo run
+
+  formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
           components: rustfmt
-      - run: cargo fmt -- --check
+
+      - name: Run rustfmt
+        run: cargo fmt -- --check
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-tarpaulin
+        uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-tarpaulin
+          version: latest
+
+      - name: Coverage with tarpaulin
+        run: cargo tarpaulin --out Lcov -- --test-threads 1
+
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v3

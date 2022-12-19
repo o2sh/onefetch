@@ -1,438 +1,195 @@
-use crate::info::deps::package_manager::PackageManager;
-use crate::info::info_field::{InfoField, InfoFieldOff};
+use crate::info::info_field::InfoType;
 use crate::info::langs::language::{Language, LanguageType};
-use crate::ui::image_backends;
-use crate::ui::image_backends::ImageBackend;
 use crate::ui::printer::SerializationFormat;
-use anyhow::{Context, Result};
-use clap::{crate_description, crate_name, crate_version, App, AppSettings, Arg};
-use image::DynamicImage;
+use anyhow::Result;
+use clap::builder::PossibleValuesParser;
+use clap::builder::TypedValueParser as _;
+use clap::{value_parser, Command, Parser, ValueHint};
+use clap_complete::{generate, Generator, Shell};
+use num_format::CustomFormat;
+use onefetch_image::ImageProtocol;
+use onefetch_manifest::ManifestType;
 use regex::Regex;
-use std::process::Command;
-use std::{convert::From, env, str::FromStr};
+use serde::Serialize;
+use std::env;
+use std::io;
+use std::path::PathBuf;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 
-const MAX_TERM_WIDTH: usize = 95;
+const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 
+#[derive(Clone, Debug, Parser, PartialEq, Eq)]
+#[command(version, about, long_about = None, rename_all = "kebab-case")]
 pub struct Config {
-    pub repo_path: String,
+    /// Run as if onefetch was started in <input> instead of the current working directory
+    #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
+    pub input: PathBuf,
+    /// Takes a non-empty STRING as input to replace the ASCII logo
+    ///
+    /// It is possible to pass a generated STRING by command substitution
+    ///
+    /// For example:
+    ///
+    /// '--ascii-input "$(fortune | cowsay -W 25)"
+    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
+    /// Which LANGUAGE's ascii art to print
+    #[arg(
+        long,
+        short,
+        value_name = "LANGUAGE",
+        value_enum,
+        hide_possible_values = true
+    )]
     pub ascii_language: Option<Language>,
-    pub ascii_colors: Vec<String>,
-    pub disabled_fields: InfoFieldOff,
+    /// Colors (X X X...) to print the ascii art
+    #[arg(
+        long,
+        num_args = 1..,
+        value_name = "X",
+        short = 'c',
+        value_parser = value_parser!(u8).range(..16),
+    )]
+    pub ascii_colors: Vec<u8>,
+    /// Allows you to disable FIELD(s) from appearing in the output
+    #[arg(
+        long,
+        short,
+        num_args = 1..,
+        hide_possible_values = true,
+        value_enum,
+        value_name = "FIELD"
+    )]
+    pub disabled_fields: Vec<InfoType>,
+    /// Path to the IMAGE file
+    #[arg(long, short, value_hint = ValueHint::FilePath)]
+    pub image: Option<PathBuf>,
+    /// Which image protocol to use
+    #[arg(long, value_enum, requires = "image")]
+    pub image_protocol: Option<ImageProtocol>,
+    /// VALUE of color resolution to use with SIXEL backend
+    #[arg(
+        long,
+        value_name = "VALUE",
+        requires = "image",
+        default_value_t = 16usize,
+        value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
+            .map(|s| s.parse::<usize>().unwrap())
+    )]
+    pub color_resolution: usize,
+    /// Turns off bold formatting
+    #[arg(long)]
     pub no_bold: bool,
-    pub image: Option<DynamicImage>,
-    pub image_backend: Option<Box<dyn ImageBackend>>,
-    pub image_color_resolution: usize,
+    /// Ignores merge commits
+    #[arg(long)]
     pub no_merges: bool,
+    /// Hides the color palette
+    #[arg(long)]
     pub no_color_palette: bool,
+    /// Maximum NUM of authors to be shown
+    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
-    pub ignored_directories: Vec<String>,
-    pub bot_regex_pattern: Option<Regex>,
-    pub print_languages: bool,
-    pub print_package_managers: bool,
+    /// Maximum NUM of languages to be shown
+    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    pub number_of_languages: usize,
+    /// Ignore all files & directories matching EXCLUDE
+    #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
+    pub exclude: Vec<PathBuf>,
+    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
+    #[arg(long, value_name = "REGEX")]
+    pub no_bots: Option<Option<MyRegex>>,
+    /// Prints out supported languages
+    #[arg(long, short)]
+    pub languages: bool,
+    /// Prints out supported package managers
+    #[arg(long, short)]
+    pub package_managers: bool,
+    /// Outputs Onefetch in a specific format
+    #[arg(long, short, value_name = "FORMAT", value_enum)]
     pub output: Option<SerializationFormat>,
-    pub true_color: bool,
-    pub art_off: bool,
-    pub text_colors: Vec<String>,
+    /// Specify when to use true color
+    ///
+    /// If set to auto: true color will be enabled if supported by the terminal
+    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
+    pub true_color: When,
+    /// Specify when to show the logo
+    ///
+    /// If set to auto: the logo will be hidden if the terminal's width < 95
+    #[arg(long, default_value = "always", value_name = "WHEN", value_enum)]
+    pub show_logo: When,
+    /// Changes the text colors (X X X...)
+    ///
+    /// Goes in order of title, ~, underline, subtitle, colon, and info
+    ///
+    /// For example:
+    ///
+    /// '--text-colors 9 10 11 12 13 14'
+    #[arg(
+        long,
+        short,
+        value_name = "X",
+        value_parser = value_parser!(u8).range(..16),
+        num_args = 1..=6
+    )]
+    pub text_colors: Vec<u8>,
+    /// Use ISO 8601 formatted timestamps
+    #[arg(long, short = 'z')]
     pub iso_time: bool,
-    pub show_email: bool,
+    /// Which thousands SEPARATOR to use
+    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    pub number_separator: NumberSeparator,
+    /// Show the email address of each author
+    #[arg(long, short = 'E')]
+    pub email: bool,
+    /// Count hidden files and directories
+    #[arg(long)]
     pub include_hidden: bool,
-    pub language_types: Vec<LanguageType>,
+    /// Filters output by language type
+    #[arg(
+        long,
+        num_args = 1..,
+        default_values = &["programming", "markup"],
+        short = 'T',
+        value_enum,
+    )]
+    pub r#type: Vec<LanguageType>,
+    /// If provided, outputs the completion file for given SHELL
+    #[arg(long = "generate", value_name = "SHELL", value_enum)]
+    pub completion: Option<Shell>,
 }
 
-impl Config {
-    pub fn new() -> Result<Self> {
-        #[cfg(not(windows))]
-        let possible_backends = ["kitty", "iterm", "sixel"];
-        #[cfg(windows)]
-        let possible_backends = [];
-        let color_values = &[
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-        ];
-        let matches = App::new(crate_name!())
-        .version(crate_version!())
-        .about(crate_description!())
-        .setting(AppSettings::ColoredHelp)
-        .setting(AppSettings::DeriveDisplayOrder)
-        .setting(AppSettings::HidePossibleValuesInHelp)
-        .arg(
-            Arg::with_name("input")
-            .default_value(".")
-            .hide_default_value(true)
-            .help("Run as if onefetch was started in <input> instead of the current working directory.")
-        )
-        .arg(
-            Arg::with_name("output")
-            .short("o")
-            .long("output")
-            .value_name("FORMAT")
-            .help("Outputs Onefetch in a specific format (json, yaml).")
-            .takes_value(true)
-            .possible_values(
-                &SerializationFormat::iter()
-                .map(|format| format.into())
-                .collect::<Vec<&str>>())
-        )
-        .arg(
-            Arg::with_name("languages")
-            .short("l")
-            .long("languages")
-            .help("Prints out supported languages."),
-        )
-        .arg(
-            Arg::with_name("package-managers")
-            .short("p")
-            .long("package-managers")
-            .help("Prints out supported package managers."),
-        )
-        .arg(
-            Arg::with_name("show-logo")
-            .long("show-logo")
-            .value_name("WHEN")
-            .takes_value(true)
-            .possible_values(&["auto", "never", "always"])
-            .default_value("always")
-            .hide_default_value(true)
-            .help("Specify when to show the logo (auto, never, *always*).")
-            .long_help(
-                "Specify when to show the logo (auto, never, *always*). \n\
-                If set to auto: the logo will be hidden if the terminal's width < 95.")
-        )
-        .arg(
-            Arg::with_name("image")
-            .short("i")
-            .long("image")
-            .value_name("IMAGE")
-            .takes_value(true)
-            .help("Path to the IMAGE file."),
-        )
-        .arg(
-            Arg::with_name("image-backend")
-            .long("image-backend")
-            .value_name("BACKEND")
-            .takes_value(true)
-            .requires("image")
-            .possible_values(&possible_backends)
-            .help("Which image BACKEND to use."),
-        )
-        .arg(
-            Arg::with_name("color-resolution")
-            .long("color-resolution")
-            .value_name("VALUE")
-            .requires("image")
-            .takes_value(true)
-            .possible_values(&["16", "32", "64", "128", "256"])
-            .help("VALUE of color resolution to use with SIXEL backend."),
-        )
-        .arg(
-            Arg::with_name("ascii-language")
-           .short("a")
-           .value_name("LANGUAGE")
-           .long("ascii-language")
-           .takes_value(true)
-           .case_insensitive(true)
-           .help("Which LANGUAGE's ascii art to print.")
-           .possible_values(
-               &Language::iter()
-               .map(|language| language.into())
-               .collect::<Vec<&str>>())
-        )
-        .arg(
-            Arg::with_name("ascii-input")
-            .long("ascii-input")
-            .value_name("STRING")
-            .takes_value(true)
-            .help("Takes a non-empty STRING as input to replace the ASCII logo.")
-            .long_help(
-                "Takes a non-empty STRING as input to replace the ASCII logo. \
-                It is possible to pass a generated STRING by command substitution. \n\
-                For example:\n \
-                '--ascii-input \"$(fortune | cowsay -W 25)\"'")
-            .validator(|t| {
-                if t.is_empty() {
-                    Err(String::from("must not be empty"))
-                } else {
-                    Ok(())
-                }
-            }),
-        )
-        .arg(
-            Arg::with_name("true-color")
-            .long("true-color")
-            .value_name("WHEN")
-            .takes_value(true)
-            .possible_values(&["auto", "never", "always"])
-            .default_value("auto")
-            .hide_default_value(true)
-            .help("Specify when to use true color (*auto*, never, always).")
-            .long_help(
-                "Specify when to use true color (*auto*, never, always). \n\
-                If set to auto: true color will be enabled if supported by the terminal.")
-        )
-        .arg(
-            Arg::with_name("ascii-colors")
-            .short("c")
-            .long("ascii-colors")
-            .value_name("X")
-            .multiple(true)
-            .takes_value(true)
-            .possible_values(color_values)
-            .help("Colors (X X X...) to print the ascii art."),
-        )
-        .arg(
-            Arg::with_name("text-colors")
-            .short("t")
-            .long("text-colors")
-            .value_name("X")
-            .multiple(true)
-            .takes_value(true)
-            .max_values(6)
-            .possible_values(color_values)
-            .help("Changes the text colors (X X X...).")
-            .long_help(
-                "Changes the text colors (X X X...). \
-                Goes in order of title, ~, underline, subtitle, colon, and info. \n\
-                For example:\n \
-                '--text-colors 9 10 11 12 13 14'")
-        )
-        .arg(
-            Arg::with_name("no-bold")
-            .long("no-bold")
-            .help("Turns off bold formatting."),
-        )
-        .arg(
-            Arg::with_name("no-palette")
-            .long("no-palette")
-            .help("Hides the color palette."),
-        )
-        .arg(
-            Arg::with_name("no-merges")
-            .long("no-merges")
-            .help("Ignores merge commits."),
-        )
-        .arg(
-            Arg::with_name("no-bots")
-            .long("no-bots")
-            .min_values(0)
-            .max_values(1)
-            .value_name("REGEX")
-            .help("Exclude [bot] commits. Use <REGEX> to override the default pattern.")
-            .validator(|p| {
-                match Regex::from_str(&p) {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err(String::from("must be a valid regex pattern"))
-                }
-            }),
-        )
-        .arg(
-            Arg::with_name("isotime")
-            .short("z")
-            .long("isotime")
-            .help("Use ISO 8601 formatted timestamps.")
-        )
-        .arg(
-            Arg::with_name("disable-fields")
-            .long("disable-fields")
-            .short("d")
-            .value_name("FIELD")
-            .multiple(true)
-            .takes_value(true)
-            .case_insensitive(true)
-            .help("Allows you to disable FIELD(s) from appearing in the output.")
-            .possible_values(
-                &InfoField::iter()
-                    .map(|field| field.into())
-                    .collect::<Vec<&str>>())
-        )
-        .arg(
-            Arg::with_name("authors-number")
-            .short("A")
-            .long("authors-number")
-            .value_name("NUM")
-            .takes_value(true)
-            .default_value("3")
-            .help("NUM of authors to be shown.")
-            .validator(|t| {
-                match t.parse::<u32>() {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err(String::from("must be a number"))
-                }
-            })
-        )
-        .arg(
-            Arg::with_name("email")
-            .short("E")
-            .long("email")
-            .help("show the email address of each author.")
-        )
-        .arg(
-            Arg::with_name("hidden")
-            .long("hidden")
-            .help("Count hidden files and directories.")
-        )
-        .arg(
-            Arg::with_name("exclude")
-            .short("e")
-            .long("exclude")
-            .value_name("EXCLUDE")
-            .multiple(true)
-            .takes_value(true)
-            .help("Ignore all files & directories matching EXCLUDE."),
-        )
-        .arg(
-            Arg::with_name("type")
-            .short("T")
-            .long("type")
-            .value_name("TYPE")
-            .multiple(true)
-            .takes_value(true)
-            .case_insensitive(true)
-            .help("Filters output by language type (*programming*, *markup*, prose, data).")
-            .possible_values(
-                &LanguageType::iter()
-                    .map(|t| t.into())
-                    .collect::<Vec<&str>>())
-        )
-        .get_matches();
-
-        let true_color = match matches.value_of("true-color") {
-            Some("always") => true,
-            Some("never") => false,
-            Some("auto") => is_truecolor_terminal(),
-            _ => unreachable!(),
-        };
-
-        let no_bold = matches.is_present("no-bold");
-        let no_merges = matches.is_present("no-merges");
-        let no_color_palette = matches.is_present("no-palette");
-        let print_languages = matches.is_present("languages");
-        let print_package_managers = matches.is_present("package-managers");
-        let iso_time = matches.is_present("isotime");
-        let show_email = matches.is_present("email");
-        let include_hidden = matches.is_present("hidden");
-
-        let output = matches
-            .value_of("output")
-            .map(SerializationFormat::from_str)
-            .transpose()?;
-
-        let fields_to_hide: Vec<String> = if let Some(values) = matches.values_of("disable-fields")
-        {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        };
-
-        let disabled_fields = InfoFieldOff::new(fields_to_hide)?;
-
-        let art_off = match matches.value_of("show-logo") {
-            Some("always") => false,
-            Some("never") => true,
-            Some("auto") => {
-                if let Some((width, _)) = term_size::dimensions_stdout() {
-                    width < MAX_TERM_WIDTH
-                } else {
-                    false
-                }
-            }
-            _ => unreachable!(),
-        };
-
-        let image = if let Some(image_path) = matches.value_of("image") {
-            Some(image::open(image_path).with_context(|| "Could not load the specified image")?)
-        } else {
-            None
-        };
-
-        let image_backend = if image.is_some() {
-            if let Some(backend_name) = matches.value_of("image-backend") {
-                image_backends::get_image_backend(backend_name)
-            } else {
-                image_backends::get_best_backend()
-            }
-        } else {
-            None
-        };
-
-        let image_color_resolution = if let Some(value) = matches.value_of("color-resolution") {
-            usize::from_str(value)?
-        } else {
-            16
-        };
-
-        let repo_path = matches
-            .value_of("input")
-            .map(String::from)
-            .with_context(|| "Failed to parse input directory")?;
-
-        let ascii_input = matches.value_of("ascii-input").map(String::from);
-
-        let ascii_language = matches
-            .value_of("ascii-language")
-            .map(|ascii_language| Language::from_str(&ascii_language.to_lowercase()).unwrap());
-
-        let ascii_colors = if let Some(values) = matches.values_of("ascii-colors") {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        };
-
-        let text_colors = if let Some(values) = matches.values_of("text-colors") {
-            values.map(String::from).collect()
-        } else {
-            Vec::new()
-        };
-
-        let number_of_authors: usize = matches.value_of("authors-number").unwrap().parse()?;
-
-        let ignored_directories =
-            if let Some(user_ignored_directories) = matches.values_of("exclude") {
-                user_ignored_directories.map(String::from).collect()
-            } else {
-                Vec::new()
-            };
-
-        let bot_regex_pattern = matches.is_present("no-bots").then(|| {
-            matches
-                .value_of("no-bots")
-                .map_or(Regex::from_str(r"\[bot\]").unwrap(), |s| {
-                    Regex::from_str(s).unwrap()
-                })
-        });
-
-        let language_types: Vec<LanguageType> = if let Some(values) = matches.values_of("type") {
-            values.map(|t| LanguageType::from_str(t).unwrap()).collect()
-        } else {
-            vec![LanguageType::Programming, LanguageType::Markup]
-        };
-
-        Ok(Config {
-            repo_path,
-            ascii_input,
-            ascii_language,
-            ascii_colors,
-            disabled_fields,
-            no_bold,
-            image,
-            image_backend,
-            image_color_resolution,
-            no_merges,
-            no_color_palette,
-            number_of_authors,
-            ignored_directories,
-            bot_regex_pattern,
-            print_languages,
-            print_package_managers,
-            output,
-            true_color,
-            art_off,
-            text_colors,
-            iso_time,
-            show_email,
-            include_hidden,
-            language_types,
-        })
+impl Default for Config {
+    fn default() -> Config {
+        Config {
+            input: PathBuf::from("."),
+            ascii_input: Default::default(),
+            ascii_language: Default::default(),
+            ascii_colors: Default::default(),
+            disabled_fields: Default::default(),
+            image: Default::default(),
+            image_protocol: Default::default(),
+            color_resolution: 16,
+            no_bold: Default::default(),
+            no_merges: Default::default(),
+            no_color_palette: Default::default(),
+            number_of_authors: 3,
+            number_of_languages: 6,
+            exclude: Default::default(),
+            no_bots: Default::default(),
+            languages: Default::default(),
+            package_managers: Default::default(),
+            output: Default::default(),
+            true_color: When::Auto,
+            show_logo: When::Always,
+            text_colors: Default::default(),
+            iso_time: Default::default(),
+            number_separator: NumberSeparator::Plain,
+            email: Default::default(),
+            include_hidden: Default::default(),
+            r#type: vec![LanguageType::Programming, LanguageType::Markup],
+            completion: Default::default(),
+        }
     }
 }
 
@@ -445,7 +202,7 @@ pub fn print_supported_languages() -> Result<()> {
 }
 
 pub fn print_supported_package_managers() -> Result<()> {
-    for p in PackageManager::iter() {
+    for p in ManifestType::iter() {
         println!("{}", p);
     }
 
@@ -459,10 +216,133 @@ pub fn is_truecolor_terminal() -> bool {
 }
 
 pub fn get_git_version() -> String {
-    let version = Command::new("git").arg("--version").output();
+    let version = std::process::Command::new("git").arg("--version").output();
 
     match version {
         Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
         Err(_) => String::new(),
+    }
+}
+
+pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
+    generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
+}
+
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+pub enum When {
+    Auto,
+    Never,
+    Always,
+}
+
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+pub enum NumberSeparator {
+    Plain,
+    Comma,
+    Space,
+    Underscore,
+}
+
+impl NumberSeparator {
+    fn separator(&self) -> &'static str {
+        match self {
+            Self::Plain => "",
+            Self::Comma => ",",
+            Self::Space => "\u{202f}",
+            Self::Underscore => "_",
+        }
+    }
+
+    pub fn get_format(&self) -> CustomFormat {
+        num_format::CustomFormat::builder()
+            .grouping(num_format::Grouping::Standard)
+            .separator(self.separator())
+            .build()
+            .unwrap()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_default_config() {
+        let config: Config = Default::default();
+        assert_eq!(config, Config::parse_from(&["onefetch"]))
+    }
+
+    #[test]
+    fn test_custom_config() {
+        let config: Config = Config {
+            number_of_authors: 4,
+            input: PathBuf::from("/tmp/folder"),
+            no_merges: true,
+            ascii_colors: vec![5, 0],
+            disabled_fields: vec![InfoType::Version, InfoType::Repo],
+            show_logo: When::Never,
+            ascii_language: Some(Language::Lisp),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            config,
+            Config::parse_from(&[
+                "onefetch",
+                "/tmp/folder",
+                "--number-of-authors",
+                "4",
+                "--no-merges",
+                "--ascii-colors",
+                "5",
+                "0",
+                "--disabled-fields",
+                "version",
+                "repo",
+                "--show-logo",
+                "never",
+                "--ascii-language",
+                "lisp"
+            ])
+        )
+    }
+
+    #[test]
+    fn test_config_with_image_protocol_but_no_image() {
+        assert!(Config::try_parse_from(&["onefetch", "--image-protocol", "sixel"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_color_resolution_but_no_image() {
+        assert!(Config::try_parse_from(&["onefetch", "--color-resolution", "32"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_ascii_colors_but_out_of_bounds() {
+        assert!(Config::try_parse_from(&["onefetch", "--ascii-colors", "17"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_text_colors_but_out_of_bounds() {
+        assert!(Config::try_parse_from(&["onefetch", "--text-colors", "17"]).is_err())
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct MyRegex(pub Regex);
+
+impl Eq for MyRegex {}
+
+impl PartialEq for MyRegex {
+    fn eq(&self, other: &MyRegex) -> bool {
+        self.0.as_str() == other.0.as_str()
+    }
+}
+
+impl FromStr for MyRegex {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Ok(MyRegex(Regex::new(s)?))
     }
 }

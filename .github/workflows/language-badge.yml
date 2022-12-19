@@ -1,7 +1,8 @@
 name: Generate Language Badge
 on:
-  release:
-    types: [published]
+  schedule:
+    # Once week at midnight UTC
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 jobs:
@@ -9,14 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Get Language Count
-        uses: spenserblack/actions-set-output@v1
-        id: lang-count
+      - uses: actions/checkout@v3
         with:
-          variables: COUNT=$(cargo run -- --languages | wc -l)
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Get Language Count
+        id: vars
+        run: echo "::set-output name=language_count::$(cargo run -- --languages | wc -l)"
       - name: Get Badge
-        run: curl https://img.shields.io/badge/languages-${{ steps.lang-count.outputs.COUNT }}-blue > ./assets/language-badge.svg
+        run: curl https://img.shields.io/badge/languages-${{ steps.vars.outputs.language_count }}-blue > ./assets/language-badge.svg
       - name: Commit Badge
         continue-on-error: true
         run: |

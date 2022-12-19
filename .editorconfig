@@ -13,3 +13,7 @@ indent_size = 2
 
 [{Makefile,.SRCINFO}]
 indent_style = tab
+
+[*.json]
+indent_style = space
+indent_size = 2

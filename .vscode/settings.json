@@ -1,0 +1,6 @@
+{
+  "search.exclude": {
+    "**/node_modules": false,
+    "**/target": true
+  }
+}
