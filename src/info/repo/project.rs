@@ -67,10 +67,7 @@ fn get_number_of_tags(repo: &Repository) -> Result<usize> {
 
 fn get_number_of_branches(repo: &Repository) -> Result<usize> {
     let mut number_of_branches = repo.references()?.remote_branches()?.count();
-    if number_of_branches > 0 {
-        //Exclude origin/HEAD -> origin/main
-        number_of_branches -= 1;
-    }
+    number_of_branches = number_of_branches.saturating_sub(1); //Exclude origin/HEAD -> origin/main
     Ok(number_of_branches)
 }
 

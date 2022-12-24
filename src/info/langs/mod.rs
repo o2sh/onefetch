@@ -50,7 +50,7 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
         language_distribution.insert(Language::from(*language_name), code as f64);
     }
 
-    let total: f64 = language_distribution.iter().map(|(_, v)| v).sum();
+    let total: f64 = language_distribution.values().sum();
 
     if total.abs() < f64::EPSILON {
         None
