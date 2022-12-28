@@ -40,6 +40,9 @@ impl ProjectInfo {
 }
 
 fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> {
+    if repo_url.is_empty() {
+        return Ok(String::default());
+    }
     let url = git_repository::url::parse(repo_url.into())?;
     let path = git_repository::path::from_bstr(url.path.as_bstr());
     let repo_name = path
