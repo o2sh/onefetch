@@ -27,6 +27,7 @@ fn test_repo() -> Result<()> {
     let repo = repo("repo.sh")?;
     let config: Config = Config {
         input: repo.path().to_path_buf(),
+        iso_time: true,
         ..Default::default()
     };
     let info = Info::new(&config)?;

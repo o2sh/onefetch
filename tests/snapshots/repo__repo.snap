@@ -18,7 +18,7 @@ expression: info
     ]
   },
   "version": "tag1",
-  "created": "22 years ago",
+  "created": "2000-01-02T00:00:00Z",
   "languages": [
     {
       "language": "Rust",
@@ -46,7 +46,7 @@ expression: info
       "contribution": 25
     }
   ],
-  "lastChange": "22 years ago",
+  "lastChange": "2000-01-02T00:00:00Z",
   "contributors": 4,
   "repoUrl": "https://github.com/user/repo.git",
   "numberOfCommits": 4,
