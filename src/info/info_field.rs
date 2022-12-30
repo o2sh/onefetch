@@ -57,20 +57,22 @@ mod test {
     }
 
     #[test]
-    fn test_info_field_get() {
+    fn test_info_field_with_value() {
         let info = InfoFieldImpl("test");
         assert_eq!(info.has_value(&[]), true);
+        assert_eq!(info.title(), "title".to_string());
+        assert_eq!(info.r#type(), InfoType::Project);
         assert_eq!(info.value(), "test".to_string());
     }
 
     #[test]
-    fn test_info_field_get_none_when_type_disabled() {
+    fn test_info_field_when_type_is_disabled() {
         let info = InfoFieldImpl("test");
         assert_eq!(info.has_value(&[InfoType::Project]), false);
     }
 
     #[test]
-    fn test_info_field_get_none_when_value_is_empty() {
+    fn test_info_field_without_value() {
         let info = InfoFieldImpl("");
         assert_eq!(info.has_value(&[]), false);
     }
