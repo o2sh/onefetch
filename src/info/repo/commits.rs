@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::{
     cli::NumberSeparator,
     info::{
@@ -7,9 +9,12 @@ use crate::{
     },
 };
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CommitsInfo {
     pub number_of_commits: usize,
     is_shallow: bool,
+    #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
@@ -23,9 +28,8 @@ impl CommitsInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for CommitsInfo {
-    const TYPE: InfoType = InfoType::Commits;
-
     fn value(&self) -> String {
         format!(
             "{}{}",
@@ -36,6 +40,10 @@ impl InfoField for CommitsInfo {
 
     fn title(&self) -> String {
         "Commits".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Commits
     }
 }
 

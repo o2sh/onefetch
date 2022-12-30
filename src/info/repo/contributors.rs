@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::{
     cli::NumberSeparator,
     info::{
@@ -6,9 +8,14 @@ use crate::{
         info_field::{InfoField, InfoType},
     },
 };
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ContributorsInfo {
     pub number_of_contributors: usize,
+    #[serde(skip_serializing)]
     pub number_of_authors_to_display: usize,
+    #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
@@ -26,9 +33,8 @@ impl ContributorsInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for ContributorsInfo {
-    const TYPE: InfoType = InfoType::Contributors;
-
     fn value(&self) -> String {
         if self.number_of_contributors > self.number_of_authors_to_display {
             format_number(self.number_of_contributors, self.number_separator)
@@ -39,6 +45,10 @@ impl InfoField for ContributorsInfo {
 
     fn title(&self) -> String {
         "Contributors".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Contributors
     }
 }
 

@@ -12,6 +12,7 @@ use serde::Serialize;
 use std::ffi::OsStr;
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_branches: usize,
@@ -108,15 +109,18 @@ impl std::fmt::Display for ProjectInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for ProjectInfo {
-    const TYPE: InfoType = InfoType::Project;
-
     fn value(&self) -> String {
         self.to_string()
     }
 
     fn title(&self) -> String {
         "Project".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Project
     }
 }
 

@@ -279,7 +279,7 @@ mod test {
             input: PathBuf::from("/tmp/folder"),
             no_merges: true,
             ascii_colors: vec![5, 0],
-            disabled_fields: vec![InfoType::Version, InfoType::Repo],
+            disabled_fields: vec![InfoType::Version, InfoType::URL],
             show_logo: When::Never,
             ascii_language: Some(Language::Lisp),
             ..Default::default()
@@ -298,7 +298,7 @@ mod test {
                 "0",
                 "--disabled-fields",
                 "version",
-                "repo",
+                "url",
                 "--show-logo",
                 "never",
                 "--ascii-language",

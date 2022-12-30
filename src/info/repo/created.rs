@@ -1,9 +1,13 @@
+use serde::Serialize;
+
 use super::gitoxide_time_to_formatted_time;
 use crate::info::{
     git::Commits,
     info_field::{InfoField, InfoType},
 };
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreatedInfo {
     pub creation_date: String,
 }
@@ -19,15 +23,18 @@ fn get_creation_date(commits: &Commits, iso_time: bool) -> String {
     gitoxide_time_to_formatted_time(commits.time_of_first_commit, iso_time)
 }
 
+#[typetag::serialize]
 impl InfoField for CreatedInfo {
-    const TYPE: InfoType = InfoType::Created;
-
     fn value(&self) -> String {
         self.creation_date.to_string()
     }
 
     fn title(&self) -> String {
         "Created".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Created
     }
 }
 

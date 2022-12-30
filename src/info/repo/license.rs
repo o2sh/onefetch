@@ -2,6 +2,7 @@ use crate::info::info_field::{InfoField, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
+use serde::Serialize;
 use std::path::Path;
 use std::{ffi::OsStr, fs};
 
@@ -73,6 +74,7 @@ fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
         .any(|&name| file_name.as_ref().starts_with(name))
 }
 
+#[derive(Serialize)]
 pub struct LicenseInfo {
     pub license: String,
 }
@@ -84,15 +86,18 @@ impl LicenseInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for LicenseInfo {
-    const TYPE: InfoType = InfoType::License;
-
     fn value(&self) -> String {
         self.license.to_string()
     }
 
     fn title(&self) -> String {
         "License".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::License
     }
 }
 

@@ -6,7 +6,9 @@ use crate::{
     },
 };
 use onefetch_manifest::Manifest;
+use serde::Serialize;
 
+#[derive(Serialize)]
 pub struct DependenciesInfo {
     pub dependencies: String,
 }
@@ -29,15 +31,18 @@ impl DependenciesInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for DependenciesInfo {
-    const TYPE: InfoType = InfoType::Dependencies;
-
     fn value(&self) -> String {
         self.dependencies.clone()
     }
 
     fn title(&self) -> String {
         "Dependencies".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Dependencies
     }
 }
 

@@ -1,9 +1,11 @@
 use crate::info::info_field::{InfoField, InfoType};
 use onefetch_manifest::Manifest;
+use serde::Serialize;
 use std::fmt::Write;
 
 const NUMBER_OF_WORDS_PER_LINE: usize = 5;
 
+#[derive(Serialize)]
 pub struct DescriptionInfo {
     pub description: Option<String>,
 }
@@ -19,9 +21,8 @@ impl DescriptionInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for DescriptionInfo {
-    const TYPE: InfoType = InfoType::Description;
-
     fn value(&self) -> String {
         match &self.description {
             Some(value) => {
@@ -48,6 +49,10 @@ impl InfoField for DescriptionInfo {
 
     fn title(&self) -> String {
         "Description".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Description
     }
 }
 

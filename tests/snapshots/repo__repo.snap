@@ -3,54 +3,123 @@ source: tests/repo.rs
 expression: info
 ---
 {
-  "gitUsername": "onefetch-committer-name",
-  "gitVersion": "git version",
-  "project": {
-    "repo_name": "repo",
-    "number_of_branches": 0,
-    "number_of_tags": 1
+  "title": {
+    "gitUsername": "onefetch-committer-name",
+    "gitVersion": "git version"
   },
-  "description": "Amazing tool",
-  "head": {
-    "short_commit_id": "short commit",
-    "refs": [
-      "main"
-    ]
-  },
-  "version": "tag1",
-  "created": "2000-01-02T00:00:00Z",
-  "languages": [
+  "infoFields": [
     {
-      "language": "Rust",
-      "percentage": 100.0
-    }
-  ],
-  "dependencies": "1 (Cargo)",
-  "authors": [
-    {
-      "name": "Author Four",
-      "email": "author4@example.org",
-      "nbr_of_commits": 1,
-      "contribution": 25
+      "ProjectInfo": {
+        "repoName": "repo",
+        "numberOfBranches": 0,
+        "numberOfTags": 1
+      }
     },
     {
-      "name": "Author One",
-      "email": "author1@example.org",
-      "nbr_of_commits": 1,
-      "contribution": 25
+      "DescriptionInfo": {
+        "description": "Amazing tool"
+      }
     },
     {
-      "name": "Author Three",
-      "email": "author3@example.org",
-      "nbr_of_commits": 1,
-      "contribution": 25
+      "HeadInfo": {
+        "headRefs": {
+          "shortCommitId": "short commit",
+          "refs": [
+            "main"
+          ]
+        }
+      }
+    },
+    {
+      "PendingInfo": {
+        "pendingChanges": "1+- 2+"
+      }
+    },
+    {
+      "VersionInfo": {
+        "version": "tag1"
+      }
+    },
+    {
+      "CreatedInfo": {
+        "creationDate": "2000-01-02T00:00:00Z"
+      }
+    },
+    {
+      "LanguagesInfo": {
+        "languagesWithPercentage": [
+          {
+            "language": "Rust",
+            "percentage": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "DependenciesInfo": {
+        "dependencies": "1 (Cargo)"
+      }
+    },
+    {
+      "AuthorsInfo": {
+        "authors": [
+          {
+            "name": "Author Four",
+            "email": "author4@example.org",
+            "nbrOfCommits": 1,
+            "contribution": 25
+          },
+          {
+            "name": "Author One",
+            "email": "author1@example.org",
+            "nbrOfCommits": 1,
+            "contribution": 25
+          },
+          {
+            "name": "Author Three",
+            "email": "author3@example.org",
+            "nbrOfCommits": 1,
+            "contribution": 25
+          }
+        ]
+      }
+    },
+    {
+      "LastChangeInfo": {
+        "lastChange": "2000-01-02T00:00:00Z"
+      }
+    },
+    {
+      "ContributorsInfo": {
+        "numberOfContributors": 4
+      }
+    },
+    {
+      "UrlInfo": {
+        "repoUrl": "https://github.com/user/repo.git"
+      }
+    },
+    {
+      "CommitsInfo": {
+        "numberOfCommits": 4,
+        "isShallow": false
+      }
+    },
+    {
+      "LocInfo": {
+        "linesOfCode": 4
+      }
+    },
+    {
+      "SizeInfo": {
+        "repoSize": "22 B",
+        "fileCount": 1
+      }
+    },
+    {
+      "LicenseInfo": {
+        "license": "MIT"
+      }
     }
-  ],
-  "lastChange": "2000-01-02T00:00:00Z",
-  "contributors": 4,
-  "repoUrl": "https://github.com/user/repo.git",
-  "numberOfCommits": 4,
-  "linesOfCode": 4,
-  "repoSize": "22 B",
-  "license": "MIT"
+  ]
 }

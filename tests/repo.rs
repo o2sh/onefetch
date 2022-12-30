@@ -34,8 +34,8 @@ fn test_repo() -> Result<()> {
     insta::assert_json_snapshot!(
         info,
         {
-            ".gitVersion" => "git version",
-            ".head.short_commit_id" => "short commit"
+            ".title.gitVersion" => "git version",
+            ".infoFields[].HeadInfo.headRefs.shortCommitId" => "short commit"
         }
     );
 

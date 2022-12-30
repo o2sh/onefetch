@@ -1,10 +1,14 @@
+#[typetag::serialize]
 pub trait InfoField {
-    const TYPE: InfoType;
     fn value(&self) -> String;
     fn title(&self) -> String;
+    fn r#type(&self) -> InfoType;
+    fn should_color(&self) -> bool {
+        true
+    }
     fn get(&self, disabled_infos: &[InfoType]) -> Option<String> {
         let info_field_value = self.value();
-        if disabled_infos.contains(&Self::TYPE) || info_field_value.is_empty() {
+        if disabled_infos.contains(&self.r#type()) || info_field_value.is_empty() {
             return None;
         }
         Some(info_field_value)
@@ -25,7 +29,7 @@ pub enum InfoType {
     Authors,
     LastChange,
     Contributors,
-    Repo,
+    URL,
     Commits,
     LinesOfCode,
     Size,
@@ -34,19 +38,25 @@ pub enum InfoType {
 
 #[cfg(test)]
 mod test {
+    use serde::Serialize;
+
     use super::*;
 
+    #[derive(Serialize)]
     struct InfoFieldImpl(&'static str);
 
+    #[typetag::serialize]
     impl InfoField for InfoFieldImpl {
-        const TYPE: InfoType = InfoType::Project;
-
         fn value(&self) -> String {
             self.0.into()
         }
 
         fn title(&self) -> String {
             "title".into()
+        }
+
+        fn r#type(&self) -> InfoType {
+            InfoType::Project
         }
     }
 
