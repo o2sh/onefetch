@@ -13,7 +13,6 @@ pub trait InfoField {
 
 #[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
 pub enum InfoType {
-    Title,
     Project,
     Description,
     Head,

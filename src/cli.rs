@@ -87,6 +87,9 @@ pub struct Config {
     /// Hides the color palette
     #[arg(long)]
     pub no_color_palette: bool,
+    /// Hides the title
+    #[arg(long)]
+    pub no_title: bool,
     /// Maximum NUM of authors to be shown
     #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
@@ -173,6 +176,7 @@ impl Default for Config {
             no_bold: Default::default(),
             no_merges: Default::default(),
             no_color_palette: Default::default(),
+            no_title: Default::default(),
             number_of_authors: 3,
             number_of_languages: 6,
             exclude: Default::default(),

@@ -50,6 +50,8 @@ pub struct Info {
     #[serde(skip_serializing)]
     no_color_palette: bool,
     #[serde(skip_serializing)]
+    no_title: bool,
+    #[serde(skip_serializing)]
     no_bold: bool,
     #[serde(skip_serializing)]
     pub dominant_language: Language,
@@ -60,7 +62,7 @@ pub struct Info {
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         //Title
-        if !self.disabled_fields.contains(&InfoType::Title) {
+        if !self.no_title {
             write!(f, "{}", self.title)?;
         }
 
@@ -221,6 +223,7 @@ impl Info {
             dominant_language,
             ascii_colors,
             no_color_palette: config.no_color_palette,
+            no_title: config.no_title,
             no_bold: config.no_bold,
         })
     }
