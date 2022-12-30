@@ -6,12 +6,8 @@ pub trait InfoField {
     fn should_color(&self) -> bool {
         true
     }
-    fn get(&self, disabled_infos: &[InfoType]) -> Option<String> {
-        let info_field_value = self.value();
-        if disabled_infos.contains(&self.r#type()) || info_field_value.is_empty() {
-            return None;
-        }
-        Some(info_field_value)
+    fn has_value(&self, disabled_infos: &[InfoType]) -> bool {
+        !(disabled_infos.contains(&self.r#type()) || self.value().is_empty())
     }
 }
 
@@ -63,18 +59,19 @@ mod test {
     #[test]
     fn test_info_field_get() {
         let info = InfoFieldImpl("test");
-        assert_eq!(info.get(&[]), Some("test".into()));
+        assert_eq!(info.has_value(&[]), true);
+        assert_eq!(info.value(), "test".to_string());
     }
 
     #[test]
     fn test_info_field_get_none_when_type_disabled() {
         let info = InfoFieldImpl("test");
-        assert_eq!(info.get(&[InfoType::Project]), None);
+        assert_eq!(info.has_value(&[InfoType::Project]), false);
     }
 
     #[test]
     fn test_info_field_get_none_when_value_is_empty() {
         let info = InfoFieldImpl("");
-        assert_eq!(info.get(&[]), None);
+        assert_eq!(info.has_value(&[]), false);
     }
 }

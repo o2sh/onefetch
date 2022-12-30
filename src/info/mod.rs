@@ -65,15 +65,17 @@ impl std::fmt::Display for Info {
         }
 
         //Info lines
-        for info_field in self.info_fields.iter() {
-            if let Some(info_field_value) = info_field.get(&self.disabled_fields) {
-                self.write_styled_info_line(
-                    f,
-                    &info_field.title(),
-                    &info_field_value,
-                    info_field.should_color(),
-                )?;
-            }
+        for info_field in self
+            .info_fields
+            .iter()
+            .filter(|x| x.has_value(&self.disabled_fields))
+        {
+            self.write_styled_info_line(
+                f,
+                &info_field.title(),
+                &info_field.value(),
+                info_field.should_color(),
+            )?
         }
 
         //Palette
