@@ -1,13 +1,13 @@
+#[typetag::serialize]
 pub trait InfoField {
-    const TYPE: InfoType;
     fn value(&self) -> String;
     fn title(&self) -> String;
-    fn get(&self, disabled_infos: &[InfoType]) -> Option<String> {
-        let info_field_value = self.value();
-        if disabled_infos.contains(&Self::TYPE) || info_field_value.is_empty() {
-            return None;
-        }
-        Some(info_field_value)
+    fn r#type(&self) -> InfoType;
+    fn should_color(&self) -> bool {
+        true
+    }
+    fn has_value(&self, disabled_infos: &[InfoType]) -> bool {
+        !(disabled_infos.contains(&self.r#type()) || self.value().is_empty())
     }
 }
 
@@ -25,7 +25,7 @@ pub enum InfoType {
     Authors,
     LastChange,
     Contributors,
-    Repo,
+    URL,
     Commits,
     LinesOfCode,
     Size,
@@ -34,13 +34,15 @@ pub enum InfoType {
 
 #[cfg(test)]
 mod test {
+    use serde::Serialize;
+
     use super::*;
 
+    #[derive(Serialize)]
     struct InfoFieldImpl(&'static str);
 
+    #[typetag::serialize]
     impl InfoField for InfoFieldImpl {
-        const TYPE: InfoType = InfoType::Project;
-
         fn value(&self) -> String {
             self.0.into()
         }
@@ -48,23 +50,30 @@ mod test {
         fn title(&self) -> String {
             "title".into()
         }
+
+        fn r#type(&self) -> InfoType {
+            InfoType::Project
+        }
     }
 
     #[test]
-    fn test_info_field_get() {
+    fn test_info_field_with_value() {
         let info = InfoFieldImpl("test");
-        assert_eq!(info.get(&[]), Some("test".into()));
+        assert_eq!(info.has_value(&[]), true);
+        assert_eq!(info.title(), "title".to_string());
+        assert_eq!(info.r#type(), InfoType::Project);
+        assert_eq!(info.value(), "test".to_string());
     }
 
     #[test]
-    fn test_info_field_get_none_when_type_disabled() {
+    fn test_info_field_when_type_is_disabled() {
         let info = InfoFieldImpl("test");
-        assert_eq!(info.get(&[InfoType::Project]), None);
+        assert_eq!(info.has_value(&[InfoType::Project]), false);
     }
 
     #[test]
-    fn test_info_field_get_none_when_value_is_empty() {
+    fn test_info_field_without_value() {
         let info = InfoFieldImpl("");
-        assert_eq!(info.get(&[]), None);
+        assert_eq!(info.has_value(&[]), false);
     }
 }

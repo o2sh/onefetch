@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::{
     cli::NumberSeparator,
     info::{
@@ -6,8 +8,11 @@ use crate::{
     },
 };
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LocInfo {
     pub lines_of_code: usize,
+    #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
@@ -20,15 +25,18 @@ impl LocInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for LocInfo {
-    const TYPE: InfoType = InfoType::LinesOfCode;
-
     fn value(&self) -> String {
         format_number(self.lines_of_code, self.number_separator)
     }
 
     fn title(&self) -> String {
         "Lines of code".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::LinesOfCode
     }
 }
 

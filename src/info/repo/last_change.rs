@@ -1,9 +1,13 @@
+use serde::Serialize;
+
 use super::gitoxide_time_to_formatted_time;
 use crate::info::{
     git::Commits,
     info_field::{InfoField, InfoType},
 };
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LastChangeInfo {
     pub last_change: String,
 }
@@ -20,15 +24,18 @@ fn get_date_of_last_commit(commits: &Commits, iso_time: bool) -> String {
     gitoxide_time_to_formatted_time(commits.time_of_most_recent_commit, iso_time)
 }
 
+#[typetag::serialize]
 impl InfoField for LastChangeInfo {
-    const TYPE: InfoType = InfoType::LastChange;
-
     fn value(&self) -> String {
         self.last_change.to_string()
     }
 
     fn title(&self) -> String {
         "Last change".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::LastChange
     }
 }
 

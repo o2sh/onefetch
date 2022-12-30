@@ -12,10 +12,15 @@ pub struct LanguageWithPercentage {
     pub percentage: f64,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LanguagesInfo {
     pub languages_with_percentage: Vec<LanguageWithPercentage>,
+    #[serde(skip_serializing)]
     true_color: bool,
+    #[serde(skip_serializing)]
     number_of_languages: usize,
+    #[serde(skip_serializing)]
     info_color: DynColors,
 }
 
@@ -126,9 +131,8 @@ impl std::fmt::Display for LanguagesInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for LanguagesInfo {
-    const TYPE: InfoType = InfoType::Languages;
-
     fn value(&self) -> String {
         self.to_string()
     }
@@ -139,6 +143,13 @@ impl InfoField for LanguagesInfo {
             title.push('s')
         }
         title
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Languages
+    }
+    fn should_color(&self) -> bool {
+        false
     }
 }
 

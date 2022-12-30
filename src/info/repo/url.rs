@@ -1,7 +1,10 @@
 use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::Repository;
+use serde::Serialize;
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UrlInfo {
     pub repo_url: String,
 }
@@ -39,15 +42,18 @@ fn get_url(repo: &Repository) -> Result<String> {
     Ok(remote_url)
 }
 
+#[typetag::serialize]
 impl InfoField for UrlInfo {
-    const TYPE: InfoType = InfoType::Repo;
-
     fn value(&self) -> String {
         self.repo_url.to_string()
     }
 
     fn title(&self) -> String {
-        "Repo".into()
+        "URL".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::URL
     }
 }
 

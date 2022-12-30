@@ -5,6 +5,7 @@ use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Title {
     pub git_username: String,
     pub git_version: String,

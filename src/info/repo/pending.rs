@@ -2,7 +2,10 @@ use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git2::{Status, StatusOptions, StatusShow};
 use git_repository::Repository;
+use serde::Serialize;
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PendingInfo {
     pub pending_changes: String,
 }
@@ -56,15 +59,18 @@ fn get_pending_changes(repo: &git2::Repository) -> Result<String> {
     Ok(result.trim().into())
 }
 
+#[typetag::serialize]
 impl InfoField for PendingInfo {
-    const TYPE: InfoType = InfoType::Pending;
-
     fn value(&self) -> String {
         self.pending_changes.to_string()
     }
 
     fn title(&self) -> String {
         "Pending".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Pending
     }
 }
 

@@ -4,6 +4,7 @@ use git_repository::{reference::Category, Reference, Repository};
 use serde::Serialize;
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct HeadRefs {
     short_commit_id: String,
     refs: Vec<String>,
@@ -34,6 +35,8 @@ impl std::fmt::Display for HeadRefs {
     }
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct HeadInfo {
     pub head_refs: HeadRefs,
 }
@@ -60,15 +63,18 @@ fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
     Ok(HeadRefs::new(head_oid.shorten()?.to_string(), refs_info))
 }
 
+#[typetag::serialize]
 impl InfoField for HeadInfo {
-    const TYPE: InfoType = InfoType::Head;
-
     fn value(&self) -> String {
         self.head_refs.to_string()
     }
 
     fn title(&self) -> String {
         "HEAD".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Head
     }
 }
 

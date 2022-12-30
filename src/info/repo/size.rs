@@ -7,10 +7,14 @@ use crate::{
 };
 use byte_unit::Byte;
 use git_repository::Repository;
+use serde::Serialize;
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SizeInfo {
     pub repo_size: String,
     pub file_count: u64,
+    #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
@@ -59,14 +63,17 @@ impl std::fmt::Display for SizeInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for SizeInfo {
-    const TYPE: InfoType = InfoType::Size;
-
     fn value(&self) -> String {
         self.to_string()
     }
     fn title(&self) -> String {
         "Size".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Size
     }
 }
 

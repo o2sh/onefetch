@@ -2,7 +2,9 @@ use crate::info::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git_repository::Repository;
 use onefetch_manifest::Manifest;
+use serde::Serialize;
 
+#[derive(Serialize)]
 pub struct VersionInfo {
     pub version: String,
 }
@@ -38,15 +40,19 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
         Ok(version)
     }
 }
-impl InfoField for VersionInfo {
-    const TYPE: InfoType = InfoType::Version;
 
+#[typetag::serialize]
+impl InfoField for VersionInfo {
     fn value(&self) -> String {
         self.version.to_string()
     }
 
     fn title(&self) -> String {
         "Version".into()
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Version
     }
 }
 

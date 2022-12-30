@@ -26,7 +26,6 @@ use num_format::ToFormattedString;
 use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize, Style};
 use regex::Regex;
-use serde::ser::SerializeStruct;
 use serde::Serialize;
 use std::path::Path;
 use std::str::FromStr;
@@ -39,29 +38,22 @@ mod repo;
 pub mod test;
 pub mod title;
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Info {
     title: Title,
-    project: ProjectInfo,
-    description: DescriptionInfo,
-    head: HeadInfo,
-    pending: PendingInfo,
-    version: VersionInfo,
-    created: CreatedInfo,
-    languages: LanguagesInfo,
-    dependencies: DependenciesInfo,
-    authors: AuthorsInfo,
-    last_change: LastChangeInfo,
-    contributors: ContributorsInfo,
-    repo: UrlInfo,
-    commits: CommitsInfo,
-    lines_of_code: LocInfo,
-    size: SizeInfo,
-    license: LicenseInfo,
+    info_fields: Vec<Box<dyn InfoField>>,
+    #[serde(skip_serializing)]
     disabled_fields: Vec<InfoType>,
+    #[serde(skip_serializing)]
     text_colors: TextColors,
+    #[serde(skip_serializing)]
     no_color_palette: bool,
+    #[serde(skip_serializing)]
     no_bold: bool,
+    #[serde(skip_serializing)]
     pub dominant_language: Language,
+    #[serde(skip_serializing)]
     pub ascii_colors: Vec<DynColors>,
 }
 
@@ -73,93 +65,17 @@ impl std::fmt::Display for Info {
         }
 
         //Info lines
-        if let Some(project_info_value) = self.project.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.project.title(), &project_info_value, true)?;
-        }
-
-        if let Some(description_info_value) = self.description.get(&self.disabled_fields) {
+        for info_field in self
+            .info_fields
+            .iter()
+            .filter(|x| x.has_value(&self.disabled_fields))
+        {
             self.write_styled_info_line(
                 f,
-                &self.description.title(),
-                &description_info_value,
-                true,
-            )?;
-        }
-
-        if let Some(head_info_value) = self.head.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.head.title(), &head_info_value, true)?;
-        }
-
-        if let Some(pending_info_value) = self.pending.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.pending.title(), &pending_info_value, true)?;
-        }
-
-        if let Some(version_info_value) = self.version.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.version.title(), &version_info_value, true)?;
-        }
-
-        if let Some(created_info_value) = self.created.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.created.title(), &created_info_value, true)?;
-        }
-
-        if let Some(languages_info_value) = self.languages.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.languages.title(), &languages_info_value, false)?;
-        }
-
-        if let Some(dependencies_info_value) = self.dependencies.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                f,
-                &self.dependencies.title(),
-                &dependencies_info_value,
-                true,
-            )?;
-        }
-
-        if let Some(authors_info_value) = self.authors.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.authors.title(), &authors_info_value, false)?;
-        }
-
-        if let Some(last_change_info_value) = self.last_change.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                f,
-                &self.last_change.title(),
-                &last_change_info_value,
-                true,
-            )?;
-        }
-
-        if let Some(contributors_info_value) = self.contributors.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                f,
-                &self.contributors.title(),
-                &contributors_info_value,
-                true,
-            )?;
-        }
-
-        if let Some(repo_info_value) = self.repo.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.repo.title(), &repo_info_value, true)?;
-        }
-
-        if let Some(commits_info_value) = self.commits.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.commits.title(), &commits_info_value, true)?;
-        }
-
-        if let Some(lines_of_code_info_value) = self.lines_of_code.get(&self.disabled_fields) {
-            self.write_styled_info_line(
-                f,
-                &self.lines_of_code.title(),
-                &lines_of_code_info_value,
-                true,
-            )?;
-        }
-
-        if let Some(size_info_value) = self.size.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.size.title(), &size_info_value, true)?;
-        }
-
-        if let Some(license_info_value) = self.license.get(&self.disabled_fields) {
-            self.write_styled_info_line(f, &self.license.title(), &license_info_value, true)?;
+                &info_field.title(),
+                &info_field.value(),
+                info_field.should_color(),
+            )?
         }
 
         //Palette
@@ -279,24 +195,27 @@ impl Info {
         let commits = CommitsInfo::new(&commits, config.number_separator);
         let lines_of_code = LocInfo::new(lines_of_code, config.number_separator);
 
+        let info_fields: Vec<Box<dyn InfoField>> = vec![
+            Box::new(project),
+            Box::new(description),
+            Box::new(head),
+            Box::new(pending),
+            Box::new(version),
+            Box::new(created),
+            Box::new(languages),
+            Box::new(dependencies),
+            Box::new(authors),
+            Box::new(last_change),
+            Box::new(contributors),
+            Box::new(repo_url),
+            Box::new(commits),
+            Box::new(lines_of_code),
+            Box::new(size),
+            Box::new(license),
+        ];
         Ok(Self {
             title,
-            project,
-            description,
-            head,
-            pending,
-            version,
-            created,
-            languages,
-            dependencies,
-            authors,
-            last_change,
-            contributors,
-            repo: repo_url,
-            commits,
-            lines_of_code,
-            size,
-            license,
+            info_fields,
             disabled_fields: config.disabled_fields.clone(),
             text_colors,
             dominant_language,
@@ -364,34 +283,6 @@ fn get_style(is_bold: bool, color: DynColors) -> Style {
         style = style.bold();
     }
     style
-}
-
-impl Serialize for Info {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_struct("Info", 17)?;
-        state.serialize_field("gitUsername", &self.title.git_username)?;
-        state.serialize_field("gitVersion", &self.title.git_version)?;
-        state.serialize_field("project", &self.project)?;
-        state.serialize_field("description", &self.description.description)?;
-        state.serialize_field("head", &self.head.head_refs)?;
-        state.serialize_field("version", &self.version.version)?;
-        state.serialize_field("created", &self.created.creation_date)?;
-        state.serialize_field("languages", &self.languages.languages_with_percentage)?;
-        state.serialize_field("dependencies", &self.dependencies.dependencies)?;
-        state.serialize_field("authors", &self.authors.authors)?;
-        state.serialize_field("lastChange", &self.last_change.last_change)?;
-        state.serialize_field("contributors", &self.contributors.number_of_contributors)?;
-        state.serialize_field("repoUrl", &self.repo.repo_url)?;
-        state.serialize_field("numberOfCommits", &self.commits.number_of_commits)?;
-        state.serialize_field("linesOfCode", &self.lines_of_code.lines_of_code)?;
-        state.serialize_field("repoSize", &self.size.repo_size)?;
-        state.serialize_field("license", &self.license.license)?;
-
-        state.end()
-    }
 }
 
 #[cfg(test)]

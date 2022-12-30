@@ -12,6 +12,7 @@ use serde::Serialize;
 use std::fmt::Write;
 
 #[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Author {
     name: String,
     email: String,
@@ -68,8 +69,10 @@ impl std::fmt::Display for Author {
     }
 }
 
+#[derive(Serialize)]
 pub struct AuthorsInfo {
     pub authors: Vec<Author>,
+    #[serde(skip_serializing)]
     pub info_color: DynColors,
 }
 
@@ -103,9 +106,8 @@ impl std::fmt::Display for AuthorsInfo {
     }
 }
 
+#[typetag::serialize]
 impl InfoField for AuthorsInfo {
-    const TYPE: InfoType = InfoType::Authors;
-
     fn value(&self) -> String {
         self.to_string()
     }
@@ -116,6 +118,14 @@ impl InfoField for AuthorsInfo {
             title.push('s')
         }
         title
+    }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Authors
+    }
+
+    fn should_color(&self) -> bool {
+        false
     }
 }
 
