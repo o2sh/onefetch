@@ -99,16 +99,9 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn init_repo_path(repo: &git_repository::Repository) -> Result<std::path::PathBuf> {
-        Ok(repo
-            .work_dir()
-            .context("please run onefetch inside of a non-bare git repository")?
-            .to_owned())
-    }
-
     pub fn new(config: &Config) -> Result<Self> {
         let git_repo = git_repository::discover(&config.input)?;
-        let repo_path = Info::init_repo_path(&git_repo)?;
+        let repo_path = get_work_dir(&git_repo)?;
 
         let languages_handle = std::thread::spawn({
             let ignored_directories = config.exclude.clone();
@@ -150,7 +143,7 @@ impl Info {
             text_colors.underline,
             !config.no_bold,
         );
-        let manifest = Self::get_manifest(&repo_path)?;
+        let manifest = get_manifest(&repo_path)?;
         let description = DescriptionInfo::new(manifest.as_ref());
         let pending = PendingInfo::new(&git_repo)?;
         let repo_url = UrlInfo::new(&git_repo)?;
@@ -218,16 +211,6 @@ impl Info {
         })
     }
 
-    fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
-        let manifests = onefetch_manifest::get_manifests(repo_path)?;
-
-        if manifests.is_empty() {
-            Ok(None)
-        } else {
-            Ok(manifests.first().cloned())
-        }
-    }
-
     fn write_styled_info_line(
         &self,
         f: &mut std::fmt::Formatter,
@@ -261,6 +244,23 @@ impl Info {
             ":".style(colon_style)
         )
     }
+}
+
+fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
+    let manifests = onefetch_manifest::get_manifests(repo_path)?;
+
+    if manifests.is_empty() {
+        Ok(None)
+    } else {
+        Ok(manifests.first().cloned())
+    }
+}
+
+pub fn get_work_dir(repo: &git_repository::Repository) -> Result<std::path::PathBuf> {
+    Ok(repo
+        .work_dir()
+        .context("please run onefetch inside of a non-bare git repository")?
+        .to_owned())
 }
 
 fn format_number<T: ToFormattedString + std::fmt::Display>(

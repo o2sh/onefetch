@@ -1,7 +1,7 @@
 use anyhow::Result;
 use git_repository::{open, Repository, ThreadSafeRepository};
 use onefetch::cli::Config;
-use onefetch::info::Info;
+use onefetch::info::{get_work_dir, Info};
 
 fn repo(name: &str) -> Result<Repository> {
     let name = name.to_string();
@@ -13,10 +13,13 @@ fn repo(name: &str) -> Result<Repository> {
 #[test]
 fn test_bare_repo() -> Result<()> {
     let repo = repo("bare_repo.sh")?;
-    let res = Info::init_repo_path(&repo);
-    assert!(res.is_err(), "oops, info was returned on a bare git repo");
+    let work_dir = get_work_dir(&repo);
+    assert!(
+        work_dir.is_err(),
+        "oops, info was returned on a bare git repo"
+    );
     assert_eq!(
-        res.unwrap_err().to_string(),
+        work_dir.unwrap_err().to_string(),
         "please run onefetch inside of a non-bare git repository"
     );
     Ok(())
