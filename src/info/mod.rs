@@ -32,8 +32,6 @@ mod git;
 pub mod info_field;
 pub mod langs;
 mod repo;
-#[cfg(test)]
-pub mod test;
 pub mod title;
 
 #[derive(Serialize)]
