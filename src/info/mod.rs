@@ -18,17 +18,15 @@ use self::repo::size::SizeInfo;
 use self::repo::url::UrlInfo;
 use self::repo::version::VersionInfo;
 use self::title::Title;
-use crate::cli::{is_truecolor_terminal, Config, MyRegex, NumberSeparator, When};
+use crate::cli::{is_truecolor_terminal, Config, NumberSeparator, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
 use num_format::ToFormattedString;
 use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize, Style};
-use regex::Regex;
 use serde::Serialize;
 use std::path::Path;
-use std::str::FromStr;
 
 mod git;
 pub mod info_field;
@@ -127,14 +125,6 @@ impl Info {
             }
         });
 
-        let no_bots = if let Some(r) = config.no_bots.clone() {
-            match r {
-                Some(p) => Some(p),
-                None => Some(MyRegex(Regex::from_str(r"(b|B)ot")?)),
-            }
-        } else {
-            None
-        };
         let (languages, lines_of_code) = languages_handle
             .join()
             .ok()
@@ -177,7 +167,7 @@ impl Info {
         let mut commits = Commits::new(
             git_repo,
             config.no_merges,
-            &no_bots,
+            &config.no_bots,
             config.number_of_authors,
             config.email,
             config.number_separator,

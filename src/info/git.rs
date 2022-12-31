@@ -4,7 +4,9 @@ use anyhow::Result;
 use git::bstr::BString;
 use git_repository as git;
 use git_repository::bstr::ByteSlice;
+use regex::Regex;
 use std::collections::HashMap;
+use std::str::FromStr;
 
 pub struct Commits {
     pub authors: Vec<Author>,
@@ -32,7 +34,7 @@ impl Commits {
     pub fn new(
         mut repo: git::Repository,
         no_merges: bool,
-        bot_regex_pattern: &Option<MyRegex>,
+        no_bots: &Option<Option<MyRegex>>,
         number_of_authors_to_display: usize,
         show_email: bool,
         number_separator: NumberSeparator,
@@ -41,6 +43,7 @@ impl Commits {
         // when we read the commit right after.
         repo.object_cache_size(32 * 1024);
 
+        let bot_regex_pattern = get_no_bots_regex(no_bots)?;
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
         let mut commit_iter = repo.head_commit()?.ancestors().all()?;
@@ -61,7 +64,7 @@ impl Commits {
 
             let sig = Sig::from(mailmap.resolve(commit.author));
 
-            if is_bot(&sig.name, bot_regex_pattern) {
+            if is_bot(&sig.name, &bot_regex_pattern) {
                 continue;
             }
             num_commits += 1;
@@ -118,6 +121,19 @@ impl Commits {
             time_of_most_recent_commit,
         })
     }
+}
+
+fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {
+    let reg = if let Some(r) = no_bots.clone() {
+        match r {
+            Some(p) => Some(p),
+            None => Some(MyRegex(Regex::from_str(r"(b|B)ot")?)),
+        }
+    } else {
+        None
+    };
+
+    Ok(reg)
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
