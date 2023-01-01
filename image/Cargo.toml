@@ -10,7 +10,7 @@ repository = "https://github.com/o2sh/onefetch"
 
 [dependencies]
 anyhow = "1.0"
-clap = { version = "4.0.26", features = ["derive"] }
+clap = { version = "4.0.32", features = ["derive"] }
 image = "0.24.4"
 
 [target.'cfg(not(windows))'.dependencies]
