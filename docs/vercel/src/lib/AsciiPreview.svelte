@@ -35,7 +35,7 @@
 <div class="title-row">
   <div class="language-name">
     <Chip id={name} color={chip} width={24} height={24} />
-    <h3 id={name}><a href="#{name}">{name}</a></h3>
+    <h3 id={name}><a href="#{name}" class="title-link">{name}</a></h3>
   </div>
   <div class="checkbox">
     <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />
@@ -69,6 +69,12 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: baseline;
+  }
+
+  .title-link,
+  .title-link:hover,
+  .title-link:visited {
+      color: #222222;
   }
 
   pre {
