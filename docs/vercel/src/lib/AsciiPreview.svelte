@@ -74,7 +74,7 @@
   .title-link,
   .title-link:hover,
   .title-link:visited {
-      color: #222222;
+    color: #222222;
   }
 
   pre {
