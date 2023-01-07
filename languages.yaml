@@ -1457,7 +1457,7 @@ Makefile:
       - '#FFFFFF'
       - '#FAEC9A'
       - '#610000'
-    chip: '#610000'
+    chip: '#427819'
 Markdown:
   type: prose
   ascii: |
