@@ -35,7 +35,7 @@
 <div class="title-row">
   <div class="language-name">
     <Chip id={name} color={chip} width={24} height={24} />
-    <h3>{name}</h3>
+    <h3 id={name}><a href=#{name}>{name}</a></h3>
   </div>
   <div class="checkbox">
     <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />

@@ -99,6 +99,12 @@ a:hover {
   border-bottom: 2px solid #222222;
 }
 
+h3 a,
+h3 a:hover,
+h3 a:visited {
+  color: #222222;
+}
+
 ul {
   padding-left: 1.4em;
   margin-top: 0px;
