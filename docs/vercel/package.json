@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "format": "prettier -w .",
     "preview": "vite preview",
     "check": "check:svelte && check:prettier && check:eslint",
     "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
