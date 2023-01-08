@@ -1,5 +1,6 @@
 <script lang="ts">
   import Chip from './Chip.svelte';
+  import TitleLink from './TitleLink.svelte';
 
   export let name: string;
   export let ansi: string[];
@@ -35,7 +36,7 @@
 <div class="title-row">
   <div class="language-name">
     <Chip id={name} color={chip} width={24} height={24} />
-    <h3 id={name}><a href="#{name}" class="title-link">{name}</a></h3>
+    <TitleLink {name} />
   </div>
   <div class="checkbox">
     <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />
@@ -69,12 +70,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: baseline;
-  }
-
-  .title-link,
-  .title-link:hover,
-  .title-link:visited {
-    color: #222222;
   }
 
   pre {
