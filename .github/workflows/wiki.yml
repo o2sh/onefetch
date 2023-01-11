@@ -1,0 +1,27 @@
+name: Update Wiki
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push that edits the wiki contents
+  push:
+    branches: [main]
+    paths:
+      - ".github/wiki/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/wiki/**"
+
+  workflow_dispatch:
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    name: Update Wiki
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - uses: spenserblack/actions-wiki@main
+        with:
+          token: ${{ secrets.WIKI_TOKEN }}
