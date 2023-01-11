@@ -19,7 +19,7 @@ By @spenserblack
 # Runs `onefetch -a Assembly`, `onefetch -a C`, etc.
 onefetch -l | tr "[:upper:] " "[:lower:]-" | while read line; do echo "$line"; onefetch -a $line; done;
 ```
-By @Quazar_omega
+By @quazar-omega
 
 A script to put in `.bashrc` to run onefetch whenever you open a shell into a repository or cd into a repository, making sure that it's different from the last one you were in:
 ```sh
