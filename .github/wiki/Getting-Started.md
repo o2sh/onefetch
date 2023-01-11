@@ -21,20 +21,27 @@ onefetch -l | tr "[:upper:] " "[:lower:]-" | while read line; do echo "$line"; o
 ```
 By @Quazar_omega
 
-A little function to put in `.bashrc` to run onefetch whenever you cd into a repo, making sure that it's different from the last one you were in:
+A script to put in `.bashrc` to run onefetch whenever you open a shell into a repository or cd into a repository, making sure that it's different from the last one you were in:
 ```sh
-LAST_REPO=""
-cd() { 
-    builtin cd "$@";
-    git rev-parse 2>/dev/null;
-
-    if [ $? -eq 0 ]; then
-        if [ "$LAST_REPO" != $(basename $(git rev-parse --show-toplevel)) ]; then
-        onefetch
-        LAST_REPO=$(basename $(git rev-parse --show-toplevel))
-        fi
-    fi
+# git repository greeter
+last_repository=
+check_directory_for_new_repository() {
+	current_repository=$(git rev-parse --show-toplevel 2> /dev/null)
+	
+	if [ "$current_repository" ] && \
+	   [ "$current_repository" != "$last_repository" ]; then
+		onefetch
+	fi
+	last_repository=$current_repository
 }
+cd() {
+	builtin cd "$@"
+	check_directory_for_new_repository
+}
+
+# optional, greet also when opening shell directly in repository directory
+# adds time to startup
+check_directory_for_new_repository
 ```
 
 By @mbrehin
