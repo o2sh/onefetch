@@ -4,10 +4,6 @@ on:
     branches: [main]
     paths:
       - ".github/wiki/**"
-  pull_request:
-    branches: [main]
-    paths:
-      - ".github/wiki/**"
 
   workflow_dispatch:
 
