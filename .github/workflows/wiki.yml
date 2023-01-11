@@ -1,8 +1,5 @@
-name: Update Wiki
-
-# Controls when the workflow will run
+name: Sync Wiki
 on:
-  # Triggers the workflow on push that edits the wiki contents
   push:
     branches: [main]
     paths:
@@ -17,10 +14,9 @@ on:
 jobs:
   update-wiki:
     runs-on: ubuntu-latest
-    name: Update Wiki
+    name: Sync Wiki
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       - uses: spenserblack/actions-wiki@main
         with:
