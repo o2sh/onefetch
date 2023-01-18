@@ -14,7 +14,7 @@ rust-version = "1.62.1"
 version = "2.14.2"
 
 [workspace]
-members = ["image", "manifest"]
+members = ["ascii", "image", "manifest"]
 
 [dependencies]
 anyhow = "1.0.66"
@@ -33,8 +33,9 @@ git2 = { version = "0.15.0", default-features = false }
 human-panic = "1.0.3"
 image = "0.24.4"
 num-format = "0.4.4"
-onefetch-image = { path = "image", version = "2.13.2" }
-onefetch-manifest = { path = "manifest", version = "2.13.2" }
+onefetch-ascii = { path = "ascii", version = "2.14.2" }
+onefetch-image = { path = "image", version = "2.14.2" }
+onefetch-manifest = { path = "manifest", version = "2.14.2" }
 owo-colors = "3.5.0"
 regex = "1.6.0"
 serde = "1.0.147"
@@ -51,10 +52,10 @@ typetag = "0.2"
 yaml-rust = "0.4.5"
 
 [dev-dependencies]
+criterion = "0.4.0"
 git-testtools = "0.10.0"
 insta = { version = "1.23.0", features = ["json", "redactions"] }
 pretty_assertions = "1.3.0"
-criterion = "0.4.0"
 
 [[bench]]
 name = "repo"

@@ -1,9 +1,9 @@
 use crate::cli::{Config, When};
 use crate::info::Info;
-use crate::ui::ascii_art::AsciiArt;
 use crate::ui::Language;
 use anyhow::{Context, Result};
 use image::DynamicImage;
+use onefetch_ascii::AsciiArt;
 use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 use std::io::Write;
