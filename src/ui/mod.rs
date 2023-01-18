@@ -1,7 +1,6 @@
 use crate::info::langs::language::Language;
 use owo_colors::{AnsiColors, DynColors};
 
-pub mod ascii_art;
 pub mod printer;
 pub mod text_colors;
 
