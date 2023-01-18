@@ -1,6 +1,6 @@
 # image
 
-Provides the primary interface to diplay images in the terminal.
+Provides the primary interface to diplay images to the terminal.
 
 Protocols supported:
 
