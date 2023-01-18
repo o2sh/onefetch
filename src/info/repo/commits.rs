@@ -34,7 +34,7 @@ impl InfoField for CommitsInfo {
         format!(
             "{}{}",
             format_number(self.number_of_commits, self.number_separator),
-            self.is_shallow.then(|| " (shallow)").unwrap_or_default()
+            self.is_shallow.then_some(" (shallow)").unwrap_or_default()
         )
     }
 
