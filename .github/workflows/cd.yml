@@ -1,8 +1,7 @@
 name: CD
 on:
   release:
-    types: [released]
-  workflow_dispatch:
+    types: [published]
 
 jobs:
   deploy:
