@@ -31,7 +31,7 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
     let mut language_distribution = HashMap::new();
 
     for (language_name, language) in languages.iter() {
-        let mut code = language.code;
+        let mut code = language::compile_tokei_loc(language_name, language);
 
         let has_children = !language.children.is_empty();
 
@@ -114,4 +114,39 @@ fn get_ignored_directories(user_ignored_directories: &[PathBuf]) -> Vec<String> 
         }
     }
     ignored_directories
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use tokei;
+
+    #[test]
+    fn get_language_distribution_counts_md_comments() {
+        let js = tokei::Language {
+            blanks: 25,
+            comments: 50,
+            code: 100,
+            ..Default::default()
+        };
+        let js_type = tokei::LanguageType::JavaScript;
+
+        let md = tokei::Language {
+            blanks: 50,
+            comments: 200,
+            code: 100,
+            ..Default::default()
+        };
+        let md_type = tokei::LanguageType::Markdown;
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(js_type, js);
+        languages.insert(md_type, md);
+
+        let language_distribution = get_language_distribution(&languages).unwrap();
+
+        // NOTE: JS is 25% with 100 lines of code, MD is 75% with 300 lines of code + comments
+        assert_eq!(language_distribution[&Language::JavaScript], 25_f64);
+        assert_eq!(language_distribution[&Language::Markdown], 75_f64);
+    }
 }

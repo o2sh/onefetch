@@ -5,6 +5,7 @@ use owo_colors::{
 use std::fmt;
 use std::fmt::Write;
 use strum::EnumIter;
+use tokei;
 
 pub struct Colors {
     basic_colors: Vec<DynColors>,
@@ -106,6 +107,20 @@ impl Language {
                 Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
         }
+    }
+}
+
+/// Compiles the top-level lines-of-code of a tokei `Language`. Takes into
+/// account that a prose language's comments *are* its code.
+pub fn compile_tokei_loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
+    match language_type {
+        {% for language, attrs in languages -%}
+            tokei::LanguageType::{{ language }} => {
+                {% set line_types = attrs.tokei_line_types | default(value=['code']) %}
+                language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %}
+            },
+        {% endfor %}
+        _ => unimplemented!("Language Type {:?}", language_type),
     }
 }
 
