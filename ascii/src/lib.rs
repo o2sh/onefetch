@@ -211,9 +211,10 @@ fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: 
 type ParseResult<'a, R> = Option<(&'a str, R)>;
 
 fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R> {
-    let token = s.chars().next()?;
+    let mut chars = s.chars();
+    let token = chars.next()?;
     let result = predicate(token)?;
-    Some((s.get(1..).unwrap(), result))
+    Some((chars.as_str(), result))
 }
 
 // Parsers
