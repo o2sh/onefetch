@@ -1,6 +1,52 @@
+//! # onefetch-ascii
+//!
+//! Provides the ascii template interface for [onefetch](https://github.com/
+//!
+//! ```rust
+//! use onefetch_ascii::AsciiArt;
+//! use owo_colors::{DynColors, AnsiColors};
+//!
+//! const ASCII: &str = r#"
+//! {2}            .:--::////::--.`
+//! {1}        `/yNMMNho{2}////////////:.
+//! {1}      `+NMMMMMMMMmy{2}/////////////:`
+//! {0}    `-:::{1}ohNMMMMMMMNy{2}/////////////:`
+//! {0}   .::::::::{1}odMMMMMMMNy{2}/////////////-
+//! {0}  -:::::::::::{1}/hMMMMMMMmo{2}////////////-
+//! {0} .::::::::::::::{1}oMMMMMMMMh{2}////////////-
+//! {0}`:::::::::::::{1}/dMMMMMMMMMMNo{2}///////////`
+//! {0}-::::::::::::{1}sMMMMMMmMMMMMMMy{2}//////////-
+//! {0}-::::::::::{1}/dMMMMMMs{0}:{1}+NMMMMMMd{2}/////////:
+//! {0}-:::::::::{1}+NMMMMMm/{0}:::{1}/dMMMMMMm+{2}///////:
+//! {0}-::::::::{1}sMMMMMMh{0}:::::::{1}dMMMMMMm+{2}//////-
+//! {0}`:::::::{1}sMMMMMMy{0}:::::::::{1}dMMMMMMm+{2}/////`
+//! {0} .:::::{1}sMMMMMMs{0}:::::::::::{1}mMMMMMMd{2}////-
+//! {0}  -:::{1}sMMMMMMy{0}::::::::::::{1}/NMMMMMMh{2}//-
+//! {0}   .:{1}+MMMMMMd{0}::::::::::::::{1}oMMMMMMMo{2}-
+//! {1}    `yMMMMMN/{0}:::::::::::::::{1}hMMMMMh.
+//! {1}      -yMMMo{0}::::::::::::::::{1}/MMMy-
+//! {1}        `/s{0}::::::::::::::::::{1}o/`
+//! {0}            ``.---::::---..`
+//! "#;
+//!
+//! let colors = vec![
+//!     DynColors::Ansi(AnsiColors::Blue),
+//!     DynColors::Ansi(AnsiColors::Default),
+//!     DynColors::Ansi(AnsiColors::BrightBlue)
+//! ];
+//!
+//! let art = AsciiArt::new(ASCII, colors.as_slice(), true);
+//!
+//! for line in art {
+//!     println!("{line}")
+//! }
+//! ```
+//!
+
 use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
 use std::fmt::Write;
 
+/// Renders an ascii template with the given colors truncated to the correct width.
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
     colors: &'a [DynColors],
