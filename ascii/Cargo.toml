@@ -2,7 +2,7 @@
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 name = "onefetch-ascii"
 description = "Display colorized ascii art to the terminal"
-version = "2.15.0"
+version = "2.15.1"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
