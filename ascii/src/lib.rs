@@ -314,6 +314,12 @@ mod test {
             "\u{1b}[39;1m   \u{1b}[0m"
         );
 
+        // https://github.com/o2sh/onefetch/issues/935
+        assert_eq!(
+            Tokens("███").render(Vec::new().as_slice(), 0, 3, true),
+            "\u{1b}[39;1m███\u{1b}[0m"
+        );
+
         assert_eq!(
             Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
             "\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m \u{1b}[0m\u{1b}[39;1m a\u{1b}[0m   "
