@@ -1,6 +1,6 @@
 //! # onefetch-ascii
 //!
-//! Provides the ascii template interface for [onefetch](https://github.com/
+//! Provides the ascii template interface for [onefetch](https://github.com/o2sh/onefetch).
 //!
 //! ```rust
 //! use onefetch_ascii::AsciiArt;
