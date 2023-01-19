@@ -31,7 +31,7 @@ pub struct Config {
     ///
     /// For example:
     ///
-    /// '--ascii-input "$(fortune | cowsay -W 25)"
+    /// '--ascii-input "$(fortune | cowsay -W 25)"'
     #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
