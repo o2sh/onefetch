@@ -1,4 +1,5 @@
 use anyhow::Result;
+use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
 use libc::{
     c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
@@ -38,7 +39,7 @@ impl KittyBackend {
         // print the test image with the action set to query
         print!(
             "\x1B_Gi=1,f=32,s=32,v=32,a=q;{}\x1B\\",
-            base64::encode(&test_image)
+            engine::general_purpose::STANDARD.encode(&test_image)
         );
         stdout().flush().unwrap();
 
@@ -118,7 +119,7 @@ impl super::ImageBackend for KittyBackend {
             raw_image.len()
         );
 
-        let encoded_image = base64::encode(raw_image); // image data is base64 encoded
+        let encoded_image = engine::general_purpose::STANDARD.encode(raw_image); // image data is base64 encoded
         let mut image_data = Vec::<u8>::new();
         for chunk in encoded_image.as_bytes().chunks(4096) {
             // send a 4096 byte chunk of base64 encoded rgba image data
