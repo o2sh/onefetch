@@ -2,7 +2,7 @@
 //!
 //! Provides the ascii template interface for [onefetch](https://github.com/o2sh/onefetch).
 //!
-//! ```rust
+//! ```rust,no_run
 //! use onefetch_ascii::AsciiArt;
 //! use owo_colors::{DynColors, AnsiColors};
 //!
