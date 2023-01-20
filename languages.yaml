@@ -457,22 +457,19 @@ Css:
 CUDA:
   type: programming
   ascii: |
-    {0}                  *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNM
-    {0}                  *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNM
-    {0}            :**IVVF::::**IF$MNNNNNNNNNNNNNNNNNNNNM
-    {0}        :IVMNMVFI**VVFI**:   *I$NNNNNNNNNNNNNNNNNM
-    {0}    :*VMN$I*:    :*VVV$MNNMV*   :*$NNNNNNNNNNNNNNM
-    {0}  *VMNMV*   :IV$NNV     :*VMNMI:   :VNNNNNNNNNNNNM
-    {0}*MNNNV:  :IMNMF*: *$V*:    :$NNMI    *MNNNNNNNNNNM
-    {0}:MNNNF   VNNN*    *NNNM*  *$NNMF:   *$NNNNNNNNNNNM
-    {0} :$NNNF   VNNM:   *NNNNNVMNNMI:  :IMNNN$I$NNNNNNNM
-    {0}   FNNN$:  *MNMF: *NNNNNNMV*   *VMNNMV*   :*FMNNNM
-    {0}    *$NNMI   *VMN$IIIII*:  :*VMNNMV*:       :INNNM
-    {0}      *$NNMF:   **I*****IVMNNN$F*:      :*FMNNNNNM
-    {0}        :I$NNMVI*:*MMM$$$VI*:      :*I$MNNNNNNNNNM
-    {0}           :*IV$MNV       ::**IFV$NNNNNNNNNNNNNNNM
-    {0}                  *$$$$$MMNNNNNNNNNNNNNNNNNNNNNNNM
-    {0}                  *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}               NNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}             ::VVV$MNNNNNNNNNNNNNNNNNNNM
+    {0}       :*IVMM$V**::  :*F$NNNNNNNNNNNNNNM
+    {0}    *I$MV*:   :$$$MN$I*  :I$NNNNNNNNNNNM
+    {0} :IMN$*  :*V$M$    :*$NMI:  *$NNNNNNNNNM
+    {0}FNNNI  *$N$*:  NMI:   FNNM:   $NNNNNNNNM
+    {0}:$NN$: :MN$    NNNM*IMNMI:  IMNNMNNNNNNM
+    {0}  FNN$: :$N$*  NNNNNN$*: :FMNMV* :I$NNNM
+    {0}   *$NMI: *VM$FIFII*: *I$NN$*:     :VNNM
+    {0}     *$NMF*  :*IIIFV$NM$F*:    :*FMNNNNM
+    {0}       :*VMM$VIIII***:   :**F$MNNNNNNNNM
+    {0}           :***I**IIFV$MNNNNNNNNNNNNNNNM
+    {0}               NNNNNNNNNNNNNNNNNNNNNNNNM
   colors:
     ansi:
       - green
