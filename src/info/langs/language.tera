@@ -110,9 +110,9 @@ impl Language {
     }
 }
 
-/// Compiles the top-level lines-of-code of a tokei `Language`. Takes into
+/// Counts the top-level lines-of-code of a tokei `Language`. Takes into
 /// account that a prose language's comments *are* its code.
-pub fn compile_tokei_loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
+pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
     match language_type {
         {% for language, attrs in languages -%}
             tokei::LanguageType::{{ language }} => {

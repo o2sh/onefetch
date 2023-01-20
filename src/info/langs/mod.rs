@@ -31,23 +31,23 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
     let mut language_distribution = HashMap::new();
 
     for (language_name, language) in languages.iter() {
-        let mut code = language::compile_tokei_loc(language_name, language);
+        let mut loc = language::loc(language_name, language);
 
         let has_children = !language.children.is_empty();
 
         if has_children {
             for reports in language.children.values() {
                 for stats in reports.iter().map(|r| r.stats.summarise()) {
-                    code += stats.code;
+                    loc += stats.code;
                 }
             }
         }
 
-        if code == 0 {
+        if loc == 0 {
             continue;
         }
 
-        language_distribution.insert(Language::from(*language_name), code as f64);
+        language_distribution.insert(Language::from(*language_name), loc as f64);
     }
 
     let total: f64 = language_distribution.values().sum();
