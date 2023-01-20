@@ -457,24 +457,22 @@ Css:
 CUDA:
   type: programming
   ascii: |
-    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    {0}                :***I****IFV$NNNNNNNNNNNNNNNNNNNNNNNNNN
-    {0}           **V$NNNM$F::::     :*VMNNNNNNNNNNNNNNNNNNNNN
-    {0}       :I$MNMVI*:   *NNNNNMVI*    :I$NNNNNNNNNNNNNNNNNN
-    {0}    :I$NNMI:    ::*II****IVMNNMV*    :FMNNNNNNNNNNNNNNN
-    {0}  *$NNN$*    *F$NNM$F:      :IMNNMI    :IMNNNNNNNNNNNNN
-    {0}*MNNNM*   *VMNNV*:  *NMV*     :$NNNM:    :MNNNNNNNNNNNN
-    {0}:$NNNN*   VNNNV     *NNNNV  :IMNNN$:   :IMNNNNNNNNNNNNN
-    {0}  $NNNM*   VNNNI    *NNNNN$VMNNNV*   :IMNNNMV$NNNNNNNNN
-    {0}   INNNNI   *MNN$:  *NNNNNNNNMI:   *VNNNNMI:  :*VMNNNNN
-    {0}    *$NNN$:   IMNN$I*$MMM$V*:   *FMNNNMV*         VNNNN
-    {0}      *MNNNV*   *IVMV      :*I$MNNNMF*        :*VMNNNNN
-    {0}        *$NNN$I*    *M$$$MNNNNM$F*:       :*F$NNNNNNNNN
-    {0}          :*VMNNN$VIIIFFII***:      :**F$MNNNNNNNNNNNNN
-    {0}              :*IV$$V     :::**IFV$MNNNNNNNNNNNNNNNNNNN
-    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    {0}                  *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}                  *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}            :**IVVF::::**IF$MNNNNNNNNNNNNNNNNNNNNM
+    {0}        :IVMNMVFI**VVFI**:   *I$NNNNNNNNNNNNNNNNNM
+    {0}    :*VMN$I*:    :*VVV$MNNMV*   :*$NNNNNNNNNNNNNNM
+    {0}  *VMNMV*   :IV$NNV     :*VMNMI:   :VNNNNNNNNNNNNM
+    {0}*MNNNV:  :IMNMF*: *$V*:    :$NNMI    *MNNNNNNNNNNM
+    {0}:MNNNF   VNNN*    *NNNM*  *$NNMF:   *$NNNNNNNNNNNM
+    {0} :$NNNF   VNNM:   *NNNNNVMNNMI:  :IMNNN$I$NNNNNNNM
+    {0}   FNNN$:  *MNMF: *NNNNNNMV*   *VMNNMV*   :*FMNNNM
+    {0}    *$NNMI   *VMN$IIIII*:  :*VMNNMV*:       :INNNM
+    {0}      *$NNMF:   **I*****IVMNNN$F*:      :*FMNNNNNM
+    {0}        :I$NNMVI*:*MMM$$$VI*:      :*I$MNNNNNNNNNM
+    {0}           :*IV$MNV       ::**IFV$NNNNNNNNNNNNNNNM
+    {0}                  *$$$$$MMNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}                  *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNM
   colors:
     ansi:
       - green
