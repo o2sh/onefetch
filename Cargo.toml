@@ -29,7 +29,7 @@ git-features-for-configuration-only = { package = "git-features", version = "0.2
 git-repository = { version = "0.30.2", default-features = false, features = [
     "max-performance-safe",
 ] }
-git2 = { version = "0.15.0", default-features = false }
+git2 = { version = "0.16.1", default-features = false }
 human-panic = "1.0.3"
 image = "0.24.4"
 num-format = "0.4.4"
