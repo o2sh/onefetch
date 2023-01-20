@@ -454,6 +454,31 @@ Css:
       - blue
       - white
     chip: "#563D7C"
+CUDA:
+  type: programming
+  ascii: |
+    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    {0}                :***I****IFV$NNNNNNNNNNNNNNNNNNNNNNNNNN
+    {0}           **V$NNNM$F::::     :*VMNNNNNNNNNNNNNNNNNNNNN
+    {0}       :I$MNMVI*:   *NNNNNMVI*    :I$NNNNNNNNNNNNNNNNNN
+    {0}    :I$NNMI:    ::*II****IVMNNMV*    :FMNNNNNNNNNNNNNNN
+    {0}  *$NNN$*    *F$NNM$F:      :IMNNMI    :IMNNNNNNNNNNNNN
+    {0}*MNNNM*   *VMNNV*:  *NMV*     :$NNNM:    :MNNNNNNNNNNNN
+    {0}:$NNNN*   VNNNV     *NNNNV  :IMNNN$:   :IMNNNNNNNNNNNNN
+    {0}  $NNNM*   VNNNI    *NNNNN$VMNNNV*   :IMNNNMV$NNNNNNNNN
+    {0}   INNNNI   *MNN$:  *NNNNNNNNMI:   *VNNNNMI:  :*VMNNNNN
+    {0}    *$NNN$:   IMNN$I*$MMM$V*:   *FMNNNMV*         VNNNN
+    {0}      *MNNNV*   *IVMV      :*I$MNNNMF*        :*VMNNNNN
+    {0}        *$NNN$I*    *M$$$MNNNNM$F*:       :*F$NNNNNNNNN
+    {0}          :*VMNNN$VIIIFFII***:      :**F$MNNNNNNNNNNNNN
+    {0}              :*IV$$V     :::**IFV$MNNNNNNNNNNNNNNNNNNN
+    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    {0}                    *NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+  colors:
+    ansi:
+      - green
+    chip: "#73B303"
 D:
   type: programming
   ascii: |
