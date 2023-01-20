@@ -115,10 +115,8 @@ impl Language {
 pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
     match language_type {
         {% for language, attrs in languages -%}
-            tokei::LanguageType::{{ language }} => {
-                {% set line_types = attrs.tokei_line_types | default(value=['code']) %}
-                language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %}
-            },
+            {%- set line_types = attrs.tokei_line_types | default(value=['code']) -%}
+            tokei::LanguageType::{{ language }} => language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %},
         {% endfor %}
         _ => unimplemented!("Language Type {:?}", language_type),
     }
