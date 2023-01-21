@@ -1311,7 +1311,7 @@ Jupyter:
       - "#9E9E9E"
     chip: "#DA5B0B"
   serialization: jupyter-notebooks
-  tokei_line_types: [code, comments]
+  line_types: [code, comments]
 Kotlin:
   type: programming
   ascii: |
@@ -1484,7 +1484,7 @@ Markdown:
       - white
       - red
     chip: "#083FA1"
-  tokei_line_types: [code, comments]
+  line_types: [code, comments]
 Nim:
   type: programming
   ascii: |
