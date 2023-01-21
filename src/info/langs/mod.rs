@@ -65,11 +65,9 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
 }
 
 fn get_total_loc(languages: &tokei::Languages) -> usize {
-    languages
-        .values()
-        .collect::<Vec<&tokei::Language>>()
-        .iter()
-        .fold(0, |sum, val| sum + val.code)
+    languages.iter().fold(0, |sum, (lang_type, lang)| {
+        sum + language::loc(lang_type, lang)
+    })
 }
 
 fn get_statistics(
