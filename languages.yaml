@@ -1311,7 +1311,6 @@ Jupyter:
       - "#9E9E9E"
     chip: "#DA5B0B"
   serialization: jupyter-notebooks
-  line_types: [code, comments]
 Kotlin:
   type: programming
   ascii: |
