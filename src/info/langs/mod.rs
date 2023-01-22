@@ -31,17 +31,7 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
     let mut language_distribution = HashMap::new();
 
     for (language_name, language) in languages.iter() {
-        let mut loc = language::loc(language_name, language);
-
-        let has_children = !language.children.is_empty();
-
-        if has_children {
-            for reports in language.children.values() {
-                for stats in reports.iter().map(|r| r.stats.summarise()) {
-                    loc += stats.code;
-                }
-            }
-        }
+        let loc = language::loc(language_name, language);
 
         if loc == 0 {
             continue;
