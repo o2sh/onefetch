@@ -147,4 +147,29 @@ mod test {
         assert_eq!(language_distribution[&Language::JavaScript], 25_f64);
         assert_eq!(language_distribution[&Language::Markdown], 75_f64);
     }
+
+    #[test]
+    fn get_total_loc_counts_md_comments() {
+        let js = tokei::Language {
+            blanks: 25,
+            comments: 50,
+            code: 100,
+            ..Default::default()
+        };
+        let js_type = tokei::LanguageType::JavaScript;
+
+        let md = tokei::Language {
+            blanks: 50,
+            comments: 200,
+            code: 100,
+            ..Default::default()
+        };
+        let md_type = tokei::LanguageType::Markdown;
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(js_type, js);
+        languages.insert(md_type, md);
+
+        assert_eq!(get_total_loc(&languages), 400);
+    }
 }
