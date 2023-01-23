@@ -1,6 +1,7 @@
 use crate::info::info_field::{InfoField, InfoType};
 use owo_colors::OwoColorize;
 use serde::Serialize;
+use tokei;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
@@ -151,6 +152,27 @@ impl InfoField for LanguagesInfo {
     fn should_color(&self) -> bool {
         false
     }
+}
+
+/// Counts the lines-of-code of a tokei `Language`. Takes into
+/// account that a prose language's comments *are* its code.
+pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
+    __loc(language_type, language)
+        + language
+            .children
+            .iter()
+            .fold(0, |sum, (lang_type, reports)| {
+                sum + reports
+                    .iter()
+                    .fold(0, |sum, report| sum + stats_loc(lang_type, &report.stats))
+            })
+}
+
+/// Counts the lines-of-code of a tokei `Report`. This is the child of a
+/// `tokei::CodeStats`.
+pub fn stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
+    let stats = stats.summarise();
+    __stats_loc(language_type, &stats)
 }
 
 #[cfg(test)]

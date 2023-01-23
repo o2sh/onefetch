@@ -5,7 +5,6 @@ use owo_colors::{
 use std::fmt;
 use std::fmt::Write;
 use strum::EnumIter;
-use tokei;
 
 pub struct Colors {
     basic_colors: Vec<DynColors>,
@@ -110,25 +109,18 @@ impl Language {
     }
 }
 
-/// Counts the lines-of-code of a tokei `Language`. Takes into
-/// account that a prose language's comments *are* its code.
-pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
-    let loc = match language_type {
+fn __loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
+    match language_type {
         {% for language, attrs in languages -%}
             {%- set line_types = attrs.line_types | default(value=['code']) -%}
             tokei::LanguageType::{{ language }} => language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %},
         {% endfor %}
         _ => unimplemented!("Language Type {:?}", language_type),
-    };
-    loc + language.children.iter().fold(0, |sum, (lang_type, reports)| {
-        sum + reports.iter().fold(0, |sum, report| sum + stats_loc(lang_type, &report.stats))
-    })
+    }
 }
 
-/// Counts the lines-of-code of a tokei `Report`. This is the child of a
-/// `tokei::CodeStats`.
-pub fn stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
-    let stats = stats.summarise();
+
+fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
     match language_type {
         {% for language, attrs in languages -%}
             {%- set line_types = attrs.line_types | default(value=['code']) -%}
