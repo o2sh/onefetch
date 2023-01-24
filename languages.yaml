@@ -1483,6 +1483,7 @@ Markdown:
       - white
       - red
     chip: "#083FA1"
+  line_types: [code, comments]
 Nim:
   type: programming
   ascii: |

@@ -31,23 +31,13 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
     let mut language_distribution = HashMap::new();
 
     for (language_name, language) in languages.iter() {
-        let mut code = language.code;
+        let loc = language::loc(language_name, language);
 
-        let has_children = !language.children.is_empty();
-
-        if has_children {
-            for reports in language.children.values() {
-                for stats in reports.iter().map(|r| r.stats.summarise()) {
-                    code += stats.code;
-                }
-            }
-        }
-
-        if code == 0 {
+        if loc == 0 {
             continue;
         }
 
-        language_distribution.insert(Language::from(*language_name), code as f64);
+        language_distribution.insert(Language::from(*language_name), loc as f64);
     }
 
     let total: f64 = language_distribution.values().sum();
@@ -65,11 +55,9 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
 }
 
 fn get_total_loc(languages: &tokei::Languages) -> usize {
-    languages
-        .values()
-        .collect::<Vec<&tokei::Language>>()
-        .iter()
-        .fold(0, |sum, val| sum + val.code)
+    languages.iter().fold(0, |sum, (lang_type, lang)| {
+        sum + language::loc(lang_type, lang)
+    })
 }
 
 fn get_statistics(
@@ -114,4 +102,94 @@ fn get_ignored_directories(user_ignored_directories: &[PathBuf]) -> Vec<String> 
         }
     }
     ignored_directories
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use tokei;
+
+    #[test]
+    fn get_language_distribution_counts_md_comments() {
+        let js = tokei::Language {
+            blanks: 25,
+            comments: 50,
+            code: 100,
+            ..Default::default()
+        };
+        let js_type = tokei::LanguageType::JavaScript;
+
+        let md = tokei::Language {
+            blanks: 50,
+            comments: 200,
+            code: 100,
+            ..Default::default()
+        };
+        let md_type = tokei::LanguageType::Markdown;
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(js_type, js);
+        languages.insert(md_type, md);
+
+        let language_distribution = get_language_distribution(&languages).unwrap();
+
+        // NOTE: JS is 25% with 100 lines of code, MD is 75% with 300 lines of code + comments
+        assert_eq!(language_distribution[&Language::JavaScript], 25_f64);
+        assert_eq!(language_distribution[&Language::Markdown], 75_f64);
+    }
+
+    #[test]
+    fn get_total_loc_counts_md_comments() {
+        let js = tokei::Language {
+            blanks: 25,
+            comments: 50,
+            code: 100,
+            ..Default::default()
+        };
+        let js_type = tokei::LanguageType::JavaScript;
+
+        let md = tokei::Language {
+            blanks: 50,
+            comments: 200,
+            code: 100,
+            ..Default::default()
+        };
+        let md_type = tokei::LanguageType::Markdown;
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(js_type, js);
+        languages.insert(md_type, md);
+
+        assert_eq!(get_total_loc(&languages), 400);
+    }
+
+    #[test]
+    fn deeply_nested_total_loc() {
+        let mut bash_code_stats = tokei::CodeStats::new();
+        // NOTE: When inside Markdown, comments should be counted as code
+        bash_code_stats.code = 5;
+        bash_code_stats.blanks = 1;
+        bash_code_stats.comments = 2;
+
+        let mut md_code_stats = tokei::CodeStats::new();
+        md_code_stats.code = 10;
+        md_code_stats.blanks = 2;
+        md_code_stats.comments = 4;
+        md_code_stats
+            .blobs
+            .insert(tokei::LanguageType::Bash, bash_code_stats);
+        // NOTE: This may break if tokei ever does more than just assign `name` to a field
+        let mut md_report = tokei::Report::new("/tmp/file.ipynb".into());
+        md_report.stats = md_code_stats;
+
+        let mut jupyter_notebook = tokei::Language::default();
+        jupyter_notebook
+            .children
+            .insert(tokei::LanguageType::Markdown, vec![md_report]);
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(tokei::LanguageType::Jupyter, jupyter_notebook);
+
+        assert_eq!(get_total_loc(&languages), 21);
+    }
 }
