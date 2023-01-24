@@ -162,4 +162,34 @@ mod test {
 
         assert_eq!(get_total_loc(&languages), 400);
     }
+
+    #[test]
+    fn deeply_nested_total_loc() {
+        let mut bash_code_stats = tokei::CodeStats::new();
+        // NOTE: When inside Markdown, comments should be counted as code
+        bash_code_stats.code = 5;
+        bash_code_stats.blanks = 1;
+        bash_code_stats.comments = 2;
+
+        let mut md_code_stats = tokei::CodeStats::new();
+        md_code_stats.code = 10;
+        md_code_stats.blanks = 2;
+        md_code_stats.comments = 4;
+        md_code_stats
+            .blobs
+            .insert(tokei::LanguageType::Bash, bash_code_stats);
+        // NOTE: This may break if tokei ever does more than just assign `name` to a field
+        let mut md_report = tokei::Report::new("/tmp/file.ipynb".into());
+        md_report.stats = md_code_stats;
+
+        let mut jupyter_notebook = tokei::Language::default();
+        jupyter_notebook
+            .children
+            .insert(tokei::LanguageType::Markdown, vec![md_report]);
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(tokei::LanguageType::Jupyter, jupyter_notebook);
+
+        assert_eq!(get_total_loc(&languages), 21);
+    }
 }
