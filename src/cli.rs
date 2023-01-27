@@ -199,7 +199,7 @@ impl Default for Config {
 
 pub fn print_supported_languages() -> Result<()> {
     for l in Language::iter() {
-        println!("{}", l);
+        println!("{l}");
     }
 
     Ok(())
@@ -207,7 +207,7 @@ pub fn print_supported_languages() -> Result<()> {
 
 pub fn print_supported_package_managers() -> Result<()> {
     for p in ManifestType::iter() {
-        println!("{}", p);
+        println!("{p}");
     }
 
     Ok(())

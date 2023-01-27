@@ -45,15 +45,15 @@ fn get_pending_changes(repo: &git2::Repository) -> Result<String> {
 
     let mut result = String::new();
     if modified > 0 {
-        result = format!("{}+-", modified)
+        result = format!("{modified}+-")
     }
 
     if added > 0 {
-        result = format!("{} {}+", result, added);
+        result = format!("{result} {added}+");
     }
 
     if deleted > 0 {
-        result = format!("{} {}-", result, deleted);
+        result = format!("{result} {deleted}-");
     }
 
     Ok(result.trim().into())

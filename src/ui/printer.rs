@@ -100,7 +100,7 @@ impl<W: Write> Printer<W> {
                     buf.push_str(
                         &image_backend
                             .add_image(
-                                info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                                info_lines.map(|s| format!("{center_pad}{s}")).collect(),
                                 custom_image,
                                 self.color_resolution,
                             )
@@ -116,9 +116,9 @@ impl<W: Write> Printer<W> {
                     loop {
                         match (logo_lines.next(), info_lines.next()) {
                             (Some(logo_line), Some(info_line)) => {
-                                writeln!(buf, "{}{}{:^}", logo_line, center_pad, info_line)?
+                                writeln!(buf, "{logo_line}{center_pad}{info_line:^}")?
                             }
-                            (Some(logo_line), None) => writeln!(buf, "{}", logo_line)?,
+                            (Some(logo_line), None) => writeln!(buf, "{logo_line}")?,
                             (None, Some(info_line)) => writeln!(
                                 buf,
                                 "{:<width$}{}{:^}",
@@ -135,7 +135,7 @@ impl<W: Write> Printer<W> {
                     }
                 }
 
-                write!(self.writer, "{}", buf)?;
+                write!(self.writer, "{buf}")?;
             }
         }
         Ok(())

@@ -114,7 +114,7 @@ impl std::fmt::Display for LanguagesInfo {
             let language_str = format!(
                 "{} {} ",
                 circle,
-                format!("{} ({} %)", language, formatted_number).color(self.info_color)
+                format!("{language} ({formatted_number} %)").color(self.info_color)
             );
             if i % 2 == 0 {
                 let _ = write!(
@@ -128,7 +128,7 @@ impl std::fmt::Display for LanguagesInfo {
                 languages_info.push_str(language_str.trim_end());
             }
         }
-        write!(f, "{}", languages_info)
+        write!(f, "{languages_info}")
     }
 }
 

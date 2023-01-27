@@ -74,7 +74,7 @@ impl std::fmt::Display for Title {
                     )
                 };
 
-            writeln!(f, "{}", git_info_field_str)?;
+            writeln!(f, "{git_info_field_str}")?;
             let separator = "-".repeat(git_info_field_len);
             writeln!(f, "{}", separator.color(self.underline_color))
         } else {

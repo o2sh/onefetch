@@ -34,7 +34,7 @@ impl InfoField for DescriptionInfo {
                         if i != 0 && i % NUMBER_OF_WORDS_PER_LINE == 0 {
                             let _ = write!(description, "\n{:<width$}{} ", "", word, width = pad);
                         } else {
-                            let _ = write!(description, "{} ", word);
+                            let _ = write!(description, "{word} ");
                         }
                     }
 

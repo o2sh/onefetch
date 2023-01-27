@@ -96,13 +96,13 @@ impl std::fmt::Display for AuthorsInfo {
             let author_str = author.color(self.info_color);
 
             if i == 0 {
-                let _ = write!(authors_info, "{}", author_str);
+                let _ = write!(authors_info, "{author_str}");
             } else {
                 let _ = write!(authors_info, "\n{:<width$}{}", "", author_str, width = pad);
             }
         }
 
-        write!(f, "{}", authors_info)
+        write!(f, "{authors_info}")
     }
 }
 

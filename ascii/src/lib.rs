@@ -115,8 +115,8 @@ enum Token {
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
-            Token::Color(c) => write!(f, "{{{}}}", c),
-            Token::Char(c) => write!(f, "{}", c),
+            Token::Color(c) => write!(f, "{{{c}}}"),
+            Token::Char(c) => write!(f, "{c}"),
             Token::Space => write!(f, " "),
         }
     }
@@ -249,7 +249,7 @@ fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: 
         style = style.bold();
     }
     let formatted_segment = segment.style(style);
-    let _ = write!(base, "{}", formatted_segment);
+    let _ = write!(base, "{formatted_segment}");
 }
 
 // Basic combinators

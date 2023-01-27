@@ -95,7 +95,7 @@ fn get_ignored_directories(user_ignored_directories: &[PathBuf]) -> Vec<String> 
             let dir = user_ignored_directory.display().to_string();
             if re.is_match(&dir) {
                 let prefix = if dir.starts_with('/') { "**" } else { "**/" };
-                ignored_directories.push(format!("{}{}", prefix, dir));
+                ignored_directories.push(format!("{prefix}{dir}"));
             } else {
                 ignored_directories.push(dir);
             }
