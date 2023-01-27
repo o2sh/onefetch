@@ -1,5 +1,5 @@
-use super::repo::author::Author;
 use crate::cli::{MyRegex, NumberSeparator};
+use crate::info::author::Author;
 use anyhow::Result;
 use git::bstr::BString;
 use git_repository as git;

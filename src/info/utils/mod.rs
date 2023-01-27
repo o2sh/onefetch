@@ -2,21 +2,8 @@ use git_repository::actor::Time;
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use time_humanize::HumanTime;
 
-pub mod author;
-pub mod commits;
-pub mod contributors;
-pub mod created;
-pub mod dependencies;
-pub mod description;
-pub mod head;
-pub mod last_change;
-pub mod license;
-pub mod loc;
-pub mod pending;
-pub mod project;
-pub mod size;
-pub mod url;
-pub mod version;
+pub mod git;
+pub mod info_field;
 
 pub fn gitoxide_time_to_formatted_time(time: Time, iso_time: bool) -> String {
     if iso_time {

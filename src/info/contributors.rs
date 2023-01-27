@@ -4,8 +4,8 @@ use crate::{
     cli::NumberSeparator,
     info::{
         format_number,
-        git::Commits,
-        info_field::{InfoField, InfoType},
+        utils::git::Commits,
+        utils::info_field::{InfoField, InfoType},
     },
 };
 
@@ -58,7 +58,7 @@ mod test {
 
     #[test]
     fn test_display_contributors_info() {
-        use crate::info::git::Commits;
+        use crate::info::utils::git::Commits;
         use git_repository::actor::Time;
 
         let timestamp = Time::now_utc();

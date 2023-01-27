@@ -2,7 +2,7 @@ use crate::{
     cli::NumberSeparator,
     info::{
         format_number,
-        info_field::{InfoField, InfoType},
+        utils::info_field::{InfoField, InfoType},
     },
 };
 use byte_unit::Byte;

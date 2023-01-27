@@ -2,8 +2,8 @@ use crate::{
     cli::NumberSeparator,
     info::{
         format_number,
-        git::Commits,
-        info_field::{InfoField, InfoType},
+        utils::git::Commits,
+        utils::info_field::{InfoField, InfoType},
     },
 };
 use git_repository as git;

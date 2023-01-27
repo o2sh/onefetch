@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::{InfoField, InfoType};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::fmt::Write;

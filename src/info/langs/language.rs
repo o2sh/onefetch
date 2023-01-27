@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::{InfoField, InfoType};
 use owo_colors::OwoColorize;
 use serde::Serialize;
 use tokei;

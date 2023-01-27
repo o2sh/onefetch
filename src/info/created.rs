@@ -1,10 +1,9 @@
-use serde::Serialize;
-
-use super::gitoxide_time_to_formatted_time;
+use super::utils::gitoxide_time_to_formatted_time;
 use crate::info::{
-    git::Commits,
-    info_field::{InfoField, InfoType},
+    utils::git::Commits,
+    utils::info_field::{InfoField, InfoType},
 };
+use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

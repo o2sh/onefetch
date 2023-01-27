@@ -1,4 +1,4 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::{InfoField, InfoType};
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
