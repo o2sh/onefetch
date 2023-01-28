@@ -27,12 +27,24 @@ pub struct LanguagesInfo {
 
 impl LanguagesInfo {
     pub fn new(
-        languages: Vec<(Language, f64)>,
+        loc_by_language: &[(Language, usize)],
         true_color: bool,
         number_of_languages: usize,
         info_color: DynColors,
     ) -> Self {
-        let languages_with_percentage = languages
+        let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
+
+        let weight_by_language: Vec<(Language, f64)> = loc_by_language
+            .iter()
+            .map(|(k, v)| {
+                let mut val = *v as f64;
+                val /= total as f64;
+                val *= 100_f64;
+                (*k, val)
+            })
+            .collect();
+
+        let languages_with_percentage = weight_by_language
             .into_iter()
             .map(|(language, percentage)| LanguageWithPercentage {
                 language,

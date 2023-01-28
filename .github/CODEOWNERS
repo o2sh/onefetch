@@ -1,7 +1,7 @@
 /.github/ @spenserblack @o2sh
 /image/src/ @CephalonRho @yoichi
-/src/info/git.rs @Byron
-/src/info/repo/ @o2sh
+/src/info/utils/git.rs @Byron
+/src/info/ @o2sh
 /languages.yaml @spenserblack @o2sh
 /src/info/langs/language.tera @spenserblack
 /src/cli.rs @spenserblack @o2sh
