@@ -8,27 +8,37 @@ use strum::IntoEnumIterator;
 
 pub mod language;
 
-pub fn get_dominant_language(languages_stat_vec: &[(Language, f64)]) -> Language {
-    languages_stat_vec[0].0
+pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
+    loc_by_language[0].0
 }
 
-pub fn get_language_statistics(
+/// Returns a vector of tuples containing all the languages detected inside the repository.
+/// Each tuple is composed of the language and its corresponding loc (lines of code).
+/// The vector is sorted by loc in descending order.
+pub fn get_loc_by_language_sorted(
     dir: &Path,
     ignored_directories: &[PathBuf],
     language_types: &[LanguageType],
     include_hidden: bool,
-) -> Result<(Vec<(Language, f64)>, usize)> {
+) -> Result<Vec<(Language, usize)>> {
     let stats = get_statistics(dir, ignored_directories, language_types, include_hidden);
-    let language_distribution = get_language_distribution(&stats)
-        .context("Could not find any source code in this repository")?;
-    let mut language_distribution_vec: Vec<(_, _)> = language_distribution.into_iter().collect();
-    language_distribution_vec.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().reverse());
-    let loc = get_total_loc(&stats);
-    Ok((language_distribution_vec, loc))
+
+    let loc_by_language =
+        get_loc_by_language(&stats).context("Could not find any source code in this repository")?;
+
+    let loc_by_language_sorted = sort_by_loc(loc_by_language);
+
+    Ok(loc_by_language_sorted)
 }
 
-fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Language, f64>> {
-    let mut language_distribution = HashMap::new();
+fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
+    let mut vec: Vec<(Language, usize)> = map.into_iter().collect();
+    vec.sort_by(|a, b| b.1.cmp(&a.1));
+    vec
+}
+
+fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language, usize>> {
+    let mut loc_by_language = HashMap::new();
 
     for (language_name, language) in languages.iter() {
         let loc = language::loc(language_name, language);
@@ -37,27 +47,20 @@ fn get_language_distribution(languages: &tokei::Languages) -> Option<HashMap<Lan
             continue;
         }
 
-        language_distribution.insert(Language::from(*language_name), loc as f64);
+        loc_by_language.insert(Language::from(*language_name), loc);
     }
 
-    let total: f64 = language_distribution.values().sum();
-
-    if total.abs() < f64::EPSILON {
+    let total_loc: usize = loc_by_language.values().sum();
+    if total_loc == 0 {
         None
     } else {
-        for (_, val) in language_distribution.iter_mut() {
-            *val /= total;
-            *val *= 100_f64;
-        }
-
-        Some(language_distribution)
+        Some(loc_by_language)
     }
 }
 
-fn get_total_loc(languages: &tokei::Languages) -> usize {
-    languages.iter().fold(0, |sum, (lang_type, lang)| {
-        sum + language::loc(lang_type, lang)
-    })
+pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
+    let total_loc: usize = loc_by_language.iter().map(|(_, v)| v).sum();
+    total_loc
 }
 
 fn get_statistics(
@@ -110,7 +113,7 @@ mod test {
     use tokei;
 
     #[test]
-    fn get_language_distribution_counts_md_comments() {
+    fn get_loc_by_language_counts_md_comments() {
         let js = tokei::Language {
             blanks: 25,
             comments: 50,
@@ -131,36 +134,11 @@ mod test {
         languages.insert(js_type, js);
         languages.insert(md_type, md);
 
-        let language_distribution = get_language_distribution(&languages).unwrap();
+        let loc_by_language = get_loc_by_language(&languages).unwrap();
 
-        // NOTE: JS is 25% with 100 lines of code, MD is 75% with 300 lines of code + comments
-        assert_eq!(language_distribution[&Language::JavaScript], 25_f64);
-        assert_eq!(language_distribution[&Language::Markdown], 75_f64);
-    }
-
-    #[test]
-    fn get_total_loc_counts_md_comments() {
-        let js = tokei::Language {
-            blanks: 25,
-            comments: 50,
-            code: 100,
-            ..Default::default()
-        };
-        let js_type = tokei::LanguageType::JavaScript;
-
-        let md = tokei::Language {
-            blanks: 50,
-            comments: 200,
-            code: 100,
-            ..Default::default()
-        };
-        let md_type = tokei::LanguageType::Markdown;
-
-        let mut languages = tokei::Languages::new();
-        languages.insert(js_type, js);
-        languages.insert(md_type, md);
-
-        assert_eq!(get_total_loc(&languages), 400);
+        // NOTE: JS  with 100 lines of code, MD with 300 lines of code + comments
+        assert_eq!(loc_by_language[&Language::JavaScript], 100);
+        assert_eq!(loc_by_language[&Language::Markdown], 300);
     }
 
     #[test]
@@ -190,6 +168,35 @@ mod test {
         let mut languages = tokei::Languages::new();
         languages.insert(tokei::LanguageType::Jupyter, jupyter_notebook);
 
-        assert_eq!(get_total_loc(&languages), 21);
+        let loc_by_language = get_loc_by_language(&languages).unwrap();
+
+        assert_eq!(loc_by_language[&Language::Jupyter], 21);
+    }
+
+    #[test]
+    fn test_get_loc_by_language_sorted() {
+        let mut map = HashMap::new();
+        map.insert(Language::Ada, 300);
+        map.insert(Language::Java, 40);
+        map.insert(Language::Rust, 1200);
+        map.insert(Language::Go, 8);
+
+        let sorted_map = sort_by_loc(map);
+
+        let expected_order = vec![
+            (Language::Rust, 1200),
+            (Language::Ada, 300),
+            (Language::Java, 40),
+            (Language::Go, 8),
+        ];
+        let actual_order: Vec<_> = sorted_map.into_iter().collect();
+
+        assert_eq!(expected_order, actual_order);
+    }
+
+    #[test]
+    fn test_get_total_loc() {
+        let loc_by_language = [(Language::JavaScript, 100), (Language::Markdown, 300)];
+        assert_eq!(get_total_loc(&loc_by_language), 400);
     }
 }

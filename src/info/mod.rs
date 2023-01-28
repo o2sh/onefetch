@@ -114,13 +114,13 @@ impl Info {
         let git_repo = git_repository::discover(&config.input)?;
         let repo_path = get_work_dir(&git_repo)?;
 
-        let languages_handle = std::thread::spawn({
+        let loc_by_language_sorted_handle = std::thread::spawn({
             let ignored_directories = config.exclude.clone();
             let language_types = config.r#type.clone();
             let include_hidden = config.include_hidden;
             let workdir = repo_path.clone();
             move || {
-                langs::get_language_statistics(
+                langs::get_loc_by_language_sorted(
                     &workdir,
                     &ignored_directories,
                     &language_types,
@@ -129,11 +129,11 @@ impl Info {
             }
         });
 
-        let (languages, lines_of_code) = languages_handle
+        let loc_by_language = loc_by_language_sorted_handle
             .join()
             .ok()
             .context("BUG: panic in language statistics thread")??;
-        let dominant_language = langs::get_dominant_language(&languages);
+        let dominant_language = langs::get_main_language(&loc_by_language);
         let true_color = match config.true_color {
             When::Always => true,
             When::Never => false,
@@ -178,7 +178,7 @@ impl Info {
         )?;
         let created = CreatedInfo::new(config.iso_time, &commits);
         let languages = LanguagesInfo::new(
-            languages,
+            &loc_by_language,
             true_color,
             config.number_of_languages,
             text_colors.info,
@@ -189,7 +189,7 @@ impl Info {
         let contributors =
             ContributorsInfo::new(&commits, config.number_of_authors, config.number_separator);
         let commits = CommitsInfo::new(&commits, config.number_separator);
-        let lines_of_code = LocInfo::new(lines_of_code, config.number_separator);
+        let lines_of_code = LocInfo::new(&loc_by_language, config.number_separator);
 
         let info_fields: Vec<Box<dyn InfoField>> = vec![
             Box::new(project),
