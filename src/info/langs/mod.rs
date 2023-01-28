@@ -12,6 +12,9 @@ pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
     loc_by_language[0].0
 }
 
+/// Returns a vector of tuples containing all the languages detected inside the repository.
+/// Each tuple is composed of the language and its corresponding loc (lines of code).
+/// The vector is sorted by loc in descending order.
 pub fn get_loc_by_language_sorted(
     dir: &Path,
     ignored_directories: &[PathBuf],
