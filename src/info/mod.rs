@@ -114,7 +114,7 @@ impl Info {
         let git_repo = git_repository::discover(&config.input)?;
         let repo_path = get_work_dir(&git_repo)?;
 
-        let loc_by_language_handle = std::thread::spawn({
+        let loc_by_language_sorted_handle = std::thread::spawn({
             let ignored_directories = config.exclude.clone();
             let language_types = config.r#type.clone();
             let include_hidden = config.include_hidden;
@@ -129,7 +129,7 @@ impl Info {
             }
         });
 
-        let loc_by_language = loc_by_language_handle
+        let loc_by_language = loc_by_language_sorted_handle
             .join()
             .ok()
             .context("BUG: panic in language statistics thread")??;
