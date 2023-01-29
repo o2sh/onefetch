@@ -70,10 +70,10 @@ fn get_statistics(
     include_hidden: bool,
 ) -> tokei::Languages {
     let mut languages = tokei::Languages::new();
-    let supported_languages = get_supported_languages(language_types);
+    let filtered_languages = filter_languages_on_type(language_types);
 
     let tokei_config = tokei::Config {
-        types: Some(supported_languages),
+        types: Some(filtered_languages),
         hidden: Some(include_hidden),
         ..tokei::Config::default()
     };
@@ -83,7 +83,7 @@ fn get_statistics(
     languages
 }
 
-fn get_supported_languages(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
+fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
         .filter(|language| types.contains(&language.get_type()))
         .map(|language| language.into())
