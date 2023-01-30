@@ -373,9 +373,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.1.1"
+version = "4.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ec7a4128863c188deefe750ac1d1dfe66c236909f845af04beed823638dc1b2"
+checksum = "f13b9c79b5d1dd500d20ef541215a6423c75829ef43117e1b4d17fd8af0b5d76"
 dependencies = [
  "bitflags",
  "clap_derive",
@@ -392,7 +392,7 @@ version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce8955d4e8cd4f28f9a01c93a050194c4d131e73ca02f6636bcddbed867014d7"
 dependencies = [
- "clap 4.1.1",
+ "clap 4.1.4",
 ]
 
 [[package]]
@@ -2143,7 +2143,7 @@ dependencies = [
  "askalono",
  "byte-unit",
  "bytecount",
- "clap 4.1.1",
+ "clap 4.1.4",
  "clap_complete",
  "criterion",
  "enable-ansi-support",
@@ -2189,7 +2189,7 @@ version = "2.15.1"
 dependencies = [
  "anyhow",
  "base64",
- "clap 4.1.1",
+ "clap 4.1.4",
  "color_quant",
  "image",
  "libc",
