@@ -26,6 +26,7 @@ DisableProgramGroupPage=yes
 OutputDir=..\..
 OutputBaseFilename=onefetch-setup
 SetupIconFile=..\..\assets\onefetch.ico
+UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

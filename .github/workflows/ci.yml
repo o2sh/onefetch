@@ -6,12 +6,16 @@ on:
       - "docs/**"
       - "**.md"
       - "docs/vercel/**"
+      - ".gitpod.yml"
   pull_request:
     branches: [main]
     paths-ignore:
       - "docs/**"
       - "**.md"
       - "docs/vercel/**"
+      - ".gitpod.yml"
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
@@ -25,22 +29,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Restore cargo cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
-          default: true
-          profile: minimal
           components: clippy
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Build Debug
         run: |
@@ -63,12 +59,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
           components: rustfmt
 
-      - name: Run rustfmt 
+      - name: Run rustfmt
         run: cargo fmt -- --check
 
   coverage:
@@ -77,11 +73,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install nightly toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@v1
         with:
-          toolchain: stable 
-          override: true
+          toolchain: stable
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Install cargo-tarpaulin
         uses: actions-rs/install@v0.1

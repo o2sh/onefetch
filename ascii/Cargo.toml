@@ -1,0 +1,12 @@
+[package]
+authors = ["o2sh <ossama-hjaji@live.fr>"]
+name = "onefetch-ascii"
+description = "Display colorized ascii art to the terminal"
+version = "2.15.1"
+edition = "2021"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/o2sh/onefetch"
+
+[dependencies]
+owo-colors = "3.5.0"

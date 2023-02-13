@@ -1,0 +1,10 @@
+{
+  "name": "Rust",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": { "VARIANT": "buster" }
+  },
+  "postCreateCommand": "git config --global --add safe.directory $PWD && cargo install cargo-insta",
+  "extensions": ["EditorConfig.EditorConfig"],
+  "remoteUser": "vscode"
+}

@@ -1,14 +1,16 @@
-use crate::info::deps::package_manager::PackageManager;
-use crate::info::info_field::InfoType;
 use crate::info::langs::language::{Language, LanguageType};
-use crate::ui::image_backends::ImageProtocol;
+use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
+use num_format::CustomFormat;
+use onefetch_image::ImageProtocol;
+use onefetch_manifest::ManifestType;
 use regex::Regex;
+use serde::Serialize;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -29,7 +31,7 @@ pub struct Config {
     ///
     /// For example:
     ///
-    /// '--ascii-input "$(fortune | cowsay -W 25)'
+    /// '--ascii-input "$(fortune | cowsay -W 25)"'
     #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Which LANGUAGE's ascii art to print
@@ -85,10 +87,16 @@ pub struct Config {
     /// Hides the color palette
     #[arg(long)]
     pub no_color_palette: bool,
-    /// NUM of authors to be shown
-    #[arg(long, short, default_value_t = 3usize, value_name = "NUM")]
+    /// Hides the title
+    #[arg(long)]
+    pub no_title: bool,
+    /// Maximum NUM of authors to be shown
+    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_authors: usize,
-    /// gnore all files & directories matching EXCLUDE
+    /// Maximum NUM of languages to be shown
+    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    pub number_of_languages: usize,
+    /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
@@ -122,7 +130,7 @@ pub struct Config {
     /// '--text-colors 9 10 11 12 13 14'
     #[arg(
         long,
-        short = 't',
+        short,
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6
@@ -131,6 +139,9 @@ pub struct Config {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
+    /// Which thousands SEPARATOR to use
+    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    pub number_separator: NumberSeparator,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -151,17 +162,52 @@ pub struct Config {
     pub completion: Option<Shell>,
 }
 
+impl Default for Config {
+    fn default() -> Config {
+        Config {
+            input: PathBuf::from("."),
+            ascii_input: Default::default(),
+            ascii_language: Default::default(),
+            ascii_colors: Default::default(),
+            disabled_fields: Default::default(),
+            image: Default::default(),
+            image_protocol: Default::default(),
+            color_resolution: 16,
+            no_bold: Default::default(),
+            no_merges: Default::default(),
+            no_color_palette: Default::default(),
+            no_title: Default::default(),
+            number_of_authors: 3,
+            number_of_languages: 6,
+            exclude: Default::default(),
+            no_bots: Default::default(),
+            languages: Default::default(),
+            package_managers: Default::default(),
+            output: Default::default(),
+            true_color: When::Auto,
+            show_logo: When::Always,
+            text_colors: Default::default(),
+            iso_time: Default::default(),
+            number_separator: NumberSeparator::Plain,
+            email: Default::default(),
+            include_hidden: Default::default(),
+            r#type: vec![LanguageType::Programming, LanguageType::Markup],
+            completion: Default::default(),
+        }
+    }
+}
+
 pub fn print_supported_languages() -> Result<()> {
     for l in Language::iter() {
-        println!("{}", l);
+        println!("{l}");
     }
 
     Ok(())
 }
 
 pub fn print_supported_package_managers() -> Result<()> {
-    for p in PackageManager::iter() {
-        println!("{}", p);
+    for p in ManifestType::iter() {
+        println!("{p}");
     }
 
     Ok(())
@@ -193,26 +239,55 @@ pub enum When {
     Always,
 }
 
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+pub enum NumberSeparator {
+    Plain,
+    Comma,
+    Space,
+    Underscore,
+}
+
+impl NumberSeparator {
+    fn separator(&self) -> &'static str {
+        match self {
+            Self::Plain => "",
+            Self::Comma => ",",
+            Self::Space => "\u{202f}",
+            Self::Underscore => "_",
+        }
+    }
+
+    pub fn get_format(&self) -> CustomFormat {
+        num_format::CustomFormat::builder()
+            .grouping(num_format::Grouping::Standard)
+            .separator(self.separator())
+            .build()
+            .unwrap()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test_default_config() {
-        let config = get_default_config();
+        let config: Config = Default::default();
         assert_eq!(config, Config::parse_from(&["onefetch"]))
     }
 
     #[test]
     fn test_custom_config() {
-        let mut config = get_default_config();
-        config.number_of_authors = 4;
-        config.input = PathBuf::from("/tmp/folder");
-        config.no_merges = true;
-        config.ascii_colors = vec![5, 0];
-        config.disabled_fields = vec![InfoType::Version, InfoType::Repo];
-        config.show_logo = When::Never;
-        config.ascii_language = Some(Language::Lisp);
+        let config: Config = Config {
+            number_of_authors: 4,
+            input: PathBuf::from("/tmp/folder"),
+            no_merges: true,
+            ascii_colors: vec![5, 0],
+            disabled_fields: vec![InfoType::Version, InfoType::URL],
+            show_logo: When::Never,
+            ascii_language: Some(Language::Lisp),
+            ..Default::default()
+        };
 
         assert_eq!(
             config,
@@ -227,7 +302,7 @@ mod test {
                 "0",
                 "--disabled-fields",
                 "version",
-                "repo",
+                "url",
                 "--show-logo",
                 "never",
                 "--ascii-language",
@@ -254,36 +329,6 @@ mod test {
     #[test]
     fn test_config_with_text_colors_but_out_of_bounds() {
         assert!(Config::try_parse_from(&["onefetch", "--text-colors", "17"]).is_err())
-    }
-
-    fn get_default_config() -> Config {
-        Config {
-            input: PathBuf::from("."),
-            ascii_input: Default::default(),
-            ascii_language: Default::default(),
-            ascii_colors: Default::default(),
-            disabled_fields: Default::default(),
-            image: Default::default(),
-            image_protocol: Default::default(),
-            color_resolution: 16,
-            no_bold: Default::default(),
-            no_merges: Default::default(),
-            no_color_palette: Default::default(),
-            number_of_authors: 3,
-            exclude: Default::default(),
-            no_bots: Default::default(),
-            languages: Default::default(),
-            package_managers: Default::default(),
-            output: Default::default(),
-            true_color: When::Auto,
-            show_logo: When::Always,
-            text_colors: Default::default(),
-            iso_time: Default::default(),
-            email: Default::default(),
-            include_hidden: Default::default(),
-            r#type: vec![LanguageType::Programming, LanguageType::Markup],
-            completion: Default::default(),
-        }
     }
 }
 

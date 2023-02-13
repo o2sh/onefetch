@@ -1,10 +1,10 @@
 name: onefetch
-base: core18 # the base snap is the execution environment for this snap
+base: core22
 adopt-info: onefetch
-summary: Git repository summary in your terminal
+summary: Command-line Git information tool
 description: |
   Onefetch is a command-line Git information tool that displays project information
-  and code statistics for a local Git repository directly in your terminal.
+  and code statistics for a local Git repository directly to your terminal.
 
 grade: stable
 confinement: strict
@@ -13,6 +13,10 @@ parts:
   onefetch:
     plugin: rust
     source: .
+    build-packages:
+      - cargo
+      - rustc
+      - cmake
     stage-packages:
       - git
     override-build: |

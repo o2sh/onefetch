@@ -2,7 +2,6 @@
   import AsciiPreview from './lib/AsciiPreview.svelte';
   import data from '../../../languages.yaml';
   import type { Languages } from '../../../languages.yaml';
-  import BackToTop from './lib/BackToTop.svelte';
 
   const languages = Object.entries(data as Languages).map(
     ([name, { ascii, colors }]) => ({
@@ -16,8 +15,8 @@
 <header>
   <div class="banner">
     <small
-      >v2.12.0 is available 🎉 go check the <a
-        href="https://github.com/o2sh/onefetch/releases/tag/v2.12.0"
+      >Version 2.15 is available 🎉 Check the <a
+        href="https://github.com/o2sh/onefetch/releases/tag/2.15.0"
         >release notes</a
       >!!</small>
   </div>
@@ -53,8 +52,6 @@
       ascii={language.ascii}
       chip={language.chip} />
   {/each}
-
-  <BackToTop />
 </main>
 
 <style>

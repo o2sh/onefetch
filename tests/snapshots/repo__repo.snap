@@ -1,0 +1,125 @@
+---
+source: tests/repo.rs
+expression: info
+---
+{
+  "title": {
+    "gitUsername": "onefetch-committer-name",
+    "gitVersion": "git version"
+  },
+  "infoFields": [
+    {
+      "ProjectInfo": {
+        "repoName": "repo",
+        "numberOfBranches": 0,
+        "numberOfTags": 1
+      }
+    },
+    {
+      "DescriptionInfo": {
+        "description": "Amazing tool"
+      }
+    },
+    {
+      "HeadInfo": {
+        "headRefs": {
+          "shortCommitId": "short commit",
+          "refs": [
+            "main"
+          ]
+        }
+      }
+    },
+    {
+      "PendingInfo": {
+        "pendingChanges": "1+- 2+"
+      }
+    },
+    {
+      "VersionInfo": {
+        "version": "tag1"
+      }
+    },
+    {
+      "CreatedInfo": {
+        "creationDate": "2000-01-02T00:00:00Z"
+      }
+    },
+    {
+      "LanguagesInfo": {
+        "languagesWithPercentage": [
+          {
+            "language": "Rust",
+            "percentage": 100.0
+          }
+        ]
+      }
+    },
+    {
+      "DependenciesInfo": {
+        "dependencies": "1 (Cargo)"
+      }
+    },
+    {
+      "AuthorsInfo": {
+        "authors": [
+          {
+            "name": "Author Four",
+            "email": "author4@example.org",
+            "nbrOfCommits": 1,
+            "contribution": 25
+          },
+          {
+            "name": "Author One",
+            "email": "author1@example.org",
+            "nbrOfCommits": 1,
+            "contribution": 25
+          },
+          {
+            "name": "Author Three",
+            "email": "author3@example.org",
+            "nbrOfCommits": 1,
+            "contribution": 25
+          }
+        ]
+      }
+    },
+    {
+      "LastChangeInfo": {
+        "lastChange": "2000-01-02T00:00:00Z"
+      }
+    },
+    {
+      "ContributorsInfo": {
+        "numberOfContributors": 4
+      }
+    },
+    {
+      "UrlInfo": {
+        "repoUrl": "https://github.com/user/repo.git"
+      }
+    },
+    {
+      "CommitsInfo": {
+        "numberOfCommits": 4,
+        "isShallow": false
+      }
+    },
+    {
+      "LocInfo": {
+        "linesOfCode": 4
+      }
+    },
+    {
+      "SizeInfo": {
+        "repoSize": "22 B",
+        "fileCount": 1
+      }
+    },
+    {
+      "LicenseInfo": {
+        "license": "MIT"
+      }
+    }
+  ]
+}

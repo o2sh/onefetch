@@ -1,6 +1,6 @@
 <h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
 
-<h5 align="center">A command-line Git information tool written in Rust</h5>
+<h5 align="center">Command-line Git information tool written in Rust</h5>
 
 <p align="center">
 	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
@@ -12,17 +12,15 @@
 </p>
 
 <p align="center">
-  <a href="docs/README.ja.md"><img title="日本語" alt="日本語" src="assets/flags/jp.svg" height="18"></a>&nbsp;
-  <a href="docs/README.fa.md"><img title="فارسی" alt="فارسی" src="assets/flags/ir.svg" height="18"></a>&nbsp;
-  <a href="docs/README.cn.md"><img title="简体中文" title="简体中文" src="assets/flags/cn.svg" height="18"></a>&nbsp;
-  <a href="docs/README.ru.md"><img title="Русский" title="Русский" src="assets/flags/ru.svg" height="18"></a>&nbsp;
-  <a href="docs/README.es.md"><img title="Español" title="Español" src="assets/flags/es.svg" height="18"></a>&nbsp;
-  <a href="docs/README.fr.md"><img title="Français" title="Français" src="assets/flags/fr.svg" height="18"></a>
+  <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.fa.md">فارسی</a> |
+  <a href="docs/README.cn.md">简体中文</a> | <a href="docs/README.ru.md">Русский</a> |
+  <a href="docs/README.es.md">Español</a> | <a href="docs/README.fr.md">Français</a> |
+  <a href="docs/README.kr.md">한국어</a> | <a href="docs/README.ar.md">العربية</a>
 </p>
 
 <img src="assets/screenshot-1.png" align="right" height="240px">
 
-Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly in your terminal. The tool is completely offline - no network access is required.
+Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly to your terminal. The tool is completely offline - no network access is required.
 
 By default, the repo's information is displayed alongside the dominant language's logo, but you can further configure onefetch to instead use an image - on supported terminals -, a text input or nothing at all.
 

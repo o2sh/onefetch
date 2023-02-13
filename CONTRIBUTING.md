@@ -7,7 +7,6 @@ Adding support for a new Language consists in adding a new entry to [language.ya
 ```
 CSharp: # required, this will be the name of the enum variant for the language as specified by tokei (link 1)
   type: programming # required, can be programming, data, markup, or prose as specified by linguist (link 2)
-  
   # required, this is the logo. If it's not within 25x40 bounds, you will get a compiler error. Use `{i}` to color the ascii with `i` the color index.
   ascii: |
     {0}                 ++++++
@@ -48,34 +47,14 @@ CSharp: # required, this will be the name of the enum variant for the language a
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
+_**NOTE**: An additional field, `line_types` can also be set on a language's attributes. It has been excluded because_
+_it is not necessary for the majority of languages. By default, only a language's lines of code are counted, but this_
+_field can be used to count other lines, too. For example, `line_types: [code, comments]`. This is useful in langauges_
+_like Markdown, where the significant lines are mostly comments. A list of available fields to be used can be found in_
+_[tokei's documentation](https://docs.rs/tokei/latest/tokei/struct.Language.html#fields)._
+
 - link 1: https://github.com/XAMPPRocky/tokei#supported-languages
 - link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-
-### Adding support for a new package manager
-
-To add a new package manager, make sure to follow these steps:
-
-1. Add a new entry in the `define_package_managers!` macro in [package_manager.rs](src/info/deps/package_manager.rs).
-
-**Example**:
-
-`{ Cargo, "cargo", [ ("Cargo.toml", cargo) ] },`
-
-The first item `Cargo` corresponds to the name of the package manager. The second item `cargo` is the display name. Then we have the name of the package manager file that will be parsed: `Cargo.toml` along with its parser `cargo` (cf. step 2), notice that the third item is an array of tuple in case the package manager has multiple parsers (e.g. pip).
-
-2. In [package_manager.rs](src/info/deps/package_manager.rs): create a function that takes an input of type `&str` representing the content of the package manager's file, and returns a `usize` as its number of dependencies.
-
-```rust
-pub fn cargo(contents: &str) -> Result<usize> {
-    let parsed = contents.parse::<Value>()?;
-    let count = parsed.get("dependencies");
-
-    match count {
-        Some(val) => Ok(val.as_table().unwrap().len()),
-        None => Ok(0),
-    }
-}
-```
 
 ### Adding translation for README.md
 

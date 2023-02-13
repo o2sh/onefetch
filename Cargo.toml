@@ -1,65 +1,65 @@
 [package]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 categories = ["command-line-utilities"]
-description = "Git repository summary in your terminal"
-edition = "2018"
-exclude = ["assets/*", "docs/vercel/*"]
+description = "Command-line Git information tool"
+edition = "2021"
+exclude = ["docs/vercel/*"]
 keywords = ["git", "cli", "terminal"]
 license = "MIT"
 name = "onefetch"
 readme = "README.md"
 repository = "https://github.com/o2sh/onefetch"
-rust-version = "1.60.0"
-version = "2.12.0"
+homepage = "https://onefetch.dev"
+rust-version = "1.62.1"
+version = "2.15.1"
 
-[package.metadata.deb]
-depends = "$auto"
-extended-description = """\
-Onefetch is a command-line Git information tool written in Rust \
-that displays project information and code statistics \
-for a local Git repository directly in your terminal."""
-maintainer = "o2sh <ossama-hjaji@live.fr>"
-priority = "optional"
-section = "utility"
+[workspace]
+members = ["ascii", "image", "manifest"]
 
 [dependencies]
-anyhow = "1.0.65"
+anyhow = "1.0.66"
 askalono = "0.4.6"
-byte-unit = "4.0.14"
+byte-unit = "4.0.18"
 bytecount = "0.6.3"
-clap = { version = "4.0.10", features = ["derive"] }
-clap_complete = "4.0.2"
-color_quant = "1.1.0"
-git-features-for-configuration-only = { package = "git-features", version = "0.22.4", features = [
+clap = { version = "4.1.1", features = ["derive"] }
+clap_complete = "4.1.0"
+git-features-for-configuration-only = { package = "git-features", version = "0.23.1", features = [
     "zlib-ng-compat",
 ] }
-git-repository = { version = "0.23.1", default-features = false, features = [
+git-repository = { version = "0.30.2", default-features = false, features = [
     "max-performance-safe",
-    "unstable",
 ] }
-git2 = { version = "0.15.0", default-features = false }
+git2 = { version = "0.16.1", default-features = false }
+human-panic = "1.0.3"
 image = "0.24.4"
+num-format = "0.4.4"
+onefetch-ascii = { path = "ascii", version = "2.15.1" }
+onefetch-image = { path = "image", version = "2.15.1" }
+onefetch-manifest = { path = "manifest", version = "2.15.1" }
 owo-colors = "3.5.0"
 regex = "1.6.0"
-serde = "1.0.145"
-serde_json = "1.0.85"
-serde_yaml = "0.9.13"
+serde = "1.0.147"
+serde_json = "1.0.89"
+serde_yaml = "0.9.14"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum = { version = "0.24.1", features = ["derive"] }
 terminal_size = "0.2"
-time = { version = "0.3.14", features = ["formatting"] }
+time = { version = "0.3.17", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "12.1.2"
-toml = "0.5.9"
+typetag = "0.2"
 yaml-rust = "0.4.5"
 
-[target.'cfg(windows)'.dependencies]
-enable-ansi-support = "0.1.2"
+[dev-dependencies]
+criterion = "0.4.0"
+git-testtools = "0.10.0"
+insta = { version = "1.23.0", features = ["json", "redactions"] }
+pretty_assertions = "1.3.0"
 
-[target.'cfg(not(windows))'.dependencies]
-base64 = "0.13.0"
-libc = "0.2.134"
+[[bench]]
+name = "repo"
+harness = false
 
 [build-dependencies]
 lazy_static = "1"
@@ -67,6 +67,12 @@ regex = "1"
 serde_json = "1"
 serde_yaml = "0.9"
 tera = { version = "1", default-features = false }
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+
+[target.'cfg(windows)'.dependencies]
+enable-ansi-support = "0.2.1"
 
 [features]
 fail-on-deprecated = []

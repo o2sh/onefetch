@@ -1,9 +1,8 @@
 /.github/ @spenserblack @o2sh
-/src/ui/image_backends/ @CephalonRho @yoichi
-/src/info/git.rs @Byron
-/src/info/repo @o2sh @Byron
+/image/src/ @CephalonRho @yoichi
+/src/info/utils/git.rs @Byron
+/src/info/ @o2sh
 /languages.yaml @spenserblack @o2sh
-/templates/language.rs @spenserblack
-/src/info/deps/ @HallerPatrick @o2sh
+/src/info/langs/language.tera @spenserblack
 /src/cli.rs @spenserblack @o2sh
 /vercel/ @spenserblack

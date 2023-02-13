@@ -1,6 +1,7 @@
-use crate::info::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::{InfoField, InfoType};
 use owo_colors::OwoColorize;
 use serde::Serialize;
+use tokei;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
@@ -12,15 +13,38 @@ pub struct LanguageWithPercentage {
     pub percentage: f64,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LanguagesInfo {
     pub languages_with_percentage: Vec<LanguageWithPercentage>,
-    pub true_color: bool,
-    pub info_color: DynColors,
+    #[serde(skip_serializing)]
+    true_color: bool,
+    #[serde(skip_serializing)]
+    number_of_languages: usize,
+    #[serde(skip_serializing)]
+    info_color: DynColors,
 }
 
 impl LanguagesInfo {
-    pub fn new(languages: Vec<(Language, f64)>, true_color: bool, info_color: DynColors) -> Self {
-        let languages_with_percentage = languages
+    pub fn new(
+        loc_by_language: &[(Language, usize)],
+        true_color: bool,
+        number_of_languages: usize,
+        info_color: DynColors,
+    ) -> Self {
+        let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
+
+        let weight_by_language: Vec<(Language, f64)> = loc_by_language
+            .iter()
+            .map(|(k, v)| {
+                let mut val = *v as f64;
+                val /= total as f64;
+                val *= 100_f64;
+                (*k, val)
+            })
+            .collect();
+
+        let languages_with_percentage = weight_by_language
             .into_iter()
             .map(|(language, percentage)| LanguageWithPercentage {
                 language,
@@ -30,6 +54,7 @@ impl LanguagesInfo {
         Self {
             languages_with_percentage,
             true_color,
+            number_of_languages,
             info_color,
         }
     }
@@ -37,7 +62,7 @@ impl LanguagesInfo {
 
 impl std::fmt::Display for LanguagesInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut languages_info = String::from("");
+        let mut languages_info = String::new();
         let pad = self.title().len() + 2;
         let color_palette = vec![
             DynColors::Ansi(AnsiColors::Red),
@@ -65,8 +90,11 @@ impl std::fmt::Display for LanguagesInfo {
                     (language.to_string(), percentage, circle_color)
                 },
             );
-            if self.languages_with_percentage.len() > 6 {
-                let mut languages = iter.by_ref().take(6).collect::<Vec<_>>();
+            if self.languages_with_percentage.len() > self.number_of_languages {
+                let mut languages = iter
+                    .by_ref()
+                    .take(self.number_of_languages)
+                    .collect::<Vec<_>>();
                 let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
                 languages.push((
                     "Other".to_string(),
@@ -98,7 +126,7 @@ impl std::fmt::Display for LanguagesInfo {
             let language_str = format!(
                 "{} {} ",
                 circle,
-                format!("{} ({} %)", language, formatted_number).color(self.info_color)
+                format!("{language} ({formatted_number} %)").color(self.info_color)
             );
             if i % 2 == 0 {
                 let _ = write!(
@@ -109,27 +137,54 @@ impl std::fmt::Display for LanguagesInfo {
                     width = pad
                 );
             } else {
-                languages_info.push_str(&language_str.to_string());
+                languages_info.push_str(language_str.trim_end());
             }
         }
-        write!(f, "{}", languages_info)
+        write!(f, "{languages_info}")
     }
 }
 
+#[typetag::serialize]
 impl InfoField for LanguagesInfo {
-    const TYPE: InfoType = InfoType::Languages;
-
     fn value(&self) -> String {
         self.to_string()
     }
 
     fn title(&self) -> String {
-        let mut title = String::from("Language");
+        let mut title: String = "Language".into();
         if self.languages_with_percentage.len() > 1 {
             title.push('s')
         }
         title
     }
+
+    fn r#type(&self) -> InfoType {
+        InfoType::Languages
+    }
+    fn should_color(&self) -> bool {
+        false
+    }
+}
+
+/// Counts the lines-of-code of a tokei `Language`. Takes into
+/// account that a prose language's comments *are* its code.
+pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
+    __loc(language_type, language)
+        + language
+            .children
+            .iter()
+            .fold(0, |sum, (lang_type, reports)| {
+                sum + reports
+                    .iter()
+                    .fold(0, |sum, report| sum + stats_loc(lang_type, &report.stats))
+            })
+}
+
+/// Counts the lines-of-code of a tokei `Report`. This is the child of a
+/// `tokei::CodeStats`.
+pub fn stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
+    let stats = stats.summarise();
+    __stats_loc(language_type, &stats)
 }
 
 #[cfg(test)]
@@ -144,6 +199,7 @@ mod test {
                 percentage: 100_f64,
             }],
             true_color: false,
+            number_of_languages: 6,
             info_color: DynColors::Ansi(AnsiColors::White),
         };
         let expected_languages_info = format!(
@@ -157,5 +213,48 @@ mod test {
         );
 
         assert_eq!(languages_info.value(), expected_languages_info);
+    }
+
+    #[test]
+    fn should_display_correct_number_of_languages() {
+        let languages_info = LanguagesInfo {
+            languages_with_percentage: vec![
+                LanguageWithPercentage {
+                    language: Language::Go,
+                    percentage: 30_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Erlang,
+                    percentage: 40_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Java,
+                    percentage: 20_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Rust,
+                    percentage: 10_f64,
+                },
+            ],
+            true_color: false,
+            number_of_languages: 2,
+            info_color: DynColors::Ansi(AnsiColors::White),
+        };
+
+        assert!(languages_info.value().contains(
+            &"Go (30.0 %)"
+                .color(DynColors::Ansi(AnsiColors::White))
+                .to_string()
+        ));
+        assert!(languages_info.value().contains(
+            &"Erlang (40.0 %)"
+                .color(DynColors::Ansi(AnsiColors::White))
+                .to_string()
+        ));
+        assert!(languages_info.value().contains(
+            &"Other (30.0 %)"
+                .color(DynColors::Ansi(AnsiColors::White))
+                .to_string()
+        ));
     }
 }

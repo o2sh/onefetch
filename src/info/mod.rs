@@ -1,130 +1,92 @@
-use self::deps::DependenciesInfo;
-use self::git::Commits;
-use self::info_field::{InfoField, InfoType};
+use self::author::AuthorsInfo;
+use self::commits::CommitsInfo;
+use self::contributors::ContributorsInfo;
+use self::created::CreatedInfo;
+use self::dependencies::DependenciesInfo;
+use self::description::DescriptionInfo;
+use self::head::HeadInfo;
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
-use self::repo::author::AuthorsInfo;
-use self::repo::commits::CommitsInfo;
-use self::repo::contributors::ContributorsInfo;
-use self::repo::created::CreatedInfo;
-use self::repo::head::HeadInfo;
-use self::repo::last_change::LastChangeInfo;
-use self::repo::license::LicenseInfo;
-use self::repo::loc::LocInfo;
-use self::repo::pending::PendingInfo;
-use self::repo::project::ProjectInfo;
-use self::repo::size::SizeInfo;
-use self::repo::url::UrlInfo;
-use self::repo::version::VersionInfo;
+use self::last_change::LastChangeInfo;
+use self::license::LicenseInfo;
+use self::loc::LocInfo;
+use self::pending::PendingInfo;
+use self::project::ProjectInfo;
+use self::size::SizeInfo;
 use self::title::Title;
-use crate::cli::{is_truecolor_terminal, Config, MyRegex, When};
+use self::url::UrlInfo;
+use self::utils::git::Commits;
+use self::utils::info_field::{InfoField, InfoType};
+use self::version::VersionInfo;
+use crate::cli::{is_truecolor_terminal, Config, NumberSeparator, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
+use num_format::ToFormattedString;
+use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize, Style};
-use regex::Regex;
-use serde::ser::SerializeStruct;
 use serde::Serialize;
-use std::str::FromStr;
+use std::path::Path;
 
-pub mod deps;
-mod git;
-pub mod info_field;
+mod author;
+mod commits;
+mod contributors;
+mod created;
+mod dependencies;
+mod description;
+mod head;
 pub mod langs;
-mod repo;
+mod last_change;
+mod license;
+mod loc;
+mod pending;
+mod project;
+mod size;
 mod title;
+mod url;
+pub mod utils;
+mod version;
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Info {
     title: Title,
-    project: ProjectInfo,
-    head: HeadInfo,
-    pending: PendingInfo,
-    version: VersionInfo,
-    created: CreatedInfo,
-    languages: LanguagesInfo,
-    dependencies: DependenciesInfo,
-    authors: AuthorsInfo,
-    last_change: LastChangeInfo,
-    contributors: ContributorsInfo,
-    repo: UrlInfo,
-    commits: CommitsInfo,
-    lines_of_code: LocInfo,
-    size: SizeInfo,
-    license: LicenseInfo,
+    info_fields: Vec<Box<dyn InfoField>>,
+    #[serde(skip_serializing)]
     disabled_fields: Vec<InfoType>,
+    #[serde(skip_serializing)]
     text_colors: TextColors,
+    #[serde(skip_serializing)]
     no_color_palette: bool,
+    #[serde(skip_serializing)]
+    no_title: bool,
+    #[serde(skip_serializing)]
     no_bold: bool,
+    #[serde(skip_serializing)]
     pub dominant_language: Language,
+    #[serde(skip_serializing)]
     pub ascii_colors: Vec<DynColors>,
 }
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         //Title
-        if !self.disabled_fields.contains(&InfoType::Title) {
+        if !self.no_title {
             write!(f, "{}", self.title)?;
         }
 
         //Info lines
-        if let Some(project_info_value) = self.project.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.project.title(), &project_info_value, f)?;
-        }
-
-        if let Some(head_info_value) = self.head.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.head.title(), &head_info_value, f)?;
-        }
-
-        if let Some(pending_info_value) = self.pending.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.pending.title(), &pending_info_value, f)?;
-        }
-
-        if let Some(version_info_value) = self.version.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.version.title(), &version_info_value, f)?;
-        }
-
-        if let Some(created_info_value) = self.created.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.created.title(), &created_info_value, f)?;
-        }
-
-        if let Some(languages_info_value) = self.languages.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.languages.title(), &languages_info_value, f)?;
-        }
-
-        if let Some(dependencies_info_value) = self.dependencies.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.dependencies.title(), &dependencies_info_value, f)?;
-        }
-
-        if let Some(authors_info_value) = self.authors.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.authors.title(), &authors_info_value, f)?;
-        }
-
-        if let Some(last_change_info_value) = self.last_change.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.last_change.title(), &last_change_info_value, f)?;
-        }
-
-        if let Some(contributors_info_value) = self.contributors.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.contributors.title(), &contributors_info_value, f)?;
-        }
-
-        if let Some(repo_info_value) = self.repo.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.repo.title(), &repo_info_value, f)?;
-        }
-
-        if let Some(commits_info_value) = self.commits.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.commits.title(), &commits_info_value, f)?;
-        }
-
-        if let Some(lines_of_code_info_value) = self.lines_of_code.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.lines_of_code.title(), &lines_of_code_info_value, f)?;
-        }
-
-        if let Some(size_info_value) = self.size.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.size.title(), &size_info_value, f)?;
-        }
-
-        if let Some(license_info_value) = self.license.get(&self.disabled_fields) {
-            self.write_styled_info_line(&self.license.title(), &license_info_value, f)?;
+        for info_field in self
+            .info_fields
+            .iter()
+            .filter(|x| x.has_value(&self.disabled_fields))
+        {
+            self.write_styled_info_line(
+                f,
+                &info_field.title(),
+                &info_field.value(),
+                info_field.should_color(),
+            )?
         }
 
         //Palette
@@ -150,18 +112,15 @@ impl std::fmt::Display for Info {
 impl Info {
     pub fn new(config: &Config) -> Result<Self> {
         let git_repo = git_repository::discover(&config.input)?;
-        let repo_path = git_repo
-            .work_dir()
-            .context("please run onefetch inside of a non-bare git repository")?
-            .to_owned();
+        let repo_path = get_work_dir(&git_repo)?;
 
-        let languages_handle = std::thread::spawn({
+        let loc_by_language_sorted_handle = std::thread::spawn({
             let ignored_directories = config.exclude.clone();
             let language_types = config.r#type.clone();
             let include_hidden = config.include_hidden;
             let workdir = repo_path.clone();
             move || {
-                langs::get_language_statistics(
+                langs::get_loc_by_language_sorted(
                     &workdir,
                     &ignored_directories,
                     &language_types,
@@ -170,19 +129,11 @@ impl Info {
             }
         });
 
-        let no_bots = if let Some(r) = config.no_bots.clone() {
-            match r {
-                Some(p) => Some(p),
-                None => Some(MyRegex(Regex::from_str(r"(b|B)ot")?)),
-            }
-        } else {
-            None
-        };
-        let (languages, lines_of_code) = languages_handle
+        let loc_by_language = loc_by_language_sorted_handle
             .join()
             .ok()
             .context("BUG: panic in language statistics thread")??;
-        let dominant_language = langs::get_dominant_language(&languages);
+        let dominant_language = langs::get_main_language(&loc_by_language);
         let true_color = match config.true_color {
             When::Always => true,
             When::Never => false,
@@ -203,73 +154,96 @@ impl Info {
             text_colors.underline,
             !config.no_bold,
         );
+        let manifest = get_manifest(&repo_path)?;
+        let description = DescriptionInfo::new(manifest.as_ref());
         let pending = PendingInfo::new(&git_repo)?;
         let repo_url = UrlInfo::new(&git_repo)?;
-        let project = ProjectInfo::new(&git_repo, &repo_url.repo_url)?;
+        let project = ProjectInfo::new(
+            &git_repo,
+            &repo_url.repo_url,
+            manifest.as_ref(),
+            config.number_separator,
+        )?;
         let head = HeadInfo::new(&git_repo)?;
-        let version = VersionInfo::new(&git_repo)?;
-        let size = SizeInfo::new(&git_repo);
-        let license = LicenseInfo::new(&repo_path)?;
+        let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
+        let size = SizeInfo::new(&git_repo, config.number_separator);
+        let license = LicenseInfo::new(&repo_path, manifest.as_ref())?;
         let mut commits = Commits::new(
             git_repo,
             config.no_merges,
-            &no_bots,
+            &config.no_bots,
             config.number_of_authors,
             config.email,
+            config.number_separator,
         )?;
-
         let created = CreatedInfo::new(config.iso_time, &commits);
-        let languages = LanguagesInfo::new(languages, true_color, text_colors.info);
-        let dependencies = DependenciesInfo::new(&repo_path)?;
+        let languages = LanguagesInfo::new(
+            &loc_by_language,
+            true_color,
+            config.number_of_languages,
+            text_colors.info,
+        );
+        let dependencies = DependenciesInfo::new(manifest.as_ref(), config.number_separator);
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
         let last_change = LastChangeInfo::new(config.iso_time, &commits);
-        let contributors = ContributorsInfo::new(&commits, config.number_of_authors);
-        let commits = CommitsInfo::new(&commits);
-        let lines_of_code = LocInfo { lines_of_code };
+        let contributors =
+            ContributorsInfo::new(&commits, config.number_of_authors, config.number_separator);
+        let commits = CommitsInfo::new(&commits, config.number_separator);
+        let lines_of_code = LocInfo::new(&loc_by_language, config.number_separator);
 
+        let info_fields: Vec<Box<dyn InfoField>> = vec![
+            Box::new(project),
+            Box::new(description),
+            Box::new(head),
+            Box::new(pending),
+            Box::new(version),
+            Box::new(created),
+            Box::new(languages),
+            Box::new(dependencies),
+            Box::new(authors),
+            Box::new(last_change),
+            Box::new(contributors),
+            Box::new(repo_url),
+            Box::new(commits),
+            Box::new(lines_of_code),
+            Box::new(size),
+            Box::new(license),
+        ];
         Ok(Self {
             title,
-            project,
-            head,
-            pending,
-            version,
-            created,
-            languages,
-            dependencies,
-            authors,
-            last_change,
-            contributors,
-            repo: repo_url,
-            commits,
-            lines_of_code,
-            size,
-            license,
+            info_fields,
             disabled_fields: config.disabled_fields.clone(),
             text_colors,
             dominant_language,
             ascii_colors,
             no_color_palette: config.no_color_palette,
+            no_title: config.no_title,
             no_bold: config.no_bold,
         })
     }
 
     fn write_styled_info_line(
         &self,
+        f: &mut std::fmt::Formatter,
         subtitle: &str,
         info: &str,
-        f: &mut std::fmt::Formatter,
+        should_color_info: bool,
     ) -> std::fmt::Result {
-        let colored_info = info.color(self.text_colors.info);
-        self.write_info_line(subtitle, &colored_info.to_string(), f)
+        writeln!(
+            f,
+            "{} {}",
+            &self.style_subtitle(subtitle),
+            &self.style_info(info, should_color_info)
+        )
     }
 
-    fn write_info_line(
-        &self,
-        subtitle: &str,
-        info: &str,
-        f: &mut std::fmt::Formatter,
-    ) -> std::fmt::Result {
-        writeln!(f, "{} {}", &self.style_subtitle(subtitle), info)
+    fn style_info(&self, info: &str, with_color: bool) -> String {
+        if with_color {
+            let info_style = get_style(false, self.text_colors.info);
+            format!("{}", info.style(info_style))
+        } else {
+            info.into()
+        }
     }
 
     fn style_subtitle(&self, subtitle: &str) -> String {
@@ -283,7 +257,31 @@ impl Info {
     }
 }
 
-pub fn get_style(is_bold: bool, color: DynColors) -> Style {
+fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
+    let manifests = onefetch_manifest::get_manifests(repo_path)?;
+
+    if manifests.is_empty() {
+        Ok(None)
+    } else {
+        Ok(manifests.first().cloned())
+    }
+}
+
+pub fn get_work_dir(repo: &git_repository::Repository) -> Result<std::path::PathBuf> {
+    Ok(repo
+        .work_dir()
+        .context("please run onefetch inside of a non-bare git repository")?
+        .to_owned())
+}
+
+fn format_number<T: ToFormattedString + std::fmt::Display>(
+    number: T,
+    number_separator: NumberSeparator,
+) -> String {
+    number.to_formatted_string(&number_separator.get_format())
+}
+
+fn get_style(is_bold: bool, color: DynColors) -> Style {
     let mut style = Style::new().color(color);
     if is_bold {
         style = style.bold();
@@ -291,38 +289,9 @@ pub fn get_style(is_bold: bool, color: DynColors) -> Style {
     style
 }
 
-impl Serialize for Info {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_struct("Info", 4)?;
-        state.serialize_field("gitUsername", &self.title.git_username)?;
-        state.serialize_field("gitVersion", &self.title.git_version)?;
-        state.serialize_field("project", &self.project)?;
-        state.serialize_field("head", &self.head.head_refs)?;
-        state.serialize_field("version", &self.version.version)?;
-        state.serialize_field("created", &self.created.creation_date)?;
-        state.serialize_field("languages", &self.languages.languages_with_percentage)?;
-        state.serialize_field("dependencies", &self.dependencies.dependencies)?;
-        state.serialize_field("authors", &self.authors.authors)?;
-        state.serialize_field("lastChange", &self.last_change.last_change)?;
-        state.serialize_field("contributors", &self.contributors.number_of_contributors)?;
-        state.serialize_field("repoUrl", &self.repo.repo_url)?;
-        state.serialize_field("numberOfCommits", &self.commits.number_of_commits)?;
-        state.serialize_field("linesOfCode", &self.lines_of_code.lines_of_code)?;
-        state.serialize_field("repoSize", &self.size.repo_size)?;
-        state.serialize_field("license", &self.license.license)?;
-
-        state.end()
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ui::num_to_color;
-    use clap::Parser;
     use owo_colors::AnsiColors;
 
     #[test]
@@ -343,25 +312,19 @@ mod tests {
     }
 
     #[test]
-    fn test_style_subtitle() -> Result<()> {
-        let info = Info::new(&Config::parse_from(&[
-            "onefetch",
-            "--text-colors",
-            "0",
-            "0",
-            "0",
-            "3",
-            "4",
-        ]))?;
-        let styled_subtitle = info.style_subtitle("test");
+    fn test_format_number() {
         assert_eq!(
-            styled_subtitle,
-            format!(
-                "{}{}",
-                "test".style(Style::new().color(num_to_color(&3)).bold()),
-                ":".style(Style::new().color(num_to_color(&4)).bold())
-            )
+            &format_number(1_000_000, NumberSeparator::Comma),
+            "1,000,000"
         );
-        Ok(())
+        assert_eq!(
+            &format_number(1_000_000, NumberSeparator::Space),
+            "1\u{202f}000\u{202f}000"
+        );
+        assert_eq!(
+            &format_number(1_000_000, NumberSeparator::Underscore),
+            "1_000_000"
+        );
+        assert_eq!(&format_number(1_000_000, NumberSeparator::Plain), "1000000");
     }
 }

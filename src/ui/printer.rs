@@ -1,11 +1,10 @@
 use crate::cli::{Config, When};
 use crate::info::Info;
-use crate::ui::ascii_art::AsciiArt;
-use crate::ui::image_backends;
-use crate::ui::image_backends::ImageBackend;
 use crate::ui::Language;
 use anyhow::{Context, Result};
 use image::DynamicImage;
+use onefetch_ascii::AsciiArt;
+use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 use std::io::Write;
 use terminal_size::{terminal_size, Width};
@@ -53,8 +52,8 @@ impl<W: Write> Printer<W> {
         let image_backend = if image.is_some() {
             config
                 .image_protocol
-                .map_or_else(image_backends::get_best_backend, |s| {
-                    image_backends::get_image_backend(s)
+                .map_or_else(onefetch_image::get_best_backend, |s| {
+                    onefetch_image::get_image_backend(s)
                 })
         } else {
             None
@@ -96,16 +95,16 @@ impl<W: Write> Printer<W> {
                     let image_backend = self
                         .image_backend
                         .as_ref()
-                        .with_context(|| "Could not detect a supported image backend")?;
+                        .context("Could not detect a supported image backend")?;
 
                     buf.push_str(
                         &image_backend
                             .add_image(
-                                info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                                info_lines.map(|s| format!("{center_pad}{s}")).collect(),
                                 custom_image,
                                 self.color_resolution,
                             )
-                            .with_context(|| "Error while drawing image")?,
+                            .context("Error while drawing image")?,
                     );
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.ascii_input {
@@ -117,9 +116,9 @@ impl<W: Write> Printer<W> {
                     loop {
                         match (logo_lines.next(), info_lines.next()) {
                             (Some(logo_line), Some(info_line)) => {
-                                writeln!(buf, "{}{}{:^}", logo_line, center_pad, info_line)?
+                                writeln!(buf, "{logo_line}{center_pad}{info_line:^}")?
                             }
-                            (Some(logo_line), None) => writeln!(buf, "{}", logo_line)?,
+                            (Some(logo_line), None) => writeln!(buf, "{logo_line}")?,
                             (None, Some(info_line)) => writeln!(
                                 buf,
                                 "{:<width$}{}{:^}",
@@ -136,7 +135,7 @@ impl<W: Write> Printer<W> {
                     }
                 }
 
-                write!(self.writer, "{}", buf)?;
+                write!(self.writer, "{buf}")?;
             }
         }
         Ok(())

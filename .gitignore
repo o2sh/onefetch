@@ -1,9 +1,10 @@
 /target
 **/*.rs.bk
 /stage
-*.snap
 /parts
 /prime
 .gitignore.swp
 .DS_Store
 result
+**/generated-*
+**/.idea

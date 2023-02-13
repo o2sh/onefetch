@@ -1,0 +1,20 @@
+vscode:
+  extensions:
+    - 'EditorConfig.EditorConfig'
+    - 'svelte.svelte-vscode'
+    - 'rust-lang.rust-analyzer'
+    - 'tamasfe.even-better-toml'
+tasks:
+  - name: Install cargo-insta
+    init: cargo install cargo-insta
+  - name: Build Onefetch
+    before: sudo apt install -y cmake
+    init: cargo build
+  - name: onefetch.dev
+    init: cd $GITPOD_REPO_ROOT/docs/vercel && npm install
+    command: cd $GITPOD_REPO_ROOT/docs/vercel && npm run dev -- --port 3000
+ports:
+  - name: onefetch.dev
+    description: Web preview of onefetch ASCII art
+    port: 3000
+    onOpen: open-preview

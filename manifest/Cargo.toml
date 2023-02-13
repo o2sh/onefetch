@@ -1,0 +1,15 @@
+[package]
+authors = ["o2sh <ossama-hjaji@live.fr>"]
+name = "onefetch-manifest"
+description = "Detect and parse manifest files"
+version = "2.15.1"
+edition = "2021"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/o2sh/onefetch"
+
+[dependencies]
+anyhow = "1.0"
+cargo_toml = "0.13.0"
+npm-package-json = "0.1.3"
+strum = { version = "0.24.1", features = ["derive"] }
