@@ -23,7 +23,7 @@ Onefetch 是一款由 `Rust` 编写的命令行 Git 信息工具，它将直接�
 
 Onefetch 可以通过命令行参数进行配置，以准确显示您想要的内容和方式：您可以自定义 ASCII/文本格式、禁用信息行、忽略文件和目录、以多种格式输出（Json、Yaml），等等。<br><br>
 
-截至目前，onefetch 支持超过 50 种不同的编程语言；如果您选择的语言不受支持：创建一个 issue，我们将尽快适配。<br><br>
+截至目前，onefetch 支持超过 100 种不同的编程语言；如果您选择的语言不受支持：创建一个 issue，我们将尽快适配。<br><br>
 
 欢迎大家一起来维护项目！详见 [CONTRIBUTING](../CONTRIBUTING.md).<br><br>
 

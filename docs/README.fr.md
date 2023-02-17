@@ -23,7 +23,7 @@ Il détecte automatiquement les licences open sources et fournit à l'utilisateu
 
 Onefetch peut être configuré afin d'afficher exactement ce que vous souhaitez, comme vous le souhaitez : vous pouvez personnaliser le formatage du texte, cacher certaines lignes, ignorer des fichiers & répertoires, générer la sortie dans plusieurs formats (Json, Yaml), etc.
 
-Actuellement, onefetch supporte plus de [50 langages de programmation](https://onefetch.dev); si le langage de votre choix n'est pas supporté, créez une issue et le support sera ajouté.
+Actuellement, onefetch supporte plus de [100 langages de programmation](https://onefetch.dev); si le langage de votre choix n'est pas supporté, créez une issue et le support sera ajouté.
 
 Les contributions sont plus que bienvenues! Rendez-vous sur la page [CONTRIBUTING](../CONTRIBUTING.md) pour plus d'informations.
 
