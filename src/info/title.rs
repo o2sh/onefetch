@@ -1,6 +1,6 @@
 use super::get_style;
 use crate::cli;
-use git_repository::Repository;
+use gix::Repository;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 
@@ -41,6 +41,8 @@ impl Title {
 }
 pub fn get_git_username(repo: &Repository) -> String {
     repo.committer()
+        .map(Result::ok)
+        .flatten()
         .map(|c| c.name.to_string())
         .unwrap_or_default()
 }
@@ -86,7 +88,7 @@ impl std::fmt::Display for Title {
 mod tests {
     use super::*;
     use anyhow::Result;
-    use git_repository::{open, Repository, ThreadSafeRepository};
+    use gix::{open, Repository, ThreadSafeRepository};
     use owo_colors::AnsiColors;
 
     fn repo(name: &str) -> Result<Repository> {

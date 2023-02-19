@@ -1,5 +1,5 @@
 use anyhow::Result;
-use git_repository::{open, Repository, ThreadSafeRepository};
+use gix::{open, Repository, ThreadSafeRepository};
 use onefetch::cli::Config;
 use onefetch::info::{get_work_dir, Info};
 

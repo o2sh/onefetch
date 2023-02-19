@@ -1,7 +1,7 @@
 use crate::info::utils::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use git2::{Status, StatusOptions, StatusShow};
-use git_repository::Repository;
+use gix::Repository;
 use serde::Serialize;
 
 #[derive(Serialize)]

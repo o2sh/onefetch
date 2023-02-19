@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use git_repository::{open, ThreadSafeRepository};
+use gix::{open, ThreadSafeRepository};
 use onefetch::{cli::Config, info::Info};
 
 fn bench_repo_info(c: &mut Criterion) {

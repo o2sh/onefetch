@@ -6,7 +6,7 @@ use crate::{
     },
 };
 use anyhow::Result;
-use git_repository::{bstr::ByteSlice, Repository};
+use gix::{bstr::ByteSlice, Repository};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
@@ -44,8 +44,8 @@ fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> 
     if repo_url.is_empty() {
         return Ok(String::default());
     }
-    let url = git_repository::url::parse(repo_url.into())?;
-    let path = git_repository::path::from_bstr(url.path.as_bstr());
+    let url = gix::url::parse(repo_url.into())?;
+    let path = gix::path::from_bstr(url.path.as_bstr());
     let repo_name = path
         .with_extension("")
         .file_name()

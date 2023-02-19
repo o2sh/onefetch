@@ -59,7 +59,7 @@ mod test {
     #[test]
     fn test_display_contributors_info() {
         use crate::info::utils::git::Commits;
-        use git_repository::actor::Time;
+        use gix::actor::Time;
 
         let timestamp = Time::now_utc();
         let commits = Commits {

@@ -111,7 +111,7 @@ impl std::fmt::Display for Info {
 
 impl Info {
     pub fn new(config: &Config) -> Result<Self> {
-        let git_repo = git_repository::discover(&config.input)?;
+        let git_repo = gix::discover(&config.input)?;
         let repo_path = get_work_dir(&git_repo)?;
 
         let loc_by_language_sorted_handle = std::thread::spawn({
@@ -267,7 +267,7 @@ fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
     }
 }
 
-pub fn get_work_dir(repo: &git_repository::Repository) -> Result<std::path::PathBuf> {
+pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
     Ok(repo
         .work_dir()
         .context("please run onefetch inside of a non-bare git repository")?
