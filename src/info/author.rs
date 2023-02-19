@@ -6,7 +6,6 @@ use crate::{
         utils::info_field::{InfoField, InfoType},
     },
 };
-use git_repository as git;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 use std::fmt::Write;
@@ -26,8 +25,8 @@ pub struct Author {
 
 impl Author {
     pub fn new(
-        name: git::bstr::BString,
-        email: git::bstr::BString,
+        name: gix::bstr::BString,
+        email: gix::bstr::BString,
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
         show_email: bool,

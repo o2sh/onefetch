@@ -1,4 +1,4 @@
-use git_repository::actor::Time;
+use gix::actor::Time;
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use time_humanize::HumanTime;
 

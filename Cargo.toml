@@ -26,7 +26,7 @@ clap_complete = "4.1.0"
 git-features-for-configuration-only = { package = "git-features", version = "0.23.1", features = [
     "zlib-ng-compat",
 ] }
-git-repository = { version = "0.30.2", default-features = false, features = [
+gix = { version = "0.36.0", default-features = false, features = [
     "max-performance-safe",
 ] }
 git2 = { version = "0.16.1", default-features = false }

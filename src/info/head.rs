@@ -1,6 +1,6 @@
 use crate::info::utils::info_field::{InfoField, InfoType};
 use anyhow::{Context, Result};
-use git_repository::{reference::Category, Reference, Repository};
+use gix::{reference::Category, Reference, Repository};
 use serde::Serialize;
 
 #[derive(Serialize)]

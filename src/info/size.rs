@@ -6,7 +6,7 @@ use crate::{
     },
 };
 use byte_unit::Byte;
-use git_repository::Repository;
+use gix::Repository;
 use serde::Serialize;
 
 #[derive(Serialize)]

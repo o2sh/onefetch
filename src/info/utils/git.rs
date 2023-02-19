@@ -1,9 +1,8 @@
 use crate::cli::{MyRegex, NumberSeparator};
 use crate::info::author::Author;
 use anyhow::Result;
-use git::bstr::BString;
-use git_repository as git;
-use git_repository::bstr::ByteSlice;
+use gix::bstr::BString;
+use gix::bstr::ByteSlice;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -14,25 +13,25 @@ pub struct Commits {
     pub num_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
     pub is_shallow: bool,
-    pub time_of_most_recent_commit: git::actor::Time,
-    pub time_of_first_commit: git::actor::Time,
+    pub time_of_most_recent_commit: gix::actor::Time,
+    pub time_of_first_commit: gix::actor::Time,
 }
 
 #[derive(Hash, PartialOrd, Ord, Eq, PartialEq)]
 pub struct Sig {
-    name: git::bstr::BString,
-    email: git::bstr::BString,
+    name: gix::bstr::BString,
+    email: gix::bstr::BString,
 }
 
-impl From<git::actor::Signature> for Sig {
-    fn from(git::actor::Signature { name, email, .. }: git::actor::Signature) -> Self {
+impl From<gix::actor::Signature> for Sig {
+    fn from(gix::actor::Signature { name, email, .. }: gix::actor::Signature) -> Self {
         Self { name, email }
     }
 }
 
 impl Commits {
     pub fn new(
-        mut repo: git::Repository,
+        mut repo: gix::Repository,
         no_merges: bool,
         no_bots: &Option<Option<MyRegex>>,
         number_of_authors_to_display: usize,
