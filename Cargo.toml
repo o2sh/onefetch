@@ -26,7 +26,7 @@ clap_complete = "4.1.0"
 git-features-for-configuration-only = { package = "git-features", version = "0.23.1", features = [
     "zlib-ng-compat",
 ] }
-gix = { version = "0.36.0", default-features = false, features = [
+gix = { version = "0.36.1", default-features = false, features = [
     "max-performance-safe",
 ] }
 git2 = { version = "0.16.1", default-features = false }
@@ -53,7 +53,7 @@ yaml-rust = "0.4.5"
 
 [dev-dependencies]
 criterion = "0.4.0"
-git-testtools = "0.10.0"
+gix-testtools = "0.11.0"
 insta = { version = "1.23.0", features = ["json", "redactions"] }
 pretty_assertions = "1.3.0"
 

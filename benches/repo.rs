@@ -4,7 +4,7 @@ use onefetch::{cli::Config, info::Info};
 
 fn bench_repo_info(c: &mut Criterion) {
     let name = "repo.sh".to_string();
-    let repo_path = git_testtools::scripted_fixture_read_only(name).unwrap();
+    let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
     let repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
     let config: Config = Config {
         input: repo.path().to_path_buf(),
