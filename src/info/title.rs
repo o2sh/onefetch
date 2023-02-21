@@ -41,8 +41,7 @@ impl Title {
 }
 pub fn get_git_username(repo: &Repository) -> String {
     repo.committer()
-        .map(Result::ok)
-        .flatten()
+        .and_then(Result::ok)
         .map(|c| c.name.to_string())
         .unwrap_or_default()
 }
