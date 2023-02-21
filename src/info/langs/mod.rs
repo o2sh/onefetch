@@ -199,7 +199,7 @@ mod test {
 
         let loc_by_language = get_loc_by_language(&languages).unwrap();
 
-        assert_eq!(loc_by_language[&Language::Vue], 100);
+        assert_eq!(loc_by_language[&Language::Vue], 110);
     }
 
     #[test]

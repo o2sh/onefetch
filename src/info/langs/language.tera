@@ -122,11 +122,13 @@ fn __loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usi
 
 fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
     match language_type {
-        {% for language, attrs in languages -%}
-            {%- set line_types = attrs.line_types | default(value=['code']) -%}
+	{% for language, attrs in languages -%}
+        {%- set line_types = attrs.line_types | default(value=['code']) -%}
+	    {%- if attrs.line_types -%} 
             tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
-        {% endfor %}
-	_ => 0, // Tokei doesn't filter children languages according to the input config
+	    {% endif -%} 
+    {% endfor %}
+	_ => stats.code
     }
 }
 
