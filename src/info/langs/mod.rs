@@ -173,6 +173,35 @@ mod test {
         assert_eq!(loc_by_language[&Language::Jupyter], 21);
     }
 
+    // https://github.com/o2sh/onefetch/issues/966
+    #[test]
+    fn get_loc_by_language_should_not_panic_when_children_language_is_not_supported() {
+        let mut stylus_code_stats = tokei::CodeStats::new();
+        stylus_code_stats.code = 10;
+        stylus_code_stats.blanks = 2;
+        stylus_code_stats.comments = 4;
+
+        let mut stylus_report = tokei::Report::new("/tmp/file.vue".into());
+        stylus_report.stats = stylus_code_stats;
+
+        let mut vue = tokei::Language {
+            blanks: 50,
+            comments: 200,
+            code: 100,
+            ..Default::default()
+        };
+
+        vue.children
+            .insert(tokei::LanguageType::Stylus, vec![stylus_report]);
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(tokei::LanguageType::Vue, vue);
+
+        let loc_by_language = get_loc_by_language(&languages).unwrap();
+
+        assert_eq!(loc_by_language[&Language::Vue], 100);
+    }
+
     #[test]
     fn test_get_loc_by_language_sorted() {
         let mut map = HashMap::new();

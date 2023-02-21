@@ -126,7 +126,7 @@ fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) ->
             {%- set line_types = attrs.line_types | default(value=['code']) -%}
             tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
         {% endfor %}
-        _ => unimplemented!("Language Type {:?}", language_type),
+	_ => 0, // Tokei doesn't filter children languages according to the input config
     }
 }
 
