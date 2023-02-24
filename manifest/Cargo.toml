@@ -2,7 +2,7 @@
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 name = "onefetch-manifest"
 description = "Detect and parse manifest files"
-version = "2.15.1"
+version = "2.16.0"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
