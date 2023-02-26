@@ -13,7 +13,7 @@ Options:
 
           For example:
 
-          '--ascii-input "$(fortune | cowsay -W 25)'
+          '--ascii-input "$(fortune | cowsay -W 25)"'
 
   -a, --ascii-language <LANGUAGE>
           Which LANGUAGE's ascii art to print
@@ -47,13 +47,21 @@ Options:
       --no-color-palette
           Hides the color palette
 
-  -n, --number-of-authors <NUM>
-          NUM of authors to be shown
+      --no-title
+          Hides the title
+
+      --number-of-authors <NUM>
+          Maximum NUM of authors to be shown
 
           [default: 3]
 
+      --number-of-languages <NUM>
+          Maximum NUM of languages to be shown
+
+          [default: 6]
+
   -e, --exclude <EXCLUDE>...
-          gnore all files & directories matching EXCLUDE
+          Ignore all files & directories matching EXCLUDE
 
       --no-bots [<REGEX>]
           Exclude [bot] commits. Use <REGEX> to override the default pattern
@@ -97,6 +105,12 @@ Options:
   -z, --iso-time
           Use ISO 8601 formatted timestamps
 
+      --number-separator <SEPARATOR>
+          Which thousands SEPARATOR to use
+
+          [default: plain]
+          [possible values: plain, comma, space, underscore]
+
   -E, --email
           Show the email address of each author
 
@@ -115,8 +129,8 @@ Options:
           [possible values: bash, elvish, fish, powershell, zsh]
 
   -h, --help
-          Print help information (use `-h` for a summary)
+          Print help (see a summary with '-h')
 
   -V, --version
-          Print version information
+          Print version
 ```
