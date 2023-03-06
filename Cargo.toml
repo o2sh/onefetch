@@ -38,7 +38,7 @@ onefetch-image = { path = "image", version = "2.16.0" }
 onefetch-manifest = { path = "manifest", version = "2.16.0" }
 owo-colors = "3.5.0"
 regex = "1.6.0"
-serde = "1.0.147"
+serde = "1.0.152"
 serde_json = "1.0.89"
 serde_yaml = "0.9.17"
 # TODO With the new value parsers, we're really close to being able to eliminate
