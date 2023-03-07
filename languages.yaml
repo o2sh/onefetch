@@ -291,33 +291,6 @@ CoffeeScript:
     ansi:
       - red
     chip: "#244776"
-ColdFusion:
-  type: programming
-  ascii: |
-    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
-    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@{0}CfCfCfCf{1}@@{0}Cf
-    {0}Cf{1}@@@@@{0}CfCfCfCfCf{1}@@@@{0}CfCfCfCfCf{1}@@@{0}Cf
-    {0}Cf{1}@@@@{0}CfCfCfCfCf{1}@@@@{0}CfCf{1}@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@{0}CfCf{1}@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@{0}CfCf{1}@@@@@@@@{0}CfCfCfCfCfCf{1}@@@@@@{0}Cf
-    {0}Cf{1}@@{0}CfCf{1}@@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@{0}CfCf{1}@@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@{0}CfCf{1}@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@@{0}CfCfCfCfCf{1}@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@@@{0}CfCfCfCfCf{1}@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
-    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
-    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
-  colors:
-    ansi:
-      - white
-      - blue
-    hex:
-      - "#E5F3FC"
-      - "#274550"
-    chip: "#ed2cd6"
 Coq:
   type: programming
   ascii: |
