@@ -24,7 +24,7 @@ jobs:
           stale-pr-message: >
             This pull request has been automatically marked as stale because it has not had
             recent activity. It will be closed if no further activity occurs.
-          exempt-issue-labels: "📌pinned,🔒 security,❓ help wanted,blocked: tokei"
+          exempt-issue-labels: "📌 pinned,🔒 security,❓ help wanted,blocked: tokei"
           exempt-pr-labels: "blocked: tokei"
           stale-issue-label: "stale"
           stale-pr-label: "stale"
