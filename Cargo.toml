@@ -17,7 +17,7 @@ version = "2.16.0"
 members = ["ascii", "image", "manifest"]
 
 [dependencies]
-anyhow = "1.0.66"
+anyhow = "1.0"
 askalono = "0.4.6"
 byte-unit = "4.0.18"
 bytecount = "0.6.3"
@@ -38,8 +38,8 @@ onefetch-image = { path = "image", version = "2.16.0" }
 onefetch-manifest = { path = "manifest", version = "2.16.0" }
 owo-colors = "3.5.0"
 regex = "1.6.0"
-serde = "1.0.147"
-serde_json = "1.0.89"
+serde = "1.0"
+serde_json = "1.0"
 serde_yaml = "0.9.17"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
