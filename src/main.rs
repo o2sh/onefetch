@@ -2,17 +2,28 @@
 
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
-use human_panic::setup_panic;
 use onefetch::cli;
 use onefetch::info::Info;
 use onefetch::ui::printer::Printer;
-use std::io;
+use std::{
+    io::{self, stdout, Write},
+    panic,
+};
 
 fn main() -> Result<()> {
+    // Disable line wrapping
+    print!("\x1B[?7l");
+    stdout().flush().unwrap();
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
 
-    setup_panic!();
+    // Set up panic handler to re-enable line wrapping
+    let orig_hook = panic::take_hook();
+    panic::set_hook(Box::new(move |panic_info| {
+        print!("\x1B[?7h");
+        stdout().flush().unwrap();
+        orig_hook(panic_info);
+    }));
 
     let config = cli::Config::parse();
 
@@ -34,6 +45,9 @@ fn main() -> Result<()> {
     let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, config)?;
 
     printer.print()?;
+    // Re-enable line wrapping
+    print!("\x1B[?7h");
+    stdout().flush().unwrap();
 
     Ok(())
 }
