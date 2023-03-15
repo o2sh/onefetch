@@ -18,8 +18,7 @@ pub enum SerializationFormat {
     Yaml,
 }
 
-pub struct Printer<W> {
-    writer: W,
+pub struct Printer {
     info: Info,
     output: Option<SerializationFormat>,
     art_off: bool,
@@ -31,8 +30,8 @@ pub struct Printer<W> {
     ascii_language: Option<Language>,
 }
 
-impl<W: Write> Printer<W> {
-    pub fn new(writer: W, info: Info, config: Config) -> Result<Self> {
+impl Printer {
+    pub fn new(info: Info, config: Config) -> Result<Self> {
         let art_off = match config.show_logo {
             When::Always => false,
             When::Never => true,
@@ -60,7 +59,6 @@ impl<W: Write> Printer<W> {
         };
 
         Ok(Self {
-            writer,
             info,
             output: config.output,
             art_off,
@@ -73,14 +71,14 @@ impl<W: Write> Printer<W> {
         })
     }
 
-    pub fn print(&mut self) -> Result<()> {
+    pub fn print<W: Write>(&mut self, mut writer: W) -> Result<()> {
         match &self.output {
             Some(format) => match format {
                 SerializationFormat::Json => {
-                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?
+                    writeln!(writer, "{}", serde_json::to_string_pretty(&self.info)?)?
                 }
                 SerializationFormat::Yaml => {
-                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?
+                    writeln!(writer, "{}", serde_yaml::to_string(&self.info)?)?
                 }
             },
             None => {
@@ -135,7 +133,7 @@ impl<W: Write> Printer<W> {
                     }
                 }
 
-                write!(self.writer, "{buf}")?;
+                write!(writer, "{buf}")?;
             }
         }
         Ok(())
