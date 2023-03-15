@@ -2,15 +2,14 @@
 
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
+use human_panic::setup_panic;
 use onefetch::cli;
 use onefetch::info::Info;
 use onefetch::ui::printer::Printer;
-use std::{
-    io::{self, Write},
-    panic,
-};
+use std::io::{self, Write};
 
 fn main() -> Result<()> {
+    setup_panic!();
     let mut writer = io::BufWriter::new(io::stdout());
 
     // Disable line wrapping
