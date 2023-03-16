@@ -21,7 +21,6 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
 
-    panic!("toto");
     let config = cli::Config::parse();
 
     if config.languages {
