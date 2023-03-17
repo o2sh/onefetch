@@ -6,13 +6,13 @@ use human_panic::setup_panic;
 use onefetch::cli;
 use onefetch::info::Info;
 use onefetch::ui::printer::Printer;
-use std::{env, io};
+use std::io;
 
 fn main() -> Result<()> {
-    setup_panic!();
-
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
+
+    setup_panic!();
 
     let config = cli::Config::parse();
 
