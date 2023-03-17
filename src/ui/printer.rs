@@ -18,7 +18,11 @@ pub enum SerializationFormat {
     Yaml,
 }
 
-pub struct Printer {
+pub struct Printer<W>
+where
+    W: Write,
+{
+    writer: W,
     info: Info,
     output: Option<SerializationFormat>,
     art_off: bool,
@@ -30,8 +34,8 @@ pub struct Printer {
     ascii_language: Option<Language>,
 }
 
-impl Printer {
-    pub fn new(info: Info, config: Config) -> Result<Self> {
+impl<W: Write> Printer<W> {
+    pub fn new(writer: W, info: Info, config: Config) -> Result<Self> {
         let art_off = match config.show_logo {
             When::Always => false,
             When::Never => true,
@@ -59,6 +63,7 @@ impl Printer {
         };
 
         Ok(Self {
+            writer,
             info,
             output: config.output,
             art_off,
@@ -71,14 +76,14 @@ impl Printer {
         })
     }
 
-    pub fn print<W: Write>(&mut self, mut writer: W) -> Result<()> {
+    pub fn print(&mut self) -> Result<()> {
         match &self.output {
             Some(format) => match format {
                 SerializationFormat::Json => {
-                    writeln!(writer, "{}", serde_json::to_string_pretty(&self.info)?)?
+                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?
                 }
                 SerializationFormat::Yaml => {
-                    writeln!(writer, "{}", serde_yaml::to_string(&self.info)?)?
+                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?
                 }
             },
             None => {
@@ -133,7 +138,13 @@ impl Printer {
                     }
                 }
 
-                write!(writer, "{buf}")?;
+                // Disable line wrapping
+                write!(self.writer, "\x1B[?7l")?;
+
+                write!(self.writer, "{buf}")?;
+
+                // Re-enable line wrapping
+                write!(self.writer, "\x1B[?7h")?;
             }
         }
         Ok(())

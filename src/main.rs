@@ -2,21 +2,14 @@
 
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
+use human_panic::setup_panic;
 use onefetch::cli;
 use onefetch::info::Info;
 use onefetch::ui::printer::Printer;
-use std::{
-    env,
-    io::{self, Write},
-};
+use std::{env, io};
 
 fn main() -> Result<()> {
-    setup_panic_hook();
-
-    let mut writer = io::BufWriter::new(io::stdout());
-
-    // Disable line wrapping
-    write!(writer, "\x1B[?7l")?;
+    setup_panic!();
 
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
@@ -38,28 +31,9 @@ fn main() -> Result<()> {
     }
 
     let info = Info::new(&config)?;
-    let mut printer = Printer::new(info, config)?;
+    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, config)?;
 
-    printer.print(&mut writer)?;
-
-    // Re-enable line wrapping
-    write!(writer, "\x1B[?7h")?;
+    printer.print()?;
 
     Ok(())
-}
-
-fn setup_panic_hook() {
-    let orig_hook = std::panic::take_hook();
-    std::panic::set_hook(Box::new(move |panic_info| {
-        eprintln!("\n====================================================================");
-        eprintln!("Onefetch has panicked. This is a bug in Onefetch. Please report this");
-        eprintln!("at https://github.com/o2sh/onefetch/issues/new.");
-        eprintln!();
-        eprintln!("Platform: {} {}", env::consts::OS, env::consts::ARCH);
-        eprintln!("Args: {:?}", env::args().collect::<Vec<_>>());
-        eprintln!();
-        print!("\x1B[?7h");
-        orig_hook(panic_info);
-        std::process::exit(1);
-    }));
 }
