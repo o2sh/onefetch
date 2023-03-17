@@ -135,13 +135,8 @@ impl<W: Write> Printer<W> {
                     }
                 }
 
-                // Disable line wrapping
-                write!(self.writer, "\x1B[?7l")?;
-
-                write!(self.writer, "{buf}")?;
-
-                // Re-enable line wrapping
-                write!(self.writer, "\x1B[?7h")?;
+                // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
+                write!(self.writer, "\x1B[?7l{buf}\x1B[?7h")?;
             }
         }
         Ok(())
