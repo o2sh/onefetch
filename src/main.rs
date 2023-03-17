@@ -9,10 +9,10 @@ use onefetch::ui::printer::Printer;
 use std::io;
 
 fn main() -> Result<()> {
+    setup_panic!();
+
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
-
-    setup_panic!();
 
     let config = cli::Config::parse();
 
