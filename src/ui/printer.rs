@@ -135,7 +135,8 @@ impl<W: Write> Printer<W> {
                     }
                 }
 
-                write!(self.writer, "{buf}")?;
+                // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
+                write!(self.writer, "\x1B[?7l{buf}\x1B[?7h")?;
             }
         }
         Ok(())
