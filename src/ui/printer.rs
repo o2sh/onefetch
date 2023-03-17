@@ -18,10 +18,7 @@ pub enum SerializationFormat {
     Yaml,
 }
 
-pub struct Printer<W>
-where
-    W: Write,
-{
+pub struct Printer<W> {
     writer: W,
     info: Info,
     output: Option<SerializationFormat>,
