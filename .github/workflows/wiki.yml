@@ -11,6 +11,9 @@ jobs:
   update-wiki:
     runs-on: ubuntu-latest
     name: Sync Wiki
+    concurrency:
+      group: wiki
+      cancel-in-progress: true
 
     steps:
       - uses: actions/checkout@v3
