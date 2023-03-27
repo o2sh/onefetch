@@ -180,7 +180,7 @@ mod test {
     }
 
     #[test]
-    fn test_display_project_info_when_one_branche_one_tag() {
+    fn test_display_project_info_when_one_branch_one_tag() {
         let project_info = ProjectInfo {
             repo_name: "onefetch".to_string(),
             number_of_branches: 1,
