@@ -42,7 +42,7 @@ pub struct CliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "INFO")]
+#[command(next_help_heading = "Info")]
 pub struct InfoCliOptions {
     /// Allows you to disable FIELD(s) from appearing in the output
     #[arg(
@@ -90,7 +90,7 @@ pub struct InfoCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "ASCII")]
+#[command(next_help_heading = "Ascii")]
 pub struct AsciiCliOptions {
     /// Takes a non-empty STRING as input to replace the ASCII logo
     ///
@@ -132,7 +132,7 @@ pub struct AsciiCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "IMAGE")]
+#[command(next_help_heading = "Image")]
 pub struct ImageCliOptions {
     /// Path to the IMAGE file
     #[arg(long, short, value_hint = ValueHint::FilePath)]
@@ -153,7 +153,7 @@ pub struct ImageCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "TEXT FORMATTING")]
+#[command(next_help_heading = "Text formatting")]
 pub struct TextForamttingCliOptions {
     /// Changes the text colors (X X X...)
     ///
@@ -181,7 +181,7 @@ pub struct TextForamttingCliOptions {
     pub no_bold: bool,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "COLOR BLOCKS")]
+#[command(next_help_heading = "Color blocks")]
 pub struct ColorBlocksCliOptions {
     /// Hides the color palette
     #[arg(long)]
@@ -189,7 +189,7 @@ pub struct ColorBlocksCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "DEVELOPER")]
+#[command(next_help_heading = "Developer")]
 pub struct DeveloperCliOptions {
     /// Outputs Onefetch in a specific format
     #[arg(long, short, value_name = "FORMAT", value_enum)]
@@ -200,7 +200,7 @@ pub struct DeveloperCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "OTHER")]
+#[command(next_help_heading = "Other")]
 pub struct OtherCliOptions {
     /// Prints out supported languages
     #[arg(long, short)]
