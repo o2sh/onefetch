@@ -35,7 +35,21 @@ fn get_url(repo: &Repository) -> Result<String> {
     }
 
     let remote_url = match remote_url {
-        Some(url) => url,
+        Some(url) => {
+            if url.contains("ghp") {
+                let first_token_character_pos: usize = url.find("g").unwrap(); //ghp
+                let last_token_character_pos = url.find("@").unwrap();
+
+                let res = format!(
+                    "{}{}",
+                    &url[0..first_token_character_pos],
+                    &url[last_token_character_pos + 1..url.len()]
+                );
+                res
+            } else {
+                url
+            }
+        }
         None => return Ok(Default::default()),
     };
 
