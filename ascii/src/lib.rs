@@ -265,7 +265,7 @@ fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R
 
 // Parsers
 
-/// Parses a color indiator of the format `{n}` where `n` is a digit.
+/// Parses a color indicator of the format `{n}` where `n` is a digit.
 fn color_token(s: &str) -> ParseResult<Token> {
     let (s, _) = token(s, succeed_when(|c| c == '{'))?;
     let (s, color_index) = token(s, |c| c.to_digit(10))?;
