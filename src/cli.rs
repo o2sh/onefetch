@@ -20,7 +20,7 @@ use strum::IntoEnumIterator;
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[command(version, about)]
+#[command(disable_help_flag = true, about)]
 pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
@@ -137,8 +137,8 @@ pub struct ImageCliOptions {
     /// Path to the IMAGE file
     #[arg(long, short, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
-    /// Which image protocol to use
-    #[arg(long, value_enum, requires = "image")]
+    /// Which image PROTOCOL to use
+    #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
