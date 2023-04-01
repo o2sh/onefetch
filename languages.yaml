@@ -291,6 +291,56 @@ CoffeeScript:
     ansi:
       - red
     chip: "#244776"
+ColdFusion:
+  type: programming
+  ascii: |
+    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
+    {0}Cf                                    Cf
+    {0}Cf                                    Cf
+    {0}Cf                         CfCfCfCf   Cf
+    {0}Cf       CfCfCfCfCf     CfCfCfCfCf    Cf
+    {0}Cf      CfCfCfCfCf     CfCf           Cf
+    {0}Cf     CfCf           CfCf            Cf
+    {0}Cf    CfCf         CfCfCfCfCfCf       Cf
+    {0}Cf    CfCf            CfCf            Cf
+    {0}Cf    CfCf            CfCf            Cf
+    {0}Cf     CfCf           CfCf            Cf
+    {0}Cf      CfCfCfCfCf    CfCf            Cf
+    {0}Cf       CfCfCfCfCf   CfCf            Cf
+    {0}Cf                                    Cf
+    {0}Cf                                    Cf
+    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
+  colors:
+    ansi:
+      - Cyan
+    hex:
+      - "#DFF0FD"
+    chip: "#ed2cd6"
+ColdFusionScript:
+  type: programming
+  ascii: |
+    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
+    {0}Cf                                    Cf
+    {0}Cf                                    Cf
+    {0}Cf                         CfCfCfCf   Cf
+    {0}Cf       CfCfCfCfCf     CfCfCfCfCf    Cf
+    {0}Cf      CfCfCfCfCf     CfCf           Cf
+    {0}Cf     CfCf           CfCf            Cf
+    {0}Cf    CfCf         CfCfCfCfCfCf       Cf
+    {0}Cf    CfCf            CfCf            Cf
+    {0}Cf    CfCf            CfCf            Cf
+    {0}Cf     CfCf           CfCf            Cf
+    {0}Cf      CfCfCfCfCf    CfCf            Cf
+    {0}Cf       CfCfCfCfCf   CfCf            Cf
+    {0}Cf                                    Cf
+    {0}Cf                                    Cf
+    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
+  colors:
+    ansi:
+      - Cyan
+    hex:
+      - "#DFF0FD"
+    chip: "#ed2cd6"
 Coq:
   type: programming
   ascii: |
