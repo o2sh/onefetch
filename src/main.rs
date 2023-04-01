@@ -14,24 +14,24 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     let _ = enable_ansi_support::enable_ansi_support();
 
-    let config = cli::Config::parse();
+    let cli_options = cli::CliOptions::parse();
 
-    if config.languages {
+    if cli_options.other.languages {
         return cli::print_supported_languages();
     }
 
-    if config.package_managers {
+    if cli_options.other.package_managers {
         return cli::print_supported_package_managers();
     }
 
-    if let Some(generator) = config.completion {
-        let mut cmd = cli::Config::command();
+    if let Some(generator) = cli_options.developer.completion {
+        let mut cmd = cli::CliOptions::command();
         cli::print_completions(generator, &mut cmd);
         return Ok(());
     }
 
-    let info = Info::new(&config)?;
-    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, config)?;
+    let info = Info::new(&cli_options)?;
+    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
 
     printer.print()?;
 
