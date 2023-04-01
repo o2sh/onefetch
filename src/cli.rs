@@ -20,7 +20,7 @@ use strum::IntoEnumIterator;
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[command(version, about, long_about = None, rename_all = "kebab-case")]
+#[command(version, about)]
 pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
