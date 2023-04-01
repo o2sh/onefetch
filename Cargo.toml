@@ -30,7 +30,7 @@ gix = { version = "0.36.1", default-features = false, features = [
     "max-performance-safe",
 ] }
 git2 = { version = "0.16.1", default-features = false }
-human-panic = "1.0.3"
+human-panic = "1.1.0"
 image = "0.24.4"
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.16.0" }
