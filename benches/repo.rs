@@ -1,12 +1,12 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use gix::{open, ThreadSafeRepository};
-use onefetch::{cli::Config, info::Info};
+use onefetch::{cli::CliOptions, info::Info};
 
 fn bench_repo_info(c: &mut Criterion) {
     let name = "repo.sh".to_string();
     let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
     let repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
-    let config: Config = Config {
+    let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };

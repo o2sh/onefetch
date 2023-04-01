@@ -1,4 +1,4 @@
-use crate::cli::{Config, When};
+use crate::cli::{CliOptions, When};
 use crate::info::Info;
 use crate::ui::Language;
 use anyhow::{Context, Result};
@@ -32,8 +32,8 @@ pub struct Printer<W> {
 }
 
 impl<W: Write> Printer<W> {
-    pub fn new(writer: W, info: Info, config: Config) -> Result<Self> {
-        let art_off = match config.show_logo {
+    pub fn new(writer: W, info: Info, cli_options: CliOptions) -> Result<Self> {
+        let art_off = match cli_options.ascii.show_logo {
             When::Always => false,
             When::Never => true,
             When::Auto => {
@@ -44,13 +44,14 @@ impl<W: Write> Printer<W> {
                 }
             }
         };
-        let image = match config.image {
+        let image = match cli_options.image.image {
             Some(p) => Some(image::open(p).context("Could not load the specified image")?),
             None => None,
         };
 
         let image_backend = if image.is_some() {
-            config
+            cli_options
+                .image
                 .image_protocol
                 .map_or_else(onefetch_image::get_best_backend, |s| {
                     onefetch_image::get_image_backend(s)
@@ -62,14 +63,14 @@ impl<W: Write> Printer<W> {
         Ok(Self {
             writer,
             info,
-            output: config.output,
+            output: cli_options.developer.output,
             art_off,
             image,
             image_backend,
-            color_resolution: config.color_resolution,
-            no_bold: config.no_bold,
-            ascii_input: config.ascii_input,
-            ascii_language: config.ascii_language,
+            color_resolution: cli_options.image.color_resolution,
+            no_bold: cli_options.text_formatting.no_bold,
+            ascii_input: cli_options.ascii.ascii_input,
+            ascii_language: cli_options.ascii.ascii_language,
         })
     }
 
