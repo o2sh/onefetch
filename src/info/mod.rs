@@ -142,7 +142,7 @@ impl Info {
         let ascii_colors = get_ascii_colors(
             &cli_options.ascii.ascii_language,
             &dominant_language,
-            &cli_options.text_formatting.ascii_colors,
+            &cli_options.ascii.ascii_colors,
             true_color,
         );
 

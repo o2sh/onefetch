@@ -131,7 +131,7 @@ pub struct AsciiCliOptions {
     pub show_logo: When,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageCliOptions {
     /// Path to the IMAGE file
@@ -155,15 +155,6 @@ pub struct ImageCliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "TEXT FORMATTING")]
 pub struct TextForamttingCliOptions {
-    /// Colors (X X X...) to print the ascii art
-    #[arg(
-        long,
-        num_args = 1..,
-        value_name = "X",
-        short = 'c',
-        value_parser = value_parser!(u8).range(..16),
-    )]
-    pub ascii_colors: Vec<u8>,
     /// Changes the text colors (X X X...)
     ///
     /// Goes in order of title, ~, underline, subtitle, colon, and info
@@ -254,7 +245,6 @@ impl Default for InfoCliOptions {
 impl Default for TextForamttingCliOptions {
     fn default() -> Self {
         TextForamttingCliOptions {
-            ascii_colors: Default::default(),
             text_colors: Default::default(),
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
@@ -271,6 +261,15 @@ impl Default for AsciiCliOptions {
             ascii_language: Default::default(),
             true_color: When::Auto,
             show_logo: When::Always,
+        }
+    }
+}
+impl Default for ImageCliOptions {
+    fn default() -> Self {
+        ImageCliOptions {
+            image: Default::default(),
+            image_protocol: Default::default(),
+            color_resolution: 16,
         }
     }
 }
@@ -364,11 +363,8 @@ mod test {
                 disabled_fields: vec![InfoType::Version, InfoType::URL],
                 ..Default::default()
             },
-            text_formatting: TextForamttingCliOptions {
-                ascii_colors: vec![5, 0],
-                ..Default::default()
-            },
             ascii: AsciiCliOptions {
+                ascii_colors: vec![5, 0],
                 show_logo: When::Never,
                 ascii_language: Some(Language::Lisp),
                 ..Default::default()
