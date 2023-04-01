@@ -294,52 +294,29 @@ CoffeeScript:
 ColdFusion:
   type: programming
   ascii: |
-    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
-    {0}Cf                                    Cf
-    {0}Cf                                    Cf
-    {0}Cf                         CfCfCfCf   Cf
-    {0}Cf       CfCfCfCfCf     CfCfCfCfCf    Cf
-    {0}Cf      CfCfCfCfCf     CfCf           Cf
-    {0}Cf     CfCf           CfCf            Cf
-    {0}Cf    CfCf         CfCfCfCfCfCf       Cf
-    {0}Cf    CfCf            CfCf            Cf
-    {0}Cf    CfCf            CfCf            Cf
-    {0}Cf     CfCf           CfCf            Cf
-    {0}Cf      CfCfCfCfCf    CfCf            Cf
-    {0}Cf       CfCfCfCfCf   CfCf            Cf
-    {0}Cf                                    Cf
-    {0}Cf                                    Cf
-    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
+    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
+    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@{0}CfCfCfCf{1}@@{0}Cf
+    {0}Cf{1}@@@@@{0}CfCfCfCfCf{1}@@@@{0}CfCfCfCfCf{1}@@@{0}Cf
+    {0}Cf{1}@@@@{0}CfCfCfCfCf{1}@@@@{0}CfCf{1}@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@{0}CfCf{1}@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@{0}CfCf{1}@@@@@@@@{0}CfCfCfCfCfCf{1}@@@@@@{0}Cf
+    {0}Cf{1}@@{0}CfCf{1}@@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@{0}CfCf{1}@@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@{0}CfCf{1}@@@@@@@@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@@{0}CfCfCfCfCf{1}@@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@@@{0}CfCfCfCfCf{1}@@{0}CfCf{1}@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
+    {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
+    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
   colors:
     ansi:
-      - Cyan
+      - white
+      - blue
     hex:
-      - "#DFF0FD"
-    chip: "#ed2cd6"
-ColdFusionScript:
-  type: programming
-  ascii: |
-    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
-    {0}Cf                                    Cf
-    {0}Cf                                    Cf
-    {0}Cf                         CfCfCfCf   Cf
-    {0}Cf       CfCfCfCfCf     CfCfCfCfCf    Cf
-    {0}Cf      CfCfCfCfCf     CfCf           Cf
-    {0}Cf     CfCf           CfCf            Cf
-    {0}Cf    CfCf         CfCfCfCfCfCf       Cf
-    {0}Cf    CfCf            CfCf            Cf
-    {0}Cf    CfCf            CfCf            Cf
-    {0}Cf     CfCf           CfCf            Cf
-    {0}Cf      CfCfCfCfCf    CfCf            Cf
-    {0}Cf       CfCfCfCfCf   CfCf            Cf
-    {0}Cf                                    Cf
-    {0}Cf                                    Cf
-    {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
-  colors:
-    ansi:
-      - Cyan
-    hex:
-      - "#DFF0FD"
+      - "#E5F3FC"
+      - "#274550"
     chip: "#ed2cd6"
 Coq:
   type: programming
