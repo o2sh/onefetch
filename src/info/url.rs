@@ -36,16 +36,16 @@ fn get_url(repo: &Repository) -> Result<String> {
 
     let remote_url = match remote_url {
         Some(url) => {
-            if url.contains("ghp") {
-                let first_token_character_pos: usize = url.find("g").unwrap(); //ghp
+            if url.contains("@") {
+                let first_token_character_pos: usize = url.find("/").unwrap();
                 let last_token_character_pos = url.find("@").unwrap();
 
-                let res = format!(
+                let res_url = format!(
                     "{}{}",
-                    &url[0..first_token_character_pos],
+                    &url[0..first_token_character_pos + 2], //assuming that all remotes are https
                     &url[last_token_character_pos + 1..url.len()]
                 );
-                res
+                res_url
             } else {
                 url
             }
