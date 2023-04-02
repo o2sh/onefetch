@@ -226,7 +226,7 @@ impl Info {
             text_colors,
             dominant_language,
             ascii_colors,
-            no_color_palette: cli_options.color_blocks.no_color_palette,
+            no_color_palette: cli_options.visuals.no_color_palette,
             no_title: cli_options.info.no_title,
             no_bold: cli_options.text_formatting.no_bold,
         })

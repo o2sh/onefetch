@@ -30,11 +30,11 @@ pub struct CliOptions {
     #[command(flatten)]
     pub text_formatting: TextForamttingCliOptions,
     #[command(flatten)]
-    pub color_blocks: ColorBlocksCliOptions,
-    #[command(flatten)]
     pub ascii: AsciiCliOptions,
     #[command(flatten)]
     pub image: ImageCliOptions,
+    #[command(flatten)]
+    pub visuals: VisualsCliOptions,
     #[command(flatten)]
     pub developer: DeveloperCliOptions,
     #[command(flatten)]
@@ -124,11 +124,6 @@ pub struct AsciiCliOptions {
     /// If set to auto: true color will be enabled if supported by the terminal
     #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
     pub true_color: When,
-    /// Specify when to show the logo
-    ///
-    /// If set to auto: the logo will be hidden if the terminal's width < 95
-    #[arg(long, default_value = "always", value_name = "WHEN", value_enum)]
-    pub show_logo: When,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
@@ -181,11 +176,14 @@ pub struct TextForamttingCliOptions {
     pub no_bold: bool,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "COLOR BLOCKS")]
-pub struct ColorBlocksCliOptions {
+#[command(next_help_heading = "VISUALS")]
+pub struct VisualsCliOptions {
     /// Hides the color palette
     #[arg(long)]
     pub no_color_palette: bool,
+    /// Hides the ascii art or image if provided
+    #[arg(long)]
+    pub no_art: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
@@ -216,7 +214,7 @@ impl Default for CliOptions {
             input: PathBuf::from("."),
             info: InfoCliOptions::default(),
             text_formatting: TextForamttingCliOptions::default(),
-            color_blocks: ColorBlocksCliOptions::default(),
+            visuals: VisualsCliOptions::default(),
             ascii: AsciiCliOptions::default(),
             image: ImageCliOptions::default(),
             developer: DeveloperCliOptions::default(),
@@ -260,7 +258,6 @@ impl Default for AsciiCliOptions {
             ascii_colors: Default::default(),
             ascii_language: Default::default(),
             true_color: When::Auto,
-            show_logo: When::Always,
         }
     }
 }
@@ -365,8 +362,11 @@ mod test {
             },
             ascii: AsciiCliOptions {
                 ascii_colors: vec![5, 0],
-                show_logo: When::Never,
                 ascii_language: Some(Language::Lisp),
+                ..Default::default()
+            },
+            visuals: VisualsCliOptions {
+                no_art: true,
                 ..Default::default()
             },
             ..Default::default()
@@ -386,8 +386,7 @@ mod test {
                 "--disabled-fields",
                 "version",
                 "url",
-                "--show-logo",
-                "never",
+                "--no-art",
                 "--ascii-language",
                 "lisp"
             ])

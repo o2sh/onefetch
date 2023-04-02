@@ -1,4 +1,4 @@
-use crate::cli::{CliOptions, When};
+use crate::cli::CliOptions;
 use crate::info::Info;
 use crate::ui::Language;
 use anyhow::{Context, Result};
@@ -7,10 +7,8 @@ use onefetch_ascii::AsciiArt;
 use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 use std::io::Write;
-use terminal_size::{terminal_size, Width};
 
 const CENTER_PAD_LENGTH: usize = 3;
-const MAX_TERM_WIDTH: u16 = 95;
 
 #[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
@@ -33,17 +31,6 @@ pub struct Printer<W> {
 
 impl<W: Write> Printer<W> {
     pub fn new(writer: W, info: Info, cli_options: CliOptions) -> Result<Self> {
-        let art_off = match cli_options.ascii.show_logo {
-            When::Always => false,
-            When::Never => true,
-            When::Auto => {
-                if let Some((Width(width), _)) = terminal_size() {
-                    width < MAX_TERM_WIDTH
-                } else {
-                    false
-                }
-            }
-        };
         let image = match cli_options.image.image {
             Some(p) => Some(image::open(p).context("Could not load the specified image")?),
             None => None,
@@ -64,7 +51,7 @@ impl<W: Write> Printer<W> {
             writer,
             info,
             output: cli_options.developer.output,
-            art_off,
+            art_off: cli_options.visuals.no_art,
             image,
             image_backend,
             color_resolution: cli_options.image.color_resolution,
