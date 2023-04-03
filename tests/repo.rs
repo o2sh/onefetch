@@ -1,6 +1,6 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
-use onefetch::cli::Config;
+use onefetch::cli::{Config, When};
 use onefetch::info::{get_work_dir, Info};
 
 fn repo(name: &str) -> Result<Repository> {
@@ -54,6 +54,25 @@ fn test_repo_without_remote() -> Result<()> {
     };
     let info = Info::new(&config);
     assert!(info.is_ok());
+
+    Ok(())
+}
+
+#[test]
+fn test_repo_with_token_url() -> Result<()> {
+    let repo = repo("repo_with_token_url.sh")?;
+    let config: Config = Config {
+        input: repo.path().to_path_buf(),
+        // NOTE: Normalizing for a snapshot
+        no_bold: true,
+        no_color_palette: true,
+        text_colors: Vec::new(),
+        iso_time: true,
+        true_color: When::Never,
+        ..Default::default()
+    };
+    let info = Info::new(&config)?;
+    insta::assert_display_snapshot!(info);
 
     Ok(())
 }

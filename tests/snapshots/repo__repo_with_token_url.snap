@@ -1,0 +1,18 @@
+---
+source: tests/repo.rs
+expression: info
+---
+[31monefetch-committer-name[0m [39m~[0m [31mgit version 2.25.1[0m
+[39m--------------------------------------------[39m
+[31mProject[0m[39m:[0m [39mbar[0m
+[31mHEAD[0m[39m:[0m [39m3e3dc67 (master)[0m
+[31mCreated[0m[39m:[0m [39m2000-01-02T00:00:00Z[0m
+[31mLanguage[0m[39m:[0m [41m                          [49m
+          [31m●[39m [39mRust (100.0 %)[39m 
+[31mAuthor[0m[39m:[0m [39m100% author 1[39m
+[31mLast change[0m[39m:[0m [39m2000-01-02T00:00:00Z[0m
+[31mURL[0m[39m:[0m [39mhttps://github.com/foo/bar.git[0m
+[31mCommits[0m[39m:[0m [39m1[0m
+[31mLines of code[0m[39m:[0m [39m1[0m
+[31mSize[0m[39m:[0m [39m41 B (1 file)[0m
+
