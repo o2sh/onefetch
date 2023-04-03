@@ -1,6 +1,7 @@
 use crate::info::utils::info_field::{InfoField, InfoType};
 use anyhow::Result;
 use gix::Repository;
+use regex::Regex;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -36,19 +37,9 @@ fn get_url(repo: &Repository) -> Result<String> {
 
     let remote_url = match remote_url {
         Some(url) => {
-            if url.contains("@") {
-                let first_token_character_pos: usize = url.find("/").unwrap();
-                let last_token_character_pos = url.find("@").unwrap();
-
-                let res_url = format!(
-                    "{}{}",
-                    &url[0..first_token_character_pos + 2], //assuming that all remotes are https
-                    &url[last_token_character_pos + 1..url.len()]
-                );
-                res_url
-            } else {
-                url
-            }
+            let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
+            let replaced_url = pattern.replace(&url, "$1").to_string();
+            replaced_url
         }
         None => return Ok(Default::default()),
     };
