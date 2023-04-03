@@ -1,9 +1,9 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
 use onefetch::cli::{
-    AsciiCliOptions, CliOptions, TextForamttingCliOptions, VisualsCliOptions, When,
+    AsciiCliOptions, CliOptions, InfoCliOptions, TextForamttingCliOptions, VisualsCliOptions, When,
 };
-use onefetch::info::{get_work_dir, Info};
+use onefetch::info::{get_work_dir, utils::info_field::InfoType, Info};
 
 fn repo(name: &str) -> Result<Repository> {
     let name = name.to_string();
@@ -69,6 +69,11 @@ fn test_repo_with_token_url() -> Result<()> {
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         // NOTE: Normalizing for a snapshot
+        info: InfoCliOptions {
+            disabled_fields: vec![InfoType::Head],
+            no_title: true,
+            ..Default::default()
+        },
         text_formatting: TextForamttingCliOptions {
             text_colors: Vec::new(),
             iso_time: true,

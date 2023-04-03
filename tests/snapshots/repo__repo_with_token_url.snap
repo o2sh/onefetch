@@ -2,10 +2,7 @@
 source: tests/repo.rs
 expression: info
 ---
-[31monefetch-committer-name[0m [39m~[0m [31mgit version 2.25.1[0m
-[39m--------------------------------------------[39m
 [31mProject[0m[39m:[0m [39mbar[0m
-[31mHEAD[0m[39m:[0m [39m3e3dc67 (master)[0m
 [31mCreated[0m[39m:[0m [39m2000-01-02T00:00:00Z[0m
 [31mLanguage[0m[39m:[0m [41m                          [49m
           [31m●[39m [39mRust (100.0 %)[39m 
