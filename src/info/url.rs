@@ -77,4 +77,13 @@ mod test {
             "git@github.com:o2sh/onefetch.git".to_string()
         );
     }
+
+    #[test]
+    fn test_remove_personal_token() {
+        let url = "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/jim4067/onefetch.git";
+        let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
+        let replaced_url = pattern.replace(&url, "$1");
+
+        assert_eq!(replaced_url, "https://github.com/jim4067/onefetch.git");
+    }
 }
