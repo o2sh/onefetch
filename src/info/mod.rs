@@ -18,7 +18,7 @@ use self::url::UrlInfo;
 use self::utils::git::Commits;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
-use crate::cli::{is_truecolor_terminal, Config, NumberSeparator, When};
+use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -110,14 +110,14 @@ impl std::fmt::Display for Info {
 }
 
 impl Info {
-    pub fn new(config: &Config) -> Result<Self> {
-        let git_repo = gix::discover(&config.input)?;
+    pub fn new(cli_options: &CliOptions) -> Result<Self> {
+        let git_repo = gix::discover(&cli_options.input)?;
         let repo_path = get_work_dir(&git_repo)?;
 
         let loc_by_language_sorted_handle = std::thread::spawn({
-            let ignored_directories = config.exclude.clone();
-            let language_types = config.r#type.clone();
-            let include_hidden = config.include_hidden;
+            let ignored_directories = cli_options.info.exclude.clone();
+            let language_types = cli_options.info.r#type.clone();
+            let include_hidden = cli_options.info.include_hidden;
             let workdir = repo_path.clone();
             move || {
                 langs::get_loc_by_language_sorted(
@@ -134,25 +134,26 @@ impl Info {
             .ok()
             .context("BUG: panic in language statistics thread")??;
         let dominant_language = langs::get_main_language(&loc_by_language);
-        let true_color = match config.true_color {
+        let true_color = match cli_options.ascii.true_color {
             When::Always => true,
             When::Never => false,
             When::Auto => is_truecolor_terminal(),
         };
         let ascii_colors = get_ascii_colors(
-            &config.ascii_language,
+            &cli_options.ascii.ascii_language,
             &dominant_language,
-            &config.ascii_colors,
+            &cli_options.ascii.ascii_colors,
             true_color,
         );
 
-        let text_colors = TextColors::new(&config.text_colors, ascii_colors[0]);
+        let text_colors =
+            TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
         let title = Title::new(
             &git_repo,
             text_colors.title,
             text_colors.tilde,
             text_colors.underline,
-            !config.no_bold,
+            !cli_options.text_formatting.no_bold,
         );
         let manifest = get_manifest(&repo_path)?;
         let description = DescriptionInfo::new(manifest.as_ref());
@@ -162,34 +163,43 @@ impl Info {
             &git_repo,
             &repo_url.repo_url,
             manifest.as_ref(),
-            config.number_separator,
+            cli_options.text_formatting.number_separator,
         )?;
         let head = HeadInfo::new(&git_repo)?;
         let version = VersionInfo::new(&git_repo, manifest.as_ref())?;
-        let size = SizeInfo::new(&git_repo, config.number_separator);
+        let size = SizeInfo::new(&git_repo, cli_options.text_formatting.number_separator);
         let license = LicenseInfo::new(&repo_path, manifest.as_ref())?;
         let mut commits = Commits::new(
             git_repo,
-            config.no_merges,
-            &config.no_bots,
-            config.number_of_authors,
-            config.email,
-            config.number_separator,
+            cli_options.info.no_merges,
+            &cli_options.info.no_bots,
+            cli_options.info.number_of_authors,
+            cli_options.info.email,
+            cli_options.text_formatting.number_separator,
         )?;
-        let created = CreatedInfo::new(config.iso_time, &commits);
+        let created = CreatedInfo::new(cli_options.text_formatting.iso_time, &commits);
         let languages = LanguagesInfo::new(
             &loc_by_language,
             true_color,
-            config.number_of_languages,
+            cli_options.info.number_of_languages,
             text_colors.info,
         );
-        let dependencies = DependenciesInfo::new(manifest.as_ref(), config.number_separator);
+        let dependencies = DependenciesInfo::new(
+            manifest.as_ref(),
+            cli_options.text_formatting.number_separator,
+        );
         let authors = AuthorsInfo::new(text_colors.info, &mut commits);
-        let last_change = LastChangeInfo::new(config.iso_time, &commits);
-        let contributors =
-            ContributorsInfo::new(&commits, config.number_of_authors, config.number_separator);
-        let commits = CommitsInfo::new(&commits, config.number_separator);
-        let lines_of_code = LocInfo::new(&loc_by_language, config.number_separator);
+        let last_change = LastChangeInfo::new(cli_options.text_formatting.iso_time, &commits);
+        let contributors = ContributorsInfo::new(
+            &commits,
+            cli_options.info.number_of_authors,
+            cli_options.text_formatting.number_separator,
+        );
+        let commits = CommitsInfo::new(&commits, cli_options.text_formatting.number_separator);
+        let lines_of_code = LocInfo::new(
+            &loc_by_language,
+            cli_options.text_formatting.number_separator,
+        );
 
         let info_fields: Vec<Box<dyn InfoField>> = vec![
             Box::new(project),
@@ -212,13 +222,13 @@ impl Info {
         Ok(Self {
             title,
             info_fields,
-            disabled_fields: config.disabled_fields.clone(),
+            disabled_fields: cli_options.info.disabled_fields.clone(),
             text_colors,
             dominant_language,
             ascii_colors,
-            no_color_palette: config.no_color_palette,
-            no_title: config.no_title,
-            no_bold: config.no_bold,
+            no_color_palette: cli_options.visuals.no_color_palette,
+            no_title: cli_options.info.no_title,
+            no_bold: cli_options.text_formatting.no_bold,
         })
     }
 

@@ -1,6 +1,8 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
-use onefetch::cli::{Config, When};
+use onefetch::cli::{
+    AsciiCliOptions, CliOptions, TextForamttingCliOptions, VisualsCliOptions, When,
+};
 use onefetch::info::{get_work_dir, Info};
 
 fn repo(name: &str) -> Result<Repository> {
@@ -28,9 +30,12 @@ fn test_bare_repo() -> Result<()> {
 #[test]
 fn test_repo() -> Result<()> {
     let repo = repo("repo.sh")?;
-    let config: Config = Config {
+    let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
-        iso_time: true,
+        text_formatting: TextForamttingCliOptions {
+            iso_time: true,
+            ..Default::default()
+        },
         ..Default::default()
     };
     let info = Info::new(&config)?;
@@ -48,7 +53,7 @@ fn test_repo() -> Result<()> {
 #[test]
 fn test_repo_without_remote() -> Result<()> {
     let repo = repo("basic_repo.sh")?;
-    let config: Config = Config {
+    let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
@@ -61,14 +66,24 @@ fn test_repo_without_remote() -> Result<()> {
 #[test]
 fn test_repo_with_token_url() -> Result<()> {
     let repo = repo("repo_with_token_url.sh")?;
-    let config: Config = Config {
+    let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         // NOTE: Normalizing for a snapshot
-        no_bold: true,
-        no_color_palette: true,
-        text_colors: Vec::new(),
-        iso_time: true,
-        true_color: When::Never,
+        text_formatting: TextForamttingCliOptions {
+            text_colors: Vec::new(),
+            iso_time: true,
+            no_bold: true,
+            ..Default::default()
+        },
+        ascii: AsciiCliOptions {
+            ascii_colors: Vec::new(),
+            true_color: When::Never,
+            ..Default::default()
+        },
+        visuals: VisualsCliOptions {
+            no_color_palette: true,
+            ..Default::default()
+        },
         ..Default::default()
     };
     let info = Info::new(&config)?;

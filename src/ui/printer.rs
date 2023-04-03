@@ -1,4 +1,4 @@
-use crate::cli::{Config, When};
+use crate::cli::CliOptions;
 use crate::info::Info;
 use crate::ui::Language;
 use anyhow::{Context, Result};
@@ -7,10 +7,8 @@ use onefetch_ascii::AsciiArt;
 use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 use std::io::Write;
-use terminal_size::{terminal_size, Width};
 
 const CENTER_PAD_LENGTH: usize = 3;
-const MAX_TERM_WIDTH: u16 = 95;
 
 #[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
@@ -32,25 +30,15 @@ pub struct Printer<W> {
 }
 
 impl<W: Write> Printer<W> {
-    pub fn new(writer: W, info: Info, config: Config) -> Result<Self> {
-        let art_off = match config.show_logo {
-            When::Always => false,
-            When::Never => true,
-            When::Auto => {
-                if let Some((Width(width), _)) = terminal_size() {
-                    width < MAX_TERM_WIDTH
-                } else {
-                    false
-                }
-            }
-        };
-        let image = match config.image {
+    pub fn new(writer: W, info: Info, cli_options: CliOptions) -> Result<Self> {
+        let image = match cli_options.image.image {
             Some(p) => Some(image::open(p).context("Could not load the specified image")?),
             None => None,
         };
 
         let image_backend = if image.is_some() {
-            config
+            cli_options
+                .image
                 .image_protocol
                 .map_or_else(onefetch_image::get_best_backend, |s| {
                     onefetch_image::get_image_backend(s)
@@ -62,14 +50,14 @@ impl<W: Write> Printer<W> {
         Ok(Self {
             writer,
             info,
-            output: config.output,
-            art_off,
+            output: cli_options.developer.output,
+            art_off: cli_options.visuals.no_art,
             image,
             image_backend,
-            color_resolution: config.color_resolution,
-            no_bold: config.no_bold,
-            ascii_input: config.ascii_input,
-            ascii_language: config.ascii_language,
+            color_resolution: cli_options.image.color_resolution,
+            no_bold: cli_options.text_formatting.no_bold,
+            ascii_input: cli_options.ascii.ascii_input,
+            ascii_language: cli_options.ascii.ascii_language,
         })
     }
 
