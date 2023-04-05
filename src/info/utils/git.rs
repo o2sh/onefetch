@@ -1,8 +1,8 @@
 use crate::cli::{MyRegex, NumberSeparator};
 use crate::info::author::Author;
 use anyhow::Result;
-use gix::bstr::BString;
 use gix::bstr::BStr;
+use gix::bstr::BString;
 use gix::bstr::ByteSlice;
 use regex::Regex;
 use std::collections::HashMap;
@@ -83,27 +83,38 @@ impl Commits {
             }
         }
 
-        let mut authors_by_number_of_commits: Vec<(Sig, usize)> = Vec::new();
-        for (e, name_to_nbr_of_commits) in email_to_names.into_iter() {
+        let mut authors_by_number_of_commits: Vec<(Sig, usize)> = email_to_names
+            .into_iter()
+            .map(|(email, name_to_nbr_of_commits)| {
+                let mut author_nbr_of_commits = 0;
 
-            let mut most_frequent_name: Option<BString> = None;
-            let mut highest_nbr_of_commits = 0;
-            let mut author_nbr_of_commits = 0;
+                let most_frequent_name = name_to_nbr_of_commits
+                    .into_iter()
+                    .fold(None, |acc, x| {
+                        author_nbr_of_commits += x.1;
 
-            for (n, c) in name_to_nbr_of_commits.into_iter() {
+                        match acc {
+                            None => Some(x),
+                            Some(e) => {
+                                if x.1 > e.1 {
+                                    Some(x)
+                                } else {
+                                    Some(e)
+                                }
+                            }
+                        }
+                    })
+                    .unwrap();
 
-                author_nbr_of_commits += c;
-
-                if c > highest_nbr_of_commits {
-                    highest_nbr_of_commits = c;
-                    most_frequent_name.insert(n.clone());
-                }
-            }
-
-            let sig = Sig { email: e, name: most_frequent_name.unwrap().clone() };
-            authors_by_number_of_commits.push((sig, author_nbr_of_commits));
-        }
-
+                (
+                    Sig {
+                        email,
+                        name: most_frequent_name.0.clone(),
+                    },
+                    author_nbr_of_commits,
+                )
+            })
+            .collect();
 
         let total_num_authors = authors_by_number_of_commits.len();
         authors_by_number_of_commits.sort_by(|(sa, a_count), (sb, b_count)| {
