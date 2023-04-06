@@ -86,32 +86,27 @@ impl Commits {
         let mut authors_by_number_of_commits: Vec<(Sig, usize)> = email_to_names
             .into_iter()
             .map(|(email, name_to_nbr_of_commits)| {
-                let mut author_nbr_of_commits = 0;
-
-                let most_frequent_name = name_to_nbr_of_commits
-                    .into_iter()
-                    .fold(None, |acc, x| {
-                        author_nbr_of_commits += x.1;
-
-                        match acc {
-                            None => Some(x),
-                            Some(e) => {
-                                if x.1 > e.1 {
-                                    Some(x)
-                                } else {
-                                    Some(e)
-                                }
+                let (most_frequent_name, total_commits) = name_to_nbr_of_commits.into_iter().fold(
+                    (None, 0),
+                    |(acc_common_name, total_commits), (curr_name, curr_commits)| {
+                        let next_common_name = match acc_common_name {
+                            Some((acc_name, acc_commits)) if acc_commits > curr_commits => {
+                                Some((acc_name, acc_commits))
                             }
-                        }
-                    })
-                    .unwrap();
+
+                            _ => Some((curr_name, curr_commits)),
+                        };
+
+                        (next_common_name, total_commits + curr_commits)
+                    },
+                );
 
                 (
                     Sig {
                         email,
-                        name: most_frequent_name.0.clone(),
+                        name: most_frequent_name.unwrap().0.clone(),
                     },
-                    author_nbr_of_commits,
+                    total_commits,
                 )
             })
             .collect();
