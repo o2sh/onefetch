@@ -11,7 +11,7 @@ repository = "https://github.com/o2sh/onefetch"
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.1.6", features = ["derive"] }
-image = "0.24.4"
+image = "0.24.6"
 
 [target.'cfg(not(windows))'.dependencies]
 color_quant = "1.1.0"

@@ -31,7 +31,7 @@ gix = { version = "0.36.1", default-features = false, features = [
 ] }
 git2 = { version = "0.16.1", default-features = false }
 human-panic = "1.1.0"
-image = "0.24.4"
+image = "0.24.6"
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.16.0" }
 onefetch-image = { path = "image", version = "2.16.0" }
