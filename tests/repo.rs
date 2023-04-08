@@ -1,9 +1,7 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
-use onefetch::cli::{
-    AsciiCliOptions, CliOptions, InfoCliOptions, TextForamttingCliOptions, VisualsCliOptions, When,
-};
-use onefetch::info::{get_work_dir, utils::info_field::InfoType, Info};
+use onefetch::cli::{CliOptions, TextForamttingCliOptions};
+use onefetch::info::{get_work_dir, Info};
 
 fn repo(name: &str) -> Result<Repository> {
     let name = name.to_string();

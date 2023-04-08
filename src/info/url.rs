@@ -82,15 +82,18 @@ mod test {
 
     #[test]
     fn test_token_removal_github() {
-        let remote_url = "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/jim4067/onefetch.git"
-            .to_string();
+        let remote_url =
+            "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/jim4067/onefetch.git"
+                .to_string();
         let res_url = remove_token_from_url(remote_url);
         assert_eq!("https://github.com/jim4067/onefetch.git", res_url);
     }
 
     #[test]
     fn test_token_removal_gitlab() {
-        let remote_url = "https://john:abc123personaltoken@gitlab.com/jim4067/myproject.git".to_string();
+        let remote_url =
+            "https://john:abc123personaltoken@gitlab.com/jim4067/myproject.git".to_string();
         let res_url = remove_token_from_url(remote_url);
-        assert_eq!("https://gitlab.com/jim4067/myproject.git", res_url);    }
+        assert_eq!("https://gitlab.com/jim4067/myproject.git", res_url);
+    }
 }
