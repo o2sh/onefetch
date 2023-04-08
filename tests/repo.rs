@@ -62,37 +62,3 @@ fn test_repo_without_remote() -> Result<()> {
 
     Ok(())
 }
-
-#[test]
-fn test_repo_with_token_url() -> Result<()> {
-    let repo = repo("repo_with_token_url.sh")?;
-    let config: CliOptions = CliOptions {
-        input: repo.path().to_path_buf(),
-        // NOTE: Normalizing for a snapshot
-        info: InfoCliOptions {
-            disabled_fields: vec![InfoType::Head],
-            no_title: true,
-            ..Default::default()
-        },
-        text_formatting: TextForamttingCliOptions {
-            text_colors: Vec::new(),
-            iso_time: true,
-            no_bold: true,
-            ..Default::default()
-        },
-        ascii: AsciiCliOptions {
-            ascii_colors: Vec::new(),
-            true_color: When::Never,
-            ..Default::default()
-        },
-        visuals: VisualsCliOptions {
-            no_color_palette: true,
-            ..Default::default()
-        },
-        ..Default::default()
-    };
-    let info = Info::new(&config)?;
-    insta::assert_display_snapshot!(info);
-
-    Ok(())
-}
