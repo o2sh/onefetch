@@ -2,7 +2,7 @@
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 name = "onefetch-image"
 description = "Display images in the terminal"
-version = "2.16.0"
+version = "2.17.0"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
