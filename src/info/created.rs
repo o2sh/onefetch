@@ -1,4 +1,4 @@
-use super::utils::gitoxide_time_to_formatted_time;
+use super::utils::format_time;
 use crate::info::{
     utils::git::Commits,
     utils::info_field::{InfoField, InfoType},
@@ -19,7 +19,7 @@ impl CreatedInfo {
 }
 
 fn get_creation_date(commits: &Commits, iso_time: bool) -> String {
-    gitoxide_time_to_formatted_time(commits.time_of_first_commit, iso_time)
+    format_time(commits.time_of_first_commit, iso_time)
 }
 
 #[typetag::serialize]
