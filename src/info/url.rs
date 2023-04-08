@@ -36,15 +36,17 @@ fn get_url(repo: &Repository) -> Result<String> {
     }
 
     let remote_url = match remote_url {
-        Some(url) => {
-            let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
-            let replaced_url = pattern.replace(&url, "$1").to_string();
-            replaced_url
-        }
+        Some(url) => remove_token_from_url(url),
         None => return Ok(Default::default()),
     };
 
     Ok(remote_url)
+}
+
+fn remove_token_from_url(url: String) -> String {
+    let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
+    let replaced_url = pattern.replace(&url, "$1").to_string();
+    replaced_url
 }
 
 #[typetag::serialize]
@@ -77,4 +79,18 @@ mod test {
             "git@github.com:o2sh/onefetch.git".to_string()
         );
     }
+
+    #[test]
+    fn test_token_removal_github() {
+        let remote_url = "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/jim4067/onefetch.git"
+            .to_string();
+        let res_url = remove_token_from_url(remote_url);
+        assert_eq!("https://github.com/jim4067/onefetch.git", res_url);
+    }
+
+    #[test]
+    fn test_token_removal_gitlab() {
+        let remote_url = "https://john:abc123personaltoken@gitlab.com/jim4067/myproject.git".to_string();
+        let res_url = remove_token_from_url(remote_url);
+        assert_eq!("https://gitlab.com/jim4067/myproject.git", res_url);    }
 }
