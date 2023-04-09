@@ -21,7 +21,7 @@ pub struct CommitsInfo {
 impl CommitsInfo {
     pub fn new(commits: &Commits, number_separator: NumberSeparator) -> Self {
         Self {
-            number_of_commits: commits.num_commits,
+            number_of_commits: commits.total_number_of_commits,
             is_shallow: commits.is_shallow,
             number_separator,
         }

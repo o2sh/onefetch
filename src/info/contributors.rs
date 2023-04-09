@@ -26,7 +26,7 @@ impl ContributorsInfo {
         number_separator: NumberSeparator,
     ) -> Self {
         Self {
-            number_of_contributors: commits.total_num_authors,
+            number_of_contributors: commits.total_number_of_authors,
             number_of_authors_to_display,
             number_separator,
         }
@@ -63,9 +63,9 @@ mod test {
 
         let timestamp = Time::now_utc();
         let commits = Commits {
-            authors: vec![],
-            total_num_authors: 12,
-            num_commits: 2,
+            authors_to_display: vec![],
+            total_number_of_authors: 12,
+            total_number_of_commits: 2,
             is_shallow: true,
             time_of_most_recent_commit: timestamp,
             time_of_first_commit: timestamp,

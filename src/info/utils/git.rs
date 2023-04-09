@@ -8,9 +8,9 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 pub struct Commits {
-    pub authors: Vec<Author>,
-    pub total_num_authors: usize,
-    pub num_commits: usize,
+    pub authors_to_display: Vec<Author>,
+    pub total_number_of_authors: usize,
+    pub total_number_of_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
     pub is_shallow: bool,
     pub time_of_most_recent_commit: gix::actor::Time,
@@ -48,11 +48,10 @@ impl Commits {
         let mut commit_iter = repo.head_commit()?.ancestors().all()?;
         let mut commit_iter_peekable = commit_iter.by_ref().peekable();
 
-        let mailmap = repo.open_mailmap();
-        let mut author_to_number_of_commits: HashMap<Sig, usize> = HashMap::new();
-        let mut total_nbr_of_commits = 0;
+        let mailmap_config = repo.open_mailmap();
+        let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
+        let mut count = 0;
 
-        let mut num_commits = 0;
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
             let commit = commit.decode()?;
@@ -61,46 +60,30 @@ impl Commits {
                 continue;
             }
 
-            let sig = Sig::from(mailmap.resolve(commit.author));
+            let sig = Sig::from(mailmap_config.resolve(commit.author));
 
             if is_bot(&sig.name, &bot_regex_pattern) {
                 continue;
             }
-            num_commits += 1;
 
-            let author_nbr_of_commits = author_to_number_of_commits.entry(sig).or_insert(0);
+            let author_nbr_of_commits = number_of_commits_by_signature.entry(sig).or_insert(0);
             *author_nbr_of_commits += 1;
-            total_nbr_of_commits += 1;
 
             time_of_most_recent_commit.get_or_insert_with(|| commit.time());
             if commit_iter_peekable.peek().is_none() {
                 time_of_first_commit = commit.time().into();
             }
+
+            count += 1;
         }
 
-        let mut authors_by_number_of_commits: Vec<(Sig, usize)> =
-            author_to_number_of_commits.into_iter().collect();
-
-        let total_num_authors = authors_by_number_of_commits.len();
-        authors_by_number_of_commits.sort_by(|(sa, a_count), (sb, b_count)| {
-            b_count.cmp(a_count).then_with(|| sa.name.cmp(&sb.name))
-        });
-
-        let authors: Vec<Author> = authors_by_number_of_commits
-            .into_iter()
-            .map(|(author, author_nbr_of_commits)| {
-                let email = author.email;
-                Author::new(
-                    author.name,
-                    email,
-                    author_nbr_of_commits,
-                    total_nbr_of_commits,
-                    show_email,
-                    number_separator,
-                )
-            })
-            .take(number_of_authors_to_display)
-            .collect();
+        let (authors_to_display, total_number_of_authors) = compute_authors(
+            number_of_commits_by_signature,
+            count,
+            number_of_authors_to_display,
+            show_email,
+            number_separator,
+        );
 
         // This could happen if a branch pointed to non-commit object, so no traversal actually happens.
         let (time_of_first_commit, time_of_most_recent_commit) = time_of_first_commit
@@ -112,14 +95,47 @@ impl Commits {
         );
         drop(commit_iter);
         Ok(Self {
-            authors,
-            total_num_authors,
-            num_commits,
+            authors_to_display,
+            total_number_of_authors,
+            total_number_of_commits: count,
             is_shallow,
             time_of_first_commit,
             time_of_most_recent_commit,
         })
     }
+}
+
+fn compute_authors(
+    number_of_commits_by_signature: HashMap<Sig, usize>,
+    total_number_of_commits: usize,
+    number_of_authors_to_display: usize,
+    show_email: bool,
+    number_separator: NumberSeparator,
+) -> (Vec<Author>, usize) {
+    let total_number_of_authors = number_of_commits_by_signature.len();
+    let mut signature_with_number_of_commits_sorted: Vec<(Sig, usize)> =
+        number_of_commits_by_signature.into_iter().collect();
+
+    signature_with_number_of_commits_sorted.sort_by(|(sa, a_count), (sb, b_count)| {
+        b_count.cmp(a_count).then_with(|| sa.name.cmp(&sb.name))
+    });
+
+    let authors: Vec<Author> = signature_with_number_of_commits_sorted
+        .into_iter()
+        .map(|(author, author_nbr_of_commits)| {
+            let email = author.email;
+            Author::new(
+                author.name,
+                email,
+                author_nbr_of_commits,
+                total_number_of_commits,
+                show_email,
+                number_separator,
+            )
+        })
+        .take(number_of_authors_to_display)
+        .collect();
+    (authors, total_number_of_authors)
 }
 
 fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {

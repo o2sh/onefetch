@@ -77,7 +77,7 @@ pub struct AuthorsInfo {
 
 impl AuthorsInfo {
     pub fn new(info_color: DynColors, commits: &mut Commits) -> Self {
-        let authors = commits.authors.clone();
+        let authors = commits.authors_to_display.clone();
         Self {
             authors,
             info_color,
