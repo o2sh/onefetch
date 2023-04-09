@@ -376,7 +376,7 @@ mod tests {
         let subtitle_text = info.style_subtitle("foo");
         assert_eq!(
             subtitle_text,
-            // Rendered text: black `foo` and bright colon
+            // Rendered text: black `foo` and bright white colon
             "\u{1b}[30;1mfoo\u{1b}[0m\u{1b}[97;1m:\u{1b}[0m"
         );
         Ok(())
