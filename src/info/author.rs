@@ -13,7 +13,7 @@ use std::fmt::Write;
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Author {
-    name: String,
+    pub name: String,
     email: String,
     nbr_of_commits: usize,
     contribution: usize,

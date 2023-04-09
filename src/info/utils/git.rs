@@ -158,3 +158,69 @@ fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
         .map(|regex| regex.0.is_match(author_name.to_str_lossy().as_ref()))
         .unwrap_or(false)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_no_bots_regex() {
+        // Test case 1: no_bots is None
+        let no_bots: Option<Option<MyRegex>> = None;
+        let result = get_no_bots_regex(&no_bots).unwrap();
+        assert_eq!(result, None);
+
+        // Test case 2: no_bots is Some(None)
+        let no_bots: Option<Option<MyRegex>> = Some(None);
+        let result = get_no_bots_regex(&no_bots).unwrap();
+        assert_eq!(result.unwrap().0.as_str(), "(b|B)ot");
+
+        // Test case 3: no_bots is Some(Some(regex))
+        let regex = MyRegex(Regex::new(r"foo").unwrap());
+        let no_bots: Option<Option<MyRegex>> = Some(Some(regex));
+        let result = get_no_bots_regex(&no_bots).unwrap();
+        assert_eq!(result.unwrap().0.as_str(), "foo");
+    }
+
+    #[test]
+    fn test_compute_authors() {
+        let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
+        number_of_commits_by_signature.insert(
+            Sig {
+                name: "John Doe".into(),
+                email: "johndoe@example.com".into(),
+            },
+            10,
+        );
+        number_of_commits_by_signature.insert(
+            Sig {
+                name: "Jane Doe".into(),
+                email: "janedoe@example.com".into(),
+            },
+            5,
+        );
+        number_of_commits_by_signature.insert(
+            Sig {
+                name: "Ellen Smith".into(),
+                email: "ellensmith@example.com".into(),
+            },
+            50,
+        );
+        let total_number_of_commits = 15;
+        let number_of_authors_to_display = 2;
+        let show_email = false;
+        let number_separator = NumberSeparator::Comma;
+
+        let (authors, total_number_of_authors) = compute_authors(
+            number_of_commits_by_signature,
+            total_number_of_commits,
+            number_of_authors_to_display,
+            show_email,
+            number_separator,
+        );
+
+        assert_eq!(total_number_of_authors, 3);
+        assert_eq!(authors.len(), 2);
+        assert_eq!(authors.get(0).unwrap().name, "Ellen Smith".to_string());
+    }
+}
