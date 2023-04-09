@@ -12,7 +12,7 @@ use crate::{
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ContributorsInfo {
-    pub number_of_contributors: usize,
+    pub total_number_of_authors: usize,
     #[serde(skip_serializing)]
     pub number_of_authors_to_display: usize,
     #[serde(skip_serializing)]
@@ -26,7 +26,7 @@ impl ContributorsInfo {
         number_separator: NumberSeparator,
     ) -> Self {
         Self {
-            number_of_contributors: commits.total_number_of_authors,
+            total_number_of_authors: commits.total_number_of_authors,
             number_of_authors_to_display,
             number_separator,
         }
@@ -36,8 +36,8 @@ impl ContributorsInfo {
 #[typetag::serialize]
 impl InfoField for ContributorsInfo {
     fn value(&self) -> String {
-        if self.number_of_contributors > self.number_of_authors_to_display {
-            format_number(self.number_of_contributors, self.number_separator)
+        if self.total_number_of_authors > self.number_of_authors_to_display {
+            format_number(self.total_number_of_authors, self.number_separator)
         } else {
             "".to_string()
         }
@@ -79,7 +79,7 @@ mod test {
     #[test]
     fn test_display_contributors_less_than_authors_to_display() {
         let contributors_info = ContributorsInfo {
-            number_of_contributors: 1,
+            total_number_of_authors: 1,
             number_of_authors_to_display: 3,
             number_separator: NumberSeparator::Plain,
         };

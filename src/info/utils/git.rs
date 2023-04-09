@@ -52,6 +52,7 @@ impl Commits {
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
         let mut count = 0;
 
+        // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
             let commit = commit.decode()?;
