@@ -13,6 +13,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <csr-id-d43fa9acbbc93cfee2e59faf3652e7893de55ffa/>
 <csr-id-5e4d02552beea1a998239360fe61b8465437884a/>
 
+## 2.17.0 (2023-04-08)
+
+### Other
+
+- Disable line wrap (#983) @o2sh
+- Add Pascal support (#989) @rchastain
+- Add Coldfusion support (#971) @theemanofsteele
+- Remove github token from url field (#996) @jim4067
+- Changed Hashbang (#979) @gautamprikshit1
+- Prevent conflicts in wiki action 39fe441 @spenserblack
+- Fix typos (#992) @hezhizhen
+- Group CLI options in sections (#995) @o2sh
+- replace --show-logo with --no-art (#1002) @o2sh
+- Set snapshot language to plain text (#1003) @spenserblack
+- Better error message when human_time panics (#1010) @o2sh
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 10 commits contributed to the release over the course of 21 calendar days.
+- 43 days passed between releases.
+- 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+- 6 unique issues were worked on: [#1002](https://github.com/o2sh/onefetch/issues/1002), [#1010](https://github.com/o2sh/onefetch/issues/1010), [#983](https://github.com/o2sh/onefetch/issues/983), [#992](https://github.com/o2sh/onefetch/issues/992), [#995](https://github.com/o2sh/onefetch/issues/995), [#996](https://github.com/o2sh/onefetch/issues/996)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1002](https://github.com/o2sh/onefetch/issues/1002)**
+  - Replace --show-logo with --no-art ([`20f4390`](https://github.com/o2sh/onefetch/commit/20f43906ea316bfa4a5e1e80361fb4df14df4991))
+- **[#1010](https://github.com/o2sh/onefetch/issues/1010)**
+  - Better panic message ([`727cf70`](https://github.com/o2sh/onefetch/commit/727cf7008aab976136b3f29bf4b0782cf65f73b1))
+- **[#983](https://github.com/o2sh/onefetch/issues/983)**
+  - Disable line wrap ([`71ea9c1`](https://github.com/o2sh/onefetch/commit/71ea9c16b797d9ea7541b40eedabe27982bcadea))
+- **[#992](https://github.com/o2sh/onefetch/issues/992)**
+  - Fix typo ([`fa80f33`](https://github.com/o2sh/onefetch/commit/fa80f3308ff6f19a3c62233ecbc9767ffa7b9ac9))
+- **[#995](https://github.com/o2sh/onefetch/issues/995)**
+  - Add help sections ([`240fae7`](https://github.com/o2sh/onefetch/commit/240fae73575e3c0643292daa9602bba9b2c95e6d))
+- **[#996](https://github.com/o2sh/onefetch/issues/996)**
+  - Remove github token from url field ([`6d448ce`](https://github.com/o2sh/onefetch/commit/6d448ce89a30154411ee04e3fbd67485f1a7a667))
+- **Uncategorized** - Update manpage ([`d7773c9`](https://github.com/o2sh/onefetch/commit/d7773c98a22ca3ab871696cf90f2fe55b6c8f611)) - Use pascal case for clap help sections ([`20ca8cd`](https://github.com/o2sh/onefetch/commit/20ca8cd6a2509ced9c766b5d5da5be00054082b4)) - Merge branch 'main' of github.com:o2sh/onefetch ([`e57965a`](https://github.com/o2sh/onefetch/commit/e57965a82e2c11a9b0108db52d37d288dc6de5cd)) - Move setup_panic at the top of the main function ([`406a844`](https://github.com/o2sh/onefetch/commit/406a844dfb77e10fc34ebd9d43577c69beaedc15))
+</details>
+
 ## 2.16.0 (2023-02-24)
 
 ### Other
