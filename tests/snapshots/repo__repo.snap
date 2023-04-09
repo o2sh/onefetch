@@ -91,7 +91,7 @@ expression: info
     },
     {
       "ContributorsInfo": {
-        "numberOfContributors": 4
+        "totalNumberOfAuthors": 4
       }
     },
     {
