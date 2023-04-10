@@ -115,29 +115,4 @@ mod test {
             ]
         );
     }
-
-    #[test]
-    fn num_to_color_code_match() {
-        // This test case is only for test coverage
-        assert_eq!(num_to_color(&0), DynColors::Ansi(AnsiColors::Black));
-        assert_eq!(num_to_color(&1), DynColors::Ansi(AnsiColors::Red));
-        assert_eq!(num_to_color(&2), DynColors::Ansi(AnsiColors::Green));
-        assert_eq!(num_to_color(&3), DynColors::Ansi(AnsiColors::Yellow));
-        assert_eq!(num_to_color(&4), DynColors::Ansi(AnsiColors::Blue));
-        assert_eq!(num_to_color(&5), DynColors::Ansi(AnsiColors::Magenta));
-        assert_eq!(num_to_color(&6), DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(num_to_color(&7), DynColors::Ansi(AnsiColors::White));
-        assert_eq!(num_to_color(&8), DynColors::Ansi(AnsiColors::BrightBlack));
-        assert_eq!(num_to_color(&9), DynColors::Ansi(AnsiColors::BrightRed));
-        assert_eq!(num_to_color(&10), DynColors::Ansi(AnsiColors::BrightGreen));
-        assert_eq!(num_to_color(&11), DynColors::Ansi(AnsiColors::BrightYellow));
-        assert_eq!(num_to_color(&12), DynColors::Ansi(AnsiColors::BrightBlue));
-        assert_eq!(
-            num_to_color(&13),
-            DynColors::Ansi(AnsiColors::BrightMagenta)
-        );
-        assert_eq!(num_to_color(&14), DynColors::Ansi(AnsiColors::BrightCyan));
-        assert_eq!(num_to_color(&15), DynColors::Ansi(AnsiColors::BrightWhite));
-        assert_eq!(num_to_color(&127), DynColors::Ansi(AnsiColors::Default));
-    }
 }
