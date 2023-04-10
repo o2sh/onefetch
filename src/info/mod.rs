@@ -301,6 +301,8 @@ fn get_style(is_bold: bool, color: DynColors) -> Style {
 
 #[cfg(test)]
 mod tests {
+    use crate::cli::TextForamttingCliOptions;
+
     use super::*;
     use owo_colors::AnsiColors;
 
@@ -336,5 +338,47 @@ mod tests {
             "1_000_000"
         );
         assert_eq!(&format_number(1_000_000, NumberSeparator::Plain), "1000000");
+    }
+
+    #[test]
+    fn test_info_style_info() -> Result<()> {
+        let config: CliOptions = CliOptions {
+            text_formatting: TextForamttingCliOptions {
+                text_colors: vec![0, 0, 0, 0, 0, 0],
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+
+        let info = Info::new(&config)?;
+        let info_text = info.style_info("foo", false);
+        assert_eq!(info_text, "foo");
+
+        // Should display colour code
+        let info_text = info.style_info("foo", true);
+        // Rendered text: black `foo`
+        assert_eq!(info_text, "\u{1b}[30mfoo\u{1b}[0m");
+        Ok(())
+    }
+
+    #[test]
+    fn test_info_style_subtitle() -> Result<()> {
+        let config: CliOptions = CliOptions {
+            text_formatting: TextForamttingCliOptions {
+                text_colors: vec![0, 0, 0, 0, 15, 0],
+                no_bold: false,
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+
+        let info = Info::new(&config)?;
+        let subtitle_text = info.style_subtitle("foo");
+        assert_eq!(
+            subtitle_text,
+            // Rendered text: black `foo` and bright white colon
+            "\u{1b}[30;1mfoo\u{1b}[0m\u{1b}[97;1m:\u{1b}[0m"
+        );
+        Ok(())
     }
 }
