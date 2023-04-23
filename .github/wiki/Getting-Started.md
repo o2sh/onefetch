@@ -44,6 +44,25 @@ cd() {
 check_directory_for_new_repository
 ```
 
+By @TheSast
+
+A fish adaptation of the previous script to put in your `$XDG_CONFIG_HOME/fish/functions/cd.fish`:
+```fish
+function cd -w='cd'
+  builtin cd $argv || return
+  check_directory_for_new_repository
+end
+
+function check_directory_for_new_repository
+  set current_repository (git rev-parse --show-toplevel 2> /dev/null)
+  if [ "$current_repository" ] && \
+    [ "$current_repository" != "$last_repository" ]
+    onefetch
+  end
+  set -x last_repository $current_repository
+end
+```
+
 By @mbrehin
 ```sh
 # Add Git alias for onefetch.
