@@ -46,7 +46,7 @@ check_directory_for_new_repository
 
 By @TheSast
 
-A fish adaptation of the previous script to put in your `$XDG_CONFIG_HOME/fish/functions/cd.fish`:
+A fish adaptation of the previous script, run it once in your shell to save it:
 ```fish
 function cd -w='cd'
   builtin cd $argv || return
@@ -61,6 +61,9 @@ function check_directory_for_new_repository
   end
   set -gx last_repository $current_repository
 end
+
+funcsave cd
+funcsave check_directory_for_new_repository
 ```
 
 By @mbrehin
