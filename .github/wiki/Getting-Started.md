@@ -59,7 +59,7 @@ function check_directory_for_new_repository
     [ "$current_repository" != "$last_repository" ]
     onefetch
   end
-  set -x last_repository $current_repository
+  set -gx last_repository $current_repository
 end
 ```
 
