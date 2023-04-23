@@ -44,6 +44,28 @@ cd() {
 check_directory_for_new_repository
 ```
 
+By @TheSast
+
+A fish adaptation of the previous script, run it once in your shell to save it:
+```fish
+function cd -w='cd'
+  builtin cd $argv || return
+  check_directory_for_new_repository
+end
+
+function check_directory_for_new_repository
+  set current_repository (git rev-parse --show-toplevel 2> /dev/null)
+  if [ "$current_repository" ] && \
+    [ "$current_repository" != "$last_repository" ]
+    onefetch
+  end
+  set -gx last_repository $current_repository
+end
+
+funcsave cd
+funcsave check_directory_for_new_repository
+```
+
 By @mbrehin
 ```sh
 # Add Git alias for onefetch.
