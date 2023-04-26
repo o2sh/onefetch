@@ -959,27 +959,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "22030e2c5a68ec659fde1e949a745124b48e6fa8b045b7ed5bd1fe4ccc5c4e5d"
 
 [[package]]
-name = "git-features"
-version = "0.23.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4be88ae837674c71b30c6517c6f5f1335f8135bb8a9ffef20000d211933bed08"
-dependencies = [
- "flate2",
- "git-hash",
- "libc",
-]
-
-[[package]]
-name = "git-hash"
-version = "0.9.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16d46e6c2d1e8da4438a87bf516a6761b300964a353541fea61e96b3c7b34554"
-dependencies = [
- "hex",
- "thiserror",
-]
-
-[[package]]
 name = "git2"
 version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2155,9 +2134,9 @@ dependencies = [
  "clap_complete",
  "criterion",
  "enable-ansi-support",
- "git-features",
  "git2",
  "gix",
+ "gix-features",
  "gix-testtools",
  "human-panic",
  "image",
