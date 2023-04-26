@@ -91,15 +91,12 @@ impl Commits {
             .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
             .unwrap_or_default();
 
-        let is_shallow = commit_iter.is_shallow.expect(
-            "BUG: we must deplete the iterator. If you are seeing this, please let us know at https://github.com/o2sh/onefetch/issues/new",
-        );
         drop(commit_iter);
         Ok(Self {
             authors_to_display,
             total_number_of_authors,
             total_number_of_commits: count,
-            is_shallow,
+            is_shallow: repo.is_shallow(),
             time_of_first_commit,
             time_of_most_recent_commit,
         })

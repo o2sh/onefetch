@@ -111,7 +111,15 @@ impl std::fmt::Display for Info {
 
 impl Info {
     pub fn new(cli_options: &CliOptions) -> Result<Self> {
-        let git_repo = gix::discover(&cli_options.input)?;
+        let git_repo = gix::ThreadSafeRepository::discover_opts(
+            &cli_options.input,
+            gix::discover::upwards::Options {
+                dot_git_only: true,
+                ..Default::default()
+            },
+            Default::default(),
+        )?
+        .to_thread_local();
         let repo_path = get_work_dir(&git_repo)?;
 
         let loc_by_language_sorted_handle = std::thread::spawn({
