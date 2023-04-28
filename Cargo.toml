@@ -11,7 +11,7 @@ readme = "README.md"
 repository = "https://github.com/o2sh/onefetch"
 homepage = "https://onefetch.dev"
 rust-version = "1.64.0"
-version = "2.17.0"
+version = "2.17.1"
 
 [workspace]
 members = ["ascii", "image", "manifest"]
@@ -33,9 +33,9 @@ git2 = { version = "0.17.1", default-features = false }
 human-panic = "1.1.4"
 image = "0.24.6"
 num-format = "0.4.4"
-onefetch-ascii = { path = "ascii", version = "2.17.0" }
-onefetch-image = { path = "image", version = "2.17.0" }
-onefetch-manifest = { path = "manifest", version = "2.17.0" }
+onefetch-ascii = { path = "ascii", version = "2.17.1" }
+onefetch-image = { path = "image", version = "2.17.1" }
+onefetch-manifest = { path = "manifest", version = "2.17.1" }
 owo-colors = "3.5.0"
 regex = "1.6.0"
 serde = "1.0"
