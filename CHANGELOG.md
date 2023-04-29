@@ -13,6 +13,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <csr-id-d43fa9acbbc93cfee2e59faf3652e7893de55ffa/>
 <csr-id-5e4d02552beea1a998239360fe61b8465437884a/>
 
+## 2.17.1 (2023-04-28)
+
+### Other
+
+- Improve code coverage of src/info/mod.rs (#1011) @changhc
+- Improve code coverage of src/ui/mod.rs (#1012) @changhc
+- Added fish git repository greeter script to wiki (#1021) @TheSast
+- upgrade gitoxide to v0.44 (and incorporate #1023):x (#1024) @Byron @spenserblack
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 6 commits contributed to the release over the course of 19 calendar days.
+- 19 days passed between releases.
+- 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+- 3 unique issues were worked on: [#1011](https://github.com/o2sh/onefetch/issues/1011), [#1012](https://github.com/o2sh/onefetch/issues/1012), [#1024](https://github.com/o2sh/onefetch/issues/1024)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1011](https://github.com/o2sh/onefetch/issues/1011)**
+  - Improve code coverage of src/info/mod.rs ([`050568f`](https://github.com/o2sh/onefetch/commit/050568f1d346c4c398711ace93b9ee6759349892))
+- **[#1012](https://github.com/o2sh/onefetch/issues/1012)**
+  - Improve code coverage of src/ui/mod.rs ([`31b813f`](https://github.com/o2sh/onefetch/commit/31b813f695781e0d9820bbe833aec4a8613e3904))
+- **[#1024](https://github.com/o2sh/onefetch/issues/1024)**
+  - Upgrade gitoxide to v0.44 (and incorporate #1023):x ([`7be7ea9`](https://github.com/o2sh/onefetch/commit/7be7ea92a29117706af73f4ff9799a9a5a3d76b1))
+- **Uncategorized** - Add unit tests to git.rs ([`793de44`](https://github.com/o2sh/onefetch/commit/793de44f5b1aa81bcc2a6e2f34ce3d2982b10556)) - Better property name ([`e38c6d0`](https://github.com/o2sh/onefetch/commit/e38c6d041d7fbec1034d56c41e9e6ac6e3e6f494)) - Cleaning code in git.rs ([`282e8d1`](https://github.com/o2sh/onefetch/commit/282e8d175655293e53ab9e4be20488b836bade56))
+</details>
+
 ## 2.17.0 (2023-04-08)
 
 ### Other
