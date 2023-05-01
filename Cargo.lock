@@ -2481,6 +2481,7 @@ dependencies = [
  "insta",
  "lazy_static",
  "num-format",
+ "onefetch",
  "onefetch-ascii",
  "onefetch-image",
  "onefetch-manifest",
