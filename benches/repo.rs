@@ -1,6 +1,6 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use onefetch::{cli::CliOptions, info::Info};
 use onefetch::utils::repo;
+use onefetch::{cli::CliOptions, info::Info};
 
 fn bench_repo_info(c: &mut Criterion) {
     let repo = repo("repo.sh").unwrap();

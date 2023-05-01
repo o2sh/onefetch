@@ -354,9 +354,9 @@ mod tests {
     #[test]
     #[cfg(feature = "test-utils")]
     fn test_info_style_info() -> Result<()> {
-	let repo = repo("basic_repo.sh")?;
+        let repo = repo("basic_repo.sh")?;
         let config: CliOptions = CliOptions {
-	    input: repo.path().to_path_buf(),
+            input: repo.path().to_path_buf(),
             text_formatting: TextForamttingCliOptions {
                 text_colors: vec![0, 0, 0, 0, 0, 0],
                 ..Default::default()
@@ -378,9 +378,9 @@ mod tests {
     #[test]
     #[cfg(feature = "test-utils")]
     fn test_info_style_subtitle() -> Result<()> {
-	let repo = repo("basic_repo.sh")?;
+        let repo = repo("basic_repo.sh")?;
         let config: CliOptions = CliOptions {
-	    input: repo.path().to_path_buf(),
+            input: repo.path().to_path_buf(),
             text_formatting: TextForamttingCliOptions {
                 text_colors: vec![0, 0, 0, 0, 15, 0],
                 no_bold: false,

@@ -86,9 +86,9 @@ impl std::fmt::Display for Title {
 #[cfg(test)]
 #[cfg(feature = "test-utils")]
 mod tests {
-    use anyhow::Result;
-    use crate::utils::repo;
     use super::*;
+    use crate::utils::repo;
+    use anyhow::Result;
     use owo_colors::AnsiColors;
 
     #[test]
