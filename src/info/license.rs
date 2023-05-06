@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use anyhow::{bail, Result};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
@@ -94,10 +94,6 @@ impl InfoField for LicenseInfo {
 
     fn title(&self) -> String {
         "License".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::License
     }
 }
 

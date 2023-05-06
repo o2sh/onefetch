@@ -1,9 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::{
-        format_number,
-        utils::info_field::{InfoField, InfoType},
-    },
+    info::{format_number, utils::info_field::InfoField},
 };
 use byte_unit::Byte;
 use gix::Repository;
@@ -70,10 +67,6 @@ impl InfoField for SizeInfo {
     }
     fn title(&self) -> String {
         "Size".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Size
     }
 }
 

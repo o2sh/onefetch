@@ -1,9 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::{
-        format_number,
-        utils::info_field::{InfoField, InfoType},
-    },
+    info::{format_number, utils::info_field::InfoField},
 };
 use onefetch_manifest::Manifest;
 use serde::Serialize;
@@ -39,10 +36,6 @@ impl InfoField for DependenciesInfo {
 
     fn title(&self) -> String {
         "Dependencies".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Dependencies
     }
 }
 

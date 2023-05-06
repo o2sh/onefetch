@@ -1,10 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::{
-        format_number,
-        utils::git::Commits,
-        utils::info_field::{InfoField, InfoType},
-    },
+    info::{format_number, utils::git::Commits, utils::info_field::InfoField},
 };
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
@@ -76,7 +72,7 @@ pub struct AuthorsInfo {
 }
 
 impl AuthorsInfo {
-    pub fn new(info_color: DynColors, commits: &mut Commits) -> Self {
+    pub fn new(info_color: DynColors, commits: &Commits) -> Self {
         let authors = commits.authors_to_display.clone();
         Self {
             authors,
@@ -117,10 +113,6 @@ impl InfoField for AuthorsInfo {
             title.push('s')
         }
         title
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Authors
     }
 
     fn should_color(&self) -> bool {

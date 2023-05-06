@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::fmt::Write;
@@ -49,10 +49,6 @@ impl InfoField for DescriptionInfo {
 
     fn title(&self) -> String {
         "Description".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Description
     }
 }
 

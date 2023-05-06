@@ -3,8 +3,8 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
-use onefetch::cli;
-use onefetch::info::Info;
+use onefetch::cli::{self, CliOptions};
+use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
 
@@ -25,12 +25,13 @@ fn main() -> Result<()> {
     }
 
     if let Some(generator) = cli_options.developer.completion {
-        let mut cmd = cli::CliOptions::command();
+        let mut cmd = CliOptions::command();
         cli::print_completions(generator, &mut cmd);
         return Ok(());
     }
 
-    let info = Info::new(&cli_options)?;
+    let info = build_info(&cli_options)?;
+
     let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
 
     printer.print()?;

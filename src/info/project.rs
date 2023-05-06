@@ -1,9 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::{
-        format_number,
-        utils::info_field::{InfoField, InfoType},
-    },
+    info::{format_number, utils::info_field::InfoField},
 };
 use anyhow::Result;
 use gix::{bstr::ByteSlice, Repository};
@@ -117,10 +114,6 @@ impl InfoField for ProjectInfo {
 
     fn title(&self) -> String {
         "Project".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Project
     }
 }
 

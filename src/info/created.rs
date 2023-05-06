@@ -1,8 +1,5 @@
 use super::utils::format_time;
-use crate::info::{
-    utils::git::Commits,
-    utils::info_field::{InfoField, InfoType},
-};
+use crate::info::{utils::git::Commits, utils::info_field::InfoField};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -30,10 +27,6 @@ impl InfoField for CreatedInfo {
 
     fn title(&self) -> String {
         "Created".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Created
     }
 }
 

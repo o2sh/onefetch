@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use owo_colors::OwoColorize;
 use serde::Serialize;
 use tokei;
@@ -158,9 +158,6 @@ impl InfoField for LanguagesInfo {
         title
     }
 
-    fn r#type(&self) -> InfoType {
-        InfoType::Languages
-    }
     fn should_color(&self) -> bool {
         false
     }
