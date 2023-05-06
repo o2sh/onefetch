@@ -436,6 +436,14 @@ fn style_subtitle(subtitle: &str, text_colors: &TextColors, no_bold: bool) -> St
     )
 }
 
+fn get_style(is_bold: bool, color: DynColors) -> Style {
+    let mut style = Style::new().color(color);
+    if is_bold {
+        style = style.bold();
+    }
+    style
+}
+
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
     let manifests = onefetch_manifest::get_manifests(repo_path)?;
 
@@ -458,14 +466,6 @@ fn format_number<T: ToFormattedString + std::fmt::Display>(
     number_separator: NumberSeparator,
 ) -> String {
     number.to_formatted_string(&number_separator.get_format())
-}
-
-fn get_style(is_bold: bool, color: DynColors) -> Style {
-    let mut style = Style::new().color(color);
-    if is_bold {
-        style = style.bold();
-    }
-    style
 }
 
 #[cfg(test)]
