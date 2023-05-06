@@ -1,7 +1,7 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
 use onefetch::cli::{CliOptions, TextForamttingCliOptions};
-use onefetch::info::{get_work_dir, Info};
+use onefetch::info::{build_info, get_work_dir};
 
 fn repo(name: &str) -> Result<Repository> {
     let name = name.to_string();
@@ -36,7 +36,7 @@ fn test_repo() -> Result<()> {
         },
         ..Default::default()
     };
-    let info = Info::new(&config)?;
+    let info = build_info(&config)?;
     insta::assert_json_snapshot!(
         info,
         {
@@ -55,7 +55,7 @@ fn test_repo_without_remote() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = Info::new(&config);
+    let info = build_info(&config);
     assert!(info.is_ok());
 
     Ok(())

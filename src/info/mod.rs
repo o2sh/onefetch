@@ -73,6 +73,45 @@ struct InfoBuilder {
     no_title: bool,
 }
 
+impl std::fmt::Display for Info {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        //Title
+        if let Some(title) = &self.title {
+            write!(f, "{}", title)?;
+        }
+
+        //Info lines
+        for info_field in self.info_fields.iter().filter(|x| !x.value().is_empty()) {
+            write_styled_info_line(
+                f,
+                &info_field.title(),
+                &info_field.value(),
+                info_field.should_color(),
+                self.no_bold,
+                &self.text_colors,
+            )?
+        }
+
+        //Palette
+        if !self.no_color_palette {
+            writeln!(
+                f,
+                "\n{0}{1}{2}{3}{4}{5}{6}{7}",
+                "   ".on_black(),
+                "   ".on_red(),
+                "   ".on_green(),
+                "   ".on_yellow(),
+                "   ".on_blue(),
+                "   ".on_magenta(),
+                "   ".on_cyan(),
+                "   ".on_white()
+            )?;
+        }
+
+        Ok(())
+    }
+}
+
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let repo = gix::ThreadSafeRepository::discover_opts(
         &cli_options.input,
@@ -362,77 +401,39 @@ impl InfoBuilder {
     }
 }
 
-impl Info {
-    fn write_styled_info_line(
-        &self,
-        f: &mut std::fmt::Formatter,
-        subtitle: &str,
-        info: &str,
-        should_color_info: bool,
-    ) -> std::fmt::Result {
-        writeln!(
-            f,
-            "{} {}",
-            &self.style_subtitle(subtitle),
-            &self.style_info(info, should_color_info)
-        )
-    }
+fn write_styled_info_line(
+    f: &mut std::fmt::Formatter,
+    subtitle: &str,
+    info: &str,
+    should_color_info: bool,
+    no_bold: bool,
+    text_colors: &TextColors,
+) -> std::fmt::Result {
+    writeln!(
+        f,
+        "{} {}",
+        style_subtitle(subtitle, text_colors, no_bold),
+        style_info(info, text_colors, should_color_info)
+    )
+}
 
-    fn style_info(&self, info: &str, with_color: bool) -> String {
-        if with_color {
-            let info_style = get_style(false, self.text_colors.info);
-            format!("{}", info.style(info_style))
-        } else {
-            info.into()
-        }
-    }
-
-    fn style_subtitle(&self, subtitle: &str) -> String {
-        let subtitle_style = get_style(!self.no_bold, self.text_colors.subtitle);
-        let colon_style = get_style(!self.no_bold, self.text_colors.colon);
-        format!(
-            "{}{}",
-            subtitle.style(subtitle_style),
-            ":".style(colon_style)
-        )
+fn style_info(info: &str, text_colors: &TextColors, with_color: bool) -> String {
+    if with_color {
+        let info_style = get_style(false, text_colors.info);
+        format!("{}", info.style(info_style))
+    } else {
+        info.into()
     }
 }
 
-impl std::fmt::Display for Info {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        //Title
-        if let Some(title) = &self.title {
-            write!(f, "{}", title)?;
-        }
-
-        //Info lines
-        for info_field in self.info_fields.iter().filter(|x| !x.value().is_empty()) {
-            self.write_styled_info_line(
-                f,
-                &info_field.title(),
-                &info_field.value(),
-                info_field.should_color(),
-            )?
-        }
-
-        //Palette
-        if !self.no_color_palette {
-            writeln!(
-                f,
-                "\n{0}{1}{2}{3}{4}{5}{6}{7}",
-                "   ".on_black(),
-                "   ".on_red(),
-                "   ".on_green(),
-                "   ".on_yellow(),
-                "   ".on_blue(),
-                "   ".on_magenta(),
-                "   ".on_cyan(),
-                "   ".on_white()
-            )?;
-        }
-
-        Ok(())
-    }
+fn style_subtitle(subtitle: &str, text_colors: &TextColors, no_bold: bool) -> String {
+    let subtitle_style = get_style(!no_bold, text_colors.subtitle);
+    let colon_style = get_style(!no_bold, text_colors.colon);
+    format!(
+        "{}{}",
+        subtitle.style(subtitle_style),
+        ":".style(colon_style)
+    )
 }
 
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
@@ -469,8 +470,6 @@ fn get_style(is_bold: bool, color: DynColors) -> Style {
 
 #[cfg(test)]
 mod tests {
-    use crate::cli::TextForamttingCliOptions;
-
     use super::*;
     use owo_colors::AnsiColors;
 
@@ -510,20 +509,14 @@ mod tests {
 
     #[test]
     fn test_info_style_info() -> Result<()> {
-        let config: CliOptions = CliOptions {
-            text_formatting: TextForamttingCliOptions {
-                text_colors: vec![0, 0, 0, 0, 0, 0],
-                ..Default::default()
-            },
-            ..Default::default()
-        };
+        let text_colors =
+            TextColors::new(&vec![0, 0, 0, 0, 0, 0], DynColors::Ansi(AnsiColors::Blue));
 
-        let info = Info::new(&config)?;
-        let info_text = info.style_info("foo", false);
+        let info_text = style_info("foo", &text_colors, false);
         assert_eq!(info_text, "foo");
 
         // Should display colour code
-        let info_text = info.style_info("foo", true);
+        let info_text = style_info("foo", &text_colors, true);
         // Rendered text: black `foo`
         assert_eq!(info_text, "\u{1b}[30mfoo\u{1b}[0m");
         Ok(())
@@ -531,17 +524,10 @@ mod tests {
 
     #[test]
     fn test_info_style_subtitle() -> Result<()> {
-        let config: CliOptions = CliOptions {
-            text_formatting: TextForamttingCliOptions {
-                text_colors: vec![0, 0, 0, 0, 15, 0],
-                no_bold: false,
-                ..Default::default()
-            },
-            ..Default::default()
-        };
+        let text_colors =
+            TextColors::new(&vec![0, 0, 0, 0, 15, 0], DynColors::Ansi(AnsiColors::Blue));
 
-        let info = Info::new(&config)?;
-        let subtitle_text = info.style_subtitle("foo");
+        let subtitle_text = style_subtitle("foo", &text_colors, false);
         assert_eq!(
             subtitle_text,
             // Rendered text: black `foo` and bright white colon
