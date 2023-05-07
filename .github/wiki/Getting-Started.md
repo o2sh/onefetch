@@ -66,6 +66,15 @@ funcsave cd
 funcsave check_directory_for_new_repository
 ```
 
+By [**@mataha**](https://github.com/mataha)
+
+An adaptation of the above snippet suited for Windows's `cmd.exe`,
+specifically for inclusion in `AutoRun` or DOSKEY scripts:
+```cmd
+@set LAST_REPOSITORY=
+@doskey cd = @(if "$*"=="" (chdir /d "%%HOMEDRIVE%%%%HOMEPATH%%") else (chdir /d $*)) ^&^& (for /f "usebackq tokens=* delims=" %%i in (`"git rev-parse --show-toplevel 2$Gnul"`) do @(if not "%%~i"=="" if not "%%~i"=="%%LAST_REPOSITORY%%" (onefetch ^& set "LAST_REPOSITORY=%%~i")))
+```
+
 By @mbrehin
 ```sh
 # Add Git alias for onefetch.
