@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use anyhow::Result;
 use git2::{Status, StatusOptions, StatusShow};
 use gix::Repository;
@@ -67,10 +67,6 @@ impl InfoField for PendingInfo {
 
     fn title(&self) -> String {
         "Pending".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Pending
     }
 }
 

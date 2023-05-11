@@ -4,10 +4,7 @@ use serde::Serialize;
 
 use crate::{
     cli::NumberSeparator,
-    info::{
-        format_number,
-        utils::info_field::{InfoField, InfoType},
-    },
+    info::{format_number, utils::info_field::InfoField},
 };
 
 #[derive(Serialize)]
@@ -36,10 +33,6 @@ impl InfoField for LocInfo {
 
     fn title(&self) -> String {
         "Lines of code".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::LinesOfCode
     }
 }
 

@@ -2,11 +2,7 @@ use serde::Serialize;
 
 use crate::{
     cli::NumberSeparator,
-    info::{
-        format_number,
-        utils::git::Commits,
-        utils::info_field::{InfoField, InfoType},
-    },
+    info::{format_number, utils::git::Commits, utils::info_field::InfoField},
 };
 
 #[derive(Serialize)]
@@ -45,10 +41,6 @@ impl InfoField for ContributorsInfo {
 
     fn title(&self) -> String {
         "Contributors".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Contributors
     }
 }
 

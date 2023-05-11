@@ -1,6 +1,7 @@
 use crate::ui::num_to_color;
 use owo_colors::{AnsiColors, DynColors};
 
+#[derive(Clone)]
 pub struct TextColors {
     pub title: DynColors,
     pub tilde: DynColors,

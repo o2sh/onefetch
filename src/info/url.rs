@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use anyhow::Result;
 use gix::Repository;
 use regex::Regex;
@@ -10,13 +10,14 @@ pub struct UrlInfo {
     pub repo_url: String,
 }
 impl UrlInfo {
-    pub fn new(repo: &Repository) -> Result<Self> {
-        let repo_url = get_url(repo)?;
-        Ok(Self { repo_url })
+    pub fn new(repo_url: &str) -> Self {
+        Self {
+            repo_url: repo_url.into(),
+        }
     }
 }
 
-fn get_url(repo: &Repository) -> Result<String> {
+pub fn get_repo_url(repo: &Repository) -> Result<String> {
     let config = repo.config_snapshot();
     let remotes = match config.plumbing().sections_by_name("remote") {
         Some(sections) => sections,
@@ -57,10 +58,6 @@ impl InfoField for UrlInfo {
 
     fn title(&self) -> String {
         "URL".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::URL
     }
 }
 

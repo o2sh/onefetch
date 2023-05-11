@@ -31,17 +31,13 @@ impl From<gix::actor::Signature> for Sig {
 
 impl Commits {
     pub fn new(
-        mut repo: gix::Repository,
+        repo: &gix::Repository,
         no_merges: bool,
         no_bots: &Option<Option<MyRegex>>,
         number_of_authors_to_display: usize,
         show_email: bool,
         number_separator: NumberSeparator,
     ) -> Result<Self> {
-        // assure that objects we just traversed are coming from cache
-        // when we read the commit right after.
-        repo.object_cache_size(32 * 1024);
-
         let bot_regex_pattern = get_no_bots_regex(no_bots)?;
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;

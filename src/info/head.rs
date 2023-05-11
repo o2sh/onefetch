@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use anyhow::{Context, Result};
 use gix::{reference::Category, Reference, Repository};
 use serde::Serialize;
@@ -71,10 +71,6 @@ impl InfoField for HeadInfo {
 
     fn title(&self) -> String {
         "HEAD".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Head
     }
 }
 

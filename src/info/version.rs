@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::{InfoField, InfoType};
+use crate::info::utils::info_field::InfoField;
 use anyhow::Result;
 use gix::Repository;
 use onefetch_manifest::Manifest;
@@ -49,10 +49,6 @@ impl InfoField for VersionInfo {
 
     fn title(&self) -> String {
         "Version".into()
-    }
-
-    fn r#type(&self) -> InfoType {
-        InfoType::Version
     }
 }
 
