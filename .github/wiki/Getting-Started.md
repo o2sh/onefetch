@@ -69,10 +69,37 @@ funcsave check_directory_for_new_repository
 By [**@mataha**](https://github.com/mataha)
 
 An adaptation of the above snippet suited for Windows's `cmd.exe`,
-specifically for inclusion in `AutoRun` or DOSKEY scripts:
-```cmd
+specifically for inclusion in AutoRun scripts or DOSKEY macrofiles:
+```batchfile
 @set LAST_REPOSITORY=
-@doskey cd = @(if "$*"=="" (chdir /d "%%USERPROFILE%%") else (chdir /d $*)) ^&^& (for /f "usebackq tokens=* delims=" %%i in (`"git rev-parse --show-toplevel 2$Gnul"`) do @(if not "%%~i"=="" if not "%%~i"=="%%LAST_REPOSITORY%%" (onefetch ^& set "LAST_REPOSITORY=%%~i")))
+
+@doskey cd = ( ^
+    for %%^^^^ in ("") do @for /f "delims=" %%i in (^^""$*%%~^^"^") do @( ^
+        if "%%~i"=="" ( ^
+            if defined USERPROFILE ( ^
+                if /i not "%%CD%%"=="%%USERPROFILE%%" ( ^
+                    chdir /d "%%USERPROFILE%%" ^&^& set "OLDPWD=%%CD%%" ^
+                ) ^
+            ) else (call) ^
+        ) else if "%%~i"=="-" ( ^
+            if defined OLDPWD ( ^
+                if /i not "%%CD%%"=="%%OLDPWD%%" ( ^
+                    chdir /d "%%OLDPWD%%"      ^&^& set "OLDPWD=%%CD%%" ^
+                ) ^
+            ) else (call) ^
+        ) else ( ^
+            if defined CD ( ^
+                if /i not "%%CD%%"=="%%~fi" ( ^
+                    chdir /d %%~fi             ^&^& set "OLDPWD=%%CD%%" ^
+                ) ^
+            ) else (call) ^
+        ) ^
+    ) ^
+) ^&^& for /f "delims=" %%r in ('git rev-parse --show-toplevel 2^^^>nul') do @( ^
+    if not "%%~r"=="%%LAST_REPOSITORY%%" ( ^
+        onefetch ^
+    ) ^& set "LAST_REPOSITORY=%%~r" ^
+)
 ```
 
 By [**@mbrehin**](https://github.com/mbrehin)
