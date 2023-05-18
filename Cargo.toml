@@ -22,7 +22,7 @@ askalono = "0.4.6"
 byte-unit = "4.0.19"
 bytecount = "0.6.3"
 clap = { version = "4.2.5", features = ["derive"] }
-clap_complete = "4.2.1"
+clap_complete = "4.2.3"
 gix-features-for-configuration-only = { package = "gix-features", version = "0.29.0", features = [
     "zlib-ng",
 ] }
