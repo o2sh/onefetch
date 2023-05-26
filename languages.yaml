@@ -1639,6 +1639,32 @@ OCaml:
     ansi:
       - yellow
     chip: "#3BE133"
+Odin:
+  type: programming
+  ascii: |
+    {0}                OOOOO                 
+    {0}         OOOOOOOOOOOOO    OOO          
+    {0}      OOOOOOO   OOOOO   OOOOOOOOO      
+    {0}    OOOOO      OOOO    OOOO   OOOOO    
+    {0}  OOOOO      OOOOO   OOOOO      OOOOO  
+    {0} OOOO       OOOO    OOOO          OOOO 
+    {0}OOOO       OOOO   OOOOO            OOOO
+    {0}OOO      OOOO    OOOO               OOO
+    {0}OOO     OOOO    OOOO                OOO
+    {0}OOO   OOOO    OOOO                  OOO
+    {0}OOOO OOOO    OOOO                  OOOO
+    {0} OOOOOOO   OOOO                   OOOO 
+    {0}  OOOO    OOOO                  OOOOO  
+    {0}    O   OOOOO                 OOOOO    
+    {0}       OOOOO              OOOOOOO      
+    {0}          OOOOOOOOOOOOOOOOOOO          
+  colors:
+    ansi:
+      - blue
+    hex:
+      - "#3882D2"
+    chip: "#60AFFE"
+
 Org:
   type: prose
   ascii: |
