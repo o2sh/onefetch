@@ -68,7 +68,7 @@ mod tests {
     #[test]
     fn display_time_as_iso_time_some_time() {
         // Set "current" time to 11/18/2021 11:02:22
-        let time_sample = 1637233282;
+        let time_sample = 1_637_233_282;
         let time = Time::new(time_sample, 0);
         let result = format_time(time, true);
         assert_eq!(result, "2021-11-18T11:01:22Z");

@@ -81,12 +81,12 @@ mod test {
     #[test]
     fn test_display_head_refs() {
         let head = HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]);
-        assert_eq!(head.to_string(), "be561d5 (main, origin/main)")
+        assert_eq!(head.to_string(), "be561d5 (main, origin/main)");
     }
 
     #[test]
     fn test_display_head_refs_with_no_refs() {
         let head = HeadRefs::new("be561d5".into(), vec![]);
-        assert_eq!(head.to_string(), "be561d5")
+        assert_eq!(head.to_string(), "be561d5");
     }
 }

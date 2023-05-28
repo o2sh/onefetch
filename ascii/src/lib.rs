@@ -173,7 +173,7 @@ impl<'a> Tokens<'a> {
     }
     fn leading_spaces(&mut self) -> usize {
         self.take_while(|token| !token.is_solid())
-            .filter(|token| token.is_space())
+            .filter(Token::is_space)
             .count()
     }
     fn truncate(self, mut start: usize, end: usize) -> impl 'a + Iterator<Item = Token> {

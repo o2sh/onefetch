@@ -228,13 +228,13 @@ impl Default for InfoCliOptions {
         InfoCliOptions {
             number_of_authors: 3,
             number_of_languages: 6,
-            exclude: Default::default(),
-            no_bots: Default::default(),
+            exclude: Vec::default(),
+            no_bots: Option::default(),
             no_merges: Default::default(),
             email: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
-            disabled_fields: Default::default(),
+            disabled_fields: Vec::default(),
             no_title: Default::default(),
         }
     }
@@ -254,9 +254,9 @@ impl Default for TextForamttingCliOptions {
 impl Default for AsciiCliOptions {
     fn default() -> Self {
         AsciiCliOptions {
-            ascii_input: Default::default(),
-            ascii_colors: Default::default(),
-            ascii_language: Default::default(),
+            ascii_input: Option::default(),
+            ascii_colors: Vec::default(),
+            ascii_language: Option::default(),
             true_color: When::Auto,
         }
     }
@@ -264,7 +264,7 @@ impl Default for AsciiCliOptions {
 impl Default for ImageCliOptions {
     fn default() -> Self {
         ImageCliOptions {
-            image: Default::default(),
+            image: Option::default(),
             image_protocol: Default::default(),
             color_resolution: 16,
         }
