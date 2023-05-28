@@ -346,8 +346,8 @@ mod test {
 
     #[test]
     fn test_default_config() {
-        let config: CliOptions = Default::default();
-        assert_eq!(config, CliOptions::parse_from(&["onefetch"]))
+        let config: CliOptions = CliOptions::default();
+        assert_eq!(config, CliOptions::parse_from(["onefetch"]));
     }
 
     #[test]
@@ -390,7 +390,7 @@ mod test {
                 "--ascii-language",
                 "lisp"
             ])
-        )
+        );
     }
 
     #[test]
