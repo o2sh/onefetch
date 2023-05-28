@@ -47,7 +47,7 @@ fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> 
         .with_extension("")
         .file_name()
         .map(OsStr::to_string_lossy)
-        .map(|s| s.into_owned())
+        .map(std::borrow::Cow::into_owned)
         .unwrap_or_default();
 
     if repo_name.is_empty() {
@@ -82,7 +82,7 @@ impl std::fmt::Display for ProjectInfo {
                 1 => "1 branch".into(),
                 _ => format!(
                     "{} branches",
-                    format_number(self.number_of_branches, self.number_separator)
+                    format_number(&self.number_of_branches, self.number_separator)
                 ),
             };
 
@@ -91,7 +91,7 @@ impl std::fmt::Display for ProjectInfo {
                 1 => "1 tag".into(),
                 _ => format!(
                     "{} tags",
-                    format_number(self.number_of_tags, self.number_separator)
+                    format_number(&self.number_of_tags, self.number_separator)
                 ),
             };
 
@@ -198,7 +198,7 @@ mod test {
     #[test]
     fn test_display_project_info_when_no_repo_name() {
         let project_info = ProjectInfo {
-            repo_name: "".to_string(),
+            repo_name: String::new(),
             number_of_branches: 0,
             number_of_tags: 0,
             number_separator: NumberSeparator::Plain,

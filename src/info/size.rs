@@ -53,7 +53,7 @@ impl std::fmt::Display for SizeInfo {
                     f,
                     "{} ({} files)",
                     self.repo_size,
-                    format_number(self.file_count, self.number_separator)
+                    format_number(&self.file_count, self.number_separator)
                 )
             }
         }

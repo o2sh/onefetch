@@ -153,7 +153,7 @@ impl InfoField for LanguagesInfo {
     fn title(&self) -> String {
         let mut title: String = "Language".into();
         if self.languages_with_percentage.len() > 1 {
-            title.push('s')
+            title.push('s');
         }
         title
     }

@@ -15,7 +15,7 @@ fn bench_repo_info(c: &mut Criterion) {
         b.iter(|| {
             let result = black_box(build_info(&config));
             assert!(result.is_ok());
-        })
+        });
     });
 }
 

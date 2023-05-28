@@ -113,7 +113,7 @@ mod test {
 
     #[test]
     fn test_is_license_file() {
-        for file_name in LICENSE_FILES.iter() {
+        for file_name in &LICENSE_FILES {
             assert!(is_license_file(file_name));
         }
         assert!(!is_license_file("NOT_LICENSE"));

@@ -50,7 +50,7 @@ impl std::fmt::Display for Author {
                 self.contribution,
                 self.name,
                 self.email,
-                format_number(self.nbr_of_commits, self.number_separator)
+                format_number(&self.nbr_of_commits, self.number_separator)
             )
         } else {
             write!(
@@ -58,7 +58,7 @@ impl std::fmt::Display for Author {
                 "{}% {} {}",
                 self.contribution,
                 self.name,
-                format_number(self.nbr_of_commits, self.number_separator)
+                format_number(&self.nbr_of_commits, self.number_separator)
             )
         }
     }

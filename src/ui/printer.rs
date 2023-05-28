@@ -65,10 +65,10 @@ impl<W: Write> Printer<W> {
         match &self.output {
             Some(format) => match format {
                 SerializationFormat::Json => {
-                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?
+                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?;
                 }
                 SerializationFormat::Yaml => {
-                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?
+                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?;
                 }
             },
             None => {
@@ -104,7 +104,7 @@ impl<W: Write> Printer<W> {
                     loop {
                         match (logo_lines.next(), info_lines.next()) {
                             (Some(logo_line), Some(info_line)) => {
-                                writeln!(buf, "{logo_line}{center_pad}{info_line:^}")?
+                                writeln!(buf, "{logo_line}{center_pad}{info_line:^}")?;
                             }
                             (Some(logo_line), None) => writeln!(buf, "{logo_line}")?,
                             (None, Some(info_line)) => writeln!(

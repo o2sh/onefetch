@@ -124,14 +124,14 @@ mod tests {
         assert!(title.to_string().contains('~'));
         assert!(title.to_string().contains("git version 2.37.2"));
 
-        title.git_version = "".to_string();
+        title.git_version = String::new();
         assert!(title.to_string().contains("onefetch-committer-name"));
         assert!(!title.to_string().contains('~'));
         assert!(!title.to_string().contains("git version 2.37.2"));
 
-        title.git_username = "".to_string();
-        let expected_title = "".to_string();
-        assert_eq!(format!("{}", title), expected_title);
+        title.git_username = String::new();
+        let expected_title = String::new();
+        assert_eq!(format!("{title}"), expected_title);
 
         Ok(())
     }

@@ -86,7 +86,7 @@ fn get_statistics(
 fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
         .filter(|language| types.contains(&language.get_type()))
-        .map(|language| language.into())
+        .map(std::convert::Into::into)
         .collect()
 }
 

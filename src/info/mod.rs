@@ -23,6 +23,7 @@ use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
+use gix::sec::trust::Mapping;
 use gix::Repository;
 use num_format::ToFormattedString;
 use onefetch_manifest::Manifest;
@@ -77,7 +78,7 @@ impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         //Title
         if let Some(title) = &self.title {
-            write!(f, "{}", title)?;
+            write!(f, "{title}")?;
         }
 
         //Info lines
@@ -89,7 +90,7 @@ impl std::fmt::Display for Info {
                 info_field.should_color(),
                 self.no_bold,
                 &self.text_colors,
-            )?
+            )?;
         }
 
         //Palette
@@ -119,7 +120,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             dot_git_only: true,
             ..Default::default()
         },
-        Default::default(),
+        Mapping::default(),
     )?
     .to_thread_local();
     let repo_path = get_work_dir(&repo)?;
@@ -144,7 +145,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .ok()
         .context("BUG: panic in language statistics thread")??;
     let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(&repo)?;
+    let repo_url = get_repo_url(&repo);
 
     let commits = Commits::new(
         &repo,
@@ -174,7 +175,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let number_of_languages = cli_options.info.number_of_languages;
     let number_of_authors = cli_options.info.number_of_authors;
 
-    Ok(InfoBuilder::new(cli_options)?
+    Ok(InfoBuilder::new(cli_options)
         .title(&repo, no_bold, &text_colors)
         .project(&repo, &repo_url, &manifest, number_separator)?
         .description(&manifest)
@@ -201,13 +202,13 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
 }
 
 impl InfoBuilder {
-    fn new(cli_options: &CliOptions) -> Result<Self> {
-        Ok(Self {
+    fn new(cli_options: &CliOptions) -> Self {
+        Self {
             title: None,
             info_fields: Vec::new(),
             disabled_fields: cli_options.info.disabled_fields.clone(),
             no_title: cli_options.info.no_title,
-        })
+        }
     }
 
     fn title(mut self, repo: &Repository, no_bold: bool, text_colors: &TextColors) -> Self {
@@ -462,7 +463,7 @@ pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
 }
 
 fn format_number<T: ToFormattedString + std::fmt::Display>(
-    number: T,
+    number: &T,
     number_separator: NumberSeparator,
 ) -> String {
     number.to_formatted_string(&number_separator.get_format())
@@ -474,43 +475,43 @@ mod tests {
     use owo_colors::AnsiColors;
 
     #[test]
-    fn test_get_style() -> Result<()> {
+    fn test_get_style() {
         let style = get_style(true, DynColors::Ansi(AnsiColors::Cyan));
         assert_eq!(
             style,
             Style::new().color(DynColors::Ansi(AnsiColors::Cyan)).bold()
         );
-        Ok(())
     }
 
     #[test]
-    fn test_get_style_no_bold() -> Result<()> {
+    fn test_get_style_no_bold() {
         let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
         assert_eq!(style, Style::new().color(DynColors::Ansi(AnsiColors::Cyan)));
-        Ok(())
     }
 
     #[test]
     fn test_format_number() {
         assert_eq!(
-            &format_number(1_000_000, NumberSeparator::Comma),
+            &format_number(&1_000_000, NumberSeparator::Comma),
             "1,000,000"
         );
         assert_eq!(
-            &format_number(1_000_000, NumberSeparator::Space),
+            &format_number(&1_000_000, NumberSeparator::Space),
             "1\u{202f}000\u{202f}000"
         );
         assert_eq!(
-            &format_number(1_000_000, NumberSeparator::Underscore),
+            &format_number(&1_000_000, NumberSeparator::Underscore),
             "1_000_000"
         );
-        assert_eq!(&format_number(1_000_000, NumberSeparator::Plain), "1000000");
+        assert_eq!(
+            &format_number(&1_000_000, NumberSeparator::Plain),
+            "1000000"
+        );
     }
 
     #[test]
-    fn test_info_style_info() -> Result<()> {
-        let text_colors =
-            TextColors::new(&vec![0, 0, 0, 0, 0, 0], DynColors::Ansi(AnsiColors::Blue));
+    fn test_info_style_info() {
+        let text_colors = TextColors::new(&[0, 0, 0, 0, 0, 0], DynColors::Ansi(AnsiColors::Blue));
 
         let info_text = style_info("foo", &text_colors, false);
         assert_eq!(info_text, "foo");
@@ -519,13 +520,11 @@ mod tests {
         let info_text = style_info("foo", &text_colors, true);
         // Rendered text: black `foo`
         assert_eq!(info_text, "\u{1b}[30mfoo\u{1b}[0m");
-        Ok(())
     }
 
     #[test]
-    fn test_info_style_subtitle() -> Result<()> {
-        let text_colors =
-            TextColors::new(&vec![0, 0, 0, 0, 15, 0], DynColors::Ansi(AnsiColors::Blue));
+    fn test_info_style_subtitle() {
+        let text_colors = TextColors::new(&[0, 0, 0, 0, 15, 0], DynColors::Ansi(AnsiColors::Blue));
 
         let subtitle_text = style_subtitle("foo", &text_colors, false);
         assert_eq!(
@@ -533,6 +532,5 @@ mod tests {
             // Rendered text: black `foo` and bright white colon
             "\u{1b}[30;1mfoo\u{1b}[0m\u{1b}[97;1m:\u{1b}[0m"
         );
-        Ok(())
     }
 }

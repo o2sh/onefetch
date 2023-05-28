@@ -29,7 +29,7 @@ impl InfoField for CommitsInfo {
     fn value(&self) -> String {
         format!(
             "{}{}",
-            format_number(self.number_of_commits, self.number_separator),
+            format_number(&self.number_of_commits, self.number_separator),
             self.is_shallow.then_some(" (shallow)").unwrap_or_default()
         )
     }

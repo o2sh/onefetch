@@ -146,10 +146,9 @@ fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
-    bot_regex_pattern
-        .as_ref()
-        .map(|regex| regex.0.is_match(author_name.to_str_lossy().as_ref()))
-        .unwrap_or(false)
+    bot_regex_pattern.as_ref().map_or(false, |regex| {
+        regex.0.is_match(author_name.to_str_lossy().as_ref())
+    })
 }
 
 #[cfg(test)]

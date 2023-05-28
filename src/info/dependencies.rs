@@ -17,7 +17,7 @@ impl DependenciesInfo {
                 (m.number_of_dependencies != 0).then(|| {
                     format!(
                         "{} ({})",
-                        format_number(m.number_of_dependencies, number_separator),
+                        format_number(&m.number_of_dependencies, number_separator),
                         m.manifest_type
                     )
                 })

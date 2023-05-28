@@ -28,7 +28,7 @@ impl LocInfo {
 #[typetag::serialize]
 impl InfoField for LocInfo {
     fn value(&self) -> String {
-        format_number(self.lines_of_code, self.number_separator)
+        format_number(&self.lines_of_code, self.number_separator)
     }
 
     fn title(&self) -> String {

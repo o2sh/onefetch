@@ -33,7 +33,7 @@ impl ContributorsInfo {
 impl InfoField for ContributorsInfo {
     fn value(&self) -> String {
         if self.total_number_of_authors > self.number_of_authors_to_display {
-            format_number(self.total_number_of_authors, self.number_separator)
+            format_number(&self.total_number_of_authors, self.number_separator)
         } else {
             "".to_string()
         }
