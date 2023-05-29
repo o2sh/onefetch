@@ -46,7 +46,7 @@ impl Commits {
 
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-        let mut count = 0;
+        let mut total_number_of_commits = 0;
 
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
@@ -63,20 +63,19 @@ impl Commits {
                 continue;
             }
 
-            let author_nbr_of_commits = number_of_commits_by_signature.entry(sig).or_insert(0);
-            *author_nbr_of_commits += 1;
+            *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
 
             time_of_most_recent_commit.get_or_insert_with(|| commit.time());
             if commit_iter_peekable.peek().is_none() {
                 time_of_first_commit = commit.time().into();
             }
 
-            count += 1;
+            total_number_of_commits += 1;
         }
 
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
-            count,
+            total_number_of_commits,
             number_of_authors_to_display,
             show_email,
             number_separator,
@@ -91,7 +90,7 @@ impl Commits {
         Ok(Self {
             authors_to_display,
             total_number_of_authors,
-            total_number_of_commits: count,
+            total_number_of_commits,
             is_shallow: repo.is_shallow(),
             time_of_first_commit,
             time_of_most_recent_commit,
