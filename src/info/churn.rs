@@ -7,8 +7,8 @@ use std::fmt::Write;
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct FileChurn {
-    file_path: String,
-    nbr_of_commits: usize,
+    pub file_path: String,
+    pub nbr_of_commits: usize,
     #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
@@ -91,7 +91,7 @@ impl InfoField for ChurnInfo {
 fn truncate_file_path(path: &str, depth: usize) -> String {
     let components: Vec<&str> = path.split('/').collect();
 
-    if components.len() <= depth {
+    if depth == 0 || components.len() <= depth {
         return path.to_string();
     }
 
@@ -103,4 +103,53 @@ fn truncate_file_path(path: &str, depth: usize) -> String {
     let truncated_path = format!(".../{}", truncated_components.join("/"));
 
     truncated_path
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display_file_churn() {
+        let file_churn = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
+
+        assert_eq!(file_churn.to_string(), ".../to/file.txt 50");
+    }
+
+    #[test]
+    fn test_churn_info_value_with_two_file_churns() {
+        let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
+        let file_churn_2 = FileChurn::new("file_2.txt".into(), 30, NumberSeparator::Plain);
+
+        let churn_info = ChurnInfo {
+            info_color: DynColors::Rgb(255, 0, 0),
+            file_churns: vec![file_churn_1, file_churn_2],
+        };
+
+        assert!(churn_info.value().contains(
+            &".../to/file.txt 50"
+                .color(DynColors::Rgb(255, 0, 0))
+                .to_string()
+        ));
+
+        assert!(churn_info
+            .value()
+            .contains(&"file_2.txt 30".color(DynColors::Rgb(255, 0, 0)).to_string()));
+    }
+
+    #[test]
+    fn test_truncate_file_path() {
+        assert_eq!(
+            truncate_file_path("path/to/file.txt", 3),
+            "path/to/file.txt"
+        );
+        assert_eq!(
+            truncate_file_path("another/file.txt", 2),
+            "another/file.txt"
+        );
+        assert_eq!(truncate_file_path("file.txt", 1), "file.txt");
+        assert_eq!(truncate_file_path("path/to/file.txt", 2), ".../to/file.txt");
+        assert_eq!(truncate_file_path("another/file.txt", 1), ".../file.txt");
+        assert_eq!(truncate_file_path("file.txt", 0), "file.txt");
+    }
 }

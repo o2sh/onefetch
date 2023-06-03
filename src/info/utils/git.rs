@@ -300,4 +300,28 @@ mod tests {
         assert_eq!(authors.len(), 2);
         assert_eq!(authors.get(0).unwrap().name, "Ellen Smith".to_string());
     }
+
+    #[test]
+    fn test_compute_file_churns() {
+        let mut number_of_commits_by_file_path = HashMap::new();
+        number_of_commits_by_file_path.insert("path/to/file1.txt".to_string(), 2);
+        number_of_commits_by_file_path.insert("path/to/file2.txt".to_string(), 5);
+        number_of_commits_by_file_path.insert("path/to/file3.txt".to_string(), 3);
+        number_of_commits_by_file_path.insert("path/to/file4.txt".to_string(), 7);
+
+        let number_of_file_churns_to_display = 3;
+        let number_separator = NumberSeparator::Comma;
+        let file_churns = compute_file_churns(
+            number_of_commits_by_file_path,
+            number_of_file_churns_to_display,
+            number_separator,
+        );
+
+        assert_eq!(file_churns.len(), 3);
+        assert_eq!(
+            file_churns.get(0).unwrap().file_path,
+            "path/to/file4.txt".to_string()
+        );
+        assert_eq!(file_churns.get(0).unwrap().nbr_of_commits, 7);
+    }
 }
