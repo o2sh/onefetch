@@ -65,19 +65,19 @@ expression: info
         "authors": [
           {
             "name": "Author Four",
-            "email": "author4@example.org",
+            "email": null,
             "nbrOfCommits": 1,
             "contribution": 25
           },
           {
             "name": "Author One",
-            "email": "author1@example.org",
+            "email": null,
             "nbrOfCommits": 1,
             "contribution": 25
           },
           {
             "name": "Author Three",
-            "email": "author3@example.org",
+            "email": null,
             "nbrOfCommits": 1,
             "contribution": 25
           }
@@ -103,6 +103,16 @@ expression: info
       "CommitsInfo": {
         "numberOfCommits": 4,
         "isShallow": false
+      }
+    },
+    {
+      "ChurnInfo": {
+        "file_churns": [
+          {
+            "filePath": "code.rs",
+            "nbrOfCommits": 4
+          }
+        ]
       }
     },
     {

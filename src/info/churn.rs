@@ -6,14 +6,14 @@ use std::fmt::Write;
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Churn {
+pub struct FileChurn {
     file_path: String,
     nbr_of_commits: usize,
     #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
-impl Churn {
+impl FileChurn {
     pub fn new(
         file_path: String,
         nbr_of_commits: usize,
@@ -27,7 +27,7 @@ impl Churn {
     }
 }
 
-impl std::fmt::Display for Churn {
+impl std::fmt::Display for FileChurn {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(
             f,
@@ -40,14 +40,17 @@ impl std::fmt::Display for Churn {
 
 #[derive(Serialize)]
 pub struct ChurnInfo {
-    pub churn: Vec<Churn>,
+    pub file_churns: Vec<FileChurn>,
     #[serde(skip_serializing)]
     pub info_color: DynColors,
 }
 impl ChurnInfo {
     pub fn new(info_color: DynColors, commit_metrics: &CommitMetrics) -> Self {
-        let churn = commit_metrics.churns_to_display.clone();
-        Self { churn, info_color }
+        let file_churns = commit_metrics.file_churns_to_display.clone();
+        Self {
+            file_churns,
+            info_color,
+        }
     }
 }
 impl std::fmt::Display for ChurnInfo {
@@ -56,7 +59,7 @@ impl std::fmt::Display for ChurnInfo {
 
         let pad = self.title().len() + 2;
 
-        for (i, churn) in self.churn.iter().enumerate() {
+        for (i, churn) in self.file_churns.iter().enumerate() {
             let churn_str = churn.color(self.info_color);
 
             if i == 0 {

@@ -63,6 +63,12 @@ pub struct InfoCliOptions {
     /// Maximum NUM of languages to be shown
     #[arg(long, default_value_t = 6usize, value_name = "NUM")]
     pub number_of_languages: usize,
+    /// Maximum NUM of file churns to be shown
+    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    pub number_of_file_churns: usize,
+    ///NUM of commits from HEAD used to compute file churns
+    #[arg(long, default_value_t = 100usize, value_name = "NUM")]
+    pub churn_commit_limit: usize,
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
@@ -228,6 +234,8 @@ impl Default for InfoCliOptions {
         InfoCliOptions {
             number_of_authors: 3,
             number_of_languages: 6,
+            number_of_file_churns: 3,
+            churn_commit_limit: 100,
             exclude: Vec::default(),
             no_bots: Option::default(),
             no_merges: Default::default(),

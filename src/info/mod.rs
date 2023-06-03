@@ -149,14 +149,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(&repo);
 
-    let commit_metrics = CommitMetrics::new(
-        &repo,
-        cli_options.info.no_merges,
-        &cli_options.info.no_bots,
-        cli_options.info.number_of_authors,
-        cli_options.info.email,
-        cli_options.text_formatting.number_separator,
-    )?;
+    let commit_metrics = CommitMetrics::new(&repo, cli_options)?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,

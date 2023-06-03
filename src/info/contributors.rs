@@ -56,7 +56,7 @@ mod test {
         let timestamp = Time::now_utc();
         let commit_metrics = CommitMetrics {
             authors_to_display: vec![],
-            churns_to_display: vec![],
+            file_churns_to_display: vec![],
             total_number_of_authors: 12,
             total_number_of_commits: 2,
             is_shallow: true,

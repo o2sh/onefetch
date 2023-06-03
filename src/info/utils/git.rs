@@ -1,6 +1,6 @@
-use crate::cli::{MyRegex, NumberSeparator};
+use crate::cli::{CliOptions, MyRegex, NumberSeparator};
 use crate::info::author::Author;
-use crate::info::churn::Churn;
+use crate::info::churn::FileChurn;
 use anyhow::Result;
 use gix::bstr::ByteSlice;
 use gix::bstr::{BString, Utf8Error};
@@ -14,7 +14,7 @@ use std::str::FromStr;
 
 pub struct CommitMetrics {
     pub authors_to_display: Vec<Author>,
-    pub churns_to_display: Vec<Churn>,
+    pub file_churns_to_display: Vec<FileChurn>,
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
@@ -36,15 +36,8 @@ impl From<gix::actor::Signature> for Sig {
 }
 
 impl CommitMetrics {
-    pub fn new(
-        repo: &gix::Repository,
-        no_merges: bool,
-        no_bots: &Option<Option<MyRegex>>,
-        number_of_authors_to_display: usize,
-        show_email: bool,
-        number_separator: NumberSeparator,
-    ) -> Result<Self> {
-        let bot_regex_pattern = get_no_bots_regex(no_bots)?;
+    pub fn new(repo: &gix::Repository, options: &CliOptions) -> Result<Self> {
+        let bot_regex_pattern = get_no_bots_regex(&options.info.no_bots)?;
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
         let mut commit_iter = repo.head_commit()?.ancestors().all()?;
@@ -59,7 +52,7 @@ impl CommitMetrics {
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
 
-            if no_merges && commit.parent_ids().count() > 1 {
+            if options.info.no_merges && commit.parent_ids().count() > 1 {
                 continue;
             }
 
@@ -71,7 +64,7 @@ impl CommitMetrics {
 
             *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
 
-            if total_number_of_commits <= 100 {
+            if total_number_of_commits <= options.info.churn_commit_limit {
                 compute_diff(&mut number_of_commits_by_file_path, &commit, repo)?;
             }
 
@@ -91,12 +84,16 @@ impl CommitMetrics {
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
             total_number_of_commits,
-            number_of_authors_to_display,
-            show_email,
-            number_separator,
+            options.info.number_of_authors,
+            options.info.email,
+            options.text_formatting.number_separator,
         );
 
-        let churns_to_display = compute_churns(number_of_commits_by_file_path, number_separator);
+        let file_churns_to_display = compute_file_churns(
+            number_of_commits_by_file_path,
+            options.info.number_of_file_churns,
+            options.text_formatting.number_separator,
+        );
 
         // This could happen if a branch pointed to non-commit object, so no traversal actually happens.
         let (time_of_first_commit, time_of_most_recent_commit) = time_of_first_commit
@@ -105,7 +102,7 @@ impl CommitMetrics {
 
         Ok(Self {
             authors_to_display,
-            churns_to_display,
+            file_churns_to_display,
             total_number_of_authors,
             total_number_of_commits,
             is_shallow: repo.is_shallow(),
@@ -115,10 +112,11 @@ impl CommitMetrics {
     }
 }
 
-fn compute_churns(
+fn compute_file_churns(
     number_of_commits_by_file_path: HashMap<String, usize>,
+    number_of_file_churns_to_display: usize,
     number_separator: NumberSeparator,
-) -> Vec<Churn> {
+) -> Vec<FileChurn> {
     let mut number_of_commits_by_file_path_sorted: Vec<(String, usize)> =
         number_of_commits_by_file_path.into_iter().collect();
 
@@ -127,8 +125,10 @@ fn compute_churns(
 
     number_of_commits_by_file_path_sorted
         .into_iter()
-        .map(|(file_path, nbr_of_commits)| Churn::new(file_path, nbr_of_commits, number_separator))
-        .take(3)
+        .map(|(file_path, nbr_of_commits)| {
+            FileChurn::new(file_path, nbr_of_commits, number_separator)
+        })
+        .take(number_of_file_churns_to_display)
         .collect()
 }
 
