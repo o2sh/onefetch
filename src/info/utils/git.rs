@@ -72,7 +72,7 @@ impl CommitMetrics {
             *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
 
             if total_number_of_commits <= 100 {
-                compute_diff_with_parents(&mut number_of_commits_by_file_path, &commit, repo)?;
+                compute_diff(&mut number_of_commits_by_file_path, &commit, repo)?;
             }
 
             let commit_time = commit
@@ -167,7 +167,7 @@ fn compute_authors(
     (authors, total_number_of_authors)
 }
 
-fn compute_diff_with_parents(
+fn compute_diff(
     change_map: &mut HashMap<String, usize>,
     commit: &Commit,
     repo: &gix::Repository,
