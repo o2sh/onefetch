@@ -1,6 +1,6 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
-use onefetch::cli::{CliOptions, TextForamttingCliOptions};
+use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
 use onefetch::info::{build_info, get_work_dir};
 
 fn repo(name: &str) -> Result<Repository> {
@@ -30,6 +30,10 @@ fn test_repo() -> Result<()> {
     let repo = repo("repo.sh")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
+        info: InfoCliOptions {
+            email: true,
+            ..Default::default()
+        },
         text_formatting: TextForamttingCliOptions {
             iso_time: true,
             ..Default::default()

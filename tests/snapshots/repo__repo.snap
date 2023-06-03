@@ -65,19 +65,19 @@ expression: info
         "authors": [
           {
             "name": "Author Four",
-            "email": null,
+            "email": "author4@example.org",
             "nbrOfCommits": 1,
             "contribution": 25
           },
           {
             "name": "Author One",
-            "email": null,
+            "email": "author1@example.org",
             "nbrOfCommits": 1,
             "contribution": 25
           },
           {
             "name": "Author Three",
-            "email": null,
+            "email": "author3@example.org",
             "nbrOfCommits": 1,
             "contribution": 25
           }
