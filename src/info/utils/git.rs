@@ -53,7 +53,6 @@ impl CommitMetrics {
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
         let mut total_number_of_commits = 0;
-        let mut diff_count = 0;
         let mut number_of_commits_by_file_path: HashMap<String, usize> = HashMap::new();
 
         // From newest to oldest
@@ -72,13 +71,8 @@ impl CommitMetrics {
 
             *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
 
-            if diff_count <= 100 {
-                compute_diff_with_parents(
-                    &mut number_of_commits_by_file_path,
-                    &commit,
-                    repo,
-                    &mut diff_count,
-                )?;
+            if total_number_of_commits <= 100 {
+                compute_diff_with_parents(&mut number_of_commits_by_file_path, &commit, repo)?;
             }
 
             let commit_time = commit
@@ -177,7 +171,6 @@ fn compute_diff_with_parents(
     change_map: &mut HashMap<String, usize>,
     commit: &Commit,
     repo: &gix::Repository,
-    diff_count: &mut usize,
 ) -> Result<()> {
     // Handles the very first commit
     if commit.parent_ids().count() == 0 {
@@ -188,17 +181,19 @@ fn compute_diff_with_parents(
                 for_each_change(change, change_map)
             })?;
     }
-    for parent_id in commit.parent_ids() {
-        parent_id
-            .object()?
-            .into_commit()
-            .tree()?
-            .changes()?
-            .track_path()
-            .for_each_to_obtain_tree(&commit.tree()?, |change| {
-                for_each_change(change, change_map)
-            })?;
-        *diff_count += 1;
+    // Ignore merge commits
+    else if commit.parent_ids().count() == 1 {
+        for parent_id in commit.parent_ids() {
+            parent_id
+                .object()?
+                .into_commit()
+                .tree()?
+                .changes()?
+                .track_path()
+                .for_each_to_obtain_tree(&commit.tree()?, |change| {
+                    for_each_change(change, change_map)
+                })?;
+        }
     }
 
     Ok(())
