@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::{
     cli::NumberSeparator,
-    info::{format_number, utils::git::Commits, utils::info_field::InfoField},
+    info::{format_number, utils::git::CommitMetrics, utils::info_field::InfoField},
 };
 
 #[derive(Serialize)]
@@ -17,12 +17,12 @@ pub struct ContributorsInfo {
 
 impl ContributorsInfo {
     pub fn new(
-        commits: &Commits,
+        commit_metrics: &CommitMetrics,
         number_of_authors_to_display: usize,
         number_separator: NumberSeparator,
     ) -> Self {
         Self {
-            total_number_of_authors: commits.total_number_of_authors,
+            total_number_of_authors: commit_metrics.total_number_of_authors,
             number_of_authors_to_display,
             number_separator,
         }
@@ -50,12 +50,13 @@ mod test {
 
     #[test]
     fn test_display_contributors_info() {
-        use crate::info::utils::git::Commits;
+        use crate::info::utils::git::CommitMetrics;
         use gix::actor::Time;
 
         let timestamp = Time::now_utc();
-        let commits = Commits {
+        let commit_metrics = CommitMetrics {
             authors_to_display: vec![],
+            churns_to_display: vec![],
             total_number_of_authors: 12,
             total_number_of_commits: 2,
             is_shallow: true,
@@ -63,7 +64,7 @@ mod test {
             time_of_first_commit: timestamp,
         };
 
-        let contributors_info = ContributorsInfo::new(&commits, 2, NumberSeparator::Plain);
+        let contributors_info = ContributorsInfo::new(&commit_metrics, 2, NumberSeparator::Plain);
         assert_eq!(contributors_info.value(), "12".to_string());
         assert_eq!(contributors_info.title(), "Contributors".to_string());
     }

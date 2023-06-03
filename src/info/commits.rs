@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::{
     cli::NumberSeparator,
-    info::{format_number, utils::git::Commits, utils::info_field::InfoField},
+    info::{format_number, utils::git::CommitMetrics, utils::info_field::InfoField},
 };
 
 #[derive(Serialize)]
@@ -15,10 +15,10 @@ pub struct CommitsInfo {
 }
 
 impl CommitsInfo {
-    pub fn new(commits: &Commits, number_separator: NumberSeparator) -> Self {
+    pub fn new(commit_metrics: &CommitMetrics, number_separator: NumberSeparator) -> Self {
         Self {
-            number_of_commits: commits.total_number_of_commits,
-            is_shallow: commits.is_shallow,
+            number_of_commits: commit_metrics.total_number_of_commits,
+            is_shallow: commit_metrics.is_shallow,
             number_separator,
         }
     }

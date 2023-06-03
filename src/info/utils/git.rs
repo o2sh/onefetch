@@ -1,14 +1,20 @@
 use crate::cli::{MyRegex, NumberSeparator};
 use crate::info::author::Author;
+use crate::info::churn::Churn;
 use anyhow::Result;
-use gix::bstr::BString;
 use gix::bstr::ByteSlice;
+use gix::bstr::{BString, Utf8Error};
+use gix::object::tree::diff::change::Event;
+use gix::object::tree::diff::{Action, Change};
+use gix::objs::tree::EntryMode;
+use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
 
-pub struct Commits {
+pub struct CommitMetrics {
     pub authors_to_display: Vec<Author>,
+    pub churns_to_display: Vec<Churn>,
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
@@ -29,7 +35,7 @@ impl From<gix::actor::Signature> for Sig {
     }
 }
 
-impl Commits {
+impl CommitMetrics {
     pub fn new(
         repo: &gix::Repository,
         no_merges: bool,
@@ -47,17 +53,17 @@ impl Commits {
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
         let mut total_number_of_commits = 0;
+        let mut number_of_commits_by_file_path: HashMap<String, usize> = HashMap::new();
 
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
-            let commit = commit.decode()?;
 
-            if no_merges && commit.parents().take(2).count() > 1 {
+            if no_merges && commit.parent_ids().count() > 1 {
                 continue;
             }
 
-            let sig = Sig::from(mailmap_config.resolve(commit.author));
+            let sig = Sig::from(mailmap_config.resolve(commit.author()?));
 
             if is_bot(&sig.name, &bot_regex_pattern) {
                 continue;
@@ -65,9 +71,18 @@ impl Commits {
 
             *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
 
-            time_of_most_recent_commit.get_or_insert_with(|| commit.time());
+            if total_number_of_commits <= 100 {
+                compute_diff_with_parents(&mut number_of_commits_by_file_path, &commit, repo)?;
+            }
+
+            let commit_time = commit
+                .time()
+                .expect("Could not read commit's creation time");
+
+            time_of_most_recent_commit.get_or_insert(commit_time);
+
             if commit_iter_peekable.peek().is_none() {
-                time_of_first_commit = commit.time().into();
+                time_of_first_commit = commit_time.into();
             }
 
             total_number_of_commits += 1;
@@ -81,14 +96,16 @@ impl Commits {
             number_separator,
         );
 
+        let churns_to_display = compute_churns(number_of_commits_by_file_path, number_separator);
+
         // This could happen if a branch pointed to non-commit object, so no traversal actually happens.
         let (time_of_first_commit, time_of_most_recent_commit) = time_of_first_commit
             .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
             .unwrap_or_default();
 
-        drop(commit_iter);
         Ok(Self {
             authors_to_display,
+            churns_to_display,
             total_number_of_authors,
             total_number_of_commits,
             is_shallow: repo.is_shallow(),
@@ -96,6 +113,23 @@ impl Commits {
             time_of_most_recent_commit,
         })
     }
+}
+
+fn compute_churns(
+    number_of_commits_by_file_path: HashMap<String, usize>,
+    number_separator: NumberSeparator,
+) -> Vec<Churn> {
+    let mut number_of_commits_by_file_path_sorted: Vec<(String, usize)> =
+        number_of_commits_by_file_path.into_iter().collect();
+
+    number_of_commits_by_file_path_sorted
+        .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+
+    number_of_commits_by_file_path_sorted
+        .into_iter()
+        .map(|(file_path, nbr_of_commits)| Churn::new(file_path, nbr_of_commits, number_separator))
+        .take(3)
+        .collect()
 }
 
 fn compute_authors(
@@ -116,19 +150,71 @@ fn compute_authors(
     let authors: Vec<Author> = signature_with_number_of_commits_sorted
         .into_iter()
         .map(|(author, author_nbr_of_commits)| {
-            let email = author.email;
             Author::new(
-                author.name,
-                email,
+                author.name.to_string(),
+                if show_email {
+                    Some(author.email.to_string())
+                } else {
+                    None
+                },
                 author_nbr_of_commits,
                 total_number_of_commits,
-                show_email,
                 number_separator,
             )
         })
         .take(number_of_authors_to_display)
         .collect();
     (authors, total_number_of_authors)
+}
+
+fn compute_diff_with_parents(
+    change_map: &mut HashMap<String, usize>,
+    commit: &Commit,
+    repo: &gix::Repository,
+) -> Result<()> {
+    // Handles the very first commit
+    if commit.parent_ids().count() == 0 {
+        repo.empty_tree()
+            .changes()?
+            .track_path()
+            .for_each_to_obtain_tree(&commit.tree()?, |change| {
+                for_each_change(change, change_map)
+            })?;
+    }
+    // Ignore merge commits
+    else if commit.parent_ids().count() == 1 {
+        for parent_id in commit.parent_ids() {
+            parent_id
+                .object()?
+                .into_commit()
+                .tree()?
+                .changes()?
+                .track_path()
+                .for_each_to_obtain_tree(&commit.tree()?, |change| {
+                    for_each_change(change, change_map)
+                })?;
+        }
+    }
+
+    Ok(())
+}
+
+fn for_each_change(
+    change: Change,
+    change_map: &mut HashMap<String, usize>,
+) -> Result<Action, Utf8Error> {
+    let is_file_change = match change.event {
+        Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
+            entry_mode == EntryMode::Blob
+        }
+        Event::Deletion { .. } | Event::Rewrite { .. } => false,
+    };
+    if is_file_change {
+        let path = change.location.to_os_str()?.to_string_lossy();
+        *change_map.entry(path.into_owned()).or_insert(0) += 1;
+    }
+
+    Ok::<Action, Utf8Error>(Action::Continue)
 }
 
 fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {
