@@ -176,10 +176,8 @@ fn compute_diff(
     let parents = (
         parents
             .next()
-            .map(|parent_id| -> Result<_> { Ok(parent_id.object()?.into_commit().tree_id()?) })
-            .unwrap_or_else(|| {
-                Ok(gix::hash::ObjectId::empty_tree(repo.object_hash()).attach(repo))
-            })?,
+            .and_then(|parent_id| parent_id.object().ok()?.into_commit().tree_id().ok())
+            .unwrap_or_else(|| gix::hash::ObjectId::empty_tree(repo.object_hash()).attach(repo)),
         parents.next(),
     );
     // Ignore merge commits
