@@ -5,7 +5,7 @@ use anyhow::Result;
 use gix::bstr::ByteSlice;
 use gix::bstr::{BString, Utf8Error};
 use gix::object::tree::diff::change::Event;
-use gix::object::tree::diff::{Action, Change};
+use gix::object::tree::diff::Action;
 use gix::objs::tree::EntryMode;
 use gix::prelude::ObjectIdExt;
 use gix::Commit;
@@ -67,7 +67,7 @@ impl CommitMetrics {
             *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
 
             if total_number_of_commits <= options.info.churn_commit_limit {
-                compute_diff(&mut number_of_commits_by_file_path, &commit, repo)?;
+                compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, repo)?;
             }
 
             let commit_time = commit_ref.time();
@@ -165,7 +165,7 @@ fn compute_authors(
     (authors, total_number_of_authors)
 }
 
-fn compute_diff(
+fn compute_diff_with_parent(
     change_map: &mut HashMap<BString, usize>,
     commit: &Commit,
     repo: &gix::Repository,
@@ -178,7 +178,7 @@ fn compute_diff(
             .unwrap_or_else(|| gix::hash::ObjectId::empty_tree(repo.object_hash()).attach(repo)),
         parents.next(),
     );
-    // Ignore merge commits
+
     if let (tree_id, None) = parents {
         tree_id
             .object()?
@@ -186,29 +186,22 @@ fn compute_diff(
             .changes()?
             .track_path()
             .for_each_to_obtain_tree(&commit.tree()?, |change| {
-                for_each_change(change, change_map)
+                let is_file_change = match change.event {
+                    Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
+                        entry_mode == EntryMode::Blob || entry_mode == EntryMode::BlobExecutable
+                    }
+                    Event::Deletion { .. } | Event::Rewrite { .. } => false,
+                };
+                if is_file_change {
+                    let path = change.location;
+                    *change_map.entry(path.to_owned()).or_insert(0) += 1;
+                }
+
+                Ok::<Action, Utf8Error>(Action::Continue)
             })?;
     }
 
     Ok(())
-}
-
-fn for_each_change(
-    change: Change,
-    change_map: &mut HashMap<BString, usize>,
-) -> Result<Action, Utf8Error> {
-    let is_file_change = match change.event {
-        Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
-            entry_mode == EntryMode::Blob || entry_mode == EntryMode::BlobExecutable
-        }
-        Event::Deletion { .. } | Event::Rewrite { .. } => false,
-    };
-    if is_file_change {
-        let path = change.location;
-        *change_map.entry(path.to_owned()).or_insert(0) += 1;
-    }
-
-    Ok(Action::Continue)
 }
 
 fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {
