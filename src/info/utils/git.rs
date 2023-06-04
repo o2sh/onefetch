@@ -7,6 +7,7 @@ use gix::bstr::{BString, Utf8Error};
 use gix::object::tree::diff::change::Event;
 use gix::object::tree::diff::{Action, Change};
 use gix::objs::tree::EntryMode;
+use gix::prelude::ObjectIdExt;
 use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
@@ -46,7 +47,7 @@ impl CommitMetrics {
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
         let mut total_number_of_commits = 0;
-        let mut number_of_commits_by_file_path: HashMap<String, usize> = HashMap::new();
+        let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
 
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
@@ -113,12 +114,11 @@ impl CommitMetrics {
 }
 
 fn compute_file_churns(
-    number_of_commits_by_file_path: HashMap<String, usize>,
+    number_of_commits_by_file_path: HashMap<BString, usize>,
     number_of_file_churns_to_display: usize,
     number_separator: NumberSeparator,
 ) -> Vec<FileChurn> {
-    let mut number_of_commits_by_file_path_sorted: Vec<(String, usize)> =
-        number_of_commits_by_file_path.into_iter().collect();
+    let mut number_of_commits_by_file_path_sorted = Vec::from_iter(number_of_commits_by_file_path);
 
     number_of_commits_by_file_path_sorted
         .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
@@ -126,7 +126,7 @@ fn compute_file_churns(
     number_of_commits_by_file_path_sorted
         .into_iter()
         .map(|(file_path, nbr_of_commits)| {
-            FileChurn::new(file_path, nbr_of_commits, number_separator)
+            FileChurn::new(file_path.to_string(), nbr_of_commits, number_separator)
         })
         .take(number_of_file_churns_to_display)
         .collect()
@@ -168,32 +168,30 @@ fn compute_authors(
 }
 
 fn compute_diff(
-    change_map: &mut HashMap<String, usize>,
+    change_map: &mut HashMap<BString, usize>,
     commit: &Commit,
     repo: &gix::Repository,
 ) -> Result<()> {
-    // Handles the very first commit
-    if commit.parent_ids().count() == 0 {
-        repo.empty_tree()
+    let mut parents = commit.parent_ids();
+    let parents = (
+        parents
+            .next()
+            .map(|parent_id| -> Result<_> { Ok(parent_id.object()?.into_commit().tree_id()?) })
+            .unwrap_or_else(|| {
+                Ok(gix::hash::ObjectId::empty_tree(repo.object_hash()).attach(repo))
+            })?,
+        parents.next(),
+    );
+    // Ignore merge commits
+    if let (tree_id, None) = parents {
+        tree_id
+            .object()?
+            .into_tree()
             .changes()?
             .track_path()
             .for_each_to_obtain_tree(&commit.tree()?, |change| {
                 for_each_change(change, change_map)
             })?;
-    }
-    // Ignore merge commits
-    else if commit.parent_ids().count() == 1 {
-        for parent_id in commit.parent_ids() {
-            parent_id
-                .object()?
-                .into_commit()
-                .tree()?
-                .changes()?
-                .track_path()
-                .for_each_to_obtain_tree(&commit.tree()?, |change| {
-                    for_each_change(change, change_map)
-                })?;
-        }
     }
 
     Ok(())
@@ -201,7 +199,7 @@ fn compute_diff(
 
 fn for_each_change(
     change: Change,
-    change_map: &mut HashMap<String, usize>,
+    change_map: &mut HashMap<BString, usize>,
 ) -> Result<Action, Utf8Error> {
     let is_file_change = match change.event {
         Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
@@ -210,11 +208,11 @@ fn for_each_change(
         Event::Deletion { .. } | Event::Rewrite { .. } => false,
     };
     if is_file_change {
-        let path = change.location.to_os_str()?.to_string_lossy();
-        *change_map.entry(path.into_owned()).or_insert(0) += 1;
+        let path = change.location;
+        *change_map.entry(path.to_owned()).or_insert(0) += 1;
     }
 
-    Ok::<Action, Utf8Error>(Action::Continue)
+    Ok(Action::Continue)
 }
 
 fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {
@@ -304,10 +302,10 @@ mod tests {
     #[test]
     fn test_compute_file_churns() {
         let mut number_of_commits_by_file_path = HashMap::new();
-        number_of_commits_by_file_path.insert("path/to/file1.txt".to_string(), 2);
-        number_of_commits_by_file_path.insert("path/to/file2.txt".to_string(), 5);
-        number_of_commits_by_file_path.insert("path/to/file3.txt".to_string(), 3);
-        number_of_commits_by_file_path.insert("path/to/file4.txt".to_string(), 7);
+        number_of_commits_by_file_path.insert("path/to/file1.txt".into(), 2);
+        number_of_commits_by_file_path.insert("path/to/file2.txt".into(), 5);
+        number_of_commits_by_file_path.insert("path/to/file3.txt".into(), 3);
+        number_of_commits_by_file_path.insert("path/to/file4.txt".into(), 7);
 
         let number_of_file_churns_to_display = 3;
         let number_separator = NumberSeparator::Comma;

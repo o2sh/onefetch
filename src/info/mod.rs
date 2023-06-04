@@ -116,7 +116,7 @@ impl std::fmt::Display for Info {
 }
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
-    let repo = gix::ThreadSafeRepository::discover_opts(
+    let mut repo = gix::ThreadSafeRepository::discover_opts(
         &cli_options.input,
         gix::discover::upwards::Options {
             dot_git_only: true,
@@ -125,6 +125,8 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         Mapping::default(),
     )?
     .to_thread_local();
+    // Having an object cache is important for getting much better traversal and diff performance.
+    repo.object_cache_size_if_unset(4 * 1024 * 1024);
     let repo_path = get_work_dir(&repo)?;
 
     let loc_by_language_sorted_handle = std::thread::spawn({
