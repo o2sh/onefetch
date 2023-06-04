@@ -100,7 +100,7 @@ fn truncate_file_path(path: &str, depth: usize) -> String {
         .skip(components.len() - depth)
         .copied()
         .collect();
-    let truncated_path = format!(".../{}", truncated_components.join("/"));
+    let truncated_path = format!("\u{2026}/{}", truncated_components.join("/"));
 
     truncated_path
 }
@@ -113,7 +113,7 @@ mod tests {
     fn test_display_file_churn() {
         let file_churn = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
 
-        assert_eq!(file_churn.to_string(), ".../to/file.txt 50");
+        assert_eq!(file_churn.to_string(), "\u{2026}/to/file.txt 50");
     }
 
     #[test]
@@ -127,7 +127,7 @@ mod tests {
         };
 
         assert!(churn_info.value().contains(
-            &".../to/file.txt 50"
+            &"\u{2026}/to/file.txt 50"
                 .color(DynColors::Rgb(255, 0, 0))
                 .to_string()
         ));
@@ -148,8 +148,14 @@ mod tests {
             "another/file.txt"
         );
         assert_eq!(truncate_file_path("file.txt", 1), "file.txt");
-        assert_eq!(truncate_file_path("path/to/file.txt", 2), ".../to/file.txt");
-        assert_eq!(truncate_file_path("another/file.txt", 1), ".../file.txt");
+        assert_eq!(
+            truncate_file_path("path/to/file.txt", 2),
+            "\u{2026}/to/file.txt"
+        );
+        assert_eq!(
+            truncate_file_path("another/file.txt", 1),
+            "\u{2026}/file.txt"
+        );
         assert_eq!(truncate_file_path("file.txt", 0), "file.txt");
     }
 }
