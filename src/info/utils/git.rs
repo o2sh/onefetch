@@ -199,7 +199,7 @@ fn for_each_change(
 ) -> Result<Action, Utf8Error> {
     let is_file_change = match change.event {
         Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
-            entry_mode == EntryMode::Blob
+            entry_mode == EntryMode::Blob || entry_mode == EntryMode::BlobExecutable
         }
         Event::Deletion { .. } | Event::Rewrite { .. } => false,
     };
