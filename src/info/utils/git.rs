@@ -52,12 +52,13 @@ impl CommitMetrics {
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
+            let commit_ref = commit.decode()?;
 
-            if options.info.no_merges && commit.parent_ids().count() > 1 {
+            if options.info.no_merges && commit_ref.parents.len() > 1 {
                 continue;
             }
 
-            let sig = Sig::from(mailmap_config.resolve(commit.author()?));
+            let sig = Sig::from(mailmap_config.resolve(commit_ref.author()));
 
             if is_bot(&sig.name, &bot_regex_pattern) {
                 continue;
@@ -69,10 +70,7 @@ impl CommitMetrics {
                 compute_diff(&mut number_of_commits_by_file_path, &commit, repo)?;
             }
 
-            let commit_time = commit
-                .time()
-                .expect("Could not read commit's creation time");
-
+            let commit_time = commit_ref.time();
             time_of_most_recent_commit.get_or_insert(commit_time);
 
             if commit_iter_peekable.peek().is_none() {
