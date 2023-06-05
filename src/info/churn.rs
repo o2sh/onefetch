@@ -63,9 +63,9 @@ impl std::fmt::Display for ChurnInfo {
             let churn_str = churn.color(self.info_color);
 
             if i == 0 {
-                let _ = write!(churn_info, "{churn_str}");
+                write!(churn_info, "{churn_str}")?;
             } else {
-                let _ = write!(churn_info, "\n{:<width$}{}", "", churn_str, width = pad);
+                write!(churn_info, "\n{:<width$}{}", "", churn_str, width = pad)?;
             }
         }
 
@@ -100,9 +100,8 @@ fn truncate_file_path(path: &str, depth: usize) -> String {
         .skip(components.len() - depth)
         .copied()
         .collect();
-    let truncated_path = format!("\u{2026}/{}", truncated_components.join("/"));
 
-    truncated_path
+    format!("\u{2026}/{}", truncated_components.join("/"))
 }
 
 #[cfg(test)]

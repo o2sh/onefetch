@@ -12,7 +12,7 @@ fn main() -> Result<()> {
     setup_panic!();
 
     #[cfg(windows)]
-    let _ = enable_ansi_support::enable_ansi_support();
+    enable_ansi_support::enable_ansi_support()?;
 
     let cli_options = cli::CliOptions::parse();
 
