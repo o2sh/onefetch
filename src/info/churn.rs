@@ -2,7 +2,7 @@ use super::utils::{git::CommitMetrics, info_field::InfoField};
 use crate::{cli::NumberSeparator, info::format_number};
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
-use std::fmt::Write;
+use std::{fmt::Write, path::MAIN_SEPARATOR_STR};
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -101,7 +101,11 @@ fn truncate_file_path(path: &str, depth: usize) -> String {
         .copied()
         .collect();
 
-    format!("\u{2026}/{}", truncated_components.join("/"))
+    format!(
+        "\u{2026}{}{}",
+        MAIN_SEPARATOR_STR,
+        truncated_components.join(MAIN_SEPARATOR_STR)
+    )
 }
 
 #[cfg(test)]
