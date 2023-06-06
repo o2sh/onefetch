@@ -41,11 +41,13 @@ fn test_repo() -> Result<()> {
         ..Default::default()
     };
     let info = build_info(&config)?;
+    // Note that `nbrOfCommits` is hard-coded here as its actual value is non-deterministic due to time-based computation.
     insta::assert_json_snapshot!(
         info,
         {
             ".title.gitVersion" => "git version",
-            ".infoFields[].HeadInfo.headRefs.shortCommitId" => "short commit"
+            ".infoFields[].HeadInfo.headRefs.shortCommitId" => "short commit",
+            ".infoFields[].ChurnInfo.file_churns[].nbrOfCommits" => 4
         }
     );
 

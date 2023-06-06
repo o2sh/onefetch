@@ -12,6 +12,8 @@ use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 pub struct CommitMetrics {
     pub authors_to_display: Vec<Author>,
@@ -47,38 +49,56 @@ impl CommitMetrics {
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
         let mut total_number_of_commits = 0;
-        let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
+        let (tx, rx) = std::sync::mpsc::channel::<gix::ObjectDetached>();
+        let cancel_calc = Arc::new(AtomicBool::default());
+        let calc_diffs = std::thread::spawn({
+            let repo = repo.clone();
+            let cancel_calc = cancel_calc.clone();
+            move || -> Result<_> {
+                let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
+                for commit in rx {
+                    if cancel_calc.load(Ordering::Relaxed) {
+                        break;
+                    }
+                    let commit = commit.attach(&repo).into_commit();
+                    compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
+                }
+                Ok(number_of_commits_by_file_path)
+            }
+        });
 
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
-            let commit_ref = commit.decode()?;
+            {
+                let commit_ref = commit.decode()?;
 
-            if options.info.no_merges && commit_ref.parents.len() > 1 {
-                continue;
+                if options.info.no_merges && commit_ref.parents.len() > 1 {
+                    continue;
+                }
+
+                let sig = Sig::from(mailmap_config.resolve(commit_ref.author()));
+
+                if is_bot(&sig.name, &bot_regex_pattern) {
+                    continue;
+                }
+
+                *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
+                let commit_time = commit_ref.time();
+                time_of_most_recent_commit.get_or_insert(commit_time);
+
+                if commit_iter_peekable.peek().is_none() {
+                    time_of_first_commit = commit_time.into();
+                }
+
+                total_number_of_commits += 1;
             }
-
-            let sig = Sig::from(mailmap_config.resolve(commit_ref.author()));
-
-            if is_bot(&sig.name, &bot_regex_pattern) {
-                continue;
-            }
-
-            *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
-
             if total_number_of_commits <= options.info.churn_commit_limit {
-                compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, repo)?;
+                tx.send(commit.detach()).ok();
             }
-
-            let commit_time = commit_ref.time();
-            time_of_most_recent_commit.get_or_insert(commit_time);
-
-            if commit_iter_peekable.peek().is_none() {
-                time_of_first_commit = commit_time.into();
-            }
-
-            total_number_of_commits += 1;
         }
+        drop(tx);
+        cancel_calc.store(true, Ordering::SeqCst);
 
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
@@ -89,7 +109,7 @@ impl CommitMetrics {
         );
 
         let file_churns_to_display = compute_file_churns(
-            number_of_commits_by_file_path,
+            calc_diffs.join().expect("never panics")?,
             options.info.number_of_file_churns,
             options.text_formatting.number_separator,
         );
