@@ -57,11 +57,11 @@ impl CommitMetrics {
             move || -> Result<_> {
                 let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
                 for commit in rx {
+                    let commit = commit.attach(&repo).into_commit();
+                    compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                     if cancel_calc.load(Ordering::Relaxed) {
                         break;
                     }
-                    let commit = commit.attach(&repo).into_commit();
-                    compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                 }
                 Ok(number_of_commits_by_file_path)
             }
