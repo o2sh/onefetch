@@ -12,7 +12,7 @@ use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 
 pub struct CommitMetrics {
@@ -49,9 +49,9 @@ impl CommitMetrics {
 
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-        let mut total_number_of_commits = 0;
+        let mut total_number_of_commits: usize = 0;
         let (sender, receiver) = std::sync::mpsc::channel::<gix::ObjectDetached>();
-        let cancellation_token = Arc::new(AtomicBool::default());
+        let cancellation_token = Arc::new(AtomicUsize::default());
 
         let churn_results = std::thread::spawn({
             let repo = repo.clone();
@@ -64,12 +64,15 @@ impl CommitMetrics {
                     let commit = commit.attach(&repo).into_commit();
                     compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                     number_of_diffs_computed += 1;
-                    if cancellation_token.load(Ordering::Relaxed)
-                        && number_of_diffs_computed >= churn_pool_size
+                    if cancellation_token.load(Ordering::Relaxed) > 0
+                        && (number_of_diffs_computed >= churn_pool_size
+                            || number_of_diffs_computed
+                                == cancellation_token.load(Ordering::Relaxed))
                     {
                         break;
                     }
                 }
+
                 Ok((number_of_commits_by_file_path, number_of_diffs_computed))
             }
         });
@@ -104,7 +107,7 @@ impl CommitMetrics {
             sender.send(commit.detach()).ok();
         }
 
-        cancellation_token.store(true, Ordering::SeqCst);
+        cancellation_token.store(total_number_of_commits, Ordering::SeqCst);
 
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
