@@ -243,7 +243,7 @@ impl Default for InfoCliOptions {
             number_of_authors: 3,
             number_of_languages: 6,
             number_of_file_churns: 3,
-            churn_pool_size: 100,
+            churn_pool_size: 0,
             exclude: Vec::default(),
             no_bots: Option::default(),
             no_merges: Default::default(),
