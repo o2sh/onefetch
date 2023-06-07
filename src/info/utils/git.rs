@@ -20,6 +20,7 @@ pub struct CommitMetrics {
     pub file_churns_to_display: Vec<FileChurn>,
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
+    pub churn_pool_size: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
     pub is_shallow: bool,
     pub time_of_most_recent_commit: gix::actor::Time,
@@ -49,21 +50,27 @@ impl CommitMetrics {
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
         let mut total_number_of_commits = 0;
-        let (tx, rx) = std::sync::mpsc::channel::<gix::ObjectDetached>();
-        let cancel_calc = Arc::new(AtomicBool::default());
-        let calc_diffs = std::thread::spawn({
+        let (sender, receiver) = std::sync::mpsc::channel::<gix::ObjectDetached>();
+        let cancellation_token = Arc::new(AtomicBool::default());
+
+        let churn_results = std::thread::spawn({
             let repo = repo.clone();
-            let cancel_calc = cancel_calc.clone();
+            let cancellation_token = cancellation_token.clone();
+            let churn_pool_size = options.info.churn_pool_size;
             move || -> Result<_> {
                 let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
-                for commit in rx {
+                let mut number_of_diffs_computed = 0;
+                while let Ok(commit) = receiver.recv() {
                     let commit = commit.attach(&repo).into_commit();
                     compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
-                    if cancel_calc.load(Ordering::Relaxed) {
+                    number_of_diffs_computed += 1;
+                    if cancellation_token.load(Ordering::Relaxed)
+                        && number_of_diffs_computed >= churn_pool_size
+                    {
                         break;
                     }
                 }
-                Ok(number_of_commits_by_file_path)
+                Ok((number_of_commits_by_file_path, number_of_diffs_computed))
             }
         });
 
@@ -93,12 +100,11 @@ impl CommitMetrics {
 
                 total_number_of_commits += 1;
             }
-            if total_number_of_commits <= options.info.churn_commit_limit {
-                tx.send(commit.detach()).ok();
-            }
+
+            sender.send(commit.detach()).ok();
         }
-        drop(tx);
-        cancel_calc.store(true, Ordering::SeqCst);
+
+        cancellation_token.store(true, Ordering::SeqCst);
 
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
@@ -108,8 +114,11 @@ impl CommitMetrics {
             options.text_formatting.number_separator,
         );
 
+        let (number_of_commits_by_file_path, churn_pool_size) =
+            churn_results.join().expect("never panics")?;
+
         let file_churns_to_display = compute_file_churns(
-            calc_diffs.join().expect("never panics")?,
+            number_of_commits_by_file_path,
             options.info.number_of_file_churns,
             options.text_formatting.number_separator,
         );
@@ -124,6 +133,7 @@ impl CommitMetrics {
             file_churns_to_display,
             total_number_of_authors,
             total_number_of_commits,
+            churn_pool_size,
             is_shallow: repo.is_shallow(),
             time_of_first_commit,
             time_of_most_recent_commit,

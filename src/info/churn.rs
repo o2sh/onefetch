@@ -32,7 +32,7 @@ impl std::fmt::Display for FileChurn {
         write!(
             f,
             "{} {}",
-            truncate_file_path(&self.file_path, 2),
+            shorten_file_path(&self.file_path, 2),
             format_number(&self.nbr_of_commits, self.number_separator)
         )
     }
@@ -41,6 +41,7 @@ impl std::fmt::Display for FileChurn {
 #[derive(Serialize)]
 pub struct ChurnInfo {
     pub file_churns: Vec<FileChurn>,
+    pub churn_pool_size: usize,
     #[serde(skip_serializing)]
     pub info_color: DynColors,
 }
@@ -49,6 +50,7 @@ impl ChurnInfo {
         let file_churns = commit_metrics.file_churns_to_display.clone();
         Self {
             file_churns,
+            churn_pool_size: commit_metrics.churn_pool_size,
             info_color,
         }
     }
@@ -80,7 +82,7 @@ impl InfoField for ChurnInfo {
     }
 
     fn title(&self) -> String {
-        "Churn".into()
+        format!("Churn ({})", self.churn_pool_size)
     }
 
     fn should_color(&self) -> bool {
@@ -88,11 +90,11 @@ impl InfoField for ChurnInfo {
     }
 }
 
-fn truncate_file_path(path: &str, depth: usize) -> String {
-    let components: Vec<&str> = path.split('/').collect();
+fn shorten_file_path(file_path: &str, depth: usize) -> String {
+    let components: Vec<&str> = file_path.split('/').collect();
 
     if depth == 0 || components.len() <= depth {
-        return path.to_string();
+        return file_path.to_string();
     }
 
     let truncated_components: Vec<&str> = components
@@ -121,8 +123,9 @@ mod tests {
         let file_churn_2 = FileChurn::new("file_2.txt".into(), 30, NumberSeparator::Plain);
 
         let churn_info = ChurnInfo {
-            info_color: DynColors::Rgb(255, 0, 0),
             file_churns: vec![file_churn_1, file_churn_2],
+            churn_pool_size: 5,
+            info_color: DynColors::Rgb(255, 0, 0),
         };
 
         assert!(churn_info.value().contains(
@@ -138,23 +141,17 @@ mod tests {
 
     #[test]
     fn test_truncate_file_path() {
+        assert_eq!(shorten_file_path("path/to/file.txt", 3), "path/to/file.txt");
+        assert_eq!(shorten_file_path("another/file.txt", 2), "another/file.txt");
+        assert_eq!(shorten_file_path("file.txt", 1), "file.txt");
         assert_eq!(
-            truncate_file_path("path/to/file.txt", 3),
-            "path/to/file.txt"
-        );
-        assert_eq!(
-            truncate_file_path("another/file.txt", 2),
-            "another/file.txt"
-        );
-        assert_eq!(truncate_file_path("file.txt", 1), "file.txt");
-        assert_eq!(
-            truncate_file_path("path/to/file.txt", 2),
+            shorten_file_path("path/to/file.txt", 2),
             "\u{2026}/to/file.txt"
         );
         assert_eq!(
-            truncate_file_path("another/file.txt", 1),
+            shorten_file_path("another/file.txt", 1),
             "\u{2026}/file.txt"
         );
-        assert_eq!(truncate_file_path("file.txt", 0), "file.txt");
+        assert_eq!(shorten_file_path("file.txt", 0), "file.txt");
     }
 }
