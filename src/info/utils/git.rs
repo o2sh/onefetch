@@ -65,16 +65,13 @@ impl CommitMetrics {
                     let commit = commit.attach(&repo).into_commit();
                     compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                     number_of_diffs_computed += 1;
-                    if has_commit_graph_traversal_ended.load(Ordering::Relaxed) {
-                        let total_number_of_commits =
-                            total_number_of_commits.load(Ordering::Relaxed);
-                        if should_break(
-                            churn_pool_size_opt,
-                            number_of_diffs_computed,
-                            total_number_of_commits,
-                        ) {
-                            break;
-                        }
+                    if should_break(
+                        has_commit_graph_traversal_ended.load(Ordering::Relaxed),
+                        total_number_of_commits.load(Ordering::Relaxed),
+                        churn_pool_size_opt,
+                        number_of_diffs_computed,
+                    ) {
+                        break;
                     }
                 }
 
@@ -152,20 +149,25 @@ impl CommitMetrics {
 }
 
 fn should_break(
+    has_commit_graph_traversal_ended: bool,
+    total_number_of_commits: usize,
     churn_pool_size_opt: Option<usize>,
     number_of_diffs_computed: usize,
-    total_number_of_commits: usize,
 ) -> bool {
-    if let Some(mut churn_pool_size) = churn_pool_size_opt {
-        if churn_pool_size > total_number_of_commits {
-            churn_pool_size = total_number_of_commits;
+    if has_commit_graph_traversal_ended {
+        let total_number_of_commits = total_number_of_commits;
+        if let Some(mut churn_pool_size) = churn_pool_size_opt {
+            if churn_pool_size > total_number_of_commits {
+                churn_pool_size = total_number_of_commits;
+            }
+            if number_of_diffs_computed == churn_pool_size {
+                return true;
+            }
+            return false;
         }
-        if number_of_diffs_computed == churn_pool_size {
-            return true;
-        }
-        return false;
+        return true;
     }
-    true
+    false
 }
 
 fn compute_file_churns(
@@ -283,6 +285,7 @@ fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
 
     #[test]
     fn test_get_no_bots_regex() {
@@ -367,5 +370,29 @@ mod tests {
             "path/to/file4.txt".to_string()
         );
         assert_eq!(file_churns.get(0).unwrap().nbr_of_commits, 7);
+    }
+
+    #[rstest]
+    #[case(true, 10, Some(8), 4, false)]
+    #[case(false, 10, Some(10), 10, false)]
+    #[case(true, 10, Some(5), 5, true)]
+    #[case(true, 5, Some(10), 5, true)]
+    #[case(true, 5, Some(10), 3, false)]
+    #[case(true, 10, Some(5), 3, false)]
+    fn test_should_break(
+        #[case] has_commit_graph_traversal_ended: bool,
+        #[case] total_number_of_commits: usize,
+        #[case] churn_pool_size_opt: Option<usize>,
+        #[case] number_of_diffs_computed: usize,
+        #[case] expected: bool,
+    ) {
+        let result = should_break(
+            has_commit_graph_traversal_ended,
+            total_number_of_commits,
+            churn_pool_size_opt,
+            number_of_diffs_computed,
+        );
+
+        assert_eq!(result, expected);
     }
 }
