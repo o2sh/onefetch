@@ -32,6 +32,7 @@ fn test_repo() -> Result<()> {
         input: repo.path().to_path_buf(),
         info: InfoCliOptions {
             email: true,
+            churn_pool_size: Some(10),
             ..Default::default()
         },
         text_formatting: TextForamttingCliOptions {

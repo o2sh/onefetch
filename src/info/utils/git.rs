@@ -12,7 +12,7 @@ use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Arc;
 
 pub struct CommitMetrics {
@@ -49,14 +49,15 @@ impl CommitMetrics {
 
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-        let mut total_number_of_commits: usize = 0;
         let (sender, receiver) = std::sync::mpsc::channel::<gix::ObjectDetached>();
-        let cancellation_token = Arc::new(AtomicUsize::default());
+        let has_graph_commit_traversal_ended = Arc::new(AtomicBool::default());
+        let total_number_of_commits = Arc::new(AtomicUsize::default());
 
         let churn_results = std::thread::spawn({
             let repo = repo.clone();
-            let cancellation_token = cancellation_token.clone();
-            let churn_pool_size = options.info.churn_pool_size;
+            let has_commit_graph_traversal_ended = has_graph_commit_traversal_ended.clone();
+            let total_number_of_commits = total_number_of_commits.clone();
+            let churn_pool_size_opt = options.info.churn_pool_size;
             move || -> Result<_> {
                 let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
                 let mut number_of_diffs_computed = 0;
@@ -64,12 +65,16 @@ impl CommitMetrics {
                     let commit = commit.attach(&repo).into_commit();
                     compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                     number_of_diffs_computed += 1;
-                    if cancellation_token.load(Ordering::Relaxed) > 0
-                        && (number_of_diffs_computed >= churn_pool_size
-                            || number_of_diffs_computed
-                                == cancellation_token.load(Ordering::Relaxed))
-                    {
-                        break;
+                    if has_commit_graph_traversal_ended.load(Ordering::Relaxed) {
+                        let total_number_of_commits =
+                            total_number_of_commits.load(Ordering::Relaxed);
+                        if should_break(
+                            churn_pool_size_opt,
+                            number_of_diffs_computed,
+                            total_number_of_commits,
+                        ) {
+                            break;
+                        }
                     }
                 }
 
@@ -77,6 +82,7 @@ impl CommitMetrics {
             }
         });
 
+        let mut count = 0;
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
             let commit = commit_id?.object()?.into_commit();
@@ -101,17 +107,18 @@ impl CommitMetrics {
                     time_of_first_commit = commit_time.into();
                 }
 
-                total_number_of_commits += 1;
+                count += 1;
             }
 
             sender.send(commit.detach()).ok();
         }
 
-        cancellation_token.store(total_number_of_commits, Ordering::SeqCst);
+        has_graph_commit_traversal_ended.store(true, Ordering::SeqCst);
+        total_number_of_commits.store(count, Ordering::SeqCst);
 
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
-            total_number_of_commits,
+            count,
             options.info.number_of_authors,
             options.info.email,
             options.text_formatting.number_separator,
@@ -135,13 +142,30 @@ impl CommitMetrics {
             authors_to_display,
             file_churns_to_display,
             total_number_of_authors,
-            total_number_of_commits,
+            total_number_of_commits: count,
             churn_pool_size,
             is_shallow: repo.is_shallow(),
             time_of_first_commit,
             time_of_most_recent_commit,
         })
     }
+}
+
+fn should_break(
+    churn_pool_size_opt: Option<usize>,
+    number_of_diffs_computed: usize,
+    total_number_of_commits: usize,
+) -> bool {
+    if let Some(mut churn_pool_size) = churn_pool_size_opt {
+        if churn_pool_size > total_number_of_commits {
+            churn_pool_size = total_number_of_commits;
+        }
+        if number_of_diffs_computed == churn_pool_size {
+            return true;
+        }
+        return false;
+    }
+    true
 }
 
 fn compute_file_churns(

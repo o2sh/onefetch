@@ -70,13 +70,8 @@ pub struct InfoCliOptions {
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
     /// and will be displayed under the info title "Churn (NUM)"
-    #[arg(
-        long,
-        default_value_t = 0usize,
-        hide_default_value = true,
-        value_name = "NUM"
-    )]
-    pub churn_pool_size: usize,
+    #[arg(long, value_name = "NUM")]
+    pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
     pub exclude: Vec<PathBuf>,
@@ -243,7 +238,7 @@ impl Default for InfoCliOptions {
             number_of_authors: 3,
             number_of_languages: 6,
             number_of_file_churns: 3,
-            churn_pool_size: 0,
+            churn_pool_size: Option::default(),
             exclude: Vec::default(),
             no_bots: Option::default(),
             no_merges: Default::default(),
