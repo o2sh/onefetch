@@ -106,6 +106,17 @@ expression: info
       }
     },
     {
+      "ChurnInfo": {
+        "file_churns": [
+          {
+            "filePath": "code.rs",
+            "nbrOfCommits": 4
+          }
+        ],
+        "churn_pool_size": 4
+      }
+    },
+    {
       "LocInfo": {
         "linesOfCode": 4
       }

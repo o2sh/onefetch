@@ -1,5 +1,5 @@
 use super::utils::format_time;
-use crate::info::{utils::git::Commits, utils::info_field::InfoField};
+use crate::info::{utils::git::CommitMetrics, utils::info_field::InfoField};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -9,15 +9,15 @@ pub struct LastChangeInfo {
 }
 
 impl LastChangeInfo {
-    pub fn new(iso_time: bool, commits: &Commits) -> Self {
-        let last_change = get_date_of_last_commit(commits, iso_time);
+    pub fn new(iso_time: bool, commit_metrics: &CommitMetrics) -> Self {
+        let last_change = get_date_of_last_commit(commit_metrics, iso_time);
 
         Self { last_change }
     }
 }
 
-fn get_date_of_last_commit(commits: &Commits, iso_time: bool) -> String {
-    format_time(commits.time_of_most_recent_commit, iso_time)
+fn get_date_of_last_commit(commit_metrics: &CommitMetrics, iso_time: bool) -> String {
+    format_time(commit_metrics.time_of_most_recent_commit, iso_time)
 }
 
 #[typetag::serialize]

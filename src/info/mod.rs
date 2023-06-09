@@ -1,4 +1,5 @@
 use self::author::AuthorsInfo;
+use self::churn::ChurnInfo;
 use self::commits::CommitsInfo;
 use self::contributors::ContributorsInfo;
 use self::created::CreatedInfo;
@@ -16,7 +17,7 @@ use self::size::SizeInfo;
 use self::title::Title;
 use self::url::get_repo_url;
 use self::url::UrlInfo;
-use self::utils::git::Commits;
+use self::utils::git::CommitMetrics;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
@@ -32,6 +33,7 @@ use serde::Serialize;
 use std::path::Path;
 
 mod author;
+mod churn;
 mod commits;
 mod contributors;
 mod created;
@@ -114,7 +116,7 @@ impl std::fmt::Display for Info {
 }
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
-    let repo = gix::ThreadSafeRepository::discover_opts(
+    let mut repo = gix::ThreadSafeRepository::discover_opts(
         &cli_options.input,
         gix::discover::upwards::Options {
             dot_git_only: true,
@@ -123,6 +125,8 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         Mapping::default(),
     )?
     .to_thread_local();
+    // Having an object cache is important for getting much better traversal and diff performance.
+    repo.object_cache_size_if_unset(4 * 1024 * 1024);
     let repo_path = get_work_dir(&repo)?;
 
     let loc_by_language_sorted_handle = std::thread::spawn({
@@ -147,14 +151,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(&repo);
 
-    let commits = Commits::new(
-        &repo,
-        cli_options.info.no_merges,
-        &cli_options.info.no_bots,
-        cli_options.info.number_of_authors,
-        cli_options.info.email,
-        cli_options.text_formatting.number_separator,
-    )?;
+    let commit_metrics = CommitMetrics::new(&repo, cli_options)?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
@@ -182,7 +179,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .head(&repo)?
         .pending(&repo)?
         .version(&repo, &manifest)?
-        .created(&commits, iso_time)
+        .created(&commit_metrics, iso_time)
         .languages(
             &loc_by_language,
             true_color,
@@ -190,11 +187,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             &text_colors,
         )
         .dependencies(&manifest, number_separator)
-        .authors(&commits, &text_colors)
-        .last_change(&commits, iso_time)
-        .contributors(&commits, number_of_authors, number_separator)
+        .authors(&commit_metrics, &text_colors)
+        .last_change(&commit_metrics, iso_time)
+        .contributors(&commit_metrics, number_of_authors, number_separator)
         .url(&repo_url)
-        .commits(&commits, number_separator)
+        .commits(&commit_metrics, number_separator)
+        .churn(&commit_metrics, &text_colors)
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, &manifest)?
@@ -295,9 +293,9 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    fn created(mut self, commits: &Commits, iso_time: bool) -> Self {
+    fn created(mut self, commit_metrics: &CommitMetrics, iso_time: bool) -> Self {
         if !self.disabled_fields.contains(&InfoType::Created) {
-            let created = CreatedInfo::new(iso_time, commits);
+            let created = CreatedInfo::new(iso_time, commit_metrics);
             self.info_fields.push(Box::new(created));
         }
         self
@@ -334,17 +332,17 @@ impl InfoBuilder {
         self
     }
 
-    fn authors(mut self, commits: &Commits, text_colors: &TextColors) -> Self {
+    fn authors(mut self, commit_metrics: &CommitMetrics, text_colors: &TextColors) -> Self {
         if !self.disabled_fields.contains(&InfoType::Authors) {
-            let authors = AuthorsInfo::new(text_colors.info, commits);
+            let authors = AuthorsInfo::new(text_colors.info, commit_metrics);
             self.info_fields.push(Box::new(authors));
         }
         self
     }
 
-    fn last_change(mut self, commits: &Commits, iso_time: bool) -> Self {
+    fn last_change(mut self, commit_metrics: &CommitMetrics, iso_time: bool) -> Self {
         if !self.disabled_fields.contains(&InfoType::LastChange) {
-            let last_change = LastChangeInfo::new(iso_time, commits);
+            let last_change = LastChangeInfo::new(iso_time, commit_metrics);
             self.info_fields.push(Box::new(last_change));
         }
         self
@@ -352,21 +350,34 @@ impl InfoBuilder {
 
     fn contributors(
         mut self,
-        commits: &Commits,
+        commit_metrics: &CommitMetrics,
         number_of_authors: usize,
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Contributors) {
-            let contributors = ContributorsInfo::new(commits, number_of_authors, number_separator);
+            let contributors =
+                ContributorsInfo::new(commit_metrics, number_of_authors, number_separator);
             self.info_fields.push(Box::new(contributors));
         }
         self
     }
 
-    fn commits(mut self, commits: &Commits, number_separator: NumberSeparator) -> Self {
+    fn commits(
+        mut self,
+        commit_metrics: &CommitMetrics,
+        number_separator: NumberSeparator,
+    ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Commits) {
-            let commits = CommitsInfo::new(commits, number_separator);
+            let commits = CommitsInfo::new(commit_metrics, number_separator);
             self.info_fields.push(Box::new(commits));
+        }
+        self
+    }
+
+    fn churn(mut self, commit_metrics: &CommitMetrics, text_colors: &TextColors) -> Self {
+        if !self.disabled_fields.contains(&InfoType::Churn) {
+            let churn = ChurnInfo::new(text_colors.info, commit_metrics);
+            self.info_fields.push(Box::new(churn));
         }
         self
     }

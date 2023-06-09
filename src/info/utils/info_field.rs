@@ -22,6 +22,7 @@ pub enum InfoType {
     Contributors,
     URL,
     Commits,
+    Churn,
     LinesOfCode,
     Size,
     License,

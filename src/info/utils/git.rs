@@ -1,16 +1,26 @@
-use crate::cli::{MyRegex, NumberSeparator};
+use crate::cli::{CliOptions, MyRegex, NumberSeparator};
 use crate::info::author::Author;
+use crate::info::churn::FileChurn;
 use anyhow::Result;
-use gix::bstr::BString;
 use gix::bstr::ByteSlice;
+use gix::bstr::{BString, Utf8Error};
+use gix::object::tree::diff::change::Event;
+use gix::object::tree::diff::Action;
+use gix::objs::tree::EntryMode;
+use gix::prelude::ObjectIdExt;
+use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::sync::Arc;
 
-pub struct Commits {
+pub struct CommitMetrics {
     pub authors_to_display: Vec<Author>,
+    pub file_churns_to_display: Vec<FileChurn>,
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
+    pub churn_pool_size: usize,
     /// false if we have found the first commit that started it all, true if the repository is shallow.
     pub is_shallow: bool,
     pub time_of_most_recent_commit: gix::actor::Time,
@@ -29,16 +39,9 @@ impl From<gix::actor::Signature> for Sig {
     }
 }
 
-impl Commits {
-    pub fn new(
-        repo: &gix::Repository,
-        no_merges: bool,
-        no_bots: &Option<Option<MyRegex>>,
-        number_of_authors_to_display: usize,
-        show_email: bool,
-        number_separator: NumberSeparator,
-    ) -> Result<Self> {
-        let bot_regex_pattern = get_no_bots_regex(no_bots)?;
+impl CommitMetrics {
+    pub fn new(repo: &gix::Repository, options: &CliOptions) -> Result<Self> {
+        let bot_regex_pattern = get_no_bots_regex(&options.info.no_bots)?;
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
         let mut commit_iter = repo.head_commit()?.ancestors().all()?;
@@ -46,39 +49,86 @@ impl Commits {
 
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-        let mut total_number_of_commits = 0;
+        let (sender, receiver) = std::sync::mpsc::channel::<gix::hash::ObjectId>();
+        let has_graph_commit_traversal_ended = Arc::new(AtomicBool::default());
+        let total_number_of_commits = Arc::new(AtomicUsize::default());
 
+        let churn_results = std::thread::spawn({
+            let repo = repo.clone();
+            let has_commit_graph_traversal_ended = has_graph_commit_traversal_ended.clone();
+            let total_number_of_commits = total_number_of_commits.clone();
+            let churn_pool_size_opt = options.info.churn_pool_size;
+            move || -> Result<_> {
+                let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
+                let mut number_of_diffs_computed = 0;
+                while let Ok(commit_id) = receiver.recv() {
+                    let commit = repo.find_object(commit_id)?.into_commit();
+                    compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
+                    number_of_diffs_computed += 1;
+                    if should_break(
+                        has_commit_graph_traversal_ended.load(Ordering::Relaxed),
+                        total_number_of_commits.load(Ordering::Relaxed),
+                        churn_pool_size_opt,
+                        number_of_diffs_computed,
+                    ) {
+                        break;
+                    }
+                }
+
+                Ok((number_of_commits_by_file_path, number_of_diffs_computed))
+            }
+        });
+
+        let mut count = 0;
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
-            let commit = commit_id?.object()?.into_commit();
-            let commit = commit.decode()?;
+            let commit_id = commit_id?;
+            let commit = commit_id.object()?.into_commit();
+            {
+                let commit_ref = commit.decode()?;
 
-            if no_merges && commit.parents().take(2).count() > 1 {
-                continue;
+                if options.info.no_merges && commit_ref.parents.len() > 1 {
+                    continue;
+                }
+
+                let sig = Sig::from(mailmap_config.resolve(commit_ref.author()));
+
+                if is_bot(&sig.name, &bot_regex_pattern) {
+                    continue;
+                }
+
+                *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
+                let commit_time = commit_ref.time();
+                time_of_most_recent_commit.get_or_insert(commit_time);
+
+                if commit_iter_peekable.peek().is_none() {
+                    time_of_first_commit = commit_time.into();
+                }
+
+                count += 1;
             }
 
-            let sig = Sig::from(mailmap_config.resolve(commit.author));
-
-            if is_bot(&sig.name, &bot_regex_pattern) {
-                continue;
-            }
-
-            *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
-
-            time_of_most_recent_commit.get_or_insert_with(|| commit.time());
-            if commit_iter_peekable.peek().is_none() {
-                time_of_first_commit = commit.time().into();
-            }
-
-            total_number_of_commits += 1;
+            sender.send(commit_id.detach()).ok();
         }
+
+        has_graph_commit_traversal_ended.store(true, Ordering::SeqCst);
+        total_number_of_commits.store(count, Ordering::SeqCst);
 
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
-            total_number_of_commits,
-            number_of_authors_to_display,
-            show_email,
-            number_separator,
+            count,
+            options.info.number_of_authors,
+            options.info.email,
+            options.text_formatting.number_separator,
+        );
+
+        let (number_of_commits_by_file_path, churn_pool_size) =
+            churn_results.join().expect("never panics")?;
+
+        let file_churns_to_display = compute_file_churns(
+            number_of_commits_by_file_path,
+            options.info.number_of_file_churns,
+            options.text_formatting.number_separator,
         );
 
         // This could happen if a branch pointed to non-commit object, so no traversal actually happens.
@@ -86,16 +136,50 @@ impl Commits {
             .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
             .unwrap_or_default();
 
-        drop(commit_iter);
         Ok(Self {
             authors_to_display,
+            file_churns_to_display,
             total_number_of_authors,
-            total_number_of_commits,
+            total_number_of_commits: count,
+            churn_pool_size,
             is_shallow: repo.is_shallow(),
             time_of_first_commit,
             time_of_most_recent_commit,
         })
     }
+}
+
+fn should_break(
+    has_commit_graph_traversal_ended: bool,
+    total_number_of_commits: usize,
+    churn_pool_size_opt: Option<usize>,
+    number_of_diffs_computed: usize,
+) -> bool {
+    if !has_commit_graph_traversal_ended {
+        return false;
+    }
+    churn_pool_size_opt.map_or(true, |churn_pool_size| {
+        number_of_diffs_computed == churn_pool_size.min(total_number_of_commits)
+    })
+}
+
+fn compute_file_churns(
+    number_of_commits_by_file_path: HashMap<BString, usize>,
+    number_of_file_churns_to_display: usize,
+    number_separator: NumberSeparator,
+) -> Vec<FileChurn> {
+    let mut number_of_commits_by_file_path_sorted = Vec::from_iter(number_of_commits_by_file_path);
+
+    number_of_commits_by_file_path_sorted
+        .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+
+    number_of_commits_by_file_path_sorted
+        .into_iter()
+        .map(|(file_path, nbr_of_commits)| {
+            FileChurn::new(file_path.to_string(), nbr_of_commits, number_separator)
+        })
+        .take(number_of_file_churns_to_display)
+        .collect()
 }
 
 fn compute_authors(
@@ -116,19 +200,60 @@ fn compute_authors(
     let authors: Vec<Author> = signature_with_number_of_commits_sorted
         .into_iter()
         .map(|(author, author_nbr_of_commits)| {
-            let email = author.email;
             Author::new(
-                author.name,
-                email,
+                author.name.to_string(),
+                if show_email {
+                    Some(author.email.to_string())
+                } else {
+                    None
+                },
                 author_nbr_of_commits,
                 total_number_of_commits,
-                show_email,
                 number_separator,
             )
         })
         .take(number_of_authors_to_display)
         .collect();
     (authors, total_number_of_authors)
+}
+
+fn compute_diff_with_parent(
+    change_map: &mut HashMap<BString, usize>,
+    commit: &Commit,
+    repo: &gix::Repository,
+) -> Result<()> {
+    let mut parents = commit.parent_ids();
+    let parents = (
+        parents
+            .next()
+            .and_then(|parent_id| parent_id.object().ok()?.into_commit().tree_id().ok())
+            .unwrap_or_else(|| gix::hash::ObjectId::empty_tree(repo.object_hash()).attach(repo)),
+        parents.next(),
+    );
+
+    if let (tree_id, None) = parents {
+        tree_id
+            .object()?
+            .into_tree()
+            .changes()?
+            .track_path()
+            .for_each_to_obtain_tree(&commit.tree()?, |change| {
+                let is_file_change = match change.event {
+                    Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
+                        entry_mode == EntryMode::Blob || entry_mode == EntryMode::BlobExecutable
+                    }
+                    Event::Deletion { .. } | Event::Rewrite { .. } => false,
+                };
+                if is_file_change {
+                    let path = change.location;
+                    *change_map.entry(path.to_owned()).or_insert(0) += 1;
+                }
+
+                Ok::<Action, Utf8Error>(Action::Continue)
+            })?;
+    }
+
+    Ok(())
 }
 
 fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {
@@ -153,6 +278,7 @@ fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
 
     #[test]
     fn test_get_no_bots_regex() {
@@ -213,5 +339,53 @@ mod tests {
         assert_eq!(total_number_of_authors, 3);
         assert_eq!(authors.len(), 2);
         assert_eq!(authors.get(0).unwrap().name, "Ellen Smith".to_string());
+    }
+
+    #[test]
+    fn test_compute_file_churns() {
+        let mut number_of_commits_by_file_path = HashMap::new();
+        number_of_commits_by_file_path.insert("path/to/file1.txt".into(), 2);
+        number_of_commits_by_file_path.insert("path/to/file2.txt".into(), 5);
+        number_of_commits_by_file_path.insert("path/to/file3.txt".into(), 3);
+        number_of_commits_by_file_path.insert("path/to/file4.txt".into(), 7);
+
+        let number_of_file_churns_to_display = 3;
+        let number_separator = NumberSeparator::Comma;
+        let file_churns = compute_file_churns(
+            number_of_commits_by_file_path,
+            number_of_file_churns_to_display,
+            number_separator,
+        );
+
+        assert_eq!(file_churns.len(), 3);
+        assert_eq!(
+            file_churns.get(0).unwrap().file_path,
+            "path/to/file4.txt".to_string()
+        );
+        assert_eq!(file_churns.get(0).unwrap().nbr_of_commits, 7);
+    }
+
+    #[rstest]
+    #[case(true, 10, Some(8), 4, false)]
+    #[case(false, 10, Some(10), 10, false)]
+    #[case(true, 10, Some(5), 5, true)]
+    #[case(true, 5, Some(10), 5, true)]
+    #[case(true, 5, Some(10), 3, false)]
+    #[case(true, 10, Some(5), 3, false)]
+    fn test_should_break(
+        #[case] has_commit_graph_traversal_ended: bool,
+        #[case] total_number_of_commits: usize,
+        #[case] churn_pool_size_opt: Option<usize>,
+        #[case] number_of_diffs_computed: usize,
+        #[case] expected: bool,
+    ) {
+        let result = should_break(
+            has_commit_graph_traversal_ended,
+            total_number_of_commits,
+            churn_pool_size_opt,
+            number_of_diffs_computed,
+        );
+
+        assert_eq!(result, expected);
     }
 }

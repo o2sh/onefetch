@@ -129,13 +129,13 @@ impl std::fmt::Display for LanguagesInfo {
                 format!("{language} ({formatted_number} %)").color(self.info_color)
             );
             if i % 2 == 0 {
-                let _ = write!(
+                write!(
                     languages_info,
                     "\n{:<width$}{}",
                     "",
                     language_str,
                     width = pad
-                );
+                )?;
             } else {
                 languages_info.push_str(language_str.trim_end());
             }

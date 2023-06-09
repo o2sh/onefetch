@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::{format_number, utils::git::Commits, utils::info_field::InfoField},
+    info::{format_number, utils::git::CommitMetrics, utils::info_field::InfoField},
 };
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
@@ -10,32 +10,28 @@ use std::fmt::Write;
 #[serde(rename_all = "camelCase")]
 pub struct Author {
     pub name: String,
-    email: String,
+    email: Option<String>,
     nbr_of_commits: usize,
     contribution: usize,
-    #[serde(skip_serializing)]
-    show_email: bool,
     #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
 impl Author {
     pub fn new(
-        name: gix::bstr::BString,
-        email: gix::bstr::BString,
+        name: String,
+        email: Option<String>,
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
-        show_email: bool,
         number_separator: NumberSeparator,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
         Self {
-            name: name.to_string(),
-            email: email.to_string(),
+            name,
+            email,
             nbr_of_commits,
             contribution,
-            show_email,
             number_separator,
         }
     }
@@ -43,13 +39,13 @@ impl Author {
 
 impl std::fmt::Display for Author {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.show_email {
+        if let Some(email) = &self.email {
             write!(
                 f,
                 "{}% {} <{}> {}",
                 self.contribution,
                 self.name,
-                self.email,
+                email,
                 format_number(&self.nbr_of_commits, self.number_separator)
             )
         } else {
@@ -72,8 +68,8 @@ pub struct AuthorsInfo {
 }
 
 impl AuthorsInfo {
-    pub fn new(info_color: DynColors, commits: &Commits) -> Self {
-        let authors = commits.authors_to_display.clone();
+    pub fn new(info_color: DynColors, commit_metrics: &CommitMetrics) -> Self {
+        let authors = commit_metrics.authors_to_display.clone();
         Self {
             authors,
             info_color,
@@ -91,9 +87,9 @@ impl std::fmt::Display for AuthorsInfo {
             let author_str = author.color(self.info_color);
 
             if i == 0 {
-                let _ = write!(authors_info, "{author_str}");
+                write!(authors_info, "{author_str}")?;
             } else {
-                let _ = write!(authors_info, "\n{:<width$}{}", "", author_str, width = pad);
+                write!(authors_info, "\n{:<width$}{}", "", author_str, width = pad)?;
             }
         }
 
@@ -128,10 +124,9 @@ mod test {
     fn test_display_author() {
         let author = Author::new(
             "John Doe".into(),
-            "john.doe@email.com".into(),
+            Some("john.doe@email.com".into()),
             1500,
             2000,
-            true,
             NumberSeparator::Plain,
         );
 
@@ -140,14 +135,7 @@ mod test {
 
     #[test]
     fn test_display_author_with_no_email() {
-        let author = Author::new(
-            "John Doe".into(),
-            "john.doe@email.com".into(),
-            1500,
-            2000,
-            false,
-            NumberSeparator::Plain,
-        );
+        let author = Author::new("John Doe".into(), None, 1500, 2000, NumberSeparator::Plain);
 
         assert_eq!(author.to_string(), "75% John Doe 1500");
     }
@@ -156,10 +144,9 @@ mod test {
     fn test_authors_info_title_with_one_author() {
         let author = Author::new(
             "John Doe".into(),
-            "john.doe@email.com".into(),
+            Some("john.doe@email.com".into()),
             1500,
             2000,
-            true,
             NumberSeparator::Plain,
         );
 
@@ -175,19 +162,17 @@ mod test {
     fn test_authors_info_title_with_two_authors() {
         let author = Author::new(
             "John Doe".into(),
-            "john.doe@email.com".into(),
+            Some("john.doe@email.com".into()),
             1500,
             2000,
-            true,
             NumberSeparator::Plain,
         );
 
         let author_2 = Author::new(
             "Roberto Berto".into(),
-            "bertolone2000@email.com".into(),
+            None,
             240,
             300,
-            false,
             NumberSeparator::Plain,
         );
 
@@ -203,10 +188,9 @@ mod test {
     fn test_author_info_value_with_one_author() {
         let author = Author::new(
             "John Doe".into(),
-            "john.doe@email.com".into(),
+            Some("john.doe@email.com".into()),
             1500,
             2000,
-            true,
             NumberSeparator::Plain,
         );
 
@@ -227,19 +211,17 @@ mod test {
     fn test_author_info_value_with_two_authors() {
         let author = Author::new(
             "John Doe".into(),
-            "john.doe@email.com".into(),
+            Some("john.doe@email.com".into()),
             1500,
             2000,
-            true,
             NumberSeparator::Plain,
         );
 
         let author_2 = Author::new(
             "Roberto Berto".into(),
-            "bertolone2000@email.com".into(),
+            None,
             240,
             300,
-            false,
             NumberSeparator::Plain,
         );
 
