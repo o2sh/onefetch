@@ -49,7 +49,7 @@ impl CommitMetrics {
 
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-        let (sender, receiver) = std::sync::mpsc::channel::<gix::ObjectDetached>();
+        let (sender, receiver) = std::sync::mpsc::channel::<gix::hash::ObjectId>();
         let has_graph_commit_traversal_ended = Arc::new(AtomicBool::default());
         let total_number_of_commits = Arc::new(AtomicUsize::default());
 
@@ -61,8 +61,8 @@ impl CommitMetrics {
             move || -> Result<_> {
                 let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
                 let mut number_of_diffs_computed = 0;
-                while let Ok(commit) = receiver.recv() {
-                    let commit = commit.attach(&repo).into_commit();
+                while let Ok(commit_id) = receiver.recv() {
+                    let commit = repo.find_object(commit_id)?.into_commit();
                     compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                     number_of_diffs_computed += 1;
                     if should_break(
@@ -82,7 +82,8 @@ impl CommitMetrics {
         let mut count = 0;
         // From newest to oldest
         while let Some(commit_id) = commit_iter_peekable.next() {
-            let commit = commit_id?.object()?.into_commit();
+            let commit_id = commit_id?;
+            let commit = commit_id.object()?.into_commit();
             {
                 let commit_ref = commit.decode()?;
 
@@ -107,7 +108,7 @@ impl CommitMetrics {
                 count += 1;
             }
 
-            sender.send(commit.detach()).ok();
+            sender.send(commit_id.detach()).ok();
         }
 
         has_graph_commit_traversal_ended.store(true, Ordering::SeqCst);
