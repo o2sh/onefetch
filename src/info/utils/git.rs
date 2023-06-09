@@ -154,20 +154,12 @@ fn should_break(
     churn_pool_size_opt: Option<usize>,
     number_of_diffs_computed: usize,
 ) -> bool {
-    if has_commit_graph_traversal_ended {
-        let total_number_of_commits = total_number_of_commits;
-        if let Some(mut churn_pool_size) = churn_pool_size_opt {
-            if churn_pool_size > total_number_of_commits {
-                churn_pool_size = total_number_of_commits;
-            }
-            if number_of_diffs_computed == churn_pool_size {
-                return true;
-            }
-            return false;
-        }
-        return true;
+    if !has_commit_graph_traversal_ended {
+        return false;
     }
-    false
+    churn_pool_size_opt.map_or(true, |churn_pool_size| {
+        number_of_diffs_computed == churn_pool_size.min(total_number_of_commits)
+    })
 }
 
 fn compute_file_churns(
