@@ -8,6 +8,7 @@ use gix::object::tree::diff::change::Event;
 use gix::object::tree::diff::Action;
 use gix::objs::tree::EntryMode;
 use gix::prelude::ObjectIdExt;
+use gix::traverse::commit::Sorting;
 use gix::Commit;
 use regex::Regex;
 use std::collections::HashMap;
@@ -44,8 +45,12 @@ impl CommitMetrics {
         let bot_regex_pattern = get_no_bots_regex(&options.info.no_bots)?;
         let mut time_of_most_recent_commit = None;
         let mut time_of_first_commit = None;
-        let mut commit_iter = repo.head_commit()?.ancestors().all()?;
-        let mut commit_iter_peekable = commit_iter.by_ref().peekable();
+        let commit_iter = repo
+            .head_commit()?
+            .id()
+            .ancestors()
+            .sorting(Sorting::ByCommitTimeNewestFirst)
+            .all()?;
 
         let mailmap_config = repo.open_mailmap();
         let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
@@ -81,34 +86,34 @@ impl CommitMetrics {
 
         let mut count = 0;
         // From newest to oldest
-        while let Some(commit_id) = commit_iter_peekable.next() {
-            let commit_id = commit_id?;
-            let commit = commit_id.object()?.into_commit();
+        for commit in commit_iter {
+            let commit = commit?;
             {
-                let commit_ref = commit.decode()?;
-
-                if options.info.no_merges && commit_ref.parents.len() > 1 {
+                if options.info.no_merges && commit.parent_ids.len() > 1 {
                     continue;
                 }
 
-                let sig = Sig::from(mailmap_config.resolve(commit_ref.author()));
-
+                let sig = mailmap_config.resolve(commit.object()?.author()?);
                 if is_bot(&sig.name, &bot_regex_pattern) {
                     continue;
                 }
-
-                *number_of_commits_by_signature.entry(sig).or_insert(0) += 1;
-                let commit_time = commit_ref.time();
+                *number_of_commits_by_signature
+                    .entry(sig.into())
+                    .or_insert(0) += 1;
+                let commit_time = gix::actor::Time::new(
+                    commit
+                        .commit_time
+                        .expect("sorting by time yields this field as part of traversal")
+                        as u32, // TODO: remove this cast once `gix` supports 64 bit dates.
+                    0,
+                );
                 time_of_most_recent_commit.get_or_insert(commit_time);
-
-                if commit_iter_peekable.peek().is_none() {
-                    time_of_first_commit = commit_time.into();
-                }
+                time_of_first_commit = commit_time.into();
 
                 count += 1;
             }
 
-            sender.send(commit_id.detach()).ok();
+            sender.send(commit.id).ok();
         }
 
         has_graph_commit_traversal_ended.store(true, Ordering::SeqCst);
