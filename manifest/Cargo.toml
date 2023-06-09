@@ -10,6 +10,6 @@ repository = "https://github.com/o2sh/onefetch"
 
 [dependencies]
 anyhow = "1.0"
-cargo_toml = "0.15.2"
+cargo_toml = "0.15.3"
 npm-package-json = "0.1.3"
 strum = { version = "0.24.1", features = ["derive"] }
