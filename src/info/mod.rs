@@ -84,14 +84,17 @@ impl std::fmt::Display for Info {
         }
 
         //Info lines
-        for info_field in self.info_fields.iter().filter(|x| !x.value().is_empty()) {
-            write_styled_info_line(
-                f,
-                &info_field.title(),
-                &info_field.value(),
-                self.no_bold,
-                &self.text_colors,
-            )?;
+        for info_field in self.info_fields.iter() {
+            let info_field_value = info_field.value();
+            if !info_field_value.is_empty() {
+                write_styled_info_line(
+                    f,
+                    &info_field.title(),
+                    &info_field.value(),
+                    self.no_bold,
+                    &self.text_colors,
+                )?;
+            }
         }
 
         //Palette
