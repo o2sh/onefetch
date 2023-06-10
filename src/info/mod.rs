@@ -89,7 +89,6 @@ impl std::fmt::Display for Info {
                 f,
                 &info_field.title(),
                 &info_field.value(),
-                info_field.should_color(),
                 self.no_bold,
                 &self.text_colors,
             )?;
@@ -187,12 +186,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             &text_colors,
         )
         .dependencies(&manifest, number_separator)
-        .authors(&commit_metrics, &text_colors)
+        .authors(&commit_metrics)
         .last_change(&commit_metrics, iso_time)
         .contributors(&commit_metrics, number_of_authors, number_separator)
         .url(&repo_url)
         .commits(&commit_metrics, number_separator)
-        .churn(&commit_metrics, &text_colors)
+        .churn(&commit_metrics)
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, &manifest)?
@@ -332,9 +331,9 @@ impl InfoBuilder {
         self
     }
 
-    fn authors(mut self, commit_metrics: &CommitMetrics, text_colors: &TextColors) -> Self {
+    fn authors(mut self, commit_metrics: &CommitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoType::Authors) {
-            let authors = AuthorsInfo::new(text_colors.info, commit_metrics);
+            let authors = AuthorsInfo::new(commit_metrics);
             self.info_fields.push(Box::new(authors));
         }
         self
@@ -374,9 +373,9 @@ impl InfoBuilder {
         self
     }
 
-    fn churn(mut self, commit_metrics: &CommitMetrics, text_colors: &TextColors) -> Self {
+    fn churn(mut self, commit_metrics: &CommitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoType::Churn) {
-            let churn = ChurnInfo::new(text_colors.info, commit_metrics);
+            let churn = ChurnInfo::new(commit_metrics);
             self.info_fields.push(Box::new(churn));
         }
         self
@@ -417,7 +416,6 @@ fn write_styled_info_line(
     f: &mut std::fmt::Formatter,
     subtitle: &str,
     info: &str,
-    should_color_info: bool,
     no_bold: bool,
     text_colors: &TextColors,
 ) -> std::fmt::Result {
@@ -425,17 +423,20 @@ fn write_styled_info_line(
         f,
         "{} {}",
         style_subtitle(subtitle, text_colors, no_bold),
-        style_info(info, text_colors, should_color_info)
+        style_info(info, text_colors)
     )
 }
 
-fn style_info(info: &str, text_colors: &TextColors, with_color: bool) -> String {
-    if with_color {
-        let info_style = get_style(false, text_colors.info);
-        format!("{}", info.style(info_style))
-    } else {
-        info.into()
-    }
+fn style_info(info: &str, text_colors: &TextColors) -> String {
+    let info_lines: Vec<&str> = info.lines().collect();
+    let info_style = get_style(false, text_colors.info);
+
+    let styled_lines: Vec<String> = info_lines
+        .iter()
+        .map(|line| format!("{}", line.style(info_style)))
+        .collect();
+
+    styled_lines.join("\n")
 }
 
 fn style_subtitle(subtitle: &str, text_colors: &TextColors, no_bold: bool) -> String {
@@ -524,11 +525,7 @@ mod tests {
     fn test_info_style_info() {
         let text_colors = TextColors::new(&[0, 0, 0, 0, 0, 0], DynColors::Ansi(AnsiColors::Blue));
 
-        let info_text = style_info("foo", &text_colors, false);
-        assert_eq!(info_text, "foo");
-
-        // Should display colour code
-        let info_text = style_info("foo", &text_colors, true);
+        let info_text = style_info("foo", &text_colors);
         // Rendered text: black `foo`
         assert_eq!(info_text, "\u{1b}[30mfoo\u{1b}[0m");
     }

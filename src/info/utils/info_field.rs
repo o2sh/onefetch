@@ -2,9 +2,6 @@
 pub trait InfoField {
     fn value(&self) -> String;
     fn title(&self) -> String;
-    fn should_color(&self) -> bool {
-        true
-    }
 }
 
 #[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
