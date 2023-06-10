@@ -94,12 +94,11 @@ impl CommitMetrics {
                 }
 
                 let sig = mailmap_config.resolve(commit.object()?.author()?);
-                if is_bot(&sig.name, &bot_regex_pattern) {
-                    continue;
+                if !is_bot(&sig.name, &bot_regex_pattern) {
+                    *number_of_commits_by_signature
+                        .entry(sig.into())
+                        .or_insert(0) += 1;
                 }
-                *number_of_commits_by_signature
-                    .entry(sig.into())
-                    .or_insert(0) += 1;
                 let commit_time = gix::actor::Time::new(
                     commit
                         .commit_time
