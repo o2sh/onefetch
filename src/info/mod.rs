@@ -90,7 +90,7 @@ impl std::fmt::Display for Info {
                 write_styled_info_line(
                     f,
                     &info_field.title(),
-                    &info_field.value(),
+                    &info_field_value,
                     self.no_bold,
                     &self.text_colors,
                 )?;
