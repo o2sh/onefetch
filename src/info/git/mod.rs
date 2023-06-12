@@ -44,11 +44,15 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         options.info.churn_pool_size,
     )?;
 
-    let author_thread = repo
-        .commit_graph()
-        .ok()
-        .is_some()
-        .then(|| get_author_channel(repo, &bot_regex_pattern, &mailmap));
+    let num_threads = std::thread::available_parallelism()
+        .map(|p| p.get())
+        .unwrap_or(1);
+
+    let commit_graph = repo.commit_graph().ok();
+    let can_use_author_threads = num_threads > 1 && commit_graph.is_some();
+
+    let author_threads = can_use_author_threads
+        .then(|| get_author_channel(repo, num_threads, &bot_regex_pattern, &mailmap));
 
     let mut count = 0;
     for commit in commit_iter {
@@ -58,7 +62,7 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
                 continue;
             }
 
-            if let Some((_thread, author_tx)) = author_thread.as_ref() {
+            if let Some((_threads, author_tx)) = author_threads.as_ref() {
                 author_tx.send(commit.id)?;
             } else {
                 let sig = mailmap.resolve(commit.object()?.author()?);
@@ -85,10 +89,14 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         }
     }
 
-    if let Some((thread, author_tx)) = author_thread {
-        drop(author_tx);
-        let mapping = thread.join().expect("no panic")?;
-        number_of_commits_by_signature = mapping;
+    if let Some((threads, sender)) = author_threads {
+        drop(sender);
+        for thread in threads {
+            let mapping = thread.join().expect("never panics")?;
+            for (sig, num_commits) in mapping {
+                *number_of_commits_by_signature.entry(sig).or_insert(0) += num_commits;
+            }
+        }
     }
 
     total_number_of_commits.store(count, Ordering::SeqCst);
@@ -112,30 +120,44 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
 
 fn get_author_channel(
     repo: &gix::Repository,
+    num_threads: usize,
     bot_regex_pattern: &Option<MyRegex>,
     mailmap: &gix::mailmap::Snapshot,
-) -> (JoinHandle<Result<HashMap<Sig, usize>>>, Sender<ObjectId>) {
-    let (tx, rx) = channel::<gix::hash::ObjectId>();
-    let threads = std::thread::spawn({
-        let mut repo = repo.clone();
-        let mailmap = mailmap.clone();
-        let bot_regex_pattern = bot_regex_pattern.clone();
-        move || -> anyhow::Result<_> {
-            let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-            // We are sure to see each object only once.
-            repo.object_cache_size(0);
-            while let Ok(commit_id) = rx.recv() {
-                let commit = repo.find_object(commit_id)?.into_commit();
-                update_signature_counts(
-                    &commit,
-                    &mailmap,
-                    &bot_regex_pattern,
-                    &mut number_of_commits_by_signature,
-                )?;
-            }
-            Ok(number_of_commits_by_signature)
-        }
-    });
+) -> (
+    Vec<JoinHandle<Result<HashMap<Sig, usize>>>>,
+    crossbeam_channel::Sender<ObjectId>,
+) {
+    // we intentionally over-allocate threads a little as the main thread won't be very busy anyway
+    // traversing commits with the graph available.
+    // The channel is generously bounded to assure all threads are fed, without consuming excessive memory.
+    // We have to wait for the threads to finish anyway so some synchronization here will be fine, while tests
+    // show that this is about as fast as if it was unbounded.
+    let (tx, rx) = crossbeam_channel::bounded::<ObjectId>(num_threads * 100);
+    let threads: Vec<_> = (0..num_threads)
+        .map(|_| {
+            std::thread::spawn({
+                let mut repo = repo.clone();
+                let mailmap = mailmap.clone();
+                let bot_regex_pattern = bot_regex_pattern.clone();
+                let rx = rx.clone();
+                move || -> anyhow::Result<_> {
+                    let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
+                    // We are sure to see each object only once.
+                    repo.object_cache_size(0);
+                    while let Ok(commit_id) = rx.recv() {
+                        let commit = repo.find_object(commit_id)?.into_commit();
+                        update_signature_counts(
+                            &commit,
+                            &mailmap,
+                            &bot_regex_pattern,
+                            &mut number_of_commits_by_signature,
+                        )?;
+                    }
+                    Ok(number_of_commits_by_signature)
+                }
+            })
+        })
+        .collect();
     (threads, tx)
 }
 
