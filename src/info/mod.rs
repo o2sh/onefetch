@@ -195,7 +195,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .last_change(&git_metrics, iso_time)
         .contributors(&git_metrics, number_of_authors, number_separator)
         .url(&repo_url)
-        .commits(&git_metrics, number_separator)
+        .commits(&git_metrics, repo.is_shallow(), number_separator)
         .churn(&git_metrics)
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
@@ -366,9 +366,14 @@ impl InfoBuilder {
         self
     }
 
-    fn commits(mut self, git_metrics: &GitMetrics, number_separator: NumberSeparator) -> Self {
+    fn commits(
+        mut self,
+        git_metrics: &GitMetrics,
+        is_shallow: bool,
+        number_separator: NumberSeparator,
+    ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Commits) {
-            let commits = CommitsInfo::new(git_metrics, number_separator);
+            let commits = CommitsInfo::new(git_metrics, is_shallow, number_separator);
             self.info_fields.push(Box::new(commits));
         }
         self

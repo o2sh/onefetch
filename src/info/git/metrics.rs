@@ -13,8 +13,6 @@ pub struct GitMetrics {
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
     pub churn_pool_size: usize,
-    /// false if we have found the first commit that started it all, true if the repository is shallow.
-    pub is_shallow: bool,
     pub time_of_most_recent_commit: gix::actor::Time,
     pub time_of_first_commit: gix::actor::Time,
 }
@@ -27,7 +25,6 @@ impl GitMetrics {
         total_number_of_commits: usize,
         time_of_first_commit: Option<Time>,
         time_of_most_recent_commit: Option<Time>,
-        is_shallow: bool,
         options: &CliOptions,
     ) -> Result<Self> {
         let (authors_to_display, total_number_of_authors) = compute_authors(
@@ -55,7 +52,6 @@ impl GitMetrics {
             total_number_of_authors,
             total_number_of_commits,
             churn_pool_size,
-            is_shallow,
             time_of_first_commit,
             time_of_most_recent_commit,
         })

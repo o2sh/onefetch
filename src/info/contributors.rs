@@ -58,7 +58,6 @@ mod test {
             total_number_of_authors: 12,
             total_number_of_commits: 2,
             churn_pool_size: 0,
-            is_shallow: true,
             time_of_most_recent_commit: timestamp,
             time_of_first_commit: timestamp,
         };

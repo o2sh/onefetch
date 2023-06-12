@@ -15,10 +15,14 @@ pub struct CommitsInfo {
 }
 
 impl CommitsInfo {
-    pub fn new(git_metrics: &GitMetrics, number_separator: NumberSeparator) -> Self {
+    pub fn new(
+        git_metrics: &GitMetrics,
+        is_shallow: bool,
+        number_separator: NumberSeparator,
+    ) -> Self {
         Self {
             number_of_commits: git_metrics.total_number_of_commits,
-            is_shallow: git_metrics.is_shallow,
+            is_shallow,
             number_separator,
         }
     }
