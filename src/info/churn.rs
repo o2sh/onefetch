@@ -1,6 +1,5 @@
 use super::{git::metrics::GitMetrics, utils::info_field::InfoField};
 use crate::{cli::NumberSeparator, info::format_number};
-use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 use std::fmt::Write;
 
@@ -42,16 +41,13 @@ impl std::fmt::Display for FileChurn {
 pub struct ChurnInfo {
     pub file_churns: Vec<FileChurn>,
     pub churn_pool_size: usize,
-    #[serde(skip_serializing)]
-    pub info_color: DynColors,
 }
 impl ChurnInfo {
-    pub fn new(info_color: DynColors, git_metrics: &GitMetrics) -> Self {
+    pub fn new(git_metrics: &GitMetrics) -> Self {
         let file_churns = git_metrics.file_churns_to_display.clone();
         Self {
             file_churns,
-            churn_pool_size: git_metrics.churn_pool_size,
-            info_color,
+            churn_pool_size: git_metrics.churn_pool_size
         }
     }
 }
@@ -61,13 +57,11 @@ impl std::fmt::Display for ChurnInfo {
 
         let pad = self.title().len() + 2;
 
-        for (i, churn) in self.file_churns.iter().enumerate() {
-            let churn_str = churn.color(self.info_color);
-
+        for (i, file_churn) in self.file_churns.iter().enumerate() {
             if i == 0 {
-                write!(churn_info, "{churn_str}")?;
+                write!(churn_info, "{file_churn}")?;
             } else {
-                write!(churn_info, "\n{:<width$}{}", "", churn_str, width = pad)?;
+                write!(churn_info, "\n{:<width$}{}", "", file_churn, width = pad)?;
             }
         }
 
@@ -83,10 +77,6 @@ impl InfoField for ChurnInfo {
 
     fn title(&self) -> String {
         format!("Churn ({})", self.churn_pool_size)
-    }
-
-    fn should_color(&self) -> bool {
-        false
     }
 }
 
@@ -125,18 +115,13 @@ mod tests {
         let churn_info = ChurnInfo {
             file_churns: vec![file_churn_1, file_churn_2],
             churn_pool_size: 5,
-            info_color: DynColors::Rgb(255, 0, 0),
         };
-
-        assert!(churn_info.value().contains(
-            &"\u{2026}/to/file.txt 50"
-                .color(DynColors::Rgb(255, 0, 0))
-                .to_string()
-        ));
 
         assert!(churn_info
             .value()
-            .contains(&"file_2.txt 30".color(DynColors::Rgb(255, 0, 0)).to_string()));
+            .contains(&"\u{2026}/to/file.txt 50".to_string()));
+
+        assert!(churn_info.value().contains(&"file_2.txt 30".to_string()));
     }
 
     #[test]

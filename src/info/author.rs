@@ -3,7 +3,6 @@ use crate::{
     cli::NumberSeparator,
     info::{format_number, utils::info_field::InfoField},
 };
-use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 use std::fmt::Write;
 
@@ -64,17 +63,12 @@ impl std::fmt::Display for Author {
 #[derive(Serialize)]
 pub struct AuthorsInfo {
     pub authors: Vec<Author>,
-    #[serde(skip_serializing)]
-    pub info_color: DynColors,
 }
 
 impl AuthorsInfo {
-    pub fn new(info_color: DynColors, git_metrics: &GitMetrics) -> Self {
+    pub fn new(git_metrics: &GitMetrics) -> Self {
         let authors = git_metrics.authors_to_display.clone();
-        Self {
-            authors,
-            info_color,
-        }
+        Self { authors }
     }
 }
 
@@ -85,12 +79,10 @@ impl std::fmt::Display for AuthorsInfo {
         let pad = self.title().len() + 2;
 
         for (i, author) in self.authors.iter().enumerate() {
-            let author_str = author.color(self.info_color);
-
             if i == 0 {
-                write!(authors_info, "{author_str}")?;
+                write!(authors_info, "{author}")?;
             } else {
-                write!(authors_info, "\n{:<width$}{}", "", author_str, width = pad)?;
+                write!(authors_info, "\n{:<width$}{}", "", author, width = pad)?;
             }
         }
 
@@ -110,10 +102,6 @@ impl InfoField for AuthorsInfo {
             title.push('s')
         }
         title
-    }
-
-    fn should_color(&self) -> bool {
-        false
     }
 }
 
@@ -152,7 +140,6 @@ mod test {
         );
 
         let authors_info = AuthorsInfo {
-            info_color: DynColors::Rgb(255, 0, 0),
             authors: vec![author],
         };
 
@@ -178,7 +165,6 @@ mod test {
         );
 
         let authors_info = AuthorsInfo {
-            info_color: DynColors::Rgb(255, 0, 0),
             authors: vec![author, author_2],
         };
 
@@ -196,15 +182,12 @@ mod test {
         );
 
         let authors_info = AuthorsInfo {
-            info_color: DynColors::Rgb(255, 0, 0),
             authors: vec![author],
         };
 
         assert_eq!(
             authors_info.value(),
-            "75% John Doe <john.doe@email.com> 1500"
-                .color(DynColors::Rgb(255, 0, 0))
-                .to_string()
+            "75% John Doe <john.doe@email.com> 1500".to_string()
         );
     }
 
@@ -227,20 +210,15 @@ mod test {
         );
 
         let authors_info = AuthorsInfo {
-            info_color: DynColors::Rgb(255, 0, 0),
             authors: vec![author, author_2],
         };
 
-        assert!(authors_info.value().contains(
-            &"75% John Doe <john.doe@email.com> 1500"
-                .color(DynColors::Rgb(255, 0, 0))
-                .to_string()
-        ));
+        assert!(authors_info
+            .value()
+            .contains(&"75% John Doe <john.doe@email.com> 1500".to_string()));
 
-        assert!(authors_info.value().contains(
-            &"80% Roberto Berto 240"
-                .color(DynColors::Rgb(255, 0, 0))
-                .to_string()
-        ));
+        assert!(authors_info
+            .value()
+            .contains(&"80% Roberto Berto 240".to_string()));
     }
 }

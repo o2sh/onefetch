@@ -157,10 +157,6 @@ impl InfoField for LanguagesInfo {
         }
         title
     }
-
-    fn should_color(&self) -> bool {
-        false
-    }
 }
 
 /// Counts the lines-of-code of a tokei `Language`. Takes into
