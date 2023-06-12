@@ -56,6 +56,8 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
             }
 
             author_tx.send(commit.id)?;
+            churn_tx.send(commit.id)?;
+
             let commit_time = gix::actor::Time::new(
                 commit
                     .commit_time
@@ -68,13 +70,11 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
 
             count += 1;
         }
-
-        churn_tx.send(commit.id).ok();
     }
 
     drop(author_tx);
     for thread in author_threads {
-        let mapping = thread.join().expect("no panic")?;
+        let mapping = thread.join().expect("never panics")?;
         for (sig, num_commits) in mapping {
             *number_of_commits_by_signature.entry(sig).or_insert(0) += num_commits;
         }
