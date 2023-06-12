@@ -23,7 +23,6 @@ byte-unit = "4.0.19"
 bytecount = "0.6.3"
 clap = { version = "4.3.1", features = ["derive"] }
 clap_complete = "4.3.1"
-crossbeam-channel = "0.5.8"
 gix-features-for-configuration-only = { package = "gix-features", version = "0.30.0", features = [
     "zlib-ng",
 ] }

@@ -2525,7 +2525,6 @@ dependencies = [
  "clap 4.3.1",
  "clap_complete",
  "criterion",
- "crossbeam-channel",
  "enable-ansi-support",
  "git2",
  "gix",
