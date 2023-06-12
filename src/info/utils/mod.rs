@@ -4,7 +4,6 @@ use gix::actor::Time;
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use time_humanize::HumanTime;
 
-pub mod git;
 pub mod info_field;
 
 pub fn format_time(time: Time, iso_time: bool) -> String {

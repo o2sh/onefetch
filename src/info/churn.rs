@@ -1,4 +1,4 @@
-use super::utils::{git::CommitMetrics, info_field::InfoField};
+use super::{git::metrics::GitMetrics, utils::info_field::InfoField};
 use crate::{cli::NumberSeparator, info::format_number};
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
@@ -46,11 +46,11 @@ pub struct ChurnInfo {
     pub info_color: DynColors,
 }
 impl ChurnInfo {
-    pub fn new(info_color: DynColors, commit_metrics: &CommitMetrics) -> Self {
-        let file_churns = commit_metrics.file_churns_to_display.clone();
+    pub fn new(info_color: DynColors, git_metrics: &GitMetrics) -> Self {
+        let file_churns = git_metrics.file_churns_to_display.clone();
         Self {
             file_churns,
-            churn_pool_size: commit_metrics.churn_pool_size,
+            churn_pool_size: git_metrics.churn_pool_size,
             info_color,
         }
     }
