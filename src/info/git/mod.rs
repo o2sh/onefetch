@@ -14,7 +14,7 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::mpsc::channel;
+use std::sync::mpsc::{channel, Sender};
 use std::sync::Arc;
 use std::thread::JoinHandle;
 
@@ -44,6 +44,12 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         options.info.churn_pool_size,
     )?;
 
+    let author_thread = repo
+        .commit_graph()
+        .ok()
+        .is_some()
+        .then(|| get_author_channel(repo, &bot_regex_pattern, &mailmap));
+
     let mut count = 0;
     for commit in commit_iter {
         let commit = commit?;
@@ -52,11 +58,15 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
                 continue;
             }
 
-            let sig = mailmap.resolve(commit.object()?.author()?);
-            if !is_bot(&sig.name, &bot_regex_pattern) {
-                *number_of_commits_by_signature
-                    .entry(sig.into())
-                    .or_insert(0) += 1;
+            if let Some((_thread, author_tx)) = author_thread.as_ref() {
+                author_tx.send(commit.id)?;
+            } else {
+                let sig = mailmap.resolve(commit.object()?.author()?);
+                if !is_bot(&sig.name, &bot_regex_pattern) {
+                    *number_of_commits_by_signature
+                        .entry(sig.into())
+                        .or_insert(0) += 1;
+                }
             }
 
             churn_tx.send(commit.id)?;
@@ -73,6 +83,12 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
 
             count += 1;
         }
+    }
+
+    if let Some((thread, author_tx)) = author_thread {
+        drop(author_tx);
+        let mapping = thread.join().expect("no panic")?;
+        number_of_commits_by_signature = mapping;
     }
 
     total_number_of_commits.store(count, Ordering::SeqCst);
@@ -94,6 +110,35 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
     Ok(git_metrics)
 }
 
+fn get_author_channel(
+    repo: &gix::Repository,
+    bot_regex_pattern: &Option<MyRegex>,
+    mailmap: &gix::mailmap::Snapshot,
+) -> (JoinHandle<Result<HashMap<Sig, usize>>>, Sender<ObjectId>) {
+    let (tx, rx) = channel::<gix::hash::ObjectId>();
+    let threads = std::thread::spawn({
+        let mut repo = repo.clone();
+        let mailmap = mailmap.clone();
+        let bot_regex_pattern = bot_regex_pattern.clone();
+        move || -> anyhow::Result<_> {
+            let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
+            // We are sure to see each object only once.
+            repo.object_cache_size(0);
+            while let Ok(commit_id) = rx.recv() {
+                let commit = repo.find_object(commit_id)?.into_commit();
+                update_signature_counts(
+                    &commit,
+                    &mailmap,
+                    &bot_regex_pattern,
+                    &mut number_of_commits_by_signature,
+                )?;
+            }
+            Ok(number_of_commits_by_signature)
+        }
+    });
+    (threads, tx)
+}
+
 fn get_churn_channel(
     repo: &gix::Repository,
     has_commit_graph_traversal_ended: &Arc<AtomicBool>,
@@ -101,7 +146,7 @@ fn get_churn_channel(
     churn_pool_size_opt: Option<usize>,
 ) -> Result<(
     JoinHandle<Result<(HashMap<BString, usize>, usize)>>,
-    std::sync::mpsc::Sender<ObjectId>,
+    Sender<ObjectId>,
 )> {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
@@ -145,6 +190,21 @@ fn should_break(
     churn_pool_size_opt.map_or(true, |churn_pool_size| {
         number_of_diffs_computed >= churn_pool_size.min(total_number_of_commits)
     })
+}
+
+fn update_signature_counts(
+    commit: &gix::Commit,
+    mailmap: &gix::mailmap::Snapshot,
+    bot_regex_pattern: &Option<MyRegex>,
+    number_of_commits_by_signature: &mut HashMap<Sig, usize>,
+) -> Result<()> {
+    let sig = mailmap.resolve(commit.author()?);
+    if !is_bot(&sig.name, bot_regex_pattern) {
+        *number_of_commits_by_signature
+            .entry(sig.into())
+            .or_insert(0) += 1;
+    }
+    Ok(())
 }
 
 fn compute_diff_with_parent(
