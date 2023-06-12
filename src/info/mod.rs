@@ -191,7 +191,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             &text_colors,
         )
         .dependencies(&manifest, number_separator)
-
         .authors(&git_metrics)
         .last_change(&git_metrics, iso_time)
         .contributors(&git_metrics, number_of_authors, number_separator)

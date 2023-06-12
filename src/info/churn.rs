@@ -47,7 +47,7 @@ impl ChurnInfo {
         let file_churns = git_metrics.file_churns_to_display.clone();
         Self {
             file_churns,
-            churn_pool_size: git_metrics.churn_pool_size
+            churn_pool_size: git_metrics.churn_pool_size,
         }
     }
 }
