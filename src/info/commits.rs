@@ -1,9 +1,9 @@
-use serde::Serialize;
-
+use super::git::metrics::GitMetrics;
 use crate::{
     cli::NumberSeparator,
-    info::{format_number, utils::git::CommitMetrics, utils::info_field::InfoField},
+    info::{format_number, utils::info_field::InfoField},
 };
+use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -15,10 +15,14 @@ pub struct CommitsInfo {
 }
 
 impl CommitsInfo {
-    pub fn new(commit_metrics: &CommitMetrics, number_separator: NumberSeparator) -> Self {
+    pub fn new(
+        git_metrics: &GitMetrics,
+        is_shallow: bool,
+        number_separator: NumberSeparator,
+    ) -> Self {
         Self {
-            number_of_commits: commit_metrics.total_number_of_commits,
-            is_shallow: commit_metrics.is_shallow,
+            number_of_commits: git_metrics.total_number_of_commits,
+            is_shallow,
             number_separator,
         }
     }

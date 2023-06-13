@@ -1,6 +1,7 @@
+use super::git::metrics::GitMetrics;
 use crate::{
     cli::NumberSeparator,
-    info::{format_number, utils::git::CommitMetrics, utils::info_field::InfoField},
+    info::{format_number, utils::info_field::InfoField},
 };
 use serde::Serialize;
 use std::fmt::Write;
@@ -65,8 +66,8 @@ pub struct AuthorsInfo {
 }
 
 impl AuthorsInfo {
-    pub fn new(commit_metrics: &CommitMetrics) -> Self {
-        let authors = commit_metrics.authors_to_display.clone();
+    pub fn new(git_metrics: &GitMetrics) -> Self {
+        let authors = git_metrics.authors_to_display.clone();
         Self { authors }
     }
 }

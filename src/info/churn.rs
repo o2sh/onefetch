@@ -1,4 +1,4 @@
-use super::utils::{git::CommitMetrics, info_field::InfoField};
+use super::{git::metrics::GitMetrics, utils::info_field::InfoField};
 use crate::{cli::NumberSeparator, info::format_number};
 use serde::Serialize;
 use std::fmt::Write;
@@ -43,11 +43,11 @@ pub struct ChurnInfo {
     pub churn_pool_size: usize,
 }
 impl ChurnInfo {
-    pub fn new(commit_metrics: &CommitMetrics) -> Self {
-        let file_churns = commit_metrics.file_churns_to_display.clone();
+    pub fn new(git_metrics: &GitMetrics) -> Self {
+        let file_churns = git_metrics.file_churns_to_display.clone();
         Self {
             file_churns,
-            churn_pool_size: commit_metrics.churn_pool_size,
+            churn_pool_size: git_metrics.churn_pool_size,
         }
     }
 }

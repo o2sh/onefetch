@@ -1,5 +1,5 @@
-use super::utils::format_time;
-use crate::info::{utils::git::CommitMetrics, utils::info_field::InfoField};
+use super::{git::metrics::GitMetrics, utils::format_time};
+use crate::info::utils::info_field::InfoField;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -9,14 +9,14 @@ pub struct CreatedInfo {
 }
 
 impl CreatedInfo {
-    pub fn new(iso_time: bool, commit_metrics: &CommitMetrics) -> Self {
-        let creation_date = get_creation_date(commit_metrics, iso_time);
+    pub fn new(iso_time: bool, git_metrics: &GitMetrics) -> Self {
+        let creation_date = get_creation_date(git_metrics, iso_time);
         Self { creation_date }
     }
 }
 
-fn get_creation_date(commit_metrics: &CommitMetrics, iso_time: bool) -> String {
-    format_time(commit_metrics.time_of_first_commit, iso_time)
+fn get_creation_date(git_metrics: &GitMetrics, iso_time: bool) -> String {
+    format_time(git_metrics.time_of_first_commit, iso_time)
 }
 
 #[typetag::serialize]
