@@ -273,7 +273,7 @@ fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex
     let reg = if let Some(r) = no_bots.clone() {
         match r {
             Some(p) => Some(p),
-            None => Some(MyRegex(Regex::from_str(r"(b|B)ot")?)),
+            None => Some(MyRegex(Regex::from_str(r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]")?)),
         }
     } else {
         None
@@ -294,22 +294,37 @@ mod tests {
     use rstest::rstest;
 
     #[test]
-    fn test_get_no_bots_regex() {
+    fn test_get_no_bots_regex() -> Result<()> {
         // Test case 1: no_bots is None
         let no_bots: Option<Option<MyRegex>> = None;
-        let result = get_no_bots_regex(&no_bots).unwrap();
+        let result = get_no_bots_regex(&no_bots)?;
         assert_eq!(result, None);
 
         // Test case 2: no_bots is Some(None)
         let no_bots: Option<Option<MyRegex>> = Some(None);
-        let result = get_no_bots_regex(&no_bots).unwrap();
-        assert_eq!(result.unwrap().0.as_str(), "(b|B)ot");
+        let result = get_no_bots_regex(&no_bots)?;
+        assert_eq!(result.unwrap().0.as_str(), r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]");
 
         // Test case 3: no_bots is Some(Some(regex))
-        let regex = MyRegex(Regex::new(r"foo").unwrap());
+        let regex = MyRegex(Regex::new(r"foo")?);
         let no_bots: Option<Option<MyRegex>> = Some(Some(regex));
-        let result = get_no_bots_regex(&no_bots).unwrap();
+        let result = get_no_bots_regex(&no_bots)?;
         assert_eq!(result.unwrap().0.as_str(), "foo");
+
+        Ok(())
+    }
+
+    #[rstest]
+    #[case("John Doe", false)]
+    #[case("dependabot[bot]", true)]
+    #[case("foo bot", true)]
+    #[case("foo-bot", true)]
+    #[case("bot", false)]
+    fn test_is_bot(#[case] author_name: &str, #[case] expected: bool) -> Result<()> {
+        let no_bots: Option<Option<MyRegex>> = Some(None);
+        let regex = get_no_bots_regex(&no_bots)?;
+        assert_eq!(is_bot(&author_name.into(), &regex), expected);
+        Ok(())
     }
 
     #[rstest]
