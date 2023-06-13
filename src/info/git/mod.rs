@@ -65,12 +65,12 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
             if let Some((_threads, author_tx)) = author_threads.as_ref() {
                 author_tx.send(commit.id)?;
             } else {
-                let sig = mailmap.resolve(commit.object()?.author()?);
-                if !is_bot(&sig.name, &bot_regex_pattern) {
-                    *number_of_commits_by_signature
-                        .entry(sig.into())
-                        .or_insert(0) += 1;
-                }
+                update_signature_counts(
+                    &commit.object()?,
+                    &mailmap,
+                    &bot_regex_pattern,
+                    &mut number_of_commits_by_signature,
+                )?;
             }
 
             churn_tx.send(commit.id)?;
