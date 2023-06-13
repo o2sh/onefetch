@@ -30,11 +30,19 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
     let has_commit_graph_traversal_ended = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
+    let num_threads = std::thread::available_parallelism()
+        .map(|p| p.get())
+        .unwrap_or(1);
+    let commit_graph = repo.commit_graph().ok();
+    let can_use_author_threads = num_threads > 1 && commit_graph.is_some();
+
     let commit_iter = repo
         .head_commit()?
         .id()
         .ancestors()
         .sorting(Sorting::ByCommitTimeNewestFirst)
+        .use_commit_graph(can_use_author_threads)
+        .with_commit_graph(commit_graph)
         .all()?;
 
     let (churn_thread, churn_tx) = get_churn_channel(
@@ -43,13 +51,6 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         &total_number_of_commits,
         options.info.churn_pool_size,
     )?;
-
-    let num_threads = std::thread::available_parallelism()
-        .map(|p| p.get())
-        .unwrap_or(1);
-
-    let commit_graph = repo.commit_graph().ok();
-    let can_use_author_threads = num_threads > 1 && commit_graph.is_some();
 
     let author_threads = can_use_author_threads
         .then(|| get_author_channel(repo, num_threads, &bot_regex_pattern, &mailmap));
