@@ -110,7 +110,6 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         number_of_commits_by_signature,
         number_of_commits_by_file_path,
         churn_pool_size,
-        count,
         time_of_first_commit,
         time_of_most_recent_commit,
         options,

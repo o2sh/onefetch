@@ -22,11 +22,11 @@ impl GitMetrics {
         number_of_commits_by_signature: HashMap<Sig, usize>,
         number_of_commits_by_file_path: HashMap<BString, usize>,
         churn_pool_size: usize,
-        total_number_of_commits: usize,
         time_of_first_commit: Option<Time>,
         time_of_most_recent_commit: Option<Time>,
         options: &CliOptions,
     ) -> Result<Self> {
+        let total_number_of_commits = number_of_commits_by_signature.values().sum();
         let (authors_to_display, total_number_of_authors) = compute_authors(
             number_of_commits_by_signature,
             total_number_of_commits,
