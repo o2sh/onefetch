@@ -23,10 +23,11 @@ byte-unit = "4.0.19"
 bytecount = "0.6.3"
 clap = { version = "4.3.1", features = ["derive"] }
 clap_complete = "4.3.1"
-gix-features-for-configuration-only = { package = "gix-features", version = "0.29.0", features = [
+crossbeam-channel = "0.5.8"
+gix-features-for-configuration-only = { package = "gix-features", version = "0.30.0", features = [
     "zlib-ng",
 ] }
-gix = { version = "0.45.1", default-features = false, features = [
+gix = { version = "0.46.0", default-features = false, features = [
     "max-performance-safe",
 ] }
 git2 = { version = "0.17.2", default-features = false }
@@ -37,21 +38,22 @@ onefetch-ascii = { path = "ascii", version = "2.17.1" }
 onefetch-image = { path = "image", version = "2.17.1" }
 onefetch-manifest = { path = "manifest", version = "2.17.1" }
 owo-colors = "3.5.0"
-regex = "1.8.1"
+regex = "1.8.4"
 serde = "1.0"
 serde_json = "1.0"
 serde_yaml = "0.9.21"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum = { version = "0.24.1", features = ["derive"] }
-time = { version = "0.3.21", features = ["formatting"] }
+time = { version = "0.3.22", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "12.1.2"
 typetag = "0.2"
 yaml-rust = "0.4.5"
+parking_lot = "0.12"
 
 [dev-dependencies]
-criterion = "0.4.0"
+criterion = "0.5.1"
 gix-testtools = "0.12.0"
 insta = { version = "1.29.0", features = ["json", "redactions"] }
 pretty_assertions = "1.3.0"

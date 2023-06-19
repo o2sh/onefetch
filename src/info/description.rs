@@ -57,6 +57,7 @@ fn break_sentence_into_lines(sentence: &str, left_pad: usize) -> String {
 mod test {
     use super::*;
     use onefetch_manifest::ManifestType;
+    use rstest::rstest;
 
     #[test]
     fn should_display_description() {
@@ -72,22 +73,17 @@ mod test {
         assert_eq!(description_info.value(), "test".to_string());
     }
 
-    #[test]
-    fn should_split_long_description_into_multiple_lines() {
-        let description_info = DescriptionInfo::new(Some(&Manifest {
-            manifest_type: ManifestType::Cargo,
-            name: String::new(),
-            description: Some("This is a very long description with a lot of text".into()),
-            number_of_dependencies: 0,
-            version: String::new(),
-            license: None,
-        }));
-
-        assert_eq!(
-            description_info.value().lines().count(),
-            (description_info.description.unwrap().split(' ').count() as f32
-                / NUMBER_OF_WORDS_PER_LINE as f32)
-                .ceil() as usize
-        );
+    #[rstest]
+    #[case("Hello", "Hello")]
+    #[case(
+        "Hello world, how are you doing?",
+        "Hello world, how are you\n    doing?"
+    )]
+    #[case(
+        "This is a long sentence that needs to be broken into multiple lines.",
+        "This is a long sentence\n    that needs to be broken\n    into multiple lines."
+    )]
+    fn test_break_sentence_into_lines(#[case] sentence: &str, #[case] expected_result: &str) {
+        assert_eq!(break_sentence_into_lines(sentence, 4), expected_result);
     }
 }

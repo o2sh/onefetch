@@ -66,7 +66,7 @@ pub struct InfoCliOptions {
     /// Maximum NUM of file churns to be shown
     #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_file_churns: usize,
-    /// Maximum NUM of commits from HEAD used to compute the churn summary
+    /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
     /// and will be displayed under the info title "Churn (NUM)"

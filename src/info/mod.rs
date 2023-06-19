@@ -5,6 +5,8 @@ use self::contributors::ContributorsInfo;
 use self::created::CreatedInfo;
 use self::dependencies::DependenciesInfo;
 use self::description::DescriptionInfo;
+use self::git::metrics::GitMetrics;
+use self::git::traverse_commit_graph;
 use self::head::HeadInfo;
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
@@ -17,7 +19,6 @@ use self::size::SizeInfo;
 use self::title::Title;
 use self::url::get_repo_url;
 use self::url::UrlInfo;
-use self::utils::git::CommitMetrics;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
@@ -39,6 +40,7 @@ mod contributors;
 mod created;
 mod dependencies;
 mod description;
+mod git;
 mod head;
 pub mod langs;
 mod last_change;
@@ -153,7 +155,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(&repo);
 
-    let commit_metrics = CommitMetrics::new(&repo, cli_options)?;
+    let git_metrics = traverse_commit_graph(&repo, cli_options)?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
@@ -181,7 +183,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .head(&repo)?
         .pending(&repo)?
         .version(&repo, &manifest)?
-        .created(&commit_metrics, iso_time)
+        .created(&git_metrics, iso_time)
         .languages(
             &loc_by_language,
             true_color,
@@ -189,12 +191,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             &text_colors,
         )
         .dependencies(&manifest, number_separator)
-        .authors(&commit_metrics)
-        .last_change(&commit_metrics, iso_time)
-        .contributors(&commit_metrics, number_of_authors, number_separator)
+        .authors(&git_metrics)
+        .last_change(&git_metrics, iso_time)
+        .contributors(&git_metrics, number_of_authors, number_separator)
         .url(&repo_url)
-        .commits(&commit_metrics, number_separator)
-        .churn(&commit_metrics)
+        .commits(&git_metrics, repo.is_shallow(), number_separator)
+        .churn(&git_metrics)
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, &manifest)?
@@ -295,9 +297,9 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    fn created(mut self, commit_metrics: &CommitMetrics, iso_time: bool) -> Self {
+    fn created(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
         if !self.disabled_fields.contains(&InfoType::Created) {
-            let created = CreatedInfo::new(iso_time, commit_metrics);
+            let created = CreatedInfo::new(iso_time, git_metrics);
             self.info_fields.push(Box::new(created));
         }
         self
@@ -334,17 +336,17 @@ impl InfoBuilder {
         self
     }
 
-    fn authors(mut self, commit_metrics: &CommitMetrics) -> Self {
+    fn authors(mut self, git_metrics: &GitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoType::Authors) {
-            let authors = AuthorsInfo::new(commit_metrics);
+            let authors = AuthorsInfo::new(git_metrics);
             self.info_fields.push(Box::new(authors));
         }
         self
     }
 
-    fn last_change(mut self, commit_metrics: &CommitMetrics, iso_time: bool) -> Self {
+    fn last_change(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
         if !self.disabled_fields.contains(&InfoType::LastChange) {
-            let last_change = LastChangeInfo::new(iso_time, commit_metrics);
+            let last_change = LastChangeInfo::new(iso_time, git_metrics);
             self.info_fields.push(Box::new(last_change));
         }
         self
@@ -352,13 +354,13 @@ impl InfoBuilder {
 
     fn contributors(
         mut self,
-        commit_metrics: &CommitMetrics,
+        git_metrics: &GitMetrics,
         number_of_authors: usize,
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Contributors) {
             let contributors =
-                ContributorsInfo::new(commit_metrics, number_of_authors, number_separator);
+                ContributorsInfo::new(git_metrics, number_of_authors, number_separator);
             self.info_fields.push(Box::new(contributors));
         }
         self
@@ -366,19 +368,20 @@ impl InfoBuilder {
 
     fn commits(
         mut self,
-        commit_metrics: &CommitMetrics,
+        git_metrics: &GitMetrics,
+        is_shallow: bool,
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Commits) {
-            let commits = CommitsInfo::new(commit_metrics, number_separator);
+            let commits = CommitsInfo::new(git_metrics, is_shallow, number_separator);
             self.info_fields.push(Box::new(commits));
         }
         self
     }
 
-    fn churn(mut self, commit_metrics: &CommitMetrics) -> Self {
+    fn churn(mut self, git_metrics: &GitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoType::Churn) {
-            let churn = ChurnInfo::new(commit_metrics);
+            let churn = ChurnInfo::new(git_metrics);
             self.info_fields.push(Box::new(churn));
         }
         self
