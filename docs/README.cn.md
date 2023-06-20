@@ -11,7 +11,7 @@
 	<img src="../assets/msrv-badge.svg">
 </p>
 
-<img src="../assets/screenshot-1.png" align="right" height="240px">
+<img src="../assets/screenshot-1.png" align="right" height="250px">
 
 Onefetch 是一款由 `Rust` 编写的命令行 Git 信息工具，它将直接在终端中展示本地 Git 仓库的项目详情和代码统计等内容。工具完全离线可用（不需要网络连接)。<br><br>
 
@@ -19,7 +19,7 @@ Onefetch 是一款由 `Rust` 编写的命令行 Git 信息工具，它将直接�
 
 它会自动从文本中检测开源许可证，并为用户提供有价值的信息，例如代码分发、pending、依赖数量（使用包管理器）、主要贡献者（按提交次数）、占用磁盘大小、创建日期、LOC（代码行数）等。<br><br>
 
-<img src="../assets/screenshot-2.png" align="right" height="240px">
+<img src="../assets/screenshot-2.png" align="right" height="250px">
 
 Onefetch 可以通过命令行参数进行配置，以准确显示您想要的内容和方式：您可以自定义 ASCII/文本格式、禁用信息行、忽略文件和目录、以多种格式输出（Json、Yaml），等等。<br><br>
 

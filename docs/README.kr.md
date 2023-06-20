@@ -11,7 +11,7 @@
     <img src="../assets/msrv-badge.svg">
 </p>
 
-<img src="../assets/screenshot-1.png" align="right" height="240px">
+<img src="../assets/screenshot-1.png" align="right" height="250px">
 
 Onefetch는 `Rust`로 작성된 깃 정보 유틸리티 입니다. Onefetch를 사용하면 네트워크 연결이 필요 없이 터미널에서 바로 로컬 깃 저장소의 프로젝트 정보와 코드 통계 등을 볼 수 있습니다.
 
@@ -19,7 +19,7 @@ Onefetch는 `Rust`로 작성된 깃 정보 유틸리티 입니다. Onefetch를 �
 
 Onefetch는 텍스트를 읽고 어떤 라이선스를 사용 중인지 자동으로 알아내며, 언어 종류, 대기중인 커밋, (패키지 관리자별) 의존성 갯수, 가장 많이 커밋한 기여자들, 총 용량, 만들어진 날짜, 총 코드 줄 수 등 다양한 정보를 보여줍니다.
 
-<img src="../assets/screenshot-2.png" align="right" height="240px">
+<img src="../assets/screenshot-2.png" align="right" height="250px">
 
 또한 명령줄 인자를 통해 정확히 어떤 부분을 보여줄지 원하는 대로 설정할 수 있습니다. 예를 들어 텍스트 포맷을 변경하거나, 정보 칸을 표시하지 않거나, 특정 파일 또는 폴더를 무시하거나, Json또는 Yaml등 다양한 포맷으로 출력할 수 있습니다.
 

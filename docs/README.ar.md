@@ -11,7 +11,7 @@
 	<img src="../assets/msrv-badge.svg">
 </p>
 
-<img src="../assets/screenshot-1.png" align="left" height="240px">
+<img src="../assets/screenshot-1.png" align="left" height="250px">
 
 <p dir="rtl" lang="ar">
 Onefetch
@@ -35,7 +35,7 @@ LOC
 (عدد أسطر الكود)، إلخ.
 </p>
 
-<img src="../assets/screenshot-2.png" align="left" height="240px">
+<img src="../assets/screenshot-2.png" align="left" height="250px">
 
 <p dir="rtl" lang="ar">
 يمكن تكوين

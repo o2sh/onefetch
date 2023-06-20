@@ -11,7 +11,7 @@
 	<img src="../assets/msrv-badge.svg">
 </p>
 
-<img src="../assets/screenshot-1.png" align="right" height="240px">
+<img src="../assets/screenshot-1.png" align="right" height="250px">
 
 Onefetch は`Rust`で書かれたコマンドラインインターフェースの Git 情報ツールで、ローカルにある Git リポジトリのプロジェクト情報やコードの統計をターミナルへ直接表示します。このツールは常にオフラインで動作し、ネットワークへのアクセスは必要ありません。
 
@@ -19,7 +19,7 @@ Onefetch は`Rust`で書かれたコマンドラインインターフェース�
 
 テキストからオープンソースライセンスを自動的に検出し、ソースコードの配布ページや保留中の変更、依存関係の数（パッケージマネージャーによる）、トップコントリビューター（コミット数による）、ディスク上のサイズ、作成日、LOC（コードの行数）などの有益な情報をユーザーに提供します。
 
-<img src="../assets/screenshot-2.png" align="right" height="240px">
+<img src="../assets/screenshot-2.png" align="right" height="250px">
 
 Onefetch はコマンドラインフラグを使用して ASCII/テキストフォーマットのカスタマイズや情報行の無効化、ファイルやディレクトリの除外、複数のフォーマット（JSON、YAML）での出力など設定できます。
 
