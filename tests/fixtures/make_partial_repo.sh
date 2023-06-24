@@ -18,6 +18,14 @@ mkdir base
     git add code.rs
     git commit -q -m c4
     echo more >> code.rs
+    git mv code.rs renamed.rs
+    echo change >> renamed.rs
+    git commit -q -am c5
+
+    git config uploadpack.allowfilter true
 )
 
 git clone --filter=blob:none file://$PWD/base partial
+(cd partial
+    git config diff.renames true
+)

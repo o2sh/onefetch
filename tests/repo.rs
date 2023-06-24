@@ -80,8 +80,6 @@ fn test_partial_repo() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = build_info(&config);
-    assert!(info.is_ok());
-
+    let _info = build_info(&config).expect("no error");
     Ok(())
 }

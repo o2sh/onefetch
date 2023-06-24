@@ -180,11 +180,7 @@ fn get_churn_channel(
             let mut number_of_diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
-                if compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)
-                    .is_err()
-                {
-                    continue;
-                };
+                compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                 number_of_diffs_computed += 1;
                 if should_break(
                     has_commit_graph_traversal_ended.load(Ordering::Relaxed),
@@ -253,6 +249,7 @@ fn compute_diff_with_parent(
             .into_tree()
             .changes()?
             .track_path()
+            .track_rewrites(None)
             .for_each_to_obtain_tree(&commit.tree()?, |change| {
                 let is_file_change = match change.event {
                     Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
