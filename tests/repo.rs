@@ -4,8 +4,15 @@ use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
 use onefetch::info::{build_info, get_work_dir};
 
 fn repo(name: &str) -> Result<Repository> {
-    let name = name.to_string();
     let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
+    let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
+    Ok(safe_repo.to_thread_local())
+}
+
+pub fn named_repo(fixture: &str, name: &str) -> Result<Repository> {
+    let repo_path = gix_testtools::scripted_fixture_read_only(fixture)
+        .unwrap()
+        .join(name);
     let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
     Ok(safe_repo.to_thread_local())
 }
@@ -63,5 +70,16 @@ fn test_repo_without_remote() -> Result<()> {
     let info = build_info(&config);
     assert!(info.is_ok());
 
+    Ok(())
+}
+
+#[test]
+fn test_partial_repo() -> Result<()> {
+    let repo = named_repo("make_partial_repo.sh", "partial")?;
+    let config: CliOptions = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let _info = build_info(&config).expect("no error");
     Ok(())
 }

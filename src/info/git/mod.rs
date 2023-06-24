@@ -249,6 +249,7 @@ fn compute_diff_with_parent(
             .into_tree()
             .changes()?
             .track_path()
+            .track_rewrites(None)
             .for_each_to_obtain_tree(&commit.tree()?, |change| {
                 let is_file_change = match change.event {
                     Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
