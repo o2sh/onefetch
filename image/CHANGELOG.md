@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 32 commits contributed to the release over the course of 167 calendar days.
+ - 39 commits contributed to the release over the course of 224 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
- - 10 unique issues were worked on: [#1004](https://github.com/o2sh/onefetch/issues/1004), [#1027](https://github.com/o2sh/onefetch/issues/1027), [#838](https://github.com/o2sh/onefetch/issues/838), [#859](https://github.com/o2sh/onefetch/issues/859), [#865](https://github.com/o2sh/onefetch/issues/865), [#924](https://github.com/o2sh/onefetch/issues/924), [#930](https://github.com/o2sh/onefetch/issues/930), [#934](https://github.com/o2sh/onefetch/issues/934), [#964](https://github.com/o2sh/onefetch/issues/964), [#992](https://github.com/o2sh/onefetch/issues/992)
+ - 15 unique issues were worked on: [#1004](https://github.com/o2sh/onefetch/issues/1004), [#1027](https://github.com/o2sh/onefetch/issues/1027), [#1036](https://github.com/o2sh/onefetch/issues/1036), [#1053](https://github.com/o2sh/onefetch/issues/1053), [#1065](https://github.com/o2sh/onefetch/issues/1065), [#1073](https://github.com/o2sh/onefetch/issues/1073), [#1090](https://github.com/o2sh/onefetch/issues/1090), [#838](https://github.com/o2sh/onefetch/issues/838), [#859](https://github.com/o2sh/onefetch/issues/859), [#865](https://github.com/o2sh/onefetch/issues/865), [#924](https://github.com/o2sh/onefetch/issues/924), [#930](https://github.com/o2sh/onefetch/issues/930), [#934](https://github.com/o2sh/onefetch/issues/934), [#964](https://github.com/o2sh/onefetch/issues/964), [#992](https://github.com/o2sh/onefetch/issues/992)
 
 ### Commit Details
 
@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Bump image from 0.24.4 to 0.24.6 ([`356b66a`](https://github.com/o2sh/onefetch/commit/356b66a46921dcc15aad5a3fb5c7c24d4eb6399a))
  * **[#1027](https://github.com/o2sh/onefetch/issues/1027)**
     - Bump clap from 4.1.6 to 4.2.4 ([`65ba0f1`](https://github.com/o2sh/onefetch/commit/65ba0f10f75f9affc5f44008f76771cdc5a5a13b))
+ * **[#1036](https://github.com/o2sh/onefetch/issues/1036)**
+    - Bump clap from 4.2.4 to 4.2.5 ([`a48715e`](https://github.com/o2sh/onefetch/commit/a48715e7f94d607e36eeb59c13127130f66f5b73))
+ * **[#1053](https://github.com/o2sh/onefetch/issues/1053)**
+    - Bump clap from 4.2.5 to 4.2.7 ([`eb27cea`](https://github.com/o2sh/onefetch/commit/eb27cea1431be77656db7e78989f983026e0dcc5))
+ * **[#1065](https://github.com/o2sh/onefetch/issues/1065)**
+    - Bump base64 from 0.21.0 to 0.21.2 ([`460d879`](https://github.com/o2sh/onefetch/commit/460d87929ae5c1bee8d6d4f6e46f1887191ca3b5))
+ * **[#1073](https://github.com/o2sh/onefetch/issues/1073)**
+    - Bump clap from 4.2.7 to 4.3.1 ([`e73f7b6`](https://github.com/o2sh/onefetch/commit/e73f7b652cfa656d48da465f243190c677d84adc))
+ * **[#1090](https://github.com/o2sh/onefetch/issues/1090)**
+    - Bump clap from 4.3.1 to 4.3.4 ([`4a30ac1`](https://github.com/o2sh/onefetch/commit/4a30ac1a1f1cbd4f1b8597dcab5a022b898da07b))
  * **[#838](https://github.com/o2sh/onefetch/issues/838)**
     - Bump libc from 0.2.134 to 0.2.137 ([`48a1b59`](https://github.com/o2sh/onefetch/commit/48a1b59cfa225967e9078e95173dc21990b117af))
  * **[#859](https://github.com/o2sh/onefetch/issues/859)**
@@ -42,6 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * **[#992](https://github.com/o2sh/onefetch/issues/992)**
     - Fix typo ([`fa80f33`](https://github.com/o2sh/onefetch/commit/fa80f3308ff6f19a3c62233ecbc9767ffa7b9ac9))
  * **Uncategorized**
+    - Bump version ([`9cc5e52`](https://github.com/o2sh/onefetch/commit/9cc5e5295bfd678ae157a3fbcd8019ae6f7759e0))
+    - Cargo changelog --write ([`83197c9`](https://github.com/o2sh/onefetch/commit/83197c9fa2f7ee36fe86af05743431921bdff68e))
     - Bump version ([`e42360d`](https://github.com/o2sh/onefetch/commit/e42360d1569cfab87d2f4d11a8c42e3401bd699f))
     - Cargo changelog --write ([`3d6d600`](https://github.com/o2sh/onefetch/commit/3d6d6001f1120508165e8ec6c1fad3660e316718))
     - Bump version ([`ae536d3`](https://github.com/o2sh/onefetch/commit/ae536d39edaaf55b395f32cea0a3b1b9586a1f15))

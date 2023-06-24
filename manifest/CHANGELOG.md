@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 19 commits contributed to the release over the course of 167 calendar days.
+ - 24 commits contributed to the release over the course of 224 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
- - 3 unique issues were worked on: [#851](https://github.com/o2sh/onefetch/issues/851), [#959](https://github.com/o2sh/onefetch/issues/959), [#981](https://github.com/o2sh/onefetch/issues/981)
+ - 5 unique issues were worked on: [#1077](https://github.com/o2sh/onefetch/issues/1077), [#1089](https://github.com/o2sh/onefetch/issues/1089), [#851](https://github.com/o2sh/onefetch/issues/851), [#959](https://github.com/o2sh/onefetch/issues/959), [#981](https://github.com/o2sh/onefetch/issues/981)
 
 ### Commit Details
 
@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <details><summary>view details</summary>
 
+ * **[#1077](https://github.com/o2sh/onefetch/issues/1077)**
+    - Bump cargo_toml from 0.15.2 to 0.15.3 ([`b6ed0f7`](https://github.com/o2sh/onefetch/commit/b6ed0f7b28c4226bfb815ea3e94ddd6a98df930b))
+ * **[#1089](https://github.com/o2sh/onefetch/issues/1089)**
+    - Bump strum from 0.24.1 to 0.25.0 ([`3071110`](https://github.com/o2sh/onefetch/commit/3071110b80797d14af3a1c782079dc9d11601ca4))
  * **[#851](https://github.com/o2sh/onefetch/issues/851)**
     - Add manifest crate ([`ed96c45`](https://github.com/o2sh/onefetch/commit/ed96c4547d62e1660bd78663be428cad5dc57867))
  * **[#959](https://github.com/o2sh/onefetch/issues/959)**
@@ -28,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * **[#981](https://github.com/o2sh/onefetch/issues/981)**
     - Bump cargo_toml from 0.14.1 to 0.15.2 ([`b6dbb62`](https://github.com/o2sh/onefetch/commit/b6dbb62c36cd9f38d4dcfe13dfe99ab608f4ef2a))
  * **Uncategorized**
+    - Bump version ([`9cc5e52`](https://github.com/o2sh/onefetch/commit/9cc5e5295bfd678ae157a3fbcd8019ae6f7759e0))
+    - Merge branch 'main' of github.com:o2sh/onefetch ([`a91def0`](https://github.com/o2sh/onefetch/commit/a91def08355a096ca54cce477abfc8297cdea478))
+    - Cargo changelog --write ([`83197c9`](https://github.com/o2sh/onefetch/commit/83197c9fa2f7ee36fe86af05743431921bdff68e))
     - Bump version ([`e42360d`](https://github.com/o2sh/onefetch/commit/e42360d1569cfab87d2f4d11a8c42e3401bd699f))
     - Cargo changelog --write ([`3d6d600`](https://github.com/o2sh/onefetch/commit/3d6d6001f1120508165e8ec6c1fad3660e316718))
     - Bump version ([`ae536d3`](https://github.com/o2sh/onefetch/commit/ae536d39edaaf55b395f32cea0a3b1b9586a1f15))

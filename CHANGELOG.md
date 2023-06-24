@@ -5,13 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 2.18.0 (2023-06-20)
 
-<csr-id-b6cd415d049b24348150e0e2088f2fdb5822e1cb/>
-<csr-id-7b34b0aef20b1bc1dfd5de56596d3dca53e28d3e/>
-<csr-id-d00ab45d3cab26e6c8394c2952d7704dd58b8245/>
-<csr-id-d43fa9acbbc93cfee2e59faf3652e7893de55ffa/>
-<csr-id-5e4d02552beea1a998239360fe61b8465437884a/>
+### Features
+
+- add new info line called "Churn" which displays the files with the most modifications (commits) (#1071) @o2sh @Byron
+- add Hlsl support (#1082) @progDes007
+
+### Chore
+
+- performance: optimize case where repo has a commit-graph for massive performance gains (#1081) @Byron
+- docs: add a cmd.exe version of the cd snippet (#1048) @mataha
+- refacto: use the builder pattern to instantiate the `Info` struct (#1047) @o2sh @spenserblack
+- improve bot regex (#1086) @o2sh @spenserblack
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 14 commits contributed to the release over the course of 40 calendar days.
+- 53 days passed between releases.
+- 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+- 4 unique issues were worked on: [#1047](https://github.com/o2sh/onefetch/issues/1047), [#1071](https://github.com/o2sh/onefetch/issues/1071), [#1081](https://github.com/o2sh/onefetch/issues/1081), [#1086](https://github.com/o2sh/onefetch/issues/1086)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1047](https://github.com/o2sh/onefetch/issues/1047)**
+  - Add info builder pattern ([`8609f92`](https://github.com/o2sh/onefetch/commit/8609f921ab43f0e64cb0aeb831d92f157a5b0ed3))
+- **[#1071](https://github.com/o2sh/onefetch/issues/1071)**
+  - Added File Churn Metric ([`1955153`](https://github.com/o2sh/onefetch/commit/1955153a9f998780b78bc391df1a94464c57cc80))
+- **[#1081](https://github.com/o2sh/onefetch/issues/1081)**
+  - Gix upgrade and optimizations ([`09c4dc9`](https://github.com/o2sh/onefetch/commit/09c4dc9df6e1201eeed54b01f3432f4097ff54dc))
+- **[#1086](https://github.com/o2sh/onefetch/issues/1086)**
+  - Improve bot regex ([`167b428`](https://github.com/o2sh/onefetch/commit/167b428794c86eb16a415c7da9869f209a3758e1))
+- **Uncategorized** - Extract total_number_of_commits from author map ([`086ed9e`](https://github.com/o2sh/onefetch/commit/086ed9e1272f411172d3dd51824caa0285413907)) - Fix help message for churn_pool_size ([`3e19824`](https://github.com/o2sh/onefetch/commit/3e198246b5afb48d4a30be532a9bd5a67cf9af87)) - Add unit tests for break_sentence_into_lines ([`fd1d5f0`](https://github.com/o2sh/onefetch/commit/fd1d5f04bbf1fbf160506fad4a05dd2b1dd35fd9)) - Re-use info field value in display method ([`2c9706b`](https://github.com/o2sh/onefetch/commit/2c9706b21920330ae67d4b27b5663d5b9ed957f4)) - Compute info_field.value() only once to check if empty ([`b990786`](https://github.com/o2sh/onefetch/commit/b99078628dd4b24ff196703d6ae5889db2f1409d)) - Remove should_color() ([`bb85a9c`](https://github.com/o2sh/onefetch/commit/bb85a9cafe05e9b9610e390f53ee5b6855a9bed3)) - Rename variable ([`43e93fa`](https://github.com/o2sh/onefetch/commit/43e93fa27c66baa261c5e41b36fc6f947f99dce5)) - Cargo clippy pedantic ([`444dcaa`](https://github.com/o2sh/onefetch/commit/444dcaa8a4a48c0895baa5afc6f3d2d2c11c0f46)) - Cargo clippy pedantic ([`ca1db57`](https://github.com/o2sh/onefetch/commit/ca1db57fd3e60656dd83993dc0a7ba6e8f0a6469)) - Cargo clippy pedantic ([`0654eb9`](https://github.com/o2sh/onefetch/commit/0654eb957ffe50a4b1e12cf53569862a68294b35))
+</details>
 
 ## 2.17.1 (2023-04-28)
 
