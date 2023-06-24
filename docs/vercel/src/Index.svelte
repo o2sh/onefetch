@@ -2,6 +2,10 @@
   import AsciiPreview from './lib/AsciiPreview.svelte';
   import data from '../../../languages.yaml';
   import type { Languages } from '../../../languages.yaml';
+  import { onMount } from 'svelte';
+
+  let tag_name: string;
+  let html_url: string;
 
   const languages = Object.entries(data as Languages).map(
     ([name, { ascii, colors }]) => ({
@@ -10,16 +14,30 @@
       ...colors,
     })
   );
+
+  onMount(async () => {
+    try {
+      const response = await fetch(
+        'https://api.github.com/repos/o2sh/onefetch/releases/latest'
+      );
+      const data = await response.json();
+
+      tag_name = data.tag_name;
+      html_url = data.html_url;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
 </script>
 
 <header>
-  <div class="banner">
-    <small
-      >Version 2.18 is available 🎉 Check the <a
-        href="https://github.com/o2sh/onefetch/releases/tag/2.18.0"
-        >release notes</a
-      >!!</small>
-  </div>
+  {#if tag_name && html_url}
+    <div class="banner">
+      <small
+        >Version {tag_name} is available 🎉 Check the
+        <a href={html_url}>release notes</a>!!</small>
+    </div>
+  {/if}
   <h1>Onefetch</h1>
   <p>
     <small>
