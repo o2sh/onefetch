@@ -7,12 +7,6 @@ git init -q
 git config --local --add "committer.name" "onefetch-committer-name"
 git config --local --add "committer.email" "onefetch-committer-email@onefetch.com"
 
-git config --local --add "user.name" "onefetch-user-name"
-git config --local --add "user.email" "onefetch-user-email@onefetch.com"
-
-git config --local --add "author.name" "onefetch-author-name"
-git config --local --add "author.email" "onefetch-author-email@onefetch.com"
-
 git remote add origin https://github.com/user/repo.git
 
 git checkout -b main

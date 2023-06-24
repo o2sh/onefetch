@@ -19,7 +19,7 @@ pub fn named_repo(fixture: &str, name: &str) -> Result<Repository> {
 
 #[test]
 fn test_bare_repo() -> Result<()> {
-    let repo = repo("bare_repo.sh")?;
+    let repo = repo("make_bare_repo.sh")?;
     let work_dir = get_work_dir(&repo);
     assert!(
         work_dir.is_err(),
@@ -34,7 +34,7 @@ fn test_bare_repo() -> Result<()> {
 
 #[test]
 fn test_repo() -> Result<()> {
-    let repo = repo("repo.sh")?;
+    let repo = repo("make_repo.sh")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         info: InfoCliOptions {
@@ -62,7 +62,7 @@ fn test_repo() -> Result<()> {
 
 #[test]
 fn test_repo_without_remote() -> Result<()> {
-    let repo = repo("basic_repo.sh")?;
+    let repo = repo("make_repo_without_remote.sh")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
