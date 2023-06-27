@@ -13,8 +13,8 @@ pub struct GitMetrics {
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
     pub churn_pool_size: usize,
-    pub time_of_most_recent_commit: gix::actor::Time,
-    pub time_of_first_commit: gix::actor::Time,
+    pub time_of_most_recent_commit: gix::date::Time,
+    pub time_of_first_commit: gix::date::Time,
 }
 
 impl GitMetrics {

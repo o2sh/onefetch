@@ -47,7 +47,7 @@ impl InfoField for ContributorsInfo {
 #[cfg(test)]
 mod test {
     use super::*;
-    use gix::actor::Time;
+    use gix::date::Time;
 
     #[test]
     fn test_display_contributors_info() {

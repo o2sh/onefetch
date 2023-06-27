@@ -76,11 +76,10 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
 
             churn_tx.send(commit.id)?;
 
-            let commit_time = gix::actor::Time::new(
+            let commit_time = gix::date::Time::new(
                 commit
                     .commit_time
-                    .expect("sorting by time yields this field as part of traversal")
-                    as u32, // TODO: remove this cast once `gix` supports 64 bit dates.
+                    .expect("sorting by time yields this field as part of traversal"),
                 0,
             );
             time_of_most_recent_commit.get_or_insert(commit_time);
