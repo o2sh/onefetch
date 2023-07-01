@@ -8,7 +8,7 @@ pub mod info_field;
 
 pub fn format_time(time: Time, iso_time: bool) -> String {
     if iso_time {
-        to_rfc3339(HumanTime::from(time.seconds as i64))
+        to_rfc3339(HumanTime::from(time.seconds))
     } else {
         to_human_time(time)
     }
@@ -26,7 +26,10 @@ fn to_human_time(time: Time) -> String {
         .duration_since(SystemTime::UNIX_EPOCH)
         .unwrap();
 
-    let ts = Duration::from_secs(time.seconds);
+    let ts = Duration::from_secs(match time.seconds.try_into() {
+        Ok(s) => s,
+        Err(_) => return "<before UNIX epoch>".into(),
+    });
     let duration = since_epoch_duration.checked_sub(ts).expect(
         "Achievement unlocked: time travel! \
         Check your system clock and commit dates.",
@@ -46,7 +49,10 @@ mod tests {
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();
 
-        let time = Time::new(current_time.as_secs(), 0);
+        let time = Time::new(
+            current_time.as_secs() as gix::date::SecondsSinceUnixEpoch,
+            0,
+        );
         let result = format_time(time, false);
         assert_eq!(result, "now");
     }
@@ -59,7 +65,7 @@ mod tests {
             .unwrap();
         // NOTE 366 so that it's a year ago even with leap years.
         let year_ago = current_time - (day * 366);
-        let time = Time::new(year_ago.as_secs(), 0);
+        let time = Time::new(year_ago.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
         let result = format_time(time, false);
         assert_eq!(result, "a year ago");
     }
@@ -91,7 +97,14 @@ mod tests {
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();
         let tomorrow = current_time + day;
-        let time = Time::new(tomorrow.as_secs(), 0);
+        let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
         format_time(time, false);
+    }
+
+    #[test]
+    fn display_time_before_epoch() {
+        let time = Time::new(gix::date::SecondsSinceUnixEpoch::MIN, 0);
+        let result = to_human_time(time);
+        assert_eq!(result, "<before UNIX epoch>");
     }
 }
