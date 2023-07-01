@@ -21,7 +21,7 @@ anyhow = "1.0"
 askalono = "0.4.6"
 byte-unit = "4.0.19"
 bytecount = "0.6.3"
-clap = { version = "4.3.4", features = ["derive"] }
+clap = { version = "4.3.10", features = ["derive"] }
 clap_complete = "4.3.1"
 crossbeam-channel = "0.5.8"
 gix-features-for-configuration-only = { package = "gix-features", version = "0.31.0", features = [
