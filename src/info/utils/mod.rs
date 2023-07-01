@@ -100,4 +100,11 @@ mod tests {
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
         format_time(time, false);
     }
+
+    #[test]
+    fn display_time_before_epoch() {
+        let time = Time::new(gix::date::SecondsSinceUnixEpoch::MIN, 0);
+        let result = to_human_time(time);
+        assert_eq!(result, "<before UNIX epoch>");
+    }
 }
