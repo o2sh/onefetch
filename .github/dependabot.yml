@@ -15,5 +15,9 @@ updates:
       interval: "weekly"
   - package-ecosystem: npm
     directory: /docs/vercel
+    groups:
+      site:
+        patterns:
+          - "*"
     schedule:
       interval: monthly
