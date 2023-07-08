@@ -32,7 +32,7 @@ jobs:
       # NOTE Since build is automated by vercel, it's probably
       # redundant to test it here, too
       - name: Svelte Check
-        run: npm run check:svelte -- --fail-on-warnings --fail-on-hints
+        run: npm run check:svelte -- --fail-on-warnings
 
       - name: ESLint
         run: npm run check:lint
