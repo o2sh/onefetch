@@ -19,7 +19,6 @@ pub fn get_loc_by_language_sorted(
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
-    println!("{}", dir.to_str().unwrap());
     let stats = get_statistics(dir, globs_to_exclude, language_types, include_hidden);
 
     let loc_by_language =
