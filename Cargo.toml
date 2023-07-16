@@ -31,6 +31,7 @@ gix = { version = "0.48.0", default-features = false, features = [
     "max-performance-safe",
 ] }
 git2 = { version = "0.17.2", default-features = false }
+globset = "0.4.11"
 human-panic = "1.1.5"
 image = "0.24.6"
 num-format = "0.4.4"

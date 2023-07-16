@@ -3,7 +3,7 @@ use crate::{cli::NumberSeparator, info::format_number};
 use serde::Serialize;
 use std::fmt::Write;
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct FileChurn {
     pub file_path: String,
