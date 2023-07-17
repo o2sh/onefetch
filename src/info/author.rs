@@ -6,7 +6,7 @@ use crate::{
 use serde::Serialize;
 use std::fmt::Write;
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Author {
     pub name: String,

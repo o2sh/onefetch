@@ -73,8 +73,8 @@ pub struct InfoCliOptions {
     #[arg(long, value_name = "NUM")]
     pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
-    #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
-    pub exclude: Vec<PathBuf>,
+    #[arg(long, short, num_args = 1..)]
+    pub exclude: Vec<String>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[arg(long, value_name = "REGEX")]
     pub no_bots: Option<Option<MyRegex>>,

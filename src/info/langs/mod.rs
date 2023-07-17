@@ -1,9 +1,7 @@
 use anyhow::{Context, Result};
 use language::{Language, LanguageType};
-use regex::Regex;
 use std::collections::HashMap;
 use std::path::Path;
-use std::path::PathBuf;
 use strum::IntoEnumIterator;
 
 pub mod language;
@@ -17,11 +15,11 @@ pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
 /// The vector is sorted by loc in descending order.
 pub fn get_loc_by_language_sorted(
     dir: &Path,
-    ignored_directories: &[PathBuf],
+    globs_to_exclude: &[String],
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
-    let stats = get_statistics(dir, ignored_directories, language_types, include_hidden);
+    let stats = get_statistics(dir, globs_to_exclude, language_types, include_hidden);
 
     let loc_by_language =
         get_loc_by_language(&stats).context("Could not find any source code in this repository")?;
@@ -65,7 +63,7 @@ pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
 
 fn get_statistics(
     dir: &Path,
-    ignored_directories: &[PathBuf],
+    globs_to_exclude: &[String],
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> tokei::Languages {
@@ -77,8 +75,7 @@ fn get_statistics(
         hidden: Some(include_hidden),
         ..tokei::Config::default()
     };
-    let user_ignored = get_ignored_directories(ignored_directories);
-    let ignored: Vec<&str> = user_ignored.iter().map(AsRef::as_ref).collect();
+    let ignored: Vec<&str> = globs_to_exclude.iter().map(AsRef::as_ref).collect();
     languages.get_statistics(&[&dir], &ignored, &tokei_config);
     languages
 }
@@ -88,23 +85,6 @@ fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> 
         .filter(|language| types.contains(&language.get_type()))
         .map(std::convert::Into::into)
         .collect()
-}
-
-fn get_ignored_directories(user_ignored_directories: &[PathBuf]) -> Vec<String> {
-    let mut ignored_directories = Vec::new();
-    if !user_ignored_directories.is_empty() {
-        let re = Regex::new(r"((.*)+/)+(.*)").unwrap();
-        for user_ignored_directory in user_ignored_directories {
-            let dir = user_ignored_directory.display().to_string();
-            if re.is_match(&dir) {
-                let prefix = if dir.starts_with('/') { "**" } else { "**/" };
-                ignored_directories.push(format!("{prefix}{dir}"));
-            } else {
-                ignored_directories.push(dir);
-            }
-        }
-    }
-    ignored_directories
 }
 
 #[cfg(test)]
