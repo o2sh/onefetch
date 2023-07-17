@@ -29,6 +29,16 @@ INFO:
 
           [default: 6]
 
+      --number-of-file-churns <NUM>
+          Maximum NUM of file churns to be shown
+
+          [default: 3]
+
+      --churn-pool-size <NUM>
+          Minimum NUM of commits from HEAD used to compute the churn summary
+
+          By default, the actual value is non-deterministic due to time-based computation and will be displayed under the info title "Churn (NUM)"
+
   -e, --exclude <EXCLUDE>...
           Ignore all files & directories matching EXCLUDE
 
