@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.18.1 (2023-06-24)
+
+### Bug Fixes
+
+- don't fail when computing diff on partial clones (#1093) @Byron @o2sh
+
+### Features
+
+- fetch banner info from github (#1094) @spenserblack @o2sh
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 2 commits contributed to the release.
+- 4 days passed between releases.
+- 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+- 1 unique issue was worked on: [#1093](https://github.com/o2sh/onefetch/issues/1093)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1093](https://github.com/o2sh/onefetch/issues/1093)**
+  - Don't fail when computing diff on partial clones ([`89dcc8f`](https://github.com/o2sh/onefetch/commit/89dcc8fa3e0d2c1f61deb1bcf911c34915df0061))
+- **Uncategorized** - Rename fixture scripts ([`e35e106`](https://github.com/o2sh/onefetch/commit/e35e1065c5bf079dec1dce4b315127db4812ef53))
+</details>
+
 ## 2.18.0 (2023-06-20)
 
 ### Features
