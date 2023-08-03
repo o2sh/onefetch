@@ -25,6 +25,6 @@ Onefetch, tam olarak istediğinizi, istediğiniz şekilde görüntülemek için 
 
 Onefetch şu anda, [100'den fazla farklı programlama dilini desteklemektedir](https://onefetch.dev) ; seçtiğiniz dil desteklenmiyorsa: Bir "issue" açın ve o dil desteği eklenecektir.
 
-Katkıda bulunabilirsiniz! Daha fazlası için [Katkıda Bulunmak](CONTRIBUTING.md)'a bir göz atın.
+Katkıda bulunabilirsiniz! Daha fazlası için [CONTRIBUTING](../CONTRIBUTING.md)'a bir göz atın.
 
 ### Daha Fazla: \[[Viki](https://github.com/o2sh/onefetch/wiki)\] \[[Kurulum](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Başlarken](https://github.com/o2sh/onefetch/wiki/getting-started)\]
