@@ -39,7 +39,7 @@ onefetch-ascii = { path = "ascii", version = "2.18.1" }
 onefetch-image = { path = "image", version = "2.18.1" }
 onefetch-manifest = { path = "manifest", version = "2.18.1" }
 owo-colors = "3.5.0"
-regex = "1.9.1"
+regex = "1.9.3"
 serde = "1.0"
 serde_json = "1.0"
 serde_yaml = "0.9.25"
