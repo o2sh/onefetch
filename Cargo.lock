@@ -391,9 +391,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.3.21"
+version = "4.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c27cdf28c0f604ba3f512b0c9a409f8de8513e4816705deb0498b627e7c3a3fd"
+checksum = "03aef18ddf7d879c15ce20f04826ef8418101c7e528014c3eeea13321047dca3"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -402,9 +402,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.3.21"
+version = "4.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08a9f1ab5e9f01a9b81f202e8562eb9a10de70abf9eaeac1be465c28b75aa4aa"
+checksum = "f8ce6fffb678c9b80a70b6b6de0aad31df727623a70fd9a842c30cd573e2fa98"
 dependencies = [
  "anstream",
  "anstyle",
@@ -418,7 +418,7 @@ version = "4.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fc443334c81a804575546c5a8a79b4913b50e28d69232903604cada1de817ce"
 dependencies = [
- "clap 4.3.21",
+ "clap 4.3.23",
 ]
 
 [[package]]
@@ -526,7 +526,7 @@ dependencies = [
  "anes",
  "cast",
  "ciborium",
- "clap 4.3.21",
+ "clap 4.3.23",
  "criterion-plot",
  "is-terminal",
  "itertools",
@@ -2594,7 +2594,7 @@ dependencies = [
  "askalono",
  "byte-unit",
  "bytecount",
- "clap 4.3.21",
+ "clap 4.3.23",
  "clap_complete",
  "criterion",
  "crossbeam-channel",
@@ -2643,7 +2643,7 @@ version = "2.18.1"
 dependencies = [
  "anyhow",
  "base64",
- "clap 4.3.21",
+ "clap 4.3.23",
  "color_quant",
  "image",
  "libc",
