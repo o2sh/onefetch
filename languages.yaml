@@ -1,5 +1,4 @@
 ABAP:
-  type: programming
   ascii: |
     {0}xxxxxxxxxxxxxxxxxxxx
     {0}xx{1}###{0}xxx{1}##{0}xx{1}####{0}xxx{1} ##  ####   ##  ####
@@ -17,7 +16,6 @@ ABAP:
       - "#EEEEEE"
     chip: "#E8274B"
 ABNF:
-  type: data
   ascii: |
     {0}          ______
     {0}         |      |
@@ -46,7 +44,6 @@ ABNF:
       - "#888888"
     chip: "#555e25"
 Ada:
-  type: programming
   ascii: |
     {0}                              *
     {0}                              *
@@ -80,7 +77,6 @@ Ada:
       - "#0C0A7C"
     chip: "#02F88C"
 Assembly:
-  type: programming
   ascii: |
     {0}     __________________________
     {0}    /                          \
@@ -105,7 +101,6 @@ Assembly:
       - green
     chip: "#6E4C13"
 AutoHotkey:
-  type: programming
   ascii: |
     {1} .----------------.
     {1}| .--------------. |
@@ -127,7 +122,6 @@ AutoHotkey:
       - "#119810"
     chip: "#6594B9"
 C:
-  type: programming
   ascii: |
     {0}                 ++++++
     {0}              ++++++++++++
@@ -165,7 +159,6 @@ C:
       - "#FFFFFF"
     chip: "#555555"
 Ceylon:
-  type: programming
   ascii: |
     {1}                                 @@
     {1}                                 @@
@@ -195,7 +188,6 @@ Ceylon:
       - "#AB7008"
     chip: "#DFA535"
 Clojure:
-  type: programming
   ascii: |
     {0}               ,....,
     {0}          ,oooooooooooooo,
@@ -223,7 +215,6 @@ Clojure:
       - green
     chip: "#DB5855"
 CMake:
-  type: programming
   ascii: |
     {0}            ;e{2}`
     {0}           ;QD{2}?`
@@ -246,7 +237,6 @@ CMake:
       - black
     chip: "#DA3434"
 CoffeeScript:
-  type: programming
   ascii: |
     {0}           #####    ######
     {0}          ###    ###    ###
@@ -267,7 +257,6 @@ CoffeeScript:
       - red
     chip: "#244776"
 ColdFusion:
-  type: programming
   ascii: |
     {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
     {0}Cf{1}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{0}Cf
@@ -294,7 +283,6 @@ ColdFusion:
       - "#274550"
     chip: "#ed2cd6"
 Coq:
-  type: programming
   ascii: |
     {0}   ::::::::
     {0} :::::::::::
@@ -322,7 +310,6 @@ Coq:
       - "#D5BE99"
     chip: "#D0B68C"
 "C++":
-  type: programming
   ascii: |
     {0}                 ++++++
     {0}              ++++++++++++
@@ -361,7 +348,6 @@ Coq:
     chip: "#F34B7D"
   serialization: c++
 Crystal:
-  type: programming
   ascii: |
     {0}            ,loc;'..
     {0}          ,xNMMMWNXK0kdl,..
@@ -389,7 +375,6 @@ Crystal:
       - black
     chip: "#000100"
 "C#":
-  type: programming
   ascii: |
     {0}                 ++++++
     {0}              ++++++++++++
@@ -457,7 +442,6 @@ CSS:
       - white
     chip: "#563D7C"
 D:
-  type: programming
   ascii: |
     {0}                                    DDD
     {0}DDDDDDDDDDDDDDDDDDDDDD             DDDDD
@@ -479,7 +463,6 @@ D:
       - red
     chip: "#BA595E"
 Dart:
-  type: programming
   ascii: |
     {0}#
     {0} ##
@@ -510,7 +493,6 @@ Dart:
       - "#01597D"
     chip: "#00B4AB"
 Dockerfile:
-  type: programming
   ascii: |
     {2}                  ##   {0}      .
     {2}            ## ## ##   {0}     ==
@@ -527,7 +509,6 @@ Dockerfile:
       - cyan
     chip: "#384D54"
 Emacs Lisp:
-  type: programming
   ascii: |
     {0}         ':r\iv7i|r:'
     {0}      :LFaZZZaaaoooo2t\:
@@ -551,7 +532,6 @@ Emacs Lisp:
     chip: "#C065DB"
   serialization: emacs-lisp
 Elixir:
-  type: programming
   ascii: |
     {0}            x
     {0}           WNX
@@ -579,7 +559,6 @@ Elixir:
       - magenta
     chip: "#6E4A7E"
 Elm:
-  type: programming
   ascii: |
     {0}   {1}ElmElmElmElm   {3}ElmElmElmElmElm
     {0}El   {1}mElmElmElmEl   {3}mElmElmElmElm
@@ -607,7 +586,6 @@ Elm:
       - cyan
     chip: "#60B5CC"
 Emojicode:
-  type: programming
   ascii: |
     {0}~~
     {0} ~~
@@ -645,7 +623,6 @@ Emojicode:
       - "#744EAA"
     chip: "#60B5CC"
 Erlang:
-  type: programming
   ascii: |
     {0}   EEEEEEEEEEEEE      EEEEEEEEEEEE
     {0}  EEEEEEEEEEEE         EEEEEEEEEEEE
@@ -664,7 +641,6 @@ Erlang:
       - red
     chip: "#B83998"
 Forth:
-  type: programming
   ascii: |
     {0}::::::::::::::::::::::::::::::::::::::::
     {0}::::::::::::::::::::::::::::::::::::::::
@@ -691,7 +667,6 @@ Forth:
       - red
     chip: "#341708"
 FortranLegacy:
-  type: programming
   ascii: |
     {4}    _ {1}__ __
     {4}  _|_ {1} /  /
@@ -721,7 +696,6 @@ FortranLegacy:
     chip: "#4D41B1"
   serialization: fortran
 FortranModern:
-  type: programming
   ascii: |
     {4}    _{1} _  _
     {4}  _|_{1}(_|/ \
@@ -750,7 +724,6 @@ FortranModern:
       - red
     chip: "#4D41B1"
 "F#":
-  type: programming
   ascii: |
     {0}                 /  {1}((
     {0}               ///  {1}((((
@@ -777,7 +750,6 @@ FortranModern:
     chip: "#B845FC"
   serialization: f#
 GdScript:
-  type: programming
   ascii: |
     {0}         _.aMb      dMe._
     {0}        'H8888b,  ,d8888H'
@@ -806,7 +778,6 @@ GdScript:
       - "#FFFFFF"
     chip: "#355570"
 Glsl:
-  type: programming
   ascii: |
     {0}         ,,@@@@@@@@@@@@@@@@@..
     {0}       ,@@@@@@@@@@@@@@@@@@@@@@@.
@@ -836,7 +807,6 @@ Glsl:
       - "#bc258e"
     chip: "#5686a5"
 Go:
-  type: programming
   ascii: |
     {0}           --==============--
     {0}  .-==-.===oooo=oooooo=ooooo===--===-
@@ -901,7 +871,6 @@ GraphQL:
       - magenta
     chip: "#E10098"
 Groovy:
-  type: programming
   ascii: |
     {0}                   *
     {0}                  ***
@@ -932,7 +901,6 @@ Groovy:
       - white
     chip: "#4298B8"
 Haskell:
-  type: programming
   ascii: |
     {0}yyyyyy{1} xxxxxx
     {0} yyyyyy{1} xxxxxx
@@ -958,7 +926,6 @@ Haskell:
       - "#8F4E8B"
     chip: "#5E5086"
 Haxe:
-  type: programming
   ascii: |
     {0}#############              {2}@@@@@@@@@@@@@
     {0}#################      {2}@@@@@@@@@@@@@@@@@
@@ -991,7 +958,6 @@ Haxe:
       - "#F47216"
     chip: "#DF7900"
 Hcl:
-  type: programming
   ascii: |
     {0}::
     {0}::::
@@ -1024,7 +990,6 @@ Hcl:
       - "#4040B2"
     chip: "#AACE60"
 Hlsl:
-  type: programming
   ascii: |
     {0}████████████████  {1}████████████████
     {0}█████  ██  █████  {1}█████  █████████
@@ -1054,7 +1019,6 @@ Hlsl:
       - "#FFBB00"
     chip: "#AACE60"
 HolyC:
-  type: programming
   ascii: |
     {0}             ========
     {0}         ====        ====
@@ -1120,7 +1084,6 @@ HTML:
       - white
     chip: "#E34C26"
 Idris:
-  type: programming
   ascii: |
     {0}       %
     {0}          %
@@ -1145,7 +1108,6 @@ Idris:
       - red
     chip: "#B30000"
 Java:
-  type: programming
   ascii: |
     {0}                  |
     {0}                 ||
@@ -1178,7 +1140,6 @@ Java:
       - "#1665C0"
     chip: "#B07219"
 JavaScript:
-  type: programming
   ascii: |
     {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
     {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
@@ -1231,7 +1192,6 @@ JSON:
       - black
     chip: "#292929"
 Jsonnet:
-  type: programming
   ascii: |
     {0}        .       .
     {0}       /{1}:{0}\     /{1}:{0}\
@@ -1264,7 +1224,6 @@ Jsonnet:
       - black
     chip: "#0064BD"
 Julia:
-  type: programming
   ascii: |
     {0}               {2}_
     {0}   {1}_       {0}_ {3}_{2}(_){4}_
@@ -1283,7 +1242,6 @@ Julia:
       - magenta
     chip: "#A270BA"
 Jupyter Notebook:
-  type: programming
   ascii: |
     {0}                                 +%%%+
     {0}                                $$$$$$$
@@ -1320,7 +1278,6 @@ Jupyter Notebook:
     chip: "#DA5B0B"
   serialization: jupyter-notebooks
 Kotlin:
-  type: programming
   ascii: |
     {0}KOTLIN{2}KOTLINKOTLINKO{1}TLINKOTLINKOTLINKOTL
     {0}KOTLINKO{2}TLINKOTLIN{1}KOTLINKOTLINKOTLINKO
@@ -1349,7 +1306,6 @@ Kotlin:
       - magenta
     chip: "#A97BFF"
 Lisp:
-  type: programming
   ascii: |
     {0}              ............
     {0}         ********..............
@@ -1376,7 +1332,6 @@ Lisp:
       - white
     chip: "#3FB68B"
 LLVM:
-  type: programming
   ascii: |
     {0}KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
     {0}KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
@@ -1404,7 +1359,6 @@ LLVM:
       - "#98012E"
     chip: "#185619"
 Lua:
-  type: programming
   ascii: |
     {1}                 -- --
     {1}         --                 --{0} @@@@
@@ -1436,7 +1390,6 @@ Lua:
       - "#FFFFFF"
     chip: "#000080"
 Makefile:
-  type: programming
   ascii: |
     {0}    _-`````-,           ,- '- .
     {0}  .'   .- - |          | - -.  `.
@@ -1493,7 +1446,6 @@ Markdown:
     chip: "#083FA1"
   line_types: [code, comments]
 Nim:
-  type: programming
   ascii: |
     {0}                   ++
     {0}       ++        ++++++        ++
@@ -1519,7 +1471,6 @@ Nim:
       - white
     chip: "#FFC200"
 Nix:
-  type: programming
   ascii: |
     {1}         :::.    {0}':::::     ::::'
     {1}         '::::    {0}':::::.  ::::'
@@ -1546,7 +1497,6 @@ Nix:
       - blue
     chip: "#7E7EFF"
 ObjectiveC:
-  type: programming
   ascii: |
     {0}888                                888
     {0}8    8888   8       8        8888    8
@@ -1567,7 +1517,6 @@ ObjectiveC:
     chip: "#438EFF"
   serialization: objective-c
 OCaml:
-  type: programming
   ascii: |
     {0}///////////////////////////////////////
     {0}///////////////////////////////////////
@@ -1591,7 +1540,6 @@ OCaml:
       - yellow
     chip: "#3BE133"
 Odin:
-  type: programming
   ascii: |
     {0}          @@@@@@@@@
     {0}      @@@@     @@@   @@@
@@ -1646,7 +1594,6 @@ Org:
       - white
     chip: "#77AA99"
 Pascal:
-  type: programming
   ascii: |
     {0}█████{1}╗  {0}████{1}╗ {0}█████{1}╗ {0}████{1}╗ {0}████{1}╗ {0}██{1}╗
     {0}██{1}╔═{0}██{1}╗{0}██{1}╔═{0}██{1}╗{0}██{1}╔══╝{0}██{1}╔══╝{0}██{1}╔═{0}██{1}╗{0}██{1}║
@@ -1660,7 +1607,6 @@ Pascal:
       - white
     chip: "#E3F171"
 Perl:
-  type: programming
   ascii: |
     {0}                  ######
     {0}    ###         #########
@@ -1689,7 +1635,6 @@ Perl:
       - cyan
     chip: "#0298C3"
 Perl6:
-  type: programming
   ascii: |
     {0} +@8DM#8W,
     {0}#DM"{1},ypy,{0}"8#
@@ -1725,7 +1670,6 @@ Perl6:
     chip: "#0000FB"
   serialization: raku
 PHP:
-  type: programming
   ascii: |
     {0}            ################
     {0}      ##########{1}/  |{0}##############
@@ -1746,7 +1690,6 @@ PHP:
       - "#FFFFFF"
     chip: "#4F5D95"
 PowerShell:
-  type: programming
   ascii: |
     {0}         #########################
     {0}        ####{1}####{0}#################
@@ -1767,7 +1710,6 @@ PowerShell:
       - "#FFFFFF"
     chip: "#012456"
 Processing:
-  type: programming
   ascii: |
     {0}          PPPPPPPPPPPP
     {0}      PPPPPPPPPPPPPPPPPPPP
@@ -1795,7 +1737,6 @@ Processing:
       - "#FFFFFF"
     chip: "#0096D8"
 Prolog:
-  type: programming
   ascii: |
     {0}            ############   #
     {0}       #################   ####
@@ -1819,7 +1760,6 @@ Prolog:
       - white
     chip: "#74283C"
 Protobuf:
-  type: programming
   ascii: |
     {0}      ;;;;;;;;     {2}::::::::
     {0}     ;;;;;;;;       {2}::::::::
@@ -1843,7 +1783,6 @@ Protobuf:
     chip: "#74283C"
   serialization: protocol-buffers
 PureScript:
-  type: programming
   ascii: |
     {0}           \\\\\\\\\\\\\\    \\\\\
     {0}            \\\\\\\\\\\\\\     \\\\\
@@ -1858,7 +1797,6 @@ PureScript:
       - white
     chip: "#1D222D"
 Python:
-  type: programming
   ascii: |
     {0}               =========
     {0}            ===============
@@ -1891,7 +1829,6 @@ Python:
       - "#FFD940"
     chip: "#3572A5"
 Qml:
-  type: programming
   ascii: |
     {0}****************************************
     {0}****************************************
@@ -1924,7 +1861,6 @@ Qml:
       - "#4D7528"
     chip: "#44A51C"
 R:
-  type: programming
   ascii: |
     {0}             .,,,,,,,,,,,,,
     {0}       ,,,,,,,,,,,,,,,,,********
@@ -1946,7 +1882,6 @@ R:
       - blue
     chip: "#198CE7"
 Racket:
-  type: programming
   ascii: |
     {0}            {2}.:--::////::--.`
     {0}        {1}`/yNMMNho{2}////////////:.
@@ -1975,7 +1910,6 @@ Racket:
       - blue
     chip: "#3C5CAA"
 Renpy:
-  type: programming
   ascii: |
     {0}       ++++++
     {0}     ++++++++++
@@ -2021,7 +1955,6 @@ Renpy:
       - "#B5A396"
     chip: "#FF7F7F"
 Ruby:
-  type: programming
   ascii: |
     {0}                    ###{2}###{3}###{4}#{1}.{4}#
     {0}                  ###{2}###{3}###{4}##{1}.{5}##
@@ -2063,7 +1996,6 @@ Ruby:
       - "#971A0D"
     chip: "#701516"
 Rust:
-  type: programming
   ascii: |
     {0}                 R RR RR
     {0}              R RRRRRRRR R          R
@@ -2113,7 +2045,6 @@ SASS:
       - "#CD6799"
     chip: "#A53B70"
 Scala:
-  type: programming
   ascii: |
     {0}                        +
     {0}                      +++
@@ -2144,7 +2075,6 @@ Scala:
       - "#7F0C1D"
     chip: "#C22D40"
 Scheme:
-  type: programming
   ascii: |
     {0}  ////
     {0} //  //
@@ -2166,7 +2096,6 @@ Scheme:
       - "#555555"
     chip: "#1E4AEC"
 Shell:
-  type: programming
   ascii: |
     {0}              ___       ___        ___
     {0}             ####      ####       ####
@@ -2188,7 +2117,6 @@ Shell:
     chip: "#89E051"
   serialization: shell
 Solidity:
-  type: programming
   ascii: |
     {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     {0}MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
@@ -2279,7 +2207,6 @@ Svelte:
       - "#FFFFFF"
     chip: "#FF3E00"
 Swift:
-  type: programming
   ascii: |
     {0}                         :
     {0}                          ::
@@ -2330,7 +2257,6 @@ Swift:
       - "#FD2822"
     chip: "#F05138"
 SystemVerilog:
-  type: programming
   ascii: |
     {0}     _.._   _.._   _.._   _.._
     {0}     _.._   _.._   _.._   _.._
@@ -2359,7 +2285,6 @@ SystemVerilog:
       - white
     chip: "#DAE1C2"
 Tcl:
-  type: programming
   ascii: |
     {0}          //
     {2}      . /{0}////
@@ -2440,7 +2365,6 @@ TOML:
       - "#FFFFFF"
     chip: "#9C4221"
 TypeScript:
-  type: programming
   ascii: |
     {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
     {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
@@ -2469,7 +2393,6 @@ TypeScript:
       - "#FFFFFF"
     chip: "#2B7489"
 Vala:
-  type: programming
   ascii: |
     {0} ###################################
     {0}#####################################
@@ -2496,7 +2419,6 @@ Vala:
       - white
     chip: "#A56DE2"
 Verilog:
-  type: programming
   ascii: |
     {0}        _.._    _.._    _.._
     {0}        _.._    _.._    _.._
@@ -2524,7 +2446,6 @@ Verilog:
       - magenta
     chip: "#b2b7f8"
 Vhdl:
-  type: programming
   ascii: |
     {0}        |  |  |  |
     {0}       {1}------------
@@ -2546,7 +2467,6 @@ Vhdl:
       - white
     chip: "#ADB2CB"
 Vim Script:
-  type: programming
   ascii: |
     {1}     ________{0}  ++    {1}________
     {1}    /{2}VVVVVVVV{1}\{0}++++  {1}/{2}VVVVVVVV{1}\
@@ -2570,7 +2490,6 @@ Vim Script:
       - white
     chip: "#199F4B"
 VisualBasic:
-  type: programming
   ascii: |
     {1}             ::::::::::
     {1}         ::::::::::::::::::
@@ -2600,7 +2519,6 @@ VisualBasic:
       - "#FFFFFF"
     chip: "#945db7"
 Vue:
-  type: programming
   ascii: |
     {0}VUE{1}\\\\\                /////{0}VUE
     {0} VUE{1}\\\\\              /////{0}VUE
@@ -2623,7 +2541,6 @@ Vue:
       - blue
     chip: "#199F4B"
 WebAssembly:
-  type: programming
   ascii: |
     {0}:::::::::::             ::::::::::::
     {0}::::::::::::           :::::::::::::
@@ -2650,7 +2567,6 @@ WebAssembly:
       - "#FFFFFF"
     chip: "#04133B"
 Wolfram:
-  type: programming
   ascii: |
     {0}             OOOOOOOOOOOOOO
     {0}         OOOOOO  OOOOOOOOOOOOOO
@@ -2724,7 +2640,6 @@ XML:
       - green
     chip: "#0060AC"
 XSL:
-  type: programming
   ascii: |
     {0}                       :::
     {0}       :::::          :::  :::::
@@ -2756,7 +2671,6 @@ YAML:
       - white
     chip: "#CB171E"
 Zig:
-  type: programming
   ascii: |
     {0}                                     z
     {0}                                  zzz
@@ -2781,7 +2695,6 @@ Zig:
       - yellow
     chip: "#EC915C"
 Zsh:
-  type: programming
   ascii: |
     {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
     {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
