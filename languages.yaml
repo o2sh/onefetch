@@ -1,4 +1,4 @@
-Abap:
+ABAP:
   type: programming
   ascii: |
     {0}xxxxxxxxxxxxxxxxxxxx
@@ -104,7 +104,7 @@ Assembly:
       - yellow
       - green
     chip: "#6E4C13"
-AutoHotKey:
+AutoHotkey:
   type: programming
   ascii: |
     {1} .----------------.
@@ -346,7 +346,7 @@ Coq:
       - "#BF8C5E"
       - "#D5BE99"
     chip: "#D0B68C"
-Cpp:
+"C++":
   type: programming
   ascii: |
     {0}                 ++++++
@@ -413,7 +413,7 @@ Crystal:
       - white
       - black
     chip: "#000100"
-CSharp:
+"C#":
   type: programming
   ascii: |
     {0}                 ++++++
@@ -452,7 +452,7 @@ CSharp:
       - "#FFFFFF"
     chip: "#178600"
   serialization: c#
-Css:
+CSS:
   type: markup
   ascii: |
     {1}        ####    ####    ####
@@ -551,7 +551,7 @@ Dockerfile:
       - white
       - cyan
     chip: "#384D54"
-Elisp:
+Emacs Lisp:
   type: programming
   ascii: |
     {0}         ':r\iv7i|r:'
@@ -797,7 +797,7 @@ FortranModern:
       - yellow
       - red
     chip: "#4D41B1"
-FSharp:
+"F#":
   type: programming
   ascii: |
     {0}                 /  {1}((
@@ -920,7 +920,7 @@ Go:
       - "#FFFFFF"
       - "#F6D2A2"
     chip: "#00ADD8"
-Graphql:
+GraphQL:
   type: data
   ascii: |
     {0}                 {}{}{}
@@ -1138,7 +1138,7 @@ HolyC:
       - "#0B449D"
       - "#FFFFFF"
     chip: "#FFEFAF"
-Html:
+HTML:
   type: markup
   ascii: |
     {1}  ##  ##  ######  ##   ##  ##
@@ -1252,7 +1252,7 @@ JavaScript:
     hex:
       - "#ECE653"
     chip: "#F1E05A"
-Json:
+JSON:
   type: data
   ascii: |
     {0}           `:+osyyyso+/:`
@@ -1361,7 +1361,7 @@ Julia:
       - red
       - magenta
     chip: "#A270BA"
-Jupyter:
+Jupyter Notebook:
   type: programming
   ascii: |
     {0}                                 +%%%+
@@ -1803,7 +1803,7 @@ Perl6:
       - "#00FF39"
     chip: "#0000FB"
   serialization: raku
-Php:
+PHP:
   type: programming
   ascii: |
     {0}            ################
@@ -2168,7 +2168,7 @@ Rust:
       - "#E43717"
       - "#FFFFFF"
     chip: "#DEA584"
-Sass:
+SASS:
   type: markup
   ascii: |
     {0}            ,wppbbbbbp,
@@ -2244,7 +2244,7 @@ Scheme:
     hex:
       - "#555555"
     chip: "#1E4AEC"
-Sh:
+Shell:
   type: programming
   ascii: |
     {0}              ___       ___        ___
@@ -2304,7 +2304,7 @@ Solidity:
       - "#333333"
       - "#515151"
     chip: "#AA6746"
-Sql:
+SQL:
   type: data
   ascii: |
     {0}   _..------.._
@@ -2489,7 +2489,7 @@ Tex:
       - white
       - black
     chip: "#3D6117"
-Toml:
+TOML:
   type: data
   ascii: |
     {0}[[[[[[[[                    ]]]]]]]]
@@ -2655,7 +2655,7 @@ Vhdl:
       - green
       - white
     chip: "#ADB2CB"
-VimScript:
+Vim Script:
   type: programming
   ascii: |
     {1}     ________{0}  ++    {1}________
@@ -2820,7 +2820,7 @@ Xaml:
       - "#3378CE"
       - "#FFFFFF"
     chip: "#0060AC"
-Xml:
+XML:
   type: data
   ascii: |
     {0}  __{1} __  _  __ __  _    {2}   __{0}__
@@ -2851,7 +2851,7 @@ XSL:
     ansi:
       - cyan
     chip: "#EB8CEB"
-Yaml:
+YAML:
   type: data
   ascii: |
     {0}__    __  __   __    __   _
