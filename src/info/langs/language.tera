@@ -4,6 +4,7 @@ use owo_colors::{
 };
 use std::fmt;
 use std::fmt::Write;
+use std::str::FromStr;
 use strum::EnumIter;
 
 pub struct Colors {
@@ -17,7 +18,7 @@ pub struct Colors {
 pub enum Language {
     {% for language, attrs in languages -%}
         {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif -%}
-        {{ language }},
+        {{ language|enumify }},
     {% endfor %}
 }
 
@@ -25,30 +26,24 @@ impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             {% for language, _ in languages -%}
-                Self::{{ language }} => write!(f, "{}", tokei::LanguageType::{{ language }}.name()),
+                Self::{{ language|enumify }} => write!(f, "{}", r#"{{ language }}"#),
             {% endfor %}
         }
     }
 }
 
-impl From<tokei::LanguageType> for Language {
-    fn from(language: tokei::LanguageType) -> Self {
-        match language {
-            {% for language, _ in languages -%}
-                tokei::LanguageType::{{ language }} => Self::{{ language }},
-            {% endfor %}
-            _ => unimplemented!("Language {:?}", language),
-        }
-    }
-}
+impl FromStr for Language {
+    // NOTE Right now we just panic, matching old behavior
+    type Err = ();
 
-impl From<Language> for tokei::LanguageType {
-    fn from(language: Language) -> Self {
-        match language {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let lang = match s {
             {% for language, _ in languages -%}
-                Language::{{ language }} => tokei::LanguageType::{{ language }},
+                r#"{{ language }}"# => Self::{{ language|enumify }},
             {% endfor %}
-        }
+            _ => unimplemented!("Language {:?}", s),
+        };
+        Ok(lang)
     }
 }
 
@@ -56,7 +51,7 @@ impl Language {
     pub fn get_ascii_art(&self) -> &'static str {
         match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => "{{ attrs.ascii | addslashes }}",
+                Language::{{ language|enumify }} => "{{ attrs.ascii | addslashes }}",
             {% endfor %}
         }
     }
@@ -64,7 +59,7 @@ impl Language {
     pub fn get_colors(&self, true_color: bool) -> Vec<DynColors> {
         let colors = match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => Colors {
+                Language::{{ language|enumify }} => Colors {
                     basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | capitalize | replace(from="White", to="Default") }}),{% endfor %}],
                     true_colors: {% if attrs.colors.hex -%}
                         Some(vec![
@@ -87,32 +82,9 @@ impl Language {
         match self {
             {% for language, attrs in languages -%}
                 {% set rgb = attrs.colors.chip | hex_to_rgb -%}
-                Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
+                Language::{{ language|enumify }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
         }
-    }
-}
-
-fn __loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
-    match language_type {
-        {% for language, attrs in languages -%}
-            {%- set line_types = attrs.line_types | default(value=['code']) -%}
-            tokei::LanguageType::{{ language }} => language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %},
-        {% endfor %}
-        _ => unimplemented!("Language Type {:?}", language_type),
-    }
-}
-
-
-fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
-    match language_type {
-	{% for language, attrs in languages -%}
-        {%- set line_types = attrs.line_types | default(value=['code']) -%}
-	    {%- if attrs.line_types -%} 
-            tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
-	    {% endif -%} 
-    {% endfor %}
-	_ => stats.code
     }
 }
 
@@ -121,7 +93,7 @@ fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) ->
         {% set ansi_length = attrs.colors.ansi | length -%}
         {% set rgb_length = attrs.colors.rgb | length %}
         {% if ansi_length != rgb_length %}
-            compile_error!("{{ language }}: ansi and rgb colors must be the same length");
+            compile_error!(r#"{{ language }}: ansi and rgb colors must be the same length"#);
         {% endif %}
     {% endif -%}
 {% endfor -%}
@@ -135,14 +107,14 @@ fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) ->
     {% set lines = attrs.ascii | split(pat="\n") -%}
     {% set height = lines | length -%}
     {% if height > max_height %}
-        compile_error!("{{ language }}: ascii art must have {{ max_height - 1 }} or less lines, has {{ height }}");
+        compile_error!(r#"{{ language }}: ascii art must have {{ max_height - 1 }} or less lines, has {{ height }}"#);
     {% endif -%}
 
     {% for line in lines -%}
         {% set cleaned_line = line | strip_color_tokens -%}
         {% set width = cleaned_line | length -%}
         {% if width > max_width %}
-            compile_error!("{{ language }}: ascii art line {{ loop.index }} must be {{ max_width }} or less characters wide");
+            compile_error!(r#"{{ language }}: ascii art line {{ loop.index }} must be {{ max_width }} or less characters wide"#);
         {% endif -%}
     {% endfor -%}
 {% endfor -%}
