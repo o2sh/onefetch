@@ -2,89 +2,51 @@ use owo_colors::{
     AnsiColors,
     DynColors::{self, Ansi, Rgb},
 };
-use std::fmt;
-use std::fmt::Write;
-use std::str::FromStr;
-use strum::EnumIter;
 
 pub struct Colors {
     basic_colors: Vec<DynColors>,
     true_colors: Option<Vec<DynColors>>,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize)]
-#[allow(clippy::upper_case_acronyms)]
-#[clap(rename_all = "lowercase")]
-pub enum Language {
-    {% for language, attrs in languages -%}
-        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif -%}
-        {{ language|enumify }},
-    {% endfor %}
-}
-
-impl fmt::Display for Language {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            {% for language, _ in languages -%}
-                Self::{{ language|enumify }} => write!(f, "{}", r#"{{ language }}"#),
-            {% endfor %}
-        }
+pub(crate) fn get_ascii_art(s: &str) -> &'static str {
+    match s {
+        {% for language, attrs in languages -%}
+            r#"{{ language }}"# => "{{ attrs.ascii | addslashes }}",
+        {% endfor %}
+        _ => unimplemented!("{}", s),
     }
 }
 
-impl FromStr for Language {
-    // NOTE Right now we just panic, matching old behavior
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let lang = match s {
-            {% for language, _ in languages -%}
-                r#"{{ language }}"# => Self::{{ language|enumify }},
-            {% endfor %}
-            _ => unimplemented!("Language {:?}", s),
-        };
-        Ok(lang)
+pub(crate) fn get_colors(s: &str, true_color: bool) -> Vec<DynColors> {
+    let colors = match s {
+        {% for language, attrs in languages -%}
+            r#"{{ language }}"# => Colors {
+                basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | capitalize | replace(from="White", to="Default") }}),{% endfor %}],
+                true_colors: {% if attrs.colors.hex -%}
+                    Some(vec![
+                        {%- for hex in attrs.colors.hex -%}
+                            {% set rgb = hex | hex_to_rgb -%}
+                            Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
+                        {% endfor %}])
+                {% else -%}None
+                {% endif %},
+            },
+        {% endfor %}
+        _ => unimplemented!("{}", s),
+    };
+    match colors.true_colors {
+        Some(true_colors) if true_color => true_colors,
+        _ => colors.basic_colors,
     }
 }
 
-impl Language {
-    pub fn get_ascii_art(&self) -> &'static str {
-        match self {
-            {% for language, attrs in languages -%}
-                Language::{{ language|enumify }} => "{{ attrs.ascii | addslashes }}",
-            {% endfor %}
-        }
-    }
-
-    pub fn get_colors(&self, true_color: bool) -> Vec<DynColors> {
-        let colors = match self {
-            {% for language, attrs in languages -%}
-                Language::{{ language|enumify }} => Colors {
-                    basic_colors: vec![{%- for color in attrs.colors.ansi -%}Ansi(AnsiColors::{{ color | capitalize | replace(from="White", to="Default") }}),{% endfor %}],
-                    true_colors: {% if attrs.colors.hex -%}
-                        Some(vec![
-                            {%- for hex in attrs.colors.hex -%}
-                                {% set rgb = hex | hex_to_rgb -%}
-                                Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
-                            {% endfor %}])
-                    {% else -%}None
-                    {% endif %},
-                },
-            {% endfor %}
-        };
-        match colors.true_colors {
-            Some(true_colors) if true_color => true_colors,
-            _ => colors.basic_colors,
-        }
-    }
-
-    pub fn get_circle_color(&self) -> DynColors {
-        match self {
-            {% for language, attrs in languages -%}
-                {% set rgb = attrs.colors.chip | hex_to_rgb -%}
-                Language::{{ language|enumify }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
-            {% endfor %}
-        }
+pub fn get_circle_color(s: &str) -> DynColors {
+    match s {
+        {% for language, attrs in languages -%}
+            {% set rgb = attrs.colors.chip | hex_to_rgb -%}
+            r#"{{ language }}"# => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
+        {% endfor %}
+        _ => unimplemented!("{}", s),
     }
 }
 

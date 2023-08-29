@@ -18,7 +18,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut tera = Tera::default();
     tera.register_filter("strip_color_tokens", strip_color_tokens_filter);
     tera.register_filter("hex_to_rgb", hex_to_rgb_filter);
-    tera.register_filter("enumify", enumify);
 
     let lang_data: serde_json::Value = serde_yaml::from_reader(File::open("languages.yaml")?)?;
 
@@ -78,35 +77,4 @@ fn hex_to_rgb_filter(
         "g": g,
         "b": b,
     }))
-}
-
-fn enumify(value: &tera::Value, _args: &HashMap<String, tera::Value>) -> tera::Result<tera::Value> {
-    let s = match value {
-        tera::Value::String(s) => s,
-        _ => return Err(tera::Error::msg("expected string")),
-    };
-    // NOTE Known manual overrides
-    let manual = match s.as_str() {
-        "C++" => Some("Cpp".into()),
-        _ => None,
-    };
-
-    if let Some(manual) = manual {
-        return Ok(tera::Value::String(manual));
-    }
-
-    let titlecase = s
-        .split(' ')
-        .map(|s| {
-            let mut chars = s.chars();
-            match chars.next() {
-                None => String::new(),
-                Some(f) => f.to_uppercase().chain(chars).collect(),
-            }
-        })
-        .collect::<Vec<_>>()
-        .join("")
-        .replace('#', "Sharp");
-
-    Ok(tera::Value::String(titlecase))
 }
