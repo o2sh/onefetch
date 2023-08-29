@@ -50,6 +50,14 @@ pub fn get_circle_color(s: &str) -> DynColors {
     }
 }
 
+pub(crate) fn get_supported_languages() -> Vec<&'static str> {
+    vec![
+        {% for language, attrs in languages -%}
+            r#"{{ language }}"#,
+        {% endfor %}
+    ]
+}
+
 {% for language, attrs in languages -%}
     {% if attrs.colors.rgb %}
         {% set ansi_length = attrs.colors.ansi | length -%}

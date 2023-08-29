@@ -1,5 +1,6 @@
 use self::author::AuthorsInfo;
 use self::churn::ChurnInfo;
+use self::code_size::CodeSizeInfo;
 use self::commits::CommitsInfo;
 use self::contributors::ContributorsInfo;
 use self::created::CreatedInfo;
@@ -8,11 +9,9 @@ use self::description::DescriptionInfo;
 use self::git::metrics::GitMetrics;
 use self::git::traverse_commit_graph;
 use self::head::HeadInfo;
-use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
 use self::last_change::LastChangeInfo;
 use self::license::LicenseInfo;
-use self::loc::LocInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
 use self::size::SizeInfo;
@@ -24,7 +23,9 @@ use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
+
 use anyhow::{Context, Result};
+use gengo::Language;
 use gix::sec::trust::Mapping;
 use gix::Repository;
 use num_format::ToFormattedString;
@@ -35,6 +36,7 @@ use std::path::Path;
 
 mod author;
 mod churn;
+mod code_size;
 mod commits;
 mod contributors;
 mod created;
@@ -45,7 +47,6 @@ mod head;
 pub mod langs;
 mod last_change;
 mod license;
-mod loc;
 mod pending;
 mod project;
 mod size;
@@ -133,22 +134,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     repo.object_cache_size_if_unset(4 * 1024 * 1024);
     let repo_path = get_work_dir(&repo)?;
 
-    let loc_by_language_sorted_handle = std::thread::spawn({
-        let globs_to_exclude = cli_options.info.exclude.clone();
-        let language_types = cli_options.info.r#type.clone();
-        let include_hidden = cli_options.info.include_hidden;
+    let size_by_language_sorted_handle = std::thread::spawn({
         let workdir = repo_path.clone();
-        move || {
-            langs::get_loc_by_language_sorted(
-                &workdir,
-                &globs_to_exclude,
-                &language_types,
-                include_hidden,
-            )
-        }
+        move || langs::get_size_by_language_sorted(&workdir)
     });
 
-    let loc_by_language = loc_by_language_sorted_handle
+    let size_by_language = size_by_language_sorted_handle
         .join()
         .ok()
         .context("BUG: panic in language statistics thread")??;
@@ -161,7 +152,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
     };
-    let dominant_language = langs::get_main_language(&loc_by_language);
+    let dominant_language = langs::get_main_language(&size_by_language);
     let ascii_colors = get_ascii_colors(
         &cli_options.ascii.ascii_language,
         &dominant_language,
@@ -185,7 +176,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .version(&repo, &manifest)?
         .created(&git_metrics, iso_time)
         .languages(
-            &loc_by_language,
+            &size_by_language,
             true_color,
             number_of_languages,
             &text_colors,
@@ -197,7 +188,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow(), number_separator)
         .churn(&git_metrics)
-        .loc(&loc_by_language, number_separator)
+        .loc(&size_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, &manifest)?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
@@ -307,14 +298,14 @@ impl InfoBuilder {
 
     fn languages(
         mut self,
-        loc_by_language: &[(Language, usize)],
+        size_by_language: &[(Language, usize)],
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
             let languages = LanguagesInfo::new(
-                loc_by_language,
+                size_by_language,
                 true_color,
                 number_of_languages,
                 text_colors.info,
@@ -393,7 +384,7 @@ impl InfoBuilder {
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::LinesOfCode) {
-            let lines_of_code = LocInfo::new(loc_by_language, number_separator);
+            let lines_of_code = CodeSizeInfo::new(loc_by_language, number_separator);
             self.info_fields.push(Box::new(lines_of_code));
         }
         self

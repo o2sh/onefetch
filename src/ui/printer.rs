@@ -1,6 +1,7 @@
 use crate::cli::CliOptions;
 use crate::info::Info;
-use crate::ui::Language;
+
+use crate::info::langs::language::get_ascii_art;
 use anyhow::{Context, Result};
 use image::DynamicImage;
 use onefetch_ascii::AsciiArt;
@@ -26,7 +27,7 @@ pub struct Printer<W> {
     color_resolution: usize,
     no_bold: bool,
     ascii_input: Option<String>,
-    ascii_language: Option<Language>,
+    ascii_language: Option<String>,
 }
 
 impl<W: Write> Printer<W> {
@@ -134,9 +135,9 @@ impl<W: Write> Printer<W> {
         let language = if let Some(ascii_language) = &self.ascii_language {
             ascii_language
         } else {
-            &self.info.dominant_language
+            self.info.dominant_language.name()
         };
 
-        language.get_ascii_art()
+        get_ascii_art(language)
     }
 }
