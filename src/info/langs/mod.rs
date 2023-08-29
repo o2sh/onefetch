@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Result};
 
 use gengo::Language;
+use language::is_supported;
 use std::path::Path;
 
 pub mod language;
@@ -23,8 +24,12 @@ pub fn get_size_by_language_sorted(dir: &Path) -> Result<Vec<(Language, usize)>>
         Err(e) => return Err(anyhow!("Could not analyze repository: {}", e)),
     };
     let summary = analysis.summary();
-    let mut vec: Vec<(Language, usize)> =
-        summary.into_iter().map(|(k, v)| (k.clone(), *v)).collect();
+    let mut vec: Vec<(Language, usize)> = summary
+        .into_iter()
+        // HACK Prevent unimplemented panics on unsupported languages
+        .filter(|(language, _)| is_supported(language.name()))
+        .map(|(k, v)| (k.clone(), *v))
+        .collect();
     vec.sort_by(|a, b| b.1.cmp(&a.1));
 
     Ok(vec)

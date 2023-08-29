@@ -8,6 +8,15 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
+pub(crate) fn is_supported(language: &str) -> bool {
+    match language {
+        {% for language, attrs in languages -%}
+            r#"{{ language }}"# => true,
+        {% endfor %}
+        _ => false,
+    }
+}
+
 pub(crate) fn get_ascii_art(s: &str) -> &'static str {
     match s {
         {% for language, attrs in languages -%}
