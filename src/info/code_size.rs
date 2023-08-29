@@ -31,7 +31,7 @@ impl InfoField for CodeSizeInfo {
     }
 
     fn title(&self) -> String {
-        "Lines of code".into()
+        "Total blob size".into()
     }
 }
 
