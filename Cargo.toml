@@ -37,7 +37,7 @@ bytecount = "0.6.3"
 clap.workspace = true
 clap_complete = "4.3.2"
 crossbeam-channel = "0.5.8"
-gengo = "0.3"
+gengo = "^0.4.1"
 gix-features-for-configuration-only = { package = "gix-features", version = "0.31.0", features = [
     "zlib-ng",
 ] }

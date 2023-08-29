@@ -835,9 +835,9 @@ dependencies = [
 
 [[package]]
 name = "gengo"
-version = "0.3.6"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c96e2ca6afdde73a9c007dfab159ad6debc6e308aef454ac4e1c9007e4b611e"
+checksum = "910bb5625c13a5d2f5b3debf3999d4bf19f66ce3ece3378362f40a5db515528e"
 dependencies = [
  "git2",
  "glob",
