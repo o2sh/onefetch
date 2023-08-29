@@ -1909,7 +1909,7 @@ Racket:
       - white
       - blue
     chip: "#3C5CAA"
-Renpy:
+"Ren'Py":
   ascii: |
     {0}       ++++++
     {0}     ++++++++++
