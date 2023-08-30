@@ -49,7 +49,11 @@ expression: info
       "LanguagesInfo": {
         "languagesWithPercentage": [
           {
-            "language": "Rust",
+            "language": {
+              "name": "Rust",
+              "category": "programming",
+              "color": "#DD3515"
+            },
             "percentage": 100.0
           }
         ]
@@ -117,8 +121,8 @@ expression: info
       }
     },
     {
-      "LocInfo": {
-        "linesOfCode": 4
+      "CodeSizeInfo": {
+        "size": 22
       }
     },
     {
