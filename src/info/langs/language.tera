@@ -49,7 +49,7 @@ pub(crate) fn get_colors(s: &str, true_color: bool) -> Vec<DynColors> {
     }
 }
 
-pub fn get_circle_color(s: &str) -> DynColors {
+pub fn get_chip_color(s: &str) -> DynColors {
     match s {
         {% for language, attrs in languages -%}
             {% set rgb = attrs.colors.chip | hex_to_rgb -%}

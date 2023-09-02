@@ -84,7 +84,7 @@ impl std::fmt::Display for LanguagesInfo {
                     let percentage = lwp.percentage;
                     let language_name = language.name();
                     let circle_color = if self.true_color {
-                        get_circle_color(language_name)
+                        get_chip_color(language_name)
                     } else {
                         color_palette[i % color_palette.len()]
                     };
