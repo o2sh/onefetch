@@ -11,8 +11,8 @@ pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
 }
 
 /// Returns a vector of tuples containing all the languages detected inside the repository.
-/// Each tuple is composed of the language and its corresponding loc (lines of code).
-/// The vector is sorted by loc in descending order.
+/// Each tuple is composed of the language and its corresponding size.
+/// The vector is sorted by size in descending order.
 pub fn get_size_by_language_sorted(dir: &Path) -> Result<Vec<(Language, usize)>> {
     let builder = gengo::Builder::new(dir);
     let gengo = match builder.build() {
