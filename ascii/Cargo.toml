@@ -1,0 +1,11 @@
+[package]
+authors.workspace = true
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+name = "onefetch-ascii"
+description = "Display colorized ascii art to the terminal"
+
+[dependencies]
+owo-colors.workspace = true

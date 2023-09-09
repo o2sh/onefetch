@@ -13,19 +13,17 @@ jobs:
       pull-requests: write
     steps:
       - name: Mark/Close Stale Issues and Pull Requests
-        uses: actions/stale@v6.0.1
+        uses: actions/stale@v8
         with:
           repo-token: ${{ secrets.STALE_ACTION }}
-          days-before-stale: 90
-          days-before-close: 7
           stale-issue-message: >
             This issue has been automatically marked as stale because it has not had
             recent activity. It will be closed if no further activity occurs.
           stale-pr-message: >
             This pull request has been automatically marked as stale because it has not had
             recent activity. It will be closed if no further activity occurs.
-          exempt-issue-labels: "pinned,security,help wanted,blocked: tokei"
-          exempt-pr-labels: "blocked: tokei"
+          exempt-issue-labels: "📌 pinned,🔒 security,❓ help wanted,🌊 upstream"
+          exempt-pr-labels: "🌊 upstream"
           stale-issue-label: "stale"
           stale-pr-label: "stale"
           exempt-draft-pr: "true"

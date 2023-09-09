@@ -1,6 +1,6 @@
 name: Bug report 🐛
 description: Create a bug report to help us improve
-labels: ["bug"]
+labels: ["🐛 bug"]
 body:
   - type: markdown
     attributes:
@@ -31,3 +31,11 @@ body:
         1.
         2.
         3.
+  - type: textarea
+    attributes:
+      label: Additional context/Screenshots 🔦
+      description: Add any other context about the problem here. If applicable, add screenshots to help explain.
+  - type: textarea
+    attributes:
+      label: Possible Solution 💡
+      description: Only if you have suggestions on a fix for the bug.

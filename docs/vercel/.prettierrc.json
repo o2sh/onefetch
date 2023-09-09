@@ -6,5 +6,6 @@
   "trailingComma": "es5",
   "bracketSameLine": true,
   "singleAttributePerLine": false,
-  "quoteProps": "consistent"
+  "quoteProps": "consistent",
+  "plugins": ["prettier-plugin-svelte"]
 }

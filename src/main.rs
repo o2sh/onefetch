@@ -3,35 +3,36 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
-use onefetch::cli;
-use onefetch::info::Info;
+use onefetch::cli::{self, CliOptions};
+use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
 
 fn main() -> Result<()> {
-    #[cfg(windows)]
-    let _ = enable_ansi_support::enable_ansi_support();
-
     setup_panic!();
 
-    let config = cli::Config::parse();
+    #[cfg(windows)]
+    enable_ansi_support::enable_ansi_support()?;
 
-    if config.languages {
+    let cli_options = cli::CliOptions::parse();
+
+    if cli_options.other.languages {
         return cli::print_supported_languages();
     }
 
-    if config.package_managers {
+    if cli_options.other.package_managers {
         return cli::print_supported_package_managers();
     }
 
-    if let Some(generator) = config.completion {
-        let mut cmd = cli::Config::command();
+    if let Some(generator) = cli_options.developer.completion {
+        let mut cmd = CliOptions::command();
         cli::print_completions(generator, &mut cmd);
         return Ok(());
     }
 
-    let info = Info::new(&config)?;
-    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, config)?;
+    let info = build_info(&cli_options)?;
+
+    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
 
     printer.print()?;
 

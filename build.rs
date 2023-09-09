@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         &std::fs::read_to_string("src/info/langs/language.tera")?,
         &Context::from_value(serde_json::json!({ "languages": lang_data, }))?,
     )?;
-    fs::write(&output_path, rust_code)?;
+    fs::write(output_path, rust_code)?;
 
     Ok(())
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import Chip from './Chip.svelte';
+  import TitleLink from './TitleLink.svelte';
 
   export let name: string;
   export let ansi: string[];
@@ -18,7 +19,7 @@
       const htmlLine = line.replace(/\{(\d+)\}/g, (_match, index) => {
         const i = Number.parseInt(index, 10);
         const spanText = `<span style="font-weight: bold; color: ${
-          trueColor ? hex[i] : mapToDefaultTerminalFgColor(ansi[i], dark)
+          trueColor && hex ? hex[i] : mapToDefaultTerminalFgColor(ansi[i], dark)
         }">`;
         spanCount++;
         return spanText;
@@ -35,7 +36,7 @@
 <div class="title-row">
   <div class="language-name">
     <Chip id={name} color={chip} width={24} height={24} />
-    <h3>{name}</h3>
+    <TitleLink {name} />
   </div>
   <div class="checkbox">
     <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />

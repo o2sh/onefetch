@@ -1,7 +1,6 @@
 use crate::info::langs::language::Language;
 use owo_colors::{AnsiColors, DynColors};
 
-pub mod ascii_art;
 pub mod printer;
 pub mod text_colors;
 
@@ -99,5 +98,21 @@ mod test {
         let colors = get_ascii_colors(&None, &Language::Rust, &[2, 3], false);
         assert_eq!(colors.len(), 2);
         assert_eq!(colors, vec![num_to_color(&2), num_to_color(&3)]);
+    }
+
+    #[test]
+    fn get_ascii_colors_fill_custom_colors_with_language_colors() {
+        // When custom ascii colors are not enough for the given language,
+        // language colors should be used as default
+        let colors = get_ascii_colors(&None, &Language::Go, &[0], false);
+        assert_eq!(colors.len(), 3);
+        assert_eq!(
+            colors,
+            vec![
+                num_to_color(&0),
+                DynColors::Ansi(AnsiColors::Default),
+                DynColors::Ansi(AnsiColors::Yellow)
+            ]
+        );
     }
 }

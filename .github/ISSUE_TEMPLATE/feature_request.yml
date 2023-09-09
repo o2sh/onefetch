@@ -1,6 +1,6 @@
 name: Feature request 💄
 description: Suggest an improvement
-labels: ["feature request"]
+labels: ["✨ enhancement"]
 body:
   - type: markdown
     attributes:

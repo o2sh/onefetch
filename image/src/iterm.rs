@@ -1,4 +1,5 @@
 use anyhow::Result;
+use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
 use libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ};
 use std::env;
@@ -49,7 +50,7 @@ impl super::ImageBackend for ITermBackend {
 
         let mut bytes: Vec<u8> = Vec::new();
         image.write_to(&mut Cursor::new(&mut bytes), image::ImageOutputFormat::Png)?;
-        let encoded_image = base64::encode(bytes);
+        let encoded_image = engine::general_purpose::STANDARD.encode(bytes);
         let mut image_data = Vec::<u8>::new();
 
         image_data.extend(b"\x1B]1337;File=inline=1:");
