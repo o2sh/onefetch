@@ -25,7 +25,7 @@ repository = "https://github.com/o2sh/onefetch"
 [workspace.dependencies]
 owo-colors = "3.5.0"
 anyhow = "1.0"
-clap = { version = "4.3.21", features = ["derive"] }
+clap = { version = "4.4.2", features = ["derive"] }
 image = "0.24.7"
 strum = { version = "0.25.0", features = ["derive"] }
 
@@ -35,7 +35,7 @@ askalono = "0.4.6"
 byte-unit = "4.0.19"
 bytecount = "0.6.3"
 clap.workspace = true
-clap_complete = "4.3.2"
+clap_complete = "4.4.1"
 crossbeam-channel = "0.5.8"
 gix-features-for-configuration-only = { package = "gix-features", version = "0.33.0", features = [
     "zlib-ng",
