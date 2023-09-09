@@ -132,10 +132,10 @@ Ats:
       - red
       - blue
     hex:
-      - '#FFFF00'
-      - '#FF0000'
-      - '#0000FF'
-    chip: '#1AC620'
+      - "#FFFF00"
+      - "#FF0000"
+      - "#0000FF"
+    chip: "#1AC620"
   serialization: ATS
 AutoHotKey:
   type: programming
