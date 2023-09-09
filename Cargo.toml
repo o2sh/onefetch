@@ -45,7 +45,7 @@ gix = { version = "0.52.0", default-features = false, features = [
 ] }
 git2 = { version = "0.17.2", default-features = false }
 globset = "0.4.13"
-human-panic = "1.1.5"
+human-panic = "1.2.0"
 image.workspace = true
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.18.1" }
