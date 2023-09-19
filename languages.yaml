@@ -83,36 +83,31 @@ Ada:
 Arduino:
   type: programming
   ascii: |
-    {0}                 -+++++++++++++++                 
-    {0}             ++++++++++++++++++++++++             
-    {0}          ++++++++++++++++++++++++++++++          
-    {0}       ++++++++++++++++++++++++++++++++++++       
-    {0}      ++++++++++++++++++++++++++++++++++++++      
-    {0}    ++++++++++++++++++++++++++++++++++++++++++    
-    {0}   ++++++++++++++++++++++++++++++++++++++++++++   
-    {0}  ++++++++++++++++++++++++++++++++++++++++++++++  
-    {0} +++++++++++++---+++++++++++++++++--+++++++++++++ 
-    {0}+++++++++-..      ...++++++++...      ..++++++++++
-    {0}++++++++.   ..---..   .-++-.   ..----.   .++++++++
-    {0}+++++++.  .+++++++++-. .... ..+++++++++.  .+++++++
-    {0}++++++. ..++++++++++++.    .+++++. -++++-. .++++++
-    {0}++++++. .-++-     -++++.  .++++.     -++-. .++++++
-    {0}++++++. ..++++++++++++.    .+++++. -++++-. .++++++
-    {0}+++++++.  .+++++++++-. .... .-+++++++++.  .+++++++
-    {0}++++++++..  .----..   .-++-.   ..----.  ..++++++++
-    {0}+++++++++-..      ...++++++++...      ..++++++++++
-    {0} +++++++++++++---+++++++++++++++++-++++++++++++++ 
-    {0}  ++++++++++++++++++++++++++++++++++++++++++++++  
-    {0}   ++++++++++++++++++++++++++++++++++++++++++++   
-    {0}    ++++++++++++++++++++++++++++++++++++++++++    
-    {0}      ++++++++++++++++++++++++++++++++++++++      
-    {0}       ++++++++++++++++++++++++++++++++++++       
-    {0}          ++++++++++++++++++++++++++++++          
-    {0}             ++++++++++++++++++++++++             
-    {0}                 -+++++++++++++++                 
+    {0}            xxxxxxxxxxxxxxxx            
+    {0}        xxxxxxxxxxxxxxxxxxxxxxxx        
+    {0}      xxxxxxxxxxxxxxxxxxxxxxxxxxxx      
+    {0}    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    
+    {0}   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx   
+    {0}  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
+    {0} xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
+    {0}xxxxxxxx+:.  ..;+xxxxxx+;..  .:+xxxxxxxx
+    {0}xxxxxx;...:;;;. ..;xx;.. .;;;:...;xxxxxx
+    {0}xxxxx:..;xxxxxx+;......;xxx+xxx+..:xxxxx
+    {0}xxxx+. ;xx+;;;+xx+.  .+xx+;.;+xx; .xxxxx
+    {0}xxxx+. ;xx;;;;;xx+.  .+xx;;.;+xx; .xxxxx
+    {0}xxxxx:..+xxxxxxx;......;xxx+xxx+..:xxxxx
+    {0}xxxxxx;  .:;;;.  .;xx;.  .;;;:.  ;xxxxxx
+    {0}xxxxxxxx+:.  ..:+xxxxxx+:..  .:+xxxxxxxx
+    {0} xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
+    {0}  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
+    {0}   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx   
+    {0}    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    
+    {0}      xxxxxxxxxxxxxxxxxxxxxxxxxxxx      
+    {0}        xxxxxxxxxxxxxxxxxxxxxxxx        
+    {0}            xxxxxxxxxxxxxxxxx                        
   colors:
     ansi:
-      - turquoise
+      - cyan
     hex:
       - '#189BA1'
     chip: "#F34B7D"
