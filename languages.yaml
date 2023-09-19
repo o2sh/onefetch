@@ -96,8 +96,7 @@ Arduino:
       - cyan
     hex:
       - '#189BA1'
-    chip:
-      - "#F34B7D"
+    chip: "#F34B7D"
 Assembly:
   type: programming
   ascii: |
