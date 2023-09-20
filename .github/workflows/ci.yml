@@ -90,7 +90,7 @@ jobs:
           version: latest
 
       - name: Coverage with tarpaulin
-        run: cargo tarpaulin --workspace --out Lcov
+        run: cargo tarpaulin --workspace --out lcov
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
