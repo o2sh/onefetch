@@ -95,8 +95,6 @@ Arduino:
   colors:
     ansi:
       - cyan
-    hex:
-      - "#00838B"
     chip: "#F34B7D"
 Assembly:
   type: programming
