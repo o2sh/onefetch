@@ -1,6 +1,6 @@
 name: New Language Request 📢
 description: Request for a new language to be supported
-labels: ["✨ enhancement, 🌱 good first issue"]
+labels: ["enhancement, good first issue"]
 
 body:
   - type: markdown

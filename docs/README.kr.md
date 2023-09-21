@@ -3,12 +3,12 @@
 <h5 align="center">Rust로 작성된 깃 정보 커맨드라인 유틸리티</h5>
 
 <p align="center">
-    <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
-    <a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
+  <a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
+  <a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
   <a href="https://onefetch.dev"><img src="../assets/language-badge.svg"></a>
-	<a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22%E2%9D%93+help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/%E2%9D%93%20help%20wanted?color=green" alt="help wanted"></a>
-    <a href="../LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-    <img src="../assets/msrv-badge.svg">
+  <a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
+  <a href="../LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img src="../assets/msrv-badge.svg">
 </p>
 
 <img src="../assets/screenshot-1.png" align="right" height="250px">
