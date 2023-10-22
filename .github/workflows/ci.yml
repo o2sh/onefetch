@@ -84,10 +84,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Install cargo-tarpaulin
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-tarpaulin
-          version: latest
+        run: cargo install cargo-tarpaulin
 
       - name: Coverage with tarpaulin
         run: cargo tarpaulin --workspace --out lcov
