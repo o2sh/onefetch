@@ -4,7 +4,7 @@ This wiki page will guide you through getting onefetch working on your system.
 
 # Table of Contents
 
-- [Universal](#universal)
+- [Universal Install](#universal-install)
   - [Cargo](#cargo)
   - [Snap](#snap)
   - [Build from source](#build-from-source)
@@ -27,7 +27,7 @@ This wiki page will guide you through getting onefetch working on your system.
     - [Scoop](#scoop)
     - [Chocolatey](#chocolatey)
 
-# Universal
+# Universal Install
 
 If your architecture is supported by the pre-built binaries, you can download them from the [releases page](https://github.com/o2sh/onefetch/releases).
 
