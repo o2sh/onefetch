@@ -4,28 +4,28 @@ This wiki page will guide you through getting onefetch working on your system.
 
 # Table of Contents
 
-* [Universal Install](#universal-install)
-    * [Cargo](#cargo)
-    * [Snap](#snap)
-    * [Build from source](#build-from-source)
-* [OS/Distro Packages](#osdistro-packages)
-    * [Alpine Linux](#alpine-linux)
-    * [Arch](#arch)
-    * [Fedora](#fedora)
-    * [FreeBSD](#freebsd)
-    * [Funtoo](#funtoo)
-    * [macOS](#macos)
-        * [Homebrew](#homebrew)
-        * [MacPorts](#macports)
-    * [NetBSD](#netbsd)
-    * [NixOS](#nixos)
-    * [openSUSE](#openSUSE-Leap-or-Tumbleweed)
-    * [Ubuntu](#ubuntu-ppa)
-    * [Void Linux](#void-linux)
-    * [Windows](#windows)
-        * [Winget](#Winget)
-        * [Scoop](#scoop)
-        * [Chocolatey](#chocolatey)
+- [Universal](#universal)
+  - [Cargo](#cargo)
+  - [Snap](#snap)
+  - [Build from source](#build-from-source)
+- [OS/Distro Packages](#osdistro-packages)
+  - [Alpine Linux](#alpine-linux)
+  - [Arch](#arch)
+  - [Fedora](#fedora)
+  - [FreeBSD](#freebsd)
+  - [Funtoo](#funtoo)
+  - [macOS](#macos)
+    - [Homebrew](#homebrew)
+    - [MacPorts](#macports)
+  - [NetBSD](#netbsd)
+  - [NixOS](#nixos)
+  - [openSUSE](#openSUSE-Leap-or-Tumbleweed)
+  - [Ubuntu](#ubuntu-ppa)
+  - [Void Linux](#void-linux)
+  - [Windows](#windows)
+    - [Winget](#Winget)
+    - [Scoop](#scoop)
+    - [Chocolatey](#chocolatey)
 
 # Universal
 
@@ -72,17 +72,16 @@ make install
 ## Alpine Linux
 
 1. Update repositories
-    - `apk update`
+   - `apk update`
 2. Install the package
-    - `apk add onefetch`
-
+   - `apk add onefetch`
 
 ## Arch
 
 Onefetch is available in the official repos.
 
 - Install the package
-    - `pacman -S onefetch`
+  - `pacman -S onefetch`
 
 ## Fedora
 
@@ -142,20 +141,17 @@ Install it from the official repositories.
 
 - `pkg_add onefetch`
 
-
 ## NixOS
 
 Install it from the official repositories
 
 - `nix-env -i onefetch`
 
-
 ## openSUSE Leap or Tumbleweed
 
 Install it from the official repositories.
 
 - `zypper install onefetch`
-
 
 ## Ubuntu (ppa)
 
@@ -172,7 +168,6 @@ If your Ubuntu version isn't supported, use [snap](#snap).
 Install it from the official repositories
 
 - `sudo xbps-install -S onefetch`
-
 
 ## Windows
 
