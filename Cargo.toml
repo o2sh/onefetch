@@ -40,7 +40,7 @@ crossbeam-channel = "0.5.8"
 gix-features-for-configuration-only = { package = "gix-features", version = "0.34.0", features = [
     "zlib-ng",
 ] }
-gix = { version = "0.54.1", default-features = false, features = [
+gix = { version = "0.55.2", default-features = false, features = [
     "max-performance-safe", "blob-diff", "mailmap", "index"
 ] }
 git2 = { version = "0.18.0", default-features = false }
