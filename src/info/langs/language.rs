@@ -62,8 +62,6 @@ impl LanguagesInfo {
 
 impl std::fmt::Display for LanguagesInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut languages_info = String::new();
-        let pad = self.title().len() + 2;
         let color_palette = [
             DynColors::Ansi(AnsiColors::Red),
             DynColors::Ansi(AnsiColors::Green),
@@ -73,43 +71,9 @@ impl std::fmt::Display for LanguagesInfo {
             DynColors::Ansi(AnsiColors::Cyan),
         ];
 
-        let languages: Vec<(String, f64, DynColors)> = {
-            let mut iter = self.languages_with_percentage.iter().enumerate().map(
-                |(
-                    i,
-                    &LanguageWithPercentage {
-                        language,
-                        percentage,
-                    },
-                )| {
-                    let circle_color = if self.true_color {
-                        language.get_circle_color()
-                    } else {
-                        color_palette[i % color_palette.len()]
-                    };
-                    (language.to_string(), percentage, circle_color)
-                },
-            );
-            if self.languages_with_percentage.len() > self.number_of_languages {
-                let mut languages = iter
-                    .by_ref()
-                    .take(self.number_of_languages)
-                    .collect::<Vec<_>>();
-                let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
-                languages.push((
-                    "Other".to_string(),
-                    other_perc,
-                    DynColors::Ansi(AnsiColors::White),
-                ));
-                languages
-            } else {
-                iter.collect()
-            }
-        };
+        let languages: Vec<(String, f64, DynColors)> = prepare_languages(self, &color_palette);
 
-        let language_bar: String = build_language_bar(&languages);
-
-        languages_info.push_str(&language_bar);
+        let mut languages_info = build_language_bar(&languages);
 
         for (i, (language, perc, circle_color)) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, perc);
@@ -125,13 +89,56 @@ impl std::fmt::Display for LanguagesInfo {
                     "\n{:<width$}{}",
                     "",
                     language_str,
-                    width = pad
-                )?;
+                    width = self.title().len() + 2
+                )
+                .unwrap();
             } else {
                 languages_info.push_str(language_str.trim_end());
             }
         }
+
         write!(f, "{languages_info}")
+    }
+}
+
+fn prepare_languages(
+    languages_info: &LanguagesInfo,
+    color_palette: &[DynColors],
+) -> Vec<(String, f64, DynColors)> {
+    let mut iter = languages_info
+        .languages_with_percentage
+        .iter()
+        .enumerate()
+        .map(
+            |(
+                i,
+                &LanguageWithPercentage {
+                    language,
+                    percentage,
+                },
+            )| {
+                let circle_color = if languages_info.true_color {
+                    language.get_circle_color()
+                } else {
+                    color_palette[i % color_palette.len()]
+                };
+                (language.to_string(), percentage, circle_color)
+            },
+        );
+    if languages_info.languages_with_percentage.len() > languages_info.number_of_languages {
+        let mut languages = iter
+            .by_ref()
+            .take(languages_info.number_of_languages)
+            .collect::<Vec<_>>();
+        let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
+        languages.push((
+            "Other".to_string(),
+            other_perc,
+            DynColors::Ansi(AnsiColors::White),
+        ));
+        languages
+    } else {
+        iter.collect()
     }
 }
 
@@ -283,6 +290,60 @@ mod test {
             rust_bar.on_color(DynColors::Ansi(AnsiColors::Red)),
             python_bar.on_color(DynColors::Ansi(AnsiColors::Yellow))
         );
+
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn test_prepare_languages() {
+        let languages_info = LanguagesInfo {
+            languages_with_percentage: vec![
+                LanguageWithPercentage {
+                    language: Language::Go,
+                    percentage: 40_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Erlang,
+                    percentage: 30_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Java,
+                    percentage: 20_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Rust,
+                    percentage: 10_f64,
+                },
+            ],
+            true_color: false,
+            number_of_languages: 2,
+            info_color: DynColors::Ansi(AnsiColors::White),
+        };
+
+        let color_palette = [
+            DynColors::Ansi(AnsiColors::Red),
+            DynColors::Ansi(AnsiColors::Green),
+        ];
+
+        let result = prepare_languages(&languages_info, &color_palette);
+
+        let expected_result = vec![
+            (
+                Language::Go.to_string(),
+                40_f64,
+                DynColors::Ansi(AnsiColors::Red),
+            ),
+            (
+                Language::Erlang.to_string(),
+                30_f64,
+                DynColors::Ansi(AnsiColors::Green),
+            ),
+            (
+                "Other".to_string(),
+                30_f64,
+                DynColors::Ansi(AnsiColors::White),
+            ),
+        ];
 
         assert_eq!(result, expected_result);
     }
