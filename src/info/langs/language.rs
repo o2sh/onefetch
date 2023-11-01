@@ -276,7 +276,6 @@ mod test {
         let python_bar_width = (0.4 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
 
         let rust_bar = " ".repeat(rust_bar_width);
-
         let python_bar = " ".repeat(python_bar_width);
 
         let expected_result = format!(
