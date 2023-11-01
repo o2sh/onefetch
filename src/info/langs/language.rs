@@ -64,7 +64,7 @@ impl std::fmt::Display for LanguagesInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut languages_info = String::new();
         let pad = self.title().len() + 2;
-        let color_palette = vec![
+        let color_palette = [
             DynColors::Ansi(AnsiColors::Red),
             DynColors::Ansi(AnsiColors::Green),
             DynColors::Ansi(AnsiColors::Yellow),
@@ -107,16 +107,7 @@ impl std::fmt::Display for LanguagesInfo {
             }
         };
 
-        let language_bar: String = languages
-            .iter()
-            .map(|(_, perc, circle_color)| {
-                let bar_width = std::cmp::max(
-                    (perc / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
-                    1,
-                );
-                format!("{:<width$}", "".on_color(*circle_color), width = bar_width)
-            })
-            .collect();
+        let language_bar: String = build_language_bar(&languages);
 
         languages_info.push_str(&language_bar);
 
@@ -142,6 +133,24 @@ impl std::fmt::Display for LanguagesInfo {
         }
         write!(f, "{languages_info}")
     }
+}
+
+fn build_language_bar(languages: &[(String, f64, DynColors)]) -> String {
+    languages
+        .iter()
+        .fold(String::new(), |mut output, (_, perc, circle_color)| {
+            let bar_width = std::cmp::max(
+                (perc / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
+                1,
+            );
+            let _ = write!(
+                output,
+                "{:<width$}",
+                "".on_color(*circle_color),
+                width = bar_width
+            );
+            output
+        })
 }
 
 #[typetag::serialize]
@@ -249,5 +258,33 @@ mod test {
                 .color(DynColors::Ansi(AnsiColors::White))
                 .to_string()
         ));
+    }
+
+    #[test]
+    fn test_build_language_bar_multiple_languages() {
+        let languages: Vec<(String, f64, DynColors)> = vec![
+            ("Rust".to_string(), 60.0, DynColors::Ansi(AnsiColors::Red)),
+            (
+                "Python".to_string(),
+                40.0,
+                DynColors::Ansi(AnsiColors::Yellow),
+            ),
+        ];
+        let result = build_language_bar(&languages);
+
+        let rust_bar_width = (0.6 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
+        let python_bar_width = (0.4 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
+
+        let rust_bar = " ".repeat(rust_bar_width);
+
+        let python_bar = " ".repeat(python_bar_width);
+
+        let expected_result = format!(
+            "{}{}",
+            rust_bar.on_color(DynColors::Ansi(AnsiColors::Red)),
+            python_bar.on_color(DynColors::Ansi(AnsiColors::Yellow))
+        );
+
+        assert_eq!(result, expected_result);
     }
 }
