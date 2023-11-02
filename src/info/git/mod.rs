@@ -117,13 +117,15 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
     Ok(git_metrics)
 }
 
+type NumberOfCommitsBySignature = HashMap<Sig, usize>;
+
 fn get_author_channel(
     repo: &gix::Repository,
     num_threads: usize,
     bot_regex_pattern: &Option<MyRegex>,
     mailmap: &gix::mailmap::Snapshot,
 ) -> (
-    Vec<JoinHandle<Result<HashMap<Sig, usize>>>>,
+    Vec<JoinHandle<Result<NumberOfCommitsBySignature>>>,
     crossbeam_channel::Sender<ObjectId>,
 ) {
     // we intentionally over-allocate threads a little as the main thread won't be very busy anyway
@@ -140,7 +142,7 @@ fn get_author_channel(
                 let bot_regex_pattern = bot_regex_pattern.clone();
                 let rx = rx.clone();
                 move || -> anyhow::Result<_> {
-                    let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
+                    let mut number_of_commits_by_signature = NumberOfCommitsBySignature::new();
                     // We are sure to see each object only once.
                     repo.object_cache_size(0);
                     while let Ok(commit_id) = rx.recv() {
@@ -160,22 +162,22 @@ fn get_author_channel(
     (threads, tx)
 }
 
+type NumberOfCommitsByFilepath = HashMap<BString, usize>;
+type ChurnPair = (NumberOfCommitsByFilepath, usize);
+
 fn get_churn_channel(
     repo: &gix::Repository,
     has_commit_graph_traversal_ended: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
     churn_pool_size_opt: Option<usize>,
-) -> Result<(
-    JoinHandle<Result<(HashMap<BString, usize>, usize)>>,
-    Sender<ObjectId>,
-)> {
+) -> Result<(JoinHandle<Result<ChurnPair>>, Sender<ObjectId>)> {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
         let has_commit_graph_traversal_ended = has_commit_graph_traversal_ended.clone();
         let total_number_of_commits = total_number_of_commits.clone();
         move || -> Result<_> {
-            let mut number_of_commits_by_file_path: HashMap<BString, usize> = HashMap::new();
+            let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
             let mut number_of_diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
