@@ -70,6 +70,19 @@ impl AuthorsInfo {
         let authors = git_metrics.authors_to_display.clone();
         Self { authors }
     }
+
+    fn top_contribution(&self) -> usize {
+        if let Some(top_contributor) = self.authors.get(0) {
+            return top_contributor.contribution;
+        }
+        0
+    }
+}
+
+fn digit_difference(num1: usize, num2: usize) -> usize {
+    let count_digits = |num: usize| (num.checked_ilog10().unwrap_or(0) + 1) as usize;
+
+    count_digits(num1) - count_digits(num2)
 }
 
 impl std::fmt::Display for AuthorsInfo {
@@ -77,12 +90,17 @@ impl std::fmt::Display for AuthorsInfo {
         let mut authors_info = String::new();
 
         let pad = self.title().len() + 2;
-
         for (i, author) in self.authors.iter().enumerate() {
             if i == 0 {
                 write!(authors_info, "{author}")?;
             } else {
-                write!(authors_info, "\n{:<width$}{}", "", author, width = pad)?;
+                write!(
+                    authors_info,
+                    "\n{:<width$}{}",
+                    "",
+                    author,
+                    width = pad + digit_difference(self.top_contribution(), author.contribution)
+                )?;
             }
         }
 
@@ -220,5 +238,40 @@ mod test {
         assert!(authors_info
             .value()
             .contains(&"80% Roberto Berto 240".to_string()));
+    }
+    #[test]
+    fn test_author_info_value_alignment_with_three_authors() {
+        let author = Author::new(
+            "John Doe".into(),
+            Some("john.doe@email.com".into()),
+            1500,
+            2000,
+            NumberSeparator::Plain,
+        );
+
+        let author_2 = Author::new(
+            "Roberto Berto".into(),
+            None,
+            240,
+            300,
+            NumberSeparator::Plain,
+        );
+
+        let author_3 = Author::new("Jane Doe".into(), None, 1, 100, NumberSeparator::Plain);
+
+        let authors_info = AuthorsInfo {
+            authors: vec![author, author_2, author_3],
+        };
+
+        assert!(authors_info
+            .value()
+            .contains(&"75% John Doe <john.doe@email.com> 1500".to_string()));
+
+        assert!(authors_info
+            .value()
+            .contains(&"80% Roberto Berto 240".to_string()));
+
+        // Note the extra leading space to right-align the percentages
+        assert!(authors_info.value().contains(&" 1% Jane Doe 1".to_string()));
     }
 }
