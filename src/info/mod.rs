@@ -87,16 +87,7 @@ impl std::fmt::Display for Info {
 
         //Info lines
         for info_field in self.info_fields.iter() {
-            let info_field_value = info_field.value();
-            if !info_field_value.is_empty() {
-                write_styled_info_line(
-                    f,
-                    &info_field.title(),
-                    &info_field_value,
-                    self.no_bold,
-                    &self.text_colors,
-                )?;
-            }
+            info_field.write_styled(f, self.no_bold, &self.text_colors)?;
         }
 
         //Palette
@@ -418,43 +409,6 @@ impl InfoBuilder {
     }
 }
 
-fn write_styled_info_line(
-    f: &mut std::fmt::Formatter,
-    subtitle: &str,
-    info: &str,
-    no_bold: bool,
-    text_colors: &TextColors,
-) -> std::fmt::Result {
-    writeln!(
-        f,
-        "{} {}",
-        style_subtitle(subtitle, text_colors, no_bold),
-        style_info(info, text_colors)
-    )
-}
-
-fn style_info(info: &str, text_colors: &TextColors) -> String {
-    let info_lines: Vec<&str> = info.lines().collect();
-    let info_style = get_style(false, text_colors.info);
-
-    let styled_lines: Vec<String> = info_lines
-        .iter()
-        .map(|line| format!("{}", line.style(info_style)))
-        .collect();
-
-    styled_lines.join("\n")
-}
-
-fn style_subtitle(subtitle: &str, text_colors: &TextColors, no_bold: bool) -> String {
-    let subtitle_style = get_style(!no_bold, text_colors.subtitle);
-    let colon_style = get_style(!no_bold, text_colors.colon);
-    format!(
-        "{}{}",
-        subtitle.style(subtitle_style),
-        ":".style(colon_style)
-    )
-}
-
 fn get_style(is_bold: bool, color: DynColors) -> Style {
     let mut style = Style::new().color(color);
     if is_bold {
@@ -524,27 +478,6 @@ mod tests {
         assert_eq!(
             &format_number(&1_000_000, NumberSeparator::Plain),
             "1000000"
-        );
-    }
-
-    #[test]
-    fn test_info_style_info() {
-        let text_colors = TextColors::new(&[0, 0, 0, 0, 0, 0], DynColors::Ansi(AnsiColors::Blue));
-
-        let info_text = style_info("foo", &text_colors);
-        // Rendered text: black `foo`
-        assert_eq!(info_text, "\u{1b}[30mfoo\u{1b}[0m");
-    }
-
-    #[test]
-    fn test_info_style_subtitle() {
-        let text_colors = TextColors::new(&[0, 0, 0, 0, 15, 0], DynColors::Ansi(AnsiColors::Blue));
-
-        let subtitle_text = style_subtitle("foo", &text_colors, false);
-        assert_eq!(
-            subtitle_text,
-            // Rendered text: black `foo` and bright white colon
-            "\u{1b}[30;1mfoo\u{1b}[0m\u{1b}[97;1m:\u{1b}[0m"
         );
     }
 }
