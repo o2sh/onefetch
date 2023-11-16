@@ -1,0 +1,6 @@
+---
+source: src/info/utils/info_field.rs
+expression: buffer
+---
+[38;2;255;255;255;1mtitle[0m[39;1m:[0m [39mtest[0m
+

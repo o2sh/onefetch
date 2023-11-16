@@ -126,6 +126,9 @@ impl InfoField for AuthorsInfo {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::ui::text_colors::TextColors;
+    use insta::assert_snapshot;
+    use owo_colors::DynColors;
 
     #[test]
     fn test_display_author() {
@@ -190,7 +193,7 @@ mod test {
     }
 
     #[test]
-    fn test_author_info_value_with_one_author() {
+    fn test_author_info_with_one_author() {
         let author = Author::new(
             "John Doe".into(),
             Some("john.doe@email.com".into()),
@@ -202,15 +205,17 @@ mod test {
         let authors_info = AuthorsInfo {
             authors: vec![author],
         };
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let mut buffer = String::new();
+        authors_info
+            .write_styled(&mut buffer, false, &colors)
+            .unwrap();
 
-        assert_eq!(
-            authors_info.value(),
-            "75% John Doe <john.doe@email.com> 1500".to_string()
-        );
+        assert_snapshot!(buffer);
     }
 
     #[test]
-    fn test_author_info_value_with_two_authors() {
+    fn test_author_info_with_two_authors() {
         let author = Author::new(
             "John Doe".into(),
             Some("john.doe@email.com".into()),
@@ -231,16 +236,16 @@ mod test {
             authors: vec![author, author_2],
         };
 
-        assert!(authors_info
-            .value()
-            .contains(&"75% John Doe <john.doe@email.com> 1500".to_string()));
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let mut buffer = String::new();
+        authors_info
+            .write_styled(&mut buffer, false, &colors)
+            .unwrap();
 
-        assert!(authors_info
-            .value()
-            .contains(&"80% Roberto Berto 240".to_string()));
+        assert_snapshot!(buffer);
     }
     #[test]
-    fn test_author_info_value_alignment_with_three_authors() {
+    fn test_author_info_alignment_with_three_authors() {
         let author = Author::new(
             "John Doe".into(),
             Some("john.doe@email.com".into()),
@@ -263,15 +268,12 @@ mod test {
             authors: vec![author, author_2, author_3],
         };
 
-        assert!(authors_info
-            .value()
-            .contains(&"75% John Doe <john.doe@email.com> 1500".to_string()));
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let mut buffer = String::new();
+        authors_info
+            .write_styled(&mut buffer, false, &colors)
+            .unwrap();
 
-        assert!(authors_info
-            .value()
-            .contains(&"80% Roberto Berto 240".to_string()));
-
-        // Note the extra leading space to right-align the percentages
-        assert!(authors_info.value().contains(&" 1% Jane Doe 1".to_string()));
+        assert_snapshot!(buffer);
     }
 }
