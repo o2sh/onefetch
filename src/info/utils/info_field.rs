@@ -1,5 +1,4 @@
-use super::super::get_style;
-use crate::ui::text_colors::TextColors;
+use crate::{info::utils::get_style, ui::text_colors::TextColors};
 use owo_colors::OwoColorize;
 use std::fmt;
 

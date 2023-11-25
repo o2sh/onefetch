@@ -1,8 +1,5 @@
-use super::git::metrics::GitMetrics;
-use crate::{
-    cli::NumberSeparator,
-    info::{format_number, utils::info_field::InfoField},
-};
+use super::{git::metrics::GitMetrics, utils::format_number};
+use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
 use serde::Serialize;
 
 #[derive(Serialize)]

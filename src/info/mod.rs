@@ -27,9 +27,8 @@ use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
 use gix::sec::trust::Mapping;
 use gix::Repository;
-use num_format::ToFormattedString;
 use onefetch_manifest::Manifest;
-use owo_colors::{DynColors, OwoColorize, Style};
+use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 use std::path::Path;
 
@@ -409,14 +408,6 @@ impl InfoBuilder {
     }
 }
 
-fn get_style(is_bold: bool, color: DynColors) -> Style {
-    let mut style = Style::new().color(color);
-    if is_bold {
-        style = style.bold();
-    }
-    style
-}
-
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
     let manifests = onefetch_manifest::get_manifests(repo_path)?;
 
@@ -432,52 +423,4 @@ pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
         .work_dir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
-}
-
-fn format_number<T: ToFormattedString + std::fmt::Display>(
-    number: &T,
-    number_separator: NumberSeparator,
-) -> String {
-    number.to_formatted_string(&number_separator.get_format())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use owo_colors::AnsiColors;
-
-    #[test]
-    fn test_get_style() {
-        let style = get_style(true, DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(
-            style,
-            Style::new().color(DynColors::Ansi(AnsiColors::Cyan)).bold()
-        );
-    }
-
-    #[test]
-    fn test_get_style_no_bold() {
-        let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(style, Style::new().color(DynColors::Ansi(AnsiColors::Cyan)));
-    }
-
-    #[test]
-    fn test_format_number() {
-        assert_eq!(
-            &format_number(&1_000_000, NumberSeparator::Comma),
-            "1,000,000"
-        );
-        assert_eq!(
-            &format_number(&1_000_000, NumberSeparator::Space),
-            "1\u{202f}000\u{202f}000"
-        );
-        assert_eq!(
-            &format_number(&1_000_000, NumberSeparator::Underscore),
-            "1_000_000"
-        );
-        assert_eq!(
-            &format_number(&1_000_000, NumberSeparator::Plain),
-            "1000000"
-        );
-    }
 }

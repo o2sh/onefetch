@@ -1,5 +1,5 @@
 use super::{git::metrics::GitMetrics, utils::info_field::InfoField};
-use crate::{cli::NumberSeparator, info::format_number};
+use crate::{cli::NumberSeparator, info::utils::format_number};
 use serde::Serialize;
 use std::fmt::Write;
 

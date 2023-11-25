@@ -1,5 +1,4 @@
-use super::get_style;
-use crate::cli;
+use crate::{cli, info::utils::get_style};
 use gix::Repository;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;

@@ -2,10 +2,9 @@ use crate::info::langs::get_total_loc;
 use crate::info::langs::language::Language;
 use serde::Serialize;
 
-use crate::{
-    cli::NumberSeparator,
-    info::{format_number, utils::info_field::InfoField},
-};
+use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+
+use super::utils::format_number;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

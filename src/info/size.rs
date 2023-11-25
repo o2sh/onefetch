@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::{format_number, utils::info_field::InfoField},
+    info::utils::{format_number, info_field::InfoField},
 };
 use byte_unit::Byte;
 use gix::Repository;
