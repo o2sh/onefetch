@@ -81,8 +81,7 @@ impl AuthorsInfo {
 
 fn digit_difference(num1: usize, num2: usize) -> usize {
     let count_digits = |num: usize| (num.checked_ilog10().unwrap_or(0) + 1) as usize;
-
-    count_digits(num1) - count_digits(num2)
+    count_digits(num1).abs_diff(count_digits(num2))
 }
 
 impl std::fmt::Display for AuthorsInfo {
@@ -129,6 +128,7 @@ mod test {
     use crate::ui::text_colors::TextColors;
     use insta::assert_snapshot;
     use owo_colors::DynColors;
+    use rstest::rstest;
 
     #[test]
     fn test_display_author() {
@@ -275,5 +275,14 @@ mod test {
             .unwrap();
 
         assert_snapshot!(buffer);
+    }
+
+    #[rstest]
+    #[case(456, 123, 0)]
+    #[case(456789, 123, 3)]
+    #[case(1, 12, 1)]
+    fn test_digit_difference(#[case] num1: usize, #[case] num2: usize, #[case] expected: usize) {
+        let result = digit_difference(num1, num2);
+        assert_eq!(result, expected);
     }
 }
