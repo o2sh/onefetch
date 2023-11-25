@@ -1,6 +1,6 @@
 use super::sig::Sig;
 use crate::cli::{CliOptions, NumberSeparator};
-use crate::info::author::Author;
+use crate::info::authors::Author;
 use crate::info::churn::FileChurn;
 use anyhow::Result;
 use gix::bstr::BString;

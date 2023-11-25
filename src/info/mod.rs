@@ -1,4 +1,4 @@
-use self::author::AuthorsInfo;
+use self::authors::AuthorsInfo;
 use self::churn::ChurnInfo;
 use self::commits::CommitsInfo;
 use self::contributors::ContributorsInfo;
@@ -32,7 +32,7 @@ use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
 use std::path::Path;
 
-mod author;
+mod authors;
 mod churn;
 mod commits;
 mod contributors;
