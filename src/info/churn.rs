@@ -1,7 +1,10 @@
-use super::{git::metrics::GitMetrics, utils::info_field::InfoField};
+use super::utils::info_field::InfoField;
 use crate::{cli::NumberSeparator, info::utils::format_number};
+use anyhow::Result;
+use gix::bstr::BString;
+use globset::{Glob, GlobSetBuilder};
 use serde::Serialize;
-use std::fmt::Write;
+use std::{collections::HashMap, fmt::Write};
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -43,14 +46,60 @@ pub struct ChurnInfo {
     pub churn_pool_size: usize,
 }
 impl ChurnInfo {
-    pub fn new(git_metrics: &GitMetrics) -> Self {
-        let file_churns = git_metrics.file_churns_to_display.clone();
-        Self {
+    pub fn new(
+        number_of_commits_by_file_path: &HashMap<BString, usize>,
+        churn_pool_size: usize,
+        number_of_file_churns_to_display: usize,
+        globs_to_exclude: &[String],
+        number_separator: NumberSeparator,
+    ) -> Result<Self> {
+        let file_churns = compute_file_churns(
+            number_of_commits_by_file_path,
+            number_of_file_churns_to_display,
+            globs_to_exclude,
+            number_separator,
+        )?;
+
+        Ok(Self {
             file_churns,
-            churn_pool_size: git_metrics.churn_pool_size,
-        }
+            churn_pool_size,
+        })
     }
 }
+
+fn compute_file_churns(
+    number_of_commits_by_file_path: &HashMap<BString, usize>,
+    number_of_file_churns_to_display: usize,
+    globs_to_exclude: &[String],
+    number_separator: NumberSeparator,
+) -> Result<Vec<FileChurn>> {
+    let mut builder = GlobSetBuilder::new();
+    for glob in globs_to_exclude {
+        builder.add(Glob::new(glob)?);
+    }
+    let glob_set = builder.build()?;
+    let mut number_of_commits_by_file_path_sorted = Vec::from_iter(number_of_commits_by_file_path);
+
+    number_of_commits_by_file_path_sorted
+        .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+
+    Ok(number_of_commits_by_file_path_sorted
+        .into_iter()
+        .filter_map(|(file_path, nbr_of_commits)| {
+            if !glob_set.is_match(file_path.to_string()) {
+                Some(FileChurn::new(
+                    file_path.to_string(),
+                    *nbr_of_commits,
+                    number_separator,
+                ))
+            } else {
+                None
+            }
+        })
+        .take(number_of_file_churns_to_display)
+        .collect())
+}
+
 impl std::fmt::Display for ChurnInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut churn_info = String::new();
@@ -138,5 +187,36 @@ mod tests {
             "\u{2026}/file.txt"
         );
         assert_eq!(shorten_file_path("file.txt", 0), "file.txt");
+    }
+
+    #[test]
+    fn test_compute_file_churns() -> Result<()> {
+        let mut number_of_commits_by_file_path = HashMap::new();
+        number_of_commits_by_file_path.insert("path/to/file1.txt".into(), 2);
+        number_of_commits_by_file_path.insert("path/to/file2.txt".into(), 5);
+        number_of_commits_by_file_path.insert("path/to/file3.txt".into(), 3);
+        number_of_commits_by_file_path.insert("path/to/file4.txt".into(), 7);
+        number_of_commits_by_file_path.insert("foo/x/y/file.txt".into(), 70);
+        number_of_commits_by_file_path.insert("foo/x/file.txt".into(), 10);
+
+        let number_of_file_churns_to_display = 3;
+        let number_separator = NumberSeparator::Comma;
+        let globs_to_exclude = vec![
+            "foo/**/file.txt".to_string(),
+            "path/to/file2.txt".to_string(),
+        ];
+        let actual = compute_file_churns(
+            &number_of_commits_by_file_path,
+            number_of_file_churns_to_display,
+            &globs_to_exclude,
+            number_separator,
+        )?;
+        let expected = vec![
+            FileChurn::new(String::from("path/to/file4.txt"), 7, number_separator),
+            FileChurn::new(String::from("path/to/file3.txt"), 3, number_separator),
+            FileChurn::new(String::from("path/to/file1.txt"), 2, number_separator),
+        ];
+        assert_eq!(actual, expected);
+        Ok(())
     }
 }

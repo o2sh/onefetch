@@ -99,9 +99,8 @@ impl InfoField for LicenseInfo {
 
 #[cfg(test)]
 mod test {
-    use onefetch_manifest::ManifestType;
-
     use super::*;
+    use onefetch_manifest::ManifestType;
 
     #[test]
     fn test_get_license() -> Result<()> {

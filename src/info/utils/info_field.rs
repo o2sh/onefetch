@@ -78,10 +78,9 @@ pub enum InfoType {
 
 #[cfg(test)]
 mod test {
+    use super::*;
     use owo_colors::DynColors;
     use serde::Serialize;
-
-    use super::*;
 
     #[derive(Serialize)]
     struct InfoFieldImpl(&'static str);

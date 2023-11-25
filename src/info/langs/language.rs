@@ -20,7 +20,7 @@ pub struct LanguagesInfo {
     #[serde(skip_serializing)]
     true_color: bool,
     #[serde(skip_serializing)]
-    number_of_languages: usize,
+    number_of_languages_to_display: usize,
     #[serde(skip_serializing)]
     info_color: DynColors,
 }
@@ -29,7 +29,7 @@ impl LanguagesInfo {
     pub fn new(
         loc_by_language: &[(Language, usize)],
         true_color: bool,
-        number_of_languages: usize,
+        number_of_languages_to_display: usize,
         info_color: DynColors,
     ) -> Self {
         let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
@@ -54,7 +54,7 @@ impl LanguagesInfo {
         Self {
             languages_with_percentage,
             true_color,
-            number_of_languages,
+            number_of_languages_to_display,
             info_color,
         }
     }
@@ -125,10 +125,12 @@ fn prepare_languages(
                 (language.to_string(), percentage, circle_color)
             },
         );
-    if languages_info.languages_with_percentage.len() > languages_info.number_of_languages {
+    if languages_info.languages_with_percentage.len()
+        > languages_info.number_of_languages_to_display
+    {
         let mut languages = iter
             .by_ref()
-            .take(languages_info.number_of_languages)
+            .take(languages_info.number_of_languages_to_display)
             .collect::<Vec<_>>();
         let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
         languages.push((
@@ -208,7 +210,7 @@ mod test {
                 percentage: 100_f64,
             }],
             true_color: false,
-            number_of_languages: 6,
+            number_of_languages_to_display: 6,
             info_color: DynColors::Ansi(AnsiColors::White),
         };
         let expected_languages_info = format!(
@@ -246,7 +248,7 @@ mod test {
                 },
             ],
             true_color: false,
-            number_of_languages: 2,
+            number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
         };
 
@@ -316,7 +318,7 @@ mod test {
                 },
             ],
             true_color: false,
-            number_of_languages: 2,
+            number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
         };
 

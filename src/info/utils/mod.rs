@@ -1,12 +1,10 @@
-use std::time::{Duration, SystemTime};
-
+use crate::cli::NumberSeparator;
 use gix::date::Time;
 use num_format::ToFormattedString;
 use owo_colors::{DynColors, Style};
+use std::time::{Duration, SystemTime};
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use time_humanize::HumanTime;
-
-use crate::cli::NumberSeparator;
 
 pub mod info_field;
 
@@ -59,10 +57,9 @@ pub fn get_style(is_bold: bool, color: DynColors) -> Style {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use owo_colors::AnsiColors;
     use rstest::rstest;
-
-    use super::*;
     use std::time::{Duration, SystemTime};
 
     #[test]

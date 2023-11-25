@@ -145,7 +145,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(&repo);
 
-    let git_metrics = traverse_commit_graph(&repo, cli_options)?;
+    let git_metrics = traverse_commit_graph(
+        &repo,
+        &cli_options.info.no_bots,
+        cli_options.info.churn_pool_size,
+        cli_options.info.no_merges,
+    )?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
@@ -163,8 +168,11 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let no_bold = cli_options.text_formatting.no_bold;
     let number_separator = cli_options.text_formatting.number_separator;
     let iso_time = cli_options.text_formatting.iso_time;
-    let number_of_languages = cli_options.info.number_of_languages;
-    let number_of_authors = cli_options.info.number_of_authors;
+    let number_of_languages_to_display = cli_options.info.number_of_languages;
+    let number_of_authors_to_display = cli_options.info.number_of_authors;
+    let number_of_file_churns_to_display = cli_options.info.number_of_file_churns;
+    let globs_to_exclude = &cli_options.info.exclude;
+    let show_email = cli_options.info.email;
 
     Ok(InfoBuilder::new(cli_options)
         .title(&repo, no_bold, &text_colors)
@@ -177,16 +185,26 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .languages(
             &loc_by_language,
             true_color,
-            number_of_languages,
+            number_of_languages_to_display,
             &text_colors,
         )
         .dependencies(&manifest, number_separator)
-        .authors(&git_metrics)
+        .authors(
+            &git_metrics,
+            number_of_authors_to_display,
+            show_email,
+            number_separator,
+        )
         .last_change(&git_metrics, iso_time)
-        .contributors(&git_metrics, number_of_authors, number_separator)
+        .contributors(&git_metrics, number_of_authors_to_display, number_separator)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow(), number_separator)
-        .churn(&git_metrics)
+        .churn(
+            &git_metrics,
+            number_of_file_churns_to_display,
+            globs_to_exclude,
+            number_separator,
+        )?
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, &manifest)?
@@ -326,9 +344,21 @@ impl InfoBuilder {
         self
     }
 
-    fn authors(mut self, git_metrics: &GitMetrics) -> Self {
+    fn authors(
+        mut self,
+        git_metrics: &GitMetrics,
+        number_of_authors_to_display: usize,
+        show_email: bool,
+        number_separator: NumberSeparator,
+    ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Authors) {
-            let authors = AuthorsInfo::new(git_metrics);
+            let authors = AuthorsInfo::new(
+                &git_metrics.number_of_commits_by_signature,
+                git_metrics.total_number_of_commits,
+                number_of_authors_to_display,
+                show_email,
+                number_separator,
+            );
             self.info_fields.push(Box::new(authors));
         }
         self
@@ -345,12 +375,15 @@ impl InfoBuilder {
     fn contributors(
         mut self,
         git_metrics: &GitMetrics,
-        number_of_authors: usize,
+        number_of_authors_to_display: usize,
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Contributors) {
-            let contributors =
-                ContributorsInfo::new(git_metrics, number_of_authors, number_separator);
+            let contributors = ContributorsInfo::new(
+                git_metrics.total_number_of_authors,
+                number_of_authors_to_display,
+                number_separator,
+            );
             self.info_fields.push(Box::new(contributors));
         }
         self
@@ -369,12 +402,24 @@ impl InfoBuilder {
         self
     }
 
-    fn churn(mut self, git_metrics: &GitMetrics) -> Self {
+    fn churn(
+        mut self,
+        git_metrics: &GitMetrics,
+        number_of_file_churns_to_display: usize,
+        globs_to_exclude: &[String],
+        number_separator: NumberSeparator,
+    ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Churn) {
-            let churn = ChurnInfo::new(git_metrics);
+            let churn = ChurnInfo::new(
+                &git_metrics.number_of_commits_by_file_path,
+                git_metrics.churn_pool_size,
+                number_of_file_churns_to_display,
+                globs_to_exclude,
+                number_separator,
+            )?;
             self.info_fields.push(Box::new(churn));
         }
-        self
+        Ok(self)
     }
 
     fn loc(
