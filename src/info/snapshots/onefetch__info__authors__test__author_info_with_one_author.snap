@@ -1,5 +1,5 @@
 ---
-source: src/info/author.rs
+source: src/info/authors.rs
 expression: buffer
 ---
 [38;2;255;255;255;1mAuthor[0m[39;1m:[0m [39m75% John Doe <john.doe@email.com> 1500[0m
