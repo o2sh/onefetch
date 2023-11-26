@@ -45,6 +45,7 @@ pub struct ChurnInfo {
     pub file_churns: Vec<FileChurn>,
     pub churn_pool_size: usize,
 }
+
 impl ChurnInfo {
     pub fn new(
         number_of_commits_by_file_path: &HashMap<BString, usize>,
