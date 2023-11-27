@@ -79,6 +79,23 @@ Ada:
       - "#0018C9"
       - "#0C0A7C"
     chip: "#02F88C"
+Agda:
+  type: programming
+  ascii: |
+    {0}   / / /           /  /
+    {0}  / / /           /  / /
+    {0} / o o           /    / /
+    {0}/____           /      /
+    {0}     |                 |
+    {0}     |                 |
+    {0}     ;                 ;
+    {0}      \               /
+    {0}       '.           .'
+    {0}         '-._____.-'
+  colors:
+    ansi:
+      - white
+    chip: "#315665"
 Arduino:
   type: programming
   ascii: |

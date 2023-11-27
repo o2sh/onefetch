@@ -25,7 +25,7 @@ repository = "https://github.com/o2sh/onefetch"
 [workspace.dependencies]
 owo-colors = "3.5.0"
 anyhow = "1.0"
-clap = { version = "4.4.7", features = ["derive"] }
+clap = { version = "4.4.8", features = ["derive"] }
 image = "0.24.7"
 strum = { version = "0.25.0", features = ["derive"] }
 
@@ -59,7 +59,7 @@ serde_yaml = "0.9.27"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum.workspace = true
-time = { version = "0.3.28", features = ["formatting"] }
+time = { version = "0.3.30", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "12.1.2"
 typetag = "0.2"
@@ -69,7 +69,7 @@ parking_lot = "0.12"
 [dev-dependencies]
 criterion = "0.5.1"
 gix-testtools = "0.12.0"
-insta = { version = "1.31.0", features = ["json", "redactions"] }
+insta = { version = "1.34.0", features = ["json", "redactions"] }
 pretty_assertions = "1.4.0"
 rstest = "0.18.2"
 
