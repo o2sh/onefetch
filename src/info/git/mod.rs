@@ -1,6 +1,6 @@
 use self::metrics::GitMetrics;
 use self::sig::Sig;
-use crate::cli::{CliOptions, MyRegex};
+use crate::cli::MyRegex;
 use anyhow::Result;
 use gix::bstr::ByteSlice;
 use gix::bstr::{BString, Utf8Error};
@@ -19,14 +19,19 @@ use std::sync::Arc;
 use std::thread::JoinHandle;
 
 pub mod metrics;
-mod sig;
+pub mod sig;
 
-pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Result<GitMetrics> {
+pub fn traverse_commit_graph(
+    repo: &gix::Repository,
+    no_bots: &Option<Option<MyRegex>>,
+    max_churn_pool_size: Option<usize>,
+    no_merges: bool,
+) -> Result<GitMetrics> {
     let mut time_of_most_recent_commit = None;
     let mut time_of_first_commit = None;
     let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
     let mailmap = repo.open_mailmap();
-    let bot_regex_pattern = get_no_bots_regex(&options.info.no_bots)?;
+    let bot_regex_pattern = get_no_bots_regex(no_bots)?;
     let has_commit_graph_traversal_ended = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
@@ -49,7 +54,7 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         repo,
         &has_commit_graph_traversal_ended,
         &total_number_of_commits,
-        options.info.churn_pool_size,
+        max_churn_pool_size,
     )?;
 
     let author_threads = can_use_author_threads
@@ -59,7 +64,7 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
     for commit in commit_iter {
         let commit = commit?;
         {
-            if options.info.no_merges && commit.parent_ids.len() > 1 {
+            if no_merges && commit.parent_ids.len() > 1 {
                 continue;
             }
 
@@ -111,7 +116,6 @@ pub fn traverse_commit_graph(repo: &gix::Repository, options: &CliOptions) -> Re
         churn_pool_size,
         time_of_first_commit,
         time_of_most_recent_commit,
-        options,
     )?;
 
     Ok(git_metrics)
@@ -169,7 +173,7 @@ fn get_churn_channel(
     repo: &gix::Repository,
     has_commit_graph_traversal_ended: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
-    churn_pool_size_opt: Option<usize>,
+    max_churn_pool_size: Option<usize>,
 ) -> Result<(JoinHandle<Result<ChurnPair>>, Sender<ObjectId>)> {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
@@ -186,7 +190,7 @@ fn get_churn_channel(
                 if should_break(
                     has_commit_graph_traversal_ended.load(Ordering::Relaxed),
                     total_number_of_commits.load(Ordering::Relaxed),
-                    churn_pool_size_opt,
+                    max_churn_pool_size,
                     number_of_diffs_computed,
                 ) {
                     break;
@@ -203,15 +207,15 @@ fn get_churn_channel(
 fn should_break(
     has_commit_graph_traversal_ended: bool,
     total_number_of_commits: usize,
-    churn_pool_size_opt: Option<usize>,
+    max_churn_pool_size_opt: Option<usize>,
     number_of_diffs_computed: usize,
 ) -> bool {
     if !has_commit_graph_traversal_ended {
         return false;
     }
 
-    churn_pool_size_opt.map_or(true, |churn_pool_size| {
-        number_of_diffs_computed >= churn_pool_size.min(total_number_of_commits)
+    max_churn_pool_size_opt.map_or(true, |max_churn_pool_size| {
+        number_of_diffs_computed >= max_churn_pool_size.min(total_number_of_commits)
     })
 }
 

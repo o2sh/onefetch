@@ -1,4 +1,4 @@
-use super::{git::metrics::GitMetrics, utils::format_number};
+use super::utils::format_number;
 use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
 use serde::Serialize;
 
@@ -14,12 +14,12 @@ pub struct ContributorsInfo {
 
 impl ContributorsInfo {
     pub fn new(
-        git_metrics: &GitMetrics,
+        total_number_of_authors: usize,
         number_of_authors_to_display: usize,
         number_separator: NumberSeparator,
     ) -> Self {
         Self {
-            total_number_of_authors: git_metrics.total_number_of_authors,
+            total_number_of_authors,
             number_of_authors_to_display,
             number_separator,
         }
@@ -44,22 +44,10 @@ impl InfoField for ContributorsInfo {
 #[cfg(test)]
 mod test {
     use super::*;
-    use gix::date::Time;
 
     #[test]
     fn test_display_contributors_info() {
-        let timestamp = Time::now_utc();
-        let git_metrics = GitMetrics {
-            authors_to_display: vec![],
-            file_churns_to_display: vec![],
-            total_number_of_authors: 12,
-            total_number_of_commits: 2,
-            churn_pool_size: 0,
-            time_of_most_recent_commit: timestamp,
-            time_of_first_commit: timestamp,
-        };
-
-        let contributors_info = ContributorsInfo::new(&git_metrics, 2, NumberSeparator::Plain);
+        let contributors_info = ContributorsInfo::new(12, 2, NumberSeparator::Plain);
         assert_eq!(contributors_info.value(), "12".to_string());
         assert_eq!(contributors_info.title(), "Contributors".to_string());
     }
