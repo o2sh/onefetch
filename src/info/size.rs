@@ -109,7 +109,7 @@ mod test {
         assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());
     }
 
-    #[rstest(input, expected,
+    #[rstest(
         case(0, "0 B"),
         case(1023, "1023 B"),
         case(1024, "1 KiB"),
@@ -118,7 +118,7 @@ mod test {
         case(1099511627776, "1 TiB"),
         // Add more test cases as needed
     )]
-    fn test_bytes_to_human_readable(input: u64, expected: &str) {
+    fn test_bytes_to_human_readable(#[case] input: u64, #[case] expected: &str) {
         assert_eq!(bytes_to_human_readable(input), expected);
     }
 }
