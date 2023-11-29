@@ -115,8 +115,7 @@ mod test {
         case(1024, "1 KiB"),
         case(2048, "2 KiB"),
         case(1048576, "1 MiB"),
-        case(1099511627776, "1 TiB"),
-        // Add more test cases as needed
+        case(1099511627776, "1 TiB")
     )]
     fn test_bytes_to_human_readable(#[case] input: u64, #[case] expected: &str) {
         assert_eq!(bytes_to_human_readable(input), expected);
