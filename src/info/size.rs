@@ -2,7 +2,7 @@ use crate::{
     cli::NumberSeparator,
     info::utils::{format_number, info_field::InfoField},
 };
-use byte_unit::Byte;
+use byte_unit::{Byte, UnitType};
 use gix::Repository;
 use serde::Serialize;
 
@@ -29,7 +29,7 @@ impl SizeInfo {
 fn get_repo_size(repo: &Repository) -> (String, u64) {
     let (repo_size, file_count) = match repo.index() {
         Ok(index) => {
-            let repo_size = index.entries().iter().map(|e| e.stat.size as u128).sum();
+            let repo_size = index.entries().iter().map(|e| e.stat.size as u64).sum();
             (repo_size, index.entries().len() as u64)
         }
         _ => (0, 0),
@@ -38,9 +38,9 @@ fn get_repo_size(repo: &Repository) -> (String, u64) {
     (bytes_to_human_readable(repo_size), file_count)
 }
 
-fn bytes_to_human_readable(bytes: u128) -> String {
-    let byte = Byte::from_bytes(bytes);
-    byte.get_appropriate_unit(true).to_string()
+fn bytes_to_human_readable(bytes: u64) -> String {
+    let byte = Byte::from_u64(bytes);
+    byte.get_appropriate_unit(UnitType::Binary).to_string()
 }
 
 impl std::fmt::Display for SizeInfo {
@@ -72,6 +72,8 @@ impl InfoField for SizeInfo {
 
 #[cfg(test)]
 mod test {
+    use rstest::rstest;
+
     use super::*;
 
     #[test]
@@ -105,5 +107,18 @@ mod test {
         };
 
         assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());
+    }
+
+    #[rstest(
+        case(0, "0 B"),
+        case(1023, "1023 B"),
+        case(1024, "1 KiB"),
+        case(2048, "2 KiB"),
+        case(1048576, "1 MiB"),
+        case(1099511627776, "1 TiB"),
+        // Add more test cases as needed
+    )]
+    fn test_bytes_to_human_readable(#[case] input: u64, #[case] expected: &str) {
+        assert_eq!(bytes_to_human_readable(input), expected);
     }
 }
