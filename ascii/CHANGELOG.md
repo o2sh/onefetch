@@ -21,9 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 17 commits contributed to the release over the course of 180 calendar days.
+ - 19 commits contributed to the release over the course of 314 calendar days.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
- - 3 unique issues were worked on: [#934](https://github.com/o2sh/onefetch/issues/934), [#936](https://github.com/o2sh/onefetch/issues/936), [#992](https://github.com/o2sh/onefetch/issues/992)
+ - 4 unique issues were worked on: [#1142](https://github.com/o2sh/onefetch/issues/1142), [#934](https://github.com/o2sh/onefetch/issues/934), [#936](https://github.com/o2sh/onefetch/issues/936), [#992](https://github.com/o2sh/onefetch/issues/992)
 
 ### Commit Details
 
@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <details><summary>view details</summary>
 
+ * **[#1142](https://github.com/o2sh/onefetch/issues/1142)**
+    - Use workspace inheritance ([`83462df`](https://github.com/o2sh/onefetch/commit/83462df56b32082caf5718cd1665346765c6ee32))
  * **[#934](https://github.com/o2sh/onefetch/issues/934)**
     - Turn `AsciiArt.rs` into its own crate ([`1716519`](https://github.com/o2sh/onefetch/commit/17165192bf187fbd56298a53e34373d8329bfa3a))
  * **[#936](https://github.com/o2sh/onefetch/issues/936)**
@@ -38,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * **[#992](https://github.com/o2sh/onefetch/issues/992)**
     - Fix typo ([`fa80f33`](https://github.com/o2sh/onefetch/commit/fa80f3308ff6f19a3c62233ecbc9767ffa7b9ac9))
  * **Uncategorized**
+    - Cargo changelog --write ([`871f98a`](https://github.com/o2sh/onefetch/commit/871f98a6b99e8ac28445951c545c7c32ca722079))
     - Bump version ([`dccd5a8`](https://github.com/o2sh/onefetch/commit/dccd5a8ccf51f10fb6e38af6b16735b3cac5b315))
     - Cargo changelog --write ([`7eb48ae`](https://github.com/o2sh/onefetch/commit/7eb48ae5c1ef2727a2bb070556aca21506667629))
     - Bump version ([`9cc5e52`](https://github.com/o2sh/onefetch/commit/9cc5e5295bfd678ae157a3fbcd8019ae6f7759e0))
