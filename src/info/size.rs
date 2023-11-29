@@ -40,7 +40,8 @@ fn get_repo_size(repo: &Repository) -> (String, u64) {
 
 fn bytes_to_human_readable(bytes: u64) -> String {
     let byte = Byte::from_u64(bytes);
-    byte.get_appropriate_unit(UnitType::Binary).to_string()
+    let adjusted_byte_based = byte.get_appropriate_unit(UnitType::Binary);
+    format!("{adjusted_byte_based:#.2}")
 }
 
 impl std::fmt::Display for SizeInfo {
@@ -115,7 +116,8 @@ mod test {
         case(1024, "1 KiB"),
         case(2048, "2 KiB"),
         case(1048576, "1 MiB"),
-        case(1099511627776, "1 TiB")
+        case(1099511627776, "1 TiB"),
+        case(2577152, "2.46 MiB")
     )]
     fn test_bytes_to_human_readable(#[case] input: u64, #[case] expected: &str) {
         assert_eq!(bytes_to_human_readable(input), expected);
