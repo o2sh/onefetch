@@ -19,7 +19,7 @@ members = ["ascii", "image", "manifest"]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 edition = "2021"
 license = "MIT"
-version = "2.18.1"
+version = "2.19.0"
 repository = "https://github.com/o2sh/onefetch"
 
 [workspace.dependencies]
@@ -48,9 +48,9 @@ globset = "0.4.13"
 human-panic = "1.2.1"
 image.workspace = true
 num-format = "0.4.4"
-onefetch-ascii = { path = "ascii", version = "2.18.1" }
-onefetch-image = { path = "image", version = "2.18.1" }
-onefetch-manifest = { path = "manifest", version = "2.18.1" }
+onefetch-ascii = { path = "ascii", version = "2.19.0" }
+onefetch-image = { path = "image", version = "2.19.0" }
+onefetch-manifest = { path = "manifest", version = "2.19.0" }
 owo-colors.workspace = true
 regex = "1.10.2"
 serde = "1.0"
