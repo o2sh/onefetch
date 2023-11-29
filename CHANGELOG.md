@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.19.0 (2023-11-29)
+
+### New Features 🎉
+
+- exclude files from churn by @o2sh in https://github.com/o2sh/onefetch/pull/1120
+- add odin support by @spsandwichman in https://github.com/o2sh/onefetch/pull/1064
+- New language: Arduino by @Sh4rk-Byte in https://github.com/o2sh/onefetch/pull/1176
+- Right align authorship percentages by @lukehsiao in https://github.com/o2sh/onefetch/pull/1207
+- Add Agda to languages.yaml by @Zoltan-Balazs in https://github.com/o2sh/onefetch/pull/1216
+
+### Bug Fixes 🐛
+
+- add a test for negative dates and see how onefetch handles it by @Byron in https://github.com/o2sh/onefetch/pull/1100
+
+### Chores 🧹
+
+- Group clap dependency updates by @spenserblack in https://github.com/o2sh/onefetch/pull/1101
+- Group all NPM dependency updates by @spenserblack in https://github.com/o2sh/onefetch/pull/1110
+- Added Turkish Translations by @4Chaffenel in https://github.com/o2sh/onefetch/pull/1135
+- use workspace inheritance by @o2sh in https://github.com/o2sh/onefetch/pull/1142
+- docs(contributing): Add syntax highlighting to YAML block by @spenserblack in https://github.com/o2sh/onefetch/pull/1172
+- add release.yml file by @o2sh in https://github.com/o2sh/onefetch/pull/1177
+- replace action-rs by @o2sh in https://github.com/o2sh/onefetch/pull/1191
+- Resolve clippy warnings by @spenserblack in https://github.com/o2sh/onefetch/pull/1201
+- Refactor and test info field styling by @spenserblack in https://github.com/o2sh/onefetch/pull/1214
+- Refactoring git metrics module by @o2sh in https://github.com/o2sh/onefetch/pull/1217
+
+### Dependencies ⬆️⬇️
+
+- upgrade to `gix` 0.53.1 by @Byron in https://github.com/o2sh/onefetch/pull/1166
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 17 commits contributed to the release over the course of 154 calendar days.
+- 157 days passed between releases.
+- 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+- 8 unique issues were worked on: [#1098](https://github.com/o2sh/onefetch/issues/1098), [#1100](https://github.com/o2sh/onefetch/issues/1100), [#1120](https://github.com/o2sh/onefetch/issues/1120), [#1201](https://github.com/o2sh/onefetch/issues/1201), [#1207](https://github.com/o2sh/onefetch/issues/1207), [#1214](https://github.com/o2sh/onefetch/issues/1214), [#1217](https://github.com/o2sh/onefetch/issues/1217), [#1220](https://github.com/o2sh/onefetch/issues/1220)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1098](https://github.com/o2sh/onefetch/issues/1098)**
+  - Bump gix from 0.46.0 to 0.47.0 ([`7328a35`](https://github.com/o2sh/onefetch/commit/7328a35a99dbf2738b19f51ca567ea9dd9474b65))
+- **[#1100](https://github.com/o2sh/onefetch/issues/1100)**
+  - Add a test for negative dates and see how onefetch handles it ([`67cd11a`](https://github.com/o2sh/onefetch/commit/67cd11a3feb6f0198c8ffa36223491442285cee5))
+- **[#1120](https://github.com/o2sh/onefetch/issues/1120)**
+  - Exclude files from churn ([`9b8ef7f`](https://github.com/o2sh/onefetch/commit/9b8ef7fd6f59527d333ab7fa21bc7e58b1f16dbb))
+- **[#1201](https://github.com/o2sh/onefetch/issues/1201)**
+  - Resolve clippy warnings ([`d6bc16b`](https://github.com/o2sh/onefetch/commit/d6bc16be36a6bed1dbc7f473bdfbe42e48787b7a))
+- **[#1207](https://github.com/o2sh/onefetch/issues/1207)**
+  - Right align authorship percentages ([`b1cf029`](https://github.com/o2sh/onefetch/commit/b1cf0299c6356c3b2754c7fd9a7076fac7fd6d8b))
+- **[#1214](https://github.com/o2sh/onefetch/issues/1214)**
+  - Refactor and test info field styling ([`3186493`](https://github.com/o2sh/onefetch/commit/3186493e3923ede65857e6ba4d2f8390388f532b))
+- **[#1217](https://github.com/o2sh/onefetch/issues/1217)**
+  - Refactoring git metrics module ([`f1905dc`](https://github.com/o2sh/onefetch/commit/f1905dcaf4cba63c6becea0b93abec6c0d57384f))
+- **[#1220](https://github.com/o2sh/onefetch/issues/1220)**
+  - Bump byte-unit from 4.0.19 to 5.0.3 ([`4a5da46`](https://github.com/o2sh/onefetch/commit/4a5da46691bd4d8c2c0387ed018a5458b98f69ba))
+- **Uncategorized** - Limit fractional part in size ([`4174cc9`](https://github.com/o2sh/onefetch/commit/4174cc998c906b08b6dafbf9867713f98ab0d640)) - Remove comment ([`d928657`](https://github.com/o2sh/onefetch/commit/d928657c1167da6afcbf2e1813c64606a903f62c)) - Fix snapshot test ([`5a4b9b2`](https://github.com/o2sh/onefetch/commit/5a4b9b2254a86f2f0ef81653d838a54d22843199)) - Rename author module ([`bee580c`](https://github.com/o2sh/onefetch/commit/bee580c5ad90eb4dd1528bb6ed068535f4842b89)) - Move get_style and format_number in utils ([`7dd9711`](https://github.com/o2sh/onefetch/commit/7dd97115b699c45fb3dbef9cfa2e9c4225d3ef91)) - Add unit tests for digit_difference ([`ba08584`](https://github.com/o2sh/onefetch/commit/ba08584aa60b87fac34a5e95d6e52648e4e87b1b)) - Refacto languageInfo fmt method ([`9b54c9b`](https://github.com/o2sh/onefetch/commit/9b54c9b9b6ae60b4b1e6fe6f63c84e954d3c12ad)) - Remove empty line ([`6539e3b`](https://github.com/o2sh/onefetch/commit/6539e3ba0f70902bb2904ca4b01569d93f5fb2cb)) - Cargo clippy ([`0c060ed`](https://github.com/o2sh/onefetch/commit/0c060ede1fdd750bccee52ecf6b089b6b73802f9))
+</details>
+
 ## 2.18.1 (2023-06-24)
 
 ### Bug Fixes
