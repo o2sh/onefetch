@@ -1,8 +1,8 @@
-build:
-	cargo build --release --features=fail-on-deprecated
-
 install:
 	cargo install --path "." --features=fail-on-deprecated
+
+build:
+	cargo build --release --features=fail-on-deprecated
 
 uninstall:
 	cargo uninstall onefetch
