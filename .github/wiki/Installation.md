@@ -29,7 +29,7 @@ This wiki page will guide you through getting onefetch working on your system.
 
 # Universal Install
 
-If your architecture is supported by the pre-built binaries, you can download them from the [releases page](https://github.com/o2sh/onefetch/releases).
+If your architecture is supported by the pre-built binaries, you can download them from the [releases page](https://github.com/o2sh/onefetch/releases/latest).
 
 ## Cargo
 
