@@ -44,7 +44,7 @@ gix = { version = "0.55.2", default-features = false, features = [
     "max-performance-safe", "blob-diff", "mailmap", "index"
 ] }
 git2 = { version = "0.18.1", default-features = false }
-globset = "0.4.13"
+globset = "0.4.14"
 human-panic = "1.2.1"
 image.workspace = true
 num-format = "0.4.4"
