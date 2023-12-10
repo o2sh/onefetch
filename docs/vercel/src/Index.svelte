@@ -120,6 +120,10 @@
   }
 
   .checkbox-group label {
+    width: fit-content;
+  }
+
+  .checkbox-group label {
     text-transform: capitalize;
   }
 </style>
