@@ -100,8 +100,8 @@
       </label>
     {/each}
     <small
-      >N.B. By default, onefetch will only account for markup and programming
-      types, use
+      >Note: By default, onefetch will only recognize markup and programming
+      types. Use the
       <code>--type</code> flag to configure.</small>
   </div>
 
