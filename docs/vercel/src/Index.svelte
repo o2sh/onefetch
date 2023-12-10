@@ -1,18 +1,25 @@
 <script lang="ts">
   import AsciiPreview from './lib/AsciiPreview.svelte';
   import data from '../../../languages.yaml';
-  import type { Languages } from '../../../languages.yaml';
+  import type { Languages, Language } from '../../../languages.yaml';
   import { onMount } from 'svelte';
+  import { writable, derived } from 'svelte/store';
 
-  let tag_name: string;
-  let html_url: string;
+  let tagName: string;
+  let htmlUrl: string;
+  let menuOpen: boolean;
 
-  const languages = Object.entries(data as Languages).map(
-    ([name, { ascii, colors }]) => ({
+  const languages: Language[] = Object.entries(data as Languages).map(
+    ([name, { type, ascii, colors }]) => ({
       name,
+      type,
       ascii,
-      ...colors,
+      colors,
     })
+  );
+
+  const languageTypes = new Set<string>(
+    Object.values(data as Languages).map(({ type }) => type)
   );
 
   onMount(async () => {
@@ -22,20 +29,34 @@
       );
       const data = await response.json();
 
-      tag_name = data.tag_name;
-      html_url = data.html_url;
+      tagName = data.tag_name;
+      htmlUrl = data.html_url;
     } catch (error) {
       console.error('Error:', error);
     }
   });
+
+  const filter = writable({
+    checkboxes: [] as string[],
+  });
+
+  const filteredLanguages = derived(filter, ($filter) => {
+    let filtered: Language[] = languages;
+    if ($filter.checkboxes.length > 0) {
+      filtered = filtered.filter((d: Language) =>
+        $filter.checkboxes.includes(d.type)
+      );
+    }
+    return filtered;
+  });
 </script>
 
 <header>
-  {#if tag_name && html_url}
+  {#if tagName && htmlUrl}
     <div class="banner">
       <small
-        >Version {tag_name} is available 🎉 Check the
-        <a href={html_url}>release notes</a>!!</small>
+        >Version {tagName} is available 🎉 Check the
+        <a href={htmlUrl}>release notes</a>!!</small>
     </div>
   {/if}
   <h1>Onefetch</h1>
@@ -61,14 +82,30 @@
     Suggestions and PRs are welcome at <a
       href="https://github.com/o2sh/onefetch">github.com/o2sh/onefetch</a>
   </p>
-  <h3>Languages <small>({languages.length})</small></h3>
-  {#each languages as language}
+  <h3>Languages <small>({$filteredLanguages.length})</small></h3>
+
+  <button on:click={() => (menuOpen = !menuOpen)}>Filter by type</button>
+
+  <div class:show={!menuOpen} class="checkbox-group">
+    {#each languageTypes as type}
+      <label for={type}>
+        <input
+          id={type}
+          type="checkbox"
+          value={type}
+          bind:group={$filter.checkboxes} />
+        {type}
+      </label>
+    {/each}
+  </div>
+
+  {#each $filteredLanguages as language}
     <AsciiPreview
       name={language.name}
-      ansi={language.ansi}
-      hex={language.hex}
+      ansi={language.colors.ansi}
+      hex={language.colors.hex}
       ascii={language.ascii}
-      chip={language.chip} />
+      chip={language.colors.chip} />
   {/each}
 </main>
 
@@ -81,5 +118,17 @@
     width: 100%;
     text-align: center;
     padding: 0.5rem 0;
+  }
+
+  .checkbox-group {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    text-transform: capitalize;
+  }
+
+  .show {
+    display: none;
   }
 </style>
