@@ -82,9 +82,11 @@
     Suggestions and PRs are welcome at <a
       href="https://github.com/o2sh/onefetch">github.com/o2sh/onefetch</a>
   </p>
-  <h3>Languages <small>({$filteredLanguages.length})</small></h3>
-
-  <button on:click={() => (menuOpen = !menuOpen)}>Filter by type</button>
+  <div class="title">
+    <h3>Languages <small>({$filteredLanguages.length})</small></h3>
+    <button class="filter-button" on:click={() => (menuOpen = !menuOpen)}
+      >Filter by type</button>
+  </div>
 
   <div class:show={!menuOpen} class="checkbox-group">
     {#each languageTypes as type}
@@ -118,6 +120,19 @@
     width: 100%;
     text-align: center;
     padding: 0.5rem 0;
+  }
+
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .title h3 {
+    margin-bottom: 0;
+    margin-top: 0;
   }
 
   .checkbox-group {
