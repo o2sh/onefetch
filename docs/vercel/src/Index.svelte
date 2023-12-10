@@ -134,9 +134,6 @@
 
   .checkbox-group {
     margin-top: 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
   }
 
   .checkbox-group label {
