@@ -18,22 +18,16 @@
     })
   );
 
-  const languageTypes = new Set<string>(
-    Object.values(data as Languages).map(({ type }) => type)
+  const languageTypes: string[] = Array.from(
+    new Set<string>(Object.values(data as Languages).map(({ type }) => type))
   );
 
   const filter = writable({
-    checkboxes: [] as string[],
+    checkboxes: languageTypes,
   });
 
   const filteredLanguages = derived(filter, ($filter) => {
-    let filtered: Language[] = languages;
-    if ($filter.checkboxes.length > 0) {
-      filtered = filtered.filter((d: Language) =>
-        $filter.checkboxes.includes(d.type)
-      );
-    }
-    return filtered;
+    return languages.filter(({ type }) => $filter.checkboxes.includes(type));
   });
 
   onMount(async () => {
@@ -98,8 +92,9 @@
       {/each}
     </div>
     <small
-      >Note: By default, onefetch will only recognize markup and programming
-      types. Use the
+      >Note: By default, onefetch will only recognize <strong
+        >programming</strong>
+      and <strong>markup</strong> types. Use the
       <code>--type</code> flag to configure.</small>
   </div>
 
