@@ -37,17 +37,13 @@
   });
 
   onMount(async () => {
-    try {
-      const response = await fetch(
-        'https://api.github.com/repos/o2sh/onefetch/releases/latest'
-      );
-      const data = await response.json();
+    const response = await fetch(
+      'https://api.github.com/repos/o2sh/onefetch/releases/latest'
+    );
+    const data = await response.json();
 
-      tagName = data.tag_name;
-      htmlUrl = data.html_url;
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    tagName = data.tag_name;
+    htmlUrl = data.html_url;
   });
 </script>
 
@@ -88,17 +84,19 @@
       >Filter by type</button>
   </div>
 
-  <div class:show={!menuOpen} class="checkbox-group">
-    {#each languageTypes as type}
-      <label for={type}>
-        <input
-          id={type}
-          type="checkbox"
-          value={type}
-          bind:group={$filter.checkboxes} />
-        {type}
-      </label>
-    {/each}
+  <div class:hide={!menuOpen}>
+    <div class="checkbox-group">
+      {#each languageTypes as type}
+        <label for={type}>
+          <input
+            id={type}
+            type="checkbox"
+            value={type}
+            bind:group={$filter.checkboxes} />
+          {type}
+        </label>
+      {/each}
+    </div>
     <small
       >Note: By default, onefetch will only recognize markup and programming
       types. Use the
@@ -150,7 +148,7 @@
     text-transform: capitalize;
   }
 
-  .show {
+  .hide {
     display: none;
   }
 </style>
