@@ -99,6 +99,10 @@
         {type}
       </label>
     {/each}
+    <small
+      >N.B. By default, onefetch will only account for markup and programming
+      types, use
+      <code>--type</code> flag to configure.</small>
   </div>
 
   {#each $filteredLanguages as language}
@@ -140,6 +144,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+  }
+  .checkbox-group label {
     text-transform: capitalize;
   }
 
