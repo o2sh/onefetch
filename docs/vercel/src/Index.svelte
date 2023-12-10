@@ -7,7 +7,7 @@
 
   let tagName: string;
   let htmlUrl: string;
-  let menuOpen: boolean;
+  let showMenu: boolean;
 
   const languages: Language[] = Object.entries(data as Languages).map(
     ([name, { type, ascii, colors }]) => ({
@@ -80,11 +80,11 @@
   </p>
   <div class="title">
     <h3>Languages <small>({$filteredLanguages.length})</small></h3>
-    <button class="filter-button" on:click={() => (menuOpen = !menuOpen)}
+    <button class="filter-button" on:click={() => (showMenu = !showMenu)}
       >Filter by type</button>
   </div>
 
-  <div class:hide={!menuOpen}>
+  <div class:hide={!showMenu}>
     <div class="checkbox-group">
       {#each languageTypes as type}
         <label for={type}>
