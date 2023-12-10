@@ -22,20 +22,6 @@
     Object.values(data as Languages).map(({ type }) => type)
   );
 
-  onMount(async () => {
-    try {
-      const response = await fetch(
-        'https://api.github.com/repos/o2sh/onefetch/releases/latest'
-      );
-      const data = await response.json();
-
-      tagName = data.tag_name;
-      htmlUrl = data.html_url;
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  });
-
   const filter = writable({
     checkboxes: [] as string[],
   });
@@ -48,6 +34,20 @@
       );
     }
     return filtered;
+  });
+
+  onMount(async () => {
+    try {
+      const response = await fetch(
+        'https://api.github.com/repos/o2sh/onefetch/releases/latest'
+      );
+      const data = await response.json();
+
+      tagName = data.tag_name;
+      htmlUrl = data.html_url;
+    } catch (error) {
+      console.error('Error:', error);
+    }
   });
 </script>
 
