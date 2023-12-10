@@ -7,7 +7,6 @@
 
   let tagName: string;
   let htmlUrl: string;
-  let showMenu: boolean;
 
   const languages: Language[] = Object.entries(data as Languages).map(
     ([name, { type, ascii, colors }]) => ({
@@ -72,31 +71,28 @@
     Suggestions and PRs are welcome at <a
       href="https://github.com/o2sh/onefetch">github.com/o2sh/onefetch</a>
   </p>
-  <div class="title">
-    <h3>Languages <small>({$filteredLanguages.length})</small></h3>
-    <button class="filter-button" on:click={() => (showMenu = !showMenu)}
-      >Filter by type</button>
+
+  <h3>Languages <small>({$filteredLanguages.length})</small></h3>
+
+  <strong>Filter by type</strong>
+
+  <div class="checkbox-group">
+    {#each languageTypes as type}
+      <label for={type}>
+        <input
+          id={type}
+          type="checkbox"
+          value={type}
+          bind:group={$filter.checkboxes} />
+        {type}
+      </label>
+    {/each}
   </div>
 
-  <div class:hide={!showMenu}>
-    <div class="checkbox-group">
-      {#each languageTypes as type}
-        <label for={type}>
-          <input
-            id={type}
-            type="checkbox"
-            value={type}
-            bind:group={$filter.checkboxes} />
-          {type}
-        </label>
-      {/each}
-    </div>
-    <small
-      >Note: By default, onefetch will only recognize <strong
-        >programming</strong>
-      and <strong>markup</strong> types. Use the
-      <code>--type</code> flag to configure.</small>
-  </div>
+  <small
+    >Note: By default, onefetch will only recognize <strong>programming</strong>
+    and <strong>markup</strong> types. Use the
+    <code>--type</code> flag to configure.</small>
 
   {#each $filteredLanguages as language}
     <AsciiPreview
@@ -119,28 +115,11 @@
     padding: 0.5rem 0;
   }
 
-  .title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 3rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .title h3 {
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
   .checkbox-group {
     margin-top: 1.5rem;
   }
 
   .checkbox-group label {
     text-transform: capitalize;
-  }
-
-  .hide {
-    display: none;
   }
 </style>
