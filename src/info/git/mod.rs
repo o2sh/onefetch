@@ -256,7 +256,9 @@ fn compute_diff_with_parent(
             .track_rewrites(None)
             .for_each_to_obtain_tree(&commit.tree()?, |change| {
                 let is_file_change = match change.event {
-                    Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => entry_mode.is_blob(),
+                    Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
+                        entry_mode.is_blob()
+                    }
                     Event::Deletion { .. } | Event::Rewrite { .. } => false,
                 };
                 if is_file_change {
