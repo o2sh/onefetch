@@ -1328,19 +1328,6 @@ dependencies = [
 
 [[package]]
 name = "gix-features"
-version = "0.34.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f414c99e1a7abc69b21f3225a6539d203b0513f1d1d448607c4ea81cdcf9ee59"
-dependencies = [
- "flate2",
- "gix-hash 0.13.3",
- "gix-trace",
- "libc",
- "thiserror",
-]
-
-[[package]]
-name = "gix-features"
 version = "0.36.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d46a4a5c6bb5bebec9c0d18b65ada20e6517dbd7cf855b87dd4bbdce3a771b2"
@@ -2668,7 +2655,7 @@ dependencies = [
  "enable-ansi-support",
  "git2",
  "gix",
- "gix-features 0.34.0",
+ "gix-features 0.36.1",
  "gix-testtools",
  "globset",
  "human-panic",
