@@ -47,11 +47,12 @@ CSharp: # required, this will be the name of the enum variant for the language a
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
-_**NOTE**: An additional field, `line_types` can also be set on a language's attributes. It has been excluded because_
-_it is not necessary for the majority of languages. By default, only a language's lines of code are counted, but this_
-_field can be used to count other lines, too. For example, `line_types: [code, comments]`. This is useful in languages_
-_like Markdown, where the significant lines are mostly comments. A list of available fields to be used can be found in_
-_[tokei's documentation](https://docs.rs/tokei/latest/tokei/struct.Language.html#fields)._
+> [!NOTE]
+> An additional field, `line_types` can also be set on a language's attributes. It has been excluded because
+> it is not necessary for the majority of languages. By default, only a language's lines of code are counted, but this
+> field can be used to count other lines, too. For example, `line_types: [code, comments]`. This is useful in languages
+> like Markdown, where the significant lines are mostly comments. A list of available fields to be used can be found in
+> [tokei's documentation](https://docs.rs/tokei/latest/tokei/struct.Language.html#fields).
 
 - link 1: https://github.com/XAMPPRocky/tokei#supported-languages
 - link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
