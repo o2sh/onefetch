@@ -21,7 +21,7 @@ Es erkennt automatisch Open-Source-Lizenzen aus Texten und versorgt den Benutzer
 
 <img src="assets/screenshot-2.png" align="right" height="250px">
 
-Onefetch kann über Befehlszeilen-Flags so konfiguriert werden, dass es genau das anzeigt, was Sie wollen, und zwar so, wie Sie es wollen: Sie können die ASCII-/Text-Formatierung anpassen, Infozeilen deaktivieren, Dateien und Verzeichnisse ignorieren, die Ausgabe in mehreren Formaten (Json, Yaml) usw.
+Onefetch kann über Befehlszeilen-Flags so konfiguriert werden, dass es genau das anzeigt, was du möchtest, und zwar so, wie du es willst: du kannst die ASCII-/Text-Formatierung anpassen, Infozeilen deaktivieren, Dateien und Verzeichnisse ignorieren, aus verschiedenen Ausgabeformaten (Json, Yaml) wählen usw.
 
 > [!TIPP]
 Ab sofort unterstützt onefetch mehr als [100 verschiedene Programmiersprachen](https://onefetch.dev); wenn die Sprache Ihrer Wahl nicht unterstützt wird: Erstelle ein neues Issue und die Übersetzung wird hinzugefügt.
