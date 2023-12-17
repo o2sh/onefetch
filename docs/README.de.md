@@ -19,7 +19,7 @@ Standardmäßig werden die Repository-Informationen zusammen mit dem Logo der vo
 
 Es erkennt automatisch Open-Source-Lizenzen aus Texten und versorgt den Benutzer mit wertvollen Informationen wie Code-Verteilung, ausstehende Änderungen, Anzahl der Abhängigkeiten (nach Paketmanager), Top-Beitragende (nach Anzahl der Commits), Größe auf der Festplatte, Erstellungsdatum, LOC (Lines of Code), etc.
 
-<img src="assets/screenshot-2.png" align="right" height="250px">
+<img src="../assets/screenshot-2.png" align="right" height="250px">
 
 Onefetch kann über Befehlszeilen-Flags so konfiguriert werden, dass es genau das anzeigt, was du möchtest, und zwar so, wie du es willst: du kannst die ASCII-/Text-Formatierung anpassen, Infozeilen deaktivieren, Dateien und Verzeichnisse ignorieren, aus verschiedenen Ausgabeformaten (Json, Yaml) wählen usw.
 
