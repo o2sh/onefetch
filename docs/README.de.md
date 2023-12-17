@@ -25,6 +25,6 @@ Onefetch kann über Befehlszeilen-Flags so konfiguriert werden, dass es genau da
 
 Ab sofort unterstützt onefetch mehr als [100 verschiedene Programmiersprachen](https://onefetch.dev); wenn die Sprache Ihrer Wahl nicht unterstützt wird: Erstelle ein neues Issue und die Übersetzung wird hinzugefügt.
 
-Beiträge sind sehr willkommen! Siehe [CONTRIBUTING](CONTRIBUTING.md) für weitere Informationen.
+Beiträge sind sehr willkommen! Siehe [CONTRIBUTING](../CONTRIBUTING.md) für weitere Informationen.
 
 ### Mehr: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Erste Schritte](https://github.com/o2sh/onefetch/wiki/getting-started)\]
