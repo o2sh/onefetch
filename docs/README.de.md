@@ -11,7 +11,7 @@
 	<img src="../assets/msrv-badge.svg">
 </p>
 
-<img src="assets/screenshot-1.png" align="right" height="250px">
+<img src="../assets/screenshot-1.png" align="right" height="250px">
 
 Onefetch ist ein in `Rust` geschriebenes Kommandozeilen-Git-Informationstool, das Projektinformationen und Codestatistiken für ein lokales Git-Repository direkt in Ihrem Terminal anzeigt. Das Tool ist komplett offline - es ist kein Netzwerkzugang erforderlich.
 
