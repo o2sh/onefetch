@@ -8,7 +8,7 @@
   <a href="https://onefetch.dev"><img src="assets/language-badge.svg"></a>
   <a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+ist%3Aoffen+Label%3A%22Hilfe+gewünscht%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="Hilfe gesucht"></a>
 	<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-	<img src="assets/msrv-badge.svg">
+	<img src="../assets/msrv-badge.svg">
 </p>
 
 <img src="assets/screenshot-1.png" align="right" height="250px">
