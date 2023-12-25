@@ -25,7 +25,7 @@ repository = "https://github.com/o2sh/onefetch"
 [workspace.dependencies]
 owo-colors = "3.5.0"
 anyhow = "1.0"
-clap = { version = "4.4.9", features = ["derive"] }
+clap = { version = "4.4.11", features = ["derive"] }
 image = "0.24.7"
 strum = { version = "0.25.0", features = ["derive"] }
 
