@@ -7,6 +7,10 @@ updates:
         patterns:
           - "clap"
           - "clap_*"
+      gix:
+        patterns:
+          - "gix"
+          - "gix_*"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
