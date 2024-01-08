@@ -10,7 +10,7 @@ updates:
       gix:
         patterns:
           - "gix"
-          - "gix_*"
+          - "gix-*"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
