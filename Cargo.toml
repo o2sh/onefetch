@@ -43,7 +43,7 @@ gix = { version = "0.57.1", default-features = false, features = [
     "mailmap",
     "index",
 ] }
-gix-features = { version = "0.36.1", features = ["zlib-ng"] }
+gix-features = { version = "0.37.1", features = ["zlib-ng"] }
 git2 = { version = "0.18.1", default-features = false }
 globset = "0.4.14"
 human-panic = "1.2.1"
@@ -69,7 +69,7 @@ parking_lot = "0.12"
 
 [dev-dependencies]
 criterion = "0.5.1"
-gix-testtools = "0.12.0"
+gix-testtools = "0.13.0"
 insta = { version = "1.34.0", features = ["json", "redactions"] }
 pretty_assertions = "1.4.0"
 rstest = "0.18.2"
