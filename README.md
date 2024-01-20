@@ -22,7 +22,7 @@
   <a href="docs/README.kr.md">한국어</a> |
   <a href="docs/README.ru.md">Русский</a> |
   <a href="docs/README.tr.md">Türkçe</a> |
-  <a href="docs/README.pt-br.md">Português (Brasil)</a> |
+  <a href="docs/README.pt-br.md">Português (Brasil)</a>
 </p>
 
 <img src="assets/screenshot-1.png" align="right" height="250px">
