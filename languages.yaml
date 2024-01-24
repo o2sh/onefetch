@@ -1627,6 +1627,9 @@ Modelica:
     ansi:
       - black
       - red
+    hex:
+      - "#1f252f"
+      - "#dd1d30"
     chip: "#de1d31"
 Nim:
   type: programming
