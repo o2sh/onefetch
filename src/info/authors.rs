@@ -84,7 +84,7 @@ impl AuthorsInfo {
     }
 
     fn top_contribution(&self) -> usize {
-        if let Some(top_contributor) = self.authors.get(0) {
+        if let Some(top_contributor) = self.authors.first() {
             return top_contributor.contribution;
         }
         0

@@ -25,7 +25,7 @@ impl TextColors {
         if !colors.is_empty() {
             let custom_color = colors.iter().map(num_to_color).collect::<Vec<DynColors>>();
 
-            text_colors.title = *custom_color.get(0).unwrap_or(&logo_primary_color);
+            text_colors.title = *custom_color.first().unwrap_or(&logo_primary_color);
             text_colors.tilde = *custom_color
                 .get(1)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
