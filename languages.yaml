@@ -515,6 +515,26 @@ Css:
       - blue
       - white
     chip: "#563D7C"
+Cuda:
+  type: programming
+  ascii: |
+    {0}               NNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}             ::VVV$MNNNNNNNNNNNNNNNNNNNM
+    {0}       :*IVMM$V**::  :*F$NNNNNNNNNNNNNNM
+    {0}    *I$MV*:   :$$$MN$I*  :I$NNNNNNNNNNNM
+    {0} :IMN$*  :*V$M$    :*$NMI:  *$NNNNNNNNNM
+    {0}FNNNI  *$N$*:  NMI:   FNNM:   $NNNNNNNNM
+    {0}:$NN$: :MN$    NNNM*IMNMI:  IMNNMNNNNNNM
+    {0}  FNN$: :$N$*  NNNNNN$*: :FMNMV* :I$NNNM
+    {0}   *$NMI: *VM$FIFII*: *I$NN$*:     :VNNM
+    {0}     *$NMF*  :*IIIFV$NM$F*:    :*FMNNNNM
+    {0}       :*VMM$VIIII***:   :**F$MNNNNNNNNM
+    {0}           :***I**IIFV$MNNNNNNNNNNNNNNNM
+    {0}               NNNNNNNNNNNNNNNNNNNNNNNNM
+  colors:
+    ansi:
+      - green
+    chip: "#73B303"
 D:
   type: programming
   ascii: |
