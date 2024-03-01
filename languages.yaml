@@ -1761,26 +1761,26 @@ Org:
 Oz:
   type: programming
   ascii: |
-    {0}                    .-=**+=.
-    {0}                 .-+{1}#%@@%{0}***-
-    {0}             .:={1}*#%@@@@@@{0}****=
-    {0}          :-+**{1}%@@@%#@@@%{0}*****=
-    {0}      .:=*******{1}#****@@@#{0}******+.
-    {0}   .-+-.    .-+*****{1}#@@@#{0}***{1}##{0}***:
-    {0} -+*-   ::     =****{1}%@@@##%@@@%{0}***:
-    {0}+**-   +**+-    -***{1}@@@@@@@@#{0}+::***:
-    {0}+**:   -****=    +**{1}%@@@%{0}*-.    -***-
-    {0} =*+    :+***-   +***{1}#{0}*:.   .   =****=
-    {0}  -*=    .-==.  -******:.-+*-   +*****+
-    {0}   :*+:       :*{1}####{0}********.  .*******=
-    {0}    :***+=-=*{1}%@@@@@@@%#{0}*****   :*+-: :++
-    {0}     :*****{1}@@@%{0}***{1}%@@@@%{0}***+   ..   .-=.
-    {0}      .+**{1}#@@@%{0}****{1}#@@@@#{0}**-     :-=-.
-    {0}        =**{1}@@@@#{0}****{1}#@@@%{0}***-.-==:
-    {0}         =*{1}#@@@@%{0}****{1}@@@#{0}***+-.
-    {0}          =*{1}#@@@@@@@@@@#{0}+=:
-    {0}           -***{1}%%@@%#{0}+-.
-    {0}            .-+**+=:
+    {0}                   ooooooooo
+    {0}               oooooo{1}zzz{0}oooooo
+    {0}            ooooo{1}zzzzzzzz{0}oooooo
+    {0}        ooooooo{1}zzzz{0}oo{1}zzz{0}oooooooo
+    {0}     oooooooooooooooo{1}zzz{0}ooooooooo
+    {0}  oooooo   oooooooooo{1}zzz{0}oooooooooo
+    {0}ooooo  oooo    ooooo{1}zzzz{0}oo{1}zzzz{0}ooooo
+    {0}oooo  oooooo    oooo{1}zzzzzzzz{0}oooooooo
+    {0}oooo   oooooo    ooo{1}zzzz{0}oooo    oooooo
+    {0}oooo    oooooo   ooooooo   oo   ooooooo
+    {0} oooo    oooo   ooooooooooooo  ooooooooo
+    {0}  oooooo     ooozoooooooooooo  ooooooooo
+    {0}    ooooooooo{1}zzzzzzzzz{0}oooooo   ooooo ooo
+    {0}     oooooo{1}zzz{0}oooo{1}zzzzz{0}ooooo   o    oooo
+    {0}      ooooo{1}zzz{0}oooooo{1}zzzz{0}oooo    oooooo
+    {0}       oooo{1}zzzz{0}oooooo{1}zzz{0}ooooooooooo
+    {0}        oooo{1}zzzzz{0}oooo{1}zzz{0}oooooooo
+    {0}         oooo{1}zzzzzzzzzz{0}ooooo
+    {0}          oooooo{1}zzzz{0}ooooo
+    {0}            ooooooooo
   colors:
     ansi:
       - yellow
