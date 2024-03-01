@@ -1772,7 +1772,7 @@ Oz:
     {0}oooo   oooooo    ooo{1}zzzz{0}oooo    oooooo
     {0}oooo    oooooo   ooooooo   oo   ooooooo
     {0} oooo    oooo   ooooooooooooo  ooooooooo
-    {0}  oooooo     ooozoooooooooooo  ooooooooo
+    {0}  oooooo     ooo{1}z{0}oooooooooooo  ooooooooo
     {0}    ooooooooo{1}zzzzzzzzz{0}oooooo   ooooo ooo
     {0}     oooooo{1}zzz{0}oooo{1}zzzzz{0}ooooo   o    oooo
     {0}      ooooo{1}zzz{0}oooooo{1}zzzz{0}oooo    oooooo
