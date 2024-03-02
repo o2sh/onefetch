@@ -1761,7 +1761,7 @@ Org:
 Oz:
   type: programming
   ascii: |
-    {0}                  oooooooooo
+    {0}                   ooooooooo
     {0}               oooooo{1}zzz{0}oooooo
     {0}            oooooo{1}zzzzzz{0}ooooooo
     {0}         oooooo{1}zzz{0}ooo{1}zzz{0}oooooooo
@@ -1780,7 +1780,7 @@ Oz:
     {0}       ooo{1}zzzz{0}oooooo{1}zzz{0}ooooooo
     {0}        oooo{1}zzz{0}oooo{1}zzz{0}oooo
     {0}         oooooo{1}zzzz{0}ooooo
-    {0}           oooooooooo
+    {0}           ooooooooo
   colors:
     ansi:
       - yellow
