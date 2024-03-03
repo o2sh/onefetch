@@ -1761,7 +1761,7 @@ Org:
 Oz:
   type: programming
   ascii: |
-    {0}                   ooooooooo
+    {0}                  ooooooooooo
     {0}               oooooo{1}zzz{0}oooooo
     {0}            oooooo{1}zzzzzz{0}ooooooo
     {0}         oooooo{1}zzz{0}ooo{1}zzz{0}oooooooo
@@ -1773,14 +1773,14 @@ Oz:
     {0}oooo    oooooo   oooooooo      ooooooo
     {0} oooo    oooo   oooooo   ooo   oooooooo
     {0}  ooooooo    ooooooooooooooo   oooooooo
-    {0}   oooooooooo{1}zzzz{0}ooooooooooo   ooo   oo
-    {0}    oooooo{1}zzz{0}oooo{1}zzzz{0}ooooooo      ooooo
-    {0}     oooo{1}zzz{0}oooooo{1}zzzz{0}oooooo   ooooo
-    {0}      ooo{1}zzzz{0}oooooo{1}zzzz{0}oooooooooo
-    {0}       ooo{1}zzzz{0}oooooo{1}zzz{0}ooooooo
-    {0}        oooo{1}zzz{0}oooo{1}zzz{0}oooo
-    {0}         oooooo{1}zzzz{0}ooooo
-    {0}           ooooooooo
+    {0}   ooooooooooo{1}zzzz{0}oooooooooo   ooo   oo
+    {0}    ooooooo{1}zzz{0}oooo{1}zzzz{0}oooooo      ooooo
+    {0}     ooooo{1}zzz{0}oooooo{1}zzzz{0}ooooo   ooooo
+    {0}      oooo{1}zzzz{0}oooooo{1}zzzz{0}ooooooooo
+    {0}       oooo{1}zzzz{0}oooooo{1}zzz{0}oooooo
+    {0}        ooooo{1}zzz{0}oooo{1}zzz{0}ooo
+    {0}         ooooooo{1}zzzz{0}oooo
+    {0}          ooooooooooo
   colors:
     ansi:
       - yellow
