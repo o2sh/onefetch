@@ -1761,26 +1761,26 @@ Org:
 Oz:
   type: programming
   ascii: |
-    {0}                  ooooooooooo
+    {0}                   ooooooooo
     {0}               oooooo{1}zzz{0}oooooo
     {0}            oooooo{1}zzzzzz{0}ooooooo
     {0}         oooooo{1}zzz{0}ooo{1}zzz{0}oooooooo
     {0}      ooooooooooooooo{1}zzz{0}ooooooooo
     {0}   oooo    oooooooooo{1}zzz{0}ooo{1}zzz{0}oooo
-    {0}oooo   oooo    oooooo{1}zzzzzz{0}oooooooo
+    {0} ooo   oooo    oooooo{1}zzzzzz{0}oooooooo
     {0}ooo   oooooo    ooooo{1}zzz{0}oooooooooooo
     {0}ooo    oooooo    ooooooooooo   oooooo
     {0}oooo    oooooo   oooooooo      ooooooo
     {0} oooo    oooo   oooooo   ooo   oooooooo
     {0}  ooooooo    ooooooooooooooo   oooooooo
     {0}   ooooooooooo{1}zzzz{0}oooooooooo   ooo   oo
-    {0}    ooooooo{1}zzz{0}oooo{1}zzzz{0}oooooo      ooooo
+    {0}    ooooooo{1}zzz{0}oooo{1}zzzz{0}oooooo      oooo
     {0}     ooooo{1}zzz{0}oooooo{1}zzzz{0}ooooo   ooooo
     {0}      oooo{1}zzzz{0}oooooo{1}zzzz{0}ooooooooo
     {0}       oooo{1}zzzz{0}oooooo{1}zzz{0}oooooo
     {0}        ooooo{1}zzz{0}oooo{1}zzz{0}ooo
     {0}         ooooooo{1}zzzz{0}oooo
-    {0}          ooooooooooo
+    {0}           ooooooooo
   colors:
     ansi:
       - yellow
