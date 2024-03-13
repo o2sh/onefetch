@@ -1,6 +1,5 @@
 use crate::info::utils::info_field::InfoField;
 use anyhow::Result;
-use git2::{Status, StatusOptions, StatusShow};
 use gix::Repository;
 use serde::Serialize;
 
@@ -12,36 +11,31 @@ pub struct PendingInfo {
 
 impl PendingInfo {
     pub fn new(repo: &Repository) -> Result<Self> {
-        let git_dir = repo.git_dir().to_owned();
-        let repo = git2::Repository::open(git_dir)?;
-        let pending_changes = get_pending_changes(&repo)?;
+        let pending_changes = get_pending_changes(repo)?;
         Ok(Self { pending_changes })
     }
 }
 
-fn get_pending_changes(repo: &git2::Repository) -> Result<String> {
-    let statuses = repo.statuses(Some(
-        StatusOptions::default()
-            .show(StatusShow::Workdir)
-            .update_index(true)
-            .include_untracked(true)
-            .renames_head_to_index(true)
-            .recurse_untracked_dirs(true),
-    ))?;
+fn get_pending_changes(repo: &Repository) -> Result<String> {
+    let statuses = repo
+        .status(gix::progress::Discard)?
+        .dirwalk_options(|options| options.emit_untracked(gix::dir::walk::EmissionMode::Matching))
+        .into_index_worktree_iter(Vec::new())?;
 
-    let (added, deleted, modified) =
-        statuses
-            .iter()
-            .fold((0, 0, 0), |(added, deleted, modified), e| {
-                let s: Status = e.status();
-                if s.is_index_new() || s.is_wt_new() {
-                    (added + 1, deleted, modified)
-                } else if s.is_index_deleted() || s.is_wt_deleted() {
-                    (added, deleted + 1, modified)
-                } else {
-                    (added, deleted, modified + 1)
-                }
-            });
+    let (added, deleted, modified) = statuses
+        .take_while(Result::is_ok)
+        .filter_map(Result::ok)
+        .filter_map(|item| item.summary())
+        .fold((0, 0, 0), |(added, deleted, modified), status| {
+            use gix::status::index_worktree::iter::Summary;
+            match status {
+                Summary::Removed => (added, deleted + 1, modified),
+                Summary::Added | Summary::Copied => (added + 1, deleted, modified),
+                Summary::Modified | Summary::TypeChange => (added, deleted, modified + 1),
+                Summary::Renamed => (added + 1, deleted + 1, modified),
+                Summary::IntentToAdd | Summary::Conflict => (added, deleted, modified),
+            }
+        });
 
     let mut result = String::new();
     if modified > 0 {
