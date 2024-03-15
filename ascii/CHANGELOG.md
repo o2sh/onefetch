@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  - <csr-id-5cc8ea62b8a7e467554ee7b20bb1e85fa36d4979/> parse multi-byte unicode chars correctly + docs
    * fix: parse multi-byte unicode chars correctly
-* tests(ascii): add unicode block assertation to render
+* tests(ascii): add unicode block assertion to render
 * docs(ascii): add AsciiArt usage example
 * docs(ascii): fix ascii doc onefetch link
 * docs(ascii): add badges to readme
