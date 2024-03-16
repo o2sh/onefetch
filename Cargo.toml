@@ -37,14 +37,14 @@ bytecount = "0.6.7"
 clap.workspace = true
 clap_complete = "4.4.10"
 crossbeam-channel = "0.5.9"
-gix = { version = "0.58.0", default-features = false, features = [
+gix = { version = "0.60.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
     "index",
+    "status"
 ] }
 gix-features = { version = "0.38.0", features = ["zlib-ng"] }
-git2 = { version = "0.18.1", default-features = false }
 globset = "0.4.14"
 human-panic = "1.2.1"
 image.workspace = true
