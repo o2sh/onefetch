@@ -10,7 +10,7 @@ exclude = ["docs/vercel/*"]
 keywords = ["git", "cli", "terminal"]
 name = "onefetch"
 homepage = "https://onefetch.dev"
-rust-version = "1.70.0"
+rust-version = "1.74.1"
 
 [workspace]
 members = ["ascii", "image", "manifest"]
