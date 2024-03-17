@@ -1,3 +1,20 @@
+[workspace.package]
+authors = ["o2sh <ossama-hjaji@live.fr>"]
+edition = "2021"
+license = "MIT"
+version = "2.20.0"
+repository = "https://github.com/o2sh/onefetch"
+
+[workspace]
+members = ["ascii", "image", "manifest"]
+
+[workspace.dependencies]
+owo-colors = "3.5.0"
+anyhow = "1.0"
+clap = { version = "4.5.3", features = ["derive"] }
+image = "0.24.9"
+strum = { version = "0.25.0", features = ["derive"] }
+
 [package]
 authors.workspace = true
 edition.workspace = true
@@ -11,23 +28,6 @@ keywords = ["git", "cli", "terminal"]
 name = "onefetch"
 homepage = "https://onefetch.dev"
 rust-version = "1.74.1"
-
-[workspace]
-members = ["ascii", "image", "manifest"]
-
-[workspace.package]
-authors = ["o2sh <ossama-hjaji@live.fr>"]
-edition = "2021"
-license = "MIT"
-version = "2.19.0"
-repository = "https://github.com/o2sh/onefetch"
-
-[workspace.dependencies]
-owo-colors = "3.5.0"
-anyhow = "1.0"
-clap = { version = "4.5.3", features = ["derive"] }
-image = "0.24.9"
-strum = { version = "0.25.0", features = ["derive"] }
 
 [dependencies]
 anyhow.workspace = true
