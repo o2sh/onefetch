@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 30 commits contributed to the release over the course of 382 calendar days.
+ - 34 commits contributed to the release over the course of 490 calendar days.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
- - 8 unique issues were worked on: [#1077](https://github.com/o2sh/onefetch/issues/1077), [#1089](https://github.com/o2sh/onefetch/issues/1089), [#1142](https://github.com/o2sh/onefetch/issues/1142), [#1205](https://github.com/o2sh/onefetch/issues/1205), [#1221](https://github.com/o2sh/onefetch/issues/1221), [#851](https://github.com/o2sh/onefetch/issues/851), [#959](https://github.com/o2sh/onefetch/issues/959), [#981](https://github.com/o2sh/onefetch/issues/981)
+ - 10 unique issues were worked on: [#1077](https://github.com/o2sh/onefetch/issues/1077), [#1089](https://github.com/o2sh/onefetch/issues/1089), [#1142](https://github.com/o2sh/onefetch/issues/1142), [#1205](https://github.com/o2sh/onefetch/issues/1205), [#1221](https://github.com/o2sh/onefetch/issues/1221), [#1238](https://github.com/o2sh/onefetch/issues/1238), [#1268](https://github.com/o2sh/onefetch/issues/1268), [#851](https://github.com/o2sh/onefetch/issues/851), [#959](https://github.com/o2sh/onefetch/issues/959), [#981](https://github.com/o2sh/onefetch/issues/981)
 
 ### Commit Details
 
@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Bump cargo_toml from 0.15.3 to 0.17.0 ([`a8a6e2a`](https://github.com/o2sh/onefetch/commit/a8a6e2afa0418cb594d56cb6a989777abaee6910))
  * **[#1221](https://github.com/o2sh/onefetch/issues/1221)**
     - Bump cargo_toml from 0.17.0 to 0.17.1 ([`6cd892d`](https://github.com/o2sh/onefetch/commit/6cd892d70f4ebb422aba8f1a3f48f7aacb74e306))
+ * **[#1238](https://github.com/o2sh/onefetch/issues/1238)**
+    - Bump cargo_toml from 0.17.1 to 0.17.2 ([`7cf1434`](https://github.com/o2sh/onefetch/commit/7cf1434c24321d1b155fb34af96d990bfce2b256))
+ * **[#1268](https://github.com/o2sh/onefetch/issues/1268)**
+    - Bump cargo_toml from 0.17.2 to 0.19.1 ([`9378e09`](https://github.com/o2sh/onefetch/commit/9378e099fc7612f006805bbee9fdbb8e7414bd37))
  * **[#851](https://github.com/o2sh/onefetch/issues/851)**
     - Add manifest crate ([`ed96c45`](https://github.com/o2sh/onefetch/commit/ed96c4547d62e1660bd78663be428cad5dc57867))
  * **[#959](https://github.com/o2sh/onefetch/issues/959)**
@@ -38,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * **[#981](https://github.com/o2sh/onefetch/issues/981)**
     - Bump cargo_toml from 0.14.1 to 0.15.2 ([`b6dbb62`](https://github.com/o2sh/onefetch/commit/b6dbb62c36cd9f38d4dcfe13dfe99ab608f4ef2a))
  * **Uncategorized**
+    - Merge branch 'main' of github.com:o2sh/onefetch ([`6104bc2`](https://github.com/o2sh/onefetch/commit/6104bc2ecae02f39479ec022dfc6506404a0527a))
+    - Cargo changelog --write ([`64e6117`](https://github.com/o2sh/onefetch/commit/64e6117b1cc2c2ac41dff99791c2a714317ecdf2))
     - Cargo changelog --write ([`871f98a`](https://github.com/o2sh/onefetch/commit/871f98a6b99e8ac28445951c545c7c32ca722079))
     - Bump version ([`dccd5a8`](https://github.com/o2sh/onefetch/commit/dccd5a8ccf51f10fb6e38af6b16735b3cac5b315))
     - Cargo changelog --write ([`7eb48ae`](https://github.com/o2sh/onefetch/commit/7eb48ae5c1ef2727a2bb070556aca21506667629))

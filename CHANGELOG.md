@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+## 2.20.0 (2024-03-17)
+
+This version marks the completion of the transition from [`git2`](https://crates.io/crates/git2) to [`gitoxide`](https://crates.io/crates/gix). No more dependency to git2, onefetch is now fully oxidized! 🎉
+
+### New Features 🎉
+
+- Add svg language support by @Localghost385 in https://github.com/o2sh/onefetch/pull/1266
+- lang: Adding Oz programming language by @luxluth in https://github.com/o2sh/onefetch/pull/1280
+
+### Chores 🧹
+
+- website: Filter entries by language type in onefetch.dev by @o2sh in https://github.com/o2sh/onefetch/pull/1227
+- Use GitHub's alert syntax by @spenserblack in https://github.com/o2sh/onefetch/pull/1234
+- Add german translation of `README.md` by @rdwz in https://github.com/o2sh/onefetch/pull/1236
+- Use `gitoxide` to get pending changes by @Byron in https://github.com/o2sh/onefetch/pull/1285
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 4 commits contributed to the release over the course of 94 calendar days.
+- 108 days passed between releases.
+- 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+- 2 unique issues were worked on: [#1229](https://github.com/o2sh/onefetch/issues/1229), [#1285](https://github.com/o2sh/onefetch/issues/1285)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1229](https://github.com/o2sh/onefetch/issues/1229)**
+  - Bump gix from 0.55.2 to 0.56.0 ([`1131d39`](https://github.com/o2sh/onefetch/commit/1131d39600bf60853825d0ee00afa3cab32ff901))
+- **[#1285](https://github.com/o2sh/onefetch/issues/1285)**
+  - Conclude `gitoxide` to `git2` transition ([`8fcaf08`](https://github.com/o2sh/onefetch/commit/8fcaf08269a44e4074eea3b24ad9702d64fc3374))
+- **Uncategorized** - Refacto pending info ([`2e48f9e`](https://github.com/o2sh/onefetch/commit/2e48f9ea31effb6c1583b61134836b8e8a2dc3c0)) - Cargo clippy ([`e6c7c45`](https://github.com/o2sh/onefetch/commit/e6c7c45e8235dd4038d2dd4d5905d2453609ba57))
+</details>
+
 ## 2.19.0 (2023-11-29)
 
 ### New Features 🎉
