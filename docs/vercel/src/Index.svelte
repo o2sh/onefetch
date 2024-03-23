@@ -45,8 +45,8 @@
   {#if tagName && htmlUrl}
     <div class="banner">
       <small
-        >🎉 Version {tagName} is available, check the
-        <a href={htmlUrl}>release notes</a>!!</small>
+        >🎉 New release {tagName}! Check out the
+        <a href={htmlUrl}>release notes</a>! 📝</small>
     </div>
   {/if}
   <h1>Onefetch</h1>
