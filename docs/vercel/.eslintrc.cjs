@@ -12,7 +12,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     extraFileExtensions: ['.svelte'],
   },
-  plugins: ['@typescript-eslint', 'unused-imports'],
+  plugins: ['@typescript-eslint'],
   overrides: [
     {
       files: ['*.svelte'],
