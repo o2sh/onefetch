@@ -63,11 +63,10 @@
 <main>
   <p>
     This page displays an ASCII preview for all the programming languages
-    supported by onefetch. Like the binary, the data is sourced from <a
+    supported by onefetch. Like the binary, the data is sourced from the <a
       href="https://raw.githubusercontent.com/o2sh/onefetch/main/languages.yaml"
-      ><code>Languages.yaml</code></a
-    >, and the layout aims to replicate how the logo would appear inside a
-    terminal.
+      ><code>Languages.yaml</code></a> file, and the layout aims to replicate how
+    the logo would appear inside a terminal.
   </p>
   <p>
     Suggestions and PRs are welcome at <a
