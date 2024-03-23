@@ -1,3 +1,7 @@
+### Getting started
+
+Follow the instructions for [installing onefetch from source](https://github.com/o2sh/onefetch/wiki/Installation#build-from-source).
+
 ### Adding support for a new language
 
 Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.
@@ -39,11 +43,11 @@ CSharp: # required, this will be the name of the enum variant for the language a
       - magenta
       - white
     hex: # optional, alternative to basic colors for terminals that support true colour.
-      - '#9B4F97'
-      - '#67217A'
-      - '#803788'
-      - '#FFFFFF'
-    chip: '#178600' # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+      - "#9B4F97"
+      - "#67217A"
+      - "#803788"
+      - "#FFFFFF"
+    chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
