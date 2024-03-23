@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AsciiPreview from './lib/AsciiPreview.svelte';
+  import AsciiPreview from './components/AsciiPreview.svelte';
   import data from '../../../languages.yaml';
   import type { Languages, Language } from '../../../languages.yaml';
   import { onMount } from 'svelte';
@@ -45,7 +45,7 @@
   {#if tagName && htmlUrl}
     <div class="banner">
       <small
-        >Version {tagName} is available 🎉 Check the
+        >🎉 Version {tagName} is available, check the
         <a href={htmlUrl}>release notes</a>!!</small>
     </div>
   {/if}
@@ -62,11 +62,11 @@
 </header>
 <main>
   <p>
-    This page shows you an ASCII preview for all the programming languages
-    supported by onefetch. Like the binary, the data is taken from the <a
+    This page displays an ASCII preview for all the programming languages
+    supported by onefetch. Like the binary, the data is sourced from the <a
       href="https://raw.githubusercontent.com/o2sh/onefetch/main/languages.yaml"
-      ><code>Languages.yaml</code></a> file and the layout is meant to mimic the
-    way the logo would look inside a terminal.
+      ><code>Languages.yaml</code></a> file, and the layout aims to replicate how
+    the logo would appear inside a terminal.
   </p>
   <p>
     Suggestions and PRs are welcome at <a
@@ -74,8 +74,7 @@
   </p>
   <div class="title">
     <h3>Languages <small>({$filteredLanguages.length})</small></h3>
-    <button class="filter-button" on:click={() => (showMenu = !showMenu)}
-      >Filter by type</button>
+    <button on:click={() => (showMenu = !showMenu)}>Filter by type</button>
   </div>
 
   <div class:hide={!showMenu}>
@@ -110,13 +109,14 @@
 
 <style>
   .banner {
-    background-color: #e1f6e5;
+    background-color: black;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     text-align: center;
     padding: 0.5rem 0;
+    color: white;
   }
 
   .title {

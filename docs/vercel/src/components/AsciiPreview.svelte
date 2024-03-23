@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { mapToDefaultTerminalFgColor } from '../lib/utils';
   import Chip from './Chip.svelte';
   import TitleLink from './TitleLink.svelte';
 
@@ -27,10 +28,6 @@
       return `${htmlLine}${'</span>'.repeat(spanCount)}`;
     })
     .join('\n');
-
-  function mapToDefaultTerminalFgColor(color: string, dark: boolean): string {
-    return color === 'white' && !dark ? 'black' : color;
-  }
 </script>
 
 <div class="title-row">
@@ -59,6 +56,7 @@
   .logo-container {
     display: flex;
     justify-content: center;
+    background-color: white;
   }
 
   .logo-container.dark {

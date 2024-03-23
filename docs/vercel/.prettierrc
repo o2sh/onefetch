@@ -7,5 +7,7 @@
   "bracketSameLine": true,
   "singleAttributePerLine": false,
   "quoteProps": "consistent",
-  "plugins": ["prettier-plugin-svelte"]
+  "plugins": ["prettier-plugin-svelte"],
+  "svelteSortOrder": "scripts-options-markup-styles",
+  "svelteIndentScriptAndStyle": true
 }
