@@ -11,7 +11,7 @@
     "check": "npm run check:svelte && npm run check:prettier && npm run check:lint",
     "check:svelte": "svelte-check",
     "check:prettier": "prettier --check **/*.{ts,js,svelte,css,html,json}",
-    "check:lint": "eslint src/**/*.{ts,js,svelte}"
+    "check:lint": "eslint \"src/**/*.{ts,js,svelte}\""
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.1.2",
