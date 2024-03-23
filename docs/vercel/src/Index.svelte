@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AsciiPreview from './lib/AsciiPreview.svelte';
+  import AsciiPreview from './components/AsciiPreview.svelte';
   import data from '../../../languages.yaml';
   import type { Languages, Language } from '../../../languages.yaml';
   import { onMount } from 'svelte';
