@@ -59,6 +59,7 @@
   .logo-container {
     display: flex;
     justify-content: center;
+    background-color: white;
   }
 
   .logo-container.dark {

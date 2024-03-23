@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "format": "prettier -w .",
     "preview": "vite preview",
-    "check": "check:svelte && check:prettier && check:eslint",
+    "check": "check:svelte && check:prettier && check:lint",
     "check:svelte": "svelte-check",
     "check:prettier": "prettier --check **/*.{ts,js,svelte,css,html,json}",
-    "check:lint": "eslint 'src/**/*.{ts,js,svelte}'"
+    "check:lint": "eslint src/**/*.{ts,js,svelte}"
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.1.2",

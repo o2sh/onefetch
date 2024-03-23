@@ -45,7 +45,7 @@
   {#if tagName && htmlUrl}
     <div class="banner">
       <small
-        >Version {tagName} is available 🎉 Check the
+        >🎉 Version {tagName} is available, check the
         <a href={htmlUrl}>release notes</a>!!</small>
     </div>
   {/if}
@@ -74,8 +74,7 @@
   </p>
   <div class="title">
     <h3>Languages <small>({$filteredLanguages.length})</small></h3>
-    <button class="filter-button" on:click={() => (showMenu = !showMenu)}
-      >Filter by type</button>
+    <button on:click={() => (showMenu = !showMenu)}>Filter by type</button>
   </div>
 
   <div class:hide={!showMenu}>
@@ -110,13 +109,14 @@
 
 <style>
   .banner {
-    background-color: #e1f6e5;
+    background-color: black;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     text-align: center;
     padding: 0.5rem 0;
+    color: white;
   }
 
   .title {
