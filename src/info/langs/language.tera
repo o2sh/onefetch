@@ -2,6 +2,7 @@ use owo_colors::{
     AnsiColors,
     DynColors::{self, Ansi, Rgb},
 };
+use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Write;
 use strum::EnumIter;
@@ -39,13 +40,15 @@ impl fmt::Display for Language {
     }
 }
 
-impl From<gengo::Language> for Language {
-    fn from(language: gengo::Language) -> Self {
+impl TryFrom<gengo::Language> for Language {
+    type Error = ();
+
+    fn try_from(language: gengo::Language) -> Result<Self, Self::Error> {
         match language {
             {% for language, _ in languages -%}
-                gengo::Language::{{ language }} => Self::{{ language }},
+                gengo::Language::{{ language }} => Ok(Self::{{ language }}),
             {% endfor %}
-            _ => unimplemented!("Language {:?}", language),
+            _ => Err(()),
         }
     }
 }
