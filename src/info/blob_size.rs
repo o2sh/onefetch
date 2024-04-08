@@ -1,35 +1,35 @@
 use super::utils::format_number;
-use crate::info::langs::get_total_loc;
+use crate::info::langs::get_total_size;
 use crate::info::langs::language::Language;
 use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
 use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct LocInfo {
-    pub lines_of_code: usize,
+pub struct BlobSizeInfo {
+    pub size: usize,
     #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
-impl LocInfo {
-    pub fn new(loc_by_language: &[(Language, usize)], number_separator: NumberSeparator) -> Self {
-        let lines_of_code = get_total_loc(loc_by_language);
+impl BlobSizeInfo {
+    pub fn new(size_by_language: &[(Language, usize)], number_separator: NumberSeparator) -> Self {
+        let size = get_total_size(size_by_language);
         Self {
-            lines_of_code,
+            size,
             number_separator,
         }
     }
 }
 
 #[typetag::serialize]
-impl InfoField for LocInfo {
+impl InfoField for BlobSizeInfo {
     fn value(&self) -> String {
-        format_number(&self.lines_of_code, self.number_separator)
+        format_number(&self.size, self.number_separator)
     }
 
     fn title(&self) -> String {
-        "Lines of code".into()
+        "Total blob size".into()
     }
 }
 
@@ -39,8 +39,8 @@ mod test {
 
     #[test]
     fn test_display_loc_info() {
-        let loc_info = LocInfo {
-            lines_of_code: 1235,
+        let loc_info = BlobSizeInfo {
+            size: 1235,
             number_separator: NumberSeparator::Plain,
         };
 

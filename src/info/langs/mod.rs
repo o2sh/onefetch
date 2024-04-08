@@ -63,7 +63,7 @@ fn get_loc_by_language<Any>(languages: Any) -> Option<HashMap<Language, usize>> 
     // }
 }
 
-pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
+pub fn get_total_size(loc_by_language: &[(Language, usize)]) -> usize {
     let total_loc: usize = loc_by_language.iter().map(|(_, v)| v).sum();
     total_loc
 }

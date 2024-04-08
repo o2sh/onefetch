@@ -12,10 +12,10 @@ use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
 use self::last_change::LastChangeInfo;
 use self::license::LicenseInfo;
-use self::loc::LocInfo;
+use self::blob_size::BlobSizeInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
-use self::size::SizeInfo;
+use self::repo_size::RepoSizeInfo;
 use self::title::Title;
 use self::url::get_repo_url;
 use self::url::UrlInfo;
@@ -44,10 +44,10 @@ mod head;
 pub mod langs;
 mod last_change;
 mod license;
-mod loc;
+mod blob_size;
 mod pending;
 mod project;
-mod size;
+mod repo_size;
 mod title;
 mod url;
 pub mod utils;
@@ -291,7 +291,7 @@ impl InfoBuilder {
 
     fn size(mut self, repo: &Repository, number_separator: NumberSeparator) -> Self {
         if !self.disabled_fields.contains(&InfoType::Size) {
-            let size = SizeInfo::new(repo, number_separator);
+            let size = RepoSizeInfo::new(repo, number_separator);
             self.info_fields.push(Box::new(size));
         }
         self
@@ -428,7 +428,7 @@ impl InfoBuilder {
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::LinesOfCode) {
-            let lines_of_code = LocInfo::new(loc_by_language, number_separator);
+            let lines_of_code = BlobSizeInfo::new(loc_by_language, number_separator);
             self.info_fields.push(Box::new(lines_of_code));
         }
         self
