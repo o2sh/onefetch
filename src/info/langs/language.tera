@@ -33,28 +33,28 @@ impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             {% for language, _ in languages -%}
-                Self::{{ language }} => write!(f, "{}", tokei::LanguageType::{{ language }}.name()),
+                Self::{{ language }} => write!(f, "{}", gengo::Language::{{ language }}.name()),
             {% endfor %}
         }
     }
 }
 
-impl From<tokei::LanguageType> for Language {
-    fn from(language: tokei::LanguageType) -> Self {
+impl From<gengo::Language> for Language {
+    fn from(language: gengo::Language) -> Self {
         match language {
             {% for language, _ in languages -%}
-                tokei::LanguageType::{{ language }} => Self::{{ language }},
+                gengo::Language::{{ language }} => Self::{{ language }},
             {% endfor %}
             _ => unimplemented!("Language {:?}", language),
         }
     }
 }
 
-impl From<Language> for tokei::LanguageType {
+impl From<Language> for gengo::Language {
     fn from(language: Language) -> Self {
         match language {
             {% for language, _ in languages -%}
-                Language::{{ language }} => tokei::LanguageType::{{ language }},
+                Language::{{ language }} => gengo::Language::{{ language }},
             {% endfor %}
         }
     }
@@ -109,27 +109,29 @@ impl Language {
     }
 }
 
-fn __loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
-    match language_type {
-        {% for language, attrs in languages -%}
-            {%- set line_types = attrs.line_types | default(value=['code']) -%}
-            tokei::LanguageType::{{ language }} => language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %},
-        {% endfor %}
-        _ => unimplemented!("Language Type {:?}", language_type),
-    }
+fn __loc<Any1, Any2>(language_type: Any1, language: Any2) -> usize {
+    todo!("Determine if this is necessary")
+    // match language_type {
+    //     {% for language, attrs in languages -%}
+    //         {%- set line_types = attrs.line_types | default(value=['code']) -%}
+    //         tokei::LanguageType::{{ language }} => language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %},
+    //     {% endfor %}
+    //     _ => unimplemented!("Language Type {:?}", language_type),
+    // }
 }
 
 
-fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
-    match language_type {
-	{% for language, attrs in languages -%}
-        {%- set line_types = attrs.line_types | default(value=['code']) -%}
-	    {%- if attrs.line_types -%} 
-            tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
-	    {% endif -%} 
-    {% endfor %}
-	_ => stats.code
-    }
+fn __stats_loc<Any1, Any2>(language_type: Any1, stats: Any2) -> usize {
+    todo!("Determine if this is necessary")
+    // match language_type {
+	// {% for language, attrs in languages -%}
+    //     {%- set line_types = attrs.line_types | default(value=['code']) -%}
+	//     {%- if attrs.line_types -%}
+    //         tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
+	//     {% endif -%}
+    // {% endfor %}
+	// _ => stats.code
+    // }
 }
 
 {% for language, attrs in languages -%}
