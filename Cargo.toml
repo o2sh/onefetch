@@ -37,7 +37,8 @@ bytecount = "0.6.7"
 clap.workspace = true
 clap_complete = "4.5.1"
 crossbeam-channel = "0.5.9"
-gengo = "0.11"
+# NOTE Ensures that gengo's gix features don't conflict with the ones we're using
+gengo =  { version = "0.11", default-features = false, features = ["max-performance-safe"] }
 gix = { version = "0.60.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
