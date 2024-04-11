@@ -24,20 +24,26 @@ where
 }
 
 fn to_human_time(time: Time) -> String {
-    let since_epoch_duration = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .unwrap();
+    let duration = match diff_gix_time(SystemTime::now(), time) {
+        Ok(d) => d,
+        Err(s) => return s,
+    };
+    let ht = HumanTime::from(-(duration.as_secs() as i64));
+    ht.to_string()
+}
 
+/// Gets the duration between `now` and `time`. Returns `Err` if this cannot be calculated.
+fn diff_gix_time(now: SystemTime, time: Time) -> Result<Duration, String> {
+    let since_epoch_duration = now.duration_since(SystemTime::UNIX_EPOCH).unwrap();
     let ts = Duration::from_secs(match time.seconds.try_into() {
         Ok(s) => s,
-        Err(_) => return "<before UNIX epoch>".into(),
+        Err(_) => return Err("<before UNIX epoch>".into()),
     });
     let duration = since_epoch_duration.checked_sub(ts).expect(
         "Achievement unlocked: time travel! \
         Check your system clock and commit dates.",
     );
-    let ht = HumanTime::from(-(duration.as_secs() as i64));
-    ht.to_string()
+    Ok(duration)
 }
 
 pub fn format_number<T: ToFormattedString + std::fmt::Display>(
@@ -118,6 +124,21 @@ mod tests {
         let tomorrow = current_time + day;
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
         format_time(time, false);
+    }
+
+    #[test]
+    fn test_timezone_awareness() {
+        let current_time = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap();
+        let hour_offset: i32 = 1;
+        let offset = 60 * 60 * hour_offset;
+        let also_now = Time::new(
+            (current_time.as_secs() as gix::date::SecondsSinceUnixEpoch) + i64::from(offset),
+            -offset,
+        );
+        let diff = diff_gix_time(SystemTime::now(), also_now).unwrap();
+        assert_eq!(diff.as_secs(), 0);
     }
 
     #[test]
