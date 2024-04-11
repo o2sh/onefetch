@@ -35,7 +35,7 @@ fn to_human_time(time: Time) -> String {
 /// Gets the duration between `now` and `time`. Returns `Err` if this cannot be calculated.
 fn diff_gix_time(now: SystemTime, time: Time) -> Result<Duration, String> {
     let since_epoch_duration = now.duration_since(SystemTime::UNIX_EPOCH).unwrap();
-    let ts = Duration::from_secs(match time.seconds.try_into() {
+    let ts = Duration::from_secs(match (time.seconds + i64::from(time.offset)).try_into() {
         Ok(s) => s,
         Err(_) => return Err("<before UNIX epoch>".into()),
     });
