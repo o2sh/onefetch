@@ -128,16 +128,15 @@ mod tests {
 
     #[test]
     fn test_timezone_awareness() {
-        let current_time = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .unwrap();
+        let now = SystemTime::now();
+        let current_time = now.duration_since(SystemTime::UNIX_EPOCH).unwrap();
         let hour_offset: i32 = 1;
         let offset = 60 * 60 * hour_offset;
         let also_now = Time::new(
             (current_time.as_secs() as gix::date::SecondsSinceUnixEpoch) + i64::from(offset),
             -offset,
         );
-        let diff = diff_gix_time(SystemTime::now(), also_now).unwrap();
+        let diff = diff_gix_time(now, also_now).unwrap();
         assert_eq!(diff.as_secs(), 0);
     }
 
