@@ -2833,7 +2833,6 @@ dependencies = [
  "tokei",
  "typetag",
  "winres",
- "yaml-rust",
 ]
 
 [[package]]
