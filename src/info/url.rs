@@ -16,7 +16,7 @@ impl UrlInfo {
     }
 }
 
-pub fn get_repo_url(repo: &Repository) -> String {
+pub fn get_repo_url(repo: &Repository, force_url_http: bool) -> String {
     let config = repo.config_snapshot();
     let remotes = match config.plumbing().sections_by_name("remote") {
         Some(sections) => sections,
@@ -36,14 +36,29 @@ pub fn get_repo_url(repo: &Repository) -> String {
     }
 
     match remote_url {
-        Some(url) => remove_token_from_url(&url),
+        Some(url) => format_url(&url, force_url_http),
         None => String::default(),
+    }
+}
+
+fn format_url(url: &str, force_url_http: bool) -> String {
+    let removed_token = remove_token_from_url(&url);
+    if !force_url_http || removed_token.starts_with("http") {
+        removed_token
+    } else {
+        create_http_url(url)
     }
 }
 
 fn remove_token_from_url(url: &str) -> String {
     let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
     let replaced_url = pattern.replace(url, "$1").to_string();
+    replaced_url
+}
+
+fn create_http_url(url: &str) -> String {
+    let pattern = Regex::new(r"([^@]+)@([^:]+):(.*)").unwrap();
+    let replaced_url = pattern.replace(url, "https://${2}/${3}").to_string();
     replaced_url
 }
 
@@ -72,6 +87,32 @@ mod test {
             url_info.value(),
             "git@github.com:o2sh/onefetch.git".to_string()
         );
+    }
+
+    #[test]
+    fn test_format_url_http() {
+        let remote_url_github = "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/0spotter0/onefetch.git";
+        let res_url_github = format_url(remote_url_github, true);
+        assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github);
+
+        let remote_url_gitlab = "https://john:abc123personaltoken@gitlab.com/0spotter0/onefetch.git";
+        let res_url_gitlab = format_url(remote_url_gitlab, true);
+        assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab);
+    }
+
+    #[test]
+    fn test_format_url_ssh() {
+        let remote_url_github = "git@github.com:0spotter0/onefetch.git";
+        let res_url_github_force_http_true = format_url(remote_url_github, true);
+        let res_url_github_force_http_false = format_url(remote_url_github, false);
+        assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github_force_http_true);
+        assert_eq!("git@github.com:0spotter0/onefetch.git", res_url_github_force_http_false);
+
+        let remote_url_gitlab = "git@gitlab.com:0spotter0/onefetch.git";
+        let res_url_gitlab_force_http_true = format_url(remote_url_gitlab, true);
+        let res_url_gitlab_force_http_false = format_url(remote_url_gitlab, false);
+        assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab_force_http_true);
+        assert_eq!("git@gitlab.com:0spotter0/onefetch.git", res_url_gitlab_force_http_false);
     }
 
     #[test]
