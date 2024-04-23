@@ -106,6 +106,8 @@ pub fn traverse_commit_graph(
     total_number_of_commits.store(count, Ordering::SeqCst);
     has_commit_graph_traversal_ended.store(true, Ordering::SeqCst);
 
+    drop(churn_tx);
+
     let (number_of_commits_by_file_path, churn_pool_size) =
         churn_thread.join().expect("never panics")?;
 
