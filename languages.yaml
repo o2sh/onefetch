@@ -164,8 +164,8 @@ Astro:
       - white
       - yellow
     hex:
-      - "#ffffff"
-      - "#ff5A04"
+      - "#FFFFFF"
+      - "#FF5A04"
     chip: "#FF7F3B"
 AutoHotKey:
   type: programming
