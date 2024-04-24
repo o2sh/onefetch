@@ -158,13 +158,13 @@ Astro:
     {1}                      %%%%%%%%%%%*                    
     {1}                      *#  #%%%%#*                     
     {1}                          *%%#                        
-    {1}                           ##                                                                               
+    {1}                           ##  
   colors:
     ansi:
-      - black
+      - white
       - yellow
     hex:
-      - "#000000"
+      - "#ffffff"
       - "#ff5A04"
     chip: "#FF7F3B"
 AutoHotKey:
