@@ -16,7 +16,7 @@ impl UrlInfo {
     }
 }
 
-pub fn get_repo_url(repo: &Repository, force_url_http: bool) -> String {
+pub fn get_repo_url(repo: &Repository, http_url: bool) -> String {
     let config = repo.config_snapshot();
     let remotes = match config.plumbing().sections_by_name("remote") {
         Some(sections) => sections,
@@ -36,17 +36,17 @@ pub fn get_repo_url(repo: &Repository, force_url_http: bool) -> String {
     }
 
     match remote_url {
-        Some(url) => format_url(&url, force_url_http),
+        Some(url) => format_url(&url, http_url),
         None => String::default(),
     }
 }
 
-fn format_url(url: &str, force_url_http: bool) -> String {
+fn format_url(url: &str, http_url: bool) -> String {
     let removed_token = remove_token_from_url(&url);
-    if !force_url_http || removed_token.starts_with("http") {
+    if !http_url || removed_token.starts_with("http") {
         removed_token
     } else {
-        create_http_url(url)
+        create_http_url_from_ssh(url)
     }
 }
 
@@ -56,7 +56,7 @@ fn remove_token_from_url(url: &str) -> String {
     replaced_url
 }
 
-fn create_http_url(url: &str) -> String {
+fn create_http_url_from_ssh(url: &str) -> String {
     let pattern = Regex::new(r"([^@]+)@([^:]+):(.*)").unwrap();
     let replaced_url = pattern.replace(url, "https://${2}/${3}").to_string();
     replaced_url
@@ -128,5 +128,16 @@ mod test {
         let remote_url = "https://john:abc123personaltoken@gitlab.com/jim4067/myproject.git";
         let res_url = remove_token_from_url(remote_url);
         assert_eq!("https://gitlab.com/jim4067/myproject.git", res_url);
+    }
+
+    #[test]
+    fn test_create_http_url_from_ssh() {
+        let remote_url_github = "git@github.com:0spotter0/onefetch.git";
+        let res_url_github = create_http_url_from_ssh(remote_url_github);
+        assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github);
+
+        let remote_url_gitlab = "git@gitlab.com:0spotter0/onefetch.git";
+        let res_url_gitlab = create_http_url_from_ssh(remote_url_gitlab);
+        assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab);
     }
 }
