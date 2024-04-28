@@ -80,9 +80,8 @@ impl InfoField for UrlInfo {
 
 #[cfg(test)]
 mod test {
-    use rstest::rstest;
-
     use super::*;
+    use rstest::rstest;
 
     #[test]
     fn test_display_url_info() {
