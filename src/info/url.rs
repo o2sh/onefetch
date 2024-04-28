@@ -120,6 +120,18 @@ mod test {
         true,
         "https://gitlab.com/user/repo"
     )]
+    #[case(
+        "https://github.com/user/repo",
+        true,
+        true,
+        "https://github.com/user/repo"
+    )]
+    #[case(
+        "https://username:token@github.com/user/repo",
+        false,
+        false,
+        "https://username:token@github.com/user/repo"
+    )]
     fn test_format_url(
         #[case] url: &str,
         #[case] hide_token: bool,
