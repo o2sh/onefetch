@@ -143,7 +143,11 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .ok()
         .context("BUG: panic in language statistics thread")??;
     let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(&repo, cli_options.info.http_url);
+    let repo_url = get_repo_url(
+        &repo,
+        cli_options.info.hide_token,
+        cli_options.info.http_url,
+    );
 
     let git_metrics = traverse_commit_graph(
         &repo,

@@ -87,6 +87,9 @@ pub struct InfoCliOptions {
     /// Display repository URL as HTTP
     #[arg(long)]
     pub http_url: bool,
+    /// Hide token in repository URL
+    #[arg(long)]
+    pub hide_token: bool,
     /// Count hidden files and directories
     #[arg(long)]
     pub include_hidden: bool,
@@ -247,6 +250,7 @@ impl Default for InfoCliOptions {
             no_merges: Default::default(),
             email: Default::default(),
             http_url: Default::default(),
+            hide_token: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
             disabled_fields: Vec::default(),
