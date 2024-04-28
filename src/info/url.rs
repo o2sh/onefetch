@@ -80,6 +80,8 @@ impl InfoField for UrlInfo {
 
 #[cfg(test)]
 mod test {
+    use rstest::rstest;
+
     use super::*;
 
     #[test]
@@ -94,69 +96,52 @@ mod test {
         );
     }
 
-    #[test]
-    fn test_format_url_http() {
-        let remote_url_github =
-            "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/0spotter0/onefetch.git";
-        let res_url_github = format_url(remote_url_github, true, true);
-        assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github);
-
-        let remote_url_gitlab =
-            "https://john:abc123personaltoken@gitlab.com/0spotter0/onefetch.git";
-        let res_url_gitlab = format_url(remote_url_gitlab, true, true);
-        assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab);
+    #[rstest]
+    #[case(
+        "https://username:token@github.com/user/repo",
+        true,
+        false,
+        "https://github.com/user/repo"
+    )]
+    #[case(
+        "https://user:token@gitlab.com/user/repo",
+        true,
+        false,
+        "https://gitlab.com/user/repo"
+    )]
+    #[case(
+        "git@github.com:user/repo.git",
+        false,
+        true,
+        "https://github.com/user/repo.git"
+    )]
+    #[case(
+        "git@gitlab.com:user/repo",
+        false,
+        true,
+        "https://gitlab.com/user/repo"
+    )]
+    fn test_format_url(
+        #[case] url: &str,
+        #[case] hide_token: bool,
+        #[case] http_url: bool,
+        #[case] expected: &str,
+    ) {
+        assert_eq!(format_url(url, hide_token, http_url), expected);
     }
 
-    #[test]
-    fn test_format_url_ssh() {
-        let remote_url_github = "git@github.com:0spotter0/onefetch.git";
-        let res_url_github_force_http_true = format_url(remote_url_github, false, true);
-        let res_url_github_force_http_false = format_url(remote_url_github, false, false);
-        assert_eq!(
-            "https://github.com/0spotter0/onefetch.git",
-            res_url_github_force_http_true
-        );
-        assert_eq!(
-            "git@github.com:0spotter0/onefetch.git",
-            res_url_github_force_http_false
-        );
-
-        let remote_url_gitlab = "git@gitlab.com:0spotter0/onefetch.git";
-        let res_url_gitlab_force_http_true = format_url(remote_url_gitlab, false, true);
-        let res_url_gitlab_force_http_false = format_url(remote_url_gitlab, false, false);
-        assert_eq!(
-            "https://gitlab.com/0spotter0/onefetch.git",
-            res_url_gitlab_force_http_true
-        );
-        assert_eq!(
-            "git@gitlab.com:0spotter0/onefetch.git",
-            res_url_gitlab_force_http_false
-        );
+    #[rstest]
+    #[case(
+        "https://username:token@github.com/user/repo",
+        "https://github.com/user/repo"
+    )]
+    fn test_remove_token_from_url(#[case] url: &str, #[case] expected: &str) {
+        assert_eq!(remove_token_from_url(url), expected);
     }
 
-    #[test]
-    fn test_token_removal_github() {
-        let remote_url =
-            "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/jim4067/onefetch.git";
-        let res_url = remove_token_from_url(remote_url);
-        assert_eq!("https://github.com/jim4067/onefetch.git", res_url);
-    }
-
-    #[test]
-    fn test_token_removal_gitlab() {
-        let remote_url = "https://john:abc123personaltoken@gitlab.com/jim4067/myproject.git";
-        let res_url = remove_token_from_url(remote_url);
-        assert_eq!("https://gitlab.com/jim4067/myproject.git", res_url);
-    }
-
-    #[test]
-    fn test_create_http_url_from_ssh() {
-        let remote_url_github = "git@github.com:0spotter0/onefetch.git";
-        let res_url_github = create_http_url_from_ssh(remote_url_github);
-        assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github);
-
-        let remote_url_gitlab = "git@gitlab.com:0spotter0/onefetch.git";
-        let res_url_gitlab = create_http_url_from_ssh(remote_url_gitlab);
-        assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab);
+    #[rstest]
+    #[case("git@github.com:user/repo.git", "https://github.com/user/repo.git")]
+    fn test_create_http_url_from_ssh(#[case] url: &str, #[case] expected: &str) {
+        assert_eq!(create_http_url_from_ssh(url), expected);
     }
 }
