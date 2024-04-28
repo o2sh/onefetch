@@ -84,6 +84,9 @@ pub struct InfoCliOptions {
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
+    /// Display repository URL as HTTP
+    #[arg(long)]
+    pub http_url: bool,
     /// Count hidden files and directories
     #[arg(long)]
     pub include_hidden: bool,
@@ -243,6 +246,7 @@ impl Default for InfoCliOptions {
             no_bots: Option::default(),
             no_merges: Default::default(),
             email: Default::default(),
+            http_url: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
             disabled_fields: Vec::default(),
