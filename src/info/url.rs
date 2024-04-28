@@ -130,17 +130,17 @@ mod test {
         assert_eq!(format_url(url, hide_token, http_url), expected);
     }
 
-    #[rstest]
-    #[case(
-        "https://username:token@github.com/user/repo",
-        "https://github.com/user/repo"
-    )]
-    fn test_remove_token_from_url(#[case] url: &str, #[case] expected: &str) {
-        assert_eq!(remove_token_from_url(url), expected);
+    #[test]
+    fn test_remove_token_from_url() {
+        assert_eq!(
+            remove_token_from_url("https://username:token@github.com/user/repo"),
+            "https://github.com/user/repo"
+        );
     }
 
     #[rstest]
     #[case("git@github.com:user/repo.git", "https://github.com/user/repo.git")]
+    #[case("git@gitlab.com:user/repo", "https://gitlab.com/user/repo")]
     fn test_create_http_url_from_ssh(#[case] url: &str, #[case] expected: &str) {
         assert_eq!(create_http_url_from_ssh(url), expected);
     }
