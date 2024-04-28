@@ -91,11 +91,13 @@ mod test {
 
     #[test]
     fn test_format_url_http() {
-        let remote_url_github = "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/0spotter0/onefetch.git";
+        let remote_url_github =
+            "https://1234567890abcdefghijklmnopqrstuvwxyz@github.com/0spotter0/onefetch.git";
         let res_url_github = format_url(remote_url_github, true);
         assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github);
 
-        let remote_url_gitlab = "https://john:abc123personaltoken@gitlab.com/0spotter0/onefetch.git";
+        let remote_url_gitlab =
+            "https://john:abc123personaltoken@gitlab.com/0spotter0/onefetch.git";
         let res_url_gitlab = format_url(remote_url_gitlab, true);
         assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab);
     }
@@ -105,14 +107,26 @@ mod test {
         let remote_url_github = "git@github.com:0spotter0/onefetch.git";
         let res_url_github_force_http_true = format_url(remote_url_github, true);
         let res_url_github_force_http_false = format_url(remote_url_github, false);
-        assert_eq!("https://github.com/0spotter0/onefetch.git", res_url_github_force_http_true);
-        assert_eq!("git@github.com:0spotter0/onefetch.git", res_url_github_force_http_false);
+        assert_eq!(
+            "https://github.com/0spotter0/onefetch.git",
+            res_url_github_force_http_true
+        );
+        assert_eq!(
+            "git@github.com:0spotter0/onefetch.git",
+            res_url_github_force_http_false
+        );
 
         let remote_url_gitlab = "git@gitlab.com:0spotter0/onefetch.git";
         let res_url_gitlab_force_http_true = format_url(remote_url_gitlab, true);
         let res_url_gitlab_force_http_false = format_url(remote_url_gitlab, false);
-        assert_eq!("https://gitlab.com/0spotter0/onefetch.git", res_url_gitlab_force_http_true);
-        assert_eq!("git@gitlab.com:0spotter0/onefetch.git", res_url_gitlab_force_http_false);
+        assert_eq!(
+            "https://gitlab.com/0spotter0/onefetch.git",
+            res_url_gitlab_force_http_true
+        );
+        assert_eq!(
+            "git@gitlab.com:0spotter0/onefetch.git",
+            res_url_gitlab_force_http_false
+        );
     }
 
     #[test]
