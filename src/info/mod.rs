@@ -12,7 +12,6 @@ use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
 use self::last_change::LastChangeInfo;
 use self::license::LicenseInfo;
-use self::blob_size::BlobSizeInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
 use self::repo_size::RepoSizeInfo;
@@ -44,7 +43,6 @@ mod head;
 pub mod langs;
 mod last_change;
 mod license;
-mod blob_size;
 mod pending;
 mod project;
 mod repo_size;
@@ -205,7 +203,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             globs_to_exclude,
             number_separator,
         )?
-        .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, &manifest)?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
@@ -420,18 +417,6 @@ impl InfoBuilder {
             self.info_fields.push(Box::new(churn));
         }
         Ok(self)
-    }
-
-    fn loc(
-        mut self,
-        loc_by_language: &[(Language, usize)],
-        number_separator: NumberSeparator,
-    ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::LinesOfCode) {
-            let lines_of_code = BlobSizeInfo::new(loc_by_language, number_separator);
-            self.info_fields.push(Box::new(lines_of_code));
-        }
-        self
     }
 
     fn build(

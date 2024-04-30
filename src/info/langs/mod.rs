@@ -35,34 +35,6 @@ pub fn get_loc_by_language_sorted(
     Ok(size_by_language)
 }
 
-fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
-    let mut vec: Vec<(Language, usize)> = map.into_iter().collect();
-    vec.sort_by(|a, b| b.1.cmp(&a.1));
-    vec
-}
-
-fn get_loc_by_language<Any>(languages: Any) -> Option<HashMap<Language, usize>> {
-    todo!("Determine if this is necessary")
-    // let mut loc_by_language = HashMap::new();
-
-    // for (language_name, language) in languages.iter() {
-    //     let loc = language::loc(language_name, language);
-
-    //     if loc == 0 {
-    //         continue;
-    //     }
-
-    //     loc_by_language.insert(Language::from(*language_name), loc);
-    // }
-
-    // let total_loc: usize = loc_by_language.values().sum();
-    // if total_loc == 0 {
-    //     None
-    // } else {
-    //     Some(loc_by_language)
-    // }
-}
-
 pub fn get_total_size(loc_by_language: &[(Language, usize)]) -> usize {
     let total_loc: usize = loc_by_language.iter().map(|(_, v)| v).sum();
     total_loc
