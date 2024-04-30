@@ -939,16 +939,15 @@ dependencies = [
 
 [[package]]
 name = "gengo"
-version = "0.11.1"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dbe3699980642aa2586d2713766e5f1b36d7fe76be169317018e7791d515eaac"
+checksum = "1a570f3efde2af550c1602f7ee6fda84f426f4a9a9886518a3ce257cd7a29bc5"
 dependencies = [
  "gix",
  "glob",
  "ignore",
  "indexmap",
  "once_cell",
- "prettyplease",
  "proc-macro2",
  "quote",
  "rayon",
@@ -956,7 +955,6 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml",
- "syn 2.0.53",
 ]
 
 [[package]]
@@ -2837,16 +2835,6 @@ checksum = "af7cee1a6c8a5b9208b3cb1061f10c0cb689087b3d8ce85fb9d2dd7a29b6ba66"
 dependencies = [
  "diff",
  "yansi",
-]
-
-[[package]]
-name = "prettyplease"
-version = "0.2.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d3928fb5db768cb86f891ff014f0144589297e3c6a1aba6ed7cecfdace270c7"
-dependencies = [
- "proc-macro2",
- "syn 2.0.53",
 ]
 
 [[package]]
