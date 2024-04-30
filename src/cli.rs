@@ -87,15 +87,6 @@ pub struct InfoCliOptions {
     /// Count hidden files and directories
     #[arg(long)]
     pub include_hidden: bool,
-    /// Filters output by language type
-    #[arg(
-        long,
-        num_args = 1..,
-        default_values = &["programming", "markup"],
-        short = 'T',
-        value_enum,
-    )]
-    pub r#type: Vec<LanguageType>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
@@ -244,7 +235,6 @@ impl Default for InfoCliOptions {
             no_merges: Default::default(),
             email: Default::default(),
             include_hidden: Default::default(),
-            r#type: vec![LanguageType::Programming, LanguageType::Markup],
             disabled_fields: Vec::default(),
             no_title: Default::default(),
         }

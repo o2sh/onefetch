@@ -19,10 +19,9 @@ pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
 pub fn get_loc_by_language_sorted(
     dir: &Path,
     globs_to_exclude: &[String],
-    language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
-    let stats = match get_statistics(dir, globs_to_exclude, language_types, include_hidden) {
+    let stats = match get_statistics(dir, globs_to_exclude, include_hidden) {
         Ok(stats) => stats,
         Err(e) => return Err(anyhow!("Could not analyze repository: {}", e))
     };
@@ -43,15 +42,10 @@ pub fn get_total_size(loc_by_language: &[(Language, usize)]) -> usize {
 fn get_statistics(
     dir: &Path,
     globs_to_exclude: &[String],
-    language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<gengo::Analysis, Box<dyn Error>> {
     // TODO Determine best way to ignore files (and if that should continue to be handled by onefetch)
     let file_source = Git::new(dir, "HEAD")?;
     let gengo = Builder::new(file_source).build()?;
     gengo.analyze()
-}
-
-fn filter_languages_on_type(types: &[LanguageType]) -> ! {
-    todo!("Determine if this is even necessary")
 }
