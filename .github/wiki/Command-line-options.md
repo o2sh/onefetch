@@ -57,7 +57,7 @@ INFO:
   -T, --type <TYPE>...
           Filters output by language type
 
-          [default: programming markup]
+          [default: programming markup query]
           [possible values: programming, markup, prose, data]
 
 TEXT FORMATTING:

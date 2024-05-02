@@ -12,14 +12,6 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
-#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
-pub enum LanguageType {
-    Programming,
-    Markup,
-    Prose,
-    Data,
-}
-
 #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize)]
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
@@ -91,14 +83,6 @@ impl Language {
         match colors.true_colors {
             Some(true_colors) if true_color => true_colors,
             _ => colors.basic_colors,
-        }
-    }
-
-    pub fn get_type(&self) -> LanguageType {
-        match self {
-            {% for language, attrs in languages -%}
-                Language::{{ language }} => LanguageType::{{ attrs.type | title }},
-            {% endfor %}
         }
     }
 

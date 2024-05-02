@@ -22,13 +22,28 @@ pub fn get_loc_by_language_sorted(
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
-    let stats = match get_statistics(dir, globs_to_exclude, language_types, include_hidden) {
+    let analysis = match get_statistics(dir, globs_to_exclude, language_types, include_hidden) {
         Ok(stats) => stats,
         Err(e) => return Err(anyhow!("Could not analyze repository: {}", e))
     };
 
     // NOTE If finer control is ever needed, summary_with can be used.
-    let mut size_by_language: Vec<(Language, _)> = stats.summary().iter().filter_map(|(lang, size)| (*lang).try_into().map(|l| (l, *size)).ok()).collect();
+    let mut size_by_language: Vec<(Language, _)> = analysis.iter()
+        .filter(|(_, entry)| {
+            let lang_type = LanguageType(entry.language().category());
+            language_types.contains(&lang_type)
+        })
+        .filter_map(|(_, entry)| {
+            let language = *entry.language();
+            let language: Option<Language> = language.try_into().ok();
+            language.map(|language: Language| (language, entry.size()))
+        })
+        .fold(HashMap::new(), |mut acc, (language, size)| {
+            *acc.entry(language).or_insert(0) += size;
+            acc
+        })
+        .into_iter()
+        .collect();
     // NOTE Sort by size (descending) first, then by language name (ascending) in case the size is equal
     size_by_language.sort_by_key(|(language, size)| (usize::MAX - *size, language.to_string()));
 
@@ -50,8 +65,4 @@ fn get_statistics(
     let file_source = Git::new(dir, "HEAD")?;
     let gengo = Builder::new(file_source).build()?;
     gengo.analyze()
-}
-
-fn filter_languages_on_type(types: &[LanguageType]) -> ! {
-    todo!("Determine if this is even necessary")
 }

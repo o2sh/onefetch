@@ -91,7 +91,7 @@ pub struct InfoCliOptions {
     #[arg(
         long,
         num_args = 1..,
-        default_values = &["programming", "markup"],
+        default_values = &["programming", "markup", "query"],
         short = 'T',
         value_enum,
     )]
@@ -244,7 +244,7 @@ impl Default for InfoCliOptions {
             no_merges: Default::default(),
             email: Default::default(),
             include_hidden: Default::default(),
-            r#type: vec![LanguageType::Programming, LanguageType::Markup],
+            r#type: LanguageType::DEFAULT_ARGS.to_vec(),
             disabled_fields: Vec::default(),
             no_title: Default::default(),
         }
