@@ -9,14 +9,14 @@ use strum::IntoEnumIterator;
 
 pub mod language;
 
-pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
-    loc_by_language[0].0
+pub fn get_main_language(size_by_language: &[(Language, usize)]) -> Language {
+    size_by_language[0].0
 }
 
 /// Returns a vector of tuples containing all the languages detected inside the repository.
-/// Each tuple is composed of the language and its corresponding loc (lines of code).
-/// The vector is sorted by loc in descending order.
-pub fn get_loc_by_language_sorted(
+/// Each tuple is composed of the language and its corresponding blob size.
+/// The vector is sorted by size in descending order.
+pub fn get_size_by_language_sorted(
     dir: &Path,
     globs_to_exclude: &[String],
     language_types: &[LanguageType],

@@ -56,14 +56,14 @@ pub struct LanguagesInfo {
 
 impl LanguagesInfo {
     pub fn new(
-        loc_by_language: &[(Language, usize)],
+        size_by_language: &[(Language, usize)],
         true_color: bool,
         number_of_languages_to_display: usize,
         info_color: DynColors,
     ) -> Self {
-        let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
+        let total: usize = size_by_language.iter().map(|(_, v)| v).sum();
 
-        let weight_by_language: Vec<(Language, f64)> = loc_by_language
+        let weight_by_language: Vec<(Language, f64)> = size_by_language
             .iter()
             .map(|(k, v)| {
                 let mut val = *v as f64;
