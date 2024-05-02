@@ -123,12 +123,14 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
 
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
+        let language_types = cli_options.info.r#type.clone();
         let include_hidden = cli_options.info.include_hidden;
         let workdir = repo_path.clone();
         move || {
             langs::get_loc_by_language_sorted(
                 &workdir,
                 &globs_to_exclude,
+                &language_types,
                 include_hidden,
             )
         }
