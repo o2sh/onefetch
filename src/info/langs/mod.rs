@@ -50,11 +50,6 @@ pub fn get_loc_by_language_sorted(
     Ok(size_by_language)
 }
 
-pub fn get_total_size(loc_by_language: &[(Language, usize)]) -> usize {
-    let total_loc: usize = loc_by_language.iter().map(|(_, v)| v).sum();
-    total_loc
-}
-
 fn get_statistics(
     dir: &Path,
     globs_to_exclude: &[String],
