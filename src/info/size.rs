@@ -8,14 +8,14 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RepoSizeInfo {
+pub struct SizeInfo {
     pub repo_size: String,
     pub file_count: u64,
     #[serde(skip_serializing)]
     number_separator: NumberSeparator,
 }
 
-impl RepoSizeInfo {
+impl SizeInfo {
     pub fn new(repo: &Repository, number_separator: NumberSeparator) -> Self {
         let (repo_size, file_count) = get_repo_size(repo);
         Self {
@@ -44,7 +44,7 @@ fn bytes_to_human_readable(bytes: u64) -> String {
     format!("{adjusted_byte_based:#.2}")
 }
 
-impl std::fmt::Display for RepoSizeInfo {
+impl std::fmt::Display for SizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.file_count {
             0 => write!(f, "{}", &self.repo_size),
@@ -62,12 +62,12 @@ impl std::fmt::Display for RepoSizeInfo {
 }
 
 #[typetag::serialize]
-impl InfoField for RepoSizeInfo {
+impl InfoField for SizeInfo {
     fn value(&self) -> String {
         self.to_string()
     }
     fn title(&self) -> String {
-        "Repository Size".into()
+        "Size".into()
     }
 }
 
@@ -79,7 +79,7 @@ mod test {
 
     #[test]
     fn test_display_size_info() {
-        let size_info = RepoSizeInfo {
+        let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 123,
             number_separator: NumberSeparator::Plain,
@@ -90,7 +90,7 @@ mod test {
 
     #[test]
     fn test_display_size_info_no_files() {
-        let size_info = RepoSizeInfo {
+        let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 0,
             number_separator: NumberSeparator::Plain,
@@ -101,7 +101,7 @@ mod test {
 
     #[test]
     fn test_display_size_info_one_files() {
-        let size_info = RepoSizeInfo {
+        let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 1,
             number_separator: NumberSeparator::Plain,

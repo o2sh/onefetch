@@ -14,7 +14,7 @@ use self::last_change::LastChangeInfo;
 use self::license::LicenseInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
-use self::repo_size::RepoSizeInfo;
+use self::size::SizeInfo;
 use self::title::Title;
 use self::url::get_repo_url;
 use self::url::UrlInfo;
@@ -45,7 +45,7 @@ mod last_change;
 mod license;
 mod pending;
 mod project;
-mod repo_size;
+mod size;
 mod title;
 mod url;
 pub mod utils;
@@ -288,7 +288,7 @@ impl InfoBuilder {
 
     fn size(mut self, repo: &Repository, number_separator: NumberSeparator) -> Self {
         if !self.disabled_fields.contains(&InfoType::Size) {
-            let size = RepoSizeInfo::new(repo, number_separator);
+            let size = SizeInfo::new(repo, number_separator);
             self.info_fields.push(Box::new(size));
         }
         self
