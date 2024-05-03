@@ -7,7 +7,7 @@ use gix::bstr::{BString, Utf8Error};
 use gix::object::tree::diff::change::Event;
 use gix::object::tree::diff::Action;
 use gix::prelude::ObjectIdExt;
-use gix::traverse::commit::Sorting;
+use gix::traverse::commit::simple::Sorting;
 use gix::{Commit, ObjectId};
 use regex::Regex;
 use std::collections::HashMap;
@@ -105,6 +105,8 @@ pub fn traverse_commit_graph(
 
     total_number_of_commits.store(count, Ordering::SeqCst);
     has_commit_graph_traversal_ended.store(true, Ordering::SeqCst);
+
+    drop(churn_tx);
 
     let (number_of_commits_by_file_path, churn_pool_size) =
         churn_thread.join().expect("never panics")?;
