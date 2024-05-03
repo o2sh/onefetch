@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::path::Path;
 use strum::IntoEnumIterator;
+use globset::{Glob, GlobSetBuilder};
 
 pub mod language;
 
@@ -22,6 +23,13 @@ pub fn get_size_by_language_sorted(
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
+    let globset = globs_to_exclude.iter()
+        .filter_map(|glob| Glob::new(glob).ok())
+        .fold(GlobSetBuilder::new(), |mut builder, glob| {
+            builder.add(glob);
+            builder
+        })
+        .build()?;
     let analysis = match get_statistics(dir, globs_to_exclude, language_types, include_hidden) {
         Ok(stats) => stats,
         Err(e) => return Err(anyhow!("Could not analyze repository: {}", e))
@@ -30,6 +38,7 @@ pub fn get_size_by_language_sorted(
     // NOTE If finer control is ever needed, summary_with can be used.
     let mut size_by_language: Vec<(Language, _)> = analysis.iter()
         .filter(|(path, _)| include_hidden || !is_hidden(path))
+        .filter(|(path, _)| !globset.is_match(path))
         .filter(|(_, entry)| {
             let lang_type = LanguageType(entry.language().category());
             language_types.contains(&lang_type)
