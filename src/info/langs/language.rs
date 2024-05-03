@@ -10,14 +10,24 @@ include!(concat!(env!("OUT_DIR"), "/language.rs"));
 pub struct LanguageType(pub Category);
 
 impl LanguageType {
-    pub(crate) const DEFAULT_ARGS: [Self;3] = [Self(Category::Programming), Self(Category::Markup), Self(Category::Query)];
+    pub(crate) const DEFAULT_ARGS: [Self; 3] = [
+        Self(Category::Programming),
+        Self(Category::Markup),
+        Self(Category::Query),
+    ];
     // pub(crate) const VARIANTS: [Self;5]
 }
 
 impl clap::ValueEnum for LanguageType {
     fn value_variants<'a>() -> &'a [Self] {
         use Category::*;
-        &[Self(Programming), Self(Markup), Self(Prose), Self(Data), Self(Query)]
+        &[
+            Self(Programming),
+            Self(Markup),
+            Self(Prose),
+            Self(Data),
+            Self(Query),
+        ]
     }
 
     fn to_possible_value(&self) -> Option<PossibleValue> {

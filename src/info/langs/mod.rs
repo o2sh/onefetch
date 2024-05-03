@@ -1,12 +1,11 @@
-use anyhow::{anyhow, Context, Result};
-use gengo::{analysis, FileSource, Git, Builder};
-use gix::filter::plumbing::eol::Stats;
+use anyhow::{anyhow, Result};
+use gengo::{Builder, Git};
+
+use globset::{Glob, GlobSetBuilder};
 use language::{Language, LanguageType};
 use std::collections::HashMap;
 use std::error::Error;
 use std::path::Path;
-use strum::IntoEnumIterator;
-use globset::{Glob, GlobSetBuilder};
 
 pub mod language;
 
@@ -23,20 +22,22 @@ pub fn get_size_by_language_sorted(
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
-    let globset = globs_to_exclude.iter()
+    let globset = globs_to_exclude
+        .iter()
         .filter_map(|glob| Glob::new(glob).ok())
         .fold(GlobSetBuilder::new(), |mut builder, glob| {
             builder.add(glob);
             builder
         })
         .build()?;
-    let analysis = match get_statistics(dir, globs_to_exclude, language_types, include_hidden) {
+    let analysis = match get_statistics(dir) {
         Ok(stats) => stats,
-        Err(e) => return Err(anyhow!("Could not analyze repository: {}", e))
+        Err(e) => return Err(anyhow!("Could not analyze repository: {}", e)),
     };
 
     // NOTE If finer control is ever needed, summary_with can be used.
-    let mut size_by_language: Vec<(Language, _)> = analysis.iter()
+    let mut size_by_language: Vec<(Language, _)> = analysis
+        .iter()
         .filter(|(path, _)| include_hidden || !is_hidden(path))
         .filter(|(path, _)| !globset.is_match(path))
         .filter(|(_, entry)| {
@@ -60,12 +61,7 @@ pub fn get_size_by_language_sorted(
     Ok(size_by_language)
 }
 
-fn get_statistics(
-    dir: &Path,
-    globs_to_exclude: &[String],
-    language_types: &[LanguageType],
-    include_hidden: bool,
-) -> Result<gengo::Analysis, Box<dyn Error>> {
+fn get_statistics(dir: &Path) -> Result<gengo::Analysis, Box<dyn Error>> {
     // TODO Determine best way to ignore files (and if that should continue to be handled by onefetch)
     let file_source = Git::new(dir, "HEAD")?;
     let gengo = Builder::new(file_source).build()?;
@@ -74,9 +70,9 @@ fn get_statistics(
 
 /// Returns `true` if the file is or any of its containing directories are hidden.
 fn is_hidden(path: impl AsRef<Path>) -> bool {
-    path.as_ref().components().any(|c| {
-        c.as_os_str().to_string_lossy().starts_with('.')
-    })
+    path.as_ref()
+        .components()
+        .any(|c| c.as_os_str().to_string_lossy().starts_with('.'))
 }
 
 #[cfg(test)]
