@@ -29,6 +29,7 @@ pub fn get_size_by_language_sorted(
 
     // NOTE If finer control is ever needed, summary_with can be used.
     let mut size_by_language: Vec<(Language, _)> = analysis.iter()
+        .filter(|(path, _)| include_hidden || !is_hidden(path))
         .filter(|(_, entry)| {
             let lang_type = LanguageType(entry.language().category());
             language_types.contains(&lang_type)
@@ -60,4 +61,26 @@ fn get_statistics(
     let file_source = Git::new(dir, "HEAD")?;
     let gengo = Builder::new(file_source).build()?;
     gengo.analyze()
+}
+
+/// Returns `true` if the file is or any of its containing directories are hidden.
+fn is_hidden(path: impl AsRef<Path>) -> bool {
+    path.as_ref().components().any(|c| {
+        c.as_os_str().to_string_lossy().starts_with('.')
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use rstest::rstest;
+
+    #[rstest]
+    #[case("file", false)]
+    #[case("path/to/file", false)]
+    #[case(".file", true)]
+    #[case(".path/to/file", true)]
+    #[case("path/.to/file", true)]
+    fn test_is_hidden(#[case] path: &str, #[case] expected: bool) {
+        assert_eq!(super::is_hidden(path), expected);
+    }
 }
