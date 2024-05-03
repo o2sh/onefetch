@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use gengo::{Builder, Git};
 
 use globset::{Glob, GlobSetBuilder};
@@ -9,8 +9,12 @@ use std::path::Path;
 
 pub mod language;
 
-pub fn get_main_language(size_by_language: &[(Language, usize)]) -> Language {
-    size_by_language[0].0
+pub fn get_main_language(size_by_language: &[(Language, usize)]) -> Result<Language> {
+    // TODO This function only works with an already-sorted slice, so it doesn't have much utility
+    let (language, _) = size_by_language
+        .get(0)
+        .context("Could not find any source code in this repository")?;
+    Ok(*language)
 }
 
 /// Returns a vector of tuples containing all the languages detected inside the repository.

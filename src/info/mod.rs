@@ -158,7 +158,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
     };
-    let dominant_language = langs::get_main_language(&size_by_language);
+    let dominant_language = langs::get_main_language(&size_by_language)?;
     let ascii_colors = get_ascii_colors(
         &cli_options.ascii.ascii_language,
         &dominant_language,
