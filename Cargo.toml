@@ -32,7 +32,7 @@ rust-version = "1.74.1"
 [dependencies]
 anyhow.workspace = true
 askalono = "0.4.6"
-byte-unit = "5.1.2"
+byte-unit = "5.1.4"
 bytecount = "0.6.7"
 clap.workspace = true
 clap_complete = "4.5.2"
