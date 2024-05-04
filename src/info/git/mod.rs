@@ -192,17 +192,20 @@ fn get_churn_channel(
             let mut number_of_diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
-                if !is_bot_commit(&commit, &mailmap, &bot_regex_pattern)? {
-                    compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
-                    number_of_diffs_computed += 1;
-                    if should_break(
-                        has_commit_graph_traversal_ended.load(Ordering::Relaxed),
-                        total_number_of_commits.load(Ordering::Relaxed),
-                        max_churn_pool_size,
-                        number_of_diffs_computed,
-                    ) {
-                        break;
-                    }
+                if bot_regex_pattern.is_some()
+                    && is_bot_commit(&commit, &mailmap, &bot_regex_pattern)?
+                {
+                    continue;
+                }
+                compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
+                number_of_diffs_computed += 1;
+                if should_break(
+                    has_commit_graph_traversal_ended.load(Ordering::Relaxed),
+                    total_number_of_commits.load(Ordering::Relaxed),
+                    max_churn_pool_size,
+                    number_of_diffs_computed,
+                ) {
+                    break;
                 }
             }
 
