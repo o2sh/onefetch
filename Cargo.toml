@@ -36,7 +36,7 @@ byte-unit = "5.1.4"
 bytecount = "0.6.8"
 clap.workspace = true
 clap_complete = "4.5.2"
-crossbeam-channel = "0.5.9"
+crossbeam-channel = "0.5.12"
 gix = { version = "0.62.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
