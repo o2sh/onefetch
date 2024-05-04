@@ -51,6 +51,8 @@ pub fn traverse_commit_graph(
 
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
+        &mailmap,
+        &bot_regex_pattern,
         &has_commit_graph_traversal_ended,
         &total_number_of_commits,
         max_churn_pool_size,
@@ -172,6 +174,8 @@ type ChurnPair = (NumberOfCommitsByFilepath, usize);
 
 fn get_churn_channel(
     repo: &gix::Repository,
+    mailmap: &gix::mailmap::Snapshot,
+    bot_regex_pattern: &Option<MyRegex>,
     has_commit_graph_traversal_ended: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
     max_churn_pool_size: Option<usize>,
@@ -179,6 +183,8 @@ fn get_churn_channel(
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
+        let mailmap = mailmap.clone();
+        let bot_regex_pattern = bot_regex_pattern.clone();
         let has_commit_graph_traversal_ended = has_commit_graph_traversal_ended.clone();
         let total_number_of_commits = total_number_of_commits.clone();
         move || -> Result<_> {
@@ -186,15 +192,17 @@ fn get_churn_channel(
             let mut number_of_diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
-                compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
-                number_of_diffs_computed += 1;
-                if should_break(
-                    has_commit_graph_traversal_ended.load(Ordering::Relaxed),
-                    total_number_of_commits.load(Ordering::Relaxed),
-                    max_churn_pool_size,
-                    number_of_diffs_computed,
-                ) {
-                    break;
+                if !is_bot_commit(&commit, &mailmap, &bot_regex_pattern)? {
+                    compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
+                    number_of_diffs_computed += 1;
+                    if should_break(
+                        has_commit_graph_traversal_ended.load(Ordering::Relaxed),
+                        total_number_of_commits.load(Ordering::Relaxed),
+                        max_churn_pool_size,
+                        number_of_diffs_computed,
+                    ) {
+                        break;
+                    }
                 }
             }
 
@@ -286,6 +294,15 @@ fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex
     };
 
     Ok(reg)
+}
+
+fn is_bot_commit(
+    commit: &Commit,
+    mailmap: &gix::mailmap::Snapshot,
+    bot_regex_pattern: &Option<MyRegex>,
+) -> Result<bool> {
+    let sig = mailmap.resolve(commit.author()?);
+    Ok(is_bot(&sig.name, bot_regex_pattern))
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
