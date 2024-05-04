@@ -1170,7 +1170,7 @@ dependencies = [
  "gix-validate",
  "gix-worktree 0.33.1",
  "once_cell",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "smallvec",
  "thiserror",
 ]
@@ -1468,7 +1468,7 @@ dependencies = [
  "jwalk",
  "libc",
  "once_cell",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "prodash 28.0.0",
  "sha1_smol",
  "thiserror",
@@ -1576,7 +1576,7 @@ checksum = "feb61880816d7ec4f0b20606b498147d480860ddd9133ba542628df2f548d3ca"
 dependencies = [
  "gix-hash 0.13.3",
  "hashbrown 0.14.3",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
 ]
 
 [[package]]
@@ -1587,7 +1587,7 @@ checksum = "7ddf80e16f3c19ac06ce415a38b8591993d3f73aede049cb561becb5b3a8e242"
 dependencies = [
  "gix-hash 0.14.2",
  "hashbrown 0.14.3",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
 ]
 
 [[package]]
@@ -1793,7 +1793,7 @@ dependencies = [
  "gix-pack",
  "gix-path",
  "gix-quote",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "tempfile",
  "thiserror",
 ]
@@ -1813,7 +1813,7 @@ dependencies = [
  "gix-path",
  "gix-tempfile 13.1.1",
  "memmap2 0.9.0",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "smallvec",
  "thiserror",
  "uluru",
@@ -2031,7 +2031,7 @@ dependencies = [
  "gix-fs 0.7.0",
  "libc",
  "once_cell",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "tempfile",
 ]
 
@@ -2044,7 +2044,7 @@ dependencies = [
  "gix-fs 0.8.1",
  "libc",
  "once_cell",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "signal-hook",
  "signal-hook-registry",
  "tempfile",
@@ -2060,7 +2060,7 @@ dependencies = [
  "gix-fs 0.10.2",
  "libc",
  "once_cell",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "tempfile",
 ]
 
@@ -2083,7 +2083,7 @@ dependencies = [
  "io-close",
  "is_ci",
  "once_cell",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "tar",
  "tempfile",
  "winnow 0.5.27",
@@ -2819,7 +2819,7 @@ dependencies = [
  "onefetch-image",
  "onefetch-manifest",
  "owo-colors",
- "parking_lot 0.12.1",
+ "parking_lot 0.12.2",
  "pretty_assertions",
  "regex",
  "rstest",
@@ -2900,9 +2900,9 @@ dependencies = [
 
 [[package]]
 name = "parking_lot"
-version = "0.12.1"
+version = "0.12.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3742b2c103b9f06bc9fff0a37ff4912935851bee6d36f3c02bcc755bcfec228f"
+checksum = "7e4af0ca4f6caed20e900d564c242b8e5d4903fdacf31d3daf527b66fe6f42fb"
 dependencies = [
  "lock_api",
  "parking_lot_core 0.9.8",
