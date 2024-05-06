@@ -78,7 +78,7 @@ mod test {
 
     #[test]
     fn get_ascii_colors_no_custom_language_no_custom_colors_true_color() {
-        let colors = get_ascii_colors(None.as_ref(), &Language::Rust, &[], true);
+        let colors = get_ascii_colors(None, &Language::Rust, &[], true);
         assert_eq!(colors.len(), 2);
         assert_eq!(
             colors,
