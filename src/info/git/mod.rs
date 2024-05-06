@@ -22,7 +22,7 @@ pub mod sig;
 
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
-    no_bots: &Option<Option<MyRegex>>,
+    no_bots: Option<&Option<MyRegex>>,
     max_churn_pool_size: Option<usize>,
     no_merges: bool,
 ) -> Result<GitMetrics> {
@@ -52,14 +52,14 @@ pub fn traverse_commit_graph(
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
         &mailmap,
-        &bot_regex_pattern,
+        bot_regex_pattern.clone(),
         &has_commit_graph_traversal_ended,
         &total_number_of_commits,
         max_churn_pool_size,
     )?;
 
     let author_threads = can_use_author_threads
-        .then(|| get_author_channel(repo, num_threads, &bot_regex_pattern, &mailmap));
+        .then(|| get_author_channel(repo, num_threads, bot_regex_pattern.clone(), &mailmap));
 
     let mut count = 0;
     for commit in commit_iter {
@@ -75,7 +75,7 @@ pub fn traverse_commit_graph(
                 update_signature_counts(
                     &commit.object()?,
                     &mailmap,
-                    &bot_regex_pattern,
+                    bot_regex_pattern.as_ref(),
                     &mut number_of_commits_by_signature,
                 )?;
             }
@@ -129,7 +129,7 @@ type NumberOfCommitsBySignature = HashMap<Sig, usize>;
 fn get_author_channel(
     repo: &gix::Repository,
     num_threads: usize,
-    bot_regex_pattern: &Option<MyRegex>,
+    bot_regex_pattern: Option<MyRegex>,
     mailmap: &gix::mailmap::Snapshot,
 ) -> (
     Vec<JoinHandle<Result<NumberOfCommitsBySignature>>>,
@@ -157,7 +157,7 @@ fn get_author_channel(
                         update_signature_counts(
                             &commit,
                             &mailmap,
-                            &bot_regex_pattern,
+                            bot_regex_pattern.as_ref(),
                             &mut number_of_commits_by_signature,
                         )?;
                     }
@@ -175,7 +175,7 @@ type ChurnPair = (NumberOfCommitsByFilepath, usize);
 fn get_churn_channel(
     repo: &gix::Repository,
     mailmap: &gix::mailmap::Snapshot,
-    bot_regex_pattern: &Option<MyRegex>,
+    bot_regex_pattern: Option<MyRegex>,
     has_commit_graph_traversal_ended: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
     max_churn_pool_size: Option<usize>,
@@ -193,7 +193,7 @@ fn get_churn_channel(
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
                 if bot_regex_pattern.is_some()
-                    && is_bot_commit(&commit, &mailmap, &bot_regex_pattern)?
+                    && is_bot_commit(&commit, &mailmap, bot_regex_pattern.as_ref())?
                 {
                     continue;
                 }
@@ -234,7 +234,7 @@ fn should_break(
 fn update_signature_counts(
     commit: &gix::Commit,
     mailmap: &gix::mailmap::Snapshot,
-    bot_regex_pattern: &Option<MyRegex>,
+    bot_regex_pattern: Option<&MyRegex>,
     number_of_commits_by_signature: &mut HashMap<Sig, usize>,
 ) -> Result<()> {
     let sig = mailmap.resolve(commit.author()?);
@@ -286,10 +286,10 @@ fn compute_diff_with_parent(
     Ok(())
 }
 
-fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex>> {
-    let reg = if let Some(r) = no_bots.clone() {
+fn get_no_bots_regex(no_bots: Option<&Option<MyRegex>>) -> Result<Option<MyRegex>> {
+    let reg = if let Some(r) = no_bots {
         match r {
-            Some(p) => Some(p),
+            Some(p) => Some(p.clone()),
             None => Some(MyRegex(Regex::from_str(r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]")?)),
         }
     } else {
@@ -302,13 +302,13 @@ fn get_no_bots_regex(no_bots: &Option<Option<MyRegex>>) -> Result<Option<MyRegex
 fn is_bot_commit(
     commit: &Commit,
     mailmap: &gix::mailmap::Snapshot,
-    bot_regex_pattern: &Option<MyRegex>,
+    bot_regex_pattern: Option<&MyRegex>,
 ) -> Result<bool> {
     let sig = mailmap.resolve(commit.author()?);
     Ok(is_bot(&sig.name, bot_regex_pattern))
 }
 
-fn is_bot(author_name: &BString, bot_regex_pattern: &Option<MyRegex>) -> bool {
+fn is_bot(author_name: &BString, bot_regex_pattern: Option<&MyRegex>) -> bool {
     bot_regex_pattern.as_ref().map_or(false, |regex| {
         regex.0.is_match(author_name.to_str_lossy().as_ref())
     })
@@ -323,18 +323,18 @@ mod tests {
     fn test_get_no_bots_regex() -> Result<()> {
         // Test case 1: no_bots is None
         let no_bots: Option<Option<MyRegex>> = None;
-        let result = get_no_bots_regex(&no_bots)?;
+        let result = get_no_bots_regex(no_bots.as_ref())?;
         assert_eq!(result, None);
 
         // Test case 2: no_bots is Some(None)
         let no_bots: Option<Option<MyRegex>> = Some(None);
-        let result = get_no_bots_regex(&no_bots)?;
+        let result = get_no_bots_regex(no_bots.as_ref())?;
         assert_eq!(result.unwrap().0.as_str(), r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]");
 
         // Test case 3: no_bots is Some(Some(regex))
         let regex = MyRegex(Regex::new(r"foo")?);
         let no_bots: Option<Option<MyRegex>> = Some(Some(regex));
-        let result = get_no_bots_regex(&no_bots)?;
+        let result = get_no_bots_regex(no_bots.as_ref())?;
         assert_eq!(result.unwrap().0.as_str(), "foo");
 
         Ok(())
@@ -348,8 +348,8 @@ mod tests {
     #[case("bot", false)]
     fn test_is_bot(#[case] author_name: &str, #[case] expected: bool) -> Result<()> {
         let no_bots: Option<Option<MyRegex>> = Some(None);
-        let regex = get_no_bots_regex(&no_bots)?;
-        assert_eq!(is_bot(&author_name.into(), &regex), expected);
+        let regex = get_no_bots_regex(no_bots.as_ref())?;
+        assert_eq!(is_bot(&author_name.into(), regex.as_ref()), expected);
         Ok(())
     }
 

@@ -151,7 +151,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
 
     let git_metrics = traverse_commit_graph(
         &repo,
-        &cli_options.info.no_bots,
+        cli_options.info.no_bots.as_ref(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )?;
