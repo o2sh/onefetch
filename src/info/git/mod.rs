@@ -286,8 +286,12 @@ fn is_bot_commit(
     mailmap: &gix::mailmap::Snapshot,
     bot_regex_pattern: Option<&MyRegex>,
 ) -> Result<bool> {
-    let sig = mailmap.resolve(commit.author()?);
-    Ok(is_bot(&sig.name, bot_regex_pattern))
+    if bot_regex_pattern.is_some() {
+        let sig = mailmap.resolve(commit.author()?);
+        Ok(is_bot(&sig.name, bot_regex_pattern))
+    } else {
+        Ok(false)
+    }
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: Option<&MyRegex>) -> bool {
