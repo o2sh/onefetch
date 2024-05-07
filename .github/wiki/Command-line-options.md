@@ -42,7 +42,7 @@ INFO:
   -e, --exclude <EXCLUDE>...
           Ignore all files & directories matching EXCLUDE
 
-      --no-bots [<REGEX>]
+      --no-bots[=<REGEX>]
           Exclude [bot] commits. Use <REGEX> to override the default pattern
 
       --no-merges
@@ -50,6 +50,12 @@ INFO:
 
   -E, --email
           Show the email address of each author
+
+      --http-url
+          Display repository URL as HTTP
+
+      --hide-token
+          Hide token in repository URL
 
       --include-hidden
           Count hidden files and directories
