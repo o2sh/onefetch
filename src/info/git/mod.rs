@@ -9,9 +9,7 @@ use gix::object::tree::diff::Action;
 use gix::prelude::ObjectIdExt;
 use gix::traverse::commit::simple::Sorting;
 use gix::{Commit, ObjectId};
-use regex::Regex;
 use std::collections::HashMap;
-use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::mpsc::{channel, Sender};
 use std::sync::Arc;
@@ -22,7 +20,7 @@ pub mod sig;
 
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
-    no_bots: Option<&Option<MyRegex>>,
+    no_bots: Option<MyRegex>,
     max_churn_pool_size: Option<usize>,
     no_merges: bool,
 ) -> Result<GitMetrics> {
@@ -30,7 +28,6 @@ pub fn traverse_commit_graph(
     let mut time_of_first_commit = None;
     let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
     let mailmap = repo.open_mailmap();
-    let bot_regex_pattern = get_no_bots_regex(no_bots)?;
     let has_commit_graph_traversal_ended = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
@@ -52,14 +49,14 @@ pub fn traverse_commit_graph(
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
         &mailmap,
-        bot_regex_pattern.clone(),
+        no_bots.clone(),
         &has_commit_graph_traversal_ended,
         &total_number_of_commits,
         max_churn_pool_size,
     )?;
 
     let author_threads = can_use_author_threads
-        .then(|| get_author_channel(repo, num_threads, bot_regex_pattern.clone(), &mailmap));
+        .then(|| get_author_channel(repo, num_threads, no_bots.clone(), &mailmap));
 
     let mut count = 0;
     for commit in commit_iter {
@@ -75,7 +72,7 @@ pub fn traverse_commit_graph(
                 update_signature_counts(
                     &commit.object()?,
                     &mailmap,
-                    bot_regex_pattern.as_ref(),
+                    no_bots.as_ref(),
                     &mut number_of_commits_by_signature,
                 )?;
             }
@@ -192,9 +189,7 @@ fn get_churn_channel(
             let mut number_of_diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
-                if bot_regex_pattern.is_some()
-                    && is_bot_commit(&commit, &mailmap, bot_regex_pattern.as_ref())?
-                {
+                if is_bot_commit(&commit, &mailmap, bot_regex_pattern.as_ref())? {
                     continue;
                 }
                 compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
@@ -286,19 +281,6 @@ fn compute_diff_with_parent(
     Ok(())
 }
 
-fn get_no_bots_regex(no_bots: Option<&Option<MyRegex>>) -> Result<Option<MyRegex>> {
-    let reg = if let Some(r) = no_bots {
-        match r {
-            Some(p) => Some(p.clone()),
-            None => Some(MyRegex(Regex::from_str(r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]")?)),
-        }
-    } else {
-        None
-    };
-
-    Ok(reg)
-}
-
 fn is_bot_commit(
     commit: &Commit,
     mailmap: &gix::mailmap::Snapshot,
@@ -309,7 +291,7 @@ fn is_bot_commit(
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: Option<&MyRegex>) -> bool {
-    bot_regex_pattern.as_ref().map_or(false, |regex| {
+    bot_regex_pattern.map_or(false, |regex| {
         regex.0.is_match(author_name.to_str_lossy().as_ref())
     })
 }
@@ -317,28 +299,9 @@ fn is_bot(author_name: &BString, bot_regex_pattern: Option<&MyRegex>) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::NO_BOTS_DEFAULT_REGEX_PATTERN;
     use rstest::rstest;
-
-    #[test]
-    fn test_get_no_bots_regex() -> Result<()> {
-        // Test case 1: no_bots is None
-        let no_bots: Option<Option<MyRegex>> = None;
-        let result = get_no_bots_regex(no_bots.as_ref())?;
-        assert_eq!(result, None);
-
-        // Test case 2: no_bots is Some(None)
-        let no_bots: Option<Option<MyRegex>> = Some(None);
-        let result = get_no_bots_regex(no_bots.as_ref())?;
-        assert_eq!(result.unwrap().0.as_str(), r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]");
-
-        // Test case 3: no_bots is Some(Some(regex))
-        let regex = MyRegex(Regex::new(r"foo")?);
-        let no_bots: Option<Option<MyRegex>> = Some(Some(regex));
-        let result = get_no_bots_regex(no_bots.as_ref())?;
-        assert_eq!(result.unwrap().0.as_str(), "foo");
-
-        Ok(())
-    }
+    use std::str::FromStr;
 
     #[rstest]
     #[case("John Doe", false)]
@@ -347,9 +310,9 @@ mod tests {
     #[case("foo-bot", true)]
     #[case("bot", false)]
     fn test_is_bot(#[case] author_name: &str, #[case] expected: bool) -> Result<()> {
-        let no_bots: Option<Option<MyRegex>> = Some(None);
-        let regex = get_no_bots_regex(no_bots.as_ref())?;
-        assert_eq!(is_bot(&author_name.into(), regex.as_ref()), expected);
+        let from_str = MyRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN);
+        let no_bots: Option<MyRegex> = Some(from_str?);
+        assert_eq!(is_bot(&author_name.into(), no_bots.as_ref()), expected);
         Ok(())
     }
 
