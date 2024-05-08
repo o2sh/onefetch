@@ -18,6 +18,7 @@ use std::str::FromStr;
 use strum::IntoEnumIterator;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
+pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about)]
@@ -76,8 +77,14 @@ pub struct InfoCliOptions {
     #[arg(long, short, num_args = 1..)]
     pub exclude: Vec<String>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
-    #[arg(long, value_name = "REGEX")]
-    pub no_bots: Option<Option<MyRegex>>,
+    #[arg(
+        long,
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
+        value_name = "REGEX"
+    )]
+    pub no_bots: Option<MyRegex>,
     /// Ignores merge commits
     #[arg(long)]
     pub no_merges: bool,

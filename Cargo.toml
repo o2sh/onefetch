@@ -2,7 +2,7 @@
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 edition = "2021"
 license = "MIT"
-version = "2.20.0"
+version = "2.21.0"
 repository = "https://github.com/o2sh/onefetch"
 
 [workspace]
@@ -11,7 +11,7 @@ members = ["ascii", "image", "manifest"]
 [workspace.dependencies]
 owo-colors = "3.5.0"
 anyhow = "1.0"
-clap = { version = "4.5.3", features = ["derive"] }
+clap = { version = "4.5.4", features = ["derive"] }
 image = "0.24.9"
 strum = { version = "0.25.0", features = ["derive"] }
 
@@ -32,11 +32,11 @@ rust-version = "1.74.1"
 [dependencies]
 anyhow.workspace = true
 askalono = "0.4.6"
-byte-unit = "5.1.2"
-bytecount = "0.6.7"
+byte-unit = "5.1.4"
+bytecount = "0.6.8"
 clap.workspace = true
-clap_complete = "4.5.1"
-crossbeam-channel = "0.5.9"
+clap_complete = "4.5.2"
+crossbeam-channel = "0.5.12"
 # NOTE Ensures that gengo's gix features don't conflict with the ones we're using
 gengo =  { version = "0.11.2", default-features = false, features = ["max-performance-safe"] }
 gix = { version = "0.62.0", default-features = false, features = [
@@ -55,14 +55,14 @@ onefetch-ascii = { path = "ascii", version = "2.19.0" }
 onefetch-image = { path = "image", version = "2.19.0" }
 onefetch-manifest = { path = "manifest", version = "2.19.0" }
 owo-colors.workspace = true
-regex = "1.10.2"
+regex = "1.10.4"
 serde = "1.0"
 serde_json = "1.0"
-serde_yaml = "0.9.27"
+serde_yaml = "0.9.34"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum.workspace = true
-time = { version = "0.3.34", features = ["formatting"] }
+time = { version = "0.3.36", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 typetag = "0.2"
 parking_lot = "0.12"
@@ -70,9 +70,9 @@ parking_lot = "0.12"
 [dev-dependencies]
 criterion = "0.5.1"
 gix-testtools = "0.13.0"
-insta = { version = "1.34.0", features = ["json", "redactions"] }
+insta = { version = "1.38.0", features = ["json", "redactions"] }
 pretty_assertions = "1.4.0"
-rstest = "0.18.2"
+rstest = "0.19.0"
 
 [[bench]]
 name = "repo"
