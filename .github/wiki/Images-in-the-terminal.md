@@ -1,12 +1,12 @@
-Onefetch supports displaying images using [`kitty`](https://sw.kovidgoyal.net/kitty/graphics-protocol.html), [`Sixel`](https://en.wikipedia.org/wiki/Sixel) and [`iTerm`](https://www.iterm2.com/documentation-images.html).
+Onefetch supports displaying images using [`kitty`](https://sw.kovidgoyal.net/kitty/graphics-protocol.html), [`Sixel`](https://en.wikipedia.org/wiki/Sixel) and [`iTerm`](https://www.iterm2.com/documentation-images.html) protocols.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/o2sh/onefetch/main/assets/screenshot-1.png" height="250px">
 </p>
 
-When running `onefetch --image ./My-picture.jpg`, the program looks for the first `Image Backend` supported by the terminal and use it to display the requested image instead of the Ascii logo.
+When running `onefetch --image ./My-picture.jpg`, the program looks for the first `Image Protocol` supported by the terminal and use it to display the requested image instead of the Ascii logo.
 
-If you decide to go manual, and want to force the use of a specific image backend --> `onefetch --image ./My-picture.jpg --image-backend sixel|kitty|iterm`
+If you decide to go manual, and want to force the use of a specific image protocol: `onefetch --image ./My-picture.jpg --image-protocol sixel|kitty|iterm`
 
 ### Sixel
 
