@@ -38,8 +38,8 @@ clap.workspace = true
 clap_complete = "4.5.2"
 crossbeam-channel = "0.5.12"
 # NOTE Ensures that gengo's gix features don't conflict with the ones we're using
-gengo =  { version = "0.11.2", default-features = false, features = ["max-performance-safe"] }
-gix = { version = "0.62.0", default-features = false, features = [
+gengo =  { version = "0.11.3", default-features = false, features = ["max-performance-safe"] }
+gix = { version = "0.63.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
@@ -70,7 +70,7 @@ parking_lot = "0.12"
 [dev-dependencies]
 criterion = "0.5.1"
 gix-testtools = "0.13.0"
-insta = { version = "1.38.0", features = ["json", "redactions"] }
+insta = { version = "1.39.0", features = ["json", "redactions"] }
 pretty_assertions = "1.4.0"
 rstest = "0.19.0"
 
