@@ -355,6 +355,7 @@ CommonLisp:
     ansi:
       - white
     chip: "#3FB68B"
+  serialization: lisp
 Coq:
   type: programming
   ascii: |
