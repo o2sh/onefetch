@@ -388,7 +388,7 @@ mod test {
             },
             ascii: AsciiCliOptions {
                 ascii_colors: vec![5, 0],
-                ascii_language: Some(Language::Lisp),
+                ascii_language: Some(Language::CommonLisp),
                 ..Default::default()
             },
             visuals: VisualsCliOptions {
