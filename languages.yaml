@@ -138,7 +138,7 @@ Assembly:
       - yellow
       - green
     chip: "#6E4C13"
- Ats:
+Ats:
   type: programming
   ascii: |
     {0}              ############
