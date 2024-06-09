@@ -119,11 +119,6 @@ expression: info
       }
     },
     {
-      "LocInfo": {
-        "linesOfCode": 4
-      }
-    },
-    {
       "SizeInfo": {
         "repoSize": "22 B",
         "fileCount": 1
