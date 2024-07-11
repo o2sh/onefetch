@@ -81,23 +81,17 @@ jobs:
       - name: Publish to crates.io (ascii)
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        working-directory:
-          ./ascii
-        run: cargo publish
+        run: cargo publish -p onefetch-ascii
 
       - name: Publish to crates.io (image)
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        working-directory:
-          ./image
-        run: cargo publish
+        run: cargo publish -p onefetch-image
 
       - name: Publish to crates.io (manifest)
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        working-directory:
-          ./manifest
-        run: cargo publish
+        run: cargo publish -p onefetch-manifest
 
       - name: Publish to crates.io
         env:
