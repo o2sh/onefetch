@@ -2,6 +2,8 @@ name: CD
 on:
   release:
     types: [published]
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   deploy:
@@ -65,8 +67,6 @@ jobs:
   cargo-publish:
     name: Publish to crates.io
     runs-on: ubuntu-latest
-    env:
-      CARGO_TERM_COLOR: always
 
     steps:
       - uses: actions/checkout@v4
