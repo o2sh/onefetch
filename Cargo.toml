@@ -68,7 +68,7 @@ parking_lot = "0.12"
 
 [dev-dependencies]
 criterion = "0.5.1"
-gix-testtools = "0.13.0"
+gix-testtools = "0.15.0"
 insta = { version = "1.39.0", features = ["json", "redactions"] }
 pretty_assertions = "1.4.0"
 rstest = "0.21.0"
