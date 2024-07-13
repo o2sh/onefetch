@@ -372,12 +372,12 @@ checksum = "a7534301c0ea17abb4db06d75efc7b4b0fa360fce8e175a4330d721c71c942ff"
 
 [[package]]
 name = "cargo_toml"
-version = "0.20.2"
+version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8cb1d556b8b8f36e5ca74938008be3ac102f5dcb5b68a0477e4249ae2291cd3"
+checksum = "4895c018bb228aa6b3ba1a0285543fcb4b704734c3fb1f72afaa75aa769500c1"
 dependencies = [
  "serde",
- "toml 0.8.6",
+ "toml 0.8.14",
 ]
 
 [[package]]
@@ -3580,9 +3580,9 @@ dependencies = [
 
 [[package]]
 name = "serde_spanned"
-version = "0.6.4"
+version = "0.6.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12022b835073e5b11e90a14f86838ceb1c8fb0325b72416845c487ac0fa95e80"
+checksum = "79e674e01f999af37c49f70a6ede167a8a60b2503e56c5599532a65baa5969a0"
 dependencies = [
  "serde",
 ]
@@ -4009,21 +4009,21 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.8.6"
+version = "0.8.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ff9e3abce27ee2c9a37f9ad37238c1bdd4e789c84ba37df76aa4d528f5072cc"
+checksum = "6f49eb2ab21d2f26bd6db7bf383edc527a7ebaee412d17af4d40fdccd442f335"
 dependencies = [
  "serde",
  "serde_spanned",
  "toml_datetime",
- "toml_edit 0.20.7",
+ "toml_edit 0.22.15",
 ]
 
 [[package]]
 name = "toml_datetime"
-version = "0.6.5"
+version = "0.6.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3550f4e9685620ac18a50ed434eb3aec30db8ba93b0287467bca5826ea25baf1"
+checksum = "4badfd56924ae69bcc9039335b2e017639ce3f9b001c393c1b2d1ef846ce2cbf"
 dependencies = [
  "serde",
 ]
@@ -4048,10 +4048,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "70f427fce4d84c72b5b732388bf4a9f4531b53f74e2887e3ecb2481f68f66d81"
 dependencies = [
  "indexmap",
+ "toml_datetime",
+ "winnow 0.5.27",
+]
+
+[[package]]
+name = "toml_edit"
+version = "0.22.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d59a3a72298453f564e2b111fa896f8d07fabb36f51f06d7e875fc5e0b5a3ef1"
+dependencies = [
+ "indexmap",
  "serde",
  "serde_spanned",
  "toml_datetime",
- "winnow 0.5.27",
+ "winnow 0.6.5",
 ]
 
 [[package]]
