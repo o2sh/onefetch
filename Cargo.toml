@@ -37,7 +37,7 @@ bytecount = "0.6.8"
 clap.workspace = true
 clap_complete = "4.5.8"
 crossbeam-channel = "0.5.13"
-gix = { version = "0.63.0", default-features = false, features = [
+gix = { version = "0.64.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
