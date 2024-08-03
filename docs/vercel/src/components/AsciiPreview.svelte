@@ -49,6 +49,7 @@
   </div>
 </div>
 <div class="logo-container" class:dark>
+  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   <pre class:dark>{@html html}</pre>
 </div>
 
