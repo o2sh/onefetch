@@ -53,7 +53,7 @@ onefetch-ascii = { path = "ascii", version = "2.19.0" }
 onefetch-image = { path = "image", version = "2.19.0" }
 onefetch-manifest = { path = "manifest", version = "2.19.0" }
 owo-colors.workspace = true
-regex = "1.10.5"
+regex = "1.10.6"
 serde = "1.0"
 serde_json = "1.0"
 serde_yaml = "0.9.34"
