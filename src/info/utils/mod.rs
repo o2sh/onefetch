@@ -27,16 +27,14 @@ fn to_human_time(time: Time) -> String {
     let since_epoch_duration = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
         .unwrap();
-
     let ts = Duration::from_secs(match time.seconds.try_into() {
         Ok(s) => s,
         Err(_) => return "<before UNIX epoch>".into(),
     });
-    let duration = since_epoch_duration.checked_sub(ts).expect(
-        "Achievement unlocked: time travel! \
-        Check your system clock and commit dates.",
-    );
-    let ht = HumanTime::from(-(duration.as_secs() as i64));
+    // Calculate the distance from the current time. This handles
+    // future dates gracefully and will simply return something like `in 5 minutes`
+    let duration = (ts.as_secs() as i64) - (since_epoch_duration.as_secs() as i64);
+    let ht = HumanTime::from(duration);
     ht.to_string()
 }
 
@@ -107,17 +105,15 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(
-        expected = "Achievement unlocked: time travel! Check your system clock and commit dates."
-    )]
-    fn should_panic_when_display_human_time_and_commit_date_in_the_future() {
+    fn handle_display_human_time_and_commit_date_in_the_future() {
         let day = Duration::from_secs(60 * 60 * 24);
         let current_time = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();
         let tomorrow = current_time + day;
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        format_time(time, false);
+        let result = format_time(time, false);
+        assert_eq!(result, "in a day");
     }
 
     #[test]
