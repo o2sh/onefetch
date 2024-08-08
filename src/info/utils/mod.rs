@@ -27,16 +27,14 @@ fn to_human_time(time: Time) -> String {
     let since_epoch_duration = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
         .unwrap();
-
     let ts = Duration::from_secs(match time.seconds.try_into() {
         Ok(s) => s,
         Err(_) => return "<before UNIX epoch>".into(),
     });
-    let duration = since_epoch_duration.checked_sub(ts).expect(
-        "Achievement unlocked: time travel! \
-        Check your system clock and commit dates.",
-    );
-    let ht = HumanTime::from(-(duration.as_secs() as i64));
+    // Calculate the distance from the current time. This handles
+    // future dates gracefully and will simply return something like `in 5 minutes`
+    let duration = (ts.as_secs() as i64) - (since_epoch_duration.as_secs() as i64);
+    let ht = HumanTime::from(duration);
     ht.to_string()
 }
 
