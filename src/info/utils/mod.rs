@@ -105,17 +105,15 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(
-        expected = "Achievement unlocked: time travel! Check your system clock and commit dates."
-    )]
-    fn should_panic_when_display_human_time_and_commit_date_in_the_future() {
+    fn handle_display_human_time_and_commit_date_in_the_future() {
         let day = Duration::from_secs(60 * 60 * 24);
         let current_time = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();
         let tomorrow = current_time + day;
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        format_time(time, false);
+        let result = format_time(time, false);
+        assert_eq!(result, "in a day");
     }
 
     #[test]
