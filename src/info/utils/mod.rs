@@ -2,7 +2,7 @@ use crate::cli::NumberSeparator;
 use gix::date::Time;
 use num_format::ToFormattedString;
 use owo_colors::{DynColors, Style};
-use std::time::{Duration, SystemTime};
+use std::time::SystemTime;
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use time_humanize::HumanTime;
 
@@ -26,17 +26,13 @@ where
 fn to_human_time(time: Time) -> String {
     let since_epoch_duration = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
-        .unwrap();
-
-    let ts = Duration::from_secs(match time.seconds.try_into() {
-        Ok(s) => s,
-        Err(_) => return "<before UNIX epoch>".into(),
-    });
-    let duration = since_epoch_duration.checked_sub(ts).expect(
-        "Achievement unlocked: time travel! \
-        Check your system clock and commit dates.",
-    );
-    let ht = HumanTime::from(-(duration.as_secs() as i64));
+        .expect("System time is before the Unix epoch");
+    // Calculate the distance from the current time. This handles
+    // future dates gracefully and will simply return something like `in 5 minutes`
+    let delta_in_seconds = time
+        .seconds
+        .saturating_sub(since_epoch_duration.as_secs() as i64);
+    let ht = HumanTime::from(delta_in_seconds);
     ht.to_string()
 }
 
