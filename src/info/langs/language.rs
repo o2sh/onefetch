@@ -81,11 +81,14 @@ impl std::fmt::Display for LanguagesInfo {
 
         for (i, language_display_data) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
-            let circle = language_display_data.icon.color(language_display_data.circle_color);
+            let circle = language_display_data
+                .icon
+                .color(language_display_data.circle_color);
             let language_str = format!(
                 "{} {} ",
                 circle,
-                format!("{0} ({formatted_number} %)", language_display_data.language).color(self.info_color)
+                format!("{0} ({formatted_number} %)", language_display_data.language)
+                    .color(self.info_color)
             );
             if i % 2 == 0 {
                 write!(
@@ -113,7 +116,10 @@ struct LanguageDisplayData {
     icon: &'static str,
 }
 
-fn prepare_languages(languages_info: &LanguagesInfo, color_palette: &[DynColors]) -> Vec<LanguageDisplayData> {
+fn prepare_languages(
+    languages_info: &LanguagesInfo,
+    color_palette: &[DynColors],
+) -> Vec<LanguageDisplayData> {
     let mut iter = languages_info
         .languages_with_percentage
         .iter()
@@ -167,19 +173,22 @@ fn prepare_languages(languages_info: &LanguagesInfo, color_palette: &[DynColors]
 }
 
 fn build_language_bar(languages: &[LanguageDisplayData]) -> String {
-    languages.iter().fold(String::new(), |mut output, language_display_data| {
-        let bar_width = std::cmp::max(
-            (language_display_data.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
-            1,
-        );
-        let _ = write!(
-            output,
-            "{:<width$}",
-            "".on_color(language_display_data.circle_color),
-            width = bar_width
-        );
-        output
-    })
+    languages
+        .iter()
+        .fold(String::new(), |mut output, language_display_data| {
+            let bar_width = std::cmp::max(
+                (language_display_data.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round()
+                    as usize,
+                1,
+            );
+            let _ = write!(
+                output,
+                "{:<width$}",
+                "".on_color(language_display_data.circle_color),
+                width = bar_width
+            );
+            output
+        })
 }
 
 #[typetag::serialize]
