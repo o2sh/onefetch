@@ -23,6 +23,8 @@ pub struct LanguagesInfo {
     number_of_languages_to_display: usize,
     #[serde(skip_serializing)]
     info_color: DynColors,
+    #[serde(skip_serializing)]
+    use_nerd_font_icons: bool,
 }
 
 impl LanguagesInfo {
@@ -31,6 +33,7 @@ impl LanguagesInfo {
         true_color: bool,
         number_of_languages_to_display: usize,
         info_color: DynColors,
+        use_nerd_font_icons: bool,
     ) -> Self {
         let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
 
@@ -56,6 +59,7 @@ impl LanguagesInfo {
             true_color,
             number_of_languages_to_display,
             info_color,
+            use_nerd_font_icons,
         }
     }
 }
@@ -71,13 +75,14 @@ impl std::fmt::Display for LanguagesInfo {
             DynColors::Ansi(AnsiColors::Cyan),
         ];
 
-        let languages: Vec<(String, f64, DynColors)> = prepare_languages(self, &color_palette);
+        let languages: Vec<(String, f64, DynColors, &str)> =
+            prepare_languages(self, &color_palette);
 
         let mut languages_info = build_language_bar(&languages);
 
-        for (i, (language, perc, circle_color)) in languages.iter().enumerate() {
+        for (i, (language, perc, circle_color, icon)) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, perc);
-            let circle = "\u{25CF}".color(*circle_color);
+            let circle = icon.color(*circle_color);
             let language_str = format!(
                 "{} {} ",
                 circle,
@@ -104,7 +109,7 @@ impl std::fmt::Display for LanguagesInfo {
 fn prepare_languages(
     languages_info: &LanguagesInfo,
     color_palette: &[DynColors],
-) -> Vec<(String, f64, DynColors)> {
+) -> Vec<(String, f64, DynColors, &'static str)> {
     let mut iter = languages_info
         .languages_with_percentage
         .iter()
@@ -122,7 +127,13 @@ fn prepare_languages(
                 } else {
                     color_palette[i % color_palette.len()]
                 };
-                (language.to_string(), percentage, circle_color)
+
+                let icon = if languages_info.use_nerd_font_icons {
+                    language.get_language_icon()
+                } else {
+                    "\u{25CF}"
+                };
+                (language.to_string(), percentage, circle_color, icon)
             },
         );
     if languages_info.languages_with_percentage.len()
@@ -137,6 +148,7 @@ fn prepare_languages(
             "Other".to_string(),
             other_perc,
             DynColors::Ansi(AnsiColors::White),
+            "\u{25CF}",
         ));
         languages
     } else {
@@ -144,10 +156,10 @@ fn prepare_languages(
     }
 }
 
-fn build_language_bar(languages: &[(String, f64, DynColors)]) -> String {
+fn build_language_bar(languages: &[(String, f64, DynColors, &str)]) -> String {
     languages
         .iter()
-        .fold(String::new(), |mut output, (_, perc, circle_color)| {
+        .fold(String::new(), |mut output, (_, perc, circle_color, _)| {
             let bar_width = std::cmp::max(
                 (perc / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
                 1,
@@ -212,6 +224,7 @@ mod test {
             true_color: false,
             number_of_languages_to_display: 6,
             info_color: DynColors::Ansi(AnsiColors::White),
+            use_nerd_font_icons: false,
         };
         let expected_languages_info = format!(
             "{:<width$}\n{:<pad$}{} {} ",
@@ -250,6 +263,7 @@ mod test {
             true_color: false,
             number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
+            use_nerd_font_icons: false,
         };
 
         assert!(languages_info.value().contains(
@@ -271,12 +285,18 @@ mod test {
 
     #[test]
     fn test_build_language_bar_multiple_languages() {
-        let languages: Vec<(String, f64, DynColors)> = vec![
-            ("Rust".to_string(), 60.0, DynColors::Ansi(AnsiColors::Red)),
+        let languages: Vec<(String, f64, DynColors, &str)> = vec![
+            (
+                "Rust".to_string(),
+                60.0,
+                DynColors::Ansi(AnsiColors::Red),
+                "\u{25CF}",
+            ),
             (
                 "Python".to_string(),
                 40.0,
                 DynColors::Ansi(AnsiColors::Yellow),
+                "\u{25CF}",
             ),
         ];
         let result = build_language_bar(&languages);
@@ -320,6 +340,7 @@ mod test {
             true_color: false,
             number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
+            use_nerd_font_icons: false,
         };
 
         let color_palette = [
@@ -334,16 +355,19 @@ mod test {
                 Language::Go.to_string(),
                 40_f64,
                 DynColors::Ansi(AnsiColors::Red),
+                "{25CF}",
             ),
             (
                 Language::Erlang.to_string(),
                 30_f64,
                 DynColors::Ansi(AnsiColors::Green),
+                "{25CF}",
             ),
             (
                 "Other".to_string(),
                 30_f64,
                 DynColors::Ansi(AnsiColors::White),
+                "{25CF}",
             ),
         ];
 

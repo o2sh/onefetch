@@ -107,6 +107,14 @@ impl Language {
             {% endfor %}
         }
     }
+
+    pub fn get_language_icon(&self) -> &'static str {
+        match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => "{{ attrs.icon | default(value='\u{25CF}') }}",
+            {% endfor %}
+        }
+    }
 }
 
 fn __loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
@@ -124,9 +132,9 @@ fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) ->
     match language_type {
 	{% for language, attrs in languages -%}
         {%- set line_types = attrs.line_types | default(value=['code']) -%}
-	    {%- if attrs.line_types -%} 
+	    {%- if attrs.line_types -%}
             tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
-	    {% endif -%} 
+	    {% endif -%}
     {% endfor %}
 	_ => stats.code
     }
