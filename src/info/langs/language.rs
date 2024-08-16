@@ -75,18 +75,17 @@ impl std::fmt::Display for LanguagesInfo {
             DynColors::Ansi(AnsiColors::Cyan),
         ];
 
-        let languages: Vec<(String, f64, DynColors, &str)> =
-            prepare_languages(self, &color_palette);
+        let languages: Vec<LanguageDisplayData> = prepare_languages(self, &color_palette);
 
         let mut languages_info = build_language_bar(&languages);
 
-        for (i, (language, perc, circle_color, icon)) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, perc);
-            let circle = icon.color(*circle_color);
+        for (i, language_display_data) in languages.iter().enumerate() {
+            let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
+            let circle = language_display_data.icon.color(language_display_data.circle_color);
             let language_str = format!(
                 "{} {} ",
                 circle,
-                format!("{language} ({formatted_number} %)").color(self.info_color)
+                format!("{0} ({formatted_number} %)", language_display_data.language).color(self.info_color)
             );
             if i % 2 == 0 {
                 write!(
@@ -106,10 +105,15 @@ impl std::fmt::Display for LanguagesInfo {
     }
 }
 
-fn prepare_languages(
-    languages_info: &LanguagesInfo,
-    color_palette: &[DynColors],
-) -> Vec<(String, f64, DynColors, &'static str)> {
+#[derive(Debug, PartialEq)]
+struct LanguageDisplayData {
+    language: String,
+    percentage: f64,
+    circle_color: DynColors,
+    icon: &'static str,
+}
+
+fn prepare_languages(languages_info: &LanguagesInfo, color_palette: &[DynColors]) -> Vec<LanguageDisplayData> {
     let mut iter = languages_info
         .languages_with_percentage
         .iter()
@@ -133,7 +137,13 @@ fn prepare_languages(
                 } else {
                     "\u{25CF}"
                 };
-                (language.to_string(), percentage, circle_color, icon)
+
+                LanguageDisplayData {
+                    language: language.to_string(),
+                    percentage,
+                    circle_color,
+                    icon,
+                }
             },
         );
     if languages_info.languages_with_percentage.len()
@@ -143,35 +153,33 @@ fn prepare_languages(
             .by_ref()
             .take(languages_info.number_of_languages_to_display)
             .collect::<Vec<_>>();
-        let other_perc = iter.fold(0.0, |acc, x| acc + x.1);
-        languages.push((
-            "Other".to_string(),
-            other_perc,
-            DynColors::Ansi(AnsiColors::White),
-            "\u{25CF}",
-        ));
+        let other_perc = iter.fold(0.0, |acc, x| acc + x.percentage);
+        languages.push(LanguageDisplayData {
+            language: "Other".to_string(),
+            percentage: other_perc,
+            circle_color: DynColors::Ansi(AnsiColors::White),
+            icon: "\u{25CF}",
+        });
         languages
     } else {
         iter.collect()
     }
 }
 
-fn build_language_bar(languages: &[(String, f64, DynColors, &str)]) -> String {
-    languages
-        .iter()
-        .fold(String::new(), |mut output, (_, perc, circle_color, _)| {
-            let bar_width = std::cmp::max(
-                (perc / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
-                1,
-            );
-            let _ = write!(
-                output,
-                "{:<width$}",
-                "".on_color(*circle_color),
-                width = bar_width
-            );
-            output
-        })
+fn build_language_bar(languages: &[LanguageDisplayData]) -> String {
+    languages.iter().fold(String::new(), |mut output, language_display_data| {
+        let bar_width = std::cmp::max(
+            (language_display_data.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize,
+            1,
+        );
+        let _ = write!(
+            output,
+            "{:<width$}",
+            "".on_color(language_display_data.circle_color),
+            width = bar_width
+        );
+        output
+    })
 }
 
 #[typetag::serialize]
@@ -285,19 +293,19 @@ mod test {
 
     #[test]
     fn test_build_language_bar_multiple_languages() {
-        let languages: Vec<(String, f64, DynColors, &str)> = vec![
-            (
-                "Rust".to_string(),
-                60.0,
-                DynColors::Ansi(AnsiColors::Red),
-                "\u{25CF}",
-            ),
-            (
-                "Python".to_string(),
-                40.0,
-                DynColors::Ansi(AnsiColors::Yellow),
-                "\u{25CF}",
-            ),
+        let languages: Vec<LanguageDisplayData> = vec![
+            LanguageDisplayData {
+                language: "Rust".to_string(),
+                percentage: 60.0,
+                circle_color: DynColors::Ansi(AnsiColors::Red),
+                icon: "\u{25CF}",
+            },
+            LanguageDisplayData {
+                language: "Python".to_string(),
+                percentage: 40.0,
+                circle_color: DynColors::Ansi(AnsiColors::Yellow),
+                icon: "\u{25CF}",
+            },
         ];
         let result = build_language_bar(&languages);
 
@@ -351,24 +359,24 @@ mod test {
         let result = prepare_languages(&languages_info, &color_palette);
 
         let expected_result = vec![
-            (
-                Language::Go.to_string(),
-                40_f64,
-                DynColors::Ansi(AnsiColors::Red),
-                "\u{25CF}",
-            ),
-            (
-                Language::Erlang.to_string(),
-                30_f64,
-                DynColors::Ansi(AnsiColors::Green),
-                "\u{25CF}",
-            ),
-            (
-                "Other".to_string(),
-                30_f64,
-                DynColors::Ansi(AnsiColors::White),
-                "\u{25CF}",
-            ),
+            LanguageDisplayData {
+                language: Language::Go.to_string(),
+                percentage: 40_f64,
+                circle_color: DynColors::Ansi(AnsiColors::Red),
+                icon: "\u{25CF}",
+            },
+            LanguageDisplayData {
+                language: Language::Erlang.to_string(),
+                percentage: 30_f64,
+                circle_color: DynColors::Ansi(AnsiColors::Green),
+                icon: "\u{25CF}",
+            },
+            LanguageDisplayData {
+                language: "Other".to_string(),
+                percentage: 30_f64,
+                circle_color: DynColors::Ansi(AnsiColors::White),
+                icon: "\u{25CF}",
+            },
         ];
 
         assert_eq!(result, expected_result);
