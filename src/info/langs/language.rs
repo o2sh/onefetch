@@ -355,19 +355,19 @@ mod test {
                 Language::Go.to_string(),
                 40_f64,
                 DynColors::Ansi(AnsiColors::Red),
-                "{25CF}",
+                "\u{25CF}",
             ),
             (
                 Language::Erlang.to_string(),
                 30_f64,
                 DynColors::Ansi(AnsiColors::Green),
-                "{25CF}",
+                "\u{25CF}",
             ),
             (
                 "Other".to_string(),
                 30_f64,
                 DynColors::Ansi(AnsiColors::White),
-                "{25CF}",
+                "\u{25CF}",
             ),
         ];
 
