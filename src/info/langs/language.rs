@@ -24,7 +24,7 @@ pub struct LanguagesInfo {
     #[serde(skip_serializing)]
     info_color: DynColors,
     #[serde(skip_serializing)]
-    use_nerd_font_icons: bool,
+    nerd_fonts: bool,
 }
 
 impl LanguagesInfo {
@@ -33,7 +33,7 @@ impl LanguagesInfo {
         true_color: bool,
         number_of_languages_to_display: usize,
         info_color: DynColors,
-        use_nerd_font_icons: bool,
+        nerd_fonts: bool,
     ) -> Self {
         let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
 
@@ -59,7 +59,7 @@ impl LanguagesInfo {
             true_color,
             number_of_languages_to_display,
             info_color,
-            use_nerd_font_icons,
+            nerd_fonts,
         }
     }
 }
@@ -128,7 +128,7 @@ fn prepare_languages(
                     color_palette[i % color_palette.len()]
                 };
 
-                let icon = if languages_info.use_nerd_font_icons {
+                let icon = if languages_info.nerd_fonts {
                     language.get_language_icon()
                 } else {
                     "\u{25CF}"
@@ -224,7 +224,7 @@ mod test {
             true_color: false,
             number_of_languages_to_display: 6,
             info_color: DynColors::Ansi(AnsiColors::White),
-            use_nerd_font_icons: false,
+            nerd_fonts: false,
         };
         let expected_languages_info = format!(
             "{:<width$}\n{:<pad$}{} {} ",
@@ -263,7 +263,7 @@ mod test {
             true_color: false,
             number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
-            use_nerd_font_icons: false,
+            nerd_fonts: false,
         };
 
         assert!(languages_info.value().contains(
@@ -340,7 +340,7 @@ mod test {
             true_color: false,
             number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
-            use_nerd_font_icons: false,
+            nerd_fonts: false,
         };
 
         let color_palette = [

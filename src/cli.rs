@@ -206,9 +206,9 @@ pub struct VisualsCliOptions {
     /// Hides the ascii art or image if provided
     #[arg(long)]
     pub no_art: bool,
-    /// Uses a language specific nerd font icon
-    #[arg(long, short = 'I')]
-    pub use_nerd_font_icon: bool,
+    /// Uses a language specific nerd font icon in the language info
+    #[arg(long)]
+    pub nerd_font: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
