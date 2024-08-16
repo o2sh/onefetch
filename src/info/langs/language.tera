@@ -108,10 +108,10 @@ impl Language {
         }
     }
 
-    pub fn get_language_icon(&self) -> &'static str {
+    pub fn get_icon(&self) -> Option<&'static str> {
         match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => "{{ attrs.icon | default(value='\u{25CF}') }}",
+                {% if attrs.icon is defined %}Language::{{ language }} => Some("{{ attrs.icon }}"),{% else %}Language::{{ language }} => None,{% endif %}
             {% endfor %}
         }
     }

@@ -129,7 +129,7 @@ fn prepare_languages(
                 };
 
                 let icon = if languages_info.nerd_fonts {
-                    language.get_language_icon()
+                    language.get_icon().unwrap_or("\u{25CF}")
                 } else {
                     "\u{25CF}"
                 };
