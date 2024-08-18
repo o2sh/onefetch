@@ -12,7 +12,25 @@ members = ["ascii", "image", "manifest"]
 owo-colors = "3.5.0"
 anyhow = "1.0"
 clap = { version = "4.5.9", features = ["derive"] }
-image = "0.24.9"
+image = { version = "0.25.2", default-features = false, features = [
+    "color_quant",
+    "rayon",
+    # default-formats, except avif
+    "bmp",
+    "dds",
+    "exr",
+    "ff",
+    "gif",
+    "hdr",
+    "ico",
+    "jpeg",
+    "png",
+    "pnm",
+    "qoi",
+    "tga",
+    "tiff",
+    "webp"
+] }
 strum = { version = "0.25.0", features = ["derive"] }
 
 [package]
