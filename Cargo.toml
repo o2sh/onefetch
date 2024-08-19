@@ -11,7 +11,7 @@ members = ["ascii", "image", "manifest"]
 [workspace.dependencies]
 owo-colors = "3.5.0"
 anyhow = "1.0"
-clap = { version = "4.5.9", features = ["derive"] }
+clap = { version = "4.5.16", features = ["derive"] }
 image = "0.24.9"
 strum = { version = "0.25.0", features = ["derive"] }
 
@@ -35,7 +35,7 @@ askalono = "0.4.6"
 byte-unit = "5.1.4"
 bytecount = "0.6.8"
 clap.workspace = true
-clap_complete = "4.5.8"
+clap_complete = "4.5.19"
 crossbeam-channel = "0.5.13"
 gix = { version = "0.64.0", default-features = false, features = [
     "max-performance-safe",
