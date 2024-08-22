@@ -6,6 +6,7 @@ use tokei;
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
+const DEFAULT_ICON: &str = "\u{25CF}";
 
 #[derive(Serialize)]
 pub struct LanguageWithPercentage {
@@ -138,11 +139,11 @@ fn prepare_languages(
                     color_palette[i % color_palette.len()]
                 };
 
-                let icon = if languages_info.nerd_fonts {
-                    language.get_icon().unwrap_or("\u{25CF}")
-                } else {
-                    "\u{25CF}"
-                };
+                let icon = languages_info
+                    .nerd_fonts
+                    .then_some(language.get_icon())
+                    .flatten()
+                    .unwrap_or(DEFAULT_ICON);
 
                 LanguageDisplayData {
                     language: language.to_string(),
@@ -164,7 +165,7 @@ fn prepare_languages(
             language: "Other".to_string(),
             percentage: other_perc,
             circle_color: DynColors::Ansi(AnsiColors::White),
-            icon: "\u{25CF}",
+            icon: DEFAULT_ICON,
         });
         languages
     } else {
@@ -247,7 +248,7 @@ mod test {
             "{:<width$}\n{:<pad$}{} {} ",
             "".on_color(DynColors::Ansi(AnsiColors::Red)),
             "",
-            "\u{25CF}".color(DynColors::Ansi(AnsiColors::Red)),
+            DEFAULT_ICON.color(DynColors::Ansi(AnsiColors::Red)),
             "Go (100.0 %)".color(DynColors::Ansi(AnsiColors::White)),
             width = LANGUAGES_BAR_LENGTH,
             pad = "Language".len() + 2
@@ -307,13 +308,13 @@ mod test {
                 language: "Rust".to_string(),
                 percentage: 60.0,
                 circle_color: DynColors::Ansi(AnsiColors::Red),
-                icon: "\u{25CF}",
+                icon: DEFAULT_ICON,
             },
             LanguageDisplayData {
                 language: "Python".to_string(),
                 percentage: 40.0,
                 circle_color: DynColors::Ansi(AnsiColors::Yellow),
-                icon: "\u{25CF}",
+                icon: DEFAULT_ICON,
             },
         ];
         let result = build_language_bar(&languages);
@@ -372,19 +373,19 @@ mod test {
                 language: Language::Go.to_string(),
                 percentage: 40_f64,
                 circle_color: DynColors::Ansi(AnsiColors::Red),
-                icon: "\u{25CF}",
+                icon: DEFAULT_ICON,
             },
             LanguageDisplayData {
                 language: Language::Erlang.to_string(),
                 percentage: 30_f64,
                 circle_color: DynColors::Ansi(AnsiColors::Green),
-                icon: "\u{25CF}",
+                icon: DEFAULT_ICON,
             },
             LanguageDisplayData {
                 language: "Other".to_string(),
                 percentage: 30_f64,
                 circle_color: DynColors::Ansi(AnsiColors::White),
-                icon: "\u{25CF}",
+                icon: DEFAULT_ICON,
             },
         ];
 
