@@ -391,4 +391,62 @@ mod test {
 
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn test_prepare_languages_with_nerd_fonts() {
+        let languages_info = LanguagesInfo {
+            languages_with_percentage: vec![
+                LanguageWithPercentage {
+                    language: Language::Go,
+                    percentage: 40_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Erlang,
+                    percentage: 30_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Java,
+                    percentage: 20_f64,
+                },
+                LanguageWithPercentage {
+                    language: Language::Rust,
+                    percentage: 10_f64,
+                },
+            ],
+            true_color: false,
+            number_of_languages_to_display: 2,
+            info_color: DynColors::Ansi(AnsiColors::White),
+            nerd_fonts: true,
+        };
+
+        let color_palette = [
+            DynColors::Ansi(AnsiColors::Red),
+            DynColors::Ansi(AnsiColors::Green),
+        ];
+
+        let result = prepare_languages(&languages_info, &color_palette);
+
+        let expected_result = vec![
+            LanguageDisplayData {
+                language: Language::Go.to_string(),
+                percentage: 40_f64,
+                chip_color: DynColors::Ansi(AnsiColors::Red),
+                icon: Language::Go.get_icon().unwrap(),
+            },
+            LanguageDisplayData {
+                language: Language::Erlang.to_string(),
+                percentage: 30_f64,
+                chip_color: DynColors::Ansi(AnsiColors::Green),
+                icon: Language::Erlang.get_icon().unwrap(),
+            },
+            LanguageDisplayData {
+                language: "Other".to_string(),
+                percentage: 30_f64,
+                chip_color: DynColors::Ansi(AnsiColors::White),
+                icon: DEFAULT_ICON,
+            },
+        ];
+
+        assert_eq!(result, expected_result);
+    }
 }
