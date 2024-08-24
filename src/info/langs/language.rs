@@ -82,12 +82,12 @@ impl std::fmt::Display for LanguagesInfo {
 
         for (i, language_display_data) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
-            let circle = language_display_data
+            let chip = language_display_data
                 .icon
                 .color(language_display_data.chip_color);
             let language_str = format!(
                 "{} {} ",
-                circle,
+                chip,
                 format!("{0} ({formatted_number} %)", language_display_data.language)
                     .color(self.info_color)
             );
