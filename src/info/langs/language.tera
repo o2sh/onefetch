@@ -99,7 +99,7 @@ impl Language {
         }
     }
 
-    pub fn get_circle_color(&self) -> DynColors {
+    pub fn get_chip_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
                 {% set rgb = attrs.colors.chip | hex_to_rgb -%}

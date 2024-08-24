@@ -332,7 +332,7 @@ impl InfoBuilder {
                 true_color,
                 number_of_languages,
                 text_colors.info,
-                cli_options.visuals.nerd_font,
+                cli_options.visuals.nerd_fonts,
             );
             self.info_fields.push(Box::new(languages));
         }

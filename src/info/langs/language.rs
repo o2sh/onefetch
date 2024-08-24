@@ -84,7 +84,7 @@ impl std::fmt::Display for LanguagesInfo {
             let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
             let circle = language_display_data
                 .icon
-                .color(language_display_data.circle_color);
+                .color(language_display_data.chip_color);
             let language_str = format!(
                 "{} {} ",
                 circle,
@@ -113,7 +113,7 @@ impl std::fmt::Display for LanguagesInfo {
 struct LanguageDisplayData {
     language: String,
     percentage: f64,
-    circle_color: DynColors,
+    chip_color: DynColors,
     icon: &'static str,
 }
 
@@ -133,8 +133,8 @@ fn prepare_languages(
                     percentage,
                 },
             )| {
-                let circle_color = if languages_info.true_color {
-                    language.get_circle_color()
+                let chip_color = if languages_info.true_color {
+                    language.get_chip_color()
                 } else {
                     color_palette[i % color_palette.len()]
                 };
@@ -148,7 +148,7 @@ fn prepare_languages(
                 LanguageDisplayData {
                     language: language.to_string(),
                     percentage,
-                    circle_color,
+                    chip_color,
                     icon,
                 }
             },
@@ -164,7 +164,7 @@ fn prepare_languages(
         languages.push(LanguageDisplayData {
             language: "Other".to_string(),
             percentage: other_perc,
-            circle_color: DynColors::Ansi(AnsiColors::White),
+            chip_color: DynColors::Ansi(AnsiColors::White),
             icon: DEFAULT_ICON,
         });
         languages
@@ -185,7 +185,7 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> String {
             let _ = write!(
                 output,
                 "{:<width$}",
-                "".on_color(language_display_data.circle_color),
+                "".on_color(language_display_data.chip_color),
                 width = bar_width
             );
             output
@@ -307,13 +307,13 @@ mod test {
             LanguageDisplayData {
                 language: "Rust".to_string(),
                 percentage: 60.0,
-                circle_color: DynColors::Ansi(AnsiColors::Red),
+                chip_color: DynColors::Ansi(AnsiColors::Red),
                 icon: DEFAULT_ICON,
             },
             LanguageDisplayData {
                 language: "Python".to_string(),
                 percentage: 40.0,
-                circle_color: DynColors::Ansi(AnsiColors::Yellow),
+                chip_color: DynColors::Ansi(AnsiColors::Yellow),
                 icon: DEFAULT_ICON,
             },
         ];
@@ -372,19 +372,19 @@ mod test {
             LanguageDisplayData {
                 language: Language::Go.to_string(),
                 percentage: 40_f64,
-                circle_color: DynColors::Ansi(AnsiColors::Red),
+                chip_color: DynColors::Ansi(AnsiColors::Red),
                 icon: DEFAULT_ICON,
             },
             LanguageDisplayData {
                 language: Language::Erlang.to_string(),
                 percentage: 30_f64,
-                circle_color: DynColors::Ansi(AnsiColors::Green),
+                chip_color: DynColors::Ansi(AnsiColors::Green),
                 icon: DEFAULT_ICON,
             },
             LanguageDisplayData {
                 language: "Other".to_string(),
                 percentage: 30_f64,
-                circle_color: DynColors::Ansi(AnsiColors::White),
+                chip_color: DynColors::Ansi(AnsiColors::White),
                 icon: DEFAULT_ICON,
             },
         ];
