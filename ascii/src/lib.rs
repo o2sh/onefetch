@@ -90,7 +90,7 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
             let line_end = Tokens(line).true_length();
             (line_start, line_end)
         })
-        .fold((std::usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
+        .fold((usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
             (acc_s.min(line_s), acc_e.max(line_e))
         })
 }
