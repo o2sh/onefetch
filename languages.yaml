@@ -79,7 +79,7 @@ Ada:
       - "#0018C9"
       - "#0C0A7C"
     chip: "#02F88C"
-  icon: "\\uE6B5"
+  icon: '\u{E6B5}'
 Agda:
   type: programming
   ascii: |
@@ -114,7 +114,7 @@ Arduino:
     ansi:
       - cyan
     chip: "#F34B7D"
-  icon: "\\uF34B"
+  icon: '\u{F34B}'
 Assembly:
   type: programming
   ascii: |
@@ -140,7 +140,7 @@ Assembly:
       - yellow
       - green
     chip: "#6E4C13"
-  icon: "\\uE6AB"
+  icon: '\u{E6AB}'
 AutoHotKey:
   type: programming
   ascii: |
@@ -188,7 +188,7 @@ Bash:
       - white
       - green
     chip: "#89E051"
-  icon: "\\uEBCA"
+  icon: '\u{EBCA}'
 C:
   type: programming
   ascii: |
@@ -227,7 +227,7 @@ C:
       - "#00599D"
       - "#FFFFFF"
     chip: "#555555"
-  icon: "\\uE61E"
+  icon: '\u{E61E}'
 Ceylon:
   type: programming
   ascii: |
@@ -286,7 +286,7 @@ Clojure:
       - cyan
       - green
     chip: "#DB5855"
-  icon: "\\uE768"
+  icon: '\u{E768}'
 CMake:
   type: programming
   ascii: |
@@ -331,7 +331,7 @@ CoffeeScript:
     ansi:
       - red
     chip: "#244776"
-  icon: "\\uE751"
+  icon: '\u{E751}'
 ColdFusion:
   type: programming
   ascii: |
@@ -359,7 +359,7 @@ ColdFusion:
       - "#E5F3FC"
       - "#274550"
     chip: "#ed2cd6"
-  icon: "\\uE645"
+  icon: '\u{E645}'
 Coq:
   type: programming
   ascii: |
@@ -426,7 +426,7 @@ Cpp:
       - "#00599D"
       - "#FFFFFF"
     chip: "#F34B7D"
-  icon: "\\uE61D"
+  icon: '\u{E61D}'
   serialization: c++
 Crystal:
   type: programming
@@ -456,7 +456,7 @@ Crystal:
       - white
       - black
     chip: "#000100"
-  icon: "\\uE62F"
+  icon: '\u{E62F}'
 CSharp:
   type: programming
   ascii: |
@@ -495,7 +495,7 @@ CSharp:
       - "#803788"
       - "#FFFFFF"
     chip: "#178600"
-  icon: "\\uE648"
+  icon: '\u{E648}'
   serialization: c#
 Css:
   type: markup
@@ -526,7 +526,7 @@ Css:
       - blue
       - white
     chip: "#563D7C"
-  icon: "\\uE749"
+  icon: '\u{E749}'
 D:
   type: programming
   ascii: |
@@ -549,7 +549,7 @@ D:
     ansi:
       - red
     chip: "#BA595E"
-  icon: "\\uE7AF"
+  icon: '\u{E7AF}'
 Dart:
   type: programming
   ascii: |
@@ -581,7 +581,7 @@ Dart:
       - "#42DFCD"
       - "#01597D"
     chip: "#00B4AB"
-  icon: "\\uE64C"
+  icon: '\u{E64C}'
 Dockerfile:
   type: programming
   ascii: |
@@ -599,7 +599,7 @@ Dockerfile:
       - white
       - cyan
     chip: "#384D54"
-  icon: "\\uF308"
+  icon: '\u{F308}'
 Elisp:
   type: programming
   ascii: |
@@ -623,7 +623,7 @@ Elisp:
       - magenta
       - white
     chip: "#C065DB"
-  icon: "\\uE632"
+  icon: '\u{E632}'
   serialization: emacs-lisp
 Elixir:
   type: programming
@@ -653,7 +653,7 @@ Elixir:
     ansi:
       - magenta
     chip: "#6E4A7E"
-  icon: "\\uE62D"
+  icon: '\u{E62D}'
 Elm:
   type: programming
   ascii: |
@@ -682,7 +682,7 @@ Elm:
       - yellow
       - cyan
     chip: "#60B5CC"
-  icon: "\\uE62C"
+  icon: '\u{E62C}'
 Emojicode:
   type: programming
   ascii: |
@@ -721,7 +721,7 @@ Emojicode:
       - "#AA8DD8"
       - "#744EAA"
     chip: "#60B5CC"
-  icon: "\\uf1044"
+  icon: '\u{f1044}'
 Erlang:
   type: programming
   ascii: |
@@ -741,7 +741,7 @@ Erlang:
     ansi:
       - red
     chip: "#B83998"
-  icon: "\\uE7B1"
+  icon: '\u{E7B1}'
 Fish:
   type: programming
   ascii: |
@@ -765,7 +765,7 @@ Fish:
       - red
       - yellow
     chip: "#4AAE47"
-  icon: "\\uEE41"
+  icon: '\u{EE41}'
 Forth:
   type: programming
   ascii: |
@@ -793,7 +793,7 @@ Forth:
     ansi:
       - red
     chip: "#341708"
-  icon: "\\u229E"
+  icon: '\u{229E}'
 FortranLegacy:
   type: programming
   ascii: |
@@ -823,7 +823,7 @@ FortranLegacy:
       - yellow
       - red
     chip: "#4D41B1"
-  icon: "\\uf121a"
+  icon: '\u{f121a}'
   serialization: fortran
 FortranModern:
   type: programming
@@ -854,7 +854,7 @@ FortranModern:
       - yellow
       - red
     chip: "#4D41B1"
-  icon: "\\uf121a"
+  icon: '\u{f121a}'
 FSharp:
   type: programming
   ascii: |
@@ -881,7 +881,7 @@ FSharp:
       - cyan
       - cyan
     chip: "#B845FC"
-  icon: "\\uE7A7"
+  icon: '\u{E7A7}'
   serialization: f#
 GdScript:
   type: programming
@@ -912,7 +912,7 @@ GdScript:
       - "#458DC0"
       - "#FFFFFF"
     chip: "#355570"
-  icon: "\\uE65F"
+  icon: '\u{E65F}'
 Glsl:
   type: programming
   ascii: |
@@ -980,7 +980,7 @@ Go:
       - "#FFFFFF"
       - "#F6D2A2"
     chip: "#00ADD8"
-  icon: "\\uE627"
+  icon: '\u{E627}'
 Graphql:
   type: data
   ascii: |
@@ -1009,7 +1009,7 @@ Graphql:
     ansi:
       - magenta
     chip: "#E10098"
-  icon: "\\ue662"
+  icon: '\u{e662}'
 Groovy:
   type: programming
   ascii: |
@@ -1041,7 +1041,7 @@ Groovy:
       - cyan
       - white
     chip: "#4298B8"
-  icon: "\\uE775"
+  icon: '\u{E775}'
 Haskell:
   type: programming
   ascii: |
@@ -1068,7 +1068,7 @@ Haskell:
       - "#5E5086"
       - "#8F4E8B"
     chip: "#5E5086"
-  icon: "\\uE777"
+  icon: '\u{E777}'
 Haxe:
   type: programming
   ascii: |
@@ -1102,7 +1102,7 @@ Haxe:
       - "#F69912"
       - "#F47216"
     chip: "#DF7900"
-  icon: "\\uE666"
+  icon: '\u{E666}'
 Hcl:
   type: programming
   ascii: |
@@ -1166,7 +1166,7 @@ Hlsl:
       - "#00A1F1"
       - "#FFBB00"
     chip: "#AACE60"
-  icon: "\\u229E"
+  icon: '\u{229E}'
 HolyC:
   type: programming
   ascii: |
@@ -1204,7 +1204,7 @@ HolyC:
       - "#0B449D"
       - "#FFFFFF"
     chip: "#FFEFAF"
-  icon: "\\uE61E"
+  icon: '\u{E61E}'
 Html:
   type: markup
   ascii: |
@@ -1234,7 +1234,7 @@ Html:
       - red
       - white
     chip: "#E34C26"
-  icon: "\\uE736"
+  icon: '\u{E736}'
 Idris:
   type: programming
   ascii: |
@@ -1293,7 +1293,7 @@ Java:
       - "#F44336"
       - "#1665C0"
     chip: "#B07219"
-  icon: "\\uE738"
+  icon: '\u{E738}'
 JavaScript:
   type: programming
   ascii: |
@@ -1321,7 +1321,7 @@ JavaScript:
     hex:
       - "#ECE653"
     chip: "#F1E05A"
-  icon: "\\uF2EE"
+  icon: '\u{F2EE}'
 Json:
   type: data
   ascii: |
@@ -1348,7 +1348,7 @@ Json:
       - white
       - black
     chip: "#292929"
-  icon: "\\ueb0f"
+  icon: '\u{eb0f}'
 Jsonnet:
   type: programming
   ascii: |
@@ -1413,7 +1413,7 @@ Jsx:
       - "#B684D3"
       - "#FFFFFF"
     chip: "#F1E05A"
-  icon: "\\uF2EE"
+  icon: '\u{F2EE}'
 Julia:
   type: programming
   ascii: |
@@ -1433,7 +1433,7 @@ Julia:
       - red
       - magenta
     chip: "#A270BA"
-  icon: "\\uE624"
+  icon: '\u{E624}'
 Jupyter:
   type: programming
   ascii: |
@@ -1500,7 +1500,7 @@ Kotlin:
       - yellow
       - magenta
     chip: "#A97BFF"
-  icon: "\\uE634"
+  icon: '\u{E634}'
 Lisp:
   type: programming
   ascii: |
@@ -1528,7 +1528,7 @@ Lisp:
     ansi:
       - white
     chip: "#3FB68B"
-  icon: "\\uE6B0"
+  icon: '\u{E6B0}'
 LLVM:
   type: programming
   ascii: |
@@ -1587,7 +1587,7 @@ Lua:
       - "#134074"
       - "#FFFFFF"
     chip: "#000080"
-  icon: "\\uE620"
+  icon: '\u{E620}'
 Makefile:
   type: programming
   ascii: |
@@ -1619,7 +1619,7 @@ Makefile:
       - "#FAEC9A"
       - "#610000"
     chip: "#427819"
-  icon: "\\uE673"
+  icon: '\u{E673}'
 Markdown:
   type: prose
   ascii: |
@@ -1645,7 +1645,7 @@ Markdown:
       - white
       - red
     chip: "#083FA1"
-  icon: "\\uE73E"
+  icon: '\u{E73E}'
   line_types: [code, comments]
 Nim:
   type: programming
@@ -1673,7 +1673,7 @@ Nim:
       - yellow
       - white
     chip: "#FFC200"
-  icon: "\\uE677"
+  icon: '\u{E677}'
 Nix:
   type: programming
   ascii: |
@@ -1701,7 +1701,7 @@ Nix:
       - cyan
       - blue
     chip: "#7E7EFF"
-  icon: "\\uf313"
+  icon: '\u{f313}'
 ObjectiveC:
   type: programming
   ascii: |
@@ -1747,7 +1747,7 @@ OCaml:
     ansi:
       - yellow
     chip: "#3BE133"
-  icon: "\\uE67A"
+  icon: '\u{E67A}'
 Odin:
   type: programming
   ascii: |
@@ -1803,7 +1803,7 @@ Org:
       - red
       - white
     chip: "#77AA99"
-  icon: "\\uE633"
+  icon: '\u{E633}'
 Oz:
   type: programming
   ascii: |
@@ -1878,7 +1878,7 @@ Perl:
     ansi:
       - cyan
     chip: "#0298C3"
-  icon: "\\uE67E"
+  icon: '\u{E67E}'
 Perl6:
   type: programming
   ascii: |
@@ -1936,7 +1936,7 @@ Php:
       - "#777BB3"
       - "#FFFFFF"
     chip: "#4F5D95"
-  icon: "\\uf031f"
+  icon: '\u{f031f}'
 PowerShell:
   type: programming
   ascii: |
@@ -1958,7 +1958,7 @@ PowerShell:
       - "#316CB9"
       - "#FFFFFF"
     chip: "#012456"
-  icon: "\\uf0a0a"
+  icon: '\u{f0a0a}'
 Processing:
   type: programming
   ascii: |
@@ -2011,7 +2011,7 @@ Prolog:
     ansi:
       - white
     chip: "#74283C"
-  icon: "\\uE7A1"
+  icon: '\u{E7A1}'
 Protobuf:
   type: programming
   ascii: |
@@ -2051,7 +2051,7 @@ PureScript:
     ansi:
       - white
     chip: "#1D222D"
-  icon: "\\uE630"
+  icon: '\u{E630}'
 Python:
   type: programming
   ascii: |
@@ -2085,7 +2085,7 @@ Python:
       - "#2F69A2"
       - "#FFD940"
     chip: "#3572A5"
-  icon: "\\uE73C"
+  icon: '\u{E73C}'
 Qml:
   type: programming
   ascii: |
@@ -2141,7 +2141,7 @@ R:
       - white
       - blue
     chip: "#198CE7"
-  icon: "\\uE68A"
+  icon: '\u{E68A}'
 Racket:
   type: programming
   ascii: |
@@ -2259,7 +2259,7 @@ Ruby:
       - "#A3170C"
       - "#971A0D"
     chip: "#701516"
-  icon: "\\uE739"
+  icon: '\u{E739}'
 Rust:
   type: programming
   ascii: |
@@ -2287,7 +2287,7 @@ Rust:
       - "#E43717"
       - "#FFFFFF"
     chip: "#DEA584"
-  icon: "\\uE7A8"
+  icon: '\u{E7A8}'
 Sass:
   type: markup
   ascii: |
@@ -2311,7 +2311,7 @@ Sass:
     hex:
       - "#CD6799"
     chip: "#A53B70"
-  icon: "\\uE74B"
+  icon: '\u{E74B}'
 Scala:
   type: programming
   ascii: |
@@ -2343,7 +2343,7 @@ Scala:
       - "#DF3F3D"
       - "#7F0C1D"
     chip: "#C22D40"
-  icon: "\\uE737"
+  icon: '\u{E737}'
 Scheme:
   type: programming
   ascii: |
@@ -2366,7 +2366,7 @@ Scheme:
     hex:
       - "#555555"
     chip: "#1E4AEC"
-  icon: "\\uE6B1"
+  icon: '\u{E6B1}'
 Sh:
   type: programming
   ascii: |
@@ -2388,7 +2388,7 @@ Sh:
     ansi:
       - green
     chip: "#89E051"
-  icon: "\\uf1183"
+  icon: '\u{f1183}'
   serialization: shell
 Solidity:
   type: programming
@@ -2449,7 +2449,7 @@ Sql:
       - cyan
       - yellow
     chip: "#E38C00"
-  icon: "\\uE737"
+  icon: '\u{E737}'
 Svelte:
   type: markup
   ascii: |
@@ -2482,7 +2482,7 @@ Svelte:
       - "#FF3C00"
       - "#FFFFFF"
     chip: "#FF3E00"
-  icon: "\\uE697"
+  icon: '\u{E697}'
 Svg:
   type: data
   ascii: |
@@ -2516,7 +2516,7 @@ Svg:
       - "#FFFFFF"
       - "#EBA71F"
     chip: "#FF9900"
-  icon: "\\uf0721"
+  icon: '\u{f0721}'
 Swift:
   type: programming
   ascii: |
@@ -2568,7 +2568,7 @@ Swift:
       - "#FC3224"
       - "#FD2822"
     chip: "#F05138"
-  icon: "\\uE755"
+  icon: '\u{E755}'
 SystemVerilog:
   type: programming
   ascii: |
@@ -2598,7 +2598,7 @@ SystemVerilog:
       - blue
       - white
     chip: "#DAE1C2"
-  icon: "\\uF4BC"
+  icon: '\u{F4BC}'
 Tcl:
   type: programming
   ascii: |
@@ -2625,7 +2625,7 @@ Tcl:
       - white
       - cyan
     chip: "#E4CC98"
-  icon: "\\ue7c4"
+  icon: '\u{e7c4}'
 Tex:
   type: markup
   ascii: |
@@ -2652,7 +2652,7 @@ Tex:
       - white
       - black
     chip: "#3D6117"
-  icon: "\\uE69B"
+  icon: '\u{E69B}'
 Toml:
   type: data
   ascii: |
@@ -2682,7 +2682,7 @@ Toml:
       - "#9C4221"
       - "#FFFFFF"
     chip: "#9C4221"
-  icon: "\\uE6B2"
+  icon: '\u{E6B2}'
 Tsx:
   type: programming
   ascii: |
@@ -2714,7 +2714,7 @@ Tsx:
       - "#8A53A6"
       - "#FFFFFF"
     chip: "#2B7489"
-  icon: "\\uE69D"
+  icon: '\u{E69D}'
 TypeScript:
   type: programming
   ascii: |
@@ -2744,7 +2744,7 @@ TypeScript:
       - "#007ACC"
       - "#FFFFFF"
     chip: "#2B7489"
-  icon: "\\uE69D"
+  icon: '\u{E69D}'
 Vala:
   type: programming
   ascii: |
@@ -2800,7 +2800,7 @@ Verilog:
       - white
       - magenta
     chip: "#b2b7f8"
-  icon: "\\uF4BC"
+  icon: '\u{F4BC}'
 Vhdl:
   type: programming
   ascii: |
@@ -2823,7 +2823,7 @@ Vhdl:
       - green
       - white
     chip: "#ADB2CB"
-  icon: "\\uF4BC"
+  icon: '\u{F4BC}'
 VimScript:
   type: programming
   ascii: |
@@ -2848,7 +2848,7 @@ VimScript:
       - black
       - white
     chip: "#199F4B"
-  icon: "\\uE7C5"
+  icon: '\u{E7C5}'
 VisualBasic:
   type: programming
   ascii: |
@@ -2902,7 +2902,7 @@ Vue:
       - green
       - blue
     chip: "#199F4B"
-  icon: "\\uE6A0"
+  icon: '\u{E6A0}'
 WebAssembly:
   type: programming
   ascii: |
@@ -2930,7 +2930,7 @@ WebAssembly:
       - "#654FF0"
       - "#FFFFFF"
     chip: "#04133B"
-  icon: "\\uE6A1"
+  icon: '\u{E6A1}'
 Wolfram:
   type: programming
   ascii: |
@@ -2992,7 +2992,7 @@ Xaml:
       - "#3378CE"
       - "#FFFFFF"
     chip: "#0060AC"
-  icon: "\\uf0673"
+  icon: '\u{f0673}'
 Xml:
   type: data
   ascii: |
@@ -3006,7 +3006,7 @@ Xml:
       - white
       - green
     chip: "#0060AC"
-  icon: "\\uf05c0"
+  icon: '\u{f05c0}'
 XSL:
   type: programming
   ascii: |
@@ -3025,7 +3025,7 @@ XSL:
     ansi:
       - cyan
     chip: "#EB8CEB"
-  icon: "\\uf05c0"
+  icon: '\u{f05c0}'
 Yaml:
   type: data
   ascii: |
@@ -3040,7 +3040,7 @@ Yaml:
     ansi:
       - white
     chip: "#CB171E"
-  icon: "\\uE6A8"
+  icon: '\u{E6A8}'
 Zig:
   type: programming
   ascii: |
@@ -3066,7 +3066,7 @@ Zig:
     ansi:
       - yellow
     chip: "#EC915C"
-  icon: "\\uE6A9"
+  icon: '\u{E6A9}'
 Zsh:
   type: programming
   ascii: |
@@ -3087,4 +3087,4 @@ Zsh:
     ansi:
       - white
     chip: "#89E051"
-  icon: "\\uf1183"
+  icon: '\u{f1183}'

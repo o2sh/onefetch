@@ -48,7 +48,7 @@ CSharp: # required, this will be the name of the enum variant for the language a
       - "#803788"
       - "#FFFFFF"
     chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
-  icon: "\\uE648" # optional, the UTF-16 code point of the nerd font icon if supported (link 3).
+  icon: "\u{E648}" # optional, the UTF-16 code point of the nerd font icon if supported (link 3).
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
