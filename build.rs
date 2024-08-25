@@ -18,6 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut tera = Tera::default();
     tera.register_filter("strip_color_tokens", strip_color_tokens_filter);
     tera.register_filter("hex_to_rgb", hex_to_rgb_filter);
+    tera.register_filter("unicode_escape", unicode_escape_filter);
 
     let lang_data: serde_json::Value = serde_yaml::from_reader(File::open("languages.yaml")?)?;
 
@@ -30,6 +31,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     fs::write(output_path, rust_code)?;
 
     Ok(())
+}
+
+/// Convert unicode escapes into ECMAScript 6-style
+/// https://rust-lang.github.io/rfcs/0446-es6-unicode-escapes.html
+fn unicode_escape_filter(
+    value: &tera::Value,
+    _args: &HashMap<String, tera::Value>,
+) -> tera::Result<tera::Value> {
+    lazy_static! {
+        static ref UNICODE_ESCAPE_REGEX: Regex = Regex::new(r"\\u([0-9A-Fa-f]+)").unwrap();
+    }
+    let s = match value {
+        tera::Value::String(s) => s,
+        _ => return Err(tera::Error::msg("expected string")),
+    };
+
+    return Ok(tera::Value::String(
+        UNICODE_ESCAPE_REGEX.replace_all(s, "\\u{$1}").to_string(),
+    ));
 }
 
 /// Strips out `{n}` from the given string.
