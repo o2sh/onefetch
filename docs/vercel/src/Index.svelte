@@ -44,9 +44,8 @@
 <header>
   {#if tagName && htmlUrl}
     <div class="banner">
-      <small
-        >🎉 New release {tagName}! Check out the
-        <a href={htmlUrl}>release notes</a>! 📝</small>
+        🎉 New release {tagName}! Check out the
+        <a href={htmlUrl}>release notes</a>! 📝
     </div>
   {/if}
   <h1>Onefetch</h1>
