@@ -11,7 +11,7 @@ members = ["ascii", "image", "manifest"]
 [workspace.dependencies]
 owo-colors = "3.5.0"
 anyhow = "1.0"
-clap = { version = "4.5.9", features = ["derive"] }
+clap = { version = "4.5.16", features = ["derive"] }
 image = "0.24.9"
 strum = { version = "0.25.0", features = ["derive"] }
 
@@ -35,7 +35,7 @@ askalono = "0.4.6"
 byte-unit = "5.1.4"
 bytecount = "0.6.8"
 clap.workspace = true
-clap_complete = "4.5.8"
+clap_complete = "4.5.19"
 crossbeam-channel = "0.5.13"
 gix = { version = "0.64.0", default-features = false, features = [
     "max-performance-safe",
@@ -46,14 +46,14 @@ gix = { version = "0.64.0", default-features = false, features = [
 ] }
 gix-features = { version = "0.38.0", features = ["zlib-ng"] }
 globset = "0.4.14"
-human-panic = "2.0.0"
+human-panic = "2.0.1"
 image.workspace = true
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.19.0" }
 onefetch-image = { path = "image", version = "2.19.0" }
 onefetch-manifest = { path = "manifest", version = "2.19.0" }
 owo-colors.workspace = true
-regex = "1.10.5"
+regex = "1.10.6"
 serde = "1.0"
 serde_json = "1.0"
 serde_yaml = "0.9.34"
@@ -71,7 +71,7 @@ criterion = "0.5.1"
 gix-testtools = "0.15.0"
 insta = { version = "1.39.0", features = ["json", "redactions"] }
 pretty_assertions = "1.4.0"
-rstest = "0.21.0"
+rstest = "0.22.0"
 
 [[bench]]
 name = "repo"
