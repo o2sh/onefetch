@@ -114,7 +114,7 @@
     left: 0;
     width: 100%;
     text-align: center;
-    padding: 0.5rem 0;
+    padding: 1rem 0;
     color: white;
   }
 
