@@ -20,7 +20,7 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
     let mut version = String::new();
     let mut most_recent = 0;
 
-    for tag in repo.references()?.tags()?.peeled().filter_map(Result::ok) {
+    for tag in repo.references()?.tags()?.peeled()?.filter_map(Result::ok) {
         if let Ok(commit) = tag.id().object()?.try_into_commit() {
             let current_time = commit.time()?.seconds;
             if current_time > most_recent {
