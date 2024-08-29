@@ -6,7 +6,7 @@ use tokei;
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
-const DEFAULT_ICON: &str = "\u{25CF}";
+const DEFAULT_ICON: char = '\u{25CF}';
 
 #[derive(Serialize)]
 pub struct LanguageWithPercentage {
@@ -114,7 +114,7 @@ struct LanguageDisplayData {
     language: String,
     percentage: f64,
     chip_color: DynColors,
-    icon: &'static str,
+    icon: char,
 }
 
 fn prepare_languages(
