@@ -11,6 +11,8 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
+const DEFAULT_CHIP_ICON: char = '\u{25CF}';
+
 #[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
 pub enum LanguageType {
     Programming,
@@ -99,12 +101,24 @@ impl Language {
         }
     }
 
-    pub fn get_circle_color(&self) -> DynColors {
+    pub fn get_chip_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
                 {% set rgb = attrs.colors.chip | hex_to_rgb -%}
                 Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
+        }
+    }
+
+    pub fn get_chip_icon(&self, use_nerd_fonts: bool) -> char {
+        if use_nerd_fonts {
+            match self {
+                {% for language, attrs in languages -%}
+                    {% if attrs.icon is defined %}Language::{{ language }} => '{{ attrs.icon }}',{% else %}Language::{{ language }} => DEFAULT_CHIP_ICON,{% endif %}
+                {% endfor %}
+            }
+        } else {
+            DEFAULT_CHIP_ICON
         }
     }
 }
@@ -124,9 +138,9 @@ fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) ->
     match language_type {
 	{% for language, attrs in languages -%}
         {%- set line_types = attrs.line_types | default(value=['code']) -%}
-	    {%- if attrs.line_types -%} 
+	    {%- if attrs.line_types -%}
             tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
-	    {% endif -%} 
+	    {% endif -%}
     {% endfor %}
 	_ => stats.code
     }
