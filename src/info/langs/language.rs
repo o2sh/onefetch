@@ -6,7 +6,7 @@ use tokei;
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
-const DEFAULT_ICON: char = '\u{25CF}';
+const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
 #[derive(Serialize)]
 pub struct LanguageWithPercentage {
@@ -83,7 +83,7 @@ impl std::fmt::Display for LanguagesInfo {
         for (i, language_display_data) in languages.iter().enumerate() {
             let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
             let chip = language_display_data
-                .icon
+                .chip_icon
                 .color(language_display_data.chip_color);
             let language_str = format!(
                 "{} {} ",
@@ -114,7 +114,7 @@ struct LanguageDisplayData {
     language: String,
     percentage: f64,
     chip_color: DynColors,
-    icon: char,
+    chip_icon: char,
 }
 
 fn prepare_languages(
@@ -139,17 +139,17 @@ fn prepare_languages(
                     color_palette[i % color_palette.len()]
                 };
 
-                let icon = languages_info
+                let chip_icon = languages_info
                     .nerd_fonts
-                    .then_some(language.get_icon())
+                    .then_some(language.get_chip_icon())
                     .flatten()
-                    .unwrap_or(DEFAULT_ICON);
+                    .unwrap_or(DEFAULT_CHIP_ICON);
 
                 LanguageDisplayData {
                     language: language.to_string(),
                     percentage,
                     chip_color,
-                    icon,
+                    chip_icon,
                 }
             },
         );
@@ -165,7 +165,7 @@ fn prepare_languages(
             language: "Other".to_string(),
             percentage: other_perc,
             chip_color: DynColors::Ansi(AnsiColors::White),
-            icon: DEFAULT_ICON,
+            chip_icon: DEFAULT_CHIP_ICON,
         });
         languages
     } else {
@@ -248,7 +248,7 @@ mod test {
             "{:<width$}\n{:<pad$}{} {} ",
             "".on_color(DynColors::Ansi(AnsiColors::Red)),
             "",
-            DEFAULT_ICON.color(DynColors::Ansi(AnsiColors::Red)),
+            DEFAULT_CHIP_ICON.color(DynColors::Ansi(AnsiColors::Red)),
             "Go (100.0 %)".color(DynColors::Ansi(AnsiColors::White)),
             width = LANGUAGES_BAR_LENGTH,
             pad = "Language".len() + 2
@@ -308,13 +308,13 @@ mod test {
                 language: "Rust".to_string(),
                 percentage: 60.0,
                 chip_color: DynColors::Ansi(AnsiColors::Red),
-                icon: DEFAULT_ICON,
+                chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: "Python".to_string(),
                 percentage: 40.0,
                 chip_color: DynColors::Ansi(AnsiColors::Yellow),
-                icon: DEFAULT_ICON,
+                chip_icon: DEFAULT_CHIP_ICON,
             },
         ];
         let result = build_language_bar(&languages);
@@ -373,19 +373,19 @@ mod test {
                 language: Language::Go.to_string(),
                 percentage: 40_f64,
                 chip_color: DynColors::Ansi(AnsiColors::Red),
-                icon: DEFAULT_ICON,
+                chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: Language::Erlang.to_string(),
                 percentage: 30_f64,
                 chip_color: DynColors::Ansi(AnsiColors::Green),
-                icon: DEFAULT_ICON,
+                chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: "Other".to_string(),
                 percentage: 30_f64,
                 chip_color: DynColors::Ansi(AnsiColors::White),
-                icon: DEFAULT_ICON,
+                chip_icon: DEFAULT_CHIP_ICON,
             },
         ];
 
@@ -431,19 +431,19 @@ mod test {
                 language: Language::Go.to_string(),
                 percentage: 40_f64,
                 chip_color: DynColors::Ansi(AnsiColors::Red),
-                icon: Language::Go.get_icon().unwrap(),
+                chip_icon: Language::Go.get_chip_icon().unwrap(),
             },
             LanguageDisplayData {
                 language: Language::Erlang.to_string(),
                 percentage: 30_f64,
                 chip_color: DynColors::Ansi(AnsiColors::Green),
-                icon: Language::Erlang.get_icon().unwrap(),
+                chip_icon: Language::Erlang.get_chip_icon().unwrap(),
             },
             LanguageDisplayData {
                 language: "Other".to_string(),
                 percentage: 30_f64,
                 chip_color: DynColors::Ansi(AnsiColors::White),
-                icon: DEFAULT_ICON,
+                chip_icon: DEFAULT_CHIP_ICON,
             },
         ];
 
