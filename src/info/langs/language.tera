@@ -11,6 +11,8 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
+const DEFAULT_CHIP_ICON: char = '\u{25CF}';
+
 #[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
 pub enum LanguageType {
     Programming,
@@ -108,11 +110,15 @@ impl Language {
         }
     }
 
-    pub fn get_chip_icon(&self) -> Option<char> {
-        match self {
-            {% for language, attrs in languages -%}
-                {% if attrs.icon is defined %}Language::{{ language }} => Some('{{ attrs.icon }}'),{% else %}Language::{{ language }} => None,{% endif %}
-            {% endfor %}
+    pub fn get_chip_icon(&self, use_nerd_fonts: bool) -> char {
+        if use_nerd_fonts {
+            match self {
+                {% for language, attrs in languages -%}
+                    {% if attrs.icon is defined %}Language::{{ language }} => '{{ attrs.icon }}',{% else %}Language::{{ language }} => DEFAULT_CHIP_ICON,{% endif %}
+                {% endfor %}
+            }
+        } else {
+            DEFAULT_CHIP_ICON
         }
     }
 }

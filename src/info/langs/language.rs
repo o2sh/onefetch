@@ -6,7 +6,6 @@ use tokei;
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
-const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
 #[derive(Serialize)]
 pub struct LanguageWithPercentage {
@@ -139,11 +138,7 @@ fn prepare_languages(
                     color_palette[i % color_palette.len()]
                 };
 
-                let chip_icon = languages_info
-                    .nerd_fonts
-                    .then_some(language.get_chip_icon())
-                    .flatten()
-                    .unwrap_or(DEFAULT_CHIP_ICON);
+                let chip_icon = language.get_chip_icon(languages_info.nerd_fonts);
 
                 LanguageDisplayData {
                     language: language.to_string(),
@@ -230,6 +225,8 @@ pub fn stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) 
 
 #[cfg(test)]
 mod test {
+    use rstest::rstest;
+
     use super::*;
 
     #[test]
@@ -391,62 +388,16 @@ mod test {
 
         assert_eq!(result, expected_result);
     }
-
-    #[test]
-    fn test_prepare_languages_with_nerd_fonts() {
-        let languages_info = LanguagesInfo {
-            languages_with_percentage: vec![
-                LanguageWithPercentage {
-                    language: Language::Go,
-                    percentage: 40_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Erlang,
-                    percentage: 30_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Java,
-                    percentage: 20_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Rust,
-                    percentage: 10_f64,
-                },
-            ],
-            true_color: false,
-            number_of_languages_to_display: 2,
-            info_color: DynColors::Ansi(AnsiColors::White),
-            nerd_fonts: true,
-        };
-
-        let color_palette = [
-            DynColors::Ansi(AnsiColors::Red),
-            DynColors::Ansi(AnsiColors::Green),
-        ];
-
-        let result = prepare_languages(&languages_info, &color_palette);
-
-        let expected_result = vec![
-            LanguageDisplayData {
-                language: Language::Go.to_string(),
-                percentage: 40_f64,
-                chip_color: DynColors::Ansi(AnsiColors::Red),
-                chip_icon: Language::Go.get_chip_icon().unwrap(),
-            },
-            LanguageDisplayData {
-                language: Language::Erlang.to_string(),
-                percentage: 30_f64,
-                chip_color: DynColors::Ansi(AnsiColors::Green),
-                chip_icon: Language::Erlang.get_chip_icon().unwrap(),
-            },
-            LanguageDisplayData {
-                language: "Other".to_string(),
-                percentage: 30_f64,
-                chip_color: DynColors::Ansi(AnsiColors::White),
-                chip_icon: DEFAULT_CHIP_ICON,
-            },
-        ];
-
-        assert_eq!(result, expected_result);
+    #[rstest]
+    #[case(Language::Go, true, '\u{e627}')]
+    #[case(Language::Abap, true, DEFAULT_CHIP_ICON)] // No Nerd Font icon for this language
+    #[case(Language::Rust, false, DEFAULT_CHIP_ICON)]
+    fn test_language_get_chip_icon(
+        #[case] language: Language,
+        #[case] use_nerd_fonts: bool,
+        #[case] expected_chip_icon: char,
+    ) {
+        let result = language.get_chip_icon(use_nerd_fonts);
+        assert_eq!(result, expected_chip_icon);
     }
 }
