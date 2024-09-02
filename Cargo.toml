@@ -35,7 +35,7 @@ askalono = "0.4.6"
 byte-unit = "5.1.4"
 bytecount = "0.6.8"
 clap.workspace = true
-clap_complete = "4.5.23"
+clap_complete = "4.5.24"
 crossbeam-channel = "0.5.13"
 gix = { version = "0.66.0", default-features = false, features = [
     "max-performance-safe",
