@@ -8,6 +8,7 @@
   export let hex: string[] | null = null;
   export let chip: string;
   export let ascii: string = '';
+  export let nerdfont: string;
 
   let dark = true;
   let trueColor = hex != null;
@@ -34,6 +35,7 @@
   <div class="language-name">
     <Chip id={name} color={chip} width={24} height={24} />
     <TitleLink {name} />
+    <h3 class="nerd-font">{nerdfont}</h3>
   </div>
   <div class="checkbox">
     <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />
@@ -54,6 +56,8 @@
 </div>
 
 <style>
+  @import url('https://www.nerdfonts.com/assets/css/webfont.css');
+
   .logo-container {
     display: flex;
     justify-content: center;

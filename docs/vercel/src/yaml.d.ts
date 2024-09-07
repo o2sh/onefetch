@@ -10,6 +10,7 @@ declare module '*/languages.yaml' {
     type: string;
     ascii: string;
     colors: LanguageColors;
+    icon: string | null;
   }
 
   export type Languages = Record<string, Language>;
