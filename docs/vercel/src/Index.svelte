@@ -112,8 +112,8 @@
       ansi={language.colors.ansi}
       hex={language.colors.hex}
       ascii={language.ascii}
-      chip={language.colors.chip}
-      nerdfont={escapeToUnicode(language.icon)} />
+      chipColor={language.colors.chip}
+      chipIcon={escapeToUnicode(language.icon)} />
   {/each}
 </main>
 
