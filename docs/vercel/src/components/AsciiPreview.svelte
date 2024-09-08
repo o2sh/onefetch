@@ -1,13 +1,13 @@
 <script lang="ts">
   import { mapToDefaultTerminalFgColor } from '../lib/utils';
-  import Chip from './Chip.svelte';
   import TitleLink from './TitleLink.svelte';
 
   export let name: string;
   export let ansi: string[];
   export let hex: string[] | null = null;
-  export let chip: string;
+  export let chipColor: string;
   export let ascii: string = '';
+  export let chipIcon: string;
 
   let dark = true;
   let trueColor = hex != null;
@@ -32,7 +32,7 @@
 
 <div class="title-row">
   <div class="language-name">
-    <Chip id={name} color={chip} width={24} height={24} />
+    <h3 class="nerd-font" style="color: {chipColor}">{chipIcon}</h3>
     <TitleLink {name} />
   </div>
   <div class="checkbox">
@@ -54,6 +54,8 @@
 </div>
 
 <style>
+  @import url('https://www.nerdfonts.com/assets/css/webfont.css');
+
   .logo-container {
     display: flex;
     justify-content: center;

@@ -10,11 +10,12 @@
   let showMenu: boolean;
 
   const languages: Language[] = Object.entries(data as Languages).map(
-    ([name, { type, ascii, colors }]) => ({
+    ([name, { type, ascii, colors, icon }]) => ({
       name,
       type,
       ascii,
       colors,
+      icon,
     })
   );
 
@@ -29,6 +30,15 @@
   const filteredLanguages = derived(filter, ($filter) => {
     return languages.filter(({ type }) => $filter.checkboxes.includes(type));
   });
+
+  function escapeToUnicode(unicodeEscape: string): string {
+    if (unicodeEscape) {
+      let codePoint = parseInt(unicodeEscape.slice(3, -1), 16); // extract the relevent portion of the escape
+      return String.fromCodePoint(codePoint);
+    } else {
+      return '\u{25CF}';
+    }
+  }
 
   onMount(async () => {
     const response = await fetch(
@@ -102,7 +112,8 @@
       ansi={language.colors.ansi}
       hex={language.colors.hex}
       ascii={language.ascii}
-      chip={language.colors.chip} />
+      chipColor={language.colors.chip}
+      chipIcon={escapeToUnicode(language.icon)} />
   {/each}
 </main>
 
