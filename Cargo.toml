@@ -70,7 +70,7 @@ parking_lot = "0.12"
 criterion = "0.5.1"
 gix-testtools = "0.15.0"
 insta = { version = "1.40.0", features = ["json", "redactions"] }
-pretty_assertions = "1.4.0"
+pretty_assertions = "1.4.1"
 rstest = "0.22.0"
 
 [[bench]]
