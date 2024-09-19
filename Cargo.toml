@@ -41,7 +41,7 @@ gix = { version = "0.66.0", default-features = false, features = [
     "blob-diff",
     "mailmap",
     "index",
-    "status"
+    "status",
 ] }
 gix-features = { version = "0.38.0", features = ["zlib-ng"] }
 globset = "0.4.15"
@@ -65,6 +65,7 @@ tokei = "12.1.2"
 typetag = "0.2"
 
 [dev-dependencies]
+criterion = "0.5.1"
 gix-testtools = "0.15.0"
 insta = { version = "1.40.0", features = ["json", "redactions"] }
 rstest = "0.22.0"
