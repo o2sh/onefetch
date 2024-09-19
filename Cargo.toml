@@ -33,7 +33,6 @@ rust-version = "1.74.1"
 anyhow.workspace = true
 askalono = "0.4.6"
 byte-unit = "5.1.4"
-bytecount = "0.6.8"
 clap.workspace = true
 clap_complete = "4.5.26"
 crossbeam-channel = "0.5.13"
@@ -64,13 +63,10 @@ time = { version = "0.3.36", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "12.1.2"
 typetag = "0.2"
-parking_lot = "0.12"
 
 [dev-dependencies]
-criterion = "0.5.1"
 gix-testtools = "0.15.0"
 insta = { version = "1.40.0", features = ["json", "redactions"] }
-pretty_assertions = "1.4.0"
 rstest = "0.22.0"
 
 [[bench]]
