@@ -7,6 +7,94 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.22.0 (2024-09-20)
+
+### New Features 🎉
+
+- Add support for nerd font glyphs in languages info by @Localghost385 in https://github.com/o2sh/onefetch/pull/1395
+- [onefetch.dev] Add nerdfont iconts to the preview by @Localghost385 in https://github.com/o2sh/onefetch/pull/1411
+- Automate publishing crates to crates.io by @musicinmybrain in https://github.com/o2sh/onefetch/pull/1364
+
+### Bug Fixes 🐛
+
+- Show future commit dates without panicking by @MalteT in https://github.com/o2sh/onefetch/pull/1389
+
+### Chores 🧹
+
+- Re-generate the man page with --no-info by @musicinmybrain in https://github.com/o2sh/onefetch/pull/1376
+- Drop unused shebangs from repo test fixture scripts by @musicinmybrain in https://github.com/o2sh/onefetch/pull/1375
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 3 commits contributed to the release.
+- 135 days passed between releases.
+- 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+- 3 unique issues were worked on: [#1389](https://github.com/o2sh/onefetch/issues/1389), [#1395](https://github.com/o2sh/onefetch/issues/1395), [#1404](https://github.com/o2sh/onefetch/issues/1404)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1389](https://github.com/o2sh/onefetch/issues/1389)**
+  - Show future commit dates without panicking ([`61ab298`](https://github.com/o2sh/onefetch/commit/61ab2982bddb698f31ab78e7b3134d5f959d014e))
+- **[#1395](https://github.com/o2sh/onefetch/issues/1395)**
+  - Add support for nerd font glyphs in languages info ([`6bf1807`](https://github.com/o2sh/onefetch/commit/6bf18079ec85ee920db689c7e2b36ecaedd123a2))
+- **[#1404](https://github.com/o2sh/onefetch/issues/1404)** - Bump gix from 0.64.0 to 0.66.0 in the gix group ([`19f77b2`](https://github.com/o2sh/onefetch/commit/19f77b2b2c529cb14d01321c22bf6e00fce02164))
+</details>
+
+## 2.21.0 (2024-05-08)
+
+### New Features 🎉
+
+- Add CLI option to force URL format to HTTP instead of SSH by @0spotter0 in https://github.com/o2sh/onefetch/pull/1314
+- Add CLI flag to hide token from repository URL by @o2sh in https://github.com/o2sh/onefetch/pull/1319
+- Make Lua logo more readable on dark terminal by @o2sh in https://github.com/o2sh/onefetch/pull/1337
+
+### Bug Fixes 🐛
+
+- Fix deadlock in Churn computation by @Nettifani in https://github.com/o2sh/onefetch/pull/1316
+- Exclude bot commits from churn when `--no-bots` option is used by @o2sh in https://github.com/o2sh/onefetch/pull/1335
+
+### Chores 🧹
+
+- [onefetch.dev] switch to dark theme by @o2sh in https://github.com/o2sh/onefetch/pull/1297
+- RUSTSEC-2024-0320: remove yaml-rust dependency by @Suyun114 in https://github.com/o2sh/onefetch/pull/1309
+- Refactor `--no-bots` CLI option by @o2sh in https://github.com/o2sh/onefetch/pull/1340
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+- 7 commits contributed to the release.
+- 51 days passed between releases.
+- 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+- 7 unique issues were worked on: [#1314](https://github.com/o2sh/onefetch/issues/1314), [#1316](https://github.com/o2sh/onefetch/issues/1316), [#1318](https://github.com/o2sh/onefetch/issues/1318), [#1319](https://github.com/o2sh/onefetch/issues/1319), [#1335](https://github.com/o2sh/onefetch/issues/1335), [#1338](https://github.com/o2sh/onefetch/issues/1338), [#1340](https://github.com/o2sh/onefetch/issues/1340)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+- **[#1314](https://github.com/o2sh/onefetch/issues/1314)**
+  - Add cli option --force-url-http for URL display ([`5000452`](https://github.com/o2sh/onefetch/commit/5000452d8b732ecdc5e28ef8d912d2801ff1f6f9))
+- **[#1316](https://github.com/o2sh/onefetch/issues/1316)**
+  - Fix churn thread deadlock ([`8c1ad74`](https://github.com/o2sh/onefetch/commit/8c1ad744c4c474f6fb4e35547dc5b72e9b6fafce))
+- **[#1318](https://github.com/o2sh/onefetch/issues/1318)**
+  - Bump gix from 0.61.0 to 0.62.0 ([`3e40b97`](https://github.com/o2sh/onefetch/commit/3e40b97b42b4ed67f52f428d8a51555030705260))
+- **[#1319](https://github.com/o2sh/onefetch/issues/1319)**
+  - Add CLI flag to hide token from repository URL ([`8ef64d4`](https://github.com/o2sh/onefetch/commit/8ef64d4a591512fce89840f07a520f8dfc152f8f))
+- **[#1335](https://github.com/o2sh/onefetch/issues/1335)**
+  - Exclude bot commits from churn when `--no-bots` option is used ([`1775cc1`](https://github.com/o2sh/onefetch/commit/1775cc1c328c02f24b335d79f6d423733117ceb2))
+- **[#1338](https://github.com/o2sh/onefetch/issues/1338)**
+  - Use Option<&T> instead of &Option<T> ([`2c76c06`](https://github.com/o2sh/onefetch/commit/2c76c06583692114314550dca4f824d3537a10a4))
+- **[#1340](https://github.com/o2sh/onefetch/issues/1340)** - Init ([`2bc5aed`](https://github.com/o2sh/onefetch/commit/2bc5aed55b81922d9d4309d1a82ccaaf174d6a0d))
+</details>
+
 ## 2.20.0 (2024-03-17)
 
 This version marks the completion of the transition from [`git2`](https://crates.io/crates/git2) to [`gitoxide`](https://crates.io/crates/gix). No more dependency to git2, onefetch is now fully oxidized! 🎉
