@@ -13,7 +13,7 @@ owo-colors = "3.5.0"
 anyhow = "1.0"
 clap = { version = "4.5.17", features = ["derive"] }
 image = "0.24.9"
-strum = { version = "0.25.0", features = ["derive"] }
+strum = { version = "0.26.3", features = ["derive"] }
 
 [package]
 authors.workspace = true
