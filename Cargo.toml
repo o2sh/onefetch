@@ -45,7 +45,7 @@ gix = { version = "0.66.0", default-features = false, features = [
 ] }
 gix-features = { version = "0.38.0", features = ["zlib-ng"] }
 globset = "0.4.15"
-human-panic = "2.0.1"
+human-panic = "2.0.2"
 image.workspace = true
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.19.0" }
