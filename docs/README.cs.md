@@ -27,4 +27,4 @@ V současné době podporuje onefetch více než [100 různých programovacích 
 
 Příspěvky jsou vítány! Další informace najdete v [ZAPOJIT SE](CONTRIBUTING.md).
 
-### More: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Instalace](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Začínáme](https://github.com/o2sh/onefetch/wiki/getting-started)\]
+### Více: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Instalace](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Začínáme](https://github.com/o2sh/onefetch/wiki/getting-started)\]
