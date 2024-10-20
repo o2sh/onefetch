@@ -13,6 +13,7 @@
 
 <p align="center">
   <a href="docs/README.ar.md">العربية</a> |
+  <a href="docs/README.cs.md">Česky</a> |
   <a href="docs/README.cn.md">简体中文</a> |
   <a href="docs/README.de.md">Deutsch</a> |
   <a href="docs/README.es.md">Español</a> |
