@@ -1,4 +1,4 @@
-<h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
+<h3 align="center"><img src="../assets/onefetch.svg" height="130px"></h3>
 
 <h5 align="center">Informační nástroj Git pro příkazový řádek vytvořený v Rust</h5>
 
