@@ -48,3 +48,18 @@ pub fn get_image_backend(image_protocol: ImageProtocol) -> Option<Box<dyn ImageB
     let backend = None;
     backend
 }
+
+#[cfg(not(windows))]
+unsafe fn get_dimensions() -> libc::winsize {
+    use libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ};
+    use std::mem::zeroed;
+
+    let mut window: winsize = zeroed();
+    let result = ioctl(STDOUT_FILENO, TIOCGWINSZ, &mut window);
+
+    if result == -1 {
+        zeroed()
+    } else {
+        window
+    }
+}

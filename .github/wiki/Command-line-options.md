@@ -134,6 +134,11 @@ VISUALS:
       --no-art
           Hides the ascii art or image if provided
 
+      --nerd-fonts
+          Use Nerd Font icons
+
+          Replaces language chips with Nerd Font icons
+
 DEVELOPER:
   -o, --output <FORMAT>
           Outputs Onefetch in a specific format

@@ -2,6 +2,8 @@ name: CD
 on:
   release:
     types: [published]
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   deploy:
@@ -54,10 +56,43 @@ jobs:
           formula-name: onefetch
 
       - name: Publish executable to WinGet
-        uses: vedantmgoyal2009/winget-releaser@v2
+        uses: vedantmgoyal9/winget-releaser@main
         if: matrix.os == 'windows-latest'
         with:
           identifier: o2sh.onefetch
           installers-regex: '\.exe$'
           version: ${{ github.event.release.tag_name }}
           token: ${{ secrets.WINGET_TOKEN }}
+
+  cargo-publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy
+
+      - name: Publish to crates.io (ascii)
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p onefetch-ascii
+
+      - name: Publish to crates.io (image)
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p onefetch-image
+
+      - name: Publish to crates.io (manifest)
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p onefetch-manifest
+
+      - name: Publish to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish

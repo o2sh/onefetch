@@ -3,7 +3,7 @@ use gix::{open, ThreadSafeRepository};
 use onefetch::{cli::CliOptions, info::build_info};
 
 fn bench_repo_info(c: &mut Criterion) {
-    let name = "repo.sh".to_string();
+    let name = "make_repo.sh".to_string();
     let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
     let repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
     let config: CliOptions = CliOptions {

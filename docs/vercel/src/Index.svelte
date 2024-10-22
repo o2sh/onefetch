@@ -10,11 +10,12 @@
   let showMenu: boolean;
 
   const languages: Language[] = Object.entries(data as Languages).map(
-    ([name, { type, ascii, colors }]) => ({
+    ([name, { type, ascii, colors, icon }]) => ({
       name,
       type,
       ascii,
       colors,
+      icon,
     })
   );
 
@@ -30,6 +31,15 @@
     return languages.filter(({ type }) => $filter.checkboxes.includes(type));
   });
 
+  function escapeToUnicode(unicodeEscape: string): string {
+    if (unicodeEscape) {
+      let codePoint = parseInt(unicodeEscape.slice(3, -1), 16); // extract the relevent portion of the escape
+      return String.fromCodePoint(codePoint);
+    } else {
+      return '\u{25CF}';
+    }
+  }
+
   onMount(async () => {
     const response = await fetch(
       'https://api.github.com/repos/o2sh/onefetch/releases/latest'
@@ -44,18 +54,17 @@
 <header>
   {#if tagName && htmlUrl}
     <div class="banner">
-      <small
-        >🎉 New release {tagName}! Check out the
-        <a href={htmlUrl}>release notes</a>! 📝</small>
+      🎉 New release {tagName}! Check out the
+      <a href={htmlUrl}>release notes</a>! 📝
     </div>
   {/if}
   <h1>Onefetch</h1>
   <p>
     <small>
-      <a href="https://github.com/o2sh/onefetch/wiki">Wiki</a> |
+      <a href="https://github.com/o2sh/onefetch/wiki">wiki</a> |
       <a href="https://github.com/o2sh/onefetch/tree/main/docs/vercel"
-        >GitHub</a>
-      | Built with ❤ by
+        >github</a>
+      | built with ❤ by
       <a href="https://github.com/spenserblack">@spenserblack</a> and
       <a href="https://github.com/o2sh">@o2sh</a></small>
   </p>
@@ -103,7 +112,8 @@
       ansi={language.colors.ansi}
       hex={language.colors.hex}
       ascii={language.ascii}
-      chip={language.colors.chip} />
+      chipColor={language.colors.chip}
+      chipIcon={escapeToUnicode(language.icon)} />
   {/each}
 </main>
 
@@ -115,7 +125,7 @@
     left: 0;
     width: 100%;
     text-align: center;
-    padding: 0.5rem 0;
+    padding: 1rem 0;
     color: white;
   }
 

@@ -12,6 +12,8 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
+const DEFAULT_CHIP_ICON: char = '\u{25CF}';
+
 #[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize)]
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
@@ -86,12 +88,24 @@ impl Language {
         }
     }
 
-    pub fn get_circle_color(&self) -> DynColors {
+    pub fn get_chip_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
                 {% set rgb = attrs.colors.chip | hex_to_rgb -%}
                 Language::{{ language }} => Rgb({{ rgb.r }}, {{ rgb.g }}, {{ rgb.b }}),
             {% endfor %}
+        }
+    }
+
+    pub fn get_chip_icon(&self, use_nerd_fonts: bool) -> char {
+        if use_nerd_fonts {
+            match self {
+                {% for language, attrs in languages -%}
+                    {% if attrs.icon is defined %}Language::{{ language }} => '{{ attrs.icon }}',{% else %}Language::{{ language }} => DEFAULT_CHIP_ICON,{% endif %}
+                {% endfor %}
+            }
+        } else {
+            DEFAULT_CHIP_ICON
         }
     }
 }
