@@ -419,7 +419,7 @@ mod test {
                 "url",
                 "--no-art",
                 "--ascii-language",
-                "lisp"
+                "commonlisp"
             ])
         );
     }
