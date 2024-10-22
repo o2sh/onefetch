@@ -361,6 +361,7 @@ Coq:
     hex:
       - "#BF8C5E"
       - "#D5BE99"
+    chip: "#D0B68C"
 CPlusPlus:
   type: programming
   ascii: |
