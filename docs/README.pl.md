@@ -25,6 +25,6 @@ Onefetch może być konfigurowany poprzez flagi CLI tak, aby wyświetlał dokła
 
 Obecnie onefetch obsługuje ponad [100 różnych języków programowania](https://onefetch.dev). Jeśli wybrany przez Ciebie język nie jest obsługiwany: zgłoś Issue, a wsparcie zostanie dodane.
 
-Wkłady są mile widziane! Więcej informacji znajdziesz w [CONTRIBUTING](https://github.com/o2sh/onefetch/blob/main/CONTRIBUTING.md).
+Wkłady są mile widziane! Więcej informacji znajdziesz w [CONTRIBUTING](../CONTRIBUTING.md).
 
 ### Więcej: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Instalacja](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Jak Zacząć](https://github.com/o2sh/onefetch/wiki/getting-started)\]
