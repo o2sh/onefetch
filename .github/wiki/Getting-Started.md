@@ -28,7 +28,7 @@ If you want to automate the detection and running of `onefetch` every time you `
 
 #### 1. Bash / Zsh
 
-> By [**@quazar-omega**](https://github.com/quazar-omega)
+By [**@quazar-omega**](https://github.com/quazar-omega)
 
 A script to put in your `.bashrc` - or `.zshrc` - to run onefetch whenever you open a shell into a repository or `cd` into a repository, making sure that it's different from the last one you were in:
 
@@ -56,7 +56,7 @@ check_directory_for_new_repository
 
 #### 2. Fish
 
-> By [**@TheSast**](https://github.com/TheSast)
+By [**@TheSast**](https://github.com/TheSast)
 
 A fish adaptation of the previous script, run it once in your shell to save it:
 
@@ -81,7 +81,7 @@ funcsave check_directory_for_new_repository
 
 #### 3. CMD
 
-> By [**@mataha**](https://github.com/mataha)
+By [**@mataha**](https://github.com/mataha)
 
 An adaptation of the above snippet suited for Windows's `cmd.exe`,
 specifically for inclusion in AutoRun scripts or DOSKEY macrofiles:
@@ -120,7 +120,7 @@ specifically for inclusion in AutoRun scripts or DOSKEY macrofiles:
 
 #### 4. Powershell
 
-> By [**@kiapanahi**](https://github.com/kiapanahi)
+By [**@kiapanahi**](https://github.com/kiapanahi)
 
 An adaptation of the above snippet suited for `Powershell`. Put this script in the `$PROFILE`.
 
@@ -155,7 +155,7 @@ function Set-Location {
 
 ### Git alias
 
-> By [**@mbrehin**](https://github.com/mbrehin)
+By [**@mbrehin**](https://github.com/mbrehin)
 
 You can also add git alias to run onefetch during your git workflows
 
