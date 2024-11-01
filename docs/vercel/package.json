@@ -15,19 +15,19 @@
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.1.2",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@tsconfig/svelte": "^5.0.4",
-    "@typescript-eslint/eslint-plugin": "8.8.0",
-    "@typescript-eslint/parser": "8.8.0",
-    "eslint": "^9.11.1",
-    "eslint-plugin-svelte": "^2.44.1",
+    "@typescript-eslint/eslint-plugin": "8.12.2",
+    "@typescript-eslint/parser": "8.12.2",
+    "eslint": "^9.14.0",
+    "eslint-plugin-svelte": "^2.46.0",
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.7",
-    "svelte": "^4.2.19",
-    "svelte-check": "^4.0.4",
+    "svelte": "^5.1.9",
+    "svelte-check": "^4.0.5",
     "svelte-preprocess": "^6.0.3",
-    "tslib": "^2.7.0",
+    "tslib": "^2.8.1",
     "typescript": "~5.6",
-    "vite": "^5.4.8"
+    "vite": "^5.4.10"
   }
 }
