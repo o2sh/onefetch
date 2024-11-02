@@ -1,9 +1,48 @@
 use crate::info::utils::info_field::InfoField;
+use clap::builder::PossibleValue;
+use gengo::language::Category;
 use owo_colors::OwoColorize;
 use serde::Serialize;
-use tokei;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct LanguageType(pub Category);
+
+impl LanguageType {
+    pub(crate) const DEFAULT_ARGS: [Self; 3] = [
+        Self(Category::Programming),
+        Self(Category::Markup),
+        Self(Category::Query),
+    ];
+    // pub(crate) const VARIANTS: [Self;5]
+}
+
+impl clap::ValueEnum for LanguageType {
+    fn value_variants<'a>() -> &'a [Self] {
+        use Category::*;
+        &[
+            Self(Programming),
+            Self(Markup),
+            Self(Prose),
+            Self(Data),
+            Self(Query),
+        ]
+    }
+
+    fn to_possible_value(&self) -> Option<PossibleValue> {
+        use Category::*;
+        let possible_value = match self.0 {
+            Programming => "programming",
+            Markup => "markup",
+            Prose => "prose",
+            Data => "data",
+            Query => "query",
+            _ => return None,
+        };
+        Some(PossibleValue::new(possible_value))
+    }
+}
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
 
@@ -29,15 +68,15 @@ pub struct LanguagesInfo {
 
 impl LanguagesInfo {
     pub fn new(
-        loc_by_language: &[(Language, usize)],
+        size_by_language: &[(Language, usize)],
         true_color: bool,
         number_of_languages_to_display: usize,
         info_color: DynColors,
         nerd_fonts: bool,
     ) -> Self {
-        let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
+        let total: usize = size_by_language.iter().map(|(_, v)| v).sum();
 
-        let weight_by_language: Vec<(Language, f64)> = loc_by_language
+        let weight_by_language: Vec<(Language, f64)> = size_by_language
             .iter()
             .map(|(k, v)| {
                 let mut val = *v as f64;
@@ -200,27 +239,6 @@ impl InfoField for LanguagesInfo {
         }
         title
     }
-}
-
-/// Counts the lines-of-code of a tokei `Language`. Takes into
-/// account that a prose language's comments *are* its code.
-pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
-    __loc(language_type, language)
-        + language
-            .children
-            .iter()
-            .fold(0, |sum, (lang_type, reports)| {
-                sum + reports
-                    .iter()
-                    .fold(0, |sum, report| sum + stats_loc(lang_type, &report.stats))
-            })
-}
-
-/// Counts the lines-of-code of a tokei `Report`. This is the child of a
-/// `tokei::CodeStats`.
-pub fn stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
-    let stats = stats.summarise();
-    __stats_loc(language_type, &stats)
 }
 
 #[cfg(test)]

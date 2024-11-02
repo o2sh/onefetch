@@ -2,7 +2,7 @@
   "name": "Rust",
   "build": {
     "dockerfile": "Dockerfile",
-    "args": { "VARIANT": "buster" }
+    "args": { "VARIANT": "bookworm" }
   },
   "postCreateCommand": "git config --global --add safe.directory $PWD && cargo install cargo-insta",
   "extensions": ["EditorConfig.EditorConfig"],

@@ -4,10 +4,11 @@ use crate::cli::MyRegex;
 use anyhow::Result;
 use gix::bstr::ByteSlice;
 use gix::bstr::{BString, Utf8Error};
-use gix::object::tree::diff::change::Event;
 use gix::object::tree::diff::Action;
+use gix::object::tree::diff::Change;
 use gix::prelude::ObjectIdExt;
-use gix::traverse::commit::simple::Sorting;
+use gix::revision::walk::Sorting;
+use gix::traverse::commit::simple::CommitTimeOrder;
 use gix::{Commit, ObjectId};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
@@ -41,7 +42,7 @@ pub fn traverse_commit_graph(
         .head_commit()?
         .id()
         .ancestors()
-        .sorting(Sorting::ByCommitTimeNewestFirst)
+        .sorting(Sorting::ByCommitTime(CommitTimeOrder::NewestFirst))
         .use_commit_graph(can_use_author_threads)
         .with_commit_graph(commit_graph)
         .all()?;
@@ -260,17 +261,17 @@ fn compute_diff_with_parent(
             .object()?
             .into_tree()
             .changes()?
-            .track_path()
-            .track_rewrites(None)
+            .options(|options| {
+                options.track_path().track_rewrites(None);
+            })
             .for_each_to_obtain_tree(&commit.tree()?, |change| {
-                let is_file_change = match change.event {
-                    Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
-                        entry_mode.is_blob()
-                    }
-                    Event::Deletion { .. } | Event::Rewrite { .. } => false,
+                let is_file_change = match change {
+                    Change::Addition { entry_mode, .. }
+                    | Change::Modification { entry_mode, .. } => entry_mode.is_blob(),
+                    Change::Deletion { .. } | Change::Rewrite { .. } => false,
                 };
                 if is_file_change {
-                    let path = change.location;
+                    let path = change.location();
                     *change_map.entry(path.to_owned()).or_insert(0) += 1;
                 }
 

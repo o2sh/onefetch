@@ -16,7 +16,7 @@ Abap:
       - "#1B387D"
       - "#EEEEEE"
     chip: "#E8274B"
-ABNF:
+Abnf:
   type: data
   ascii: |
     {0}          ______
@@ -141,7 +141,7 @@ Assembly:
       - green
     chip: "#6E4C13"
   icon: '\u{E6AB}'
-AutoHotKey:
+Autohotkey:
   type: programming
   ascii: |
     {1} .----------------.
@@ -163,32 +163,6 @@ AutoHotKey:
       - "#FFFFFF"
       - "#119810"
     chip: "#6594B9"
-Bash:
-  type: programming
-  ascii: |
-    {0}             _._
-    {0}         _.-'   '-._
-    {0}     _.-'           '-._
-    {0} _.-'                   '-._
-    {0}|                        _,-|
-    {0}|                    _,-'+++|
-    {0}|                _,-'+++++++|
-    {0}|             ,-'+++++++++++|
-    {0}|             |++++ ++++++++|
-    {0}|             |+++   +++++++|
-    {0}|             |++  +++++++++|
-    {0}|             |++++  +++{1}**{0}++|
-    {0}|             |++   ++{1}**{0}++++|
-    {0}'-,_          |+++ ++++++_,-'
-    {0}    '-,_      |++++++_,-'
-    {0}        '-,_  |++_,-'
-    {0}            '-|-'
-  colors:
-    ansi:
-      - white
-      - green
-    chip: "#89E051"
-  icon: '\u{EBCA}'
 C:
   type: programming
   ascii: |
@@ -287,7 +261,7 @@ Clojure:
       - green
     chip: "#DB5855"
   icon: '\u{E768}'
-CMake:
+Cmake:
   type: programming
   ascii: |
     {0}            ;e{2}`
@@ -310,7 +284,7 @@ CMake:
       - red
       - black
     chip: "#DA3434"
-CoffeeScript:
+Coffeescript:
   type: programming
   ascii: |
     {0}           #####    ######
@@ -332,7 +306,7 @@ CoffeeScript:
       - red
     chip: "#244776"
   icon: '\u{E751}'
-ColdFusion:
+Coldfusion:
   type: programming
   ascii: |
     {0}CfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCfCf
@@ -360,6 +334,34 @@ ColdFusion:
       - "#274550"
     chip: "#ed2cd6"
   icon: '\u{E645}'
+CommonLisp:
+  type: programming
+  ascii: |
+    {0}              ............
+    {0}         ********..............
+    {0}       *************.............
+    {0}     ****************..............
+    {0}   *******************...***.........
+    {0}  **...********...*****...***.........
+    {0} ***...*******...******....***.........
+    {0}****...******...*******....****.........
+    {0}*****...****...*******.....*****........
+    {0}******...**...******.......******.......
+    {0}*******......******.......***..***......
+    {0}********.....*****.......***....***.....
+    {0}*********....****.......***......***....
+    {0} *********...****......***.......***...
+    {0}  *********...***.....***........***..
+    {0}   *********...***...................
+    {0}     **************................
+    {0}       *************.............
+    {0}         **************........
+    {0}              ************
+  colors:
+    ansi:
+      - white
+    chip: "#3FB68B"
+  icon: '\u{E6B0}'
 Coq:
   type: programming
   ascii: |
@@ -388,7 +390,7 @@ Coq:
       - "#BF8C5E"
       - "#D5BE99"
     chip: "#D0B68C"
-Cpp:
+CPlusPlus:
   type: programming
   ascii: |
     {0}                 ++++++
@@ -582,7 +584,7 @@ Dart:
       - "#01597D"
     chip: "#00B4AB"
   icon: '\u{E64C}'
-Dockerfile:
+Docker:
   type: programming
   ascii: |
     {2}                  ##   {0}      .
@@ -600,7 +602,7 @@ Dockerfile:
       - cyan
     chip: "#384D54"
   icon: '\u{F308}'
-Elisp:
+EmacsLisp:
   type: programming
   ascii: |
     {0}         ':r\iv7i|r:'
@@ -883,7 +885,7 @@ FSharp:
     chip: "#B845FC"
   icon: '\u{E7A7}'
   serialization: f#
-GdScript:
+Gdscript:
   type: programming
   ascii: |
     {0}         _.aMb      dMe._
@@ -1167,7 +1169,7 @@ Hlsl:
       - "#FFBB00"
     chip: "#AACE60"
   icon: '\u{229E}'
-HolyC:
+Holyc:
   type: programming
   ascii: |
     {0}             ========
@@ -1294,7 +1296,7 @@ Java:
       - "#1665C0"
     chip: "#B07219"
   icon: '\u{E738}'
-JavaScript:
+Javascript:
   type: programming
   ascii: |
     {0}JSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJSJS
@@ -1382,38 +1384,6 @@ Jsonnet:
       - white
       - black
     chip: "#0064BD"
-Jsx:
-  type: programming
-  ascii: |
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJSX{1}JSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJS{1}XJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJ{1}SXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJSX{1}JSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJS{1}XJSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSXJ{1}SXJSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJSX{1}JSXJSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJS{1}XJSXJSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSXJ{1}SXJSXJSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJSXJSXJSX{1}JSXJSXJSXJSX
-    {0}JSXJSXJ   SXJS      XJSXJS{1}X{2}JSX{1}JSX{2}JSX{1}JSX
-    {0}JSXJSXJ   SXJ   SXJSXJSXJ{1}SXJ{2}SXJ{1}S{2}XJS{1}XJSX
-    {0}JSXJSXJ   SXJS   XJSXJSX{1}JSXJSX{2}JSX{1}JSXJSX
-    {0}JSXJSXJ   SXJSX   JSXJS{1}XJSXJS{2}XJSXJ{1}SXJSX
-    {0}JS   XJ   SXJSXJ   SXJ{1}SXJSXJ{2}SXJ{1}S{2}XJS{1}XJSX
-    {0}JSX       JS      XJS{1}XJSXJS{2}XJS{1}XJS{2}XJS{1}XJS
-    {0}JSXJSXJSXJSXJSXJSXJS{1}XJSXJSXJSXJSXJSXJSX
-    {0}JSXJSXJSXJSXJSXJSXJ{1}SXJSXJSXJSXJSXJSXJSX
-  colors:
-    ansi:
-      - yellow
-      - magenta
-      - white
-    hex:
-      - "#ECE653"
-      - "#B684D3"
-      - "#FFFFFF"
-    chip: "#F1E05A"
-  icon: '\u{F2EE}'
 Julia:
   type: programming
   ascii: |
@@ -1434,7 +1404,7 @@ Julia:
       - magenta
     chip: "#A270BA"
   icon: '\u{E624}'
-Jupyter:
+JupyterNotebook:
   type: programming
   ascii: |
     {0}                                 +%%%+
@@ -1501,35 +1471,7 @@ Kotlin:
       - magenta
     chip: "#A97BFF"
   icon: '\u{E634}'
-Lisp:
-  type: programming
-  ascii: |
-    {0}              ............
-    {0}         ********..............
-    {0}       *************.............
-    {0}     ****************..............
-    {0}   *******************...***.........
-    {0}  **...********...*****...***.........
-    {0} ***...*******...******....***.........
-    {0}****...******...*******....****.........
-    {0}*****...****...*******.....*****........
-    {0}******...**...******.......******.......
-    {0}*******......******.......***..***......
-    {0}********.....*****.......***....***.....
-    {0}*********....****.......***......***....
-    {0} *********...****......***.......***...
-    {0}  *********...***.....***........***..
-    {0}   *********...***...................
-    {0}     **************................
-    {0}       *************.............
-    {0}         **************........
-    {0}              ************
-  colors:
-    ansi:
-      - white
-    chip: "#3FB68B"
-  icon: '\u{E6B0}'
-LLVM:
+Llvm:
   type: programming
   ascii: |
     {0}KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
@@ -1723,7 +1665,7 @@ ObjectiveC:
       - blue
     chip: "#438EFF"
   serialization: objective-c
-OCaml:
+Ocaml:
   type: programming
   ascii: |
     {0}///////////////////////////////////////
@@ -1879,42 +1821,6 @@ Perl:
       - cyan
     chip: "#0298C3"
   icon: '\u{E67E}'
-Perl6:
-  type: programming
-  ascii: |
-    {0} +@8DM#8W,
-    {0}#DM"{1},ypy,{0}"8#
-    {0}DDU {1}8M]N8u{0} DM
-    {0}8DD {1}TMD8M,{0}8M  {4}8
-    {0} 8D#=e@8MM^   {4}8
-    {0}  *MDw  {4},.,+#M`
-    {0}    "8#                   {0},e88DDDD8m,
-    {0}      "8 {3}x33#,           {0}z8D#M`9Dw "9DW
-    {3}        JE   E {2}BBW.     {0}DM {1}p#Kw {0}D8   {0}JDM
-    {1} #pp#pr {3} JRFMy{2}#EEF{3}y#Rr, {0}DM{1} MD]8 {0}9DM {4}`N
-    {1}Z#{0}8#D]{1}D# {2}EE#EEEEE{3}`EW  E {0}8M,{1}"RM`{0} 8DM  {4}D
-    {1}88{0}8]D]{1}D8 {2}EEM{1}#{2}EEE{1}E{2}Bp{3}TFF^  {0}*M888#`  {4}#M
-    {1}*#88EE8  {2} RRk{1}8BMM{2}#EEE,        {4}'^'
-    {1}   ``      {2}'"F*FFF*  {1},yw,
-    {1}                  ,#]{0}[D8{1}8W
-    {1}                  k8{0}]DDN8{1}8L
-    {1}                  '8E{0}$DE8{1}8M
-    {1}                    R#E#R^
-  colors:
-    ansi:
-      - blue
-      - red
-      - yellow
-      - white
-      - green
-    hex:
-      - "#5B00FD"
-      - "#FF005E"
-      - "#F3FF27"
-      - "#FFFFFF"
-      - "#00FF39"
-    chip: "#0000FB"
-  serialization: raku
 Php:
   type: programming
   ascii: |
@@ -1937,7 +1843,7 @@ Php:
       - "#FFFFFF"
     chip: "#4F5D95"
   icon: '\u{f031f}'
-PowerShell:
+Powershell:
   type: programming
   ascii: |
     {0}         #########################
@@ -2012,7 +1918,7 @@ Prolog:
       - white
     chip: "#74283C"
   icon: '\u{E7A1}'
-Protobuf:
+ProtocolBuffer:
   type: programming
   ascii: |
     {0}      ;;;;;;;;     {2}::::::::
@@ -2036,7 +1942,7 @@ Protobuf:
       - yellow
     chip: "#74283C"
   serialization: protocol-buffers
-PureScript:
+Purescript:
   type: programming
   ascii: |
     {0}           \\\\\\\\\\\\\\    \\\\\
@@ -2171,7 +2077,43 @@ Racket:
       - white
       - blue
     chip: "#3C5CAA"
-Renpy:
+Raku:
+  type: programming
+  ascii: |
+    {0} +@8DM#8W,
+    {0}#DM"{1},ypy,{0}"8#
+    {0}DDU {1}8M]N8u{0} DM
+    {0}8DD {1}TMD8M,{0}8M  {4}8
+    {0} 8D#=e@8MM^   {4}8
+    {0}  *MDw  {4},.,+#M`
+    {0}    "8#                   {0},e88DDDD8m,
+    {0}      "8 {3}x33#,           {0}z8D#M`9Dw "9DW
+    {3}        JE   E {2}BBW.     {0}DM {1}p#Kw {0}D8   {0}JDM
+    {1} #pp#pr {3} JRFMy{2}#EEF{3}y#Rr, {0}DM{1} MD]8 {0}9DM {4}`N
+    {1}Z#{0}8#D]{1}D# {2}EE#EEEEE{3}`EW  E {0}8M,{1}"RM`{0} 8DM  {4}D
+    {1}88{0}8]D]{1}D8 {2}EEM{1}#{2}EEE{1}E{2}Bp{3}TFF^  {0}*M888#`  {4}#M
+    {1}*#88EE8  {2} RRk{1}8BMM{2}#EEE,        {4}'^'
+    {1}   ``      {2}'"F*FFF*  {1},yw,
+    {1}                  ,#]{0}[D8{1}8W
+    {1}                  k8{0}]DDN8{1}8L
+    {1}                  '8E{0}$DE8{1}8M
+    {1}                    R#E#R^
+  colors:
+    ansi:
+      - blue
+      - red
+      - yellow
+      - white
+      - green
+    hex:
+      - "#5B00FD"
+      - "#FF005E"
+      - "#F3FF27"
+      - "#FFFFFF"
+      - "#00FF39"
+    chip: "#0000FB"
+  serialization: raku
+RenPy:
   type: programming
   ascii: |
     {0}       ++++++
@@ -2367,7 +2309,7 @@ Scheme:
       - "#555555"
     chip: "#1E4AEC"
   icon: '\u{E6B1}'
-Sh:
+Shell:
   type: programming
   ascii: |
     {0}              ___       ___        ___
@@ -2569,7 +2511,7 @@ Swift:
       - "#FD2822"
     chip: "#F05138"
   icon: '\u{E755}'
-SystemVerilog:
+Systemverilog:
   type: programming
   ascii: |
     {0}     _.._   _.._   _.._   _.._
@@ -2683,39 +2625,7 @@ Toml:
       - "#FFFFFF"
     chip: "#9C4221"
   icon: '\u{E6B2}'
-Tsx:
-  type: programming
-  ascii: |
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTSX{1}TSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTS{1}XTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTSXT{1}SXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTSX{1}TSXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSXTS{1}XTSXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSXT{1}SXTSXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTSX{1}TSXTSXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXTS{1}XTSXTSXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSXT{1}SXTSXTSXTSX
-    {0}TSXTSXTSXTSXTSXTSXTSXTSXTSX{1}TSXTSXTSXTSX
-    {0}TS{2}XTSXTSXTS{0}XTSX{2}TSXTSX{0}TSXTS{1}X{2}TSX{1}TSX{2}TSX{1}TSX
-    {0}TSXTS{2}XTS{0}XTSXTS{2}XTS{0}XTSXTSXT{1}SXT{2}SXT{1}S{2}XTS{1}XTSX
-    {0}TSXTS{2}XTS{0}XTSXTSX{2}TSX{0}TSXTSX{1}TSXTSX{2}TSX{1}TSXTSX
-    {0}TSXTS{2}XTS{0}XTSXTSXT{2}SXT{0}SXTS{1}XTSXTS{2}XTSXT{1}TSTSX
-    {0}TSXTS{2}XTS{0}XTSXTSXTS{2}XTS{0}XT{1}SXTSXT{2}SXT{1}S{2}XTS{1}XTSX
-    {0}TSXTS{2}XTS{0}XTSXT{2}SXTSXT{0}SX{1}TSXTSX{2}TSX{1}TSX{2}TSX{1}TSX
-    {0}TSXTSXTSXTSXTSXTSXTS{1}XTSXTSXTSXTSXTSXTSX
-    {0}TSXTSXTSXTSXTSXTSXT{1}SXTSXTSXTSXTSXTSXTSX
-  colors:
-    ansi:
-      - cyan
-      - magenta
-      - white
-    hex:
-      - "#007ACC"
-      - "#8A53A6"
-      - "#FFFFFF"
-    chip: "#2B7489"
-  icon: '\u{E69D}'
-TypeScript:
+Typescript:
   type: programming
   ascii: |
     {0}TSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTSTS
@@ -2903,7 +2813,7 @@ Vue:
       - blue
     chip: "#199F4B"
   icon: '\u{E6A0}'
-WebAssembly:
+Webassembly:
   type: programming
   ascii: |
     {0}:::::::::::             ::::::::::::
@@ -3007,7 +2917,7 @@ Xml:
       - green
     chip: "#0060AC"
   icon: '\u{f05c0}'
-XSL:
+Xsl:
   type: programming
   ascii: |
     {0}                       :::
@@ -3067,24 +2977,3 @@ Zig:
       - yellow
     chip: "#EC915C"
   icon: '\u{E6A9}'
-Zsh:
-  type: programming
-  ascii: |
-    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
-    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
-    {0}ZSHZ     ZSHZSHZSHZSHZSHZSHZSHZS
-    {0}ZSHZSH     SHZSHZSHZSHZSHZSHZSHZ
-    {0}ZSHZSHZS     SHZSHZSHZSHZSHZSHZS
-    {0}ZSHZSHZSHZ     HZSHZSHZSHZSHZSHZ
-    {0}ZSHZSHZSHZSH     ZSHZSHZSHZSHZSH
-    {0}ZSHZSHZSHZ     SHZSHZSHZSHZSHZSH
-    {0}ZSHZSHZS     ZSHZSHZSHZSHZSHZSHZ
-    {0}ZSHZSH     SHZSHZSHZSHZSHZSHZSHZ
-    {0}ZSHZ     ZSHZSH             SHZS
-    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
-    {0}ZSHZSHZSHZSHZSHZSHZSHZSHZSHZSHZS
-  colors:
-    ansi:
-      - white
-    chip: "#89E051"
-  icon: '\u{f1183}'
