@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
   "name": "onefetch-web",
   "private": true,
   "version": "0.0.0",
@@ -30,4 +31,37 @@
     "typescript": "~5.6",
     "vite": "^5.4.8"
   }
+=======
+	"name": "onefetch-web",
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"start": "vite",
+		"build": "vite build",
+		"format": "prettier -w .",
+		"preview": "vite preview",
+		"check": "npm run check:svelte && npm run check:prettier && npm run check:lint",
+		"check:svelte": "svelte-check --tsconfig ./tsconfig.json",
+		"check:prettier": "prettier --check **/*.{ts,js,svelte,css,html,json}",
+		"check:lint": "eslint"
+	},
+	"devDependencies": {
+		"@rollup/plugin-yaml": "^4.1.2",
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"@types/eslint": "^9.6.0",
+		"eslint": "^9.7.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-svelte": "^2.36.0",
+		"globals": "^15.0.0",
+		"prettier": "^3.3.2",
+		"prettier-plugin-svelte": "^3.2.6",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
+		"typescript": "^5.0.0",
+		"typescript-eslint": "^8.0.0",
+		"vite": "^5.0.3"
+	}
+>>>>>>> Stashed changes
 }
