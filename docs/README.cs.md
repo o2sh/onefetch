@@ -25,6 +25,6 @@ Onefetch lze nakonfigurovat tak, aby zobrazoval přesně to, co chcete, způsobe
 
 V současné době podporuje onefetch více než [100 různých programovacích jazyků](https://onefetch.dev); pokud váš vybraný jazyk není podporován: Otevřete nový požadavek a podpora bude přidána.
 
-Příspěvky jsou vítány! Další informace najdete v [ZAPOJIT SE](CONTRIBUTING.md).
+Příspěvky jsou vítány! Další informace najdete v [CONTRIBUTING](CONTRIBUTING.md).
 
 ### Více: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Instalace](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Začínáme](https://github.com/o2sh/onefetch/wiki/getting-started)\]
