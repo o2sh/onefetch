@@ -1,9 +1,10 @@
 <script lang="ts">
-  import AsciiPreview from './components/AsciiPreview.svelte';
-  import data from '../../../languages.yaml';
+  import AsciiPreview from './AsciiPreview.svelte';
+  import data from '../../../../languages.yaml';
   import type { Languages, Language } from '../../../languages.yaml';
   import { onMount } from 'svelte';
   import { writable, derived } from 'svelte/store';
+  import '../app.css';
 
   let tagName: string;
   let htmlUrl: string;
@@ -15,7 +16,7 @@
       type,
       ascii,
       colors,
-      icon,
+      icon
     })
   );
 
@@ -24,7 +25,7 @@
   );
 
   const filter = writable({
-    checkboxes: languageTypes,
+    checkboxes: languageTypes
   });
 
   const filteredLanguages = derived(filter, ($filter) => {

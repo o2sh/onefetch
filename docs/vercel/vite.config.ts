@@ -1,9 +1,13 @@
-import { resolve } from 'path';
+import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import yaml from '@rollup/plugin-yaml';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte(), yaml()],
+  plugins: [sveltekit(), yaml()],
+  server: {
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: ['..']
+    }
+  }
 });

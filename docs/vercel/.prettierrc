@@ -3,11 +3,17 @@
   "tabWidth": 2,
   "semi": true,
   "singleQuote": true,
-  "trailingComma": "es5",
+  "trailingComma": "none",
   "bracketSameLine": true,
   "singleAttributePerLine": false,
   "quoteProps": "consistent",
   "plugins": ["prettier-plugin-svelte"],
-  "svelteSortOrder": "scripts-options-markup-styles",
-  "svelteIndentScriptAndStyle": true
+  "overrides": [
+    {
+      "files": "*.svelte",
+      "options": {
+        "parser": "svelte"
+      }
+    }
+  ]
 }
