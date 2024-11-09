@@ -6,6 +6,5 @@
       "extensions": ["esbenp.prettier-vscode", "svelte.svelte-vscode"]
     }
   },
-  "postCreateCommand": "npm install",
-  "forwardPorts": [3000]
+  "postCreateCommand": "npm install"
 }
