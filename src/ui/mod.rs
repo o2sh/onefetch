@@ -88,7 +88,7 @@ mod test {
 
     #[test]
     fn get_ascii_colors_custom_language_no_custom_colors_no_true_color() {
-        let colors = get_ascii_colors(Some(&Language::Sh), &Language::Rust, &[], false);
+        let colors = get_ascii_colors(Some(&Language::Shell), &Language::Rust, &[], false);
         assert_eq!(colors.len(), 1);
         assert_eq!(colors, vec![DynColors::Ansi(AnsiColors::Green)]);
     }

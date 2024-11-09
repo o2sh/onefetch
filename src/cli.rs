@@ -104,7 +104,7 @@ pub struct InfoCliOptions {
     #[arg(
         long,
         num_args = 1..,
-        default_values = &["programming", "markup"],
+        default_values = &["programming", "markup", "query"],
         short = 'T',
         value_enum,
     )]
@@ -264,7 +264,7 @@ impl Default for InfoCliOptions {
             http_url: Default::default(),
             hide_token: Default::default(),
             include_hidden: Default::default(),
-            r#type: vec![LanguageType::Programming, LanguageType::Markup],
+            r#type: LanguageType::DEFAULT_ARGS.to_vec(),
             disabled_fields: Vec::default(),
             no_title: Default::default(),
         }
@@ -393,7 +393,7 @@ mod test {
             },
             ascii: AsciiCliOptions {
                 ascii_colors: vec![5, 0],
-                ascii_language: Some(Language::Lisp),
+                ascii_language: Some(Language::CommonLisp),
                 ..Default::default()
             },
             visuals: VisualsCliOptions {
@@ -419,7 +419,7 @@ mod test {
                 "url",
                 "--no-art",
                 "--ascii-language",
-                "lisp"
+                "commonlisp"
             ])
         );
     }
