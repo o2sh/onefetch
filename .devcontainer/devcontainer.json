@@ -2,7 +2,7 @@
   "name": "onefetch",
   "build": {
     "dockerfile": "Dockerfile",
-    "args": { "VARIANT": "buster" }
+    "args": { "VARIANT": "bookworm" }
   },
   "customizations": {
     "vscode": {
