@@ -1,5 +1,5 @@
 {
-  "name": "Rust",
+  "name": "onefetch",
   "build": {
     "dockerfile": "Dockerfile",
     "args": { "VARIANT": "buster" }

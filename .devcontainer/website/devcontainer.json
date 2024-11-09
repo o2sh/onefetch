@@ -1,17 +1,11 @@
 {
-  "name": "Node.js & TypeScript",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:16-bullseye",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/onefetch,type=bind,consistency=cached",
-  "workspaceFolder": "/workspaces/onefetch/docs/vercel",
+  "name": "onefetch.dev",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bullseye",
   "customizations": {
     "vscode": {
       "extensions": ["esbenp.prettier-vscode", "svelte.svelte-vscode"]
     }
   },
-  "portsAttributes": {
-    "3000": {
-      "label": "onfetch.dev",
-      "onAutoForward": "notify"
-    }
-  }
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000]
 }
