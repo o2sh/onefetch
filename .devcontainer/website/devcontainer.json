@@ -3,11 +3,10 @@
   "image": "mcr.microsoft.com/devcontainers/typescript-node:16-bullseye",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/onefetch,type=bind,consistency=cached",
   "workspaceFolder": "/workspaces/onefetch/docs/vercel",
-  "extensions": ["esbenp.prettier-vscode", "svelte.svelte-vscode"],
-  "postCreateCommand": "npm ci",
-  "postAttachCommand": "npm run dev -- --port 3000",
-  "settings": {
-    "editor.formatOnSave": true
+  "customizations": {
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode", "svelte.svelte-vscode"]
+    }
   },
   "portsAttributes": {
     "3000": {
