@@ -2,12 +2,13 @@ use self::metrics::GitMetrics;
 use self::sig::Sig;
 use crate::cli::MyRegex;
 use anyhow::Result;
+use gix::bstr::BString;
 use gix::bstr::ByteSlice;
-use gix::bstr::{BString, Utf8Error};
-use gix::object::tree::diff::change::Event;
-use gix::object::tree::diff::Action;
+use gix::diff::tree_with_rewrites::Change;
+use gix::diff::Options;
 use gix::prelude::ObjectIdExt;
-use gix::traverse::commit::simple::Sorting;
+use gix::revision::walk::Sorting;
+use gix::traverse::commit::simple::CommitTimeOrder;
 use gix::{Commit, ObjectId};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
@@ -41,7 +42,7 @@ pub fn traverse_commit_graph(
         .head_commit()?
         .id()
         .ancestors()
-        .sorting(Sorting::ByCommitTimeNewestFirst)
+        .sorting(Sorting::ByCommitTime(CommitTimeOrder::NewestFirst))
         .use_commit_graph(can_use_author_threads)
         .with_commit_graph(commit_graph)
         .all()?;
@@ -255,27 +256,23 @@ fn compute_diff_with_parent(
         parents.next(),
     );
 
-    if let (tree_id, None) = parents {
-        tree_id
-            .object()?
-            .into_tree()
-            .changes()?
-            .track_path()
-            .track_rewrites(None)
-            .for_each_to_obtain_tree(&commit.tree()?, |change| {
-                let is_file_change = match change.event {
-                    Event::Addition { entry_mode, .. } | Event::Modification { entry_mode, .. } => {
-                        entry_mode.is_blob()
-                    }
-                    Event::Deletion { .. } | Event::Rewrite { .. } => false,
-                };
-                if is_file_change {
-                    let path = change.location;
-                    *change_map.entry(path.to_owned()).or_insert(0) += 1;
+    if let (parent_tree_id, None) = parents {
+        let old_tree = parent_tree_id.object()?.into_tree();
+        let new_tree = commit.tree()?;
+        let changes =
+            repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default().with_rewrites(None))?;
+        for change in changes.iter() {
+            let is_file_change = match change {
+                Change::Addition { entry_mode, .. } | Change::Modification { entry_mode, .. } => {
+                    entry_mode.is_blob()
                 }
-
-                Ok::<Action, Utf8Error>(Action::Continue)
-            })?;
+                Change::Deletion { .. } | Change::Rewrite { .. } => false,
+            };
+            if is_file_change {
+                let path = change.location();
+                *change_map.entry(path.to_owned()).or_insert(0) += 1;
+            }
+        }
     }
 
     Ok(())
