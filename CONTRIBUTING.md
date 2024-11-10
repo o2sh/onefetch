@@ -66,7 +66,7 @@ CSharp: # required, this will be the name of the enum variant for the language a
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
-- [@spenserblack](https://github.com/spenserblack), [@Shuni](https://github.com/shuni64), [@yoichi](https://github.com/yoichi) and [@Byron](https://github.com/Byron) for maintaining this project.
+- [@spenserblack](https://github.com/spenserblack), [@Shuni](https://github.com/shuni64) and [@Byron](https://github.com/Byron) for maintaining this project.
 - Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
 
 <p align="center">:heart::heart:</p>
