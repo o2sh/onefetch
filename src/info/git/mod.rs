@@ -256,8 +256,8 @@ fn compute_diff_with_parent(
         parents.next(),
     );
 
-    if let (tree_id, None) = parents {
-        let old_tree = tree_id.object()?.into_tree();
+    if let (parent_tree_id, None) = parents {
+        let old_tree = parent_tree_id.object()?.into_tree();
         let new_tree = commit.tree()?;
         let changes = repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default())?;
         for change in changes.iter() {
