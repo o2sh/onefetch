@@ -259,7 +259,8 @@ fn compute_diff_with_parent(
     if let (parent_tree_id, None) = parents {
         let old_tree = parent_tree_id.object()?.into_tree();
         let new_tree = commit.tree()?;
-        let changes = repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default())?;
+        let changes =
+            repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default().with_rewrites(None))?;
         for change in changes.iter() {
             let is_file_change = match change {
                 Change::Addition { entry_mode, .. } | Change::Modification { entry_mode, .. } => {
