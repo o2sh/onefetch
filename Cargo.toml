@@ -12,7 +12,12 @@ members = ["ascii", "image", "manifest"]
 owo-colors = "3.5.0"
 anyhow = "1.0"
 clap = { version = "4.5.20", features = ["derive"] }
-image = { version = "0.25.2", features = ["color_quant"] }
+image = { version = "0.25.2", default-features = false, features = [
+    "color_quant",
+    "jpeg",
+    "png",
+    "webp"
+] }
 strum = { version = "0.26.3", features = ["derive"] }
 
 [package]
