@@ -45,7 +45,7 @@ impl super::ImageBackend for ITermBackend {
         let image_rows = height_ratio * f64::from(image.height());
 
         let mut bytes: Vec<u8> = Vec::new();
-        image.write_to(&mut Cursor::new(&mut bytes), image::ImageOutputFormat::Png)?;
+        image.write_to(&mut Cursor::new(&mut bytes), image::ImageFormat::Png)?;
         let encoded_image = engine::general_purpose::STANDARD.encode(bytes);
         let mut image_data = Vec::<u8>::new();
 
