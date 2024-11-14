@@ -7,6 +7,7 @@ use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use num_format::CustomFormat;
+use onefetch_ascii::AsciiArt;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
@@ -146,6 +147,9 @@ pub struct AsciiCliOptions {
     /// If set to auto: true color will be enabled if supported by the terminal
     #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
     pub true_color: When,
+    /// Only print the ascii art without retrieving any info
+    #[arg(long, short = 'L')]
+    pub logo_only: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
@@ -289,6 +293,7 @@ impl Default for AsciiCliOptions {
             ascii_colors: Vec::default(),
             ascii_language: Option::default(),
             true_color: When::Auto,
+            logo_only: false,
         }
     }
 }
@@ -313,6 +318,26 @@ pub fn print_supported_languages() -> Result<()> {
 pub fn print_supported_package_managers() -> Result<()> {
     for p in ManifestType::iter() {
         println!("{p}");
+    }
+
+    Ok(())
+}
+
+pub fn print_language(cli: CliOptions) -> Result<()> {
+    match cli.ascii.ascii_language {
+        Some(language) => {
+            let ascii_art = language.get_ascii_art();
+            let colors = language.get_colors(match cli.ascii.true_color {
+                When::Always => true,
+                When::Never => false,
+                When::Auto => is_truecolor_terminal(),
+            });
+            let art = AsciiArt::new(ascii_art, colors.as_slice(), !cli.text_formatting.no_bold);
+            for line in art {
+                println!("{line}")
+            }
+        }
+        None => println!("You need to provide a language with the --ascii-language/-a option."),
     }
 
     Ok(())
