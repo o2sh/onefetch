@@ -323,26 +323,6 @@ pub fn print_supported_package_managers() -> Result<()> {
     Ok(())
 }
 
-pub fn print_language(cli: CliOptions) -> Result<()> {
-    match cli.ascii.ascii_language {
-        Some(language) => {
-            let ascii_art = language.get_ascii_art();
-            let colors = language.get_colors(match cli.ascii.true_color {
-                When::Always => true,
-                When::Never => false,
-                When::Auto => is_truecolor_terminal(),
-            });
-            let art = AsciiArt::new(ascii_art, colors.as_slice(), !cli.text_formatting.no_bold);
-            for line in art {
-                println!("{line}")
-            }
-        }
-        None => println!("You need to provide a language with the --ascii-language/-a option."),
-    }
-
-    Ok(())
-}
-
 pub fn is_truecolor_terminal() -> bool {
     env::var("COLORTERM")
         .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")

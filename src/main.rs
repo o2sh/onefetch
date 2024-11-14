@@ -24,10 +24,6 @@ fn main() -> Result<()> {
         return cli::print_supported_package_managers();
     }
 
-    if cli_options.ascii.logo_only {
-        return cli::print_language(cli_options);
-    }
-
     if let Some(generator) = cli_options.developer.completion {
         let mut cmd = CliOptions::command();
         cli::print_completions(generator, &mut cmd);
