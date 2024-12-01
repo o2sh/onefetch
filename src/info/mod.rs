@@ -178,6 +178,10 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let globs_to_exclude = &cli_options.info.exclude;
     let show_email = cli_options.info.email;
 
+    if cli_options.ascii.logo_only {
+        return Ok(InfoBuilder::new(cli_options).build(cli_options, text_colors, dominant_language, ascii_colors));
+    }
+
     Ok(InfoBuilder::new(cli_options)
         .title(&repo, no_bold, &text_colors)
         .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
