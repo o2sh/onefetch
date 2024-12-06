@@ -9,6 +9,6 @@ description = "Detect and parse manifest files"
 
 [dependencies]
 anyhow.workspace = true
-cargo_toml = "0.20.5"
+cargo_toml = "0.21.0"
 npm-package-json = "0.1.3"
 strum.workspace = true
