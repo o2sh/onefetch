@@ -258,6 +258,7 @@ Ceylon:
       - "#CC8B18"
       - "#AB7008"
     chip: "#DFA535"
+  icon: "\u{E78B}"
 Clojure:
   type: programming
   ascii: |
@@ -310,6 +311,7 @@ CMake:
       - red
       - black
     chip: "#DA3434"
+  icon: "\u{E794}"
 CoffeeScript:
   type: programming
   ascii: |
@@ -1470,6 +1472,7 @@ Jupyter:
       - "#FF700F"
       - "#9E9E9E"
     chip: "#DA5B0B"
+  icon: "\u{E80F}"
   serialization: jupyter-notebooks
 Kotlin:
   type: programming
@@ -1557,6 +1560,7 @@ LLVM:
     hex:
       - "#98012E"
     chip: "#185619"
+  icon: "\u{E823}"
 Lua:
   type: programming
   ascii: |
@@ -1722,6 +1726,7 @@ ObjectiveC:
       - cyan
       - blue
     chip: "#438EFF"
+  icon: "\u{E84D}"
   serialization: objective-c
 OCaml:
   type: programming
@@ -2217,6 +2222,7 @@ Renpy:
       - "#FFFFFF"
       - "#B5A396"
     chip: "#FF7F7F"
+  icon: "\u{E88D}"
 Ruby:
   type: programming
   ascii: |
@@ -2428,6 +2434,7 @@ Solidity:
       - "#333333"
       - "#515151"
     chip: "#AA6746"
+  icon: "\u{E8A6}"
 Sql:
   type: data
   ascii: |
@@ -2772,6 +2779,7 @@ Vala:
       - magenta
       - white
     chip: "#A56DE2"
+  icon: "\u{E8D1}"
 Verilog:
   type: programming
   ascii: |
@@ -2879,6 +2887,7 @@ VisualBasic:
       - "#004E8C"
       - "#FFFFFF"
     chip: "#945db7"
+  icon: "\u{E8D5}"
 Vue:
   type: programming
   ascii: |
