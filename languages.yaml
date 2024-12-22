@@ -262,30 +262,34 @@ Ceylon:
 Clojure:
   type: programming
   ascii: |
-    {0}               ,....,
-    {0}          ,oooooooooooooo,
-    {0}      ,oooooooooooooooooooooo,
-    {0}    ,oooooooooooooooooooooooooo,
-    {0}   ,oooooo::'        '':ooooooooo,
-    {0}  '            '\\\\\:   :oooooooo,
-    {1}  .,,ooo'  :/:  {0}:\\\\\\\,  :ooooooo,
-    {1} :,oooo:  :///:  {0}:\\\\\\\\,  :oooooo:
-    {1}:ooooo:  ://///:, {0}:\\\\\\\\,  :ooooo:
-    {1}'ooooo: :///////:  {0}:\\\\\\\,  :ooooo:
-    {1}'ooooo: ://////: : {0}:\\\\\\\,  :ooooo:
-    {1}'ooooo:  :////: ::  {0}:\\\\\\,  :ooooo'
-    {1}'oooooo:  ://: ://:  {0}:\\\\,  :ooooo'
-    {1} `oooooo:  :' :////:  {0}:\\. ,;;;::'
-    {1}  `oooooo:,   ```````
-    {1}   `oooooo:::..        .::.,.,::'
-    {1}     `oooooooooOOooooOOoooooooo'
-    {1}       `ooooooooooooooooooooo'
-    {1}         `ooooooooooooooooo'
-    {1}             ````````````
+    {0}                 ,,,,,
+    {0}           .-/+ooooooooo+/:-`
+    {0}        ./ooooooooooooooooooo+:.
+    {0}      -+oooooooooooooooooooooooo+-
+    {0}    ,+ooooooooo+/:---::/+ooooooooo+.
+    {0}                         `-/oosooooo:
+    {1}   .,,oooo/` :/:  {0}:\\\\\\:  `\ooooooo:
+    {1}  :,ooooo-  :///:  {0}:\\\\\\\,  -ooooooo-
+    {1} :oooooo:  ://///:  {0}:\\\\\\\,  :oooooo+
+    {1}.ooooooo  :///////:  {0}:\\\\\\\,  ooooooo.
+    {1}:oooooo+  ://////:    {0}:\\\\\\,  +oooooo:
+    {1}-ooooooo`  :////:  ::  {0}:\\\\\, `ooooooo-
+    {1}`ooooooo:   ://:  ://:  {0}:\\\,  /oooooo:
+    {1} -ooooooo:   :   :////:  {0}:\\. :ooooo,:
+    {1}  :ooooooo+.    ://////:    {0}.+oooo,,.
+    {1}   :oooooooo+-`          
+    {1}    .+ooooooooo+/::::://oooooooooo+'
+    {1}      -+oooooooooooooooooooooooo+-
+    {1}        .:ooooooooooooooooooo+:.
+    {1}           `-:/ooooooooo+/:.`
+    {1}                 ``````
   colors:
     ansi:
       - cyan
       - green
+    hex:
+      - "#8BADF6"
+      - "#8DD545"
     chip: "#DB5855"
   icon: '\u{E768}'
 CMake:
