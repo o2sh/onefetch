@@ -15,4 +15,4 @@ image.workspace = true
 [target.'cfg(not(windows))'.dependencies]
 color_quant = "1.1.0"
 base64 = "0.22.1"
-libc = "0.2.158"
+libc = "0.2.169"
