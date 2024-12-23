@@ -44,9 +44,9 @@ fn strip_color_tokens_filter(
         tera::Value::String(s) => s,
         _ => return Err(tera::Error::msg("expected string")),
     };
-    return Ok(tera::Value::String(
+    Ok(tera::Value::String(
         COLOR_INDEX_REGEX.replace_all(s, "").to_string(),
-    ));
+    ))
 }
 
 fn hex_to_rgb_filter(
