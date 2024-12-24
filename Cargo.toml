@@ -9,14 +9,14 @@ repository = "https://github.com/o2sh/onefetch"
 members = ["ascii", "image", "manifest"]
 
 [workspace.dependencies]
-owo-colors = "3.5.0"
+owo-colors = "4.1.0"
 anyhow = "1.0"
 clap = { version = "4.5.23", features = ["derive"] }
 image = { version = "0.25.2", default-features = false, features = [
     "color_quant",
     "jpeg",
     "png",
-    "webp"
+    "webp",
 ] }
 strum = { version = "0.26.3", features = ["derive"] }
 
