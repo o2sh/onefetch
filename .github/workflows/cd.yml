@@ -20,22 +20,22 @@ jobs:
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Build
+      - name: Build Release
         run: make build
 
-      - name: Build Release Mac
+      - name: Package release for Mac
         if: matrix.os == 'macos-latest'
         run: make release-mac
 
-      - name: Build Release Linux
+      - name: Package release for Linux
         if: matrix.os == 'ubuntu-latest'
         run: make release-linux
 
-      - name: Build Release Win
+      - name: Package release for Windows
         if: matrix.os == 'windows-latest'
         run: make release-win
 
-      - name: Release
+      - name: Publish to GitHub
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to homebrew
+      - name: Publish to Homebrew
         uses: mislav/bump-homebrew-formula-action@v3
         if: matrix.os == 'macos-latest'
         env:
