@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.BADGE_TOKEN }}
@@ -23,6 +23,7 @@ jobs:
 
       - name: Create Badge
         run: curl https://img.shields.io/badge/rustc-${{ steps.get-msrv.outputs.msrv }}%2B-blue > ./assets/msrv-badge.svg
+
       - name: Commit Badge
         continue-on-error: true
         run: |

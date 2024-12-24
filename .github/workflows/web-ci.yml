@@ -18,7 +18,8 @@ jobs:
         working-directory: docs/vercel
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
