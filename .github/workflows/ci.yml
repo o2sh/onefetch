@@ -37,6 +37,3 @@ jobs:
 
       - name: Run onefetch
         run: cargo run
-
-      - name: Run onefetch (with commitgraph)
-        run: git commit-graph write --no-progress --reachable && cargo run
