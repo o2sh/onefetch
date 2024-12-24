@@ -62,7 +62,7 @@ jobs:
           version: ${{ github.event.release.tag_name }}
           token: ${{ secrets.WINGET_TOKEN }}
 
-  cargo-publish:
+  crates:
     name: Publish to crates.io
     runs-on: ubuntu-latest
 

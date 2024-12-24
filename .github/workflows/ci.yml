@@ -16,26 +16,27 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  strategy:
-    matrix:
-      os: [ubuntu-latest, windows-latest, macOS-latest]
-  runs-on: ${{ matrix.os }}
+  CI:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    runs-on: ${{ matrix.os }}
 
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install Rust
-      uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
-    - name: Build
-      run: cargo build --features=fail-on-deprecated
+      - name: Build
+        run: cargo build --features=fail-on-deprecated
 
-    - name: Run tests
-      run: cargo test
+      - name: Run tests
+        run: cargo test
 
-    - name: Run onefetch
-      run: cargo run
+      - name: Run onefetch
+        run: cargo run
 
-    - name: Run onefetch (with commitgraph)
-      run: git commit-graph write --no-progress --reachable && cargo run
+      - name: Run onefetch (with commitgraph)
+        run: git commit-graph write --no-progress --reachable && cargo run
