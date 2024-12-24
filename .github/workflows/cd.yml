@@ -14,13 +14,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Checkout
       - uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Build
         run: make build
@@ -47,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Bump homebrew-core formula
+      - name: Publish to homebrew
         uses: mislav/bump-homebrew-formula-action@v3
         if: matrix.os == 'macos-latest'
         env:
@@ -55,7 +53,7 @@ jobs:
         with:
           formula-name: onefetch
 
-      - name: Publish executable to WinGet
+      - name: Publish to WinGet
         uses: vedantmgoyal9/winget-releaser@main
         if: matrix.os == 'windows-latest'
         with:
@@ -69,13 +67,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
       - uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Publish to crates.io (ascii)
         env:

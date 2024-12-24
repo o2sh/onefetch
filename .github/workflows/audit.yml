@@ -11,12 +11,12 @@ on:
       - "**/Cargo.toml"
       - "**/Cargo.lock"
   schedule:
-    # Once week at midnight UTC
+    # Once a week at midnight UTC
     - cron: "0 0 * * 0"
   workflow_dispatch:
 
 jobs:
-  sec:
+  audit:
     name: Security audit
     runs-on: ubuntu-latest
     steps:

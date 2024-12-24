@@ -1,7 +1,7 @@
 name: Generate MSRV Badge
 on:
   schedule:
-    # Once every week at midnight UTC
+    # Once a week at midnight UTC
     - cron: "0 0 * * 0"
   workflow_dispatch:
 
@@ -10,14 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.BADGE_TOKEN }}
+
       - name: Get Minimum Supported Rust Version
         uses: spenserblack/actions-msrv@v0.4
         id: get-msrv
         timeout-minutes: 60
+
       - name: Create Badge
         run: curl https://img.shields.io/badge/rustc-${{ steps.get-msrv.outputs.msrv }}%2B-blue > ./assets/msrv-badge.svg
       - name: Commit Badge
