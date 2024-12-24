@@ -32,8 +32,8 @@ jobs:
       - name: Build
         run: cargo build --features=fail-on-deprecated
 
-      - name: Run tests
+      - name: Test
         run: cargo test
 
-      - name: Run onefetch
+      - name: Run
         run: cargo run
