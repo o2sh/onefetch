@@ -1,6 +1,0 @@
-[advisories]
-ignore = [
-  "RUSTSEC-2020-0071", # `time` localtime_r segfault
-  "RUSTSEC-2020-0159", # `chrono` localtime_r segfault
-  "RUSTSEC-2024-0421", # `idna` 
-]
