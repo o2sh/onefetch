@@ -1655,6 +1655,36 @@ Markdown:
     chip: "#083FA1"
   icon: '\u{E73E}'
   line_types: [code, comments]
+Mojo:
+  type: programming
+  ascii: |
+    {0}                   O
+    {0}                   MO
+    {0}                   MOMO
+    {0}                 MOMOMO
+    {0}                MOMOMOMO
+    {0}                MOMO{1}J{0}MOMO
+    {0}             M OMOM{1}JO{0}MOMOM
+    {0}             MOMO{1}JOJO{0}MOMOMOM
+    {0}           MOMOM{1}JOJOJO{0}MOMOMOM
+    {0}         MOMOMO{1}JOJOJOJO{0}MOMOMO M
+    {0}      M OMOMOM{1}JOJOJOJOJO{0}MOMOMOMO
+    {0}      MOMOMOM{1}JOJOJOJOJOJO{0}MOMOMOM
+    {0}       MOMO{1}J{0}M{1}JOJOJOJOJOJOJ{0}MOMOM
+    {0}       MOMO{1}JOJOJOJOJOJOJOJO{0}MOM
+    {0}        MOMO{1}JOJOJOJOJOJOJO{0}MOM
+    {0}         MOMO{1}JOJOJOJOJOJO{0}MOM
+    {0}            MO{1}JOJOJOJOJO{0}MOM
+    {0}              MO{1}JOJOJO{0}MO
+  colors:
+    ansi:
+      - red
+      - yellow
+    hex:
+      - "#FF4500"
+      - "#FFD700"
+    chip: "#FF4C1F"
+  icon: '\u{1F525}'
 Nim:
   type: programming
   ascii: |
