@@ -1,4 +1,4 @@
-name: Generate MSRV Badge
+name: MSRV Badge
 on:
   schedule:
     # Once a week at midnight UTC

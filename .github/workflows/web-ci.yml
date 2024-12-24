@@ -1,4 +1,4 @@
-name: onefetch.dev CI
+name: Web UI CI
 on:
   push:
     branches: ["main"]
