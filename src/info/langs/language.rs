@@ -202,32 +202,30 @@ impl InfoField for LanguagesInfo {
     }
 }
 
-/// Counts the lines-of-code of a tokei `Language`. Takes into
-/// account that a prose language's comments *are* its code.
 pub fn loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
-    __loc(language_type, language)
+    __loc(language_type, language.code, language.comments)
         + language
             .children
             .iter()
             .fold(0, |sum, (lang_type, reports)| {
-                sum + reports
-                    .iter()
-                    .fold(0, |sum, report| sum + stats_loc(lang_type, &report.stats))
+                sum + reports.iter().fold(0, |sum, report| {
+                    let stats = report.stats.summarise();
+                    sum + __loc(lang_type, stats.code, stats.comments)
+                })
             })
 }
 
-/// Counts the lines-of-code of a tokei `Report`. This is the child of a
-/// `tokei::CodeStats`.
-pub fn stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
-    let stats = stats.summarise();
-    __stats_loc(language_type, &stats)
+fn __loc(language_type: &tokei::LanguageType, code: usize, comments: usize) -> usize {
+    match language_type {
+        tokei::LanguageType::Markdown => code + comments,
+        _ => code,
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use rstest::rstest;
-
     use super::*;
+    use rstest::rstest;
 
     #[test]
     fn test_display_languages_info() {

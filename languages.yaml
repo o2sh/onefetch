@@ -1654,7 +1654,6 @@ Markdown:
       - red
     chip: "#083FA1"
   icon: '\u{E73E}'
-  line_types: [code, comments]
 Nim:
   type: programming
   ascii: |
