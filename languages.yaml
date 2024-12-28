@@ -1788,6 +1788,39 @@ Odin:
       - "#4797F3"
       - "#499AF7"
     chip: "#60AFFE"
+OpenScad:
+  type: programming
+  ascii: |
+    {0}                 ________
+    {0}             .:------------:   ...
+    {0}          .-+=             =+=-    :.
+    {0}        :+***               +**=:   .:.
+    {0}       =*****+             +*****=    -.
+    {0}      +**********+++++++**********+    -
+    {0}     =*****************************=   -
+    {0}    .*+==+********************+++***. .:
+    {0} .::-:.   .-+***************-     =*-..
+    {0}-.    .:.    -************=        *.
+    {0}=       .:.   :**********-        :+
+    {0}=         :.   =********=        .+.
+    {0}.-         -   .********-       :=.
+    {0} .-.       :   =********+.   .:=-
+    {0}   ::     .-:=************++==:
+    {0}     ·...·   .-=++*****++=-.
+    {0}                ---------
+  colors:
+    ansi: # required, a list of the ANSI colors used to colorize the logo
+      - blue
+      - magenta
+      - magenta
+      - white
+    hex: # optional, alternative to basic colors for terminals that support true colour.
+      - "#9B4F97"
+      - "#67217A"
+      - "#803788"
+      - "#FFFFFF"
+    chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+    icon: '\u{F34E}'
 Org:
   type: prose
   ascii: |
@@ -1887,7 +1920,7 @@ Perl:
       - cyan
     chip: "#0298C3"
   icon: '\u{E67E}'
-Perl6:
+Raku:
   type: programming
   ascii: |
     {0} +@8DM#8W,
