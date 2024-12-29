@@ -33,7 +33,11 @@ If your architecture is supported by the pre-built binaries, you can download th
 
 ## Build from source
 
-First, install `rustup` to get the `rust` compiler installed on your system (using the recommended `curl https://sh.rustup.rs -sSf | sh -s` installation method) and then
+First, install rust toolchain with [rustup](https://rustup.rs/):
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 
 > [!IMPORTANT]
 > Ensure [CMake](https://cmake.org/download/) is installed.
@@ -46,7 +50,11 @@ make install
 
 ## Cargo
 
-First, install `rustup` to get the `rust` compiler installed on your system (using the recommended `curl https://sh.rustup.rs -sSf | sh -s` installation method) and then
+First, install rust toolchain with [rustup](https://rustup.rs/):
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 
 > [!IMPORTANT]
 > Ensure [CMake](https://cmake.org/download/) is installed.

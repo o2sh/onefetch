@@ -1,7 +1,7 @@
+use crate::get_dimensions;
 use anyhow::Result;
 use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
-use libc::{ioctl, winsize, STDOUT_FILENO, TIOCGWINSZ};
 use std::env;
 use std::io::Cursor;
 
@@ -31,17 +31,13 @@ impl super::ImageBackend for ITermBackend {
         image: &DynamicImage,
         _colors: usize,
     ) -> Result<String> {
-        let tty_size = unsafe {
-            let tty_size: winsize = std::mem::zeroed();
-            ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
-            tty_size
-        };
+        let tty_size = unsafe { get_dimensions() };
         let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
         let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 
         // resize image to fit the text height with the Lanczos3 algorithm
         let image = image.resize(
-            u32::max_value(),
+            u32::MAX,
             (lines.len() as f64 / height_ratio) as u32,
             FilterType::Lanczos3,
         );
@@ -49,7 +45,7 @@ impl super::ImageBackend for ITermBackend {
         let image_rows = height_ratio * f64::from(image.height());
 
         let mut bytes: Vec<u8> = Vec::new();
-        image.write_to(&mut Cursor::new(&mut bytes), image::ImageOutputFormat::Png)?;
+        image.write_to(&mut Cursor::new(&mut bytes), image::ImageFormat::Png)?;
         let encoded_image = engine::general_purpose::STANDARD.encode(bytes);
         let mut image_data = Vec::<u8>::new();
 

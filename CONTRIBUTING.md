@@ -48,29 +48,18 @@ CSharp: # required, this will be the name of the enum variant for the language a
       - "#803788"
       - "#FFFFFF"
     chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+  icon: '\u{E648}' # optional, the UTF-16 code point of the nerd font icon if supported (link 3).
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
-> [!NOTE]
-> An additional field, `line_types` can also be set on a language's attributes. It has been excluded because
-> it is not necessary for the majority of languages. By default, only a language's lines of code are counted, but this
-> field can be used to count other lines, too. For example, `line_types: [code, comments]`. This is useful in languages
-> like Markdown, where the significant lines are mostly comments. A list of available fields to be used can be found in
-> [tokei's documentation](https://docs.rs/tokei/latest/tokei/struct.Language.html#fields).
-
 - link 1: https://github.com/XAMPPRocky/tokei#supported-languages
 - link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-
-### Adding translation for README.md
-
-In order to make Onefetch more accessible for non English-speakers, we are seeking the help of multilingual contributors willing to translate the README.md in their native tongue.
-
-These translations will be accessible directly from the English README.md via hyperlinks.
+- link 3: https://www.nerdfonts.com/cheat-sheet
 
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
-- [@spenserblack](https://github.com/spenserblack), [@Shuni](https://github.com/shuni64), [@yoichi](https://github.com/yoichi) and [@Byron](https://github.com/Byron) for maintaining this project.
+- [@spenserblack](https://github.com/spenserblack), [@Shuni](https://github.com/shuni64) and [@Byron](https://github.com/Byron) for maintaining this project.
 - Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
 
 <p align="center">:heart::heart:</p>
