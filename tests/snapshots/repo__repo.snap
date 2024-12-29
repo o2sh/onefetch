@@ -32,7 +32,9 @@ expression: info
     },
     {
       "PendingInfo": {
-        "pendingChanges": "1+- 2+"
+        "added": 2,
+        "deleted": 0,
+        "modified": 1
       }
     },
     {

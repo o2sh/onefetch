@@ -1,33 +1,33 @@
 {
   "name": "onefetch-web",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "format": "prettier -w .",
     "preview": "vite preview",
-    "check": "check:svelte && check:prettier && check:eslint",
-    "check:svelte": "svelte-check",
+    "check": "npm run check:svelte && npm run check:prettier && npm run check:lint",
+    "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
     "check:prettier": "prettier --check **/*.{ts,js,svelte,css,html,json}",
-    "check:lint": "eslint 'src/**/*.{ts,js,svelte}'"
+    "check:lint": "eslint"
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.1.2",
-    "@sveltejs/vite-plugin-svelte": "^3.0.1",
-    "@tsconfig/svelte": "^5.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "eslint": "^8.56.0",
-    "eslint-plugin-svelte": "^2.35.1",
-    "prettier": "^3.1.1",
-    "prettier-plugin-svelte": "^3.1.2",
-    "svelte": "^4.2.8",
-    "svelte-check": "^3.6.2",
-    "svelte-preprocess": "^5.1.3",
-    "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/kit": "^2.15.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@types/eslint": "^9.6.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-svelte": "^2.46.1",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-svelte": "^3.3.2",
+    "svelte": "^5.15.0",
+    "svelte-check": "^4.1.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vite": "^6.0.5"
   }
 }

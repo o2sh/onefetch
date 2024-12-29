@@ -1,3 +1,4 @@
+use crate::get_dimensions;
 use anyhow::{Context, Result};
 use color_quant::NeuQuant;
 use image::{
@@ -5,8 +6,8 @@ use image::{
     DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
 };
 use libc::{
-    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
-    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
+    c_void, poll, pollfd, read, tcgetattr, tcsetattr, termios, ECHO, ICANON, POLLIN, STDIN_FILENO,
+    TCSANOW,
 };
 use std::io::{stdout, Write};
 use std::time::Instant;
@@ -57,7 +58,7 @@ impl SixelBackend {
                 read(STDIN_FILENO, &mut byte as *mut _ as *mut c_void, 1);
             }
             buf.push(byte);
-            if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(&[b'c']) {
+            if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(b"c") {
                 for attribute in buf[3..(buf.len() - 1)].split(|x| *x == b';') {
                     if attribute == [b'4'] {
                         unsafe {
@@ -80,11 +81,7 @@ impl Default for SixelBackend {
 impl super::ImageBackend for SixelBackend {
     #[allow(clippy::map_entry)]
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String> {
-        let tty_size = unsafe {
-            let tty_size: winsize = std::mem::zeroed();
-            ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
-            tty_size
-        };
+        let tty_size = unsafe { get_dimensions() };
         let cw = tty_size.ws_xpixel / tty_size.ws_col;
         let lh = tty_size.ws_ypixel / tty_size.ws_row;
         let width_ratio = 1.0 / cw as f64;
@@ -92,7 +89,7 @@ impl super::ImageBackend for SixelBackend {
 
         // resize image to fit the text height with the Lanczos3 algorithm
         let image = image.resize(
-            u32::max_value(),
+            u32::MAX,
             (lines.len() as f64 / height_ratio) as u32,
             FilterType::Lanczos3,
         );

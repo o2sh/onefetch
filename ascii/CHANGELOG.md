@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 19 commits contributed to the release over the course of 314 calendar days.
+ - 21 commits contributed to the release over the course of 423 calendar days.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 4 unique issues were worked on: [#1142](https://github.com/o2sh/onefetch/issues/1142), [#934](https://github.com/o2sh/onefetch/issues/934), [#936](https://github.com/o2sh/onefetch/issues/936), [#992](https://github.com/o2sh/onefetch/issues/992)
 
@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * **[#992](https://github.com/o2sh/onefetch/issues/992)**
     - Fix typo ([`fa80f33`](https://github.com/o2sh/onefetch/commit/fa80f3308ff6f19a3c62233ecbc9767ffa7b9ac9))
  * **Uncategorized**
+    - Merge branch 'main' of github.com:o2sh/onefetch ([`6104bc2`](https://github.com/o2sh/onefetch/commit/6104bc2ecae02f39479ec022dfc6506404a0527a))
+    - Cargo changelog --write ([`64e6117`](https://github.com/o2sh/onefetch/commit/64e6117b1cc2c2ac41dff99791c2a714317ecdf2))
     - Cargo changelog --write ([`871f98a`](https://github.com/o2sh/onefetch/commit/871f98a6b99e8ac28445951c545c7c32ca722079))
     - Bump version ([`dccd5a8`](https://github.com/o2sh/onefetch/commit/dccd5a8ccf51f10fb6e38af6b16735b3cac5b315))
     - Cargo changelog --write ([`7eb48ae`](https://github.com/o2sh/onefetch/commit/7eb48ae5c1ef2727a2bb070556aca21506667629))

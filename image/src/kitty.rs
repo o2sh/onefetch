@@ -1,9 +1,10 @@
+use crate::get_dimensions;
 use anyhow::Result;
 use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
 use libc::{
-    c_void, ioctl, poll, pollfd, read, tcgetattr, tcsetattr, termios, winsize, ECHO, ICANON,
-    POLLIN, STDIN_FILENO, STDOUT_FILENO, TCSANOW, TIOCGWINSZ,
+    c_void, poll, pollfd, read, tcgetattr, tcsetattr, termios, ECHO, ICANON, POLLIN, STDIN_FILENO,
+    TCSANOW,
 };
 use std::io::{stdout, Write};
 use std::time::Instant;
@@ -91,17 +92,13 @@ impl super::ImageBackend for KittyBackend {
         image: &DynamicImage,
         _colors: usize,
     ) -> Result<String> {
-        let tty_size = unsafe {
-            let tty_size: winsize = std::mem::zeroed();
-            ioctl(STDOUT_FILENO, TIOCGWINSZ, &tty_size);
-            tty_size
-        };
+        let tty_size = unsafe { get_dimensions() };
         let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
         let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 
         // resize image to fit the text height with the Lanczos3 algorithm
         let image = image.resize(
-            u32::max_value(),
+            u32::MAX,
             (lines.len() as f64 / height_ratio) as u32,
             FilterType::Lanczos3,
         );

@@ -90,14 +90,14 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
             let line_end = Tokens(line).true_length();
             (line_start, line_end)
         })
-        .fold((std::usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
+        .fold((usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
             (acc_s.min(line_s), acc_e.max(line_e))
         })
 }
 
 /// Produces a series of lines which have been automatically truncated to the
 /// correct width
-impl<'a> Iterator for AsciiArt<'a> {
+impl Iterator for AsciiArt<'_> {
     type Item = String;
     fn next(&mut self) -> Option<String> {
         self.content
@@ -136,7 +136,7 @@ impl Token {
 /// An iterator over tokens found within the *.ascii format.
 #[derive(Clone, Debug)]
 struct Tokens<'a>(&'a str);
-impl<'a> Iterator for Tokens<'a> {
+impl Iterator for Tokens<'_> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
         let (s, tok) = color_token(self.0)

@@ -18,6 +18,7 @@ use std::str::FromStr;
 use strum::IntoEnumIterator;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
+pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about)]
@@ -76,14 +77,26 @@ pub struct InfoCliOptions {
     #[arg(long, short, num_args = 1..)]
     pub exclude: Vec<String>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
-    #[arg(long, value_name = "REGEX")]
-    pub no_bots: Option<Option<MyRegex>>,
+    #[arg(
+        long,
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
+        value_name = "REGEX"
+    )]
+    pub no_bots: Option<MyRegex>,
     /// Ignores merge commits
     #[arg(long)]
     pub no_merges: bool,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
+    /// Display repository URL as HTTP
+    #[arg(long)]
+    pub http_url: bool,
+    /// Hide token in repository URL
+    #[arg(long)]
+    pub hide_token: bool,
     /// Count hidden files and directories
     #[arg(long)]
     pub include_hidden: bool,
@@ -193,6 +206,11 @@ pub struct VisualsCliOptions {
     /// Hides the ascii art or image if provided
     #[arg(long)]
     pub no_art: bool,
+    /// Use Nerd Font icons
+    ///
+    /// Replaces language chips with Nerd Font icons
+    #[arg(long)]
+    pub nerd_fonts: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
@@ -243,6 +261,8 @@ impl Default for InfoCliOptions {
             no_bots: Option::default(),
             no_merges: Default::default(),
             email: Default::default(),
+            http_url: Default::default(),
+            hide_token: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
             disabled_fields: Vec::default(),

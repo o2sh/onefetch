@@ -19,10 +19,10 @@ pub fn get_loc_by_language_sorted(
     language_types: &[LanguageType],
     include_hidden: bool,
 ) -> Result<Vec<(Language, usize)>> {
-    let stats = get_statistics(dir, globs_to_exclude, language_types, include_hidden);
+    let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
 
     let loc_by_language =
-        get_loc_by_language(&stats).context("Could not find any source code in this repository")?;
+        get_loc_by_language(&locs).context("Could not find any source code in this repository")?;
 
     let loc_by_language_sorted = sort_by_loc(loc_by_language);
 
@@ -61,7 +61,7 @@ pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
     total_loc
 }
 
-fn get_statistics(
+fn get_locs(
     dir: &Path,
     globs_to_exclude: &[String],
     language_types: &[LanguageType],

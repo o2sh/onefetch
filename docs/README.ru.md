@@ -1,12 +1,11 @@
 <h3 align="center"><img src="../assets/onefetch.svg" height="130px"></h3>
 
-<h5 align="center">Терминальная утилита для вывода информации о Git
+<h5 align="center">Утилита коммандной строки для вывода информации о Git
 репозиториях, написанная на Rust</h5>
 
 <p align="center">
 	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
 	<a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
-  <a href="https://onefetch.dev"><img src="../assets/language-badge.svg"></a>
   <a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
 	<a href="../LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 	<img src="../assets/msrv-badge.svg">
@@ -14,8 +13,7 @@
 
 <img src="../assets/screenshot-1.png" align="right" height="250px">
 
-Onefetch выводит информацию о локальном Git репозитории прямо в терминал.
-Утилита не нуждается в подключении к интернету.
+Onefetch - это инструмент коммандной строки для вывода инфомации о Git репозиториях, написанная на `Rust`, которая отображает информацию о проекте и статистику кода локального Git репозитория прямо в ваш теминал. Утилита может работать полностью оффлайн - доступ к сети не нужен.
 
 По умолчанию информация о репозитории отображается вместе с логотипом главного
 языка программирования, но вы можете сделать так, чтобы Onefetch использовал

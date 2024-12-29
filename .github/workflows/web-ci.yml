@@ -1,4 +1,4 @@
-name: Vercel Deployment CI
+name: Web UI CI
 on:
   push:
     branches: ["main"]
@@ -18,19 +18,19 @@ jobs:
         working-directory: docs/vercel
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20
           cache: npm
           cache-dependency-path: docs/vercel/package-lock.json
 
       - name: Install Dependencies
         run: npm ci
-      # NOTE Since build is automated by vercel, it's probably
-      # redundant to test it here, too
+
       - name: Svelte Check
         run: npm run check:svelte -- --fail-on-warnings
 

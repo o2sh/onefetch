@@ -42,7 +42,7 @@ INFO:
   -e, --exclude <EXCLUDE>...
           Ignore all files & directories matching EXCLUDE
 
-      --no-bots [<REGEX>]
+      --no-bots[=<REGEX>]
           Exclude [bot] commits. Use <REGEX> to override the default pattern
 
       --no-merges
@@ -50,6 +50,12 @@ INFO:
 
   -E, --email
           Show the email address of each author
+
+      --http-url
+          Display repository URL as HTTP
+
+      --hide-token
+          Hide token in repository URL
 
       --include-hidden
           Count hidden files and directories
@@ -127,6 +133,11 @@ VISUALS:
 
       --no-art
           Hides the ascii art or image if provided
+
+      --nerd-fonts
+          Use Nerd Font icons
+
+          Replaces language chips with Nerd Font icons
 
 DEVELOPER:
   -o, --output <FORMAT>
