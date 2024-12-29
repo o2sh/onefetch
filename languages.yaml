@@ -2207,7 +2207,6 @@ Raku:
       - "#FFFFFF"
       - "#00FF39"
     chip: "#0000FB"
-  serialization: raku
 Renpy:
   type: programming
   ascii: |
