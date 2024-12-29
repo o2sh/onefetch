@@ -1,3 +1,4 @@
+/* $color-text: #dedce5; */
 /* Sakura.css v1.5.0
  * ================
  * Minimal css theme.
@@ -15,9 +16,9 @@ body {
   line-height: 1.618;
   max-width: 38em;
   margin: auto;
-  color: #222222;
-  background-color: #ffffff;
-  padding: 13px;
+  color: #c9c9c9;
+  background-color: #222222;
+  padding: 30px 13px 13px;
 }
 
 @media (max-width: 684px) {
@@ -84,19 +85,19 @@ sup {
 }
 
 hr {
-  border-color: #007559;
+  border-color: #ffffff;
 }
 
 a {
   text-decoration: none;
-  color: #007559;
+  color: #ffffff;
 }
 a:visited {
-  color: #004232;
+  color: #e6e6e6;
 }
 a:hover {
-  color: #006994;
-  border-bottom: 2px solid #222222;
+  color: #c9c9c9;
+  border-bottom: 2px solid #c9c9c9;
 }
 
 ul {
@@ -116,9 +117,9 @@ blockquote {
   padding-top: 0.8em;
   padding-bottom: 0.8em;
   padding-right: 0.8em;
-  border-left: 5px solid #007559;
+  border-left: 5px solid #ffffff;
   margin-bottom: 2.5rem;
-  background-color: #f7f7f7;
+  background-color: #4a4a4a;
 }
 
 blockquote p {
@@ -135,7 +136,7 @@ video {
 
 /* Pre and Code */
 pre {
-  background-color: #f7f7f7;
+  background-color: #4a4a4a;
   display: block;
   padding: 1em;
   overflow-x: auto;
@@ -149,7 +150,7 @@ kbd,
 samp {
   font-size: 0.9em;
   padding: 0 0.5em;
-  background-color: #f7f7f7;
+  background-color: #4a4a4a;
   white-space: pre-wrap;
 }
 
@@ -171,17 +172,17 @@ table {
 td,
 th {
   padding: 0.5em;
-  border-bottom: 1px solid #f7f7f7;
+  border-bottom: 1px solid #4a4a4a;
 }
 
 /* Buttons, forms and input */
 input,
 textarea {
-  border: 1px solid #222222;
+  border: 1px solid #c9c9c9;
 }
 input:focus,
 textarea:focus {
-  border: 1px solid #007559;
+  border: 1px solid #ffffff;
 }
 
 textarea {
@@ -199,10 +200,10 @@ input[type='file']::file-selector-button {
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
-  background-color: #007559;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #222222;
   border-radius: 1px;
-  border: 1px solid #007559;
+  border: 1px solid #ffffff;
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -221,8 +222,8 @@ input[type='submit']:hover,
 input[type='reset']:hover,
 input[type='button']:hover,
 input[type='file']::file-selector-button:hover {
-  background-color: #006994;
-  color: #ffffff;
+  background-color: #c9c9c9;
+  color: #222222;
   outline: 0;
 }
 .button:focus-visible,
@@ -238,11 +239,11 @@ input[type='file']::file-selector-button:focus-visible {
 textarea,
 select,
 input {
-  color: #222222;
+  color: #c9c9c9;
   padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
   margin-bottom: 10px;
-  background-color: #f7f7f7;
-  border: 1px solid #f7f7f7;
+  background-color: #4a4a4a;
+  border: 1px solid #4a4a4a;
   border-radius: 4px;
   box-shadow: none;
   box-sizing: border-box;
@@ -250,12 +251,12 @@ input {
 textarea:focus,
 select:focus,
 input:focus {
-  border: 1px solid #007559;
+  border: 1px solid #ffffff;
   outline: 0;
 }
 
 input[type='checkbox']:focus {
-  outline: 1px dotted #007559;
+  outline: 1px dotted #ffffff;
 }
 
 label,

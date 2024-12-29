@@ -8,5 +8,5 @@
 npm i
 
 # run server with hot reloading
-npm run dev
+npm start
 ```

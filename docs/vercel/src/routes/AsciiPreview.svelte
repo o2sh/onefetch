@@ -1,12 +1,13 @@
 <script lang="ts">
-  import Chip from './Chip.svelte';
+  import { mapToDefaultTerminalFgColor } from '../lib/utils';
   import TitleLink from './TitleLink.svelte';
 
   export let name: string;
   export let ansi: string[];
   export let hex: string[] | null = null;
-  export let chip: string;
+  export let chipColor: string;
   export let ascii: string = '';
+  export let chipIcon: string;
 
   let dark = true;
   let trueColor = hex != null;
@@ -27,15 +28,11 @@
       return `${htmlLine}${'</span>'.repeat(spanCount)}`;
     })
     .join('\n');
-
-  function mapToDefaultTerminalFgColor(color: string, dark: boolean): string {
-    return color === 'white' && !dark ? 'black' : color;
-  }
 </script>
 
 <div class="title-row">
   <div class="language-name">
-    <Chip id={name} color={chip} width={24} height={24} />
+    <h3 class="nerd-font" style="color: {chipColor}">{chipIcon}</h3>
     <TitleLink {name} />
   </div>
   <div class="checkbox">
@@ -52,13 +49,17 @@
   </div>
 </div>
 <div class="logo-container" class:dark>
+  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   <pre class:dark>{@html html}</pre>
 </div>
 
 <style>
+  @import url('https://www.nerdfonts.com/assets/css/webfont.css');
+
   .logo-container {
     display: flex;
     justify-content: center;
+    background-color: white;
   }
 
   .logo-container.dark {

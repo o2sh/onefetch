@@ -2,6 +2,8 @@ name: CD
 on:
   release:
     types: [published]
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   deploy:
@@ -12,31 +14,29 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Build
+      - name: Build Release
         run: make build
 
-      - name: Build Release Mac
+      - name: Package release for Mac
         if: matrix.os == 'macos-latest'
         run: make release-mac
 
-      - name: Build Release Linux
+      - name: Package release for Linux
         if: matrix.os == 'ubuntu-latest'
         run: make release-linux
 
-      - name: Build Release Win
+      - name: Package release for Windows
         if: matrix.os == 'windows-latest'
         run: make release-win
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Publish to GitHub
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             ./release/*.tar.gz
@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Bump homebrew-core formula
+      - name: Publish to Homebrew
         uses: mislav/bump-homebrew-formula-action@v3
         if: matrix.os == 'macos-latest'
         env:
@@ -53,11 +53,42 @@ jobs:
         with:
           formula-name: onefetch
 
-      - name: Publish executable to WinGet
-        uses: vedantmgoyal2009/winget-releaser@v2
+      - name: Publish to WinGet
+        uses: vedantmgoyal9/winget-releaser@main
         if: matrix.os == 'windows-latest'
         with:
           identifier: o2sh.onefetch
           installers-regex: '\.exe$'
           version: ${{ github.event.release.tag_name }}
           token: ${{ secrets.WINGET_TOKEN }}
+
+  crates:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Publish to crates.io (ascii)
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p onefetch-ascii
+
+      - name: Publish to crates.io (image)
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p onefetch-image
+
+      - name: Publish to crates.io (manifest)
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p onefetch-manifest
+
+      - name: Publish to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish

@@ -143,11 +143,15 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .ok()
         .context("BUG: panic in language statistics thread")??;
     let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(&repo);
+    let repo_url = get_repo_url(
+        &repo,
+        cli_options.info.hide_token,
+        cli_options.info.http_url,
+    );
 
     let git_metrics = traverse_commit_graph(
         &repo,
-        &cli_options.info.no_bots,
+        cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )?;
@@ -158,7 +162,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     };
     let dominant_language = langs::get_main_language(&loc_by_language);
     let ascii_colors = get_ascii_colors(
-        &cli_options.ascii.ascii_language,
+        cli_options.ascii.ascii_language.as_ref(),
         &dominant_language,
         &cli_options.ascii.ascii_colors,
         true_color,
@@ -176,19 +180,20 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
 
     Ok(InfoBuilder::new(cli_options)
         .title(&repo, no_bold, &text_colors)
-        .project(&repo, &repo_url, &manifest, number_separator)?
-        .description(&manifest)
+        .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
+        .description(manifest.as_ref())
         .head(&repo)?
         .pending(&repo)?
-        .version(&repo, &manifest)?
+        .version(&repo, manifest.as_ref())?
         .created(&git_metrics, iso_time)
         .languages(
             &loc_by_language,
             true_color,
             number_of_languages_to_display,
             &text_colors,
+            cli_options,
         )
-        .dependencies(&manifest, number_separator)
+        .dependencies(manifest.as_ref(), number_separator)
         .authors(
             &git_metrics,
             number_of_authors_to_display,
@@ -207,7 +212,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         )?
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
-        .license(&repo_path, &manifest)?
+        .license(&repo_path, manifest.as_ref())?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
 }
 
@@ -235,9 +240,9 @@ impl InfoBuilder {
         self
     }
 
-    fn description(mut self, manifest: &Option<Manifest>) -> Self {
+    fn description(mut self, manifest: Option<&Manifest>) -> Self {
         if !self.disabled_fields.contains(&InfoType::Description) {
-            let description = DescriptionInfo::new(manifest.as_ref());
+            let description = DescriptionInfo::new(manifest);
             self.info_fields.push(Box::new(description));
         }
         self
@@ -263,11 +268,11 @@ impl InfoBuilder {
         mut self,
         repo: &Repository,
         repo_url: &str,
-        manifest: &Option<Manifest>,
+        manifest: Option<&Manifest>,
         number_separator: NumberSeparator,
     ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Project) {
-            let project = ProjectInfo::new(repo, repo_url, manifest.as_ref(), number_separator)?;
+            let project = ProjectInfo::new(repo, repo_url, manifest, number_separator)?;
             self.info_fields.push(Box::new(project));
         }
         Ok(self)
@@ -281,9 +286,9 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    fn version(mut self, repo: &Repository, manifest: &Option<Manifest>) -> Result<Self> {
+    fn version(mut self, repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Version) {
-            let version = VersionInfo::new(repo, manifest.as_ref())?;
+            let version = VersionInfo::new(repo, manifest)?;
             self.info_fields.push(Box::new(version));
         }
         Ok(self)
@@ -297,9 +302,9 @@ impl InfoBuilder {
         self
     }
 
-    fn license(mut self, repo_path: &Path, manifest: &Option<Manifest>) -> Result<Self> {
+    fn license(mut self, repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::License) {
-            let license = LicenseInfo::new(repo_path, manifest.as_ref())?;
+            let license = LicenseInfo::new(repo_path, manifest)?;
             self.info_fields.push(Box::new(license));
         }
         Ok(self)
@@ -319,6 +324,7 @@ impl InfoBuilder {
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
+        cli_options: &CliOptions,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
             let languages = LanguagesInfo::new(
@@ -326,6 +332,7 @@ impl InfoBuilder {
                 true_color,
                 number_of_languages,
                 text_colors.info,
+                cli_options.visuals.nerd_fonts,
             );
             self.info_fields.push(Box::new(languages));
         }
@@ -334,11 +341,11 @@ impl InfoBuilder {
 
     fn dependencies(
         mut self,
-        manifest: &Option<Manifest>,
+        manifest: Option<&Manifest>,
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Dependencies) {
-            let dependencies = DependenciesInfo::new(manifest.as_ref(), number_separator);
+            let dependencies = DependenciesInfo::new(manifest, number_separator);
             self.info_fields.push(Box::new(dependencies));
         }
         self

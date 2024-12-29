@@ -5,9 +5,9 @@ This wiki page will guide you through getting onefetch working on your system.
 # Table of Contents
 
 - [Universal Install](#universal-install)
+  - [Build from source](#build-from-source)
   - [Cargo](#cargo)
   - [Snap](#snap)
-  - [Build from source](#build-from-source)
 - [OS/Distro Packages](#osdistro-packages)
   - [Alpine Linux](#alpine-linux)
   - [Arch](#arch)
@@ -31,9 +31,33 @@ This wiki page will guide you through getting onefetch working on your system.
 
 If your architecture is supported by the pre-built binaries, you can download them from the [releases page](https://github.com/o2sh/onefetch/releases/latest).
 
+## Build from source
+
+First, install rust toolchain with [rustup](https://rustup.rs/):
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+> [!IMPORTANT]
+> Ensure [CMake](https://cmake.org/download/) is installed.
+
+```
+git clone https://github.com/o2sh/onefetch
+cd onefetch
+make install
+```
+
 ## Cargo
 
-First, install `rustup` to get the `rust` compiler installed on your system (using the recommended `curl https://sh.rustup.rs -sSf | sh -s` installation method) and then
+First, install rust toolchain with [rustup](https://rustup.rs/):
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+> [!IMPORTANT]
+> Ensure [CMake](https://cmake.org/download/) is installed.
 
 ```
 cargo install onefetch
@@ -56,16 +80,6 @@ snap install onefetch
 ```
 
 The stable version will be installed for you automatically.
-
-## Build from source
-
-First, install `rustup` to get the `rust` compiler installed on your system (using the recommended `curl https://sh.rustup.rs -sSf | sh -s` installation method) and then
-
-```
-git clone https://github.com/o2sh/onefetch
-cd onefetch
-make install
-```
 
 # OS/Distro Packages
 
