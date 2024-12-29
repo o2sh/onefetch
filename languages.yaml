@@ -168,11 +168,7 @@ Ats:
       - yellow
       - red
       - blue
-    hex:
-      - "#FFFF00"
-      - "#FF0000"
-      - "#0000FF"
-    chip: "#1AC620"  
+    chip: "#1AC620"
 AutoHotKey:
   type: programming
   ascii: |
