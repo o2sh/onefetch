@@ -1811,8 +1811,6 @@ OpenScad:
   colors:
     ansi:
       - yellow
-    hex:
-      - "#FFFFFF"
     chip: "#E5CD45"
   icon: '\u{F34E}'
 Org:
