@@ -141,6 +141,34 @@ Assembly:
       - green
     chip: "#6E4C13"
   icon: '\u{E6AB}'
+Ats:
+  type: programming
+  ascii: |
+    {0}              ############
+    {0}          ####################
+    {0}       ##########################
+    {0}     ##############################
+    {0}   #####{1}LLLL{0}#####{2}atsatsatsatsatsatsa{0}#
+    {0}  ####{1}LLLLLLL{0}####{2}TSATSATSATSATSATSAT{0}##
+    {0} ####{1}LLL{0}##{1}LLL{0}############{2}SAT{0}###########
+    {0} ###{1}LLL{0}####{1}LLL{0}###{2}satsatsaTSAtsatsats{0}###
+    {0}###########{1}LLLL{0}##{2}ATSATSATSATSATSATSA{0}####
+    {0}##########{1}LLLLL{0}##{2}TS{0}######{2}ATS{0}######{2}AT{0}####
+    {0}#########{1}LLLLLL{0}##{2}SA{0}######{2}TSA{0}######{2}TS{0}####
+    {0} #######{1}LLL{0}##{1}LLL{0}#{2}ATsatsatSATsatsatSA{0}###
+    {0} ######{1}LLL{0}###{1}LLL{0}#{2}TSATSATSATSATSATSAT{0}###
+    {0}  ####{1}LLL{0}####{1}LLL{0}######################
+    {0}   ##{1}LLL{0}######{1}LLLLLLLLLLLLLLLLLLL{0}####
+    {0}     {1}LLL{0}#######{1}LLLLLLLLLLLLLLLLLL{0}##
+    {0}       ##########################
+    {0}          ####################
+    {0}              ############
+  colors:
+    ansi:
+      - yellow
+      - red
+      - blue
+    chip: "#1AC620"
 AutoHotKey:
   type: programming
   ascii: |
