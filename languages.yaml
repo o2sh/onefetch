@@ -1809,18 +1809,12 @@ OpenScad:
     {0}     ·...·   .-=++*****++=-.
     {0}                ---------
   colors:
-    ansi: # required, a list of the ANSI colors used to colorize the logo
-      - blue
-      - magenta
-      - magenta
-      - white
-    hex: # optional, alternative to basic colors for terminals that support true colour.
-      - "#9B4F97"
-      - "#67217A"
-      - "#803788"
+    ansi:
+      - yellow
+    hex:
       - "#FFFFFF"
-    chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
-    icon: '\u{F34E}'
+    chip: "#E5CD45"
+  icon: '\u{F34E}'
 Org:
   type: prose
   ascii: |
@@ -1920,42 +1914,6 @@ Perl:
       - cyan
     chip: "#0298C3"
   icon: '\u{E67E}'
-Raku:
-  type: programming
-  ascii: |
-    {0} +@8DM#8W,
-    {0}#DM"{1},ypy,{0}"8#
-    {0}DDU {1}8M]N8u{0} DM
-    {0}8DD {1}TMD8M,{0}8M  {4}8
-    {0} 8D#=e@8MM^   {4}8
-    {0}  *MDw  {4},.,+#M`
-    {0}    "8#                   {0},e88DDDD8m,
-    {0}      "8 {3}x33#,           {0}z8D#M`9Dw "9DW
-    {3}        JE   E {2}BBW.     {0}DM {1}p#Kw {0}D8   {0}JDM
-    {1} #pp#pr {3} JRFMy{2}#EEF{3}y#Rr, {0}DM{1} MD]8 {0}9DM {4}`N
-    {1}Z#{0}8#D]{1}D# {2}EE#EEEEE{3}`EW  E {0}8M,{1}"RM`{0} 8DM  {4}D
-    {1}88{0}8]D]{1}D8 {2}EEM{1}#{2}EEE{1}E{2}Bp{3}TFF^  {0}*M888#`  {4}#M
-    {1}*#88EE8  {2} RRk{1}8BMM{2}#EEE,        {4}'^'
-    {1}   ``      {2}'"F*FFF*  {1},yw,
-    {1}                  ,#]{0}[D8{1}8W
-    {1}                  k8{0}]DDN8{1}8L
-    {1}                  '8E{0}$DE8{1}8M
-    {1}                    R#E#R^
-  colors:
-    ansi:
-      - blue
-      - red
-      - yellow
-      - white
-      - green
-    hex:
-      - "#5B00FD"
-      - "#FF005E"
-      - "#F3FF27"
-      - "#FFFFFF"
-      - "#00FF39"
-    chip: "#0000FB"
-  serialization: raku
 Php:
   type: programming
   ascii: |
@@ -2212,6 +2170,42 @@ Racket:
       - white
       - blue
     chip: "#3C5CAA"
+Raku:
+  type: programming
+  ascii: |
+    {0} +@8DM#8W,
+    {0}#DM"{1},ypy,{0}"8#
+    {0}DDU {1}8M]N8u{0} DM
+    {0}8DD {1}TMD8M,{0}8M  {4}8
+    {0} 8D#=e@8MM^   {4}8
+    {0}  *MDw  {4},.,+#M`
+    {0}    "8#                   {0},e88DDDD8m,
+    {0}      "8 {3}x33#,           {0}z8D#M`9Dw "9DW
+    {3}        JE   E {2}BBW.     {0}DM {1}p#Kw {0}D8   {0}JDM
+    {1} #pp#pr {3} JRFMy{2}#EEF{3}y#Rr, {0}DM{1} MD]8 {0}9DM {4}`N
+    {1}Z#{0}8#D]{1}D# {2}EE#EEEEE{3}`EW  E {0}8M,{1}"RM`{0} 8DM  {4}D
+    {1}88{0}8]D]{1}D8 {2}EEM{1}#{2}EEE{1}E{2}Bp{3}TFF^  {0}*M888#`  {4}#M
+    {1}*#88EE8  {2} RRk{1}8BMM{2}#EEE,        {4}'^'
+    {1}   ``      {2}'"F*FFF*  {1},yw,
+    {1}                  ,#]{0}[D8{1}8W
+    {1}                  k8{0}]DDN8{1}8L
+    {1}                  '8E{0}$DE8{1}8M
+    {1}                    R#E#R^
+  colors:
+    ansi:
+      - blue
+      - red
+      - yellow
+      - white
+      - green
+    hex:
+      - "#5B00FD"
+      - "#FF005E"
+      - "#F3FF27"
+      - "#FFFFFF"
+      - "#00FF39"
+    chip: "#0000FB"
+  serialization: raku
 Renpy:
   type: programming
   ascii: |
