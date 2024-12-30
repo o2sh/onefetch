@@ -564,26 +564,29 @@ Css:
       - blue
       - white
     chip: "#563D7C"
-  icon: '\u{E749}'    
+  icon: '\u{E749}'
 Cuda:
   type: programming
   ascii: |
-    {0}               NNNNNNNNNNNNNNNNNNNNNNNNM
-    {0}             ::VVV$MNNNNNNNNNNNNNNNNNNNM
-    {0}       :*IVMM$V**::  :*F$NNNNNNNNNNNNNNM
-    {0}    *I$MV*:   :$$$MN$I*  :I$NNNNNNNNNNNM
-    {0} :IMN$*  :*V$M$    :*$NMI:  *$NNNNNNNNNM
-    {0}FNNNI  *$N$*:  NMI:   FNNM:   $NNNNNNNNM
-    {0}:$NN$: :MN$    NNNM*IMNMI:  IMNNMNNNNNNM
-    {0}  FNN$: :$N$*  NNNNNN$*: :FMNMV* :I$NNNM
-    {0}   *$NMI: *VM$FIFII*: *I$NN$*:     :VNNM
-    {0}     *$NMF*  :*IIIFV$NM$F*:    :*FMNNNNM
-    {0}       :*VMM$VIIII***:   :**F$MNNNNNNNNM
-    {0}           :***I**IIFV$MNNNNNNNNNNNNNNNM
-    {0}               NNNNNNNNNNNNNNNNNNNNNNNNM
+    {0}               88888888888888888888888
+    {0}           8888       8888888888888888
+    {0}       888888  8888       888888888888
+    {0}    88888      88888888     8888888888
+    {0}  8888     8888      8888     88888888
+    {0}8888    8888   888     8888    8888888
+    {0}8888   8888    8888   8888    88888888
+    {0} 8888   8888   888888888    88888  888
+    {0}  88888   888  8888888    88888      8
+    {0}    8888   8888         88888        8
+    {0}     88888         8888888        8888
+    {0}        888888 888888         88888888
+    {0}           8888          8888888888888
+    {0}               88888888888888888888888
   colors:
     ansi:
       - green
+    hex:
+      - "#76B900"
     chip: "#73B303"
 D:
   type: programming
