@@ -2,13 +2,27 @@ version: 2
 updates:
   - package-ecosystem: cargo
     directory: "/"
+    groups:
+      clap:
+        patterns:
+          - "clap"
+          - "clap_*"
+      gix:
+        patterns:
+          - "gix"
+          - "gix-*"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
   - package-ecosystem: npm
     directory: /docs/vercel
+    groups:
+      site:
+        patterns:
+          - "*"
     schedule:
       interval: monthly

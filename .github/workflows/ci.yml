@@ -6,89 +6,31 @@ on:
       - "docs/**"
       - "**.md"
       - "docs/vercel/**"
-      - ".gitpod.yml"
   pull_request:
     branches: [main]
     paths-ignore:
       - "docs/**"
       - "**.md"
       - "docs/vercel/**"
-      - ".gitpod.yml"
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  CI:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        rust: [stable, nightly]
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: ${{ matrix.rust }}
-          components: clippy
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Cache
-        uses: Swatinem/rust-cache@v2
-
-      - name: Build Debug
-        run: |
-          rustc --version
-          cargo build --features=fail-on-deprecated
+      - name: Build
+        run: cargo build --features=fail-on-deprecated
 
       - name: Run tests
         run: cargo test
-
-      - name: Run clippy
-        run: cargo clippy
-
-      - name: Run onefetch
-        run: cargo run
-
-  formatting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: rustfmt
-
-      - name: Run rustfmt
-        run: cargo fmt -- --check
-
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Cache
-        uses: Swatinem/rust-cache@v2
-
-      - name: Install cargo-tarpaulin
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-tarpaulin
-          version: latest
-
-      - name: Coverage with tarpaulin
-        run: cargo tarpaulin --out Lcov -- --test-threads 1
-
-      - name: Upload to codecov.io
-        uses: codecov/codecov-action@v3

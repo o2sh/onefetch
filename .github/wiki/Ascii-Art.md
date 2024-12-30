@@ -1,4 +1,4 @@
-This is the format onefetch uses for it's ASCII art files.
+This is the format onefetch uses for its ASCII art files.
 
 #### Here's an example:
 

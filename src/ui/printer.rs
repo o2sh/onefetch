@@ -1,4 +1,4 @@
-use crate::cli::{Config, When};
+use crate::cli::CliOptions;
 use crate::info::Info;
 use crate::ui::Language;
 use anyhow::{Context, Result};
@@ -7,10 +7,8 @@ use onefetch_ascii::AsciiArt;
 use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 use std::io::Write;
-use terminal_size::{terminal_size, Width};
 
 const CENTER_PAD_LENGTH: usize = 3;
-const MAX_TERM_WIDTH: u16 = 95;
 
 #[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
@@ -32,25 +30,15 @@ pub struct Printer<W> {
 }
 
 impl<W: Write> Printer<W> {
-    pub fn new(writer: W, info: Info, config: Config) -> Result<Self> {
-        let art_off = match config.show_logo {
-            When::Always => false,
-            When::Never => true,
-            When::Auto => {
-                if let Some((Width(width), _)) = terminal_size() {
-                    width < MAX_TERM_WIDTH
-                } else {
-                    false
-                }
-            }
-        };
-        let image = match config.image {
+    pub fn new(writer: W, info: Info, cli_options: CliOptions) -> Result<Self> {
+        let image = match cli_options.image.image {
             Some(p) => Some(image::open(p).context("Could not load the specified image")?),
             None => None,
         };
 
         let image_backend = if image.is_some() {
-            config
+            cli_options
+                .image
                 .image_protocol
                 .map_or_else(onefetch_image::get_best_backend, |s| {
                     onefetch_image::get_image_backend(s)
@@ -62,14 +50,14 @@ impl<W: Write> Printer<W> {
         Ok(Self {
             writer,
             info,
-            output: config.output,
-            art_off,
+            output: cli_options.developer.output,
+            art_off: cli_options.visuals.no_art,
             image,
             image_backend,
-            color_resolution: config.color_resolution,
-            no_bold: config.no_bold,
-            ascii_input: config.ascii_input,
-            ascii_language: config.ascii_language,
+            color_resolution: cli_options.image.color_resolution,
+            no_bold: cli_options.text_formatting.no_bold,
+            ascii_input: cli_options.ascii.ascii_input,
+            ascii_language: cli_options.ascii.ascii_language,
         })
     }
 
@@ -77,10 +65,10 @@ impl<W: Write> Printer<W> {
         match &self.output {
             Some(format) => match format {
                 SerializationFormat::Json => {
-                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?
+                    writeln!(self.writer, "{}", serde_json::to_string_pretty(&self.info)?)?;
                 }
                 SerializationFormat::Yaml => {
-                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?
+                    writeln!(self.writer, "{}", serde_yaml::to_string(&self.info)?)?;
                 }
             },
             None => {
@@ -100,7 +88,7 @@ impl<W: Write> Printer<W> {
                     buf.push_str(
                         &image_backend
                             .add_image(
-                                info_lines.map(|s| format!("{}{}", center_pad, s)).collect(),
+                                info_lines.map(|s| format!("{center_pad}{s}")).collect(),
                                 custom_image,
                                 self.color_resolution,
                             )
@@ -116,9 +104,9 @@ impl<W: Write> Printer<W> {
                     loop {
                         match (logo_lines.next(), info_lines.next()) {
                             (Some(logo_line), Some(info_line)) => {
-                                writeln!(buf, "{}{}{:^}", logo_line, center_pad, info_line)?
+                                writeln!(buf, "{logo_line}{center_pad}{info_line:^}")?;
                             }
-                            (Some(logo_line), None) => writeln!(buf, "{}", logo_line)?,
+                            (Some(logo_line), None) => writeln!(buf, "{logo_line}")?,
                             (None, Some(info_line)) => writeln!(
                                 buf,
                                 "{:<width$}{}{:^}",
@@ -135,7 +123,8 @@ impl<W: Write> Printer<W> {
                     }
                 }
 
-                write!(self.writer, "{}", buf)?;
+                // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
+                write!(self.writer, "\x1B[?7l{buf}\x1B[?7h")?;
             }
         }
         Ok(())

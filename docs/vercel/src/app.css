@@ -1,0 +1,268 @@
+/* $color-text: #dedce5; */
+/* Sakura.css v1.5.0
+ * ================
+ * Minimal css theme.
+ * Project: https://github.com/oxalorg/sakura/
+ */
+/* Body */
+html {
+  font-size: 62.5%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+body {
+  font-size: 1.8rem;
+  line-height: 1.618;
+  max-width: 38em;
+  margin: auto;
+  color: #c9c9c9;
+  background-color: #222222;
+  padding: 30px 13px 13px;
+}
+
+@media (max-width: 684px) {
+  body {
+    font-size: 1.53rem;
+  }
+}
+@media (max-width: 382px) {
+  body {
+    font-size: 1.35rem;
+  }
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  font-weight: 700;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+}
+
+h1 {
+  font-size: 2.35em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.75em;
+}
+
+h4 {
+  font-size: 1.5em;
+}
+
+h5 {
+  font-size: 1.25em;
+}
+
+h6 {
+  font-size: 1em;
+}
+
+p {
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+}
+
+small,
+sub,
+sup {
+  font-size: 75%;
+}
+
+hr {
+  border-color: #ffffff;
+}
+
+a {
+  text-decoration: none;
+  color: #ffffff;
+}
+a:visited {
+  color: #e6e6e6;
+}
+a:hover {
+  color: #c9c9c9;
+  border-bottom: 2px solid #c9c9c9;
+}
+
+ul {
+  padding-left: 1.4em;
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+}
+
+li {
+  margin-bottom: 0.4em;
+}
+
+blockquote {
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 1em;
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  padding-right: 0.8em;
+  border-left: 5px solid #ffffff;
+  margin-bottom: 2.5rem;
+  background-color: #4a4a4a;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+img,
+video {
+  height: auto;
+  max-width: 100%;
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+}
+
+/* Pre and Code */
+pre {
+  background-color: #4a4a4a;
+  display: block;
+  padding: 1em;
+  overflow-x: auto;
+  margin-top: 0px;
+  margin-bottom: 2.5rem;
+  font-size: 0.9em;
+}
+
+code,
+kbd,
+samp {
+  font-size: 0.9em;
+  padding: 0 0.5em;
+  background-color: #4a4a4a;
+  white-space: pre-wrap;
+}
+
+pre > code {
+  padding: 0;
+  background-color: transparent;
+  white-space: pre;
+  font-size: 1em;
+}
+
+/* Tables */
+table {
+  text-align: justify;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+td,
+th {
+  padding: 0.5em;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+/* Buttons, forms and input */
+input,
+textarea {
+  border: 1px solid #c9c9c9;
+}
+input:focus,
+textarea:focus {
+  border: 1px solid #ffffff;
+}
+
+textarea {
+  width: 100%;
+}
+
+.button,
+button,
+input[type='submit'],
+input[type='reset'],
+input[type='button'],
+input[type='file']::file-selector-button {
+  display: inline-block;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: #ffffff;
+  color: #222222;
+  border-radius: 1px;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.button[disabled],
+button[disabled],
+input[type='submit'][disabled],
+input[type='reset'][disabled],
+input[type='button'][disabled],
+input[type='file']::file-selector-button[disabled] {
+  cursor: default;
+  opacity: 0.5;
+}
+.button:hover,
+button:hover,
+input[type='submit']:hover,
+input[type='reset']:hover,
+input[type='button']:hover,
+input[type='file']::file-selector-button:hover {
+  background-color: #c9c9c9;
+  color: #222222;
+  outline: 0;
+}
+.button:focus-visible,
+button:focus-visible,
+input[type='submit']:focus-visible,
+input[type='reset']:focus-visible,
+input[type='button']:focus-visible,
+input[type='file']::file-selector-button:focus-visible {
+  outline-style: solid;
+  outline-width: 2px;
+}
+
+textarea,
+select,
+input {
+  color: #c9c9c9;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  margin-bottom: 10px;
+  background-color: #4a4a4a;
+  border: 1px solid #4a4a4a;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+textarea:focus,
+select:focus,
+input:focus {
+  border: 1px solid #ffffff;
+  outline: 0;
+}
+
+input[type='checkbox']:focus {
+  outline: 1px dotted #ffffff;
+}
+
+label,
+legend,
+fieldset {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}

@@ -90,14 +90,14 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
             let line_end = Tokens(line).true_length();
             (line_start, line_end)
         })
-        .fold((std::usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
+        .fold((usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
             (acc_s.min(line_s), acc_e.max(line_e))
         })
 }
 
 /// Produces a series of lines which have been automatically truncated to the
 /// correct width
-impl<'a> Iterator for AsciiArt<'a> {
+impl Iterator for AsciiArt<'_> {
     type Item = String;
     fn next(&mut self) -> Option<String> {
         self.content
@@ -115,8 +115,8 @@ enum Token {
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
-            Token::Color(c) => write!(f, "{{{}}}", c),
-            Token::Char(c) => write!(f, "{}", c),
+            Token::Color(c) => write!(f, "{{{c}}}"),
+            Token::Char(c) => write!(f, "{c}"),
             Token::Space => write!(f, " "),
         }
     }
@@ -136,7 +136,7 @@ impl Token {
 /// An iterator over tokens found within the *.ascii format.
 #[derive(Clone, Debug)]
 struct Tokens<'a>(&'a str);
-impl<'a> Iterator for Tokens<'a> {
+impl Iterator for Tokens<'_> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
         let (s, tok) = color_token(self.0)
@@ -173,7 +173,7 @@ impl<'a> Tokens<'a> {
     }
     fn leading_spaces(&mut self) -> usize {
         self.take_while(|token| !token.is_solid())
-            .filter(|token| token.is_space())
+            .filter(Token::is_space)
             .count()
     }
     fn truncate(self, mut start: usize, end: usize) -> impl 'a + Iterator<Item = Token> {
@@ -249,7 +249,7 @@ fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: 
         style = style.bold();
     }
     let formatted_segment = segment.style(style);
-    let _ = write!(base, "{}", formatted_segment);
+    let _ = write!(base, "{formatted_segment}");
 }
 
 // Basic combinators
@@ -265,7 +265,7 @@ fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R
 
 // Parsers
 
-/// Parses a color indiator of the format `{n}` where `n` is a digit.
+/// Parses a color indicator of the format `{n}` where `n` is a digit.
 fn color_token(s: &str) -> ParseResult<Token> {
     let (s, _) = token(s, succeed_when(|c| c == '{'))?;
     let (s, color_index) = token(s, |c| c.to_digit(10))?;

@@ -1,21 +1,21 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use git_repository::{open, ThreadSafeRepository};
-use onefetch::{cli::Config, info::Info};
+use gix::{open, ThreadSafeRepository};
+use onefetch::{cli::CliOptions, info::build_info};
 
 fn bench_repo_info(c: &mut Criterion) {
-    let name = "repo.sh".to_string();
-    let repo_path = git_testtools::scripted_fixture_read_only(name).unwrap();
+    let name = "make_repo.sh".to_string();
+    let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
     let repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
-    let config: Config = Config {
+    let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
 
     c.bench_function("get repo information", |b| {
         b.iter(|| {
-            let result = black_box(Info::new(&config));
+            let result = black_box(build_info(&config));
             assert!(result.is_ok());
-        })
+        });
     });
 }
 

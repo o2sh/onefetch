@@ -32,7 +32,9 @@ expression: info
     },
     {
       "PendingInfo": {
-        "pendingChanges": "1+- 2+"
+        "added": 2,
+        "deleted": 0,
+        "modified": 1
       }
     },
     {
@@ -91,7 +93,7 @@ expression: info
     },
     {
       "ContributorsInfo": {
-        "numberOfContributors": 4
+        "totalNumberOfAuthors": 4
       }
     },
     {
@@ -103,6 +105,17 @@ expression: info
       "CommitsInfo": {
         "numberOfCommits": 4,
         "isShallow": false
+      }
+    },
+    {
+      "ChurnInfo": {
+        "file_churns": [
+          {
+            "filePath": "code.rs",
+            "nbrOfCommits": 4
+          }
+        ],
+        "churn_pool_size": 4
       }
     },
     {

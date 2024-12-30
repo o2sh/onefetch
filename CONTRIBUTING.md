@@ -1,10 +1,14 @@
+### Getting started
+
+Follow the instructions for [installing onefetch from source](https://github.com/o2sh/onefetch/wiki/Installation#build-from-source).
+
 ### Adding support for a new language
 
 Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.
 
 **Example**:
 
-```
+```yaml
 CSharp: # required, this will be the name of the enum variant for the language as specified by tokei (link 1)
   type: programming # required, can be programming, data, markup, or prose as specified by linguist (link 2)
   # required, this is the logo. If it's not within 25x40 bounds, you will get a compiler error. Use `{i}` to color the ascii with `i` the color index.
@@ -39,27 +43,23 @@ CSharp: # required, this will be the name of the enum variant for the language a
       - magenta
       - white
     hex: # optional, alternative to basic colors for terminals that support true colour.
-      - '#9B4F97'
-      - '#67217A'
-      - '#803788'
-      - '#FFFFFF'
-    chip: '#178600' # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+      - "#9B4F97"
+      - "#67217A"
+      - "#803788"
+      - "#FFFFFF"
+    chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+  icon: '\u{E648}' # optional, the UTF-16 code point of the nerd font icon if supported (link 3).
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
 - link 1: https://github.com/XAMPPRocky/tokei#supported-languages
 - link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-
-### Adding translation for README.md
-
-In order to make Onefetch more accessible for non English-speakers, we are seeking the help of multilingual contributors willing to translate the README.md in their native tongue.
-
-These translations will be accessible directly from the English README.md via hyperlinks.
+- link 3: https://www.nerdfonts.com/cheat-sheet
 
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
-- [@spenserblack](https://github.com/spenserblack), [@CephalonRho](https://github.com/CephalonRho), [@yoichi](https://github.com/yoichi), [@HallerPatrick](https://github.com/HallerPatrick) and [@Byron](https://github.com/Byron) for maintaining this project.
+- [@spenserblack](https://github.com/spenserblack), [@Shuni](https://github.com/shuni64) and [@Byron](https://github.com/Byron) for maintaining this project.
 - Everyone I forgot to mention here, but also influenced onefetch and helped it grow.
 
 <p align="center">:heart::heart:</p>

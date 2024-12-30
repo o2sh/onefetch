@@ -1,10 +1,10 @@
-use crate::info::info_field::InfoType;
 use crate::info::langs::language::{Language, LanguageType};
+use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
-use clap::{value_parser, Command, Parser, ValueHint};
+use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
@@ -18,40 +18,33 @@ use std::str::FromStr;
 use strum::IntoEnumIterator;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
+pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[command(version, about, long_about = None, rename_all = "kebab-case")]
-pub struct Config {
+#[command(version, about)]
+pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
     pub input: PathBuf,
-    /// Takes a non-empty STRING as input to replace the ASCII logo
-    ///
-    /// It is possible to pass a generated STRING by command substitution
-    ///
-    /// For example:
-    ///
-    /// '--ascii-input "$(fortune | cowsay -W 25)"'
-    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
-    pub ascii_input: Option<String>,
-    /// Which LANGUAGE's ascii art to print
-    #[arg(
-        long,
-        short,
-        value_name = "LANGUAGE",
-        value_enum,
-        hide_possible_values = true
-    )]
-    pub ascii_language: Option<Language>,
-    /// Colors (X X X...) to print the ascii art
-    #[arg(
-        long,
-        num_args = 1..,
-        value_name = "X",
-        short = 'c',
-        value_parser = value_parser!(u8).range(..16),
-    )]
-    pub ascii_colors: Vec<u8>,
+    #[command(flatten)]
+    pub info: InfoCliOptions,
+    #[command(flatten)]
+    pub text_formatting: TextForamttingCliOptions,
+    #[command(flatten)]
+    pub ascii: AsciiCliOptions,
+    #[command(flatten)]
+    pub image: ImageCliOptions,
+    #[command(flatten)]
+    pub visuals: VisualsCliOptions,
+    #[command(flatten)]
+    pub developer: DeveloperCliOptions,
+    #[command(flatten)]
+    pub other: OtherCliOptions,
+}
+
+#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[command(next_help_heading = "INFO")]
+pub struct InfoCliOptions {
     /// Allows you to disable FIELD(s) from appearing in the output
     #[arg(
         long,
@@ -62,11 +55,107 @@ pub struct Config {
         value_name = "FIELD"
     )]
     pub disabled_fields: Vec<InfoType>,
+    /// Hides the title
+    #[arg(long)]
+    pub no_title: bool,
+    /// Maximum NUM of authors to be shown
+    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    pub number_of_authors: usize,
+    /// Maximum NUM of languages to be shown
+    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    pub number_of_languages: usize,
+    /// Maximum NUM of file churns to be shown
+    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    pub number_of_file_churns: usize,
+    /// Minimum NUM of commits from HEAD used to compute the churn summary
+    ///
+    /// By default, the actual value is non-deterministic due to time-based computation
+    /// and will be displayed under the info title "Churn (NUM)"
+    #[arg(long, value_name = "NUM")]
+    pub churn_pool_size: Option<usize>,
+    /// Ignore all files & directories matching EXCLUDE
+    #[arg(long, short, num_args = 1..)]
+    pub exclude: Vec<String>,
+    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
+    #[arg(
+        long,
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
+        value_name = "REGEX"
+    )]
+    pub no_bots: Option<MyRegex>,
+    /// Ignores merge commits
+    #[arg(long)]
+    pub no_merges: bool,
+    /// Show the email address of each author
+    #[arg(long, short = 'E')]
+    pub email: bool,
+    /// Display repository URL as HTTP
+    #[arg(long)]
+    pub http_url: bool,
+    /// Hide token in repository URL
+    #[arg(long)]
+    pub hide_token: bool,
+    /// Count hidden files and directories
+    #[arg(long)]
+    pub include_hidden: bool,
+    /// Filters output by language type
+    #[arg(
+        long,
+        num_args = 1..,
+        default_values = &["programming", "markup"],
+        short = 'T',
+        value_enum,
+    )]
+    pub r#type: Vec<LanguageType>,
+}
+
+#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[command(next_help_heading = "ASCII")]
+pub struct AsciiCliOptions {
+    /// Takes a non-empty STRING as input to replace the ASCII logo
+    ///
+    /// It is possible to pass a generated STRING by command substitution
+    ///
+    /// For example:
+    ///
+    /// '--ascii-input "$(fortune | cowsay -W 25)"'
+    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
+    pub ascii_input: Option<String>,
+    /// Colors (X X X...) to print the ascii art
+    #[arg(
+        long,
+        num_args = 1..,
+        value_name = "X",
+        short = 'c',
+        value_parser = value_parser!(u8).range(..16),
+    )]
+    pub ascii_colors: Vec<u8>,
+    /// Which LANGUAGE's ascii art to print
+    #[arg(
+        long,
+        short,
+        value_name = "LANGUAGE",
+        value_enum,
+        hide_possible_values = true
+    )]
+    pub ascii_language: Option<Language>,
+    /// Specify when to use true color
+    ///
+    /// If set to auto: true color will be enabled if supported by the terminal
+    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
+    pub true_color: When,
+}
+
+#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[command(next_help_heading = "IMAGE")]
+pub struct ImageCliOptions {
     /// Path to the IMAGE file
     #[arg(long, short, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
-    /// Which image protocol to use
-    #[arg(long, value_enum, requires = "image")]
+    /// Which image PROTOCOL to use
+    #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
@@ -78,49 +167,11 @@ pub struct Config {
             .map(|s| s.parse::<usize>().unwrap())
     )]
     pub color_resolution: usize,
-    /// Turns off bold formatting
-    #[arg(long)]
-    pub no_bold: bool,
-    /// Ignores merge commits
-    #[arg(long)]
-    pub no_merges: bool,
-    /// Hides the color palette
-    #[arg(long)]
-    pub no_color_palette: bool,
-    /// Hides the title
-    #[arg(long)]
-    pub no_title: bool,
-    /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
-    pub number_of_authors: usize,
-    /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
-    pub number_of_languages: usize,
-    /// Ignore all files & directories matching EXCLUDE
-    #[arg(long, short, num_args = 1.., value_hint = ValueHint::AnyPath)]
-    pub exclude: Vec<PathBuf>,
-    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
-    #[arg(long, value_name = "REGEX")]
-    pub no_bots: Option<Option<MyRegex>>,
-    /// Prints out supported languages
-    #[arg(long, short)]
-    pub languages: bool,
-    /// Prints out supported package managers
-    #[arg(long, short)]
-    pub package_managers: bool,
-    /// Outputs Onefetch in a specific format
-    #[arg(long, short, value_name = "FORMAT", value_enum)]
-    pub output: Option<SerializationFormat>,
-    /// Specify when to use true color
-    ///
-    /// If set to auto: true color will be enabled if supported by the terminal
-    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
-    pub true_color: When,
-    /// Specify when to show the logo
-    ///
-    /// If set to auto: the logo will be hidden if the terminal's width < 95
-    #[arg(long, default_value = "always", value_name = "WHEN", value_enum)]
-    pub show_logo: When,
+}
+
+#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[command(next_help_heading = "TEXT FORMATTING")]
+pub struct TextForamttingCliOptions {
     /// Changes the text colors (X X X...)
     ///
     /// Goes in order of title, ~, underline, subtitle, colon, and info
@@ -142,64 +193,118 @@ pub struct Config {
     /// Which thousands SEPARATOR to use
     #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
     pub number_separator: NumberSeparator,
-    /// Show the email address of each author
-    #[arg(long, short = 'E')]
-    pub email: bool,
-    /// Count hidden files and directories
+    /// Turns off bold formatting
     #[arg(long)]
-    pub include_hidden: bool,
-    /// Filters output by language type
-    #[arg(
-        long,
-        num_args = 1..,
-        default_values = &["programming", "markup"],
-        short = 'T',
-        value_enum,
-    )]
-    pub r#type: Vec<LanguageType>,
+    pub no_bold: bool,
+}
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[command(next_help_heading = "VISUALS")]
+pub struct VisualsCliOptions {
+    /// Hides the color palette
+    #[arg(long)]
+    pub no_color_palette: bool,
+    /// Hides the ascii art or image if provided
+    #[arg(long)]
+    pub no_art: bool,
+    /// Use Nerd Font icons
+    ///
+    /// Replaces language chips with Nerd Font icons
+    #[arg(long)]
+    pub nerd_fonts: bool,
+}
+
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[command(next_help_heading = "DEVELOPER")]
+pub struct DeveloperCliOptions {
+    /// Outputs Onefetch in a specific format
+    #[arg(long, short, value_name = "FORMAT", value_enum)]
+    pub output: Option<SerializationFormat>,
     /// If provided, outputs the completion file for given SHELL
     #[arg(long = "generate", value_name = "SHELL", value_enum)]
     pub completion: Option<Shell>,
 }
 
-impl Default for Config {
-    fn default() -> Config {
-        Config {
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[command(next_help_heading = "OTHER")]
+pub struct OtherCliOptions {
+    /// Prints out supported languages
+    #[arg(long, short)]
+    pub languages: bool,
+    /// Prints out supported package managers
+    #[arg(long, short)]
+    pub package_managers: bool,
+}
+
+impl Default for CliOptions {
+    fn default() -> CliOptions {
+        CliOptions {
             input: PathBuf::from("."),
-            ascii_input: Default::default(),
-            ascii_language: Default::default(),
-            ascii_colors: Default::default(),
-            disabled_fields: Default::default(),
-            image: Default::default(),
-            image_protocol: Default::default(),
-            color_resolution: 16,
-            no_bold: Default::default(),
-            no_merges: Default::default(),
-            no_color_palette: Default::default(),
-            no_title: Default::default(),
+            info: InfoCliOptions::default(),
+            text_formatting: TextForamttingCliOptions::default(),
+            visuals: VisualsCliOptions::default(),
+            ascii: AsciiCliOptions::default(),
+            image: ImageCliOptions::default(),
+            developer: DeveloperCliOptions::default(),
+            other: OtherCliOptions::default(),
+        }
+    }
+}
+
+impl Default for InfoCliOptions {
+    fn default() -> Self {
+        InfoCliOptions {
             number_of_authors: 3,
             number_of_languages: 6,
-            exclude: Default::default(),
-            no_bots: Default::default(),
-            languages: Default::default(),
-            package_managers: Default::default(),
-            output: Default::default(),
-            true_color: When::Auto,
-            show_logo: When::Always,
+            number_of_file_churns: 3,
+            churn_pool_size: Option::default(),
+            exclude: Vec::default(),
+            no_bots: Option::default(),
+            no_merges: Default::default(),
+            email: Default::default(),
+            http_url: Default::default(),
+            hide_token: Default::default(),
+            include_hidden: Default::default(),
+            r#type: vec![LanguageType::Programming, LanguageType::Markup],
+            disabled_fields: Vec::default(),
+            no_title: Default::default(),
+        }
+    }
+}
+
+impl Default for TextForamttingCliOptions {
+    fn default() -> Self {
+        TextForamttingCliOptions {
             text_colors: Default::default(),
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
-            email: Default::default(),
-            include_hidden: Default::default(),
-            r#type: vec![LanguageType::Programming, LanguageType::Markup],
-            completion: Default::default(),
+            no_bold: Default::default(),
+        }
+    }
+}
+
+impl Default for AsciiCliOptions {
+    fn default() -> Self {
+        AsciiCliOptions {
+            ascii_input: Option::default(),
+            ascii_colors: Vec::default(),
+            ascii_language: Option::default(),
+            true_color: When::Auto,
+        }
+    }
+}
+impl Default for ImageCliOptions {
+    fn default() -> Self {
+        ImageCliOptions {
+            image: Option::default(),
+            image_protocol: Default::default(),
+            color_resolution: 16,
         }
     }
 }
 
 pub fn print_supported_languages() -> Result<()> {
     for l in Language::iter() {
-        println!("{}", l);
+        println!("{l}");
     }
 
     Ok(())
@@ -207,7 +312,7 @@ pub fn print_supported_languages() -> Result<()> {
 
 pub fn print_supported_package_managers() -> Result<()> {
     for p in ManifestType::iter() {
-        println!("{}", p);
+        println!("{p}");
     }
 
     Ok(())
@@ -272,26 +377,35 @@ mod test {
 
     #[test]
     fn test_default_config() {
-        let config: Config = Default::default();
-        assert_eq!(config, Config::parse_from(&["onefetch"]))
+        let config: CliOptions = CliOptions::default();
+        assert_eq!(config, CliOptions::parse_from(["onefetch"]));
     }
 
     #[test]
     fn test_custom_config() {
-        let config: Config = Config {
-            number_of_authors: 4,
+        let config: CliOptions = CliOptions {
             input: PathBuf::from("/tmp/folder"),
-            no_merges: true,
-            ascii_colors: vec![5, 0],
-            disabled_fields: vec![InfoType::Version, InfoType::URL],
-            show_logo: When::Never,
-            ascii_language: Some(Language::Lisp),
+            info: InfoCliOptions {
+                number_of_authors: 4,
+                no_merges: true,
+                disabled_fields: vec![InfoType::Version, InfoType::URL],
+                ..Default::default()
+            },
+            ascii: AsciiCliOptions {
+                ascii_colors: vec![5, 0],
+                ascii_language: Some(Language::Lisp),
+                ..Default::default()
+            },
+            visuals: VisualsCliOptions {
+                no_art: true,
+                ..Default::default()
+            },
             ..Default::default()
         };
 
         assert_eq!(
             config,
-            Config::parse_from(&[
+            CliOptions::parse_from([
                 "onefetch",
                 "/tmp/folder",
                 "--number-of-authors",
@@ -303,32 +417,31 @@ mod test {
                 "--disabled-fields",
                 "version",
                 "url",
-                "--show-logo",
-                "never",
+                "--no-art",
                 "--ascii-language",
                 "lisp"
             ])
-        )
+        );
     }
 
     #[test]
     fn test_config_with_image_protocol_but_no_image() {
-        assert!(Config::try_parse_from(&["onefetch", "--image-protocol", "sixel"]).is_err())
+        assert!(CliOptions::try_parse_from(["onefetch", "--image-protocol", "sixel"]).is_err())
     }
 
     #[test]
     fn test_config_with_color_resolution_but_no_image() {
-        assert!(Config::try_parse_from(&["onefetch", "--color-resolution", "32"]).is_err())
+        assert!(CliOptions::try_parse_from(["onefetch", "--color-resolution", "32"]).is_err())
     }
 
     #[test]
     fn test_config_with_ascii_colors_but_out_of_bounds() {
-        assert!(Config::try_parse_from(&["onefetch", "--ascii-colors", "17"]).is_err())
+        assert!(CliOptions::try_parse_from(["onefetch", "--ascii-colors", "17"]).is_err())
     }
 
     #[test]
     fn test_config_with_text_colors_but_out_of_bounds() {
-        assert!(Config::try_parse_from(&["onefetch", "--text-colors", "17"]).is_err())
+        assert!(CliOptions::try_parse_from(["onefetch", "--text-colors", "17"]).is_err())
     }
 }
 

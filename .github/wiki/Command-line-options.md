@@ -1,90 +1,72 @@
 ```man
-Usage: onefetch [OPTIONS] [INPUT]
+Usage: onefetch.exe [OPTIONS] [INPUT]
 
 Arguments:
   [INPUT]
           Run as if onefetch was started in <input> instead of the current working directory
 
 Options:
-      --ascii-input <STRING>
-          Takes a non-empty STRING as input to replace the ASCII logo
+  -h, --help
+          Print help (see a summary with '-h')
 
-          It is possible to pass a generated STRING by command substitution
+  -V, --version
+          Print version
 
-          For example:
-
-          '--ascii-input "$(fortune | cowsay -W 25)'
-
-  -a, --ascii-language <LANGUAGE>
-          Which LANGUAGE's ascii art to print
-
-  -c, --ascii-colors <X>...
-          Colors (X X X...) to print the ascii art
-
+INFO:
   -d, --disabled-fields <FIELD>...
           Allows you to disable FIELD(s) from appearing in the output
 
-  -i, --image <IMAGE>
-          Path to the IMAGE file
+      --no-title
+          Hides the title
 
-      --image-protocol <IMAGE_PROTOCOL>
-          Which image protocol to use
+      --number-of-authors <NUM>
+          Maximum NUM of authors to be shown
 
-          [possible values: kitty, sixel, iterm]
+          [default: 3]
 
-      --color-resolution <VALUE>
-          VALUE of color resolution to use with SIXEL backend
+      --number-of-languages <NUM>
+          Maximum NUM of languages to be shown
 
-          [default: 16]
-          [possible values: 16, 32, 64, 128, 256]
+          [default: 6]
 
-      --no-bold
-          Turns off bold formatting
+      --number-of-file-churns <NUM>
+          Maximum NUM of file churns to be shown
+
+          [default: 3]
+
+      --churn-pool-size <NUM>
+          Minimum NUM of commits from HEAD used to compute the churn summary
+
+          By default, the actual value is non-deterministic due to time-based computation and will be displayed under the info title "Churn (NUM)"
+
+  -e, --exclude <EXCLUDE>...
+          Ignore all files & directories matching EXCLUDE
+
+      --no-bots[=<REGEX>]
+          Exclude [bot] commits. Use <REGEX> to override the default pattern
 
       --no-merges
           Ignores merge commits
 
-      --no-color-palette
-          Hides the color palette
+  -E, --email
+          Show the email address of each author
 
-  -n, --number-of-authors <NUM>
-          NUM of authors to be shown
+      --http-url
+          Display repository URL as HTTP
 
-          [default: 3]
+      --hide-token
+          Hide token in repository URL
 
-  -e, --exclude <EXCLUDE>...
-          gnore all files & directories matching EXCLUDE
+      --include-hidden
+          Count hidden files and directories
 
-      --no-bots [<REGEX>]
-          Exclude [bot] commits. Use <REGEX> to override the default pattern
+  -T, --type <TYPE>...
+          Filters output by language type
 
-  -l, --languages
-          Prints out supported languages
+          [default: programming markup]
+          [possible values: programming, markup, prose, data]
 
-  -p, --package-managers
-          Prints out supported package managers
-
-  -o, --output <FORMAT>
-          Outputs Onefetch in a specific format
-
-          [possible values: json, yaml]
-
-      --true-color <WHEN>
-          Specify when to use true color
-
-          If set to auto: true color will be enabled if supported by the terminal
-
-          [default: auto]
-          [possible values: auto, never, always]
-
-      --show-logo <WHEN>
-          Specify when to show the logo
-
-          If set to auto: the logo will be hidden if the terminal's width < 95
-
-          [default: always]
-          [possible values: auto, never, always]
-
+TEXT FORMATTING:
   -t, --text-colors <X>...
           Changes the text colors (X X X...)
 
@@ -97,26 +79,81 @@ Options:
   -z, --iso-time
           Use ISO 8601 formatted timestamps
 
-  -E, --email
-          Show the email address of each author
+      --number-separator <SEPARATOR>
+          Which thousands SEPARATOR to use
 
-      --include-hidden
-          Count hidden files and directories
+          [default: plain]
+          [possible values: plain, comma, space, underscore]
 
-  -T, --type <TYPE>...
-          Filters output by language type
+      --no-bold
+          Turns off bold formatting
 
-          [default: programming markup]
-          [possible values: programming, markup, prose, data]
+ASCII:
+      --ascii-input <STRING>
+          Takes a non-empty STRING as input to replace the ASCII logo
+
+          It is possible to pass a generated STRING by command substitution
+
+          For example:
+
+          '--ascii-input "$(fortune | cowsay -W 25)"'
+
+  -c, --ascii-colors <X>...
+          Colors (X X X...) to print the ascii art
+
+  -a, --ascii-language <LANGUAGE>
+          Which LANGUAGE's ascii art to print
+
+      --true-color <WHEN>
+          Specify when to use true color
+
+          If set to auto: true color will be enabled if supported by the terminal
+
+          [default: auto]
+          [possible values: auto, never, always]
+
+IMAGE:
+  -i, --image <IMAGE>
+          Path to the IMAGE file
+
+      --image-protocol <PROTOCOL>
+          Which image PROTOCOL to use
+
+          [possible values: kitty, sixel, iterm]
+
+      --color-resolution <VALUE>
+          VALUE of color resolution to use with SIXEL backend
+
+          [default: 16]
+          [possible values: 16, 32, 64, 128, 256]
+
+VISUALS:
+      --no-color-palette
+          Hides the color palette
+
+      --no-art
+          Hides the ascii art or image if provided
+
+      --nerd-fonts
+          Use Nerd Font icons
+
+          Replaces language chips with Nerd Font icons
+
+DEVELOPER:
+  -o, --output <FORMAT>
+          Outputs Onefetch in a specific format
+
+          [possible values: json, yaml]
 
       --generate <SHELL>
           If provided, outputs the completion file for given SHELL
 
           [possible values: bash, elvish, fish, powershell, zsh]
 
-  -h, --help
-          Print help information (use `-h` for a summary)
+OTHER:
+  -l, --languages
+          Prints out supported languages
 
-  -V, --version
-          Print version information
+  -p, --package-managers
+          Prints out supported package managers
 ```

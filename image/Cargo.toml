@@ -1,19 +1,18 @@
 [package]
-authors = ["o2sh <ossama-hjaji@live.fr>"]
+authors.workspace = true
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
 name = "onefetch-image"
 description = "Display images in the terminal"
-version = "2.15.1"
-edition = "2021"
-license = "MIT"
-readme = "README.md"
-repository = "https://github.com/o2sh/onefetch"
 
 [dependencies]
-anyhow = "1.0"
-clap = { version = "4.1.1", features = ["derive"] }
-image = "0.24.4"
+anyhow.workspace = true
+clap.workspace = true
+image.workspace = true
 
 [target.'cfg(not(windows))'.dependencies]
 color_quant = "1.1.0"
-base64 = "0.21.0"
-libc = "0.2.137"
+base64 = "0.22.1"
+libc = "0.2.169"
