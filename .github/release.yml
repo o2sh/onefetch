@@ -3,18 +3,18 @@ changelog:
     labels:
       - ignore-for-release
   categories:
-    - title: New Features 🎉
+    - title: New Features
       labels:
         - feat
-    - title: Bug Fixes 🐛
+    - title: Bug Fixes
       labels:
         - fix
-    - title: Chores 🧹
+    - title: Chores
       labels:
         - chore
         - refactor
         - doc
-    - title: Dependencies ⬆️⬇️
+    - title: Dependencies
       labels:
         - dependencies
     - title: Other Changes
