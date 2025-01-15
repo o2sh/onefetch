@@ -2879,7 +2879,7 @@ Typst:
     {0}ttttttttttttttttttttttttttttttttttttttt
     {0}ttttttttttttttttttttttttttttttttttttttt
   colors:
-    ansi: # required, a list of the ANSI colors used to colorize the logo
+    ansi:
       - cyan
       - white
     hex:
