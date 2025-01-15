@@ -2851,6 +2851,42 @@ TypeScript:
       - "#FFFFFF"
     chip: "#2B7489"
   icon: '\u{E69D}'
+Typst:
+  type: markup
+  ascii: |
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttt{1} {0}ttttttttttttttttttt
+    {0}tttttttttttttttt{1}    {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttt{1}              {0}ttttttttttttt
+    {0}ttttttttttt{1}              {0}tttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
+    {0}tttttttttttttt{1}             {0}tttttttttttt
+    {0}tttttttttttttttt{1}        {0}ttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttttttttttttttttttttttttttt
+  colors:
+    ansi: # required, a list of the ANSI colors used to colorize the logo
+      - cyan
+      - white
+    hex:
+      - "#239DAD"
+      - "#FFFFFF"
+    chip: "#239DAD"
+  icon: '\u{F37F}'
 Vala:
   type: programming
   ascii: |
