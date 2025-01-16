@@ -1567,18 +1567,18 @@ Lean:
   type: programming
   ascii: |
     {0}
-    {0}  L      ∃∃∃∃∃∃∃∃           N        N
-    {0}  L             ∃∀         ∀NN       N
-    {0}  L             ∃∀∀        ∀N N      N
-    {0}  L             ∃ ∀∀      ∀∀N NN     N
-    {0}  L             ∃  ∀∀     ∀ N  NN    N
-    {0}  L      ∃∃∃∃∃∃∃∃  ∀∀∀∀∀∀∀∀ N   N    N
-    {0}  L             ∃   ∀∀∀∀∀∀  N    N   N
-    {0}  L             ∃   ∀∀  ∀∀  N     N  N
-    {0}  L             ∃    ∀  ∀   N     NN N
-    {0}  L             ∃    ∀∀∀∀   N      NNN
-    {0}  L             ∃     ∀∀    N       NN
-    {0}  LLLLLL ∃∃∃∃∃∃∃∃      ∀    N        N
+    {0}  L      EEEEEEEE A        A N        N
+    {0}  L             E A       AA NN       N
+    {0}  L             E AA      AA N N      N
+    {0}  L             E AA      A  N NN     N
+    {0}  L             E  AA     A  N  NN    N
+    {0}  L      EEEEEEEE  AAAAAAAA  N   N    N
+    {0}  L             E   AAAAAA   N    N   N
+    {0}  L             E   AA  AA   N     N  N
+    {0}  L             E    A  A    N     NN N
+    {0}  L             E    AAAA    N      NNN
+    {0}  L             E     AA     N       NN
+    {0}  LLLLLL EEEEEEEE      A     N        N
     {0}
   colors:
     ansi:
