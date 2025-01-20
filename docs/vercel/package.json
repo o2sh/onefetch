@@ -8,7 +8,7 @@
     "format": "prettier -w .",
     "preview": "vite preview",
     "check": "npm run check:svelte && npm run check:prettier && npm run check:lint",
-    "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
+    "check:svelte": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:prettier": "prettier --check **/*.{ts,js,svelte,css,html,json}",
     "check:lint": "eslint"
   },
