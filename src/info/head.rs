@@ -1,6 +1,6 @@
 use crate::info::utils::info_field::InfoField;
 use anyhow::{Context, Result};
-use gix::{reference::Category, Reference, Repository};
+use gix::Repository;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -49,18 +49,23 @@ impl HeadInfo {
 }
 
 fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
-    let head_oid = repo.head_id().context("Could not read HEAD")?;
-    let refs_info = repo
-        .references()?
-        .all()?
-        .filter_map(Result::ok)
-        .filter_map(|reference: Reference<'_>| {
-            (reference.target().try_id() == Some(&head_oid)
-                && reference.name().category() != Some(Category::Tag))
-            .then(|| reference.name().shorten().to_string())
-        })
-        .collect();
-    Ok(HeadRefs::new(head_oid.shorten()?.to_string(), refs_info))
+    let head_id = repo.head_id().context("Failed to retrieve HEAD ID")?;
+
+    let mut ref_names = Vec::new();
+
+    if let Some(head_ref) = repo.head_ref()? {
+        let head_ref_name = head_ref.name().shorten().to_string();
+        ref_names.push(head_ref_name);
+
+        if let Some(Ok(remote_tracking_ref)) =
+            repo.branch_remote_tracking_ref_name(head_ref.name(), gix::remote::Direction::Push)
+        {
+            let remote_tracking_ref_name = remote_tracking_ref.shorten().to_string();
+            ref_names.push(remote_tracking_ref_name);
+        }
+    }
+
+    Ok(HeadRefs::new(head_id.shorten()?.to_string(), ref_names))
 }
 
 #[typetag::serialize]
