@@ -2882,6 +2882,7 @@ Typst:
       - white
     hex:
       - "#239DAD"
+      - "#FFFFFF"
     chip: "#239DAD"
   icon: '\u{F37F}'
 Vala:
