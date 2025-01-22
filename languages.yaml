@@ -1563,6 +1563,22 @@ Kotlin:
       - magenta
     chip: "#A97BFF"
   icon: '\u{E634}'
+Lean:
+  type: programming
+  ascii: |
+    {0}       ______
+    {0}|            |\              /|\       |
+    {0}|            | \            / | \      |
+    {0}|            |  \          /  |  \     |
+    {0}|      ______|   \________/   |   \    |
+    {0}|            |    \      /    |    \   |
+    {0}|            |     \    /     |     \  |
+    {0}|            |      \  /      |      \ |
+    {0}|____________|       \/       |       \|
+  colors:
+    ansi:
+      - white
+    chip: "#FFFFFF"
 Lisp:
   type: programming
   ascii: |
