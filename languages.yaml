@@ -2858,22 +2858,20 @@ Typst:
     {0}ttttttttttttttttttttttttttttttttttttttt
     {0}ttttttttttttttttttttttttttttttttttttttt
     {0}ttttttttttttttttttttttttttttttttttttttt
-    {0}ttttttttttttttttttt{1} {0}ttttttttttttttttttt
-    {0}tttttttttttttttt{1}    {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttt{1}              {0}ttttttttttttt
-    {0}ttttttttttt{1}              {0}tttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}      {0}ttttttttttttttttttt
-    {0}tttttttttttttt{1}             {0}tttttttttttt
-    {0}tttttttttttttttt{1}        {0}ttttttttttttttt
-    {0}ttttttttttttttttttttttttttttttttttttttt
+    {0}ttttttttttttttt{1}tttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}tttttttttt{1}ttttttttttttttt{0}tttttttttttttt
+    {0}tttttttttt{1}tttttttttttttt{0}ttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}tttttt{0}tttttttttttttttttttt
+    {0}ttttttttttttt{1}ttttttt{0}tttttttt{1}t{0}tttttttttt
+    {0}tttttttttttttt{1}tttttttttttttt{0}ttttttttttt
+    {0}tttttttttttttttt{1}tttttttttt{0}ttttttttttttt
     {0}ttttttttttttttttttttttttttttttttttttttt
     {0}ttttttttttttttttttttttttttttttttttttttt
     {0}ttttttttttttttttttttttttttttttttttttttt
@@ -2884,7 +2882,6 @@ Typst:
       - white
     hex:
       - "#239DAD"
-      - "#FFFFFF"
     chip: "#239DAD"
   icon: '\u{F37F}'
 Vala:
