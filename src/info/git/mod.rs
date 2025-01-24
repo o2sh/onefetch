@@ -292,9 +292,7 @@ fn is_bot_commit(
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: Option<&MyRegex>) -> bool {
-    bot_regex_pattern.map_or(false, |regex| {
-        regex.0.is_match(author_name.to_str_lossy().as_ref())
-    })
+    bot_regex_pattern.is_some_and(|regex| regex.0.is_match(author_name.to_str_lossy().as_ref()))
 }
 
 #[cfg(test)]
