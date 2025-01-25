@@ -147,7 +147,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         &repo,
         cli_options.info.hide_token,
         cli_options.info.http_url,
-    );
+    )?;
 
     let git_metrics = traverse_commit_graph(
         &repo,

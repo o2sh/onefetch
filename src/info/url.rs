@@ -1,4 +1,5 @@
 use crate::info::utils::info_field::InfoField;
+use anyhow::Result;
 use gix::Repository;
 use regex::Regex;
 use serde::Serialize;
@@ -16,29 +17,17 @@ impl UrlInfo {
     }
 }
 
-pub fn get_repo_url(repo: &Repository, hide_token: bool, http_url: bool) -> String {
-    let config = repo.config_snapshot();
-    let remotes = match config.plumbing().sections_by_name("remote") {
-        Some(sections) => sections,
-        None => return String::default(),
+pub fn get_repo_url(repo: &Repository, hide_token: bool, http_url: bool) -> Result<String> {
+    let remote = match repo.try_find_remote("origin") {
+        Some(remote) => remote?,
+        None => return Ok(String::new()),
     };
 
-    let mut remote_url: Option<String> = None;
-    for (name, url) in remotes.filter_map(|section| {
-        let remote_name = section.header().subsection_name()?;
-        let url = section.value("url")?;
-        (remote_name, url).into()
-    }) {
-        remote_url = url.to_string().into();
-        if name == "origin" {
-            break;
-        }
-    }
+    Ok(remote
+        .url(gix::remote::Direction::Push)
+        .map(|url| format_url(&url.to_string(), hide_token, http_url))
+        .unwrap_or_default())
 
-    match remote_url {
-        Some(url) => format_url(&url, hide_token, http_url),
-        None => String::default(),
-    }
 }
 
 fn format_url(url: &str, hide_token: bool, http_url: bool) -> String {
