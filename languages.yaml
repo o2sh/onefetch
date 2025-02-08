@@ -2308,7 +2308,7 @@ Raku:
       - "#00FF39"
     chip: "#0000FB"
 Razor:
-  type: programming
+  type: markup
   ascii: |                      
     {0}                                     @@ 
     {0}                            @       @@@ 
