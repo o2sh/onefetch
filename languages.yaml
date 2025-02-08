@@ -2333,7 +2333,7 @@ Razor:
       - magenta
     hex:
       - "#5c2994"
-    chip: "#A64AC9"
+    chip: "#512be4"
 Renpy:
   type: programming
   ascii: |
