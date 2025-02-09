@@ -27,7 +27,6 @@ pub fn get_repo_url(repo: &Repository, hide_token: bool, http_url: bool) -> Resu
         .url(gix::remote::Direction::Push)
         .map(|url| format_url(&url.to_string(), hide_token, http_url))
         .unwrap_or_default())
-
 }
 
 fn format_url(url: &str, hide_token: bool, http_url: bool) -> String {

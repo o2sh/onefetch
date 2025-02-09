@@ -2309,7 +2309,7 @@ Raku:
     chip: "#0000FB"
 Razor:
   type: markup
-  ascii: |                      
+  ascii: |
     {0}                                     @
     {0}                               @    @@
     {0}                            @@@@   @@@@
@@ -3065,7 +3065,7 @@ VisualBasic:
     chip: "#945db7"
   icon: '\u{E8D5}'
 Vue:
-  type: programming
+  type: markup
   ascii: |
     {0}VUE{1}\\\\\                /////{0}VUE
     {0} VUE{1}\\\\\              /////{0}VUE
