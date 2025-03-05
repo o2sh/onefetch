@@ -126,32 +126,21 @@ An adaptation of the above snippet suited for `Powershell`. Put this script in t
 
 ```pwsh
 # git repository greeter
+
+# Set the console output encoding to UTF-8, so that special characters are displayed correctly when piping to Write-Host
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $global:lastRepository = $null
 
 function Check-DirectoryForNewRepository {
     $currentRepository = git rev-parse --show-toplevel 2>$null
     if ($currentRepository -and ($currentRepository -ne $global:lastRepository)) {
-        if ([Console]::OutputEncoding -ne [System.Text.Encoding]::UTF8) {
-            [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-        }
         onefetch | Write-Host
     }
     $global:lastRepository = $currentRepository
 }
 
 function Set-Location {
-    param (
-        [string]$Path,
-        [string]$LiteralPath
-    )
-
-    if ($LiteralPath) {
-        Microsoft.PowerShell.Management\Set-Location -LiteralPath $LiteralPath
-    }
-    else {
-        Microsoft.PowerShell.Management\Set-Location -Path $Path
-    }
-
+    Microsoft.PowerShell.Management\Set-Location @args  
     Check-DirectoryForNewRepository
 }
 
