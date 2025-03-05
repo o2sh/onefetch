@@ -131,20 +131,27 @@ $global:lastRepository = $null
 function Check-DirectoryForNewRepository {
     $currentRepository = git rev-parse --show-toplevel 2>$null
     if ($currentRepository -and ($currentRepository -ne $global:lastRepository)) {
-        onefetch
+        if ([Console]::OutputEncoding -ne [System.Text.Encoding]::UTF8) {
+            [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+        }
+        onefetch | Write-Host
     }
     $global:lastRepository = $currentRepository
 }
 
 function Set-Location {
     param (
-        [string]$path
+        [string]$Path,
+        [string]$LiteralPath
     )
 
-    # Use the default Set-Location to change the directory
-    Microsoft.PowerShell.Management\Set-Location -Path $path
+    if ($LiteralPath) {
+        Microsoft.PowerShell.Management\Set-Location -LiteralPath $LiteralPath
+    }
+    else {
+        Microsoft.PowerShell.Management\Set-Location -Path $Path
+    }
 
-    # Check if we are in a new Git repository
     Check-DirectoryForNewRepository
 }
 
