@@ -5,6 +5,7 @@ use owo_colors::{
 use std::fmt;
 use std::fmt::Write;
 use strum::EnumIter;
+use serde::{Serialize, Deserialize};
 
 pub struct Colors {
     basic_colors: Vec<DynColors>,
@@ -13,7 +14,7 @@ pub struct Colors {
 
 const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
-#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
+#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum, Deserialize, Serialize)]
 pub enum LanguageType {
     Programming,
     Markup,
