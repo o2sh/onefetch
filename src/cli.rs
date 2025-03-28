@@ -11,6 +11,7 @@ use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
 use serde::Serialize;
+use merge::Merge;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -20,12 +21,18 @@ use strum::IntoEnumIterator;
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
-#[derive(Clone, Debug, Parser, PartialEq, Eq)]
+#[derive(Clone, Debug, Parser, PartialEq, Eq, Merge)]
 #[command(version, about)]
 pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
+    #[merge(skip)]
     pub input: PathBuf,
+    /// Specify a custom path to a config file.
+    /// Default config is located at ${HOME}/.config/onefetch/config.conf.
+    #[arg(long, value_hint = ValueHint::AnyPath)]
+    #[merge(skip)]
+    pub config_path: Option<PathBuf>,
     #[command(flatten)]
     pub info: InfoCliOptions,
     #[command(flatten)]
@@ -42,7 +49,7 @@ pub struct CliOptions {
     pub other: OtherCliOptions,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "INFO")]
 pub struct InfoCliOptions {
     /// Allows you to disable FIELD(s) from appearing in the output
@@ -54,27 +61,34 @@ pub struct InfoCliOptions {
         value_enum,
         value_name = "FIELD"
     )]
+    #[merge(strategy = overwrite_vec)]
     pub disabled_fields: Vec<InfoType>,
     /// Hides the title
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub no_title: bool,
     /// Maximum NUM of authors to be shown
     #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[merge(strategy = overwrite)]
     pub number_of_authors: usize,
     /// Maximum NUM of languages to be shown
     #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    #[merge(strategy = overwrite)]
     pub number_of_languages: usize,
     /// Maximum NUM of file churns to be shown
     #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[merge(strategy = overwrite)]
     pub number_of_file_churns: usize,
     /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
     /// and will be displayed under the info title "Churn (NUM)"
     #[arg(long, value_name = "NUM")]
+    #[merge(strategy = overwrite)]
     pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1..)]
+    #[merge(strategy = overwrite_vec)]
     pub exclude: Vec<String>,
     /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[arg(
@@ -84,21 +98,27 @@ pub struct InfoCliOptions {
         default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
         value_name = "REGEX"
     )]
+    #[merge(strategy = overwrite)]
     pub no_bots: Option<MyRegex>,
     /// Ignores merge commits
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub no_merges: bool,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub email: bool,
     /// Display repository URL as HTTP
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub http_url: bool,
     /// Hide token in repository URL
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub hide_token: bool,
     /// Count hidden files and directories
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub include_hidden: bool,
     /// Filters output by language type
     #[arg(
@@ -108,10 +128,11 @@ pub struct InfoCliOptions {
         short = 'T',
         value_enum,
     )]
+    #[merge(strategy = overwrite_vec)]
     pub r#type: Vec<LanguageType>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "ASCII")]
 pub struct AsciiCliOptions {
     /// Takes a non-empty STRING as input to replace the ASCII logo
@@ -122,6 +143,7 @@ pub struct AsciiCliOptions {
     ///
     /// '--ascii-input "$(fortune | cowsay -W 25)"'
     #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
+    #[merge(strategy = overwrite)]
     pub ascii_input: Option<String>,
     /// Colors (X X X...) to print the ascii art
     #[arg(
@@ -131,6 +153,7 @@ pub struct AsciiCliOptions {
         short = 'c',
         value_parser = value_parser!(u8).range(..16),
     )]
+    #[merge(strategy = overwrite_vec)]
     pub ascii_colors: Vec<u8>,
     /// Which LANGUAGE's ascii art to print
     #[arg(
@@ -140,22 +163,26 @@ pub struct AsciiCliOptions {
         value_enum,
         hide_possible_values = true
     )]
+    #[merge(skip)]
     pub ascii_language: Option<Language>,
     /// Specify when to use true color
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
     #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
+    #[merge(strategy = overwrite)]
     pub true_color: When,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageCliOptions {
     /// Path to the IMAGE file
     #[arg(long, short, value_hint = ValueHint::FilePath)]
+    #[merge(strategy = overwrite)]
     pub image: Option<PathBuf>,
     /// Which image PROTOCOL to use
     #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
+    #[merge(skip)]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
@@ -166,10 +193,11 @@ pub struct ImageCliOptions {
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
+    #[merge(strategy = overwrite)]
     pub color_resolution: usize,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "TEXT FORMATTING")]
 pub struct TextForamttingCliOptions {
     /// Changes the text colors (X X X...)
@@ -186,52 +214,63 @@ pub struct TextForamttingCliOptions {
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6
     )]
+    #[merge(strategy = overwrite_vec)]
     pub text_colors: Vec<u8>,
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub iso_time: bool,
     /// Which thousands SEPARATOR to use
     #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    #[merge(strategy = overwrite)]
     pub number_separator: NumberSeparator,
     /// Turns off bold formatting
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub no_bold: bool,
 }
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge)]
 #[command(next_help_heading = "VISUALS")]
 pub struct VisualsCliOptions {
     /// Hides the color palette
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub no_color_palette: bool,
     /// Hides the ascii art or image if provided
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub no_art: bool,
     /// Use Nerd Font icons
     ///
     /// Replaces language chips with Nerd Font icons
     #[arg(long)]
+    #[merge(strategy = merge::bool::overwrite_false)]
     pub nerd_fonts: bool,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge)]
 #[command(next_help_heading = "DEVELOPER")]
 pub struct DeveloperCliOptions {
     /// Outputs Onefetch in a specific format
     #[arg(long, short, value_name = "FORMAT", value_enum)]
+    #[merge(skip)]
     pub output: Option<SerializationFormat>,
     /// If provided, outputs the completion file for given SHELL
     #[arg(long = "generate", value_name = "SHELL", value_enum)]
+    #[merge(skip)]
     pub completion: Option<Shell>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge)]
 #[command(next_help_heading = "OTHER")]
 pub struct OtherCliOptions {
     /// Prints out supported languages
     #[arg(long, short)]
+    #[merge(skip)]
     pub languages: bool,
     /// Prints out supported package managers
     #[arg(long, short)]
+    #[merge(skip)]
     pub package_managers: bool,
 }
 
@@ -239,6 +278,7 @@ impl Default for CliOptions {
     fn default() -> CliOptions {
         CliOptions {
             input: PathBuf::from("."),
+            config_path: None,
             info: InfoCliOptions::default(),
             text_formatting: TextForamttingCliOptions::default(),
             visuals: VisualsCliOptions::default(),
@@ -300,6 +340,15 @@ impl Default for ImageCliOptions {
             color_resolution: 16,
         }
     }
+}
+
+pub fn overwrite<T>(l: &mut T, r: T) {
+    *l = r;
+}
+
+pub fn overwrite_vec<T>(l: &mut Vec<T>, mut r: Vec<T>) {
+    l.clear();
+    l.append(&mut r);
 }
 
 pub fn print_supported_languages() -> Result<()> {
