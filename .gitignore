@@ -3,6 +3,7 @@
 /stage
 /parts
 /prime
+.direnv
 .gitignore.swp
 .DS_Store
 result
