@@ -6,12 +6,12 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
-use merge::Merge;
 use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
-use serde::{de::Visitor, Serializer, Deserialize, Serialize};
+use serde::Serialize;
+use merge::Merge;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -21,19 +21,17 @@ use strum::IntoEnumIterator;
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
-#[derive(Clone, Debug, Parser, PartialEq, Eq, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Parser, PartialEq, Eq, Merge)]
 #[command(version, about)]
 pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
     #[merge(skip)]
-    #[serde(skip)]
     pub input: PathBuf,
     /// Specify a custom path to a config file.
     /// Default config is located at ${HOME}/.config/onefetch/config.conf.
     #[arg(long, value_hint = ValueHint::AnyPath)]
     #[merge(skip)]
-    #[serde(skip)]
     pub config_path: Option<PathBuf>,
     #[command(flatten)]
     pub info: InfoCliOptions,
@@ -51,7 +49,7 @@ pub struct CliOptions {
     pub other: OtherCliOptions,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "INFO")]
 pub struct InfoCliOptions {
     /// Allows you to disable FIELD(s) from appearing in the output
@@ -134,7 +132,7 @@ pub struct InfoCliOptions {
     pub r#type: Vec<LanguageType>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "ASCII")]
 pub struct AsciiCliOptions {
     /// Takes a non-empty STRING as input to replace the ASCII logo
@@ -166,7 +164,6 @@ pub struct AsciiCliOptions {
         hide_possible_values = true
     )]
     #[merge(skip)]
-    #[serde(skip)]
     pub ascii_language: Option<Language>,
     /// Specify when to use true color
     ///
@@ -176,7 +173,7 @@ pub struct AsciiCliOptions {
     pub true_color: When,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageCliOptions {
     /// Path to the IMAGE file
@@ -186,7 +183,6 @@ pub struct ImageCliOptions {
     /// Which image PROTOCOL to use
     #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
     #[merge(skip)]
-    #[serde(skip)]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
@@ -201,7 +197,7 @@ pub struct ImageCliOptions {
     pub color_resolution: usize,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Merge)]
 #[command(next_help_heading = "TEXT FORMATTING")]
 pub struct TextForamttingCliOptions {
     /// Changes the text colors (X X X...)
@@ -233,7 +229,7 @@ pub struct TextForamttingCliOptions {
     #[merge(strategy = merge::bool::overwrite_false)]
     pub no_bold: bool,
 }
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge)]
 #[command(next_help_heading = "VISUALS")]
 pub struct VisualsCliOptions {
     /// Hides the color palette
@@ -252,33 +248,29 @@ pub struct VisualsCliOptions {
     pub nerd_fonts: bool,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge)]
 #[command(next_help_heading = "DEVELOPER")]
 pub struct DeveloperCliOptions {
     /// Outputs Onefetch in a specific format
     #[arg(long, short, value_name = "FORMAT", value_enum)]
     #[merge(skip)]
-    #[serde(skip)]
     pub output: Option<SerializationFormat>,
     /// If provided, outputs the completion file for given SHELL
     #[arg(long = "generate", value_name = "SHELL", value_enum)]
     #[merge(skip)]
-    #[serde(skip)]
     pub completion: Option<Shell>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge, Serialize, Deserialize)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default, Merge)]
 #[command(next_help_heading = "OTHER")]
 pub struct OtherCliOptions {
     /// Prints out supported languages
     #[arg(long, short)]
     #[merge(skip)]
-    #[serde(skip)]
     pub languages: bool,
     /// Prints out supported package managers
     #[arg(long, short)]
     #[merge(skip)]
-    #[serde(skip)]
     pub package_managers: bool,
 }
 
@@ -394,14 +386,14 @@ pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
 pub enum When {
     Auto,
     Never,
     Always,
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Deserialize, Copy)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
 pub enum NumberSeparator {
     Plain,
     Comma,
@@ -518,39 +510,5 @@ impl FromStr for MyRegex {
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(MyRegex(Regex::new(s)?))
-    }
-}
-
-impl Serialize for MyRegex {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-        {serializer.serialize_str(self.0.as_str())}
-}
-
-pub struct RegVisitor;
-
-impl <'de>Visitor<'de> for RegVisitor {
-    type Value = MyRegex;
-
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("regex")
-    }
-
-    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-        where
-            E: serde::de::Error, {
-        match MyRegex::from_str(v) {
-            Ok(regex) => Ok(regex),
-            Err(error) => Err(serde::de::Error::custom(error))
-        }
-    }
-}
-
-impl <'de>Deserialize<'de> for MyRegex {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de>, {
-        deserializer.deserialize_str(RegVisitor)
     }
 }

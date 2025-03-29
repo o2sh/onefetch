@@ -1,6 +1,5 @@
 use crate::{info::utils::get_style, ui::text_colors::TextColors};
 use owo_colors::OwoColorize;
-use serde::{Deserialize, Serialize};
 use std::fmt;
 
 #[typetag::serialize]
@@ -56,7 +55,7 @@ pub trait InfoField {
     }
 }
 
-#[derive(Clone, clap::ValueEnum, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
 pub enum InfoType {
     Project,
     Description,

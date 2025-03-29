@@ -4,7 +4,6 @@ use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
-use onefetch::config;
 use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
@@ -15,7 +14,7 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     enable_ansi_support::enable_ansi_support()?;
 
-    let cli_options = config::populate_cfg(cli::CliOptions::parse());
+    let cli_options = cli::CliOptions::parse();
 
     if cli_options.other.languages {
         return cli::print_supported_languages();
