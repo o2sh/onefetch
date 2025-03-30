@@ -328,7 +328,10 @@ pub fn get_git_version() -> String {
     let version = std::process::Command::new("git").arg("--version").output();
 
     match version {
-        Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
+        // TODO: make those replaces controllable with config
+        Ok(v) => String::from_utf8_lossy(&v.stdout)
+            .replace('\n', "")
+            .replace("version ","v"),
         Err(_) => String::new(),
     }
 }

@@ -92,22 +92,22 @@ mod tests {
     fn test_title_format() -> Result<()> {
         let mut title = Title {
             git_username: "onefetch-committer-name".to_string(),
-            git_version: "git version 2.37.2".to_string(),
+            git_version: "git v2.37.2".to_string(),
             title_color: DynColors::Ansi(AnsiColors::Red),
             tilde_color: DynColors::Ansi(AnsiColors::White),
             underline_color: DynColors::Ansi(AnsiColors::Blue),
             is_bold: true,
         };
 
-        title.git_version = "git version 2.37.2".to_string();
+        title.git_version = "git v2.37.2".to_string();
         assert!(title.to_string().contains("onefetch-committer-name"));
         assert!(title.to_string().contains('~'));
-        assert!(title.to_string().contains("git version 2.37.2"));
+        assert!(title.to_string().contains("git v2.37.2"));
 
         title.git_version = String::new();
         assert!(title.to_string().contains("onefetch-committer-name"));
         assert!(!title.to_string().contains('~'));
-        assert!(!title.to_string().contains("git version 2.37.2"));
+        assert!(!title.to_string().contains("git v2.37.2"));
 
         title.git_username = String::new();
         let expected_title = String::new();
