@@ -22,6 +22,7 @@ use self::url::UrlInfo;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
+use crate::config::Configuration;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -109,7 +110,7 @@ impl std::fmt::Display for Info {
     }
 }
 
-pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
+pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> Result<Info> {
     let mut repo = gix::ThreadSafeRepository::discover_opts(
         &cli_options.input,
         gix::discover::upwards::Options {
@@ -178,8 +179,11 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let globs_to_exclude = &cli_options.info.exclude;
     let show_email = cli_options.info.email;
 
+    // Values from config
+    let separator = &config_options.separator;
+
     Ok(InfoBuilder::new(cli_options)
-        .title(&repo, no_bold, &text_colors)
+        .title(separator, &repo, no_bold, &text_colors)
         .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
         .description(manifest.as_ref())
         .head(&repo)?
@@ -226,12 +230,19 @@ impl InfoBuilder {
         }
     }
 
-    fn title(mut self, repo: &Repository, no_bold: bool, text_colors: &TextColors) -> Self {
+    fn title(
+        mut self,
+        separator: &String,
+        repo: &Repository,
+        no_bold: bool,
+        text_colors: &TextColors,
+    ) -> Self {
         if !self.no_title {
             let title = Title::new(
                 repo,
                 text_colors.title,
-                text_colors.tilde,
+                separator.to_string(),
+                text_colors.separator,
                 text_colors.underline,
                 !no_bold,
             );
