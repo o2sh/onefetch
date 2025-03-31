@@ -1,6 +1,6 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use gix::{open, ThreadSafeRepository};
-use onefetch::{cli::CliOptions, info::build_info};
+use onefetch::{cli::CliOptions, config::Configuration, info::build_info};
 
 fn bench_repo_info(c: &mut Criterion) {
     let name = "make_repo.sh".to_string();
@@ -10,10 +10,13 @@ fn bench_repo_info(c: &mut Criterion) {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
+    let toml = Configuration {
+        separator: "->".to_string(),
+    };
 
     c.bench_function("get repo information", |b| {
         b.iter(|| {
-            let result = black_box(build_info(&config));
+            let result = black_box(build_info(&config, &toml));
             assert!(result.is_ok());
         });
     });
