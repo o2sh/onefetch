@@ -1,7 +1,7 @@
 use super::utils::format_number;
 use crate::info::langs::get_total_loc;
 use crate::info::langs::language::Language;
-use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+use crate::{config::NumberSeparator, info::utils::info_field::InfoField};
 use serde::Serialize;
 
 #[derive(Serialize)]

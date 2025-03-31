@@ -6,11 +6,9 @@ use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
-use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
-use serde::Serialize;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -192,9 +190,6 @@ pub struct TextFormattingCliOptions {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
-    /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
-    pub number_separator: NumberSeparator,
     /// Turns off bold formatting
     #[arg(long)]
     pub no_bold: bool,
@@ -279,7 +274,6 @@ impl Default for TextFormattingCliOptions {
         TextFormattingCliOptions {
             text_colors: Default::default(),
             iso_time: Default::default(),
-            number_separator: NumberSeparator::Plain,
             no_bold: Default::default(),
         }
     }
@@ -348,33 +342,6 @@ pub enum When {
     Auto,
     Never,
     Always,
-}
-
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
-pub enum NumberSeparator {
-    Plain,
-    Comma,
-    Space,
-    Underscore,
-}
-
-impl NumberSeparator {
-    fn separator(&self) -> &'static str {
-        match self {
-            Self::Plain => "",
-            Self::Comma => ",",
-            Self::Space => "\u{202f}",
-            Self::Underscore => "_",
-        }
-    }
-
-    pub fn get_format(&self) -> CustomFormat {
-        num_format::CustomFormat::builder()
-            .grouping(num_format::Grouping::Standard)
-            .separator(self.separator())
-            .build()
-            .unwrap()
-    }
 }
 
 #[cfg(test)]

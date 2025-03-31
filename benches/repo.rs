@@ -12,6 +12,7 @@ fn bench_repo_info(c: &mut Criterion) {
     };
     let toml = Configuration {
         separator: "->".to_string(),
+        number_separator: onefetch::config::NumberSeparator::Dot
     };
 
     c.bench_function("get repo information", |b| {

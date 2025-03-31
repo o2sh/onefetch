@@ -21,7 +21,8 @@ use self::url::get_repo_url;
 use self::url::UrlInfo;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
-use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
+use crate::cli::{is_truecolor_terminal, CliOptions, When};
+use crate::config::NumberSeparator;
 use crate::config::Configuration;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
@@ -171,7 +172,6 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
 
     let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
     let no_bold = cli_options.text_formatting.no_bold;
-    let number_separator = cli_options.text_formatting.number_separator;
     let iso_time = cli_options.text_formatting.iso_time;
     let number_of_languages_to_display = cli_options.info.number_of_languages;
     let number_of_authors_to_display = cli_options.info.number_of_authors;
@@ -181,6 +181,8 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
 
     // Values from config
     let separator = &config_options.separator;
+    let number_separator = config_options.number_separator;
+
 
     Ok(InfoBuilder::new(cli_options)
         .title(separator, &repo, no_bold, &text_colors)

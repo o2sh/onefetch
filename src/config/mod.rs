@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 use dirs::config_dir;
-use merge::Merge;
+use num_format::CustomFormat;
 use serde::{Deserialize, Serialize};
 use std::{
     fs::{self, File},
@@ -8,16 +8,17 @@ use std::{
     path::Path,
 };
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Merge)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Configuration {
-    #[merge(skip)]
     pub separator: String,
+    pub number_separator: NumberSeparator
 }
 
 impl Default for Configuration {
     fn default() -> Self {
         Self {
             separator: ":".to_string(),
+            number_separator: NumberSeparator::Plain
         }
     }
 }
@@ -57,4 +58,33 @@ pub fn load_cfg<P: AsRef<Path>>(path: Option<&P>) -> Result<Configuration> {
 pub fn write_default_cfg<P: AsRef<Path>>(default_path: &P) {
     let config = toml::to_string(&Configuration::default()).expect("Config should be serializable");
     fs::write(default_path, config).expect("Could not write config!");
+}
+
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Deserialize, Copy, Serialize)]
+pub enum NumberSeparator {
+    Plain,
+    Comma,
+    Space,
+    Underscore,
+    Dot,
+}
+
+impl NumberSeparator {
+    fn separator(&self) -> &'static str {
+        match self {
+            Self::Plain => "",
+            Self::Comma => ",",
+            Self::Space => "\u{202f}",
+            Self::Underscore => "_",
+            Self::Dot => "."
+        }
+    }
+
+    pub fn get_format(&self) -> CustomFormat {
+        num_format::CustomFormat::builder()
+            .grouping(num_format::Grouping::Standard)
+            .separator(self.separator())
+            .build()
+            .unwrap()
+    }
 }

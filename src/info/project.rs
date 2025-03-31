@@ -1,4 +1,4 @@
-use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+use crate::{config::NumberSeparator, info::utils::info_field::InfoField};
 use anyhow::Result;
 use gix::{bstr::ByteSlice, Repository};
 use onefetch_manifest::Manifest;
