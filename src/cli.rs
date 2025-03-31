@@ -26,6 +26,8 @@ pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
     pub input: PathBuf,
+    #[arg(long, value_hint = ValueHint::AnyPath)]
+    pub config_path: Option<PathBuf>,
     #[command(flatten)]
     pub info: InfoCliOptions,
     #[command(flatten)]
@@ -239,6 +241,7 @@ impl Default for CliOptions {
     fn default() -> CliOptions {
         CliOptions {
             input: PathBuf::from("."),
+            config_path: Default::default(),
             info: InfoCliOptions::default(),
             text_formatting: TextFormattingCliOptions::default(),
             visuals: VisualsCliOptions::default(),
@@ -331,7 +334,7 @@ pub fn get_git_version() -> String {
         // TODO: make those replaces controllable with config
         Ok(v) => String::from_utf8_lossy(&v.stdout)
             .replace('\n', "")
-            .replace("version ","v"),
+            .replace("version ", "v"),
         Err(_) => String::new(),
     }
 }
