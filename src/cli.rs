@@ -29,7 +29,7 @@ pub struct CliOptions {
     #[command(flatten)]
     pub info: InfoCliOptions,
     #[command(flatten)]
-    pub text_formatting: TextForamttingCliOptions,
+    pub text_formatting: TextFormattingCliOptions,
     #[command(flatten)]
     pub ascii: AsciiCliOptions,
     #[command(flatten)]
@@ -171,7 +171,7 @@ pub struct ImageCliOptions {
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "TEXT FORMATTING")]
-pub struct TextForamttingCliOptions {
+pub struct TextFormattingCliOptions {
     /// Changes the text colors (X X X...)
     ///
     /// Goes in order of title, ~, underline, subtitle, colon, and info
@@ -240,7 +240,7 @@ impl Default for CliOptions {
         CliOptions {
             input: PathBuf::from("."),
             info: InfoCliOptions::default(),
-            text_formatting: TextForamttingCliOptions::default(),
+            text_formatting: TextFormattingCliOptions::default(),
             visuals: VisualsCliOptions::default(),
             ascii: AsciiCliOptions::default(),
             image: ImageCliOptions::default(),
@@ -271,9 +271,9 @@ impl Default for InfoCliOptions {
     }
 }
 
-impl Default for TextForamttingCliOptions {
+impl Default for TextFormattingCliOptions {
     fn default() -> Self {
-        TextForamttingCliOptions {
+        TextFormattingCliOptions {
             text_colors: Default::default(),
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
