@@ -7,7 +7,6 @@ pub struct TextColors {
     pub separator: DynColors,
     pub underline: DynColors,
     pub subtitle: DynColors,
-    pub colon: DynColors,
     pub info: DynColors,
 }
 
@@ -18,7 +17,6 @@ impl TextColors {
             separator: DynColors::Ansi(AnsiColors::Default),
             underline: DynColors::Ansi(AnsiColors::Default),
             subtitle: logo_primary_color,
-            colon: DynColors::Ansi(AnsiColors::Default),
             info: DynColors::Ansi(AnsiColors::Default),
         };
 
@@ -33,9 +31,6 @@ impl TextColors {
                 .get(2)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
             text_colors.subtitle = *custom_color.get(3).unwrap_or(&logo_primary_color);
-            text_colors.colon = *custom_color
-                .get(4)
-                .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
             text_colors.info = *custom_color
                 .get(5)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
@@ -56,7 +51,6 @@ mod test {
         assert_eq!(text_colors.separator, DynColors::Ansi(AnsiColors::Default));
         assert_eq!(text_colors.underline, DynColors::Ansi(AnsiColors::Default));
         assert_eq!(text_colors.subtitle, primary_color);
-        assert_eq!(text_colors.colon, DynColors::Ansi(AnsiColors::Default));
         assert_eq!(text_colors.info, DynColors::Ansi(AnsiColors::Default));
     }
 
@@ -68,7 +62,6 @@ mod test {
         assert_eq!(text_colors.separator, num_to_color(&custom_colors[1]));
         assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
         assert_eq!(text_colors.subtitle, num_to_color(&custom_colors[3]));
-        assert_eq!(text_colors.colon, num_to_color(&custom_colors[4]));
         assert_eq!(text_colors.info, num_to_color(&custom_colors[5]));
     }
 
@@ -81,7 +74,6 @@ mod test {
         assert_eq!(text_colors.separator, num_to_color(&custom_colors[1]));
         assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
         assert_eq!(text_colors.subtitle, primary_color);
-        assert_eq!(text_colors.colon, DynColors::Ansi(AnsiColors::Default));
         assert_eq!(text_colors.info, DynColors::Ansi(AnsiColors::Default));
     }
 }

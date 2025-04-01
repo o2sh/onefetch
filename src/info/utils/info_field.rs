@@ -14,12 +14,13 @@ pub trait InfoField {
         w: &mut dyn fmt::Write,
         no_bold: bool,
         text_colors: &TextColors,
+        separator: &String
     ) -> fmt::Result {
         if let Some(styled_value) = self.style_value(text_colors) {
             writeln!(
                 w,
                 "{} {}",
-                self.style_title(text_colors, no_bold),
+                self.style_title(text_colors, no_bold, separator),
                 styled_value
             )
         } else {
@@ -28,13 +29,13 @@ pub trait InfoField {
     }
 
     /// Returns a styled version of the info field's title.
-    fn style_title(&self, text_colors: &TextColors, no_bold: bool) -> String {
+    fn style_title(&self ,text_colors: &TextColors, no_bold: bool, separator: &String) -> String {
         let subtitle_style = get_style(!no_bold, text_colors.subtitle);
-        let colon_style = get_style(!no_bold, text_colors.colon);
+        let separator_style = get_style(!no_bold, text_colors.separator);
         format!(
             "{}{}",
             self.title().style(subtitle_style),
-            ":".style(colon_style)
+            separator.style(separator_style)
         )
     }
 
@@ -107,8 +108,10 @@ mod test {
     fn test_write_styled() {
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
         let info = InfoFieldImpl("test");
+        let separator = ":".to_string();
         let mut buffer = String::new();
-        info.write_styled(&mut buffer, false, &colors).unwrap();
+        info.write_styled(&mut buffer, false, &colors, &separator)
+            .unwrap();
         insta::assert_snapshot!(buffer);
     }
 
@@ -116,8 +119,10 @@ mod test {
     fn test_write_styled_no_value() {
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
         let info = InfoFieldImpl("");
+        let separator = ":".to_string();
         let mut buffer = String::new();
-        info.write_styled(&mut buffer, false, &colors).unwrap();
+        info.write_styled(&mut buffer, false, &colors, &separator)
+            .unwrap();
         assert_eq!(buffer, "", "It should not write anything");
     }
 }

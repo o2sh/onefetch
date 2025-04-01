@@ -13,20 +13,6 @@ pub struct Configuration {
     pub separator: Option<String>,
     pub number_separator: Option<NumberSeparator>,
 }
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
-pub struct DefaultConfiguration {
-    pub separator: String,
-    pub number_separator: NumberSeparator,
-}
-impl Default for DefaultConfiguration {
-    fn default() -> Self {
-        Self {
-            separator: ":".to_string(),
-            number_separator: NumberSeparator::Plain,
-        }
-    }
-}
-
 
 impl Default for Configuration {
     fn default() -> Self {
@@ -74,8 +60,9 @@ pub fn write_default_cfg<P: AsRef<Path>>(default_path: &P) {
     fs::write(default_path, config).expect("Could not write config!");
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Deserialize, Copy, Serialize)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Deserialize, Default, Copy, Serialize)]
 pub enum NumberSeparator {
+    #[default]
     Plain,
     Comma,
     Space,

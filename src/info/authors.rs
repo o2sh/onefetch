@@ -253,8 +253,9 @@ mod test {
         };
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
         let mut buffer = String::new();
+        let separator = ":".to_string();
         authors_info
-            .write_styled(&mut buffer, false, &colors)
+            .write_styled(&mut buffer, false, &colors, &separator)
             .unwrap();
 
         assert_snapshot!(buffer);
@@ -284,8 +285,9 @@ mod test {
 
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
         let mut buffer = String::new();
+        let separator = ":".to_string();
         authors_info
-            .write_styled(&mut buffer, false, &colors)
+            .write_styled(&mut buffer, false, &colors, &separator)
             .unwrap();
 
         assert_snapshot!(buffer);
@@ -316,8 +318,9 @@ mod test {
 
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
         let mut buffer = String::new();
+        let separator = ":".to_string();
         authors_info
-            .write_styled(&mut buffer, false, &colors)
+            .write_styled(&mut buffer, false, &colors, &separator)
             .unwrap();
 
         assert_snapshot!(buffer);

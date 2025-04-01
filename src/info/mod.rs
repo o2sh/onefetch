@@ -22,9 +22,8 @@ use self::url::UrlInfo;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, When};
-use crate::config::DefaultConfiguration;
-use crate::config::NumberSeparator;
 use crate::config::Configuration;
+use crate::config::NumberSeparator;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -68,6 +67,8 @@ pub struct Info {
     #[serde(skip_serializing)]
     no_bold: bool,
     #[serde(skip_serializing)]
+    separator: String,
+    #[serde(skip_serializing)]
     pub dominant_language: Language,
     #[serde(skip_serializing)]
     pub ascii_colors: Vec<DynColors>,
@@ -89,7 +90,7 @@ impl std::fmt::Display for Info {
 
         //Info lines
         for info_field in self.info_fields.iter() {
-            info_field.write_styled(f, self.no_bold, &self.text_colors)?;
+            info_field.write_styled(f, self.no_bold, &self.text_colors, &self.separator)?;
         }
 
         //Palette
@@ -181,13 +182,18 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
     let show_email = cli_options.info.email;
 
     // Values from config
-    let separator = &config_options.separator.clone().unwrap_or(DefaultConfiguration::default().separator);
-    let number_separator = config_options.number_separator.unwrap_or(DefaultConfiguration::default().number_separator);
-
+    let separator = &config_options.separator.clone().unwrap_or_default();
+    let number_separator = config_options.number_separator.unwrap_or_default();
 
     Ok(InfoBuilder::new(cli_options)
         .title(separator, &repo, no_bold, &text_colors)
-        .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
+        .project(
+            &repo,
+            &repo_url,
+            manifest.as_ref(),
+            separator.to_string(),
+            number_separator,
+        )?
         .description(manifest.as_ref())
         .head(&repo)?
         .pending(&repo)?
@@ -220,7 +226,7 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
-        .build(cli_options, text_colors, dominant_language, ascii_colors))
+        .build(config_options, cli_options, text_colors, dominant_language, ascii_colors))
 }
 
 impl InfoBuilder {
@@ -283,10 +289,11 @@ impl InfoBuilder {
         repo: &Repository,
         repo_url: &str,
         manifest: Option<&Manifest>,
+        separator: String,
         number_separator: NumberSeparator,
     ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Project) {
-            let project = ProjectInfo::new(repo, repo_url, manifest, number_separator)?;
+            let project = ProjectInfo::new(repo, repo_url, manifest, number_separator, separator)?;
             self.info_fields.push(Box::new(project));
         }
         Ok(self)
@@ -457,6 +464,7 @@ impl InfoBuilder {
 
     fn build(
         self,
+        config_options: &Configuration,
         cli_options: &CliOptions,
         text_colors: TextColors,
         dominant_language: Language,
@@ -470,6 +478,7 @@ impl InfoBuilder {
             ascii_colors,
             no_color_palette: cli_options.visuals.no_color_palette,
             no_bold: cli_options.text_formatting.no_bold,
+            separator: config_options.separator.clone().unwrap_or_default(),
         }
     }
 }

@@ -38,7 +38,7 @@ fn test_repo() -> Result<()> {
     let repo = repo("make_repo.sh")?;
     let toml = Configuration {
         separator: Some("->".to_string()),
-        number_separator: Some(onefetch::config::NumberSeparator::Dot)
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
     };
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
@@ -74,7 +74,7 @@ fn test_repo_without_remote() -> Result<()> {
     };
     let toml = Configuration {
         separator: Some("->".to_string()),
-        number_separator: Some(onefetch::config::NumberSeparator::Dot)
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
     };
     let info = build_info(&config, &toml);
     assert!(info.is_ok());
@@ -91,7 +91,7 @@ fn test_partial_repo() -> Result<()> {
     };
     let toml = Configuration {
         separator: Some("->".to_string()),
-        number_separator: Some(onefetch::config::NumberSeparator::Dot)
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
     };
     let _info = build_info(&config, &toml).expect("no error");
     Ok(())
@@ -106,7 +106,7 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
     };
     let toml = Configuration {
         separator: Some("->".to_string()),
-        number_separator: Some(onefetch::config::NumberSeparator::Dot)
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
     };
     let _info = build_info(&config, &toml).expect("no error");
     Ok(())
