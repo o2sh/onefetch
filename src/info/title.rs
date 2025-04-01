@@ -60,7 +60,7 @@ impl std::fmt::Display for Title {
                     let tilde_style = get_style(self.is_bold, self.separator_color);
                     (
                         format!(
-                            "{} {} {}",
+                            "{}{} {}",
                             &self.git_username.style(title_style),
                             self.separator.style(tilde_style),
                             &self.git_version.style(title_style)
