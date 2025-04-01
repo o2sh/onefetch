@@ -22,6 +22,7 @@ use self::url::UrlInfo;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, When};
+use crate::config::DefaultConfiguration;
 use crate::config::NumberSeparator;
 use crate::config::Configuration;
 use crate::ui::get_ascii_colors;
@@ -180,8 +181,8 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
     let show_email = cli_options.info.email;
 
     // Values from config
-    let separator = &config_options.separator;
-    let number_separator = config_options.number_separator;
+    let separator = &config_options.separator.clone().unwrap_or(DefaultConfiguration::default().separator);
+    let number_separator = config_options.number_separator.unwrap_or(DefaultConfiguration::default().number_separator);
 
 
     Ok(InfoBuilder::new(cli_options)

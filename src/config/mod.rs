@@ -10,15 +10,29 @@ use std::{
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Configuration {
-    pub separator: String,
-    pub number_separator: NumberSeparator
+    pub separator: Option<String>,
+    pub number_separator: Option<NumberSeparator>,
 }
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+pub struct DefaultConfiguration {
+    pub separator: String,
+    pub number_separator: NumberSeparator,
+}
+impl Default for DefaultConfiguration {
+    fn default() -> Self {
+        Self {
+            separator: ":".to_string(),
+            number_separator: NumberSeparator::Plain,
+        }
+    }
+}
+
 
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-            separator: ":".to_string(),
-            number_separator: NumberSeparator::Plain
+            separator: Some(":".to_string()),
+            number_separator: Some(NumberSeparator::Plain),
         }
     }
 }
@@ -76,7 +90,7 @@ impl NumberSeparator {
             Self::Comma => ",",
             Self::Space => "\u{202f}",
             Self::Underscore => "_",
-            Self::Dot => "."
+            Self::Dot => ".",
         }
     }
 
