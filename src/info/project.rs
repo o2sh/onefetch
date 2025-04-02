@@ -99,17 +99,9 @@ impl std::fmt::Display for ProjectInfo {
             if tags_str.is_empty() && branches_str.is_empty() {
                 write!(f, "{}", self.repo_name)
             } else if branches_str.is_empty() || tags_str.is_empty() {
-                write!(
-                    f,
-                    "{} ({}{})",
-                    self.repo_name, tags_str, branches_str
-                )
+                write!(f, "{} ({}{})", self.repo_name, tags_str, branches_str)
             } else {
-                write!(
-                    f,
-                    "{} ({}, {})",
-                    self.repo_name, branches_str, tags_str
-                )
+                write!(f, "{} ({}, {})", self.repo_name, branches_str, tags_str)
             }
         }
     }

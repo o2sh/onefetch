@@ -226,7 +226,13 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
-        .build(config_options, cli_options, text_colors, dominant_language, ascii_colors))
+        .build(
+            config_options,
+            cli_options,
+            text_colors,
+            dominant_language,
+            ascii_colors,
+        ))
 }
 
 impl InfoBuilder {

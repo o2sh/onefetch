@@ -14,7 +14,7 @@ pub trait InfoField {
         w: &mut dyn fmt::Write,
         no_bold: bool,
         text_colors: &TextColors,
-        separator: &String
+        separator: &String,
     ) -> fmt::Result {
         if let Some(styled_value) = self.style_value(text_colors) {
             writeln!(
@@ -29,7 +29,7 @@ pub trait InfoField {
     }
 
     /// Returns a styled version of the info field's title.
-    fn style_title(&self ,text_colors: &TextColors, no_bold: bool, separator: &String) -> String {
+    fn style_title(&self, text_colors: &TextColors, no_bold: bool, separator: &String) -> String {
         let subtitle_style = get_style(!no_bold, text_colors.subtitle);
         let separator_style = get_style(!no_bold, text_colors.separator);
         format!(
