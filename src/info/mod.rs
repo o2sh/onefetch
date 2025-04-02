@@ -204,7 +204,7 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
             true_color,
             number_of_languages_to_display,
             &text_colors,
-            cli_options,
+            config_options,
         )
         .dependencies(manifest.as_ref(), number_separator)
         .authors(
@@ -351,7 +351,7 @@ impl InfoBuilder {
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
-        cli_options: &CliOptions,
+        config_options: &Configuration
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
             let languages = LanguagesInfo::new(
@@ -359,7 +359,7 @@ impl InfoBuilder {
                 true_color,
                 number_of_languages,
                 text_colors.info,
-                cli_options.visuals.nerd_fonts,
+                config_options.nerd_fonts.unwrap_or_default(),
             );
             self.info_fields.push(Box::new(languages));
         }
