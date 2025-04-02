@@ -12,7 +12,9 @@ expression: info
       "ProjectInfo": {
         "repoName": "repo",
         "numberOfBranches": 0,
-        "numberOfTags": 1
+        "numberOfTags": 1,
+        "numberSeparator": "Dot",
+        "separator": "->"
       }
     },
     {
