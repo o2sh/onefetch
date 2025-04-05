@@ -1,5 +1,5 @@
 use super::utils::format_number;
-use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+use crate::{config::NumberSeparator, info::utils::info_field::InfoField};
 use serde::Serialize;
 
 #[derive(Serialize)]

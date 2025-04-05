@@ -1,6 +1,6 @@
 use super::git::metrics::GitMetrics;
 use crate::{
-    cli::NumberSeparator,
+    config::NumberSeparator,
     info::utils::{format_number, info_field::InfoField},
 };
 use serde::Serialize;

@@ -4,6 +4,7 @@ use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
+use onefetch::config::load_cfg;
 use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
@@ -15,6 +16,9 @@ fn main() -> Result<()> {
     enable_ansi_support::enable_ansi_support()?;
 
     let cli_options = cli::CliOptions::parse();
+
+    let config_path = &cli_options.config_path;
+    let config = load_cfg(config_path.as_ref())?;
 
     if cli_options.other.languages {
         return cli::print_supported_languages();
@@ -30,7 +34,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let info = build_info(&cli_options)?;
+    let info = build_info(&cli_options, &config)?;
 
     let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
 

@@ -336,7 +336,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fbd1fe9db3ebf71b89060adaf7b0504c2d6a425cf061313099547e382c2e472"
 dependencies = [
  "serde",
- "toml 0.8.19",
+ "toml 0.8.20",
 ]
 
 [[package]]
@@ -705,6 +705,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "dirs"
+version = "6.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3e8aa94d75141228480295a7d0e7feb620b1a5ad9f12bc40be62411e38cce4e"
+dependencies = [
+ "dirs-sys",
+]
+
+[[package]]
+name = "dirs-sys"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab"
+dependencies = [
+ "libc",
+ "option-ext",
+ "redox_users",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "displaydoc"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1026,7 +1047,7 @@ dependencies = [
  "gix-utils",
  "itoa",
  "thiserror 1.0.69",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1040,7 +1061,7 @@ dependencies = [
  "gix-utils",
  "itoa",
  "thiserror 2.0.9",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1153,7 +1174,7 @@ dependencies = [
  "smallvec",
  "thiserror 2.0.9",
  "unicode-bom",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1558,7 +1579,7 @@ dependencies = [
  "itoa",
  "smallvec",
  "thiserror 1.0.69",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1579,7 +1600,7 @@ dependencies = [
  "itoa",
  "smallvec",
  "thiserror 2.0.9",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1690,7 +1711,7 @@ dependencies = [
  "gix-utils",
  "maybe-async",
  "thiserror 2.0.9",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1723,7 +1744,7 @@ dependencies = [
  "gix-validate 0.8.5",
  "memmap2",
  "thiserror 1.0.69",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1744,7 +1765,7 @@ dependencies = [
  "gix-validate 0.9.3",
  "memmap2",
  "thiserror 2.0.9",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -1923,7 +1944,7 @@ dependencies = [
  "parking_lot",
  "tar",
  "tempfile",
- "winnow",
+ "winnow 0.6.22",
 ]
 
 [[package]]
@@ -2187,7 +2208,7 @@ dependencies = [
  "os_info",
  "serde",
  "serde_derive",
- "toml 0.8.19",
+ "toml 0.8.20",
  "uuid",
 ]
 
@@ -2680,6 +2701,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "merge"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10bbef93abb1da61525bbc45eeaff6473a41907d19f8f9aa5168d214e10693e9"
+dependencies = [
+ "merge_derive",
+ "num-traits",
+]
+
+[[package]]
+name = "merge_derive"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "209d075476da2e63b4b29e72a2ef627b840589588e71400a25e3565c4f849d07"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "miniz_oxide"
 version = "0.8.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2760,6 +2803,7 @@ dependencies = [
  "clap_complete",
  "criterion",
  "crossbeam-channel",
+ "dirs",
  "enable-ansi-support",
  "gix",
  "gix-features 0.41.0",
@@ -2769,6 +2813,7 @@ dependencies = [
  "image",
  "insta",
  "lazy_static",
+ "merge",
  "num-format",
  "onefetch-ascii",
  "onefetch-image",
@@ -2784,6 +2829,7 @@ dependencies = [
  "time",
  "time-humanize",
  "tokei",
+ "toml 0.8.20",
  "typetag",
  "winres",
 ]
@@ -2822,6 +2868,12 @@ name = "oorandom"
 version = "11.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b410bbe7e14ab526a0e86877eb47c6996a2bd7746f027ba551028c925390e4e9"
+
+[[package]]
+name = "option-ext"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
 
 [[package]]
 name = "os_info"
@@ -3086,6 +3138,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "proc-macro-error"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
+dependencies = [
+ "proc-macro-error-attr",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+ "version_check",
+]
+
+[[package]]
+name = "proc-macro-error-attr"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "version_check",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3208,6 +3284,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03a862b389f93e68874fbf580b9de08dd02facb9a788ebadaf4a3fd33cf58834"
 dependencies = [
  "bitflags 2.6.0",
+]
+
+[[package]]
+name = "redox_users"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd6f9d3d47bdd2ad6945c5015a226ec6155d0bcdfd8f7cd29f86b71f8de99d2b"
+dependencies = [
+ "getrandom",
+ "libredox",
+ "thiserror 2.0.9",
 ]
 
 [[package]]
@@ -3871,7 +3958,7 @@ dependencies = [
  "table_formatter",
  "tera",
  "term_size",
- "toml 0.8.19",
+ "toml 0.8.20",
 ]
 
 [[package]]
@@ -3885,9 +3972,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.8.19"
+version = "0.8.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1ed1f98e3fdc28d6d910e6737ae6ab1a93bf1985935a1193e68f93eeb68d24e"
+checksum = "cd87a5cdd6ffab733b2f74bc4fd7ee5fff6634124999ac278c35fc78c6120148"
 dependencies = [
  "serde",
  "serde_spanned",
@@ -3906,15 +3993,15 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.22.22"
+version = "0.22.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ae48d6208a266e853d946088ed816055e556cc6028c5e8e2b84d9fa5dd7c7f5"
+checksum = "17b4795ff5edd201c7cd6dca065ae59972ce77d1b80fa0a84d94950ece7d1474"
 dependencies = [
  "indexmap",
  "serde",
  "serde_spanned",
  "toml_datetime",
- "winnow",
+ "winnow 0.7.4",
 ]
 
 [[package]]
@@ -4425,6 +4512,15 @@ name = "winnow"
 version = "0.6.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39281189af81c07ec09db316b302a3e67bf9bd7cbf6c820b50e35fee9c2fa980"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
+name = "winnow"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e97b544156e9bebe1a0ffbc03484fc1ffe3100cbce3ffb17eac35f7cdd7ab36"
 dependencies = [
  "memchr",
 ]

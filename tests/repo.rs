@@ -1,6 +1,7 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
-use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
+use onefetch::cli::{CliOptions, InfoCliOptions, TextFormattingCliOptions};
+use onefetch::config::Configuration;
 use onefetch::info::{build_info, get_work_dir};
 
 fn repo(name: &str) -> Result<Repository> {
@@ -35,6 +36,11 @@ fn test_bare_repo() -> Result<()> {
 #[test]
 fn test_repo() -> Result<()> {
     let repo = repo("make_repo.sh")?;
+    let toml = Configuration {
+        separator: Some("->".to_string()),
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
+        nerd_fonts: Some(false)
+    };
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         info: InfoCliOptions {
@@ -42,13 +48,13 @@ fn test_repo() -> Result<()> {
             churn_pool_size: Some(10),
             ..Default::default()
         },
-        text_formatting: TextForamttingCliOptions {
+        text_formatting: TextFormattingCliOptions {
             iso_time: true,
             ..Default::default()
         },
         ..Default::default()
     };
-    let info = build_info(&config)?;
+    let info = build_info(&config, &toml)?;
     insta::assert_json_snapshot!(
         info,
         {
@@ -67,7 +73,12 @@ fn test_repo_without_remote() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = build_info(&config);
+    let toml = Configuration {
+        separator: Some("->".to_string()),
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
+        nerd_fonts: Some(false)
+    };
+    let info = build_info(&config, &toml);
     assert!(info.is_ok());
 
     Ok(())
@@ -80,7 +91,12 @@ fn test_partial_repo() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let toml = Configuration {
+        separator: Some("->".to_string()),
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
+        nerd_fonts: Some(false)
+    };
+    let _info = build_info(&config, &toml).expect("no error");
     Ok(())
 }
 
@@ -91,6 +107,11 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let toml = Configuration {
+        separator: Some("->".to_string()),
+        number_separator: Some(onefetch::config::NumberSeparator::Dot),
+        nerd_fonts: Some(false)
+    };
+    let _info = build_info(&config, &toml).expect("no error");
     Ok(())
 }
