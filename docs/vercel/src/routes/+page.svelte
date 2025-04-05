@@ -89,7 +89,7 @@
 
   <div class:hide={!showMenu}>
     <div class="checkbox-group">
-      {#each languageTypes as type}
+      {#each languageTypes as type (type)}
         <label for={type}>
           <input
             id={type}
@@ -107,7 +107,7 @@
       <code>--type</code> flag to configure.</small>
   </div>
 
-  {#each $filteredLanguages as language}
+  {#each $filteredLanguages as language (language.name)}
     <AsciiPreview
       name={language.name}
       ansi={language.colors.ansi}
