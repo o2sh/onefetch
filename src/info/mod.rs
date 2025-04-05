@@ -360,6 +360,7 @@ impl InfoBuilder {
                 number_of_languages,
                 text_colors.info,
                 config_options.nerd_fonts.unwrap_or_default(),
+                config_options.percent_verbosity.unwrap_or_default()
             );
             self.info_fields.push(Box::new(languages));
         }

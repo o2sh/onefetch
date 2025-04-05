@@ -13,6 +13,7 @@ pub struct Configuration {
     pub separator: Option<String>,
     pub number_separator: Option<NumberSeparator>,
     pub nerd_fonts: Option<bool>,
+    pub percent_verbosity: Option<usize>,
 }
 
 impl Default for Configuration {
@@ -20,7 +21,8 @@ impl Default for Configuration {
         Self {
             separator: Some(":".to_string()),
             number_separator: Some(NumberSeparator::Plain),
-            nerd_fonts: Some(false)
+            nerd_fonts: Some(false),
+            percent_verbosity: Some(1),
         }
     }
 }

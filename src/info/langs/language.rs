@@ -25,6 +25,9 @@ pub struct LanguagesInfo {
     info_color: DynColors,
     #[serde(skip_serializing)]
     nerd_fonts: bool,
+    // This might be useful lol
+    #[serde(skip_serializing)]
+    pub percent_verbosity: usize,
 }
 
 impl LanguagesInfo {
@@ -34,6 +37,7 @@ impl LanguagesInfo {
         number_of_languages_to_display: usize,
         info_color: DynColors,
         nerd_fonts: bool,
+        percent_verbosity: usize,
     ) -> Self {
         let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
 
@@ -60,6 +64,7 @@ impl LanguagesInfo {
             number_of_languages_to_display,
             info_color,
             nerd_fonts,
+            percent_verbosity,
         }
     }
 }
@@ -80,7 +85,7 @@ impl std::fmt::Display for LanguagesInfo {
         let mut languages_info = build_language_bar(&languages);
 
         for (i, language_display_data) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
+            let formatted_number = format!("{:.*}", self.percent_verbosity, language_display_data.percentage);
             let chip = language_display_data
                 .chip_icon
                 .color(language_display_data.chip_color);
@@ -238,6 +243,7 @@ mod test {
             number_of_languages_to_display: 6,
             info_color: DynColors::Ansi(AnsiColors::White),
             nerd_fonts: false,
+            percent_verbosity: 1,
         };
         let expected_languages_info = format!(
             "{:<width$}\n{:<pad$}{} {} ",
@@ -277,6 +283,7 @@ mod test {
             number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
             nerd_fonts: false,
+            percent_verbosity: 1,
         };
 
         assert!(languages_info.value().contains(
@@ -354,6 +361,7 @@ mod test {
             number_of_languages_to_display: 2,
             info_color: DynColors::Ansi(AnsiColors::White),
             nerd_fonts: false,
+            percent_verbosity: 1,
         };
 
         let color_palette = [
