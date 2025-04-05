@@ -63,6 +63,7 @@ impl std::fmt::Display for Author {
 #[derive(Serialize)]
 pub struct AuthorsInfo {
     pub authors: Vec<Author>,
+    separator_length: usize,
 }
 
 impl AuthorsInfo {
@@ -72,6 +73,7 @@ impl AuthorsInfo {
         number_of_authors_to_display: usize,
         show_email: bool,
         number_separator: NumberSeparator,
+        separator_length: usize,
     ) -> Self {
         let authors = compute_authors(
             number_of_commits_by_signature,
@@ -80,7 +82,10 @@ impl AuthorsInfo {
             show_email,
             number_separator,
         );
-        Self { authors }
+        Self {
+            authors,
+            separator_length,
+        }
     }
 
     fn top_contribution(&self) -> usize {
@@ -134,7 +139,7 @@ impl std::fmt::Display for AuthorsInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut authors_info = String::new();
 
-        let pad = self.title().len() + 2;
+        let pad = self.title().len() + self.separator_length + 1;
         for (i, author) in self.authors.iter().enumerate() {
             if i == 0 {
                 write!(authors_info, "{author}")?;
@@ -208,6 +213,7 @@ mod test {
 
         let authors_info = AuthorsInfo {
             authors: vec![author],
+            separator_length: 1,
         };
 
         assert_eq!(authors_info.title(), "Author");
@@ -233,6 +239,7 @@ mod test {
 
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2],
+            separator_length: 1,
         };
 
         assert_eq!(authors_info.title(), "Authors");
@@ -250,6 +257,7 @@ mod test {
 
         let authors_info = AuthorsInfo {
             authors: vec![author],
+            separator_length: 1,
         };
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
         let mut buffer = String::new();
@@ -281,6 +289,7 @@ mod test {
 
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2],
+            separator_length: 1,
         };
 
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
@@ -314,6 +323,7 @@ mod test {
 
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2, author_3],
+            separator_length: 1,
         };
 
         let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));

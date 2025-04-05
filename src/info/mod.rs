@@ -212,6 +212,7 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
             number_of_authors_to_display,
             show_email,
             number_separator,
+            config_options,
         )
         .last_change(&git_metrics, iso_time)
         .contributors(&git_metrics, number_of_authors_to_display, number_separator)
@@ -222,6 +223,7 @@ pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> R
             number_of_file_churns_to_display,
             globs_to_exclude,
             number_separator,
+            config_options,
         )?
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
@@ -351,7 +353,7 @@ impl InfoBuilder {
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
-        config_options: &Configuration
+        config_options: &Configuration,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
             let languages = LanguagesInfo::new(
@@ -360,7 +362,8 @@ impl InfoBuilder {
                 number_of_languages,
                 text_colors.info,
                 config_options.nerd_fonts.unwrap_or_default(),
-                config_options.percent_verbosity.unwrap_or_default()
+                config_options.percent_verbosity.unwrap_or_default(),
+                config_options.separator.clone().unwrap_or_default().len(),
             );
             self.info_fields.push(Box::new(languages));
         }
@@ -385,6 +388,7 @@ impl InfoBuilder {
         number_of_authors_to_display: usize,
         show_email: bool,
         number_separator: NumberSeparator,
+        config_options: &Configuration,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Authors) {
             let authors = AuthorsInfo::new(
@@ -393,6 +397,7 @@ impl InfoBuilder {
                 number_of_authors_to_display,
                 show_email,
                 number_separator,
+                config_options.separator.clone().unwrap_or_default().len(),
             );
             self.info_fields.push(Box::new(authors));
         }
@@ -443,6 +448,7 @@ impl InfoBuilder {
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
         number_separator: NumberSeparator,
+        config_options: &Configuration,
     ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Churn) {
             let churn = ChurnInfo::new(
@@ -451,6 +457,7 @@ impl InfoBuilder {
                 number_of_file_churns_to_display,
                 globs_to_exclude,
                 number_separator,
+                config_options.separator.clone().unwrap_or_default().len(),
             )?;
             self.info_fields.push(Box::new(churn));
         }
