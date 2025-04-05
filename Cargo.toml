@@ -49,7 +49,7 @@ gix = { version = "0.70.0", default-features = false, features = [
     "status",
 ] }
 gix-features = { version = "0.41.0", features = ["zlib-ng"] }
-globset = "0.4.15"
+globset = "0.4.16"
 human-panic = "2.0.2"
 image.workspace = true
 num-format = "0.4.4"
