@@ -20,3 +20,4 @@ jobs:
       - uses: spenserblack/actions-wiki@v0.1
         with:
           token: ${{ secrets.WIKI_TOKEN }}
+          path: docs/wiki
