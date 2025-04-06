@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/wiki/**"
+      - "docs/wiki/**"
 
   workflow_dispatch:
 
