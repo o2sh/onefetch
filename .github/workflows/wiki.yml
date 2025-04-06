@@ -17,6 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: spenserblack/actions-wiki@v0.3
+      - uses: spenserblack/actions-wiki@v0.3.0
         with:
           path: docs/wiki
