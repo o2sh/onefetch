@@ -1,10 +1,9 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Ok, Result};
 use dirs::config_dir;
 use num_format::CustomFormat;
 use serde::{Deserialize, Serialize};
 use std::{
-    fs::{self, File},
-    io::{BufReader, Read},
+    fs::{self, read_to_string},
     path::Path,
 };
 
@@ -28,11 +27,8 @@ impl Default for Configuration {
 }
 
 pub fn read_cfg<P: AsRef<Path>>(path: &P) -> Result<Configuration> {
-    let file = File::open(path)?;
-    let mut buf_reader = BufReader::new(file);
-    let mut content = String::new();
-    buf_reader.read_to_string(&mut content)?;
-    Ok(toml::from_str(content.as_str()).unwrap())
+    let contents = read_to_string(path);
+    Ok(toml::from_str(contents.unwrap().as_str()).unwrap())
 }
 
 pub fn load_cfg<P: AsRef<Path>>(path: Option<&P>) -> Result<Configuration> {
