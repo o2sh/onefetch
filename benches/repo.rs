@@ -10,12 +10,7 @@ fn bench_repo_info(c: &mut Criterion) {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let toml = Configuration {
-        separator: Some("->".to_string()),
-        number_separator: Some(onefetch::config::NumberSeparator::Dot),
-        nerd_fonts: Some(false),
-        percent_verbosity: Some(1),
-    };
+    let toml = Configuration::default();
 
     c.bench_function("get repo information", |b| {
         b.iter(|| {
