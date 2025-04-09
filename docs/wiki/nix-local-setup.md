@@ -1,3 +1,12 @@
+[Nix](https://nixos.org/) is a package manager that uses a purely functional approach to dependency management. Packages in Nix are built and run in isolated, reproducible environments. This tutorial walks you through setting up a development environment for Onefetch using Nix.
+
+> This guide assumes you already have Nix [installed](https://nixos.org/download.html#nix-quick-install) on your system.
+
+## Setup
+
+To begin, create a `flake.nix` file with the following content:
+
+```nix
 {
   description = "onefetch";
 
@@ -34,3 +43,10 @@
     });
   };
 }
+```
+
+then enter the development shell:
+
+```bash
+nix develop
+```

@@ -9,9 +9,9 @@ repository = "https://github.com/o2sh/onefetch"
 members = ["ascii", "image", "manifest"]
 
 [workspace.dependencies]
-owo-colors = "4.1.0"
+owo-colors = "4.2.0"
 anyhow = "1.0"
-clap = { version = "4.5.26", features = ["derive"] }
+clap = { version = "4.5.34", features = ["derive"] }
 image = { version = "0.25.5", default-features = false, features = [
     "color_quant",
     "jpeg",
@@ -39,18 +39,18 @@ anyhow.workspace = true
 askalono = "0.5.0"
 byte-unit = "5.1.6"
 clap.workspace = true
-clap_complete = "4.5.42"
+clap_complete = "4.5.47"
 crossbeam-channel = "0.5.14"
 dirs = "6.0.0"
-gix = { version = "0.70.0", default-features = false, features = [
+gix = { version = "0.71.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
     "index",
     "status",
 ] }
-gix-features = { version = "0.40.0", features = ["zlib-ng"] }
-globset = "0.4.15"
+gix-features = { version = "0.41.0", features = ["zlib-ng"] }
+globset = "0.4.16"
 human-panic = "2.0.2"
 image.workspace = true
 merge = "0.1.0"
@@ -75,8 +75,8 @@ typetag = "0.2"
 [dev-dependencies]
 criterion = "0.5.1"
 gix-testtools = "0.15.0"
-insta = { version = "1.42.1", features = ["json", "redactions"] }
-rstest = "0.24.0"
+insta = { version = "1.42.2", features = ["json", "redactions"] }
+rstest = "0.25.0"
 
 [[bench]]
 name = "repo"
