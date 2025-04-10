@@ -326,9 +326,7 @@ pub fn get_git_version() -> String {
 
     match version {
         // TODO: make those replaces controllable with config
-        Ok(v) => String::from_utf8_lossy(&v.stdout)
-            .replace('\n', "")
-            .replace("version ", "v"),
+        Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
         Err(_) => String::new(),
     }
 }
