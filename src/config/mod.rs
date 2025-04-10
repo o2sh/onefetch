@@ -13,6 +13,7 @@ pub struct Configuration {
     pub number_separator: Option<NumberSeparator>,
     pub nerd_fonts: Option<bool>,
     pub percent_verbosity: Option<usize>,
+
 }
 
 impl Default for Configuration {
@@ -67,7 +68,6 @@ pub enum NumberSeparator {
     Comma,
     Space,
     Underscore,
-    Dot,
 }
 
 impl NumberSeparator {
@@ -77,7 +77,6 @@ impl NumberSeparator {
             Self::Comma => ",",
             Self::Space => "\u{202f}",
             Self::Underscore => "_",
-            Self::Dot => ".",
         }
     }
 
