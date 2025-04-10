@@ -1,3 +1,4 @@
+use crate::config::NumberSeparator;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
@@ -190,6 +191,9 @@ pub struct TextFormattingCliOptions {
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
+    /// Which thousands SEPARATOR to use
+    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    pub number_separator: NumberSeparator,
     /// Turns off bold formatting
     #[arg(long)]
     pub no_bold: bool,
@@ -274,6 +278,7 @@ impl Default for TextFormattingCliOptions {
         TextFormattingCliOptions {
             text_colors: Default::default(),
             iso_time: Default::default(),
+            number_separator: NumberSeparator::Plain,
             no_bold: Default::default(),
         }
     }
