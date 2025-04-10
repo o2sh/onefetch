@@ -11,7 +11,9 @@ pub struct Title {
     #[serde(skip_serializing)]
     pub title_color: DynColors,
     #[serde(skip_serializing)]
-    pub tilde_color: DynColors,
+    pub separator: String,
+    #[serde(skip_serializing)]
+    pub separator_color: DynColors,
     #[serde(skip_serializing)]
     pub underline_color: DynColors,
     #[serde(skip_serializing)]
@@ -22,7 +24,8 @@ impl Title {
     pub fn new(
         repo: &Repository,
         title_color: DynColors,
-        tilde_color: DynColors,
+        separator: String,
+        separator_color: DynColors,
         underline_color: DynColors,
         is_bold: bool,
     ) -> Self {
@@ -32,7 +35,8 @@ impl Title {
             git_username,
             git_version,
             title_color,
-            tilde_color,
+            separator,
+            separator_color,
             underline_color,
             is_bold,
         }
@@ -53,12 +57,12 @@ impl std::fmt::Display for Title {
 
             let (git_info_field_str, git_info_field_len) =
                 if !&self.git_username.is_empty() && !&self.git_version.is_empty() {
-                    let tilde_style = get_style(self.is_bold, self.tilde_color);
+                    let tilde_style = get_style(self.is_bold, self.separator_color);
                     (
                         format!(
-                            "{} {} {}",
+                            "{}{} {}",
                             &self.git_username.style(title_style),
-                            "~".style(tilde_style),
+                            self.separator.style(tilde_style),
                             &self.git_version.style(title_style)
                         ),
                         git_info_length + 3,
@@ -75,8 +79,8 @@ impl std::fmt::Display for Title {
                 };
 
             writeln!(f, "{git_info_field_str}")?;
-            let separator = "-".repeat(git_info_field_len);
-            writeln!(f, "{}", separator.color(self.underline_color))
+            let underline = "-".repeat(git_info_field_len);
+            writeln!(f, "{}", underline.color(self.underline_color))
         } else {
             Ok(())
         }
@@ -92,22 +96,23 @@ mod tests {
     fn test_title_format() -> Result<()> {
         let mut title = Title {
             git_username: "onefetch-committer-name".to_string(),
-            git_version: "git version 2.37.2".to_string(),
+            git_version: "git v2.37.2".to_string(),
             title_color: DynColors::Ansi(AnsiColors::Red),
-            tilde_color: DynColors::Ansi(AnsiColors::White),
+            separator: "->".to_string(),
+            separator_color: DynColors::Ansi(AnsiColors::White),
             underline_color: DynColors::Ansi(AnsiColors::Blue),
             is_bold: true,
         };
 
-        title.git_version = "git version 2.37.2".to_string();
+        title.git_version = "git v2.37.2".to_string();
         assert!(title.to_string().contains("onefetch-committer-name"));
-        assert!(title.to_string().contains('~'));
-        assert!(title.to_string().contains("git version 2.37.2"));
+        assert!(title.to_string().contains("->"));
+        assert!(title.to_string().contains("git v2.37.2"));
 
         title.git_version = String::new();
         assert!(title.to_string().contains("onefetch-committer-name"));
-        assert!(!title.to_string().contains('~'));
-        assert!(!title.to_string().contains("git version 2.37.2"));
+        assert!(!title.to_string().contains("->"));
+        assert!(!title.to_string().contains("git v2.37.2"));
 
         title.git_username = String::new();
         let expected_title = String::new();

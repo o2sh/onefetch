@@ -1,4 +1,4 @@
-use crate::cli::NumberSeparator;
+use crate::config::NumberSeparator;
 use gix::date::Time;
 use num_format::ToFormattedString;
 use owo_colors::{DynColors, Style};

@@ -1,4 +1,4 @@
-use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+use crate::{config::NumberSeparator, info::utils::info_field::InfoField};
 use anyhow::Result;
 use gix::{bstr::ByteSlice, Repository};
 use onefetch_manifest::Manifest;
@@ -13,8 +13,8 @@ pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_branches: usize,
     pub number_of_tags: usize,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
+    pub number_separator: NumberSeparator,
+    pub separator: String,
 }
 
 impl ProjectInfo {
@@ -23,6 +23,7 @@ impl ProjectInfo {
         repo_url: &str,
         manifest: Option<&Manifest>,
         number_separator: NumberSeparator,
+        separator: String,
     ) -> Result<Self> {
         let repo_name = get_repo_name(repo_url, manifest)?;
         let number_of_branches = get_number_of_branches(repo)?;
@@ -32,6 +33,7 @@ impl ProjectInfo {
             number_of_branches,
             number_of_tags,
             number_separator,
+            separator,
         })
     }
 }
@@ -127,6 +129,7 @@ mod test {
             number_of_branches: 3,
             number_of_tags: 2,
             number_separator: NumberSeparator::Plain,
+            separator: "->".to_string(),
         };
 
         assert_eq!(
@@ -142,6 +145,7 @@ mod test {
             number_of_branches: 0,
             number_of_tags: 0,
             number_separator: NumberSeparator::Plain,
+            separator: "->".to_string(),
         };
 
         assert_eq!(project_info.value(), "onefetch".to_string());
@@ -154,6 +158,7 @@ mod test {
             number_of_branches: 3,
             number_of_tags: 0,
             number_separator: NumberSeparator::Plain,
+            separator: "->".to_string(),
         };
 
         assert_eq!(project_info.value(), "onefetch (3 branches)".to_string());
@@ -166,6 +171,7 @@ mod test {
             number_of_branches: 0,
             number_of_tags: 2,
             number_separator: NumberSeparator::Plain,
+            separator: "->".to_string(),
         };
 
         assert_eq!(project_info.value(), "onefetch (2 tags)".to_string());
@@ -178,6 +184,7 @@ mod test {
             number_of_branches: 1,
             number_of_tags: 1,
             number_separator: NumberSeparator::Plain,
+            separator: "->".to_string(),
         };
 
         assert_eq!(
@@ -201,6 +208,7 @@ mod test {
             number_of_branches: 0,
             number_of_tags: 0,
             number_separator: NumberSeparator::Plain,
+            separator: "->".to_string(),
         };
 
         assert!(project_info.value().is_empty());

@@ -21,7 +21,9 @@ use self::url::get_repo_url;
 use self::url::UrlInfo;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
-use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
+use crate::cli::{is_truecolor_terminal, CliOptions, When};
+use crate::config::Configuration;
+use crate::config::NumberSeparator;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -65,6 +67,8 @@ pub struct Info {
     #[serde(skip_serializing)]
     no_bold: bool,
     #[serde(skip_serializing)]
+    separator: String,
+    #[serde(skip_serializing)]
     pub dominant_language: Language,
     #[serde(skip_serializing)]
     pub ascii_colors: Vec<DynColors>,
@@ -86,7 +90,7 @@ impl std::fmt::Display for Info {
 
         //Info lines
         for info_field in self.info_fields.iter() {
-            info_field.write_styled(f, self.no_bold, &self.text_colors)?;
+            info_field.write_styled(f, self.no_bold, &self.text_colors, &self.separator)?;
         }
 
         //Palette
@@ -109,7 +113,7 @@ impl std::fmt::Display for Info {
     }
 }
 
-pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
+pub fn build_info(cli_options: &CliOptions, config_options: &Configuration) -> Result<Info> {
     let mut repo = gix::ThreadSafeRepository::discover_opts(
         &cli_options.input,
         gix::discover::upwards::Options {
@@ -170,7 +174,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
 
     let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
     let no_bold = cli_options.text_formatting.no_bold;
-    let number_separator = cli_options.text_formatting.number_separator;
     let iso_time = cli_options.text_formatting.iso_time;
     let number_of_languages_to_display = cli_options.info.number_of_languages;
     let number_of_authors_to_display = cli_options.info.number_of_authors;
@@ -178,9 +181,19 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let globs_to_exclude = &cli_options.info.exclude;
     let show_email = cli_options.info.email;
 
+    // Values from config
+    let separator = &config_options.separator.clone().unwrap_or_default();
+    let number_separator = config_options.number_separator.unwrap_or_default();
+
     Ok(InfoBuilder::new(cli_options)
-        .title(&repo, no_bold, &text_colors)
-        .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
+        .title(separator, &repo, no_bold, &text_colors)
+        .project(
+            &repo,
+            &repo_url,
+            manifest.as_ref(),
+            separator.to_string(),
+            number_separator,
+        )?
         .description(manifest.as_ref())
         .head(&repo)?
         .pending(&repo)?
@@ -191,7 +204,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             true_color,
             number_of_languages_to_display,
             &text_colors,
-            cli_options,
+            config_options,
         )
         .dependencies(manifest.as_ref(), number_separator)
         .authors(
@@ -199,6 +212,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             number_of_authors_to_display,
             show_email,
             number_separator,
+            config_options,
         )
         .last_change(&git_metrics, iso_time)
         .contributors(&git_metrics, number_of_authors_to_display, number_separator)
@@ -209,11 +223,18 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             number_of_file_churns_to_display,
             globs_to_exclude,
             number_separator,
+            config_options,
         )?
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
-        .build(cli_options, text_colors, dominant_language, ascii_colors))
+        .build(
+            config_options,
+            cli_options,
+            text_colors,
+            dominant_language,
+            ascii_colors,
+        ))
 }
 
 impl InfoBuilder {
@@ -226,12 +247,19 @@ impl InfoBuilder {
         }
     }
 
-    fn title(mut self, repo: &Repository, no_bold: bool, text_colors: &TextColors) -> Self {
+    fn title(
+        mut self,
+        separator: &String,
+        repo: &Repository,
+        no_bold: bool,
+        text_colors: &TextColors,
+    ) -> Self {
         if !self.no_title {
             let title = Title::new(
                 repo,
                 text_colors.title,
-                text_colors.tilde,
+                separator.to_string(),
+                text_colors.separator,
                 text_colors.underline,
                 !no_bold,
             );
@@ -269,10 +297,11 @@ impl InfoBuilder {
         repo: &Repository,
         repo_url: &str,
         manifest: Option<&Manifest>,
+        separator: String,
         number_separator: NumberSeparator,
     ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Project) {
-            let project = ProjectInfo::new(repo, repo_url, manifest, number_separator)?;
+            let project = ProjectInfo::new(repo, repo_url, manifest, number_separator, separator)?;
             self.info_fields.push(Box::new(project));
         }
         Ok(self)
@@ -324,7 +353,7 @@ impl InfoBuilder {
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
-        cli_options: &CliOptions,
+        config_options: &Configuration,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
             let languages = LanguagesInfo::new(
@@ -332,7 +361,9 @@ impl InfoBuilder {
                 true_color,
                 number_of_languages,
                 text_colors.info,
-                cli_options.visuals.nerd_fonts,
+                config_options.nerd_fonts.unwrap_or_default(),
+                config_options.percent_verbosity.unwrap_or_default(),
+                config_options.separator.clone().unwrap_or_default().len(),
             );
             self.info_fields.push(Box::new(languages));
         }
@@ -357,6 +388,7 @@ impl InfoBuilder {
         number_of_authors_to_display: usize,
         show_email: bool,
         number_separator: NumberSeparator,
+        config_options: &Configuration,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Authors) {
             let authors = AuthorsInfo::new(
@@ -365,6 +397,7 @@ impl InfoBuilder {
                 number_of_authors_to_display,
                 show_email,
                 number_separator,
+                config_options.separator.clone().unwrap_or_default().len(),
             );
             self.info_fields.push(Box::new(authors));
         }
@@ -415,6 +448,7 @@ impl InfoBuilder {
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
         number_separator: NumberSeparator,
+        config_options: &Configuration,
     ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Churn) {
             let churn = ChurnInfo::new(
@@ -423,6 +457,7 @@ impl InfoBuilder {
                 number_of_file_churns_to_display,
                 globs_to_exclude,
                 number_separator,
+                config_options.separator.clone().unwrap_or_default().len(),
             )?;
             self.info_fields.push(Box::new(churn));
         }
@@ -443,6 +478,7 @@ impl InfoBuilder {
 
     fn build(
         self,
+        config_options: &Configuration,
         cli_options: &CliOptions,
         text_colors: TextColors,
         dominant_language: Language,
@@ -456,6 +492,7 @@ impl InfoBuilder {
             ascii_colors,
             no_color_palette: cli_options.visuals.no_color_palette,
             no_bold: cli_options.text_formatting.no_bold,
+            separator: config_options.separator.clone().unwrap_or_default(),
         }
     }
 }

@@ -1,5 +1,5 @@
 use super::utils::info_field::InfoField;
-use crate::{cli::NumberSeparator, info::utils::format_number};
+use crate::{config::NumberSeparator, info::utils::format_number};
 use anyhow::Result;
 use gix::bstr::BString;
 use globset::{Glob, GlobSetBuilder};
@@ -44,6 +44,7 @@ impl std::fmt::Display for FileChurn {
 pub struct ChurnInfo {
     pub file_churns: Vec<FileChurn>,
     pub churn_pool_size: usize,
+    separator_length: usize,
 }
 
 impl ChurnInfo {
@@ -53,6 +54,7 @@ impl ChurnInfo {
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
         number_separator: NumberSeparator,
+        separator_length: usize,
     ) -> Result<Self> {
         let file_churns = compute_file_churns(
             number_of_commits_by_file_path,
@@ -64,6 +66,7 @@ impl ChurnInfo {
         Ok(Self {
             file_churns,
             churn_pool_size,
+            separator_length,
         })
     }
 }
@@ -105,7 +108,7 @@ impl std::fmt::Display for ChurnInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut churn_info = String::new();
 
-        let pad = self.title().len() + 2;
+        let pad = self.title().len() + self.separator_length + 1;
 
         for (i, file_churn) in self.file_churns.iter().enumerate() {
             if i == 0 {
@@ -165,6 +168,7 @@ mod tests {
         let churn_info = ChurnInfo {
             file_churns: vec![file_churn_1, file_churn_2],
             churn_pool_size: 5,
+            separator_length: 1,
         };
 
         assert!(churn_info
