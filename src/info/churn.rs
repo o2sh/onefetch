@@ -218,9 +218,9 @@ mod tests {
             number_separator,
         )?;
         let expected = vec![
-            FileChurn::new(String::from("path/to/file4.txt"), 7, number_separator),
-            FileChurn::new(String::from("path/to/file3.txt"), 3, number_separator),
-            FileChurn::new(String::from("path/to/file1.txt"), 2, number_separator),
+            FileChurn::new(String::from("file4.txt"), 7, number_separator),
+            FileChurn::new(String::from("file3.txt"), 3, number_separator),
+            FileChurn::new(String::from("file1.txt"), 2, number_separator),
         ];
         assert_eq!(actual, expected);
         Ok(())
