@@ -32,7 +32,7 @@ exclude = ["docs/vercel/*"]
 keywords = ["git", "cli", "terminal"]
 name = "onefetch"
 homepage = "https://onefetch.dev"
-rust-version = "1.81.0"
+rust-version = "1.82.0"
 
 [dependencies]
 anyhow.workspace = true
