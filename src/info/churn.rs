@@ -1,8 +1,8 @@
 use super::utils::info_field::InfoField;
 use crate::{cli::NumberSeparator, info::utils::format_number};
-use anyhow::Result;
+use anyhow::{Context, Result};
 use gix::bstr::BString;
-use globset::{Glob, GlobSetBuilder};
+use globset::{GlobSetBuilder, Glob as GlobPattern};
 use serde::Serialize;
 use std::{collections::HashMap, fmt::Write};
 
@@ -77,7 +77,7 @@ fn compute_file_churns(
     // Build a glob matcher for all the patterns to exclude
     let mut builder = GlobSetBuilder::new();
     for pattern in globs_to_exclude {
-        builder.add(glob::Pattern::new(pattern)?);
+        builder.add(GlobPattern::new(pattern)?);
     }
     let matcher = builder.build().context("Failed to build glob matcher for file exclusions")?;
 
