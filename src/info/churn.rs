@@ -16,6 +16,7 @@ pub struct FileChurn {
 }
 
 impl FileChurn {
+    #[allow(dead_code)]
     pub fn new(
         file_path: String,
         nbr_of_commits: usize,
