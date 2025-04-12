@@ -22,7 +22,12 @@ pub fn get_loc_by_language_sorted(
     let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
 
     let loc_by_language =
-        get_loc_by_language(&locs).context("Could not find any source code in this repository")?;
+        get_loc_by_language(&locs).with_context(|| {
+            format!(
+                "Could not find any source code in this repository at path '{}'. Try using --include-hidden if your files are hidden, or check your exclude patterns.", 
+                dir.display()
+            )
+        })?;
 
     let loc_by_language_sorted = sort_by_loc(loc_by_language);
 

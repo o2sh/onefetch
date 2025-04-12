@@ -74,31 +74,35 @@ fn compute_file_churns(
     globs_to_exclude: &[String],
     number_separator: NumberSeparator,
 ) -> Result<Vec<FileChurn>> {
+    // Build a glob matcher for all the patterns to exclude
     let mut builder = GlobSetBuilder::new();
-    for glob in globs_to_exclude {
-        builder.add(Glob::new(glob)?);
+    for pattern in globs_to_exclude {
+        builder.add(glob::Pattern::new(pattern)?);
     }
-    let glob_set = builder.build()?;
+    let matcher = builder.build().context("Failed to build glob matcher for file exclusions")?;
+
     let mut number_of_commits_by_file_path_sorted = Vec::from_iter(number_of_commits_by_file_path);
+    number_of_commits_by_file_path_sorted.sort_by(|(_, a), (_, b)| b.cmp(a));
 
-    number_of_commits_by_file_path_sorted
-        .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
-
-    Ok(number_of_commits_by_file_path_sorted
+    let file_churns = number_of_commits_by_file_path_sorted
         .into_iter()
-        .filter_map(|(file_path, nbr_of_commits)| {
-            if !glob_set.is_match(file_path.to_string()) {
-                Some(FileChurn::new(
-                    file_path.to_string(),
-                    *nbr_of_commits,
-                    number_separator,
-                ))
-            } else {
-                None
+        .filter_map(|(file_path, count)| {
+            let path = std::str::from_utf8(&file_path).ok()?;
+            if matcher.is_match(path) {
+                return None;
             }
+
+            let file_name = path.split('/').last().unwrap_or(path);
+            Some(FileChurn {
+                file_path: file_name.to_string(),
+                nbr_of_commits: *count,
+                number_separator,
+            })
         })
         .take(number_of_file_churns_to_display)
-        .collect())
+        .collect();
+
+    Ok(file_churns)
 }
 
 impl std::fmt::Display for ChurnInfo {
