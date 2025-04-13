@@ -16,7 +16,6 @@ pub struct FileChurn {
 }
 
 impl FileChurn {
-    #[allow(dead_code)]
     pub fn new(
         file_path: String,
         nbr_of_commits: usize,
@@ -94,11 +93,11 @@ fn compute_file_churns(
             }
 
             let file_name = path.split('/').last().unwrap_or(path);
-            Some(FileChurn {
-                file_path: file_name.to_string(),
-                nbr_of_commits: *count,
+            Some(FileChurn::new(
+                file_name.to_string(),
+                *count,
                 number_separator,
-            })
+            ))
         })
         .take(number_of_file_churns_to_display)
         .collect();

@@ -24,7 +24,7 @@ pub fn get_loc_by_language_sorted(
     let loc_by_language =
         get_loc_by_language(&locs).with_context(|| {
             format!(
-                "Could not find any source code in this repository at path '{}'. Try using --include-hidden if your files are hidden, or check your exclude patterns.", 
+                "Could not find any source code in this repository at path '{}'. Some language types like JSON may be excluded by default - try using the '-T data' option to include data languages.", 
                 dir.display()
             )
         })?;
