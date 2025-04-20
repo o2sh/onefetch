@@ -472,7 +472,7 @@ fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
 
 pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
     Ok(repo
-        .work_dir()
+        .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
 }

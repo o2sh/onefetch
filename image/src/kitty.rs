@@ -31,11 +31,7 @@ impl KittyBackend {
 
         // generate red rgba test image
         let mut test_image = Vec::<u8>::with_capacity(32 * 32 * 4);
-        test_image.extend(
-            std::iter::repeat([255, 0, 0, 255].iter())
-                .take(32 * 32)
-                .flatten(),
-        );
+        test_image.extend(std::iter::repeat_n([255, 0, 0, 255].iter(), 32 * 32).flatten());
 
         // print the test image with the action set to query
         print!(
