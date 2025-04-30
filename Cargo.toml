@@ -41,14 +41,14 @@ byte-unit = "5.1.6"
 clap.workspace = true
 clap_complete = "4.5.47"
 crossbeam-channel = "0.5.15"
-gix = { version = "0.71.0", default-features = false, features = [
+gix = { version = "0.72.1", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
     "index",
     "status",
 ] }
-gix-features = { version = "0.41.0", features = ["zlib-ng"] }
+gix-features = { version = "0.42.1", features = ["zlib-ng"] }
 globset = "0.4.16"
 human-panic = "2.0.2"
 image.workspace = true
@@ -71,7 +71,7 @@ typetag = "0.2"
 
 [dev-dependencies]
 criterion = "0.5.1"
-gix-testtools = "0.15.0"
+gix-testtools = "0.16.1"
 insta = { version = "1.42.2", features = ["json", "redactions"] }
 rstest = "0.25.0"
 
