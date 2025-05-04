@@ -22,6 +22,7 @@ use self::url::UrlInfo;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
 use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
+use crate::config::ConfigOptions;
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
@@ -109,7 +110,7 @@ impl std::fmt::Display for Info {
     }
 }
 
-pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
+pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> Result<Info> {
     let mut repo = gix::ThreadSafeRepository::discover_opts(
         &cli_options.input,
         gix::discover::upwards::Options {
@@ -178,7 +179,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let globs_to_exclude = &cli_options.info.exclude;
     let show_email = cli_options.info.email;
 
-    Ok(InfoBuilder::new(cli_options)
+    Ok(InfoBuilder::new(cli_options, config_options)
         .title(&repo, no_bold, &text_colors)
         .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
         .description(manifest.as_ref())
@@ -217,10 +218,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
 }
 
 impl InfoBuilder {
-    fn new(cli_options: &CliOptions) -> Self {
+    fn new(cli_options: &CliOptions, config_options: &ConfigOptions) -> Self {
         Self {
             title: None,
             info_fields: Vec::new(),
+            // I have totally NO idea how to properly override values
+            // if cli_options.info.disabled_fields is NOT type of Option<T>
             disabled_fields: cli_options.info.disabled_fields.clone(),
             no_title: cli_options.info.no_title,
         }

@@ -4,6 +4,7 @@ use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
+use onefetch::config::ConfigOptions;
 use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
@@ -30,7 +31,15 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let info = build_info(&cli_options)?;
+    if cli_options.config.generate_config {
+        // @spenserblack fixme pls
+        // it complans if i add .display(), and complains if i remove .display()
+        return ConfigOptions::write_default(cli_options.config.config_path.display());
+    }
+
+    let config_options = ConfigOptions::read(&cli_options.config.config_path);
+
+    let info = build_info(&cli_options, &config_options)?;
 
     let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
 
