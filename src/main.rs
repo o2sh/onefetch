@@ -32,12 +32,10 @@ fn main() -> Result<()> {
     }
 
     if cli_options.config.generate_config {
-        // @spenserblack fixme pls
-        // it complans if i add .display(), and complains if i remove .display()
-        return ConfigOptions::write_default(cli_options.config.config_path.display());
+        return ConfigOptions::write_default(cli_options.config.config_path.unwrap_or_default());
     }
 
-    let config_options = ConfigOptions::read(&cli_options.config.config_path);
+    let config_options = ConfigOptions::read(&cli_options.config.config_path.clone().unwrap_or_default());
 
     let info = build_info(&cli_options, &config_options)?;
 

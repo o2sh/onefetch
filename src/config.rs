@@ -39,16 +39,23 @@ impl ConfigOptions {
     // I mean to write disabled_fields with --disabled-fields flag
     where
         // Nah this feels really bad but rust-analyser told me to add ' + std::fmt::Display'
-        P: AsRef<Path> + std::fmt::Display,
+        P: AsRef<Path>,
     {
         // I dont think this can panic so i simply unwrapped it
         let defaults = toml::to_string(&Self::default()).unwrap();
         match fs::create_dir_all(&path) {
             Ok(_) => match fs::write(&path, &defaults) {
-                Ok(_) => println!("Default config file created at: {path}"),
-                Err(e) => eprintln!("Failed to write default config file: {}", e),
+                Ok(_) => {
+                    let path = path.as_ref().display();
+                    println!("Default config file created at: {path}")
+                }
+                Err(e) => {
+                    let path = path.as_ref().display();
+                    eprintln!("Failed to write default config file at {path}: {e}")
+                }
             },
             Err(e) => {
+                let path = path.as_ref().display();
                 eprintln!("Failed to create config directory {path}: {e}");
             }
         }

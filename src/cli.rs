@@ -220,7 +220,7 @@ pub struct VisualsCliOptions {
 pub struct ConfigCliOptions {
     /// Path to the config file
     #[arg(long, value_hint = ValueHint::FilePath)]
-    pub config_path: PathBuf,
+    pub config_path: Option<PathBuf>,
     /// Creates a default config file
     /// Writes to $XDG_CONFIG_HOME/onefetch/config.toml but can be overridden with --config-path
     #[arg(long)]
@@ -321,7 +321,7 @@ impl Default for ConfigCliOptions {
     fn default() -> Self {
         ConfigCliOptions {
             // Not sure about unwrap
-            config_path: dirs::config_dir().unwrap().join("onefetch/config.toml"),
+            config_path: Some(dirs::config_dir().unwrap().join("onefetch/config.toml")),
             generate_config: false,
         }
     }
