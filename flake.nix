@@ -22,19 +22,25 @@
         inherit (pkgs) lib;
 
         craneLib = crane.mkLib pkgs;
-        src = craneLib.cleanCargoSource ./.;
+        src = ./.;
 
         # Common arguments can be set here to avoid repeating them later
         commonArgs = {
           inherit src;
           strictDeps = true;
 
-          buildInputs = [
-            # Add additional build inputs here
-          ] ++ lib.optionals pkgs.stdenv.isDarwin [
-            # Additional darwin specific inputs can be set here
-            pkgs.libiconv
-          ];
+          buildInputs = with pkgs;
+            [
+              # package dependencies
+              zstd
+            ] ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+              # additional dependencies on Darwin systems
+              CoreFoundation
+              libresolv
+              Security
+            ]);
+          nativeBuildInputs = with pkgs; [ cmake pkg-config ];
+          nativeCheckInputs = with pkgs; [ git ];
 
           # Additional environment variables can be set directly
           # MY_CUSTOM_VAR = "some value";
@@ -46,14 +52,12 @@
 
         # Build the actual crate itself, reusing the dependency
         # artifacts from above.
-        my-crate = craneLib.buildPackage (commonArgs // {
-          inherit cargoArtifacts;
-        });
-      in
-      {
+        onefetch =
+          craneLib.buildPackage (commonArgs // { inherit cargoArtifacts; });
+      in {
         checks = {
           # Build the crate as part of `nix flake check` for convenience
-          inherit my-crate;
+          inherit onefetch;
 
           # Run clippy (and deny all warnings) on the crate source,
           # again, reusing the dependency artifacts from above.
@@ -61,40 +65,33 @@
           # Note that this is done as a separate derivation so that
           # we can block the CI if there are issues here, but not
           # prevent downstream consumers from building our crate by itself.
-          my-crate-clippy = craneLib.cargoClippy (commonArgs // {
+          onefetch-clippy = craneLib.cargoClippy (commonArgs // {
             inherit cargoArtifacts;
             cargoClippyExtraArgs = "--all-targets -- --deny warnings";
           });
 
-          my-crate-doc = craneLib.cargoDoc (commonArgs // {
-            inherit cargoArtifacts;
-          });
+          onefetch-doc =
+            craneLib.cargoDoc (commonArgs // { inherit cargoArtifacts; });
 
           # Check formatting
-          my-crate-fmt = craneLib.cargoFmt {
-            inherit src;
-          };
+          onefetch-fmt = craneLib.cargoFmt { inherit src; };
 
-          my-crate-toml-fmt = craneLib.taploFmt {
+          onefetch-toml-fmt = craneLib.taploFmt {
             src = pkgs.lib.sources.sourceFilesBySuffices src [ ".toml" ];
             # taplo arguments can be further customized below as needed
             # taploExtraArgs = "--config ./taplo.toml";
           };
 
           # Audit dependencies
-          my-crate-audit = craneLib.cargoAudit {
-            inherit src advisory-db;
-          };
+          onefetch-audit = craneLib.cargoAudit { inherit src advisory-db; };
 
           # Audit licenses
-          my-crate-deny = craneLib.cargoDeny {
-            inherit src;
-          };
+          onefetch-deny = craneLib.cargoDeny { inherit src; };
 
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on `my-crate` if you do not want
           # the tests to run twice
-          my-crate-nextest = craneLib.cargoNextest (commonArgs // {
+          onefetch-nextest = craneLib.cargoNextest (commonArgs // {
             inherit cargoArtifacts;
             partitions = 1;
             partitionType = "count";
@@ -102,13 +99,18 @@
           });
         };
 
-        packages = {
-          default = my-crate;
+        packages = rec {
+          onefetch-debug = onefetch // {
+            cargoExtraArgs = lib.concatStringsSep " " [
+              # Just to get more human-readable look
+              "--profile dev"
+            ];
+          };
+          inherit onefetch;
+          default = onefetch-debug;
         };
 
-        apps.default = flake-utils.lib.mkApp {
-          drv = my-crate;
-        };
+        apps.default = flake-utils.lib.mkApp { drv = onefetch; };
 
         devShells.default = craneLib.devShell {
           # Inherit inputs from checks.
@@ -118,8 +120,10 @@
           # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
 
           # Extra inputs can be added here; cargo and rustc are provided by default.
-          packages = [
+          packages = with pkgs; [
             # pkgs.ripgrep
+            nixd
+            nixfmt
           ];
         };
       });
