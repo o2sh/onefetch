@@ -127,4 +127,13 @@
           ];
         };
       });
+  # Sets substituters to avoid locally building something already built
+  nixConfig = {
+    extra-substituters =
+      [ "https://crane.cachix.org" "https://cache.garnix.io" ];
+    extra-trusted-public-keys = [
+      "crane.cachix.org-1:8Scfpmn9w+hGdXH/Q9tTLiYAE/2dnJYRJP7kl80GuRk="
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+    ];
+  };
 }
