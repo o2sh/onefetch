@@ -222,7 +222,7 @@ fn should_break(
         return false;
     }
 
-    max_churn_pool_size_opt.map_or(true, |max_churn_pool_size| {
+    max_churn_pool_size_opt.is_none_or(|max_churn_pool_size| {
         number_of_diffs_computed >= max_churn_pool_size.min(total_number_of_commits)
     })
 }
