@@ -321,7 +321,7 @@ impl Default for ConfigCliOptions {
     fn default() -> Self {
         ConfigCliOptions {
             // Not sure about unwrap
-            config_path: Some(dirs::config_dir().unwrap().join("onefetch/config.toml")),
+            config_path: Some(dirs::config_dir().expect("Could not find $HOME!").join("onefetch/config.toml")),
             generate_config: false,
         }
     }

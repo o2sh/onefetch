@@ -43,7 +43,7 @@ impl ConfigOptions {
     {
         // I dont think this can panic so i simply unwrapped it
         let defaults = toml::to_string(&Self::default()).unwrap();
-        match fs::create_dir_all(&path) {
+        match fs::create_dir_all(&path.as_ref().parent().unwrap_or(Path::new("/"))) {
             Ok(_) => match fs::write(&path, &defaults) {
                 Ok(_) => {
                     let path = path.as_ref().display();
