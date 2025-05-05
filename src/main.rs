@@ -8,7 +8,6 @@ use onefetch::config::ConfigOptions;
 use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
-use std::process::exit;
 
 fn main() -> Result<()> {
     setup_panic!();
@@ -33,12 +32,22 @@ fn main() -> Result<()> {
     }
 
     if cli_options.config.generate_config {
-        // what the actual FUCK is happening here?
-        // why default path is EMPTY?
-        return ConfigOptions::write_default(&cli_options.config.config_path.unwrap_or_default());
+        return ConfigOptions::default().write(
+            &cli_options.config.config_path.unwrap_or(
+                dirs::config_dir()
+                    .expect("Could not find config dir!")
+                    .join("onefetch/config.toml"),
+            ),
+        );
     }
 
-    let config_options = ConfigOptions::read(&cli_options.config.config_path.clone().unwrap_or_default());
+    let config_options = ConfigOptions::read(
+        &cli_options.config.config_path.as_ref().unwrap_or(
+            &dirs::config_dir()
+                .expect("Could not find config dir!")
+                .join("onefetch/config.toml"),
+        ),
+    );
 
     let info = build_info(&cli_options, &config_options)?;
 

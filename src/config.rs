@@ -34,24 +34,23 @@ impl ConfigOptions {
         }
     }
 
-    pub fn write_default<P>(path: P) -> Result<()>
+    pub fn write<P>(self, path: P) -> Result<()>
     // I believe user would like to generate config with CLI flags
     // I mean to write disabled_fields with --disabled-fields flag
     where
-        // Nah this feels really bad but rust-analyser told me to add ' + std::fmt::Display'
         P: AsRef<Path>,
     {
         // I dont think this can panic so i simply unwrapped it
-        let defaults = toml::to_string(&Self::default()).unwrap();
+        let contents = toml::to_string(&self).unwrap();
         match fs::create_dir_all(&path.as_ref().parent().unwrap_or(Path::new("/"))) {
-            Ok(_) => match fs::write(&path, &defaults) {
+            Ok(_) => match fs::write(&path, &contents) {
                 Ok(_) => {
                     let path = path.as_ref().display();
-                    println!("Default config file created at: {path}")
+                    println!("Config config file created at: {path}")
                 }
                 Err(e) => {
                     let path = path.as_ref().display();
-                    eprintln!("Failed to write default config file at {path}: {e}")
+                    eprintln!("Failed to write config file at {path}: {e}")
                 }
             },
             Err(e) => {
