@@ -1,8 +1,9 @@
+use crate::config::ConfigOptions;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::builder::PossibleValuesParser;
+use clap::builder::{OsStr, PossibleValuesParser};
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
@@ -54,7 +55,8 @@ pub struct InfoCliOptions {
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = "FIELD"
+        value_name = "FIELD",
+        default_value = Vec::<String>::new().join(""),
     )]
     pub disabled_fields: Vec<InfoType>,
     /// Hides the title
@@ -219,9 +221,10 @@ pub struct VisualsCliOptions {
 #[command(next_help_heading = "CONFIG")]
 pub struct ConfigCliOptions {
     /// Path to the config file
-    #[arg(long, value_hint = ValueHint::FilePath)]
-    pub config_path: Option<PathBuf>,
+    #[arg(long, value_hint = ValueHint::FilePath, default_value = ConfigCliOptions::default().config_path.into_os_string())]
+    pub config_path: PathBuf,
     /// Creates a default config file
+    ///
     /// Writes to $XDG_CONFIG_HOME/onefetch/config.toml but can be overridden with --config-path
     #[arg(long)]
     pub generate_config: bool,
@@ -321,7 +324,9 @@ impl Default for ConfigCliOptions {
     fn default() -> Self {
         ConfigCliOptions {
             // Not sure about unwrap
-            config_path: Some(dirs::config_dir().expect("Could not find $HOME!").join("onefetch/config.toml")),
+            config_path: dirs::config_dir()
+                .expect("Could not find $HOME!")
+                .join("onefetch/config.toml"),
             generate_config: false,
         }
     }
