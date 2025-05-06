@@ -6,10 +6,8 @@ use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
 use onefetch::config::ConfigOptions;
 use onefetch::info::build_info;
-use onefetch::info::utils::info_field::InfoType;
 use onefetch::ui::printer::Printer;
 use std::io;
-use std::process::exit;
 
 fn main() -> Result<()> {
     setup_panic!();
@@ -34,20 +32,22 @@ fn main() -> Result<()> {
     }
 
     if cli_options.config.generate_config {
-        return ConfigOptions::default().write(&cli_options.config.config_path);
+        return ConfigOptions::default().write(
+            &cli_options.config.config_path.unwrap_or(
+                dirs::config_dir()
+                    .expect("Could not find config dir!")
+                    .join("onefetch/config.toml"),
+            ),
+        );
     }
 
-    let config_options = ConfigOptions::read(&cli_options.config.config_path);
-
-    {
-        let merged_disabled: Vec<InfoType> = config_options
-            .disabled_fields
-            .into_iter()
-            .chain(cli_options.info.disabled_fields)
-            .collect();
-        println!("{:?}", merged_disabled);
-        exit(0)
-    }
+    let config_options = ConfigOptions::read(
+        &cli_options.config.config_path.as_ref().unwrap_or(
+            &dirs::config_dir()
+                .expect("Could not find config dir!")
+                .join("onefetch/config.toml"),
+        ),
+    );
 
     let info = build_info(&cli_options, &config_options)?;
 
