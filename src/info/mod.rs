@@ -117,11 +117,11 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             ..Default::default()
         },
         Mapping::default(),
-    )?
+    ).with_context(|| format!("Failed to find Git repository at '{}'", cli_options.input.display()))?
     .to_thread_local();
     // Having an object cache is important for getting much better traversal and diff performance.
     repo.object_cache_size_if_unset(4 * 1024 * 1024);
-    let repo_path = get_work_dir(&repo)?;
+    let repo_path = get_work_dir(&repo).context("Failed to determine the working directory of the repository")?;
 
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
@@ -147,14 +147,14 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         &repo,
         cli_options.info.hide_token,
         cli_options.info.http_url,
-    )?;
+    ).context("Failed to determine repository URL")?;
 
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
-    )?;
+    ).context("Failed to analyze Git commit history")?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
