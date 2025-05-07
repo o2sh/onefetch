@@ -56,7 +56,7 @@ pub struct InfoCliOptions {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<InfoType>,
+    pub disabled_fields: Option<Vec<InfoType>>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -280,7 +280,7 @@ impl Default for InfoCliOptions {
             hide_token: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
-            disabled_fields: Vec::default(),
+            disabled_fields: Some(Vec::default()),
             no_title: Default::default(),
         }
     }
@@ -321,7 +321,11 @@ impl Default for ConfigCliOptions {
     fn default() -> Self {
         ConfigCliOptions {
             // Not sure about unwrap
-            config_path: Some(dirs::config_dir().expect("Could not find $HOME!").join("onefetch/config.toml")),
+            config_path: Some(
+                dirs::config_dir()
+                    .expect("Could not find $HOME!")
+                    .join("onefetch/config.toml"),
+            ),
             generate_config: false,
         }
     }
@@ -413,7 +417,7 @@ mod test {
             info: InfoCliOptions {
                 number_of_authors: 4,
                 no_merges: true,
-                disabled_fields: vec![InfoType::Version, InfoType::URL],
+                disabled_fields: vec![InfoType::Version, InfoType::URL].into(),
                 ..Default::default()
             },
             ascii: AsciiCliOptions {

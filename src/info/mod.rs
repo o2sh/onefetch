@@ -222,9 +222,11 @@ impl InfoBuilder {
         Self {
             title: None,
             info_fields: Vec::new(),
-            // I have totally NO idea how to properly override values
-            // if cli_options.info.disabled_fields is NOT type of Option<T>
-            disabled_fields: cli_options.info.disabled_fields.clone(),
+            disabled_fields: cli_options
+                .info
+                .disabled_fields
+                .clone()
+                .unwrap_or(config_options.disabled_fields.clone()),
             no_title: cli_options.info.no_title,
         }
     }
