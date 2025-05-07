@@ -10,7 +10,7 @@ use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -59,13 +59,13 @@ pub struct InfoCliOptions {
     pub disabled_fields: Option<Vec<InfoType>>,
     /// Hides the title
     #[arg(long)]
-    pub no_title: bool,
+    pub no_title: Option<bool>,
     /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
-    pub number_of_authors: usize,
+    #[arg(long, value_name = "NUM")]
+    pub number_of_authors: Option<usize>,
     /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
-    pub number_of_languages: usize,
+    #[arg(long, value_name = "NUM")]
+    pub number_of_languages: Option<usize>,
     /// Maximum NUM of file churns to be shown
     #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_file_churns: usize,
@@ -268,8 +268,8 @@ impl Default for CliOptions {
 impl Default for InfoCliOptions {
     fn default() -> Self {
         InfoCliOptions {
-            number_of_authors: 3,
-            number_of_languages: 6,
+            number_of_authors: Some(3),
+            number_of_languages: Some(6),
             number_of_file_churns: 3,
             churn_pool_size: Option::default(),
             exclude: Vec::default(),
@@ -366,15 +366,17 @@ pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Deserialize, Default)]
 pub enum When {
+    #[default]
     Auto,
     Never,
     Always,
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Deserialize, Serialize, Copy, Default)]
 pub enum NumberSeparator {
+    #[default]
     Plain,
     Comma,
     Space,

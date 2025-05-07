@@ -173,8 +173,15 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
     let no_bold = cli_options.text_formatting.no_bold;
     let number_separator = cli_options.text_formatting.number_separator;
     let iso_time = cli_options.text_formatting.iso_time;
-    let number_of_languages_to_display = cli_options.info.number_of_languages;
-    let number_of_authors_to_display = cli_options.info.number_of_authors;
+    let number_of_languages_to_display = cli_options
+        .info
+        .number_of_languages
+        .unwrap_or(config_options.number_of_languages);
+    // This looks weird i think i should refactor unwrapping
+    let number_of_authors_to_display = cli_options
+        .info
+        .number_of_authors
+        .unwrap_or(config_options.number_of_authors);
     let number_of_file_churns_to_display = cli_options.info.number_of_file_churns;
     let globs_to_exclude = &cli_options.info.exclude;
     let show_email = cli_options.info.email;
@@ -227,7 +234,7 @@ impl InfoBuilder {
                 .disabled_fields
                 .clone()
                 .unwrap_or(config_options.disabled_fields.clone()),
-            no_title: cli_options.info.no_title,
+            no_title: cli_options.info.no_title.unwrap_or(config_options.no_title),
         }
     }
 
