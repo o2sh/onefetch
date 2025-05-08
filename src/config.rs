@@ -21,7 +21,7 @@ pub struct ConfigOptions {
     #[serde(default)]
     pub number_of_languages: usize,
     #[serde(default)]
-    pub churn_pool_size: usize,
+    pub number_of_file_churns: usize,
     #[serde(default)]
     pub no_merges: bool,
     #[serde(default)]
@@ -45,11 +45,11 @@ impl Default for ConfigOptions {
             no_title: false,
             number_of_authors: 3usize,
             number_of_languages: 6usize,
-            churn_pool_size: 3usize,
+            number_of_file_churns: 3usize,
             no_merges: false,
             include_hidden: false,
             iso_time: false,
-            number_separator: NumberSeparator::Plain,
+            number_separator: NumberSeparator::default(),
             no_bold: false,
             true_color: When::Auto,
             nerd_fonts: false,

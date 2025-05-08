@@ -127,7 +127,10 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
         let language_types = cli_options.info.r#type.clone();
-        let include_hidden = cli_options.info.include_hidden;
+        let include_hidden = cli_options
+            .info
+            .include_hidden
+            .unwrap_or(config_options.include_hidden);
         let workdir = repo_path.clone();
         move || {
             langs::get_loc_by_language_sorted(
@@ -154,9 +157,17 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
         &repo,
         cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
-        cli_options.info.no_merges,
+        cli_options
+            .info
+            .no_merges
+            .unwrap_or(config_options.no_merges),
     )?;
-    let true_color = match cli_options.ascii.true_color {
+    let true_color = match cli_options
+        .ascii
+        .true_color
+        .clone()
+        .unwrap_or(config_options.true_color.clone())
+    {
         When::Always => true,
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
@@ -170,9 +181,18 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
     );
 
     let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
-    let no_bold = cli_options.text_formatting.no_bold;
-    let number_separator = cli_options.text_formatting.number_separator;
-    let iso_time = cli_options.text_formatting.iso_time;
+    let no_bold = cli_options
+        .text_formatting
+        .no_bold
+        .unwrap_or(config_options.no_bold);
+    let number_separator = cli_options
+        .text_formatting
+        .number_separator
+        .unwrap_or(config_options.number_separator);
+    let iso_time = cli_options
+        .text_formatting
+        .iso_time
+        .unwrap_or(config_options.iso_time);
     let number_of_languages_to_display = cli_options
         .info
         .number_of_languages
@@ -182,9 +202,16 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
         .info
         .number_of_authors
         .unwrap_or(config_options.number_of_authors);
-    let number_of_file_churns_to_display = cli_options.info.number_of_file_churns;
+    let number_of_file_churns_to_display = cli_options
+        .info
+        .number_of_file_churns
+        .unwrap_or(config_options.number_of_file_churns);
     let globs_to_exclude = &cli_options.info.exclude;
     let show_email = cli_options.info.email;
+    let nerd_fonts = cli_options
+        .visuals
+        .nerd_fonts
+        .unwrap_or(config_options.nerd_fonts);
 
     Ok(InfoBuilder::new(cli_options, config_options)
         .title(&repo, no_bold, &text_colors)
@@ -199,7 +226,7 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
             true_color,
             number_of_languages_to_display,
             &text_colors,
-            cli_options,
+            nerd_fonts,
         )
         .dependencies(manifest.as_ref(), number_separator)
         .authors(
@@ -221,7 +248,13 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
         .loc(&loc_by_language, number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
-        .build(cli_options, text_colors, dominant_language, ascii_colors))
+        .build(
+            cli_options,
+            no_bold,
+            text_colors,
+            dominant_language,
+            ascii_colors,
+        ))
 }
 
 impl InfoBuilder {
@@ -336,7 +369,7 @@ impl InfoBuilder {
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
-        cli_options: &CliOptions,
+        nerd_fonts: bool,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
             let languages = LanguagesInfo::new(
@@ -344,7 +377,7 @@ impl InfoBuilder {
                 true_color,
                 number_of_languages,
                 text_colors.info,
-                cli_options.visuals.nerd_fonts,
+                nerd_fonts,
             );
             self.info_fields.push(Box::new(languages));
         }
@@ -456,6 +489,7 @@ impl InfoBuilder {
     fn build(
         self,
         cli_options: &CliOptions,
+        no_bold: bool,
         text_colors: TextColors,
         dominant_language: Language,
         ascii_colors: Vec<DynColors>,
@@ -467,7 +501,7 @@ impl InfoBuilder {
             dominant_language,
             ascii_colors,
             no_color_palette: cli_options.visuals.no_color_palette,
-            no_bold: cli_options.text_formatting.no_bold,
+            no_bold: no_bold,
         }
     }
 }
