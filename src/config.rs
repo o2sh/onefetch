@@ -34,3 +34,22 @@ pub struct ConfigOptions {
     #[serde(default)]
     pub nerd_fonts: bool,
 }
+
+impl Default for ConfigOptions {
+    fn default() -> Self {
+        Self {
+            disabled_fields: vec![],
+            no_title: false,
+            number_of_authors: 3usize,
+            number_of_languages: 6usize,
+            number_of_file_churns: 3usize,
+            no_merges: false,
+            include_hidden: false,
+            iso_time: false,
+            number_separator: NumberSeparator::default(),
+            no_bold: false,
+            true_color: When::Auto,
+            nerd_fonts: false,
+        }
+    }
+}
