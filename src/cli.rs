@@ -37,6 +37,8 @@ pub struct CliOptions {
     #[command(flatten)]
     pub visuals: VisualsCliOptions,
     #[command(flatten)]
+    pub config: ConfigCliOptions,
+    #[command(flatten)]
     pub developer: DeveloperCliOptions,
     #[command(flatten)]
     pub other: OtherCliOptions,
@@ -213,6 +215,18 @@ pub struct VisualsCliOptions {
     pub nerd_fonts: bool,
 }
 
+#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[command(next_help_heading = "CONFIG")]
+pub struct ConfigCliOptions {
+    /// Path to the config file
+    #[arg(long, value_hint = ValueHint::FilePath)]
+    pub config_path: Option<PathBuf>,
+    /// Creates a default config file
+    /// Writes to $XDG_CONFIG_HOME/onefetch/config.toml but can be overridden with --config-path
+    #[arg(long)]
+    pub generate_config: bool,
+}
+
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "DEVELOPER")]
 pub struct DeveloperCliOptions {
@@ -244,6 +258,7 @@ impl Default for CliOptions {
             visuals: VisualsCliOptions::default(),
             ascii: AsciiCliOptions::default(),
             image: ImageCliOptions::default(),
+            config: ConfigCliOptions::default(),
             developer: DeveloperCliOptions::default(),
             other: OtherCliOptions::default(),
         }
@@ -298,6 +313,20 @@ impl Default for ImageCliOptions {
             image: Option::default(),
             image_protocol: Default::default(),
             color_resolution: 16,
+        }
+    }
+}
+
+impl Default for ConfigCliOptions {
+    fn default() -> Self {
+        ConfigCliOptions {
+            // Not sure about unwrap
+            config_path: Some(
+                dirs::config_dir()
+                    .expect("Could not find $HOME!")
+                    .join("onefetch/config.toml"),
+            ),
+            generate_config: false,
         }
     }
 }
