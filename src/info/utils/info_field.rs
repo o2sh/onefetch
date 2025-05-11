@@ -75,6 +75,7 @@ pub enum InfoType {
     LinesOfCode,
     Size,
     License,
+    None,
 }
 
 #[cfg(test)]

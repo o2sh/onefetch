@@ -56,19 +56,19 @@ pub struct InfoCliOptions {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<InfoType>,
+    pub disabled_fields: Option<Vec<InfoType>>,
     /// Hides the title
     #[arg(long)]
-    pub no_title: bool,
+    pub no_title: Option<bool>,
     /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
-    pub number_of_authors: usize,
+    #[arg(long, value_name = "NUM")]
+    pub number_of_authors: Option<usize>,
     /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
-    pub number_of_languages: usize,
+    #[arg(long, value_name = "NUM")]
+    pub number_of_languages: Option<usize>,
     /// Maximum NUM of file churns to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
-    pub number_of_file_churns: usize,
+    #[arg(long, value_name = "NUM")]
+    pub number_of_file_churns: Option<usize>,
     /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
@@ -89,7 +89,7 @@ pub struct InfoCliOptions {
     pub no_bots: Option<MyRegex>,
     /// Ignores merge commits
     #[arg(long)]
-    pub no_merges: bool,
+    pub no_merges: Option<bool>,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -101,7 +101,7 @@ pub struct InfoCliOptions {
     pub hide_token: bool,
     /// Count hidden files and directories
     #[arg(long)]
-    pub include_hidden: bool,
+    pub include_hidden: Option<bool>,
     /// Filters output by language type
     #[arg(
         long,
@@ -147,7 +147,7 @@ pub struct AsciiCliOptions {
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
     #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
-    pub true_color: When,
+    pub true_color: Option<When>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
@@ -191,13 +191,13 @@ pub struct TextFormattingCliOptions {
     pub text_colors: Vec<u8>,
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
-    pub iso_time: bool,
+    pub iso_time: Option<bool>,
     /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
-    pub number_separator: NumberSeparator,
+    #[arg(long, value_name = "SEPARATOR", value_enum)]
+    pub number_separator: Option<NumberSeparator>,
     /// Turns off bold formatting
     #[arg(long)]
-    pub no_bold: bool,
+    pub no_bold: Option<bool>,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "VISUALS")]
@@ -212,7 +212,7 @@ pub struct VisualsCliOptions {
     ///
     /// Replaces language chips with Nerd Font icons
     #[arg(long)]
-    pub nerd_fonts: bool,
+    pub nerd_fonts: Option<bool>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
@@ -268,9 +268,9 @@ impl Default for CliOptions {
 impl Default for InfoCliOptions {
     fn default() -> Self {
         InfoCliOptions {
-            number_of_authors: 3,
-            number_of_languages: 6,
-            number_of_file_churns: 3,
+            number_of_authors: Some(3),
+            number_of_languages: Some(6),
+            number_of_file_churns: Some(3),
             churn_pool_size: Option::default(),
             exclude: Vec::default(),
             no_bots: Option::default(),
@@ -280,7 +280,7 @@ impl Default for InfoCliOptions {
             hide_token: Default::default(),
             include_hidden: Default::default(),
             r#type: vec![LanguageType::Programming, LanguageType::Markup],
-            disabled_fields: Vec::default(),
+            disabled_fields: Some(Vec::default()),
             no_title: Default::default(),
         }
     }
@@ -291,7 +291,7 @@ impl Default for TextFormattingCliOptions {
         TextFormattingCliOptions {
             text_colors: Default::default(),
             iso_time: Default::default(),
-            number_separator: NumberSeparator::Plain,
+            number_separator: Some(NumberSeparator::Plain),
             no_bold: Default::default(),
         }
     }
@@ -303,7 +303,7 @@ impl Default for AsciiCliOptions {
             ascii_input: Option::default(),
             ascii_colors: Vec::default(),
             ascii_language: Option::default(),
-            true_color: When::Auto,
+            true_color: Some(When::Auto),
         }
     }
 }
@@ -418,8 +418,8 @@ mod test {
             input: PathBuf::from("/tmp/folder"),
             info: InfoCliOptions {
                 number_of_authors: 4,
-                no_merges: true,
-                disabled_fields: vec![InfoType::Version, InfoType::URL],
+                no_merges: Some(true),
+                disabled_fields: vec![InfoType::Version, InfoType::URL].into(),
                 ..Default::default()
             },
             ascii: AsciiCliOptions {
