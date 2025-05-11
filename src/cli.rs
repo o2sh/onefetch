@@ -417,7 +417,7 @@ mod test {
         let config: CliOptions = CliOptions {
             input: PathBuf::from("/tmp/folder"),
             info: InfoCliOptions {
-                number_of_authors: 4,
+                number_of_authors: Some(4),
                 no_merges: Some(true),
                 disabled_fields: vec![InfoType::Version, InfoType::URL].into(),
                 ..Default::default()

@@ -1,6 +1,7 @@
 use anyhow::Result;
 use gix::{open, Repository, ThreadSafeRepository};
 use onefetch::cli::{CliOptions, InfoCliOptions, TextFormattingCliOptions};
+use onefetch::config::ConfigOptions;
 use onefetch::info::{build_info, get_work_dir};
 
 fn repo(name: &str) -> Result<Repository> {
@@ -43,12 +44,13 @@ fn test_repo() -> Result<()> {
             ..Default::default()
         },
         text_formatting: TextFormattingCliOptions {
-            iso_time: true,
+            iso_time: Some(true),
             ..Default::default()
         },
         ..Default::default()
     };
-    let info = build_info(&config)?;
+    let toml = ConfigOptions::default();
+    let info = build_info(&config, &toml)?;
     insta::assert_json_snapshot!(
         info,
         {
@@ -67,7 +69,8 @@ fn test_repo_without_remote() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = build_info(&config);
+    let toml = ConfigOptions::default();
+    let info = build_info(&config, &toml);
     assert!(info.is_ok());
 
     Ok(())
@@ -80,7 +83,8 @@ fn test_partial_repo() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let toml = ConfigOptions::default();
+    let _info = build_info(&config, &toml).expect("no error");
     Ok(())
 }
 
@@ -91,6 +95,7 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let toml = ConfigOptions::default();
+    let _info = build_info(&config, &toml).expect("no error");
     Ok(())
 }
