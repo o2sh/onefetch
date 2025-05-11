@@ -10,7 +10,7 @@ use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
 use regex::Regex;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -366,15 +366,17 @@ pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Deserialize, Default)]
 pub enum When {
+    #[default]
     Auto,
     Never,
     Always,
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Deserialize, Serialize, Copy, Default)]
 pub enum NumberSeparator {
+    #[default]
     Plain,
     Comma,
     Space,
