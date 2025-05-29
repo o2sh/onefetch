@@ -62,9 +62,8 @@
   <h1>Onefetch</h1>
   <p>
     <small>
-      <a href="https://github.com/o2sh/onefetch/wiki">wiki</a> |
-      <a href="https://github.com/o2sh/onefetch/tree/main/docs/vercel"
-        >github</a>
+      <a href="https://github.com/o2sh/onefetch">github</a> |
+      <a href="https://github.com/o2sh/onefetch/wiki">wiki</a>
       | built with ❤ by
       <a href="https://github.com/spenserblack">@spenserblack</a> and
       <a href="https://github.com/o2sh">@o2sh</a></small>
