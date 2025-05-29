@@ -1,8 +1,8 @@
 use super::utils::info_field::InfoField;
 use crate::{cli::NumberSeparator, info::utils::format_number};
-use anyhow::{Context, Result};
+use anyhow::Result;
 use gix::bstr::BString;
-use globset::{GlobSetBuilder, Glob as GlobPattern};
+use globset::{Glob, GlobSetBuilder};
 use serde::Serialize;
 use std::{collections::HashMap, fmt::Write};
 
@@ -74,35 +74,31 @@ fn compute_file_churns(
     globs_to_exclude: &[String],
     number_separator: NumberSeparator,
 ) -> Result<Vec<FileChurn>> {
-    // Build a glob matcher for all the patterns to exclude
     let mut builder = GlobSetBuilder::new();
-    for pattern in globs_to_exclude {
-        builder.add(GlobPattern::new(pattern)?);
+    for glob in globs_to_exclude {
+        builder.add(Glob::new(glob)?);
     }
-    let matcher = builder.build().context("Failed to build glob matcher for file exclusions")?;
-
+    let glob_set = builder.build()?;
     let mut number_of_commits_by_file_path_sorted = Vec::from_iter(number_of_commits_by_file_path);
-    number_of_commits_by_file_path_sorted.sort_by(|(_, a), (_, b)| b.cmp(a));
 
-    let file_churns = number_of_commits_by_file_path_sorted
+    number_of_commits_by_file_path_sorted
+        .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+
+    Ok(number_of_commits_by_file_path_sorted
         .into_iter()
-        .filter_map(|(file_path, count)| {
-            let path = std::str::from_utf8(&file_path).ok()?;
-            if matcher.is_match(path) {
-                return None;
+        .filter_map(|(file_path, nbr_of_commits)| {
+            if !glob_set.is_match(file_path.to_string()) {
+                Some(FileChurn::new(
+                    file_path.to_string(),
+                    *nbr_of_commits,
+                    number_separator,
+                ))
+            } else {
+                None
             }
-
-            let file_name = path.split('/').last().unwrap_or(path);
-            Some(FileChurn::new(
-                file_name.to_string(),
-                *count,
-                number_separator,
-            ))
         })
         .take(number_of_file_churns_to_display)
-        .collect();
-
-    Ok(file_churns)
+        .collect())
 }
 
 impl std::fmt::Display for ChurnInfo {
@@ -217,9 +213,9 @@ mod tests {
             number_separator,
         )?;
         let expected = vec![
-            FileChurn::new(String::from("file4.txt"), 7, number_separator),
-            FileChurn::new(String::from("file3.txt"), 3, number_separator),
-            FileChurn::new(String::from("file1.txt"), 2, number_separator),
+            FileChurn::new(String::from("path/to/file4.txt"), 7, number_separator),
+            FileChurn::new(String::from("path/to/file3.txt"), 3, number_separator),
+            FileChurn::new(String::from("path/to/file1.txt"), 2, number_separator),
         ];
         assert_eq!(actual, expected);
         Ok(())

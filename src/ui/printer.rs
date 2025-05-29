@@ -31,10 +31,13 @@ pub struct Printer<W> {
 
 impl<W: Write> Printer<W> {
     pub fn new(writer: W, info: Info, cli_options: CliOptions) -> Result<Self> {
-        let image = match cli_options.image.image {
-            Some(p) => Some(image::open(&p).with_context(|| format!("Could not load the image file at '{}'", p.display()))?),
-            None => None,
-        };
+        let image =
+            match cli_options.image.image {
+                Some(p) => Some(image::open(&p).with_context(|| {
+                    format!("Could not load the image file at '{}'", p.display())
+                })?),
+                None => None,
+            };
 
         let image_backend = if image.is_some() {
             cli_options
