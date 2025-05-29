@@ -147,14 +147,16 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         &repo,
         cli_options.info.hide_token,
         cli_options.info.http_url,
-    )?;
+    )
+    .context("Failed to determine repository URL")?;
 
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
-    )?;
+    )
+    .context("Failed to traverse Git commit history")?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
