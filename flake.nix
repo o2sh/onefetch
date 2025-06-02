@@ -120,13 +120,21 @@
         };
 
         packages = rec {
-          onefetch-debug = onefetch // {
-            cargoExtraArgs = lib.concatStringsSep " " [
-              # Just to get more human-readable look
-              "--profile dev"
-            ];
-          };
-          inherit onefetch;
+          onefetch-debug = craneLib.buildPackage (
+            common
+            // {
+              inherit cargoArtifacts;
+              doCheck = false;
+              CARGO_PROFILE = "dev";
+            }
+          );
+          onefetch = craneLib.buildPackage (
+            common
+            // {
+              inherit cargoArtifacts;
+              doCheck = false;
+            }
+          );
           default = onefetch-debug;
         };
 
