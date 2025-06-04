@@ -222,7 +222,8 @@ pub struct ConfigCliOptions {
     #[arg(long, value_hint = ValueHint::FilePath)]
     pub config_path: Option<PathBuf>,
     /// Creates a default config file
-    /// Writes to $XDG_CONFIG_HOME/onefetch/config.toml but can be overridden with --config-path
+    /// By default, creates onefetch/config.toml at your config direrctory
+    /// but it can be overridden with --config-path
     #[arg(long)]
     pub generate_config: bool,
 }
@@ -323,7 +324,7 @@ impl Default for ConfigCliOptions {
             // Not sure about unwrap
             config_path: Some(
                 dirs::config_dir()
-                    .expect("Could not find $HOME!")
+                    .expect("Config directory is not found!")
                     .join("onefetch/config.toml"),
             ),
             generate_config: false,
