@@ -62,8 +62,9 @@
   <h1>Onefetch</h1>
   <p>
     <small>
-      <a href="https://github.com/o2sh/onefetch">github</a> |
-      <a href="https://github.com/o2sh/onefetch/wiki">wiki</a>
+      <a href="https://github.com/o2sh/onefetch/wiki">wiki</a> |
+      <a href="https://github.com/o2sh/onefetch/tree/main/docs/vercel"
+        >github</a>
       | built with ❤ by
       <a href="https://github.com/spenserblack">@spenserblack</a> and
       <a href="https://github.com/o2sh">@o2sh</a></small>
@@ -88,7 +89,7 @@
 
   <div class:hide={!showMenu}>
     <div class="checkbox-group">
-      {#each languageTypes as type (type)}
+      {#each languageTypes as type}
         <label for={type}>
           <input
             id={type}
@@ -106,7 +107,7 @@
       <code>--type</code> flag to configure.</small>
   </div>
 
-  {#each $filteredLanguages as language (language.name)}
+  {#each $filteredLanguages as language}
     <AsciiPreview
       name={language.name}
       ansi={language.colors.ansi}

@@ -4,6 +4,7 @@ use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
+use onefetch::config::ConfigOptions;
 use onefetch::info::build_info;
 use onefetch::ui::printer::Printer;
 use std::io;
@@ -30,9 +31,25 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let info = build_info(&cli_options)?;
+    if cli_options.config.generate_config {
+        return ConfigOptions::default().write(
+            &cli_options.config.config_path.unwrap_or(
+                dirs::config_dir()
+                    .expect("Could not find config dir!")
+                    .join("onefetch/config.toml"),
+            ),
+        );
+    }
 
-    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
+    let config_options = ConfigOptions::read(
+        &cli_options.config.config_path.as_ref().unwrap_or(
+            &CliOptions::default().config.config_path.expect("$HOME not found!")
+        ),
+    );
+
+    let info = build_info(&cli_options, &config_options)?;
+
+    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options,config_options)?;
 
     printer.print()?;
 

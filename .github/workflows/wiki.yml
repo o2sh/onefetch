@@ -1,22 +1,22 @@
-name: Publish Wiki
+name: Sync Wiki
 on:
   push:
     branches: [main]
     paths:
-      - "docs/wiki/**"
+      - ".github/wiki/**"
 
   workflow_dispatch:
 
-concurrency:
-  group: wiki
-  cancel-in-progress: true
-permissions:
-  contents: write
 jobs:
-  wiki:
+  update-wiki:
     runs-on: ubuntu-latest
+    name: Sync Wiki
+    concurrency:
+      group: wiki
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v4
-      - uses: spenserblack/actions-wiki@v0.3.0
+      - uses: spenserblack/actions-wiki@v0.1
         with:
-          path: docs/wiki
+          token: ${{ secrets.WIKI_TOKEN }}

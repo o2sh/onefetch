@@ -22,14 +22,14 @@ pub mod sig;
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
     no_bots: Option<MyRegex>,
-    min_churn_pool_size: Option<usize>,
+    max_churn_pool_size: Option<usize>,
     no_merges: bool,
 ) -> Result<GitMetrics> {
     let mut time_of_most_recent_commit = None;
     let mut time_of_first_commit = None;
     let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
     let mailmap = repo.open_mailmap();
-    let is_traversal_complete = Arc::new(AtomicBool::default());
+    let has_commit_graph_traversal_ended = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
     let num_threads = std::thread::available_parallelism()
@@ -51,9 +51,9 @@ pub fn traverse_commit_graph(
         repo,
         &mailmap,
         no_bots.clone(),
-        &is_traversal_complete,
+        &has_commit_graph_traversal_ended,
         &total_number_of_commits,
-        min_churn_pool_size,
+        max_churn_pool_size,
     )?;
 
     let author_threads = can_use_author_threads
@@ -104,7 +104,7 @@ pub fn traverse_commit_graph(
     }
 
     total_number_of_commits.store(count, Ordering::SeqCst);
-    is_traversal_complete.store(true, Ordering::SeqCst);
+    has_commit_graph_traversal_ended.store(true, Ordering::SeqCst);
 
     drop(churn_tx);
 
@@ -174,7 +174,7 @@ fn get_churn_channel(
     repo: &gix::Repository,
     mailmap: &gix::mailmap::Snapshot,
     bot_regex_pattern: Option<MyRegex>,
-    is_traversal_complete: &Arc<AtomicBool>,
+    has_commit_graph_traversal_ended: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
     max_churn_pool_size: Option<usize>,
 ) -> Result<(JoinHandle<Result<ChurnPair>>, Sender<ObjectId>)> {
@@ -183,29 +183,29 @@ fn get_churn_channel(
         let repo = repo.clone();
         let mailmap = mailmap.clone();
         let bot_regex_pattern = bot_regex_pattern.clone();
-        let is_traversal_complete = is_traversal_complete.clone();
+        let has_commit_graph_traversal_ended = has_commit_graph_traversal_ended.clone();
         let total_number_of_commits = total_number_of_commits.clone();
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
-            let mut diffs_computed = 0;
+            let mut number_of_diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
                 if is_bot_commit(&commit, &mailmap, bot_regex_pattern.as_ref())? {
                     continue;
                 }
                 compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
-                diffs_computed += 1;
+                number_of_diffs_computed += 1;
                 if should_break(
-                    is_traversal_complete.load(Ordering::Relaxed),
+                    has_commit_graph_traversal_ended.load(Ordering::Relaxed),
                     total_number_of_commits.load(Ordering::Relaxed),
                     max_churn_pool_size,
-                    diffs_computed,
+                    number_of_diffs_computed,
                 ) {
                     break;
                 }
             }
 
-            Ok((number_of_commits_by_file_path, diffs_computed))
+            Ok((number_of_commits_by_file_path, number_of_diffs_computed))
         }
     });
 
@@ -213,17 +213,17 @@ fn get_churn_channel(
 }
 
 fn should_break(
-    is_traversal_complete: bool,
+    has_commit_graph_traversal_ended: bool,
     total_number_of_commits: usize,
-    min_churn_pool_size_opt: Option<usize>,
-    diffs_computed: usize,
+    max_churn_pool_size_opt: Option<usize>,
+    number_of_diffs_computed: usize,
 ) -> bool {
-    if !is_traversal_complete {
+    if !has_commit_graph_traversal_ended {
         return false;
     }
 
-    min_churn_pool_size_opt.is_none_or(|min_churn_pool_size| {
-        diffs_computed >= min_churn_pool_size.min(total_number_of_commits)
+    max_churn_pool_size_opt.map_or(true, |max_churn_pool_size| {
+        number_of_diffs_computed >= max_churn_pool_size.min(total_number_of_commits)
     })
 }
 

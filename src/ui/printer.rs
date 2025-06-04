@@ -1,4 +1,5 @@
 use crate::cli::CliOptions;
+use crate::config::ConfigOptions;
 use crate::info::Info;
 use crate::ui::Language;
 use anyhow::{Context, Result};
@@ -30,7 +31,12 @@ pub struct Printer<W> {
 }
 
 impl<W: Write> Printer<W> {
-    pub fn new(writer: W, info: Info, cli_options: CliOptions) -> Result<Self> {
+    pub fn new(
+        writer: W,
+        info: Info,
+        cli_options: CliOptions,
+        config_options: ConfigOptions,
+    ) -> Result<Self> {
         let image =
             match cli_options.image.image {
                 Some(p) => Some(image::open(&p).with_context(|| {
@@ -58,7 +64,10 @@ impl<W: Write> Printer<W> {
             image,
             image_backend,
             color_resolution: cli_options.image.color_resolution,
-            no_bold: cli_options.text_formatting.no_bold,
+            no_bold: cli_options
+                .text_formatting
+                .no_bold
+                .unwrap_or(config_options.no_bold),
             ascii_input: cli_options.ascii.ascii_input,
             ascii_language: cli_options.ascii.ascii_language,
         })

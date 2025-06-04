@@ -5,22 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2.24.0 (2025-04-12)
-
-### New Features
-
-- add language support for Lean by @foxyseta in https://github.com/o2sh/onefetch/pull/1509
-- add language support for Typst by @foxyseta in https://github.com/o2sh/onefetch/pull/1508
-- add language support for Razor by @SrS2225a in https://github.com/o2sh/onefetch/pull/1521
-
-### Chores
-
-- more idiomatic way to fetch HEAD refs by @o2sh in https://github.com/o2sh/onefetch/pull/1515
-- more idiomatic way to fetch repository remote URL by @o2sh in https://github.com/o2sh/onefetch/pull/1516
-- update holyc language logo by @o2sh in https://github.com/o2sh/onefetch/pull/1543
-- update wiki powershell-snippet by @FallenDeity in https://github.com/o2sh/onefetch/pull/1542
-- add nix local setup @Sk7Str1p3 in https://github.com/o2sh/onefetch/pull/1549
-
 ## 2.23.1 (2025-01-01)
 
 ### Bug Fixes

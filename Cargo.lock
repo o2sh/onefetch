@@ -331,12 +331,12 @@ checksum = "325918d6fe32f23b19878fe4b34794ae41fc19ddbe53b10571a4874d44ffd39b"
 
 [[package]]
 name = "cargo_toml"
-version = "0.22.1"
+version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02260d489095346e5cafd04dea8e8cb54d1d74fcd759022a9b72986ebe9a1257"
+checksum = "5fbd1fe9db3ebf71b89060adaf7b0504c2d6a425cf061313099547e382c2e472"
 dependencies = [
  "serde",
- "toml 0.8.19",
+ "toml 0.8.22",
 ]
 
 [[package]]
@@ -693,6 +693,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "dirs"
+version = "6.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3e8aa94d75141228480295a7d0e7feb620b1a5ad9f12bc40be62411e38cce4e"
+dependencies = [
+ "dirs-sys",
+]
+
+[[package]]
+name = "dirs-sys"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab"
+dependencies = [
+ "libc",
+ "option-ext",
+ "redox_users",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "displaydoc"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1027,7 +1048,7 @@ dependencies = [
  "gix-utils",
  "itoa",
  "thiserror 2.0.9",
- "winnow 0.7.7",
+ "winnow",
 ]
 
 [[package]]
@@ -1109,7 +1130,7 @@ dependencies = [
  "smallvec",
  "thiserror 2.0.9",
  "unicode-bom",
- "winnow 0.7.7",
+ "winnow",
 ]
 
 [[package]]
@@ -1370,7 +1391,7 @@ dependencies = [
  "itoa",
  "smallvec",
  "thiserror 2.0.9",
- "winnow 0.7.7",
+ "winnow",
 ]
 
 [[package]]
@@ -1482,7 +1503,7 @@ dependencies = [
  "gix-utils",
  "maybe-async",
  "thiserror 2.0.9",
- "winnow 0.7.7",
+ "winnow",
 ]
 
 [[package]]
@@ -1514,7 +1535,7 @@ dependencies = [
  "gix-validate",
  "memmap2",
  "thiserror 2.0.9",
- "winnow 0.7.7",
+ "winnow",
 ]
 
 [[package]]
@@ -1663,7 +1684,7 @@ dependencies = [
  "parking_lot",
  "tar",
  "tempfile",
- "winnow 0.7.7",
+ "winnow",
 ]
 
 [[package]]
@@ -1894,7 +1915,7 @@ dependencies = [
  "os_info",
  "serde",
  "serde_derive",
- "toml 0.8.19",
+ "toml 0.8.22",
  "uuid",
 ]
 
@@ -2465,6 +2486,7 @@ dependencies = [
  "clap_complete",
  "criterion",
  "crossbeam-channel",
+ "dirs",
  "enable-ansi-support",
  "gix",
  "gix-features",
@@ -2489,6 +2511,7 @@ dependencies = [
  "time",
  "time-humanize",
  "tokei",
+ "toml 0.8.22",
  "typetag",
  "winres",
 ]
@@ -2527,6 +2550,12 @@ name = "oorandom"
 version = "11.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b410bbe7e14ab526a0e86877eb47c6996a2bd7746f027ba551028c925390e4e9"
+
+[[package]]
+name = "option-ext"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
 
 [[package]]
 name = "os_info"
@@ -2893,6 +2922,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03a862b389f93e68874fbf580b9de08dd02facb9a788ebadaf4a3fd33cf58834"
 dependencies = [
  "bitflags 2.6.0",
+]
+
+[[package]]
+name = "redox_users"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd6f9d3d47bdd2ad6945c5015a226ec6155d0bcdfd8f7cd29f86b71f8de99d2b"
+dependencies = [
+ "getrandom 0.2.15",
+ "libredox",
+ "thiserror 2.0.9",
 ]
 
 [[package]]
@@ -3581,7 +3621,7 @@ dependencies = [
  "table_formatter",
  "tera",
  "term_size",
- "toml 0.8.19",
+ "toml 0.8.22",
 ]
 
 [[package]]
@@ -3595,9 +3635,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.8.19"
+version = "0.8.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1ed1f98e3fdc28d6d910e6737ae6ab1a93bf1985935a1193e68f93eeb68d24e"
+checksum = "05ae329d1f08c4d17a59bed7ff5b5a769d062e64a62d34a3261b219e62cd5aae"
 dependencies = [
  "serde",
  "serde_spanned",
@@ -3607,25 +3647,32 @@ dependencies = [
 
 [[package]]
 name = "toml_datetime"
-version = "0.6.8"
+version = "0.6.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0dd7358ecb8fc2f8d014bf86f6f638ce72ba252a2c3a2572f2a795f1d23efb41"
+checksum = "3da5db5a963e24bc68be8b17b6fa82814bb22ee8660f192bb182771d498f09a3"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "toml_edit"
-version = "0.22.22"
+version = "0.22.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ae48d6208a266e853d946088ed816055e556cc6028c5e8e2b84d9fa5dd7c7f5"
+checksum = "310068873db2c5b3e7659d2cc35d21855dbafa50d1ce336397c666e3cb08137e"
 dependencies = [
  "indexmap",
  "serde",
  "serde_spanned",
  "toml_datetime",
- "winnow 0.6.22",
+ "toml_write",
+ "winnow",
 ]
+
+[[package]]
+name = "toml_write"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfb942dfe1d8e29a7ee7fcbde5bd2b9a25fb89aa70caea2eba3bee836ff41076"
 
 [[package]]
 name = "typeid"
@@ -4138,15 +4185,6 @@ name = "windows_x86_64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
-
-[[package]]
-name = "winnow"
-version = "0.6.22"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39281189af81c07ec09db316b302a3e67bf9bd7cbf6c820b50e35fee9c2fa980"
-dependencies = [
- "memchr",
-]
 
 [[package]]
 name = "winnow"

@@ -22,8 +22,8 @@ impl Detector {
     pub fn new() -> Result<Self> {
         match Store::from_cache(CACHE_DATA) {
             Ok(store) => Ok(Self { store }),
-            Err(e) => {
-                bail!("Could not initialize the license detector: {}", e)
+            Err(_) => {
+                bail!("Could not initialize the license detector")
             }
         }
     }
