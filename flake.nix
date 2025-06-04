@@ -29,9 +29,26 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         inherit (pkgs) lib;
-
         craneLib = crane.mkLib pkgs;
+
+        # This filter prevent project from being rebuilded then changing
+        # unrelated files ,e.g. README
+        filter' =
+          path: _type:
+          builtins.match (lib.concatStringsSep "|" [
+            ".*tera"
+            ".*yaml"
+            ".*zstd"
+            ".*snap"
+            ".*sh"
+            ".+LICENSE.md"
+          ]) path != null;
+        filter = path: type: (filter' path type) || (craneLib.filterCargoSources path type);
+        src = lib.cleanSourceWith {
         src = ./.;
+          inherit filter;
+          name = "source";
+        };
 
         # Common arguments can be set here to avoid repeating them later
         common = {
