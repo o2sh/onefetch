@@ -23,7 +23,7 @@ pub fn get_loc_by_language_sorted(
 
     let loc_by_language = get_loc_by_language(&locs).with_context(|| {
         format!(
-            "No source code found in the repository at '{}'. \
+            "No source code found in the repository at '{}'.\n\
          Note: Some language types (prose, data) are excluded by default. \
          Consider using the '--type' option to include them.",
             dir.display()
