@@ -222,7 +222,9 @@ pub struct ConfigCliOptions {
     #[arg(long, value_hint = ValueHint::FilePath)]
     pub config_path: Option<PathBuf>,
     /// Creates a default config file
+    ///
     /// By default, creates onefetch/config.toml at your config direrctory
+    ///
     /// but it can be overridden with --config-path
     #[arg(long)]
     pub generate_config: bool,
