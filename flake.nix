@@ -45,7 +45,7 @@
           ]) path != null;
         filter = path: type: (filter' path type) || (craneLib.filterCargoSources path type);
         src = lib.cleanSourceWith {
-        src = ./.;
+          src = ./.;
           inherit filter;
           name = "source";
         };
@@ -65,10 +65,10 @@
             ++ lib.optionals pkgs.stdenv.isDarwin (
               with pkgs;
               [
-              # additional dependencies on Darwin systems
-              CoreFoundation
-              libresolv
-              Security
+                # additional dependencies on Darwin systems
+                CoreFoundation
+                libresolv
+                Security
               ]
             );
           # Software required for project build
@@ -79,8 +79,10 @@
           # Tools required for checks
           nativeCheckInputs = with pkgs; [ git ];
 
-          # Additional environment variables can be set directly
-          # MY_CUSTOM_VAR = "some value";
+          # Additional environment variables
+          # This one overrides build profile (default is 'release')
+          CARGO_PROFILE = "dev";
+
         };
 
         # Build dependencies only, so we will be able to reuse them further
@@ -100,8 +102,8 @@
           clippy = craneLib.cargoClippy (
             common
             // {
-            inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+              inherit cargoArtifacts;
+              cargoClippyExtraArgs = "--all-targets -- --deny warnings";
             }
           );
 
@@ -128,10 +130,10 @@
           nextest = craneLib.cargoNextest (
             common
             // {
-            inherit cargoArtifacts;
-            partitions = 1;
-            partitionType = "count";
-            cargoNextestPartitionsExtraArgs = "--no-tests=pass";
+              inherit cargoArtifacts;
+              partitions = 1;
+              partitionType = "count";
+              cargoNextestPartitionsExtraArgs = "--no-tests=pass";
             }
           );
         };
@@ -142,12 +144,12 @@
             // {
               inherit cargoArtifacts;
               doCheck = false;
-              CARGO_PROFILE = "dev";
             }
           );
           onefetch = craneLib.buildPackage (
             common
             // {
+              CARGO_PROFILE = "release";
               inherit cargoArtifacts;
               doCheck = false;
             }
@@ -155,7 +157,7 @@
           default = onefetch-debug;
         };
 
-        apps.default = flake-utils.lib.mkApp { drv = build; };
+        apps.default = flake-utils.lib.mkApp { drv = (build // { CARGO_PROFILE = "release"; }); };
 
         devShells.default = craneLib.devShell {
           # Inherit inputs from checks.
