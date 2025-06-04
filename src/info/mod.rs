@@ -151,7 +151,8 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
         &repo,
         cli_options.info.hide_token,
         cli_options.info.http_url,
-    )?;
+    )
+    .context("Failed to determine repository URL")?;
 
     let git_metrics = traverse_commit_graph(
         &repo,
@@ -161,7 +162,8 @@ pub fn build_info(cli_options: &CliOptions, config_options: &ConfigOptions) -> R
             .info
             .no_merges
             .unwrap_or(config_options.no_merges),
-    )?;
+    )
+    .context("Failed to traverse Git commit history")?;
     let true_color = match cli_options
         .ascii
         .true_color

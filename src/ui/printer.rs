@@ -37,10 +37,13 @@ impl<W: Write> Printer<W> {
         cli_options: CliOptions,
         config_options: ConfigOptions,
     ) -> Result<Self> {
-        let image = match cli_options.image.image {
-            Some(p) => Some(image::open(p).context("Could not load the specified image")?),
-            None => None,
-        };
+        let image =
+            match cli_options.image.image {
+                Some(p) => Some(image::open(&p).with_context(|| {
+                    format!("Could not load the image file at '{}'", p.display())
+                })?),
+                None => None,
+            };
 
         let image_backend = if image.is_some() {
             cli_options
@@ -92,7 +95,7 @@ impl<W: Write> Printer<W> {
                     let image_backend = self
                         .image_backend
                         .as_ref()
-                        .context("Could not detect a supported image backend")?;
+                        .context("No supported image backend detected on your system")?;
 
                     buf.push_str(
                         &image_backend
@@ -101,7 +104,7 @@ impl<W: Write> Printer<W> {
                                 custom_image,
                                 self.color_resolution,
                             )
-                            .context("Error while drawing image")?,
+                            .context("Failed to render the image in the terminal")?,
                     );
                 } else {
                     let mut logo_lines = if let Some(custom_ascii) = &self.ascii_input {
