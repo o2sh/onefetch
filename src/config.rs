@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::{fs, path::Path};
 
@@ -81,23 +81,19 @@ impl ConfigOptions {
     {
         // I dont think this can panic so i simply unwrapped it
         let contents = toml::to_string(&self).unwrap();
-        match fs::create_dir_all(&path.as_ref().parent().unwrap_or(Path::new("/"))) {
-            Ok(_) => match fs::write(&path, &contents) {
-                Ok(_) => {
-                    let path = path.as_ref().display();
-                    println!("Config config file created at: {path}")
-                }
-                Err(e) => {
-                    let path = path.as_ref().display();
-                    eprintln!("Failed to write config file at {path}: {e}")
-                }
-            },
-            Err(e) => {
-                let path = path.as_ref().display();
-                eprintln!("Failed to create config directory {path}: {e}");
-            }
+        let dir = path
+            .as_ref()
+            .parent()
+            .with_context(|| format!("'{}' is not a path!", path.as_ref().display()));
+        fs::create_dir_all(dir?)?;
+        match fs::write(&path, contents) {
+            Ok(_) => println!("Created default config at {}", path.as_ref().display()),
+            Err(e) => eprintln!(
+                "Failed to write default config at {}: {}",
+                path.as_ref().display(),
+                e
+            ),
         }
-        // Im not sure it should return simple Ok(())?
         Ok(())
     }
 }
