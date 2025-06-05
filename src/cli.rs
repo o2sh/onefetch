@@ -274,7 +274,7 @@ impl Default for InfoCliOptions {
 impl Default for TextForamttingCliOptions {
     fn default() -> Self {
         TextForamttingCliOptions {
-            text_colors: Default::default(),
+            text_colors: Vec::default(),
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
             no_bold: Default::default(),
@@ -296,7 +296,7 @@ impl Default for ImageCliOptions {
     fn default() -> Self {
         ImageCliOptions {
             image: Option::default(),
-            image_protocol: Default::default(),
+            image_protocol: Option::default(),
             color_resolution: 16,
         }
     }
@@ -353,7 +353,7 @@ pub enum NumberSeparator {
 }
 
 impl NumberSeparator {
-    fn separator(&self) -> &'static str {
+    fn separator(self) -> &'static str {
         match self {
             Self::Plain => "",
             Self::Comma => ",",

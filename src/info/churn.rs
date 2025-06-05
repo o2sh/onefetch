@@ -87,14 +87,14 @@ fn compute_file_churns(
     Ok(number_of_commits_by_file_path_sorted
         .into_iter()
         .filter_map(|(file_path, nbr_of_commits)| {
-            if !glob_set.is_match(file_path.to_string()) {
+            if glob_set.is_match(file_path.to_string()) {
+                None
+            } else {
                 Some(FileChurn::new(
                     file_path.to_string(),
                     *nbr_of_commits,
                     number_separator,
                 ))
-            } else {
-                None
             }
         })
         .take(number_of_file_churns_to_display)

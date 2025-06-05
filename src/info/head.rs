@@ -21,16 +21,16 @@ impl HeadRefs {
 
 impl std::fmt::Display for HeadRefs {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if !self.refs.is_empty() {
+        if self.refs.is_empty() {
+            write!(f, "{}", self.short_commit_id)
+        } else {
             let refs_str = self
                 .refs
                 .iter()
-                .map(|ref_name| ref_name.as_str())
+                .map(String::as_str)
                 .collect::<Vec<&str>>()
                 .join(", ");
             write!(f, "{} ({})", self.short_commit_id, refs_str)
-        } else {
-            write!(f, "{}", self.short_commit_id)
         }
     }
 }

@@ -33,7 +33,7 @@ pub fn traverse_commit_graph(
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
     let num_threads = std::thread::available_parallelism()
-        .map(|p| p.get())
+        .map(std::num::NonZero::get)
         .unwrap_or(1);
     let commit_graph = repo.commit_graph().ok();
     let can_use_author_threads = num_threads > 1 && commit_graph.is_some();
@@ -54,7 +54,7 @@ pub fn traverse_commit_graph(
         &is_traversal_complete,
         &total_number_of_commits,
         min_churn_pool_size,
-    )?;
+    );
 
     let author_threads = can_use_author_threads
         .then(|| get_author_channel(repo, num_threads, no_bots.clone(), &mailmap));
@@ -117,7 +117,7 @@ pub fn traverse_commit_graph(
         churn_pool_size,
         time_of_first_commit,
         time_of_most_recent_commit,
-    )?;
+    );
 
     Ok(git_metrics)
 }
@@ -177,7 +177,7 @@ fn get_churn_channel(
     is_traversal_complete: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
     max_churn_pool_size: Option<usize>,
-) -> Result<(JoinHandle<Result<ChurnPair>>, Sender<ObjectId>)> {
+) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
@@ -209,7 +209,7 @@ fn get_churn_channel(
         }
     });
 
-    Ok((thread, tx))
+    (thread, tx)
 }
 
 fn should_break(
@@ -261,7 +261,7 @@ fn compute_diff_with_parent(
         let new_tree = commit.tree()?;
         let changes =
             repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default().with_rewrites(None))?;
-        for change in changes.iter() {
+        for change in &changes {
             let is_file_change = match change {
                 Change::Addition { entry_mode, .. } | Change::Modification { entry_mode, .. } => {
                     entry_mode.is_blob()
