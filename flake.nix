@@ -7,6 +7,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     crane.url = "github:ipetkov/crane";
     flake-utils.url = "github:numtide/flake-utils";
+    treefmt.url = "github:numtide/treefmt-nix";
 
     advisory-db = {
       url = "github:rustsec/advisory-db";
@@ -20,6 +21,7 @@
       nixpkgs,
       crane,
       flake-utils,
+      treefmt,
       advisory-db,
       ...
     }:
@@ -173,6 +175,8 @@
             nixfmt-rfc-style
           ];
         };
+
+        formatter = (treefmt.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper;
       }
     );
   # Sets substituters to avoid locally building something already built
