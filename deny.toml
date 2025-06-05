@@ -1,2 +1,2 @@
 [licenses]
-allow = ["MIT"]
+  allow = [ "MIT" ]
