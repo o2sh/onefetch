@@ -42,9 +42,10 @@ pub fn get_manifests<P: AsRef<Path>>(path: P) -> Result<Vec<Manifest>> {
 }
 
 fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
-    let m = cargo_toml::Manifest::from_path(path)?;
+    let m = cargo_toml::Manifest::from_path(path)
+        .with_context(|| format!("Failed to parse Cargo.toml at '{}'", path.display()))?;
     let package = m.package.context("Not a package (only a workspace)")?;
-    let description = package.description().map(|v| v.into());
+    let description = package.description().map(Into::into);
 
     Ok(Manifest {
         manifest_type: ManifestType::Cargo,
@@ -52,12 +53,13 @@ fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
         name: package.name.clone(),
         description,
         version: package.version().into(),
-        license: package.license().map(|x| x.into()),
+        license: package.license().map(Into::into),
     })
 }
 
 fn parse_npm_manifest(path: &Path) -> Result<Manifest> {
-    let package = npm_package_json::Package::from_path(path)?;
+    let package = npm_package_json::Package::from_path(path)
+        .with_context(|| format!("Failed to parse package.json at '{}'", path.display()))?;
     Ok(Manifest {
         manifest_type: ManifestType::Npm,
         number_of_dependencies: package.dependencies.len(),

@@ -122,7 +122,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     // Having an object cache is important for getting much better traversal and diff performance.
     repo.object_cache_size_if_unset(4 * 1024 * 1024);
     let repo_path = get_work_dir(&repo)?;
-
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
         let language_types = cli_options.info.r#type.clone();
@@ -137,29 +136,29 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             )
         }
     });
-
-    let loc_by_language = loc_by_language_sorted_handle
-        .join()
-        .ok()
-        .context("BUG: panic in language statistics thread")??;
-    let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(
-        &repo,
-        cli_options.info.hide_token,
-        cli_options.info.http_url,
-    )?;
-
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
-    )?;
+    )
+    .context("Failed to traverse Git commit history")?;
+    let manifest = get_manifest(&repo_path)?;
+    let repo_url = get_repo_url(
+        &repo,
+        cli_options.info.hide_token,
+        cli_options.info.http_url,
+    )
+    .context("Failed to determine repository URL")?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
     };
+    let loc_by_language = loc_by_language_sorted_handle
+        .join()
+        .ok()
+        .context("BUG: panic in language statistics thread")??;
     let dominant_language = langs::get_main_language(&loc_by_language);
     let ascii_colors = get_ascii_colors(
         cli_options.ascii.ascii_language.as_ref(),
@@ -167,7 +166,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         &cli_options.ascii.ascii_colors,
         true_color,
     );
-
     let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
     let no_bold = cli_options.text_formatting.no_bold;
     let number_separator = cli_options.text_formatting.number_separator;
@@ -472,7 +470,7 @@ fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
 
 pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
     Ok(repo
-        .work_dir()
+        .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
 }

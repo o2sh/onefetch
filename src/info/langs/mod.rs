@@ -21,8 +21,14 @@ pub fn get_loc_by_language_sorted(
 ) -> Result<Vec<(Language, usize)>> {
     let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
 
-    let loc_by_language =
-        get_loc_by_language(&locs).context("Could not find any source code in this repository")?;
+    let loc_by_language = get_loc_by_language(&locs).with_context(|| {
+        format!(
+            "No source code found in the repository at '{}'.\n\
+         Note: Some language types (prose, data) are excluded by default. \
+         Consider using the '--type' option to include them.",
+            dir.display()
+        )
+    })?;
 
     let loc_by_language_sorted = sort_by_loc(loc_by_language);
 

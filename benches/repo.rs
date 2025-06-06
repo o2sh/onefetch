@@ -1,6 +1,7 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 use gix::{open, ThreadSafeRepository};
 use onefetch::{cli::CliOptions, info::build_info};
+use std::hint::black_box;
 
 fn bench_repo_info(c: &mut Criterion) {
     let name = "make_repo.sh".to_string();

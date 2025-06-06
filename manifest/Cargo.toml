@@ -9,6 +9,6 @@
 
 [dependencies]
   anyhow.workspace = true
-  cargo_toml       = "0.21.0"
+  cargo_toml       = "0.22.1"
   npm-package-json = "0.1.3"
   strum.workspace  = true

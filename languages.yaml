@@ -2800,7 +2800,6 @@ Tex:
   colors:
     ansi:
       - white
-      - black
     chip: "#3D6117"
   icon: '\u{E69B}'
 Toml:

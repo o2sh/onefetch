@@ -162,7 +162,7 @@ impl InfoField for AuthorsInfo {
     fn title(&self) -> String {
         let mut title: String = "Author".into();
         if self.authors.len() > 1 {
-            title.push('s')
+            title.push('s');
         }
         title
     }
