@@ -65,7 +65,7 @@ pub struct Info {
     #[serde(skip_serializing)]
     no_bold: bool,
     #[serde(skip_serializing)]
-    pub dominant_language: Language,
+    pub dominant_language: Option<Language>,
     #[serde(skip_serializing)]
     pub ascii_colors: Vec<DynColors>,
 }
@@ -158,11 +158,11 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let loc_by_language = loc_by_language_sorted_handle
         .join()
         .ok()
-        .context("BUG: panic in language statistics thread")??;
-    let dominant_language = langs::get_main_language(&loc_by_language);
+        .context("BUG: panic in language statistics thread")?;
+    let dominant_language = langs::get_main_language(loc_by_language.as_ref());
     let ascii_colors = get_ascii_colors(
         cli_options.ascii.ascii_language.as_ref(),
-        &dominant_language,
+        dominant_language.as_ref(),
         &cli_options.ascii.ascii_colors,
         true_color,
     );
@@ -185,7 +185,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .version(&repo, manifest.as_ref())?
         .created(&git_metrics, iso_time)
         .languages(
-            &loc_by_language,
+            loc_by_language.as_ref(),
             true_color,
             number_of_languages_to_display,
             &text_colors,
@@ -208,7 +208,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             globs_to_exclude,
             number_separator,
         )?
-        .loc(&loc_by_language, number_separator)
+        .loc(loc_by_language.as_ref(), number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
@@ -318,21 +318,23 @@ impl InfoBuilder {
 
     fn languages(
         mut self,
-        loc_by_language: &[(Language, usize)],
+        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
         cli_options: &CliOptions,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Languages) {
-            let languages = LanguagesInfo::new(
-                loc_by_language,
-                true_color,
-                number_of_languages,
-                text_colors.info,
-                cli_options.visuals.nerd_fonts,
-            );
-            self.info_fields.push(Box::new(languages));
+            if let Some(loc_by_language) = loc_by_language_opt {
+                let languages = LanguagesInfo::new(
+                    loc_by_language,
+                    true_color,
+                    number_of_languages,
+                    text_colors.info,
+                    cli_options.visuals.nerd_fonts,
+                );
+                self.info_fields.push(Box::new(languages));
+            }
         }
         self
     }
@@ -429,12 +431,14 @@ impl InfoBuilder {
 
     fn loc(
         mut self,
-        loc_by_language: &[(Language, usize)],
+        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         number_separator: NumberSeparator,
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::LinesOfCode) {
-            let lines_of_code = LocInfo::new(loc_by_language, number_separator);
-            self.info_fields.push(Box::new(lines_of_code));
+            if let Some(loc_by_language) = loc_by_language_opt {
+                let lines_of_code = LocInfo::new(loc_by_language, number_separator);
+                self.info_fields.push(Box::new(lines_of_code));
+            }
         }
         self
     }
@@ -443,7 +447,7 @@ impl InfoBuilder {
         self,
         cli_options: &CliOptions,
         text_colors: TextColors,
-        dominant_language: Language,
+        dominant_language: Option<Language>,
         ascii_colors: Vec<DynColors>,
     ) -> Info {
         Info {

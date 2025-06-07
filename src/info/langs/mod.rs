@@ -1,4 +1,3 @@
-use anyhow::{Context, Result};
 use language::{Language, LanguageType};
 use std::collections::HashMap;
 use std::path::Path;
@@ -6,8 +5,11 @@ use strum::IntoEnumIterator;
 
 pub mod language;
 
-pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
-    loc_by_language[0].0
+pub fn get_main_language(loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Option<Language> {
+    if let Some(loc_by_language) = loc_by_language_opt {
+        return Some(loc_by_language[0].0);
+    }
+    None
 }
 
 /// Returns a vector of tuples containing all the languages detected inside the repository.
@@ -18,21 +20,16 @@ pub fn get_loc_by_language_sorted(
     globs_to_exclude: &[String],
     language_types: &[LanguageType],
     include_hidden: bool,
-) -> Result<Vec<(Language, usize)>> {
+) -> Option<Vec<(Language, usize)>> {
     let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
 
-    let loc_by_language = get_loc_by_language(&locs).with_context(|| {
-        format!(
-            "No source code found in the repository at '{}'.\n\
-         Note: Some language types (prose, data) are excluded by default. \
-         Consider using the '--type' option to include them.",
-            dir.display()
-        )
-    })?;
+    let loc_by_language_opt = get_loc_by_language(&locs);
 
-    let loc_by_language_sorted = sort_by_loc(loc_by_language);
+    if let Some(loc_by_language) = loc_by_language_opt {
+        return Some(sort_by_loc(loc_by_language));
+    }
 
-    Ok(loc_by_language_sorted)
+    None
 }
 
 fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
@@ -44,7 +41,7 @@ fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
 fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language, usize>> {
     let mut loc_by_language = HashMap::new();
 
-    for (language_name, language) in languages.iter() {
+    for (language_name, language) in languages {
         let loc = language::loc(language_name, language);
 
         if loc == 0 {
