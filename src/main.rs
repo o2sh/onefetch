@@ -5,7 +5,7 @@ use clap::{CommandFactory, Parser};
 use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
 use onefetch::info::build_info;
-use onefetch::ui::printer::Printer;
+use onefetch::ui::printer::factory::PrinterFactory;
 use std::io;
 
 fn main() -> Result<()> {
@@ -32,9 +32,11 @@ fn main() -> Result<()> {
 
     let info = build_info(&cli_options)?;
 
-    let mut printer = Printer::new(io::BufWriter::new(io::stdout()), info, cli_options)?;
+    let printer = PrinterFactory::new(info, cli_options)?.create()?;
 
-    printer.print()?;
+    let mut writer = io::BufWriter::new(io::stdout());
+
+    printer.print(&mut writer)?;
 
     Ok(())
 }
