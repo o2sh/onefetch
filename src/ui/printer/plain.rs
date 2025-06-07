@@ -8,7 +8,7 @@ pub struct PlainPrinter {
 
 impl Printer for PlainPrinter {
     fn print(&self, writer: &mut dyn Write) -> Result<()> {
-        write!(writer, "{}", self.info)?;
+        write!(writer, "\x1B[?7l{}\x1B[?7h", self.info)?;
         Ok(())
     }
 }
