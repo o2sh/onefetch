@@ -10,24 +10,21 @@ pub fn get_ascii_colors(
     ascii_colors: &[u8],
     true_color: bool,
 ) -> Vec<DynColors> {
-    let language_colors = if let Some(language) = override_language_opt.or(language_opt) {
-        language.get_colors(true_color)
-    } else {
-        vec![DynColors::Ansi(AnsiColors::White)]
-    };
+    let language_colors = language_opt
+        .map(|lang| override_language_opt.unwrap_or(lang).get_colors(true_color))
+        .unwrap_or_else(|| vec![DynColors::Ansi(AnsiColors::White)]);
 
     if ascii_colors.is_empty() {
-        language_colors
-    } else {
-        let mut colors: Vec<DynColors> = ascii_colors.iter().map(num_to_color).collect();
-
-        if language_colors.len() > colors.len() {
-            let mut missing = language_colors.into_iter().skip(colors.len()).collect();
-            colors.append(&mut missing);
-        }
-
-        colors
+        return language_colors;
     }
+
+    let mut colors: Vec<DynColors> = ascii_colors.iter().map(num_to_color).collect();
+
+    if language_colors.len() > colors.len() {
+        colors.extend(language_colors.into_iter().skip(colors.len()));
+    }
+
+    colors
 }
 
 pub fn num_to_color(num: &u8) -> DynColors {
