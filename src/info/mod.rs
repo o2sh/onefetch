@@ -53,7 +53,7 @@ mod url;
 pub mod utils;
 mod version;
 
-#[derive(Serialize)]
+#[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     title: Option<Title>,

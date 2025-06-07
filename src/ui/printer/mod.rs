@@ -1,3 +1,4 @@
+use std::any::Any;
 mod ascii;
 pub mod factory;
 mod image;
@@ -13,6 +14,6 @@ pub enum SerializationFormat {
     Yaml,
 }
 
-pub trait Printer {
+pub trait Printer: Any {
     fn print(&self, writer: &mut dyn std::io::Write) -> anyhow::Result<()>;
 }

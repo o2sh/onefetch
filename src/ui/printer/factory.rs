@@ -103,3 +103,120 @@ impl PrinterFactory {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        cli::CliOptions,
+        info::{langs::language::Language, Info},
+        ui::printer::{
+            ascii::AsciiPrinter, factory::PrinterFactory, image::ImagePrinter, json::JsonPrinter,
+            plain::PlainPrinter, yaml::YamlPrinter, SerializationFormat,
+        },
+    };
+    use image::DynamicImage;
+    use std::any::Any;
+
+    #[test]
+    fn test_create_json_printer() {
+        let info = Info::default();
+        let mut options = CliOptions::default();
+        options.developer.output = Some(SerializationFormat::Json);
+
+        let factory = PrinterFactory::new(info, options).unwrap();
+        let printer = factory.create().unwrap();
+        let printer_ref = printer.as_ref() as &dyn Any;
+
+        assert!(printer_ref.downcast_ref::<JsonPrinter>().is_some());
+    }
+
+    #[test]
+    fn test_create_yaml_printer() {
+        let info = Info::default();
+        let mut options = CliOptions::default();
+        options.developer.output = Some(SerializationFormat::Yaml);
+
+        let factory = PrinterFactory::new(info, options).unwrap();
+        let printer = factory.create().unwrap();
+        let printer_ref = printer.as_ref() as &dyn Any;
+
+        assert!(printer_ref.downcast_ref::<YamlPrinter>().is_some());
+    }
+
+    #[test]
+    fn test_create_plain_printer_when_no_art() {
+        let mut info = Info::default();
+        info.dominant_language = Some(Language::Rust);
+        let mut options = CliOptions::default();
+        options.visuals.no_art = true;
+
+        let factory = PrinterFactory::new(info, options).unwrap();
+        let printer = factory.create().unwrap();
+        let printer_ref = printer.as_ref() as &dyn Any;
+
+        assert!(printer_ref.downcast_ref::<PlainPrinter>().is_some());
+    }
+
+    #[test]
+    fn test_create_plain_printer_when_no_dominant_language_no_ascii_input() {
+        let info = Info::default();
+        let options = CliOptions::default();
+
+        let factory = PrinterFactory::new(info, options).unwrap();
+        let printer = factory.create().unwrap();
+        let printer_ref = printer.as_ref() as &dyn Any;
+
+        assert!(printer_ref.downcast_ref::<PlainPrinter>().is_some());
+    }
+
+    #[test]
+    fn test_create_ascii_printer_when_dominant_language() {
+        let mut info = Info::default();
+        info.dominant_language = Some(Language::Rust);
+        let options = CliOptions::default();
+
+        let factory = PrinterFactory::new(info, options).unwrap();
+        let printer = factory.create().unwrap();
+        let printer_ref = printer.as_ref() as &dyn Any;
+
+        assert!(printer_ref.downcast_ref::<AsciiPrinter>().is_some());
+    }
+
+    pub struct DummyBackend {}
+    impl DummyBackend {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl super::ImageBackend for DummyBackend {
+        fn add_image(
+            &self,
+            _lines: Vec<String>,
+            _image: &DynamicImage,
+            _colors: usize,
+        ) -> anyhow::Result<String> {
+            Ok("foo".to_string())
+        }
+    }
+
+    #[test]
+    fn test_create_image_printer() {
+        let mut factory = PrinterFactory {
+            output: None,
+            info: Info::default(),
+            image: Some(DynamicImage::default()),
+            no_bold: false,
+            art_off: false,
+            image_backend: Some(Box::new(DummyBackend::new())),
+            color_resolution: 8,
+            ascii_input: None,
+            ascii_language: None,
+        };
+
+        factory.info.dominant_language = Some(Language::ABNF);
+        let printer = factory.create().unwrap();
+        let printer_ref = printer.as_ref() as &dyn Any;
+
+        assert!(printer_ref.downcast_ref::<ImagePrinter>().is_some());
+    }
+}
