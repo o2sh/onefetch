@@ -8,7 +8,7 @@ pub struct PlainPrinter {
 
 impl Printer for PlainPrinter {
     fn print(&self, writer: &mut dyn Write) -> Result<()> {
-        write!(writer, "{}", self.info.to_string())?;
+        write!(writer, "{}", self.info)?;
         Ok(())
     }
 }
