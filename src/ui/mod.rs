@@ -5,15 +5,15 @@ pub mod printer;
 pub mod text_colors;
 
 pub fn get_ascii_colors(
-    override_language_opt: Option<&Language>,
     language_opt: Option<&Language>,
+    override_language_opt: Option<&Language>,
     ascii_colors: &[u8],
     true_color: bool,
 ) -> Vec<DynColors> {
-    let language_colors = language_opt
-        .map(|lang| override_language_opt.unwrap_or(lang).get_colors(true_color))
-        .unwrap_or_else(|| vec![DynColors::Ansi(AnsiColors::White)]);
-
+    let language_colors = match language_opt {
+        Some(lang) => override_language_opt.unwrap_or(lang).get_colors(true_color),
+        None => vec![DynColors::Ansi(AnsiColors::White)],
+    };
     if ascii_colors.is_empty() {
         return language_colors;
     }
@@ -60,8 +60,32 @@ mod test {
     }
 
     #[test]
+    fn get_ascii_colors_no_language_no_custom_language_custom_colors() {
+        let colors = get_ascii_colors(None, None, &[3, 5, 8], false);
+        assert_eq!(colors.len(), 3);
+        assert_eq!(
+            colors,
+            vec![num_to_color(&3), num_to_color(&5), num_to_color(&8)]
+        );
+    }
+
+    #[test]
+    fn get_ascii_colors_no_language_no_custom_language() {
+        let colors = get_ascii_colors(None, None, &[], false);
+        assert_eq!(colors.len(), 1);
+        assert_eq!(colors, vec![DynColors::Ansi(AnsiColors::White)]);
+    }
+
+    #[test]
+    fn get_ascii_colors_no_language_with_custom_language() {
+        let colors = get_ascii_colors(None, Some(&Language::Python), &[], false);
+        assert_eq!(colors.len(), 1);
+        assert_eq!(colors, vec![DynColors::Ansi(AnsiColors::White)]);
+    }
+
+    #[test]
     fn get_ascii_colors_no_custom_language_no_custom_colors_no_true_color() {
-        let colors = get_ascii_colors(None.as_ref(), Some(&Language::Rust), &[], false);
+        let colors = get_ascii_colors(Some(&Language::Rust), None, &[], false);
         assert_eq!(colors.len(), 2);
         assert_eq!(
             colors,
@@ -74,7 +98,7 @@ mod test {
 
     #[test]
     fn get_ascii_colors_no_custom_language_no_custom_colors_true_color() {
-        let colors = get_ascii_colors(None, Some(&Language::Rust), &[], true);
+        let colors = get_ascii_colors(Some(&Language::Rust), None, &[], true);
         assert_eq!(colors.len(), 2);
         assert_eq!(
             colors,
@@ -84,14 +108,14 @@ mod test {
 
     #[test]
     fn get_ascii_colors_custom_language_no_custom_colors_no_true_color() {
-        let colors = get_ascii_colors(Some(&Language::Sh), Some(&Language::Rust), &[], false);
+        let colors = get_ascii_colors(Some(&Language::Rust), Some(&Language::Sh), &[], false);
         assert_eq!(colors.len(), 1);
         assert_eq!(colors, vec![DynColors::Ansi(AnsiColors::Green)]);
     }
 
     #[test]
     fn get_ascii_colors_no_custom_language_custom_colors_no_true_color() {
-        let colors = get_ascii_colors(None.as_ref(), Some(&Language::Rust), &[2, 3], false);
+        let colors = get_ascii_colors(Some(&Language::Rust), None, &[2, 3], false);
         assert_eq!(colors.len(), 2);
         assert_eq!(colors, vec![num_to_color(&2), num_to_color(&3)]);
     }
@@ -100,7 +124,7 @@ mod test {
     fn get_ascii_colors_fill_custom_colors_with_language_colors() {
         // When custom ascii colors are not enough for the given language,
         // language colors should be used as default
-        let colors = get_ascii_colors(None, Some(&Language::Go), &[0], false);
+        let colors = get_ascii_colors(Some(&Language::Go), None, &[0], false);
         assert_eq!(colors.len(), 3);
         assert_eq!(
             colors,
