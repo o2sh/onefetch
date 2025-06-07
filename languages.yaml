@@ -2822,9 +2822,7 @@ Text:
   colors:
     ansi:
       - white
-    hex:
-      - "#d0d0d0"
-    chip: "#ffffff" # No color in linguist
+    chip: "#ffffff"
   icon: '\u{f09a8}'
 Toml:
   type: data
