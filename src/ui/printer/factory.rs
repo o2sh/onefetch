@@ -1,12 +1,8 @@
 use super::Printer;
 use crate::cli::CliOptions;
+use crate::info::langs::language::Language;
 use crate::info::Info;
-use crate::ui::printer::ascii::AsciiPrinter;
-use crate::ui::printer::image::ImagePrinter;
-use crate::ui::printer::json::JsonPrinter;
-use crate::ui::printer::yaml::YamlPrinter;
-use crate::ui::printer::SerializationFormat;
-use crate::{info::langs::language::Language, ui::printer::plain::PlainPrinter};
+use crate::ui::printer::{PrinterType, SerializationFormat};
 use anyhow::{Context, Result};
 use image::DynamicImage;
 use onefetch_image::ImageBackend;
@@ -57,7 +53,7 @@ impl PrinterFactory {
         })
     }
 
-    pub fn create(self) -> Result<Box<dyn Printer>> {
+    pub fn create(self) -> Result<Printer> {
         let PrinterFactory {
             output,
             info,
@@ -71,18 +67,29 @@ impl PrinterFactory {
         } = self;
 
         match output {
-            Some(SerializationFormat::Json) => Ok(Box::new(JsonPrinter { info })),
-            Some(SerializationFormat::Yaml) => Ok(Box::new(YamlPrinter { info })),
+            Some(SerializationFormat::Json) => Ok(Printer {
+                r#type: PrinterType::Json,
+                info,
+            }),
+            Some(SerializationFormat::Yaml) => Ok(Printer {
+                r#type: PrinterType::Yaml,
+                info,
+            }),
             None => {
                 if art_off || (ascii_input.is_none() && info.dominant_language.is_none()) {
-                    Ok(Box::new(PlainPrinter { info }))
-                } else if let Some(image) = image {
-                    Ok(Box::new(ImagePrinter {
+                    Ok(Printer {
+                        r#type: PrinterType::Plain,
                         info,
-                        image,
-                        image_backend: image_backend.context("No supported image backend")?,
-                        color_resolution,
-                    }))
+                    })
+                } else if let Some(image) = image {
+                    Ok(Printer {
+                        r#type: PrinterType::Image {
+                            image,
+                            backend: image_backend.context("No supported image backend")?,
+                            resolution: color_resolution,
+                        },
+                        info,
+                    })
                 } else {
                     let ascii_art = ascii_input.unwrap_or_else(|| {
                         let language = if let Some(lang) = &ascii_language {
@@ -93,11 +100,13 @@ impl PrinterFactory {
                         language.get_ascii_art().to_string()
                     });
 
-                    Ok(Box::new(AsciiPrinter {
+                    Ok(Printer {
+                        r#type: PrinterType::Ascii {
+                            art: ascii_art.to_string(),
+                            no_bold,
+                        },
                         info,
-                        ascii_art: ascii_art.to_string(),
-                        no_bold,
-                    }))
+                    })
                 }
             }
         }
@@ -109,13 +118,9 @@ mod tests {
     use crate::{
         cli::CliOptions,
         info::{langs::language::Language, Info},
-        ui::printer::{
-            ascii::AsciiPrinter, factory::PrinterFactory, image::ImagePrinter, json::JsonPrinter,
-            plain::PlainPrinter, yaml::YamlPrinter, SerializationFormat,
-        },
+        ui::printer::{factory::PrinterFactory, PrinterType, SerializationFormat},
     };
     use image::DynamicImage;
-    use std::any::Any;
 
     #[test]
     fn test_create_json_printer() {
@@ -125,9 +130,8 @@ mod tests {
 
         let factory = PrinterFactory::new(info, options).unwrap();
         let printer = factory.create().unwrap();
-        let printer_ref = printer.as_ref() as &dyn Any;
 
-        assert!(printer_ref.downcast_ref::<JsonPrinter>().is_some());
+        assert_eq!(printer.r#type, PrinterType::Json);
     }
 
     #[test]
@@ -138,9 +142,8 @@ mod tests {
 
         let factory = PrinterFactory::new(info, options).unwrap();
         let printer = factory.create().unwrap();
-        let printer_ref = printer.as_ref() as &dyn Any;
 
-        assert!(printer_ref.downcast_ref::<YamlPrinter>().is_some());
+        assert_eq!(printer.r#type, PrinterType::Yaml);
     }
 
     #[test]
@@ -152,9 +155,8 @@ mod tests {
 
         let factory = PrinterFactory::new(info, options).unwrap();
         let printer = factory.create().unwrap();
-        let printer_ref = printer.as_ref() as &dyn Any;
 
-        assert!(printer_ref.downcast_ref::<PlainPrinter>().is_some());
+        assert_eq!(printer.r#type, PrinterType::Plain);
     }
 
     #[test]
@@ -164,9 +166,8 @@ mod tests {
 
         let factory = PrinterFactory::new(info, options).unwrap();
         let printer = factory.create().unwrap();
-        let printer_ref = printer.as_ref() as &dyn Any;
 
-        assert!(printer_ref.downcast_ref::<PlainPrinter>().is_some());
+        assert_eq!(printer.r#type, PrinterType::Json);
     }
 
     #[test]
@@ -177,9 +178,8 @@ mod tests {
 
         let factory = PrinterFactory::new(info, options).unwrap();
         let printer = factory.create().unwrap();
-        let printer_ref = printer.as_ref() as &dyn Any;
 
-        assert!(printer_ref.downcast_ref::<AsciiPrinter>().is_some());
+        assert!(matches!(printer.r#type, PrinterType::Ascii { .. }));
     }
 
     pub struct DummyBackend {}
@@ -215,8 +215,7 @@ mod tests {
 
         factory.info.dominant_language = Some(Language::ABNF);
         let printer = factory.create().unwrap();
-        let printer_ref = printer.as_ref() as &dyn Any;
 
-        assert!(printer_ref.downcast_ref::<ImagePrinter>().is_some());
+        assert!(matches!(printer.r#type, PrinterType::Image { .. }));
     }
 }

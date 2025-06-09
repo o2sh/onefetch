@@ -6,10 +6,7 @@ use strum::IntoEnumIterator;
 pub mod language;
 
 pub fn get_main_language(loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Option<Language> {
-    if let Some(loc_by_language) = loc_by_language_opt {
-        return Some(loc_by_language[0].0);
-    }
-    None
+    loc_by_language_opt.map(|loc_by_language| loc_by_language[0].0)
 }
 
 /// Returns a vector of tuples containing all the languages detected inside the repository.
