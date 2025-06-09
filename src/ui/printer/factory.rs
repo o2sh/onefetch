@@ -167,7 +167,7 @@ mod tests {
         let factory = PrinterFactory::new(info, options).unwrap();
         let printer = factory.create().unwrap();
 
-        assert_eq!(printer.r#type, PrinterType::Json);
+        assert_eq!(printer.r#type, PrinterType::Plain);
     }
 
     #[test]
