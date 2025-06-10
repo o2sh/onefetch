@@ -1,0 +1,30 @@
+name: Weekly flake.lock update
+
+on:
+  schedule:
+    - cron: '0 11 * * 4'
+  workflow_dispatch:
+
+jobs:
+  update-flake:
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: get date
+        id: date
+        run: echo "date=$(date '+%B %d, %Y')" >> $GITHUB_OUTPUT
+
+      - uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Update flake.lock
+        id: flake-upd
+        uses: DeterminateSystems/update-flake-lock@v25
+        with:
+          pr-title: "Update flake.lock on ${{ steps.date.outputs.date }}"
+          pr-labels: |
+            dependencies
+            nix

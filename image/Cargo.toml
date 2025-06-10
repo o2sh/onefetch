@@ -1,18 +1,18 @@
 [package]
-authors.workspace = true
-edition.workspace = true
-version.workspace = true
-license.workspace = true
-repository.workspace = true
-name = "onefetch-image"
-description = "Display images in the terminal"
+  authors.workspace    = true
+  description          = "Display images in the terminal"
+  edition.workspace    = true
+  license.workspace    = true
+  name                 = "onefetch-image"
+  repository.workspace = true
+  version.workspace    = true
 
 [dependencies]
-anyhow.workspace = true
-clap.workspace = true
-image.workspace = true
+  anyhow.workspace = true
+  clap.workspace   = true
+  image.workspace  = true
 
 [target.'cfg(not(windows))'.dependencies]
-color_quant = "1.1.0"
-base64 = "0.22.1"
-libc = "0.2.169"
+  base64      = "0.22.1"
+  color_quant = "1.1.0"
+  libc        = "0.2.169"

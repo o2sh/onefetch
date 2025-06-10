@@ -1,96 +1,96 @@
 [workspace.package]
-authors = ["o2sh <ossama-hjaji@live.fr>"]
-edition = "2021"
-license = "MIT"
-version = "2.24.0"
-repository = "https://github.com/o2sh/onefetch"
+  authors    = [ "o2sh <ossama-hjaji@live.fr>" ]
+  edition    = "2021"
+  license    = "MIT"
+  repository = "https://github.com/o2sh/onefetch"
+  version    = "2.24.0"
 
 [workspace]
-members = ["ascii", "image", "manifest"]
+  members = [ "ascii", "image", "manifest" ]
 
-[workspace.dependencies]
-owo-colors = "4.2.1"
-anyhow = "1.0"
-clap = { version = "4.5.34", features = ["derive"] }
-image = { version = "0.25.6", default-features = false, features = [
-    "color_quant",
-    "jpeg",
-    "png",
-    "webp",
-] }
-strum = { version = "0.26.3", features = ["derive"] }
+  [workspace.dependencies]
+    anyhow = "1.0"
+    clap = { version = "4.5.34", features = [ "derive" ] }
+    image = { version = "0.25.6", default-features = false, features = [
+      "color_quant",
+      "jpeg",
+      "png",
+      "webp",
+    ] }
+    owo-colors = "4.2.1"
+    strum = { version = "0.26.3", features = [ "derive" ] }
 
 [package]
-authors.workspace = true
-edition.workspace = true
-version.workspace = true
-license.workspace = true
-repository.workspace = true
-categories = ["command-line-utilities"]
-description = "Command-line Git information tool"
-exclude = ["docs/vercel/*"]
-keywords = ["git", "cli", "terminal"]
-name = "onefetch"
-homepage = "https://onefetch.dev"
-rust-version = "1.82.0"
+  authors.workspace    = true
+  categories           = [ "command-line-utilities" ]
+  description          = "Command-line Git information tool"
+  edition.workspace    = true
+  exclude              = [ "docs/vercel/*" ]
+  homepage             = "https://onefetch.dev"
+  keywords             = [ "cli", "git", "terminal" ]
+  license.workspace    = true
+  name                 = "onefetch"
+  repository.workspace = true
+  rust-version         = "1.82.0"
+  version.workspace    = true
 
 [dependencies]
-anyhow.workspace = true
-askalono = "0.5.0"
-byte-unit = "5.1.6"
-clap.workspace = true
-clap_complete = "4.5.47"
-crossbeam-channel = "0.5.15"
-gix = { version = "0.72.1", default-features = false, features = [
-    "max-performance-safe",
+  anyhow.workspace = true
+  askalono = "0.5.0"
+  byte-unit = "5.1.6"
+  clap.workspace = true
+  clap_complete = "4.5.47"
+  crossbeam-channel = "0.5.15"
+  gix = { version = "0.72.1", default-features = false, features = [
     "blob-diff",
-    "mailmap",
     "index",
+    "mailmap",
+    "max-performance-safe",
     "status",
-] }
-gix-features = { version = "0.42.1", features = ["zlib-ng"] }
-globset = "0.4.16"
-human-panic = "2.0.2"
-image.workspace = true
-num-format = "0.4.4"
-onefetch-ascii = { path = "ascii", version = "2.19.0" }
-onefetch-image = { path = "image", version = "2.19.0" }
-onefetch-manifest = { path = "manifest", version = "2.19.0" }
-owo-colors.workspace = true
-regex = "1.11.1"
-serde = "1.0"
-serde_json = "1.0"
-serde_yaml = "0.9.34"
-# TODO With the new value parsers, we're really close to being able to eliminate
-# the strum dependency
-strum.workspace = true
-time = { version = "0.3.41", features = ["formatting"] }
-time-humanize = { version = "0.1.3", features = ["time"] }
-tokei = "13.0.0-alpha.8"
-typetag = "0.2"
+  ] }
+  gix-features = { version = "0.42.1", features = [ "zlib-ng" ] }
+  globset = "0.4.16"
+  human-panic = "2.0.2"
+  image.workspace = true
+  num-format = "0.4.4"
+  onefetch-ascii = { path = "ascii", version = "2.19.0" }
+  onefetch-image = { path = "image", version = "2.19.0" }
+  onefetch-manifest = { path = "manifest", version = "2.19.0" }
+  owo-colors.workspace = true
+  regex = "1.11.1"
+  serde = "1.0"
+  serde_json = "1.0"
+  serde_yaml = "0.9.34"
+  # TODO With the new value parsers, we're really close to being able to eliminate
+  # the strum dependency
+  strum.workspace = true
+  time            = { version = "0.3.41", features = [ "formatting" ] }
+  time-humanize   = { version = "0.1.3", features = [ "time" ] }
+  tokei           = "13.0.0-alpha.8"
+  typetag         = "0.2"
 
 [dev-dependencies]
-criterion = "0.6.0"
-gix-testtools = "0.16.1"
-insta = { version = "1.43.1", features = ["json", "redactions"] }
-rstest = "0.25.0"
+  criterion     = "0.6.0"
+  gix-testtools = "0.16.1"
+  insta         = { version = "1.43.1", features = [ "json", "redactions" ] }
+  rstest        = "0.25.0"
 
 [[bench]]
-name = "repo"
-harness = false
+  harness = false
+  name    = "repo"
 
 [build-dependencies]
-lazy_static = "1"
-regex = "1"
-serde_json = "1"
-serde_yaml = "0.9"
-tera = { version = "1", default-features = false }
+  lazy_static = "1"
+  regex       = "1"
+  serde_json  = "1"
+  serde_yaml  = "0.9"
+  tera        = { version = "1", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
+  winres = "0.1"
 
 [target.'cfg(windows)'.dependencies]
-enable-ansi-support = "0.2.1"
+  enable-ansi-support = "0.2.1"
 
 [features]
-fail-on-deprecated = []
+  fail-on-deprecated = [  ]
