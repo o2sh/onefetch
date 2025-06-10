@@ -19,14 +19,8 @@ pub fn get_loc_by_language_sorted(
     include_hidden: bool,
 ) -> Option<Vec<(Language, usize)>> {
     let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
-
     let loc_by_language_opt = get_loc_by_language(&locs);
-
-    if let Some(loc_by_language) = loc_by_language_opt {
-        return Some(sort_by_loc(loc_by_language));
-    }
-
-    None
+    loc_by_language_opt.map(|loc_by_language| sort_by_loc(loc_by_language))
 }
 
 fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
