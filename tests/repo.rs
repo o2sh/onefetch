@@ -94,3 +94,14 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
     let _info = build_info(&config).expect("no error");
     Ok(())
 }
+
+#[test]
+fn test_repo_without_code() -> Result<()> {
+    let repo = repo("make_repo_without_code.sh")?;
+    let config: CliOptions = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let _info = build_info(&config).expect("no error");
+    Ok(())
+}

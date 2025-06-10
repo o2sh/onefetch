@@ -44,6 +44,19 @@ impl TextColors {
     }
 }
 
+impl Default for TextColors {
+    fn default() -> Self {
+        Self {
+            title: DynColors::Ansi(AnsiColors::Default),
+            tilde: DynColors::Ansi(AnsiColors::Default),
+            underline: DynColors::Ansi(AnsiColors::Default),
+            subtitle: DynColors::Ansi(AnsiColors::Default),
+            colon: DynColors::Ansi(AnsiColors::Default),
+            info: DynColors::Ansi(AnsiColors::Default),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
