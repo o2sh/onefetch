@@ -12,12 +12,12 @@ pub struct TextColors {
 }
 
 impl TextColors {
-    pub fn new(colors: &[u8], logo_primary_color: DynColors) -> Self {
+    pub fn new(colors: &[u8], primary_color: DynColors) -> Self {
         let mut text_colors = Self {
-            title: logo_primary_color,
+            title: primary_color,
             tilde: DynColors::Ansi(AnsiColors::Default),
             underline: DynColors::Ansi(AnsiColors::Default),
-            subtitle: logo_primary_color,
+            subtitle: primary_color,
             colon: DynColors::Ansi(AnsiColors::Default),
             info: DynColors::Ansi(AnsiColors::Default),
         };
@@ -25,14 +25,14 @@ impl TextColors {
         if !colors.is_empty() {
             let custom_color = colors.iter().map(num_to_color).collect::<Vec<DynColors>>();
 
-            text_colors.title = *custom_color.first().unwrap_or(&logo_primary_color);
+            text_colors.title = *custom_color.first().unwrap_or(&primary_color);
             text_colors.tilde = *custom_color
                 .get(1)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
             text_colors.underline = *custom_color
                 .get(2)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            text_colors.subtitle = *custom_color.get(3).unwrap_or(&logo_primary_color);
+            text_colors.subtitle = *custom_color.get(3).unwrap_or(&primary_color);
             text_colors.colon = *custom_color
                 .get(4)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));

@@ -39,15 +39,15 @@ impl Printer {
     pub fn print(&self, writer: &mut dyn std::io::Write) -> Result<()> {
         match &self.r#type {
             PrinterType::Json => {
-                writeln!(writer, "{}", serde_json::to_string_pretty(&self.info)?)?;
+                write!(writer, "{}", serde_json::to_string_pretty(&self.info)?)?;
                 Ok(())
             }
             PrinterType::Yaml => {
-                writeln!(writer, "{}", serde_yaml::to_string(&self.info)?)?;
+                write!(writer, "{}", serde_yaml::to_string(&self.info)?)?;
                 Ok(())
             }
             PrinterType::Plain => {
-                write!(writer, "\x1B[?7l{}\x1B[?7h", self.info)?;
+                write_with_line_wrapping(writer, &self.info.to_string())?;
                 Ok(())
             }
             PrinterType::Image {
@@ -66,7 +66,7 @@ impl Printer {
                     .add_image(info_lines, image, *resolution)
                     .context("Failed to render image")?;
 
-                write!(writer, "\x1B[?7l{rendered}\x1B[?7h")?;
+                write_with_line_wrapping(writer, &rendered)?;
                 Ok(())
             }
             PrinterType::Ascii { art, no_bold } => {
@@ -86,19 +86,21 @@ impl Printer {
                             "",
                             width = logo_lines.width()
                         )?,
-                        (None, None) => {
-                            buf.push('\n');
-                            break;
-                        }
+                        (None, None) => break,
                     }
                 }
 
-                // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
-                write!(writer, "\x1B[?7l{buf}\x1B[?7h")?;
+                write_with_line_wrapping(writer, &buf)?;
                 Ok(())
             }
         }
     }
+}
+
+fn write_with_line_wrapping(writer: &mut dyn std::io::Write, content: &str) -> Result<()> {
+    // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
+    write!(writer, "\x1B[?7l{content}\x1B[?7h")?;
+    Ok(())
 }
 
 impl PartialEq for PrinterType {
