@@ -1,0 +1,20 @@
+# https://taplo.tamasfe.dev/configuration/file.html#configuration-file
+
+[formatting]
+  align_comments = true
+  align_entries  = true
+  #
+  array_auto_collapse  = false
+  array_auto_expand    = true
+  array_trailing_comma = true
+  #
+  compact_arrays        = false
+  compact_entries       = false
+  compact_inline_tables = false
+  #
+  indent_entries = true
+  indent_tables  = true
+  #
+  reorder_arrays        = true
+  reorder_inline_tables = true
+  reorder_keys          = true

@@ -1,14 +1,14 @@
 [package]
-authors.workspace = true
-edition.workspace = true
-version.workspace = true
-license.workspace = true
-repository.workspace = true
-name = "onefetch-manifest"
-description = "Detect and parse manifest files"
+  authors.workspace    = true
+  description          = "Detect and parse manifest files"
+  edition.workspace    = true
+  license.workspace    = true
+  name                 = "onefetch-manifest"
+  repository.workspace = true
+  version.workspace    = true
 
 [dependencies]
-anyhow.workspace = true
-cargo_toml = "0.22.1"
-npm-package-json = "0.1.3"
-strum.workspace = true
+  anyhow.workspace = true
+  cargo_toml       = "0.22.1"
+  npm-package-json = "0.1.3"
+  strum.workspace  = true
