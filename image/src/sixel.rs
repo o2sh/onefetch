@@ -152,7 +152,7 @@ impl super::ImageBackend for SixelBackend {
                         sixel_samples[x as usize] |= 1 << y;
                     }
                 }
-                image_data.extend(format!("#{}", color_index).bytes());
+                image_data.extend(format!("#{color_index}").bytes());
                 image_data.extend(sixel_samples.iter().map(|x| x + 0x3F));
                 image_data.push(b'$');
             }
@@ -164,7 +164,7 @@ impl super::ImageBackend for SixelBackend {
         image_data.extend(format!("\x1B[{}C", image_columns as u32 + 1).as_bytes()); // move cursor to top-right corner of image
         let mut i = 0;
         for line in &lines {
-            image_data.extend(format!("\x1B[s{}\x1B[u\x1B[1B", line).as_bytes());
+            image_data.extend(format!("\x1B[s{line}\x1B[u\x1B[1B").as_bytes());
             i += 1;
         }
         image_data

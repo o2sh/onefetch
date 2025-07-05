@@ -131,7 +131,7 @@ impl super::ImageBackend for KittyBackend {
         image_data.extend(format!("\x1B[{}A", image_rows as u32 - 1).as_bytes()); // move cursor to start of image
         let mut i = 0;
         for line in &lines {
-            image_data.extend(format!("\x1B[s{}\x1B[u\x1B[1B", line).as_bytes());
+            image_data.extend(format!("\x1B[s{line}\x1B[u\x1B[1B").as_bytes());
             i += 1;
         }
         image_data
