@@ -160,7 +160,7 @@ impl super::ImageBackend for SixelBackend {
         }
         image_data.extend(b"\x1B\\");
 
-        image_data.extend(format!("\x1B[{}A", image_rows as u32).as_bytes()); // move cursor to top-left corner
+        image_data.extend(format!("\x1B[{}A", image_rows as u32 - 1).as_bytes()); // move cursor to top-left corner
         image_data.extend(format!("\x1B[{}C", image_columns as u32 + 1).as_bytes()); // move cursor to top-right corner of image
         let mut i = 0;
         for line in &lines {
