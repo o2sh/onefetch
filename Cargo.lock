@@ -2456,7 +2456,7 @@ checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 
 [[package]]
 name = "onefetch"
-version = "2.24.0"
+version = "2.25.0"
 dependencies = [
  "anyhow",
  "askalono",
@@ -2495,14 +2495,14 @@ dependencies = [
 
 [[package]]
 name = "onefetch-ascii"
-version = "2.24.0"
+version = "2.25.0"
 dependencies = [
  "owo-colors",
 ]
 
 [[package]]
 name = "onefetch-image"
-version = "2.24.0"
+version = "2.25.0"
 dependencies = [
  "anyhow",
  "base64",
@@ -2514,7 +2514,7 @@ dependencies = [
 
 [[package]]
 name = "onefetch-manifest"
-version = "2.24.0"
+version = "2.25.0"
 dependencies = [
  "anyhow",
  "cargo_toml",
