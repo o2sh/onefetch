@@ -50,7 +50,7 @@ gix = { version = "0.72.1", default-features = false, features = [
 ] }
 gix-features = { version = "0.42.1", features = ["zlib-ng"] }
 globset = "0.4.16"
-human-panic = "2.0.2"
+human-panic = "2.0.3"
 image.workspace = true
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.19.0" }
