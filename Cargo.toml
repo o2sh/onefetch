@@ -48,7 +48,7 @@ gix = { version = "0.72.1", default-features = false, features = [
     "index",
     "status",
 ] }
-gix-features = { version = "0.42.1", features = ["zlib-ng"] }
+gix-features = { version = "0.43.0", features = ["zlib-ng"] }
 globset = "0.4.16"
 human-panic = "2.0.2"
 image.workspace = true
