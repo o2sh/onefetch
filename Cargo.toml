@@ -11,7 +11,7 @@ members = ["ascii", "image", "manifest"]
 [workspace.dependencies]
 owo-colors = "4.2.2"
 anyhow = "1.0"
-clap = { version = "4.5.40", features = ["derive"] }
+clap = { version = "4.5.43", features = ["derive"] }
 image = { version = "0.25.6", default-features = false, features = [
     "color_quant",
     "jpeg",
@@ -39,7 +39,7 @@ anyhow.workspace = true
 askalono = "0.5.0"
 byte-unit = "5.1.6"
 clap.workspace = true
-clap_complete = "4.5.54"
+clap_complete = "4.5.55"
 crossbeam-channel = "0.5.15"
 gix = { version = "0.73.0", default-features = false, features = [
     "max-performance-safe",
@@ -50,7 +50,7 @@ gix = { version = "0.73.0", default-features = false, features = [
 ] }
 gix-features = { version = "0.43.1", features = ["zlib-ng"] }
 globset = "0.4.16"
-human-panic = "2.0.2"
+human-panic = "2.0.3"
 image.workspace = true
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.19.0" }
