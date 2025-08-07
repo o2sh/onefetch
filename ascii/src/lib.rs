@@ -254,7 +254,7 @@ fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: 
 
 type ParseResult<'a, R> = Option<(&'a str, R)>;
 
-fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R> {
+fn token<'a, R>(s: &'a str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<'a, R> {
     let mut chars = s.chars();
     let token = chars.next()?;
     let result = predicate(token)?;
@@ -264,7 +264,7 @@ fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R
 // Parsers
 
 /// Parses a color indicator of the format `{n}` where `n` is a digit.
-fn color_token(s: &str) -> ParseResult<Token> {
+fn color_token<'a>(s: &'a str) -> ParseResult<'a, Token> {
     let (s, ()) = token(s, succeed_when(|c| c == '{'))?;
     let (s, color_index) = token(s, |c| c.to_digit(10))?;
     let (s, ()) = token(s, succeed_when(|c| c == '}'))?;
@@ -272,12 +272,12 @@ fn color_token(s: &str) -> ParseResult<Token> {
 }
 
 /// Parses a space.
-fn space_token(s: &str) -> ParseResult<Token> {
+fn space_token<'a>(s: &'a str) -> ParseResult<'a, Token> {
     token(s, succeed_when(|c| c == ' ')).map(|(s, ())| (s, Token::Space))
 }
 
 /// Parses any arbitrary character. This cannot fail.
-fn char_token(s: &str) -> ParseResult<Token> {
+fn char_token<'a>(s: &'a str) -> ParseResult<'a, Token> {
     token(s, |c| Some(Token::Char(c)))
 }
 
