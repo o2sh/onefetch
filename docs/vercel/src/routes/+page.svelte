@@ -56,6 +56,7 @@
   {#if tagName && htmlUrl}
     <div class="banner">
       🎉 New release {tagName}! Check out the
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
       <a href={htmlUrl}>release notes</a>! 📝
     </div>
   {/if}
