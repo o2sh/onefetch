@@ -1,3 +1,4 @@
+use crate::i18n::tr;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
@@ -9,7 +10,6 @@ use clap_complete::{generate, Generator, Shell};
 use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
-use crate::i18n::tr;
 use regex::Regex;
 use serde::Serialize;
 use std::env;
@@ -24,8 +24,12 @@ pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about)]
 pub struct CliOptions {
-    #[arg(help = tr!("cli-input"))]
-    #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
+    #[arg(
+        default_value = ".", 
+        hide_default_value = true, 
+        value_hint = ValueHint::DirPath,
+        help = tr!("cli-input")
+    )]
     pub input: PathBuf,
     #[command(flatten)]
     pub info: InfoCliOptions,
@@ -44,70 +48,56 @@ pub struct CliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "INFO")]
+#[command(next_help_heading = tr!("cli-info-heading"))]
 pub struct InfoCliOptions {
-    /// Allows you to disable FIELD(s) from appearing in the output
     #[arg(
         long,
         short,
+        help = tr!("cli-info-disabled-fields"),
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = "FIELD"
+        value_name = tr!("cli-value-field")
     )]
     pub disabled_fields: Vec<InfoType>,
-    /// Hides the title
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-no-title"))]
     pub no_title: bool,
-    /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-authors"))]
     pub number_of_authors: usize,
-    /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 6usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-languages"))]
     pub number_of_languages: usize,
-    /// Maximum NUM of file churns to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-file-churns"))]
     pub number_of_file_churns: usize,
-    /// Minimum NUM of commits from HEAD used to compute the churn summary
-    ///
-    /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under the info title "Churn (NUM)"
-    #[arg(long, value_name = "NUM")]
+    #[arg(long, value_name = "NUM", help = tr!("cli-info-churn-pool-size"))]
     pub churn_pool_size: Option<usize>,
-    /// Ignore all files & directories matching EXCLUDE
-    #[arg(long, short, num_args = 1..)]
+    #[arg(long, short, num_args = 1.., help = tr!("cli-info-exclude"), value_name = tr!("cli-value-exclude"))]
     pub exclude: Vec<String>,
-    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[arg(
         long,
         num_args = 0..=1,
         require_equals = true,
         default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
-        value_name = "REGEX"
+        value_name = tr!("cli-value-regex"),
+        help = tr!("cli-info-no-bots")
     )]
     pub no_bots: Option<MyRegex>,
-    /// Ignores merge commits
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-no-merges"))]
     pub no_merges: bool,
-    /// Show the email address of each author
-    #[arg(long, short = 'E')]
+    #[arg(long, short = 'E', help = tr!("cli-info-email"))]
     pub email: bool,
-    /// Display repository URL as HTTP
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-http-url"))]
     pub http_url: bool,
-    /// Hide token in repository URL
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-hide-token"))]
     pub hide_token: bool,
-    /// Count hidden files and directories
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-include-hidden"))]
     pub include_hidden: bool,
-    /// Filters output by language type
     #[arg(
         long,
         num_args = 1..,
         default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
+        help = tr!("cli-info-type")
     )]
     pub r#type: Vec<LanguageType>,
 }
