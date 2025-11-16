@@ -440,19 +440,31 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.43"
+version = "4.5.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50fd97c9dc2399518aa331917ac6f274280ec5eb34e555dd291899745c48ec6f"
+checksum = "4c26d721170e0295f191a69bd9a1f93efcdb0aff38684b61ab5750468972e5f5"
 dependencies = [
  "clap_builder",
  "clap_derive",
 ]
 
 [[package]]
+name = "clap-i18n-richformatter"
+version = "0.1.4"
+source = "git+https://github.com/Sk7Str1p3/clap-i18n-richformatter-0.1.4#48171098e9ef30261729925e91a8d874ee3b6062"
+dependencies = [
+ "clap",
+ "i18n-embed",
+ "i18n-embed-fl",
+ "rust-embed",
+ "unic-langid",
+]
+
+[[package]]
 name = "clap_builder"
-version = "4.5.43"
+version = "4.5.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c35b5830294e1fa0462034af85cc95225a4cb07092c088c55bda3147cfcd8f65"
+checksum = "75835f0c7bf681bfd05abe44e965760fea999a5286c6eb2d59883634fd02011a"
 dependencies = [
  "anstream",
  "anstyle",
@@ -472,9 +484,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.5.41"
+version = "4.5.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef4f52386a59ca4c860f7393bcf8abd8dfd91ecccc0f774635ff68e92eeef491"
+checksum = "2a0b5487afeab2deb2ff4e03a807ad1a03ac532ff5a2cee5d86884440c7f7671"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -2865,6 +2877,7 @@ dependencies = [
  "askalono",
  "byte-unit",
  "clap",
+ "clap-i18n-richformatter",
  "clap_complete",
  "criterion",
  "crossbeam-channel",

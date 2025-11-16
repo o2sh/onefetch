@@ -2,6 +2,7 @@
 
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
+use clap_i18n_richformatter::{init_clap_rich_formatter_localizer, ClapI18nRichFormatter};
 use human_panic::setup_panic;
 use onefetch::cli::{self, CliOptions};
 use onefetch::info::build_info;
@@ -11,11 +12,15 @@ use std::io;
 fn main() -> Result<()> {
     setup_panic!();
     onefetch::i18n::init()?;
+    init_clap_rich_formatter_localizer();
 
     #[cfg(windows)]
     enable_ansi_support::enable_ansi_support()?;
 
-    let cli_options = cli::CliOptions::parse();
+    let cli_options = cli::CliOptions::try_parse().map_err(|e| {
+        let e = e.apply::<ClapI18nRichFormatter>();
+        e.exit()
+    }).unwrap();
 
     if cli_options.other.languages {
         return cli::print_supported_languages();
