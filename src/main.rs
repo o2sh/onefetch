@@ -10,6 +10,7 @@ use std::io;
 
 fn main() -> Result<()> {
     setup_panic!();
+    onefetch::i18n::init()?;
 
     #[cfg(windows)]
     enable_ansi_support::enable_ansi_support()?;

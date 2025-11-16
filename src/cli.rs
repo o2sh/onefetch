@@ -9,6 +9,7 @@ use clap_complete::{generate, Generator, Shell};
 use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
+use crate::i18n::tr;
 use regex::Regex;
 use serde::Serialize;
 use std::env;
@@ -23,7 +24,7 @@ pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about)]
 pub struct CliOptions {
-    /// Run as if onefetch was started in <input> instead of the current working directory
+    #[arg(help = tr!("cli-input"))]
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
     pub input: PathBuf,
     #[command(flatten)]

@@ -1,9 +1,11 @@
 use regex::Regex;
 use std::collections::HashMap;
 use std::env;
+use std::io::Write;
 use std::error::Error;
-use std::fs::{self, File};
-use std::path::Path;
+use std::fs::{self, File, create_dir_all, read_to_string};
+use std::io::BufWriter;
+use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 use tera::{Context, Tera};
 
@@ -28,6 +30,31 @@ fn main() -> Result<(), Box<dyn Error>> {
         &Context::from_value(serde_json::json!({ "languages": lang_data, }))?,
     )?;
     fs::write(output_path, rust_code)?;
+
+    println!("cargo:rerun-if-changed=locales/");
+    let locales_dir = PathBuf::from("locales").read_dir()?;
+    let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("__locales_compiled");
+
+    for dir in locales_dir {
+        let dir = dir?.path();
+        let lang = dir
+            .components()
+            .last()
+            .unwrap()
+            .as_os_str()
+            .to_str()
+            .unwrap();
+        create_dir_all(out_dir.join(lang)).unwrap();
+
+        let mut out_file =
+            BufWriter::new(File::create(out_dir.join(lang).join("onefetch.ftl"))?);
+
+        for ftl in dir.read_dir()? {
+            let ftl = ftl?.path();
+            let contents = read_to_string(&ftl)?;
+            writeln!(out_file, "{contents}")?;
+        }
+    }
 
     Ok(())
 }
