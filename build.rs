@@ -1,10 +1,10 @@
 use regex::Regex;
 use std::collections::HashMap;
 use std::env;
-use std::io::Write;
 use std::error::Error;
-use std::fs::{self, File, create_dir_all, read_to_string};
+use std::fs::{self, create_dir_all, read_to_string, File};
 use std::io::BufWriter;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 use tera::{Context, Tera};
@@ -37,17 +37,12 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for dir in locales_dir {
         let dir = dir?.path();
-        let lang = dir
-            .components()
-            .last()
-            .unwrap()
-            .as_os_str()
-            .to_str()
-            .unwrap();
-        create_dir_all(out_dir.join(lang)).unwrap();
+        let lang = dir.components().last().unwrap();
 
-        let mut out_file =
-            BufWriter::new(File::create(out_dir.join(lang).join("onefetch.ftl"))?);
+        let out_dir = out_dir.join(lang);
+        create_dir_all(&out_dir).unwrap();
+
+        let mut out_file = BufWriter::new(File::create(out_dir.join("onefetch.ftl"))?);
 
         for ftl in dir.read_dir()? {
             let ftl = ftl?.path();
