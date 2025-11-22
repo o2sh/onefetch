@@ -76,6 +76,11 @@ cli-ascii-true-color =
 
     Если установлено в auto: true-color будет включен, если он поддерживается терминалом
 
+# IMAGE
+cli-image-image = Путь к файлу ИЗОБРАЖЕНИЯ
+cli-image-image_protocol = Какой ПРОТОКОЛ изображения использовать
+cli-image-color_resolution = ЗНАЧЕНИЕ разрешения цвета, используемого с бэкендом SIXEL
+
 # VISUALS
 cli-visuals-heading = ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ
 cli-visuals-no-color-palette = Скрывает цветовую палитру

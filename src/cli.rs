@@ -166,11 +166,9 @@ pub struct AsciiCliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageCliOptions {
-    /// Path to the IMAGE file
-    #[arg(long, short, value_name = tr!("cli-value-image"), value_hint = ValueHint::FilePath)]
+    #[arg(long, short, value_name = tr!("cli-value-image"), value_hint = ValueHint::FilePath, help = tr!("cli-image-image"))]
     pub image: Option<PathBuf>,
-    /// Which image PROTOCOL to use
-    #[arg(long, value_enum, requires = "image", value_name = tr!("cli-value-protocol"))]
+    #[arg(long, value_enum, requires = "image", value_name = tr!("cli-value-protocol"), help = tr!("cli-image-image_protocol"))]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
@@ -179,7 +177,8 @@ pub struct ImageCliOptions {
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
-            .map(|s| s.parse::<usize>().unwrap())
+            .map(|s| s.parse::<usize>().unwrap()), 
+        help = tr!("cli-image-color_resolution")
     )]
     pub color_resolution: usize,
 }

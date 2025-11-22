@@ -76,6 +76,11 @@ cli-ascii-true-color =
    
     If set to auto: true color will be enabled if supported by the terminal
 
+# IMAGE
+cli-image-image = Path to the IMAGE file
+cli-image-image_protocol = Which image PROTOCOL to use
+cli-image-color_resolution = VALUE of color resolution to use with SIXEL backend
+
 # VISUALS
 cli-visuals-heading = VISUALS
 cli-visuals-no-color-palette = Hides the color palette
