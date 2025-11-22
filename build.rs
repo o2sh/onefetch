@@ -2,12 +2,13 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
-use std::fs::{self, create_dir_all, read_to_string, File};
-use std::io::BufWriter;
-use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::fs::{self, File};
+use std::path::Path;
 use std::sync::LazyLock;
 use tera::{Context, Tera};
+
+#[path = "locales/build.rs"]
+mod locales;
 
 fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(windows)]
@@ -31,25 +32,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     )?;
     fs::write(output_path, rust_code)?;
 
-    println!("cargo:rerun-if-changed=locales/");
-    let locales_dir = PathBuf::from("locales").read_dir()?;
-    let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("__locales_compiled");
-
-    for dir in locales_dir {
-        let dir = dir?.path();
-        let lang = dir.components().last().unwrap();
-
-        let out_dir = out_dir.join(lang);
-        create_dir_all(&out_dir).unwrap();
-
-        let mut out_file = BufWriter::new(File::create(out_dir.join("onefetch.ftl"))?);
-
-        for ftl in dir.read_dir()? {
-            let ftl = ftl?.path();
-            let contents = read_to_string(&ftl)?;
-            writeln!(out_file, "{contents}")?;
-        }
-    }
+    locales::concat_locales()?;
+    locales::generate_consts(&out_dir)?;
 
     Ok(())
 }

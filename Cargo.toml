@@ -88,9 +88,12 @@ harness = false
 
 [build-dependencies]
 lazy_static = "1"
+proc-macro2 = "1.0.103"
+quote = "1.0.42"
 regex = "1"
 serde_json = "1"
 serde_yaml = "0.9"
+syn = "2.0.110"
 tera = { version = "1", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
