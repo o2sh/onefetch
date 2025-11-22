@@ -5,6 +5,16 @@ cli-value-num = NUM
 cli-value-field = FIELD
 cli-value-regex = REGEX
 cli-value-exclude = EXCLUDE
+cli-value-type = TYPE
+cli-value-separator = SEPARATOR
+cli-value-string = STRING
+cli-value-language = LANGUAGE
+cli-value-when = WHEN
+cli-value-image = IMAGE
+cli-value-protocol = PROTOCOL
+cli-value-value = VALUE
+cli-value-format = FORMAT
+cli-value-shell = SHELL
 
 # INFO
 cli-info-heading = INFO

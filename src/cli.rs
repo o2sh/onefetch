@@ -68,7 +68,7 @@ pub struct InfoCliOptions {
     pub number_of_languages: usize,
     #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-file-churns"))]
     pub number_of_file_churns: usize,
-    #[arg(long, value_name = "NUM", help = tr!("cli-info-churn-pool-size"))]
+    #[arg(long, value_name = tr!("cli-value-num"), help = tr!("cli-info-churn-pool-size"))]
     pub churn_pool_size: Option<usize>,
     #[arg(long, short, num_args = 1.., help = tr!("cli-info-exclude"), value_name = tr!("cli-value-exclude"))]
     pub exclude: Vec<String>,
@@ -94,6 +94,7 @@ pub struct InfoCliOptions {
     #[arg(
         long,
         num_args = 1..,
+        value_name = tr!("cli-value-type"),
         default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
@@ -112,7 +113,7 @@ pub struct AsciiCliOptions {
     /// For example:
     ///
     /// '--ascii-input "$(fortune | cowsay -W 25)"'
-    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
+    #[arg(long, value_name = tr!("cli-value-string"), value_hint = ValueHint::CommandString)]
     pub ascii_input: Option<String>,
     /// Colors (X X X...) to print the ascii art
     #[arg(
@@ -127,7 +128,7 @@ pub struct AsciiCliOptions {
     #[arg(
         long,
         short,
-        value_name = "LANGUAGE",
+        value_name = tr!("cli-value-language"),
         value_enum,
         hide_possible_values = true
     )]
@@ -135,7 +136,7 @@ pub struct AsciiCliOptions {
     /// Specify when to use true color
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
-    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
+    #[arg(long, default_value = "auto", value_name = tr!("cli-value-when"), value_enum)]
     pub true_color: When,
 }
 
@@ -143,15 +144,15 @@ pub struct AsciiCliOptions {
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageCliOptions {
     /// Path to the IMAGE file
-    #[arg(long, short, value_hint = ValueHint::FilePath)]
+    #[arg(long, short, value_name = tr!("cli-value-image"), value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
     /// Which image PROTOCOL to use
-    #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
+    #[arg(long, value_enum, requires = "image", value_name = tr!("cli-value-protocol"))]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
         long,
-        value_name = "VALUE",
+        value_name = tr!("cli-value-value"),
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
@@ -182,7 +183,7 @@ pub struct TextForamttingCliOptions {
     #[arg(long, short = 'z')]
     pub iso_time: bool,
     /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    #[arg(long, value_name = tr!("cli-value-separator"), default_value = "plain", value_enum)]
     pub number_separator: NumberSeparator,
     /// Turns off bold formatting
     #[arg(long)]
@@ -208,10 +209,10 @@ pub struct VisualsCliOptions {
 #[command(next_help_heading = "DEVELOPER")]
 pub struct DeveloperCliOptions {
     /// Outputs Onefetch in a specific format
-    #[arg(long, short, value_name = "FORMAT", value_enum)]
+    #[arg(long, short, value_name = tr!("cli-value-format"), value_enum)]
     pub output: Option<SerializationFormat>,
     /// If provided, outputs the completion file for given SHELL
-    #[arg(long = "generate", value_name = "SHELL", value_enum)]
+    #[arg(long = "generate", value_name = tr!("cli-value-shell"), value_enum)]
     pub completion: Option<Shell>,
 }
 

@@ -5,6 +5,16 @@ cli-value-num = КОЛ-ВО
 cli-value-field = ПОЛЕ
 cli-value-regex = РЕГ. ВЫРАЖЕНИЕ
 cli-value-exclude = ИСКЛЮЧЕННОЕ
+cli-value-type = ТИП
+cli-value-separator = РАЗДЕЛИТЕЛЬ
+cli-value-string = СТРОКА
+cli-value-language = ЯЗЫК
+cli-value-when = КОГДА
+cli-value-image = ИЗОБРАЖЕНИЕ
+cli-value-protocol = ПРОТОКОЛ
+cli-value-value = ЗНАЧЕНИЕ
+cli-value-format = ФОРМАТ
+cli-value-shell = ОБОЛОЧКА
 
 # INFO
 cli-info-heading = ИНФОРМАЦИЯ
