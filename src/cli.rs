@@ -1,8 +1,9 @@
+use crate::tr;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::builder::PossibleValuesParser;
+use clap::builder::{PossibleValuesParser, Styles};
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
@@ -21,11 +22,48 @@ const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[command(version, about)]
+#[command(
+    about = tr!("cli-about"),
+    version,
+    disable_help_flag = true,
+    disable_version_flag = true,
+    help_template = format!("\
+        {{before-help}}{{about-with-newline}}\
+        \n{}{}:{} {{usage}}
+        \n{{all-args}}{{after-help}}\
+        ", 
+        Styles::default().get_usage().render(), 
+        tr!("cli-usage-header"),
+        Styles::default().get_usage().render_reset()
+    ),
+    next_help_heading = tr!("cli-arguments-header"),
+    override_usage = format!("onefetch [{}] [{}]", tr!("cli-options-header").to_owned().to_uppercase(), tr!("cli-value-input"))
+)]
 pub struct CliOptions {
-    /// Run as if onefetch was started in <input> instead of the current working directory
-    #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
+    #[arg(
+        default_value = ".", 
+        hide_default_value = true, 
+        value_hint = ValueHint::DirPath,
+        help = tr!("cli-input"),
+        value_name = tr!("cli-value-input")
+    )]
     pub input: PathBuf,
+    #[arg(
+        action = clap::ArgAction::Help,
+        long,
+        short, 
+        help = tr!("cli-help"),
+        help_heading = tr!("cli-options-header")
+    )]
+    pub help: Option<bool>,
+    #[arg(
+        action = clap::ArgAction::Version,
+        long, 
+        short = 'V', 
+        help = tr!("cli-version"), 
+        help_heading = tr!("cli-options-header")
+    )]
+    pub version: Option<bool>,
     #[command(flatten)]
     pub info: InfoCliOptions,
     #[command(flatten)]
@@ -43,201 +81,162 @@ pub struct CliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "INFO")]
+#[command(next_help_heading = tr!("cli-info-heading"))]
 pub struct InfoCliOptions {
-    /// Allows you to disable FIELD(s) from appearing in the output
     #[arg(
         long,
         short,
+        help = tr!("cli-info-disabled-fields"),
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = "FIELD"
+        value_name = tr!("cli-value-field")
     )]
     pub disabled_fields: Vec<InfoType>,
-    /// Hides the title
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-no-title"))]
     pub no_title: bool,
-    /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-authors"))]
     pub number_of_authors: usize,
-    /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 6usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-languages"))]
     pub number_of_languages: usize,
-    /// Maximum NUM of file churns to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-file-churns"))]
     pub number_of_file_churns: usize,
-    /// Minimum NUM of commits from HEAD used to compute the churn summary
-    ///
-    /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under the info title "Churn (NUM)"
-    #[arg(long, value_name = "NUM")]
+    #[arg(long, value_name = tr!("cli-value-num"), help = tr!("cli-info-churn-pool-size"))]
     pub churn_pool_size: Option<usize>,
-    /// Ignore all files & directories matching EXCLUDE
-    #[arg(long, short, num_args = 1..)]
+    #[arg(long, short, num_args = 1.., help = tr!("cli-info-exclude"), value_name = tr!("cli-value-exclude"))]
     pub exclude: Vec<String>,
-    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[arg(
         long,
         num_args = 0..=1,
         require_equals = true,
         default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
-        value_name = "REGEX"
+        value_name = tr!("cli-value-regex"),
+        help = tr!("cli-info-no-bots")
     )]
     pub no_bots: Option<MyRegex>,
-    /// Ignores merge commits
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-no-merges"))]
     pub no_merges: bool,
-    /// Show the email address of each author
-    #[arg(long, short = 'E')]
+    #[arg(long, short = 'E', help = tr!("cli-info-email"))]
     pub email: bool,
-    /// Display repository URL as HTTP
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-http-url"))]
     pub http_url: bool,
-    /// Hide token in repository URL
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-hide-token"))]
     pub hide_token: bool,
-    /// Count hidden files and directories
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-info-include-hidden"))]
     pub include_hidden: bool,
-    /// Filters output by language type
     #[arg(
         long,
         num_args = 1..,
+        value_name = tr!("cli-value-type"),
         default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
+        help = tr!("cli-info-type")
     )]
     pub r#type: Vec<LanguageType>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "ASCII")]
+#[command(next_help_heading = tr!("cli-ascii-heading"))]
 pub struct AsciiCliOptions {
-    /// Takes a non-empty STRING as input to replace the ASCII logo
-    ///
-    /// It is possible to pass a generated STRING by command substitution
-    ///
-    /// For example:
-    ///
-    /// '--ascii-input "$(fortune | cowsay -W 25)"'
-    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
+    #[arg(long, value_name = tr!("cli-value-string"), value_hint = ValueHint::CommandString, help = tr!("cli-ascii-ascii-input"))]
     pub ascii_input: Option<String>,
-    /// Colors (X X X...) to print the ascii art
     #[arg(
         long,
         num_args = 1..,
         value_name = "X",
         short = 'c',
         value_parser = value_parser!(u8).range(..16),
+        help = tr!("cli-ascii-ascii-colors")
     )]
     pub ascii_colors: Vec<u8>,
-    /// Which LANGUAGE's ascii art to print
     #[arg(
         long,
         short,
-        value_name = "LANGUAGE",
+        value_name = tr!("cli-value-language"),
         value_enum,
-        hide_possible_values = true
+        hide_possible_values = true,
+        help = tr!("cli-ascii-ascii-language")
     )]
     pub ascii_language: Option<Language>,
-    /// Specify when to use true color
-    ///
-    /// If set to auto: true color will be enabled if supported by the terminal
-    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
+    #[arg(long, default_value = "auto", value_name = tr!("cli-value-when"), value_enum, help = tr!("cli-ascii-true-color"))]
     pub true_color: When,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageCliOptions {
-    /// Path to the IMAGE file
-    #[arg(long, short, value_hint = ValueHint::FilePath)]
+    #[arg(long, short, value_name = tr!("cli-value-image"), value_hint = ValueHint::FilePath, help = tr!("cli-image-image"))]
     pub image: Option<PathBuf>,
-    /// Which image PROTOCOL to use
-    #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
+    #[arg(long, value_enum, requires = "image", value_name = tr!("cli-value-protocol"), help = tr!("cli-image-image_protocol"))]
     pub image_protocol: Option<ImageProtocol>,
     /// VALUE of color resolution to use with SIXEL backend
     #[arg(
         long,
-        value_name = "VALUE",
+        value_name = tr!("cli-value-value"),
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
-            .map(|s| s.parse::<usize>().unwrap())
+            .map(|s| s.parse::<usize>().unwrap()), 
+        help = tr!("cli-image-color_resolution")
     )]
     pub color_resolution: usize,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "TEXT FORMATTING")]
+#[command(next_help_heading = tr!("cli-text-heading"))]
 pub struct TextForamttingCliOptions {
-    /// Changes the text colors (X X X...)
-    ///
-    /// Goes in order of title, ~, underline, subtitle, colon, and info
-    ///
-    /// For example:
-    ///
-    /// '--text-colors 9 10 11 12 13 14'
+
     #[arg(
         long,
         short,
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
-        num_args = 1..=6
+        num_args = 1..=6,
+        help = tr!("cli-text-colors")
     )]
     pub text_colors: Vec<u8>,
-    /// Use ISO 8601 formatted timestamps
-    #[arg(long, short = 'z')]
+    #[arg(long, short = 'z', help = tr!("cli-text-iso-time"))]
     pub iso_time: bool,
-    /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    #[arg(long, value_name = tr!("cli-value-separator"), default_value = "plain", value_enum, help = tr!("cli-text-number-separator"))]
     pub number_separator: NumberSeparator,
-    /// Turns off bold formatting
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-text-no-bold"))]
     pub no_bold: bool,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "VISUALS")]
+#[command(next_help_heading = tr!("cli-visuals-heading"))]
 pub struct VisualsCliOptions {
-    /// Hides the color palette
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-visuals-no-color-palette"))]
     pub no_color_palette: bool,
-    /// Hides the ascii art or image if provided
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-visuals-no-art"))]
     pub no_art: bool,
-    /// Use Nerd Font icons
-    ///
-    /// Replaces language chips with Nerd Font icons
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-visuals-nerd-fonts"))]
     pub nerd_fonts: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "DEVELOPER")]
+#[command(next_help_heading = tr!("cli-dev-heading"))]
 pub struct DeveloperCliOptions {
-    /// Outputs Onefetch in a specific format
-    #[arg(long, short, value_name = "FORMAT", value_enum)]
+    #[arg(long, short, value_name = tr!("cli-value-format"), value_enum, help = tr!("cli-dev-output"))]
     pub output: Option<SerializationFormat>,
-    /// If provided, outputs the completion file for given SHELL
-    #[arg(long = "generate", value_name = "SHELL", value_enum)]
+    #[arg(long = "generate", value_name = tr!("cli-value-shell"), value_enum, help = tr!("cli-dev-completion"))]
     pub completion: Option<Shell>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "OTHER")]
+#[command(next_help_heading = tr!("cli-other-heading"))]
 pub struct OtherCliOptions {
-    /// Prints out supported languages
-    #[arg(long, short)]
+    #[arg(long, short, help = tr!("cli-other-languages"))]
     pub languages: bool,
-    /// Prints out supported package managers
-    #[arg(long, short)]
+    #[arg(long, short, help = tr!("cli-other-package-managers"))]
     pub package_managers: bool,
 }
 
 impl Default for CliOptions {
     fn default() -> CliOptions {
         CliOptions {
+            help: None,
+            version: None,
             input: PathBuf::from("."),
             info: InfoCliOptions::default(),
             text_formatting: TextForamttingCliOptions::default(),
