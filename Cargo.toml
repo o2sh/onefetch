@@ -74,7 +74,6 @@ i18n-embed = { version = "0.16.0", features = [
 ] }
 i18n-embed-fl = "0.10.0"
 rust-embed = "8.9.0"
-macro-vis = "0.1.1"
 clap-i18n-richformatter = { git = "https://github.com/Sk7Str1p3/clap-i18n-richformatter-0.1.4" }
 
 [dev-dependencies]

@@ -1,4 +1,4 @@
-use crate::i18n::tr;
+use crate::tr;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;

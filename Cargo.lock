@@ -2767,16 +2767,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
 
 [[package]]
-name = "macro-vis"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce501641c89150590dd52eb8b38cf2e9208c9015998e889f1142d7914b32c34f"
-dependencies = [
- "proc-macro2",
- "quote",
-]
-
-[[package]]
 name = "maybe-async"
 version = "0.2.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2892,7 +2882,6 @@ dependencies = [
  "image",
  "insta",
  "lazy_static",
- "macro-vis",
  "num-format",
  "onefetch-ascii",
  "onefetch-image",

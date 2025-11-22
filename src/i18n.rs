@@ -32,8 +32,7 @@ pub fn init() -> anyhow::Result<()> {
     Ok(())
 }
 
-// TODO: suppress warning "`macro` is experimental"
-#[macro_vis::macro_vis(pub)]
+#[macro_export]
 macro_rules! tr {
     ($id:literal) => {{
         i18n_embed_fl::fl!($crate::i18n::LOADER, $id)
