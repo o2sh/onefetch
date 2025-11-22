@@ -3,7 +3,7 @@ use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::builder::PossibleValuesParser;
+use clap::builder::{PossibleValuesParser, Styles};
 use clap::builder::TypedValueParser as _;
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
@@ -22,15 +22,48 @@ const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[command(version, about)]
+#[command(
+    about = tr!("cli-about"),
+    version,
+    disable_help_flag = true,
+    disable_version_flag = true,
+    help_template = format!("\
+        {{before-help}}{{about-with-newline}}\
+        \n{}{}:{} {{usage}}
+        \n{{all-args}}{{after-help}}\
+        ", 
+        Styles::default().get_usage().render(), 
+        tr!("cli-usage-header"),
+        Styles::default().get_usage().render_reset()
+    ),
+    next_help_heading = tr!("cli-arguments-header"),
+    override_usage = format!("onefetch [{}] [{}]", tr!("cli-options-header").to_owned().to_uppercase(), tr!("cli-value-input"))
+)]
 pub struct CliOptions {
     #[arg(
         default_value = ".", 
         hide_default_value = true, 
         value_hint = ValueHint::DirPath,
-        help = tr!("cli-input")
+        help = tr!("cli-input"),
+        value_name = tr!("cli-value-input")
     )]
     pub input: PathBuf,
+    #[arg(
+        action = clap::ArgAction::Help,
+        long,
+        short, 
+        help = tr!("cli-help"),
+        help_heading = tr!("cli-options-header")
+    )]
+    pub help: Option<bool>,
+    #[arg(
+        action = clap::ArgAction::Version,
+        long, 
+        short = 'V', 
+        help = tr!("cli-version"), 
+        help_heading = tr!("cli-options-header")
+    )]
+    pub version: Option<bool>,
     #[command(flatten)]
     pub info: InfoCliOptions,
     #[command(flatten)]
@@ -203,6 +236,8 @@ pub struct OtherCliOptions {
 impl Default for CliOptions {
     fn default() -> CliOptions {
         CliOptions {
+            help: None,
+            version: None,
             input: PathBuf::from("."),
             info: InfoCliOptions::default(),
             text_formatting: TextForamttingCliOptions::default(),

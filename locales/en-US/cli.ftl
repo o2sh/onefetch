@@ -1,6 +1,14 @@
 cli-input = Run as if onefetch was started in <input> instead of the current working directory
 
+cli-about = Command-line Git information tool
+cli-usage-header = Usage
+cli-arguments-header = Arguments
+cli-options-header = Options
+cli-help = Print help (see more with '--help', see a summary with '-h')
+cli-version = Print version
+
 # Value name
+cli-value-input = INPUT
 cli-value-num = NUM
 cli-value-field = FIELD
 cli-value-regex = REGEX

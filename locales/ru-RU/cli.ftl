@@ -1,6 +1,14 @@
-cli-input = Запустить так, как будто onefetch был запущен в <input> вместо текущего рабочего каталога
+cli-input = Запустить так, как будто onefetch был запущен в <ввод> вместо текущего рабочего каталога
+
+cli-about = Инструмент командной строки для получения информации о Git
+cli-usage-header = Использование
+cli-arguments-header = Аргументы
+cli-options-header = Опции
+cli-help = Показать помощь (подробнее с '--help', кратко с '-h')
+cli-version = Показать версию
 
 # Value name
+cli-value-input = ВВОД
 cli-value-num = КОЛ-ВО
 cli-value-field = ПОЛЕ
 cli-value-regex = РЕГ. ВЫРАЖЕНИЕ
