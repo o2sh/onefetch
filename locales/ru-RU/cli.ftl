@@ -36,3 +36,54 @@ cli-info-http-url = Отображать URL репозитория как HTTP
 cli-info-hide-token = Скрыть токен в URL репозитория
 cli-info-include-hidden = Учитывать скрытые файлы и каталоги
 cli-info-type = Фильтровать вывод по типу языка
+
+# TEXT FORMATTING
+cli-text-heading = ФОРМАТИРОВАНИЕ ТЕКСТА
+cli-text-colors = 
+    Изменяет цвета текста (X X X...)
+    
+    Идет в порядке заголовка, ~, подчеркивания, подзаголовка, двоеточия и информации
+    
+    Например:
+    
+    '--text-colors 9 10 11 12 13 14'
+cli-text-iso-time = Использовать временные метки в формате ISO 8601
+cli-text-number-separator = Какой РАЗДЕЛИТЕЛЬ тысяч использовать
+cli-text-no-bold = Отключает жирное форматирование
+
+# ASCII
+cli-ascii-heading = ASCII
+cli-ascii-ascii-input = 
+    Принимает непустую СТРОКУ в качестве входных данных для замены ASCII логотипа
+
+    Можно передать сгенерированную СТРОКУ с помощью подстановки команд
+
+    Например:
+
+    '--ascii-input "$(fortune | cowsay -W 25)"'
+cli-ascii-ascii-colors = Цвета (X X X...) для печати ASCII арта
+cli-ascii-ascii-language = ASCII арт какого ЯЗЫКА печатать
+cli-ascii-true-color = 
+    Указать, когда использовать true-color
+
+    Если установлено в auto: true-color будет включен, если он поддерживается терминалом
+
+# VISUALS
+cli-visuals-heading = ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ
+cli-visuals-no-color-palette = Скрывает цветовую палитру
+cli-visuals-no-art = Скрывает ASCII арт или изображение, если оно предоставлено
+cli-visuals-nerd-fonts = 
+    Использовать иконки Nerd Font
+
+    Заменяет языковые чипы иконками Nerd Font
+# not sure if       ↑ this ↑       is right translation for "chips"
+
+# DEVELOPER
+cli-dev-heading = ДЛЯ РАЗРАБОТЧИКОВ
+cli-dev-output = Выводит Onefetch в определенном формате
+cli-dev-completion = Выводит файл автозаполнения для указанной ОБОЛОЧКИ
+
+# OTHER
+cli-other-heading = ПРОЧЕЕ
+cli-other-languages = Выводит поддерживаемые языки
+cli-other-package-managers = Выводит поддерживаемые менеджеры пакетов

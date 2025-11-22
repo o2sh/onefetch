@@ -104,39 +104,29 @@ pub struct InfoCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "ASCII")]
+#[command(next_help_heading = tr!("cli-ascii-heading"))]
 pub struct AsciiCliOptions {
-    /// Takes a non-empty STRING as input to replace the ASCII logo
-    ///
-    /// It is possible to pass a generated STRING by command substitution
-    ///
-    /// For example:
-    ///
-    /// '--ascii-input "$(fortune | cowsay -W 25)"'
-    #[arg(long, value_name = tr!("cli-value-string"), value_hint = ValueHint::CommandString)]
+    #[arg(long, value_name = tr!("cli-value-string"), value_hint = ValueHint::CommandString, help = tr!("cli-ascii-ascii-input"))]
     pub ascii_input: Option<String>,
-    /// Colors (X X X...) to print the ascii art
     #[arg(
         long,
         num_args = 1..,
         value_name = "X",
         short = 'c',
         value_parser = value_parser!(u8).range(..16),
+        help = tr!("cli-ascii-ascii-colors")
     )]
     pub ascii_colors: Vec<u8>,
-    /// Which LANGUAGE's ascii art to print
     #[arg(
         long,
         short,
         value_name = tr!("cli-value-language"),
         value_enum,
-        hide_possible_values = true
+        hide_possible_values = true,
+        help = tr!("cli-ascii-ascii-language")
     )]
     pub ascii_language: Option<Language>,
-    /// Specify when to use true color
-    ///
-    /// If set to auto: true color will be enabled if supported by the terminal
-    #[arg(long, default_value = "auto", value_name = tr!("cli-value-when"), value_enum)]
+    #[arg(long, default_value = "auto", value_name = tr!("cli-value-when"), value_enum, help = tr!("cli-ascii-true-color"))]
     pub true_color: When,
 }
 
@@ -162,68 +152,51 @@ pub struct ImageCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "TEXT FORMATTING")]
+#[command(next_help_heading = tr!("cli-text-heading"))]
 pub struct TextForamttingCliOptions {
-    /// Changes the text colors (X X X...)
-    ///
-    /// Goes in order of title, ~, underline, subtitle, colon, and info
-    ///
-    /// For example:
-    ///
-    /// '--text-colors 9 10 11 12 13 14'
+
     #[arg(
         long,
         short,
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
-        num_args = 1..=6
+        num_args = 1..=6,
+        help = tr!("cli-text-colors")
     )]
     pub text_colors: Vec<u8>,
-    /// Use ISO 8601 formatted timestamps
-    #[arg(long, short = 'z')]
+    #[arg(long, short = 'z', help = tr!("cli-text-iso-time"))]
     pub iso_time: bool,
-    /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = tr!("cli-value-separator"), default_value = "plain", value_enum)]
+    #[arg(long, value_name = tr!("cli-value-separator"), default_value = "plain", value_enum, help = tr!("cli-text-number-separator"))]
     pub number_separator: NumberSeparator,
-    /// Turns off bold formatting
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-text-no-bold"))]
     pub no_bold: bool,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "VISUALS")]
+#[command(next_help_heading = tr!("cli-visuals-heading"))]
 pub struct VisualsCliOptions {
-    /// Hides the color palette
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-visuals-no-color-palette"))]
     pub no_color_palette: bool,
-    /// Hides the ascii art or image if provided
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-visuals-no-art"))]
     pub no_art: bool,
-    /// Use Nerd Font icons
-    ///
-    /// Replaces language chips with Nerd Font icons
-    #[arg(long)]
+    #[arg(long, help = tr!("cli-visuals-nerd-fonts"))]
     pub nerd_fonts: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "DEVELOPER")]
+#[command(next_help_heading = tr!("cli-dev-heading"))]
 pub struct DeveloperCliOptions {
-    /// Outputs Onefetch in a specific format
-    #[arg(long, short, value_name = tr!("cli-value-format"), value_enum)]
+    #[arg(long, short, value_name = tr!("cli-value-format"), value_enum, help = tr!("cli-dev-output"))]
     pub output: Option<SerializationFormat>,
-    /// If provided, outputs the completion file for given SHELL
-    #[arg(long = "generate", value_name = tr!("cli-value-shell"), value_enum)]
+    #[arg(long = "generate", value_name = tr!("cli-value-shell"), value_enum, help = tr!("cli-dev-completion"))]
     pub completion: Option<Shell>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "OTHER")]
+#[command(next_help_heading = tr!("cli-other-heading"))]
 pub struct OtherCliOptions {
-    /// Prints out supported languages
-    #[arg(long, short)]
+    #[arg(long, short, help = tr!("cli-other-languages"))]
     pub languages: bool,
-    /// Prints out supported package managers
-    #[arg(long, short)]
+    #[arg(long, short, help = tr!("cli-other-package-managers"))]
     pub package_managers: bool,
 }
 
