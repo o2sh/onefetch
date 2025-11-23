@@ -17,13 +17,14 @@ use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
+use crate::i18n::locale_keys::cli::*;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(
-    about = tr!("cli-about"),
+    about = tr!(ABOUT),
     version,
     disable_help_flag = true,
     disable_version_flag = true,
@@ -33,35 +34,35 @@ pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
         \n{{all-args}}{{after-help}}\
         ", 
         Styles::default().get_usage().render(), 
-        tr!("cli-usage-header"),
+        tr!(usage::HEADER),
         Styles::default().get_usage().render_reset()
     ),
-    next_help_heading = tr!("cli-arguments-header"),
-    override_usage = format!("onefetch [{}] [{}]", tr!("cli-options-header").to_owned().to_uppercase(), tr!("cli-value-input"))
+    next_help_heading = tr!(arguments::HEADER),
+    override_usage = format!("onefetch [{}] [{}]", tr!(options::HEADER).to_owned().to_uppercase(), tr!(value::INPUT))
 )]
 pub struct CliOptions {
     #[arg(
         default_value = ".", 
         hide_default_value = true, 
         value_hint = ValueHint::DirPath,
-        help = tr!("cli-input"),
-        value_name = tr!("cli-value-input")
+        help = tr!(arguments::INPUT),
+        value_name = tr!(value::INPUT)
     )]
     pub input: PathBuf,
     #[arg(
         action = clap::ArgAction::Help,
         long,
         short, 
-        help = tr!("cli-help"),
-        help_heading = tr!("cli-options-header")
+        help = tr!(options::HELP),
+        help_heading = tr!(options::HEADER)
     )]
     pub help: Option<bool>,
     #[arg(
         action = clap::ArgAction::Version,
         long, 
         short = 'V', 
-        help = tr!("cli-version"), 
-        help_heading = tr!("cli-options-header")
+        help = tr!(options::VERSION), 
+        help_heading = tr!(options::HEADER)
     )]
     pub version: Option<bool>,
     #[command(flatten)]
@@ -81,65 +82,65 @@ pub struct CliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = tr!("cli-info-heading"))]
+#[command(next_help_heading = tr!(info::HEADING))]
 pub struct InfoCliOptions {
     #[arg(
         long,
         short,
-        help = tr!("cli-info-disabled-fields"),
+        help = tr!(info::DISABLED_FIELDS),
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = tr!("cli-value-field")
+        value_name = tr!(value::FIELD)
     )]
     pub disabled_fields: Vec<InfoType>,
-    #[arg(long, help = tr!("cli-info-no-title"))]
+    #[arg(long, help = tr!(info::NO_TITLE))]
     pub no_title: bool,
-    #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-authors"))]
+    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM), help = tr!(info::NUMBER_OF_AUTHORS))]
     pub number_of_authors: usize,
-    #[arg(long, default_value_t = 6usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-languages"))]
+    #[arg(long, default_value_t = 6usize, value_name = tr!(value::NUM), help = tr!(info::NUMBER_OF_LANGUAGES))]
     pub number_of_languages: usize,
-    #[arg(long, default_value_t = 3usize, value_name = tr!("cli-value-num"), help = tr!("cli-info-number-of-file-churns"))]
+    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM), help = tr!(info::NUMBER_OF_FILE_CHURNS))]
     pub number_of_file_churns: usize,
-    #[arg(long, value_name = tr!("cli-value-num"), help = tr!("cli-info-churn-pool-size"))]
+    #[arg(long, value_name = tr!(value::NUM), help = tr!(info::CHURN_POOL_SIZE))]
     pub churn_pool_size: Option<usize>,
-    #[arg(long, short, num_args = 1.., help = tr!("cli-info-exclude"), value_name = tr!("cli-value-exclude"))]
+    #[arg(long, short, num_args = 1.., help = tr!(info::EXCLUDE), value_name = tr!(value::EXCLUDE))]
     pub exclude: Vec<String>,
     #[arg(
         long,
         num_args = 0..=1,
         require_equals = true,
         default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
-        value_name = tr!("cli-value-regex"),
-        help = tr!("cli-info-no-bots")
+        value_name = tr!(value::REGEX),
+        help = tr!(info::NO_BOTS)
     )]
     pub no_bots: Option<MyRegex>,
-    #[arg(long, help = tr!("cli-info-no-merges"))]
+    #[arg(long, help = tr!(info::NO_MERGES))]
     pub no_merges: bool,
-    #[arg(long, short = 'E', help = tr!("cli-info-email"))]
+    #[arg(long, short = 'E', help = tr!(info::EMAIL))]
     pub email: bool,
-    #[arg(long, help = tr!("cli-info-http-url"))]
+    #[arg(long, help = tr!(info::HTTP_URL))]
     pub http_url: bool,
-    #[arg(long, help = tr!("cli-info-hide-token"))]
+    #[arg(long, help = tr!(info::HIDE_TOKEN))]
     pub hide_token: bool,
-    #[arg(long, help = tr!("cli-info-include-hidden"))]
+    #[arg(long, help = tr!(info::INCLUDE_HIDDEN))]
     pub include_hidden: bool,
     #[arg(
         long,
         num_args = 1..,
-        value_name = tr!("cli-value-type"),
+        value_name = tr!(value::TYPE),
         default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
-        help = tr!("cli-info-type")
+        help = tr!(info::TYPE)
     )]
     pub r#type: Vec<LanguageType>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = tr!("cli-ascii-heading"))]
+#[command(next_help_heading = tr!(ascii::HEADING))]
 pub struct AsciiCliOptions {
-    #[arg(long, value_name = tr!("cli-value-string"), value_hint = ValueHint::CommandString, help = tr!("cli-ascii-ascii-input"))]
+    #[arg(long, value_name = tr!(value::STRING), value_hint = ValueHint::CommandString, help = tr!(ascii::ASCII_INPUT))]
     pub ascii_input: Option<String>,
     #[arg(
         long,
@@ -147,44 +148,43 @@ pub struct AsciiCliOptions {
         value_name = "X",
         short = 'c',
         value_parser = value_parser!(u8).range(..16),
-        help = tr!("cli-ascii-ascii-colors")
+        help = tr!(ascii::ASCII_COLORS)
     )]
     pub ascii_colors: Vec<u8>,
     #[arg(
         long,
         short,
-        value_name = tr!("cli-value-language"),
+        value_name = tr!(value::LANGUAGE),
         value_enum,
         hide_possible_values = true,
-        help = tr!("cli-ascii-ascii-language")
+        help = tr!(ascii::ASCII_LANGUAGE)
     )]
     pub ascii_language: Option<Language>,
-    #[arg(long, default_value = "auto", value_name = tr!("cli-value-when"), value_enum, help = tr!("cli-ascii-true-color"))]
+    #[arg(long, default_value = "auto", value_name = tr!(value::WHEN), value_enum, help = tr!(ascii::TRUE_COLOR))]
     pub true_color: When,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "IMAGE")]
+#[command(next_help_heading = image::HEADING)]
 pub struct ImageCliOptions {
-    #[arg(long, short, value_name = tr!("cli-value-image"), value_hint = ValueHint::FilePath, help = tr!("cli-image-image"))]
+    #[arg(long, short, value_name = tr!(value::IMAGE), value_hint = ValueHint::FilePath, help = tr!(image::IMAGE))]
     pub image: Option<PathBuf>,
-    #[arg(long, value_enum, requires = "image", value_name = tr!("cli-value-protocol"), help = tr!("cli-image-image_protocol"))]
+    #[arg(long, value_enum, requires = "image", value_name = tr!(value::PROTOCOL), help = tr!(image::IMAGE_PROTOCOL))]
     pub image_protocol: Option<ImageProtocol>,
-    /// VALUE of color resolution to use with SIXEL backend
     #[arg(
         long,
-        value_name = tr!("cli-value-value"),
+        value_name = tr!(value::VALUE),
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap()), 
-        help = tr!("cli-image-color_resolution")
+        help = tr!(image::COLOR_RESOLUTION)
     )]
     pub color_resolution: usize,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = tr!("cli-text-heading"))]
+#[command(next_help_heading = tr!(text::HEADING))]
 pub struct TextForamttingCliOptions {
 
     #[arg(
@@ -193,42 +193,42 @@ pub struct TextForamttingCliOptions {
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6,
-        help = tr!("cli-text-colors")
+        help = tr!(text::COLORS)
     )]
     pub text_colors: Vec<u8>,
-    #[arg(long, short = 'z', help = tr!("cli-text-iso-time"))]
+    #[arg(long, short = 'z', help = tr!(text::ISO_TIME))]
     pub iso_time: bool,
-    #[arg(long, value_name = tr!("cli-value-separator"), default_value = "plain", value_enum, help = tr!("cli-text-number-separator"))]
+    #[arg(long, value_name = tr!(value::SEPARATOR), default_value = "plain", value_enum, help = tr!(text::NUMBER_SEPARATOR))]
     pub number_separator: NumberSeparator,
-    #[arg(long, help = tr!("cli-text-no-bold"))]
+    #[arg(long, help = tr!(text::NO_BOLD))]
     pub no_bold: bool,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = tr!("cli-visuals-heading"))]
+#[command(next_help_heading = tr!(visuals::HEADING))]
 pub struct VisualsCliOptions {
-    #[arg(long, help = tr!("cli-visuals-no-color-palette"))]
+    #[arg(long, help = tr!(visuals::NO_COLOR_PALETTE))]
     pub no_color_palette: bool,
-    #[arg(long, help = tr!("cli-visuals-no-art"))]
+    #[arg(long, help = tr!(visuals::NO_ART))]
     pub no_art: bool,
-    #[arg(long, help = tr!("cli-visuals-nerd-fonts"))]
+    #[arg(long, help = tr!(visuals::NERD_FONTS))]
     pub nerd_fonts: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = tr!("cli-dev-heading"))]
+#[command(next_help_heading = tr!(dev::HEADING))]
 pub struct DeveloperCliOptions {
-    #[arg(long, short, value_name = tr!("cli-value-format"), value_enum, help = tr!("cli-dev-output"))]
+    #[arg(long, short, value_name = tr!(value::FORMAT), value_enum, help = tr!(dev::OUTPUT))]
     pub output: Option<SerializationFormat>,
-    #[arg(long = "generate", value_name = tr!("cli-value-shell"), value_enum, help = tr!("cli-dev-completion"))]
+    #[arg(long = "generate", value_name = tr!(value::SHELL), value_enum, help = tr!(dev::COMPLETION))]
     pub completion: Option<Shell>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = tr!("cli-other-heading"))]
+#[command(next_help_heading = tr!(other::HEADING))]
 pub struct OtherCliOptions {
-    #[arg(long, short, help = tr!("cli-other-languages"))]
+    #[arg(long, short, help = tr!(other::LANGUAGES))]
     pub languages: bool,
-    #[arg(long, short, help = tr!("cli-other-package-managers"))]
+    #[arg(long, short, help = tr!(other::PACKAGE_MANAGERS))]
     pub package_managers: bool,
 }
 

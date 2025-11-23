@@ -1,11 +1,11 @@
-cli-input = Run as if onefetch was started in <input> instead of the current working directory
 
 cli-about = Command-line Git information tool
 cli-usage-header = Usage
 cli-arguments-header = Arguments
+cli-arguments-input = Run as if onefetch was started in <input> instead of the current working directory
 cli-options-header = Options
-cli-help = Print help (see more with '--help', see a summary with '-h')
-cli-version = Print version
+cli-options-help = Print help (see more with '--help', see a summary with '-h')
+cli-options-version = Print version
 
 # Value name
 cli-value-input = INPUT
@@ -26,23 +26,23 @@ cli-value-shell = SHELL
 
 # INFO
 cli-info-heading = INFO
-cli-info-disabled-fields = Allows you to disable FIELD(s) from appearing in the output
-cli-info-no-title = Hides the title
-cli-info-number-of-authors = Maximum NUM of authors to be shown
-cli-info-number-of-languages = Maximum NUM of languages to be shown
-cli-info-number-of-file-churns = Maximum NUM of file churns to be shown
-cli-info-churn-pool-size = 
+cli-info-disabled_fields = Allows you to disable FIELD(s) from appearing in the output
+cli-info-no_title = Hides the title
+cli-info-number_of_authors = Maximum NUM of authors to be shown
+cli-info-number_of_languages = Maximum NUM of languages to be shown
+cli-info-number_of_file_churns = Maximum NUM of file churns to be shown
+cli-info-churn_pool_size = 
     Minimum NUM of commits from HEAD used to compute the churn summary
 
     By default, the actual value is non-deterministic due to time-based computation
     and will be displayed under the info title "Churn (NUM)"
 cli-info-exclude = Ignore all files & directories matching EXCLUDE
-cli-info-no-bots = Exclude [bot] commits. Use <REGEX> to override the default pattern
-cli-info-no-merges = Ignores merge commits
+cli-info-no_bots = Exclude [bot] commits. Use <REGEX> to override the default pattern
+cli-info-no_merges = Ignores merge commits
 cli-info-email = Show the email address of each author
-cli-info-http-url = Display repository URL as HTTP
-cli-info-hide-token = Hide token in repository URL
-cli-info-include-hidden = Count hidden files and directories
+cli-info-http_url = Display repository URL as HTTP
+cli-info-hide_token = Hide token in repository URL
+cli-info-include_hidden = Count hidden files and directories
 cli-info-type = Filters output by language type
 
 # TEXT FORMATTING
@@ -55,13 +55,13 @@ cli-text-colors =
     For example:
     
     '--text-colors 9 10 11 12 13 14'
-cli-text-iso-time = Use ISO 8601 formatted timestamps
-cli-text-number-separator = Which thousands SEPARATOR to use
-cli-text-no-bold = Turns off bold formatting
+cli-text-iso_time = Use ISO 8601 formatted timestamps
+cli-text-number_separator = Which thousands SEPARATOR to use
+cli-text-no_bold = Turns off bold formatting
 
 # ASCII
 cli-ascii-heading = ASCII
-cli-ascii-ascii-input = 
+cli-ascii-ascii_input = 
     Takes a non-empty STRING as input to replace the ASCII logo
    
     It is possible to pass a generated STRING by command substitution
@@ -69,23 +69,24 @@ cli-ascii-ascii-input =
     For example:
    
     '--ascii-input "$(fortune | cowsay -W 25)"'
-cli-ascii-ascii-colors = Colors (X X X...) to print the ascii art
-cli-ascii-ascii-language = Which LANGUAGE's ascii art to print
-cli-ascii-true-color = 
+cli-ascii-ascii_colors = Colors (X X X...) to print the ascii art
+cli-ascii-ascii_language = Which LANGUAGE's ascii art to print
+cli-ascii-true_color = 
     Specify when to use true color
    
     If set to auto: true color will be enabled if supported by the terminal
 
 # IMAGE
+cli-image-heading = IMAGE
 cli-image-image = Path to the IMAGE file
 cli-image-image_protocol = Which image PROTOCOL to use
 cli-image-color_resolution = VALUE of color resolution to use with SIXEL backend
 
 # VISUALS
 cli-visuals-heading = VISUALS
-cli-visuals-no-color-palette = Hides the color palette
-cli-visuals-no-art = Hides the ascii art or image if provided
-cli-visuals-nerd-fonts = 
+cli-visuals-no_color_palette = Hides the color palette
+cli-visuals-no_art = Hides the ascii art or image if provided
+cli-visuals-nerd_fonts = 
     Use Nerd Font icons
    
     Replaces language chips with Nerd Font icons
@@ -99,4 +100,4 @@ cli-dev-completion = If provided, outputs the completion file for given SHELL
 # OTHER
 cli-other-heading = OTHER
 cli-other-languages = Prints out supported languages
-cli-other-package-managers = Prints out supported package managers
+cli-other-package_managers = Prints out supported package managers

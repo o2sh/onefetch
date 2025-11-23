@@ -13,6 +13,8 @@ use rust_embed::RustEmbed;
 #[folder = "__locales_compiled"]
 struct Localizations;
 
+include!(concat!(env!("OUT_DIR"), "/locales_consts.rs"));
+
 pub static LOADER: LazyLock<FluentLanguageLoader> = LazyLock::new(|| {
     let loader = i18n_embed::fluent::fluent_language_loader!();
     loader.load_fallback_language(&Localizations).unwrap();
@@ -40,5 +42,18 @@ macro_rules! tr {
 
     ($id:literal, $($args:expr),*) => {{
         i18n_embed_fl::fl!($crate::i18n::LOADER, $id, $($args),*)
-    }}
+    }};
+
+    ($id:expr) => {{
+        $crate::i18n::LOADER.get($id)
+    }};
+
+    // i hope this will work right. this is AI slop too(( and i didn't check yet
+    ($id:expr, $($args:expr),*) => {{
+        let mut args = std::collections::HashMap::new();
+        $(
+            args.insert(stringify!($args).trim_matches('"'), $args);
+        )*
+        $crate::i18n::LOADER.get_args($id, args)
+    }};
 }

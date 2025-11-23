@@ -1,11 +1,11 @@
-cli-input = Запустить так, как будто onefetch был запущен в <ввод> вместо текущего рабочего каталога
 
 cli-about = Инструмент командной строки для получения информации о Git
 cli-usage-header = Использование
 cli-arguments-header = Аргументы
+cli-arguments-input = Запустить так, как будто onefetch был запущен в <ввод> вместо текущего рабочего каталога
 cli-options-header = Опции
-cli-help = Показать помощь (подробнее с '--help', кратко с '-h')
-cli-version = Показать версию
+cli-options-help = Показать помощь (подробнее с '--help', кратко с '-h')
+cli-options-version = Показать версию
 
 # Value name
 cli-value-input = ВВОД
@@ -26,23 +26,23 @@ cli-value-shell = ОБОЛОЧКА
 
 # INFO
 cli-info-heading = ИНФОРМАЦИЯ
-cli-info-disabled-fields = Позволяет отключить отображение ПОЛЯ(ПОЛЕЙ) в выводе
-cli-info-no-title = Скрывает заголовок
-cli-info-number-of-authors = Максимальное КОЛ-ВО авторов для отображения
-cli-info-number-of-languages = Максимальное КОЛ-ВО языков для отображения
-cli-info-number-of-file-churns = Максимальное КОЛ-ВО изменений файлов для отображения
-cli-info-churn-pool-size = 
+cli-info-disabled_fields = Позволяет отключить отображение ПОЛЯ(ПОЛЕЙ) в выводе
+cli-info-no_title = Скрывает заголовок
+cli-info-number_of_authors = Максимальное КОЛ-ВО авторов для отображения
+cli-info-number_of_languages = Максимальное КОЛ-ВО языков для отображения
+cli-info-number_of_file-churns = Максимальное КОЛ-ВО изменений файлов для отображения
+cli-info-churn_pool_size = 
     Минимальное КОЛ-ВО коммитов от HEAD, используемых для вычисления сводки изменений
 
     По умолчанию фактическое значение недетерминировано из-за вычислений на основе времени
     и будет отображаться под заголовком информации "Изменения (КОЛ-ВО)"
 cli-info-exclude = Игнорировать все файлы и каталоги, соответствующие ИСКЛЮЧЕННОМУ
-cli-info-no-bots = Исключить коммиты [ботов]. Используйте <РЕГ. ВЫРАЖЕНИЕ> для переопределения шаблона по умолчанию
-cli-info-no-merges = Игнорировать коммиты слияния
+cli-info-no_bots = Исключить коммиты [ботов]. Используйте <РЕГ. ВЫРАЖЕНИЕ> для переопределения шаблона по умолчанию
+cli-info-no_merges = Игнорировать коммиты слияния
 cli-info-email = Показать адрес электронной почты каждого автора
-cli-info-http-url = Отображать URL репозитория как HTTP
-cli-info-hide-token = Скрыть токен в URL репозитория
-cli-info-include-hidden = Учитывать скрытые файлы и каталоги
+cli-info-http_url = Отображать URL репозитория как HTTP
+cli-info-hide_token = Скрыть токен в URL репозитория
+cli-info-include_hidden = Учитывать скрытые файлы и каталоги
 cli-info-type = Фильтровать вывод по типу языка
 
 # TEXT FORMATTING
@@ -55,13 +55,13 @@ cli-text-colors =
     Например:
     
     '--text-colors 9 10 11 12 13 14'
-cli-text-iso-time = Использовать временные метки в формате ISO 8601
-cli-text-number-separator = Какой РАЗДЕЛИТЕЛЬ тысяч использовать
-cli-text-no-bold = Отключает жирное форматирование
+cli-text-iso_time = Использовать временные метки в формате ISO 8601
+cli-text-number_separator = Какой РАЗДЕЛИТЕЛЬ тысяч использовать
+cli-text-no_bold = Отключает жирное форматирование
 
 # ASCII
 cli-ascii-heading = ASCII
-cli-ascii-ascii-input = 
+cli-ascii-ascii_input = 
     Принимает непустую СТРОКУ в качестве входных данных для замены ASCII логотипа
 
     Можно передать сгенерированную СТРОКУ с помощью подстановки команд
@@ -69,23 +69,24 @@ cli-ascii-ascii-input =
     Например:
 
     '--ascii-input "$(fortune | cowsay -W 25)"'
-cli-ascii-ascii-colors = Цвета (X X X...) для печати ASCII арта
-cli-ascii-ascii-language = ASCII арт какого ЯЗЫКА печатать
-cli-ascii-true-color = 
+cli-ascii-ascii_colors = Цвета (X X X...) для печати ASCII арта
+cli-ascii-ascii_language = ASCII арт какого ЯЗЫКА печатать
+cli-ascii-true_color = 
     Указать, когда использовать true-color
 
     Если установлено в auto: true-color будет включен, если он поддерживается терминалом
 
 # IMAGE
+cli-image-heading = ИЗОБРАЖЕНИЕ
 cli-image-image = Путь к файлу ИЗОБРАЖЕНИЯ
 cli-image-image_protocol = Какой ПРОТОКОЛ изображения использовать
 cli-image-color_resolution = ЗНАЧЕНИЕ разрешения цвета, используемого с бэкендом SIXEL
 
 # VISUALS
 cli-visuals-heading = ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ
-cli-visuals-no-color-palette = Скрывает цветовую палитру
-cli-visuals-no-art = Скрывает ASCII арт или изображение, если оно предоставлено
-cli-visuals-nerd-fonts = 
+cli-visuals-no_color_palette = Скрывает цветовую палитру
+cli-visuals-no_art = Скрывает ASCII арт или изображение, если оно предоставлено
+cli-visuals-nerd_fonts = 
     Использовать иконки Nerd Font
 
     Заменяет языковые чипы иконками Nerd Font
@@ -99,4 +100,4 @@ cli-dev-completion = Выводит файл автозаполнения для
 # OTHER
 cli-other-heading = ПРОЧЕЕ
 cli-other-languages = Выводит поддерживаемые языки
-cli-other-package-managers = Выводит поддерживаемые менеджеры пакетов
+cli-other-package_managers = Выводит поддерживаемые менеджеры пакетов
