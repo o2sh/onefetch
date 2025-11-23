@@ -22,6 +22,7 @@ pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about)]
+#[command(styles = clap_cargo::style::CLAP_STYLING)]
 pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
