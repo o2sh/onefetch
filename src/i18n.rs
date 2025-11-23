@@ -48,11 +48,10 @@ macro_rules! tr {
         $crate::i18n::LOADER.get($id)
     }};
 
-    // i hope this will work right. this is AI slop too(( and i didn't check yet
-    ($id:expr, $($args:expr),*) => {{
+    ($id:expr, $($key:expr => $value:expr),*) => {{
         let mut args = std::collections::HashMap::new();
         $(
-            args.insert(stringify!($args).trim_matches('"'), $args);
+            args.insert(stringify!($key), $value.to_string());
         )*
         $crate::i18n::LOADER.get_args($id, args)
     }};
