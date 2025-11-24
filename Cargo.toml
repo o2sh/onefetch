@@ -18,7 +18,7 @@ image = { version = "0.25.9", default-features = false, features = [
     "png",
     "webp",
 ] }
-strum = { version = "0.26.3", features = ["derive"] }
+strum = { version = "0.27.2", features = ["derive"] }
 
 [package]
 authors.workspace = true
