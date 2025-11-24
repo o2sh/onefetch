@@ -11,7 +11,7 @@ members = ["ascii", "image", "manifest"]
 [workspace.dependencies]
 owo-colors = "4.2.3"
 anyhow = "1.0"
-clap = { version = "4.5.43", features = ["derive"] }
+clap = { version = "4.5.53", features = ["derive"] }
 image = { version = "0.25.9", default-features = false, features = [
     "color_quant",
     "jpeg",
