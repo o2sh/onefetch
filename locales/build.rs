@@ -66,9 +66,9 @@ pub fn generate_consts(out: &String) -> Result<(), Box<dyn std::error::Error>> {
     for key in &keys {
         let parts: Vec<&str> = key.split('-').collect();
         let const_name = parts.last().unwrap().to_uppercase();
-        
+
         let mut current = &mut root;
-        
+
         // Проходим по всем частям пути (кроме последней)
         for part in parts.iter().take(parts.len() - 1) {
             current = current
@@ -76,7 +76,7 @@ pub fn generate_consts(out: &String) -> Result<(), Box<dyn std::error::Error>> {
                 .entry(part.to_string())
                 .or_insert_with(Module::default);
         }
-        
+
         // Добавляем константу
         current.constants.push((const_name, key.clone()));
     }
@@ -84,7 +84,7 @@ pub fn generate_consts(out: &String) -> Result<(), Box<dyn std::error::Error>> {
     // Рекурсивная генерация кода
     fn generate_tree(module: &Module) -> proc_macro2::TokenStream {
         let mut items = Vec::new();
-        
+
         // Добавляем константы текущего модуля
         for (const_name, const_value) in &module.constants {
             let const_ident = format_ident!("{}", const_name);
@@ -92,19 +92,19 @@ pub fn generate_consts(out: &String) -> Result<(), Box<dyn std::error::Error>> {
                 pub const #const_ident: &str = #const_value;
             });
         }
-        
+
         // Добавляем подмодули
         for (mod_name, submodule) in &module.submodules {
             let mod_ident = format_ident!("{}", mod_name);
             let submodule_code = generate_tree(submodule);
-            
+
             items.push(quote! {
                 pub mod #mod_ident {
                     #submodule_code
                 }
             });
         }
-        
+
         quote! { #(#items)* }
     }
 

@@ -4,7 +4,10 @@ cli-usage-header = Usage
 cli-arguments-header = Arguments
 cli-arguments-input = Run as if onefetch was started in <input> instead of the current working directory
 cli-options-header = Options
-cli-options-help = Print help (see more with '--help', see a summary with '-h')
+cli-options-help = Print help { $short ->
+    [true] (see more with '--help')
+    *[false] (see a summary with '-h')
+}
 cli-options-version = Print version
 
 # Value name
@@ -28,10 +31,23 @@ cli-value-shell = SHELL
 cli-info-heading = INFO
 cli-info-disabled_fields = Allows you to disable FIELD(s) from appearing in the output
 cli-info-no_title = Hides the title
-cli-info-number_of_authors = Maximum NUM of authors to be shown
-cli-info-number_of_languages = Maximum NUM of languages to be shown
-cli-info-number_of_file_churns = Maximum NUM of file churns to be shown
-cli-info-churn_pool_size = 
+cli-info-number_of_authors-short = Maximum NUM of authors to be shown (default: {$def})
+cli-info-number_of_authors-long = 
+    Maximum NUM of authors to be shown 
+    
+    (default: {$def})
+cli-info-number_of_languages-short = Maximum NUM of languages to be shown (default: {$def})
+cli-info-number_of_languages-long = 
+    Maximum NUM of languages to be shown 
+
+    (default: {$def})
+cli-info-number_of_file_churns-short = Maximum NUM of file churns to be shown (default: {$def})
+cli-info-number_of_file_churns-long = 
+    Maximum NUM of file churns to be shown 
+    
+    (default: {$def})
+cli-info-churn_pool_size-short = Minimum NUM of commits from HEAD used to compute the churn summary
+cli-info-churn_pool_size-long =
     Minimum NUM of commits from HEAD used to compute the churn summary
 
     By default, the actual value is non-deterministic due to time-based computation
@@ -43,7 +59,12 @@ cli-info-email = Show the email address of each author
 cli-info-http_url = Display repository URL as HTTP
 cli-info-hide_token = Hide token in repository URL
 cli-info-include_hidden = Count hidden files and directories
-cli-info-type = Filters output by language type
+cli-info-tipe-short = Filters output by language type (default: ${def}) (possible values: {$pos})
+cli-info-tipe-long = 
+    Filters output by language type 
+    
+    (default: ${def}) 
+    (possible values: {$pos})
 
 # TEXT FORMATTING
 cli-text-heading = TEXT FORMATTING

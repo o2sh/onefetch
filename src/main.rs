@@ -17,10 +17,12 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     enable_ansi_support::enable_ansi_support()?;
 
-    let cli_options = cli::CliOptions::try_parse().map_err(|e| {
-        let e = e.apply::<ClapI18nRichFormatter>();
-        e.exit()
-    }).unwrap();
+    let cli_options = cli::CliOptions::try_parse()
+        .map_err(|e| {
+            let e = e.apply::<ClapI18nRichFormatter>();
+            e.exit()
+        })
+        .unwrap();
 
     if cli_options.other.languages {
         return cli::print_supported_languages();

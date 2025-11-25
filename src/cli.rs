@@ -1,10 +1,11 @@
-use crate::tr;
+use crate::i18n::locale_keys::cli::*;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
+use crate::tr;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::builder::{PossibleValuesParser, Styles};
 use clap::builder::TypedValueParser as _;
+use clap::builder::{PossibleValuesParser, Styles};
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use num_format::CustomFormat;
@@ -17,10 +18,26 @@ use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
-use crate::i18n::locale_keys::cli::*;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
+
+// TODO: check if short help requested more efficiently
+use std::sync::LazyLock;
+static IS_SHORT: LazyLock<bool> = LazyLock::new(|| {
+    let args = std::env::args();
+    let mut v = false;
+    for value in args {
+        if value == "-h" {
+            v = true;
+            break;
+        } else if value == "--help" {
+            break;
+        } else {
+        }
+    }
+    v
+});
 
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(
@@ -33,7 +50,7 @@ pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
         \n{}{}:{} {{usage}}
         \n{{all-args}}{{after-help}}\
         ", 
-        Styles::default().get_usage().render(), 
+        Styles::default().get_usage().render(),
         tr!(usage::HEADER),
         Styles::default().get_usage().render_reset()
     ),
@@ -43,25 +60,25 @@ pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 pub struct CliOptions {
     #[arg(
         default_value = ".", 
-        hide_default_value = true, 
+        hide_default_value = true,
         value_hint = ValueHint::DirPath,
         help = tr!(arguments::INPUT),
         value_name = tr!(value::INPUT)
     )]
     pub input: PathBuf,
     #[arg(
-        action = clap::ArgAction::Help,
+        action = if *IS_SHORT { clap::ArgAction::HelpShort } else { clap::ArgAction::HelpLong },
         long,
-        short, 
-        help = tr!(options::HELP),
+        short,
+        help = tr!(options::HELP, short => &*IS_SHORT),
         help_heading = tr!(options::HEADER)
     )]
     pub help: Option<bool>,
     #[arg(
         action = clap::ArgAction::Version,
-        long, 
-        short = 'V', 
-        help = tr!(options::VERSION), 
+        long,
+        short = 'V',
+        help = tr!(options::VERSION),
         help_heading = tr!(options::HEADER)
     )]
     pub version: Option<bool>,
@@ -96,13 +113,32 @@ pub struct InfoCliOptions {
     pub disabled_fields: Vec<InfoType>,
     #[arg(long, help = tr!(info::NO_TITLE))]
     pub no_title: bool,
-    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM), help = tr!(info::NUMBER_OF_AUTHORS))]
+    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM), hide_default_value = true)]
+    #[arg(
+        help = tr!(info::number_of_authors::SHORT, def => 3),
+        long_help = tr!(info::number_of_authors::LONG, def => 3),
+        hide_default_value = true
+    )]
     pub number_of_authors: usize,
-    #[arg(long, default_value_t = 6usize, value_name = tr!(value::NUM), help = tr!(info::NUMBER_OF_LANGUAGES))]
+    #[arg(long, default_value_t = 6usize, value_name = tr!(value::NUM))]
+    #[arg(
+        help = tr!(info::number_of_languages::SHORT, def => 6),
+        long_help = tr!(info::number_of_languages::LONG, def => 6),
+        hide_default_value = true
+    )]
     pub number_of_languages: usize,
-    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM), help = tr!(info::NUMBER_OF_FILE_CHURNS))]
+    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM))]
+    #[arg(
+        help = tr!(info::number_of_file_churns::SHORT, def => 3),
+        long_help = tr!(info::number_of_file_churns::LONG, def => 3),
+        hide_default_value = true
+    )]
     pub number_of_file_churns: usize,
-    #[arg(long, value_name = tr!(value::NUM), help = tr!(info::CHURN_POOL_SIZE))]
+    #[arg(long, value_name = tr!(value::NUM))]
+    #[arg(
+        help = tr!(info::churn_pool_size::SHORT),
+        long_help = tr!(info::churn_pool_size::LONG)
+    )]
     pub churn_pool_size: Option<usize>,
     #[arg(long, short, num_args = 1.., help = tr!(info::EXCLUDE), value_name = tr!(value::EXCLUDE))]
     pub exclude: Vec<String>,
@@ -132,7 +168,12 @@ pub struct InfoCliOptions {
         default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
-        help = tr!(info::TYPE)
+    )]
+    #[arg(
+        help = tr!(info::tipe::SHORT, def => "programming, markup", pos => "programming, markup, prose, data"),
+        long_help = tr!(info::tipe::LONG, def => "programming, markup", pos => "programming, markup, prose, data"),
+        hide_default_value = true,
+        hide_possible_values = true,
     )]
     pub r#type: Vec<LanguageType>,
 }
@@ -165,7 +206,7 @@ pub struct AsciiCliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = image::HEADING)]
+#[command(next_help_heading = tr!(image::HEADING))]
 pub struct ImageCliOptions {
     #[arg(long, short, value_name = tr!(value::IMAGE), value_hint = ValueHint::FilePath, help = tr!(image::IMAGE))]
     pub image: Option<PathBuf>,
@@ -177,7 +218,7 @@ pub struct ImageCliOptions {
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
-            .map(|s| s.parse::<usize>().unwrap()), 
+            .map(|s| s.parse::<usize>().unwrap()),
         help = tr!(image::COLOR_RESOLUTION)
     )]
     pub color_resolution: usize,
@@ -186,7 +227,6 @@ pub struct ImageCliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = tr!(text::HEADING))]
 pub struct TextForamttingCliOptions {
-
     #[arg(
         long,
         short,
