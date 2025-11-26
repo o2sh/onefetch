@@ -68,7 +68,8 @@ cli-info-tipe-long =
 
 # TEXT FORMATTING
 cli-text-heading = TEXT FORMATTING
-cli-text-colors = 
+cli-text-colors-short = Changes the text colors (X X X...)
+cli-text-colors-long = 
     Changes the text colors (X X X...)
     
     Goes in order of title, ~, underline, subtitle, colon, and info
@@ -77,12 +78,18 @@ cli-text-colors =
     
     '--text-colors 9 10 11 12 13 14'
 cli-text-iso_time = Use ISO 8601 formatted timestamps
-cli-text-number_separator = Which thousands SEPARATOR to use
+cli-text-number_separator-short = Which thousands SEPARATOR to use (defautl: ${def}) (possible values: {$pos})
+cli-text-number_separator-long = 
+    Which thousands SEPARATOR to use
+
+    (default: {$def})
+    (possible values: {$pos})
 cli-text-no_bold = Turns off bold formatting
 
 # ASCII
 cli-ascii-heading = ASCII
-cli-ascii-ascii_input = 
+cli-ascii-ascii_input-short = Takes a non-empty STRING as input to replace the ASCII logo
+cli-ascii-ascii_input-long = 
     Takes a non-empty STRING as input to replace the ASCII logo
    
     It is possible to pass a generated STRING by command substitution
@@ -92,16 +99,29 @@ cli-ascii-ascii_input =
     '--ascii-input "$(fortune | cowsay -W 25)"'
 cli-ascii-ascii_colors = Colors (X X X...) to print the ascii art
 cli-ascii-ascii_language = Which LANGUAGE's ascii art to print
-cli-ascii-true_color = 
+cli-ascii-true_color-short = Specify when to use true color (default: {$def}) (possible values: {$pos})
+cli-ascii-true_color-long = 
     Specify when to use true color
    
     If set to auto: true color will be enabled if supported by the terminal
+    
+    (default: {$def})
+    (possible values: {$pos})
 
 # IMAGE
 cli-image-heading = IMAGE
 cli-image-image = Path to the IMAGE file
-cli-image-image_protocol = Which image PROTOCOL to use
-cli-image-color_resolution = VALUE of color resolution to use with SIXEL backend
+cli-image-image_protocol-short = Which image PROTOCOL to use (possible values: {$pos})
+cli-image-image_protocol-long = 
+    Which image PROTOCOL to use
+
+    (possible values: {$pos})
+cli-image-color_resolution-short = VALUE of color resolution to use with SIXEL backend (default: {$def}) (possible values: {$pos})
+cli-image-color_resolution-long = 
+    VALUE of color resolution to use with SIXEL backend 
+
+    (default: {$def}) 
+    (possible values: {$pos})
 
 # VISUALS
 cli-visuals-heading = VISUALS
@@ -115,8 +135,16 @@ cli-visuals-nerd_fonts =
 
 # DEVELOPER
 cli-dev-heading = DEVELOPER
-cli-dev-output = Outputs Onefetch in a specific format
-cli-dev-completion = If provided, outputs the completion file for given SHELL
+cli-dev-output-short = Outputs Onefetch in a specific format (possible values: {$def})
+cli-dev-output-long = 
+    Outputs Onefetch in a specific format 
+    
+    (possible values: {$def})
+cli-dev-completion-short = If provided, outputs the completion file for given SHELL (possible values: {$def})
+cli-dev-completion-long = 
+    If provided, outputs the completion file for given SHELL 
+    
+    (possible values: {$def})
 
 # OTHER
 cli-other-heading = OTHER

@@ -68,7 +68,8 @@ cli-info-tipe-long =
 
 # TEXT FORMATTING
 cli-text-heading = ФОРМАТИРОВАНИЕ ТЕКСТА
-cli-text-colors = 
+cli-text-colors-short = Изменяет цвета текста (X X X...)
+cli-text-colors-long = 
     Изменяет цвета текста (X X X...)
     
     Идет в порядке заголовка, ~, подчеркивания, подзаголовка, двоеточия и информации
@@ -77,12 +78,18 @@ cli-text-colors =
     
     '--text-colors 9 10 11 12 13 14'
 cli-text-iso_time = Использовать временные метки в формате ISO 8601
-cli-text-number_separator = Какой РАЗДЕЛИТЕЛЬ тысяч использовать
+cli-text-number_separator-short = Какой РАЗДЕЛИТЕЛЬ тысяч использовать (по умолчанию: {$def}) (возможные значения: {$pos})
+cli-text-number_separator-long = 
+    Какой РАЗДЕЛИТЕЛЬ тысяч использовать 
+    
+    (по умолчанию: {$def}) 
+    (возможные значения: {$pos})
 cli-text-no_bold = Отключает жирное форматирование
 
 # ASCII
 cli-ascii-heading = ASCII
-cli-ascii-ascii_input = 
+cli-ascii-ascii_input-short = Принимает непустую СТРОКУ в качестве входных данных для замены ASCII логотипа
+cli-ascii-ascii_input-long = 
     Принимает непустую СТРОКУ в качестве входных данных для замены ASCII логотипа
 
     Можно передать сгенерированную СТРОКУ с помощью подстановки команд
@@ -92,16 +99,29 @@ cli-ascii-ascii_input =
     '--ascii-input "$(fortune | cowsay -W 25)"'
 cli-ascii-ascii_colors = Цвета (X X X...) для печати ASCII арта
 cli-ascii-ascii_language = ASCII арт какого ЯЗЫКА печатать
-cli-ascii-true_color = 
+cli-ascii-true_color-short = Указать, когда использовать true-color (по умолчанию: {$def}) (возможные значения: {$pos})
+cli-ascii-true_color-long = 
     Указать, когда использовать true-color
 
     Если установлено в auto: true-color будет включен, если он поддерживается терминалом
+    
+    (по умолчанию: {$def})
+    (возможные значения: {$pos})
 
 # IMAGE
 cli-image-heading = ИЗОБРАЖЕНИЕ
 cli-image-image = Путь к файлу ИЗОБРАЖЕНИЯ
-cli-image-image_protocol = Какой ПРОТОКОЛ изображения использовать
-cli-image-color_resolution = ЗНАЧЕНИЕ разрешения цвета, используемого с бэкендом SIXEL
+cli-image-image_protocol-short = Какой ПРОТОКОЛ изображения использовать (возможные значения: {$pos})
+cli-image-image_protocol-short = 
+    Какой ПРОТОКОЛ изображения использовать
+
+    (возможные значения: ${pos})
+cli-image-color_resolution-short = ЗНАЧЕНИЕ разрешения цвета, используемого с бэкендом SIXEL (по умолчанию: {$def}) (возможные значения: {$pos})
+cli-image-color_resolution-long = 
+    ЗНАЧЕНИЕ разрешения цвета, используемого с бэкендом SIXEL 
+    
+    (по умолчанию: {$def})
+    (возможные значения: {$pos})
 
 # VISUALS
 cli-visuals-heading = ВИЗУАЛЬНЫЕ ЭЛЕМЕНТЫ
@@ -115,8 +135,16 @@ cli-visuals-nerd_fonts =
 
 # DEVELOPER
 cli-dev-heading = ДЛЯ РАЗРАБОТЧИКОВ
-cli-dev-output = Выводит Onefetch в определенном формате
-cli-dev-completion = Выводит файл автозаполнения для указанной ОБОЛОЧКИ
+cli-dev-output-short = Выводит Onefetch в определенном формате (возможные значения: {$pos})
+cli-dev-output-long = 
+    Выводит Onefetch в определенном формате 
+    
+    (возможные значения: {$pos})
+cli-dev-completion-short = Выводит файл автозаполнения для указанной ОБОЛОЧКИ (возможные значения: {$pos})
+cli-dev-completion-long = 
+    Выводит файл автозаполнения для указанной ОБОЛОЧКИ 
+    
+    (возможные значения: {$pos})
 
 # OTHER
 cli-other-heading = ПРОЧЕЕ

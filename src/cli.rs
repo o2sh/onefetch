@@ -181,7 +181,11 @@ pub struct InfoCliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = tr!(ascii::HEADING))]
 pub struct AsciiCliOptions {
-    #[arg(long, value_name = tr!(value::STRING), value_hint = ValueHint::CommandString, help = tr!(ascii::ASCII_INPUT))]
+    #[arg(long, value_name = tr!(value::STRING), value_hint = ValueHint::CommandString)]
+    #[arg(
+        help = tr!(ascii::ascii_input::SHORT),
+        long_help = tr!(ascii::ascii_input::LONG)
+    )]
     pub ascii_input: Option<String>,
     #[arg(
         long,
@@ -201,7 +205,13 @@ pub struct AsciiCliOptions {
         help = tr!(ascii::ASCII_LANGUAGE)
     )]
     pub ascii_language: Option<Language>,
-    #[arg(long, default_value = "auto", value_name = tr!(value::WHEN), value_enum, help = tr!(ascii::TRUE_COLOR))]
+    #[arg(long, value_name = tr!(value::WHEN), value_enum, default_value = "auto")]
+    #[arg(
+        help = tr!(ascii::true_color::SHORT, def => "auto", pos => "auto, never, always"),
+        long_help = tr!(ascii::true_color::LONG, def => "auto", pos => "auto, never, always"),
+        hide_possible_values = true,
+        hide_default_value = true
+    )]
     pub true_color: When,
 }
 
@@ -210,7 +220,12 @@ pub struct AsciiCliOptions {
 pub struct ImageCliOptions {
     #[arg(long, short, value_name = tr!(value::IMAGE), value_hint = ValueHint::FilePath, help = tr!(image::IMAGE))]
     pub image: Option<PathBuf>,
-    #[arg(long, value_enum, requires = "image", value_name = tr!(value::PROTOCOL), help = tr!(image::IMAGE_PROTOCOL))]
+    #[arg(long, value_enum, requires = "image", value_name = tr!(value::PROTOCOL))]
+    #[arg(
+        help = tr!(image::image_protocol::SHORT, pos => "kitty, sixel, iterm"),
+        long_help = tr!(image::image_protocol::LONG, pos => "kitty, sixel, iterm"),
+        hide_possible_values = true
+    )]
     pub image_protocol: Option<ImageProtocol>,
     #[arg(
         long,
@@ -218,8 +233,13 @@ pub struct ImageCliOptions {
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
-            .map(|s| s.parse::<usize>().unwrap()),
-        help = tr!(image::COLOR_RESOLUTION)
+            .map(|s| s.parse::<usize>().unwrap())
+    )]
+    #[arg(
+        help = tr!(image::color_resolution::SHORT, def => 16, pos => COLOR_RESOLUTIONS.join(", ")),
+        long_help = tr!(image::color_resolution::LONG, def => 16, pos => COLOR_RESOLUTIONS.join(", ")),
+        hide_default_value = true,
+        hide_possible_values = true
     )]
     pub color_resolution: usize,
 }
@@ -233,12 +253,21 @@ pub struct TextForamttingCliOptions {
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6,
-        help = tr!(text::COLORS)
+    )]
+    #[arg(
+        help = tr!(text::colors::SHORT),
+        long_help = tr!(text::colors::LONG)
     )]
     pub text_colors: Vec<u8>,
     #[arg(long, short = 'z', help = tr!(text::ISO_TIME))]
     pub iso_time: bool,
-    #[arg(long, value_name = tr!(value::SEPARATOR), default_value = "plain", value_enum, help = tr!(text::NUMBER_SEPARATOR))]
+    #[arg(long, value_name = tr!(value::SEPARATOR), value_enum, default_value = "plain")]
+    #[arg(
+        help = tr!(text::number_separator::SHORT, def => "plain", pos => "plain, comma, space, underscore"),
+        long_help = tr!(text::number_separator::LONG, def => "plain", pos => "plain, comma, space, underscore"),
+        hide_default_value = true,
+        hide_possible_values = true,
+    )]
     pub number_separator: NumberSeparator,
     #[arg(long, help = tr!(text::NO_BOLD))]
     pub no_bold: bool,
@@ -257,9 +286,19 @@ pub struct VisualsCliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = tr!(dev::HEADING))]
 pub struct DeveloperCliOptions {
-    #[arg(long, short, value_name = tr!(value::FORMAT), value_enum, help = tr!(dev::OUTPUT))]
+    #[arg(long, short, value_name = tr!(value::FORMAT), value_enum)]
+    #[arg(
+        help = tr!(dev::output::SHORT, pos => "json, yaml"),
+        long_help = tr!(dev::output::LONG, pos => "json, yaml"),
+        hide_possible_values = true
+    )]
     pub output: Option<SerializationFormat>,
-    #[arg(long = "generate", value_name = tr!(value::SHELL), value_enum, help = tr!(dev::COMPLETION))]
+    #[arg(long = "generate", value_name = tr!(value::SHELL), value_enum)]
+    #[arg(
+        help = tr!(dev::completion::SHORT, pos => "bash, elvish, fish, powershell, zsh"),
+        long_help = tr!(dev::completion::LONG, pos => "bash, elvish, fish, powershell, zsh"),
+        hide_possible_values = true,
+    )]
     pub completion: Option<Shell>,
 }
 
