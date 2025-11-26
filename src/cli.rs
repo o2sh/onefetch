@@ -1,9 +1,11 @@
+use crate::i18n::locale_keys::cli::*;
 use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
+use crate::tr;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::builder::PossibleValuesParser;
 use clap::builder::TypedValueParser as _;
+use clap::builder::{PossibleValuesParser, Styles};
 use clap::{value_parser, Args, Command, Parser, ValueHint};
 use clap_complete::{generate, Generator, Shell};
 use num_format::CustomFormat;
@@ -20,13 +22,66 @@ use strum::IntoEnumIterator;
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
+// TODO: check if short help requested more efficiently
+use std::sync::LazyLock;
+static IS_SHORT: LazyLock<bool> = LazyLock::new(|| {
+    let args = std::env::args();
+    let mut v = false;
+    for value in args {
+        if value == "-h" {
+            v = true;
+            break;
+        } else if value == "--help" {
+            break;
+        } else {
+        }
+    }
+    v
+});
+
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
-#[command(version, about)]
-#[command(styles = clap_cargo::style::CLAP_STYLING)]
+#[command(
+    about = tr!(ABOUT),
+    version,
+    disable_help_flag = true,
+    disable_version_flag = true,
+    help_template = format!("\
+        {{before-help}}{{about-with-newline}}\
+        \n{}{}:{} {{usage}}
+        \n{{all-args}}{{after-help}}\
+        ", 
+        Styles::default().get_usage().render(),
+        tr!(usage::HEADER),
+        Styles::default().get_usage().render_reset()
+    ),
+    next_help_heading = tr!(arguments::HEADER),
+    override_usage = format!("onefetch [{}] [{}]", tr!(options::HEADER).to_owned().to_uppercase(), tr!(value::INPUT))
+)]
 pub struct CliOptions {
-    /// Run as if onefetch was started in <input> instead of the current working directory
-    #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
+    #[arg(
+        default_value = ".", 
+        hide_default_value = true,
+        value_hint = ValueHint::DirPath,
+        help = tr!(arguments::INPUT),
+        value_name = tr!(value::INPUT)
+    )]
     pub input: PathBuf,
+    #[arg(
+        action = if *IS_SHORT { clap::ArgAction::HelpShort } else { clap::ArgAction::HelpLong },
+        long,
+        short,
+        help = tr!(options::HELP, short => &*IS_SHORT),
+        help_heading = tr!(options::HEADER)
+    )]
+    pub help: Option<bool>,
+    #[arg(
+        action = clap::ArgAction::Version,
+        long,
+        short = 'V',
+        help = tr!(options::VERSION),
+        help_heading = tr!(options::HEADER)
+    )]
+    pub version: Option<bool>,
     #[command(flatten)]
     pub info: InfoCliOptions,
     #[command(flatten)]
@@ -44,201 +99,223 @@ pub struct CliOptions {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "INFO")]
+#[command(next_help_heading = tr!(info::HEADING))]
 pub struct InfoCliOptions {
-    /// Allows you to disable FIELD(s) from appearing in the output
     #[arg(
         long,
         short,
+        help = tr!(info::DISABLED_FIELDS),
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = "FIELD"
+        value_name = tr!(value::FIELD)
     )]
     pub disabled_fields: Vec<InfoType>,
-    /// Hides the title
-    #[arg(long)]
+    #[arg(long, help = tr!(info::NO_TITLE))]
     pub no_title: bool,
-    /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM), hide_default_value = true)]
+    #[arg(
+        help = tr!(info::number_of_authors::SHORT, def => 3),
+        long_help = tr!(info::number_of_authors::LONG, def => 3),
+        hide_default_value = true
+    )]
     pub number_of_authors: usize,
-    /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = 6usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 6usize, value_name = tr!(value::NUM))]
+    #[arg(
+        help = tr!(info::number_of_languages::SHORT, def => 6),
+        long_help = tr!(info::number_of_languages::LONG, def => 6),
+        hide_default_value = true
+    )]
     pub number_of_languages: usize,
-    /// Maximum NUM of file churns to be shown
-    #[arg(long, default_value_t = 3usize, value_name = "NUM")]
+    #[arg(long, default_value_t = 3usize, value_name = tr!(value::NUM))]
+    #[arg(
+        help = tr!(info::number_of_file_churns::SHORT, def => 3),
+        long_help = tr!(info::number_of_file_churns::LONG, def => 3),
+        hide_default_value = true
+    )]
     pub number_of_file_churns: usize,
-    /// Minimum NUM of commits from HEAD used to compute the churn summary
-    ///
-    /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under the info title "Churn (NUM)"
-    #[arg(long, value_name = "NUM")]
+    #[arg(long, value_name = tr!(value::NUM))]
+    #[arg(
+        help = tr!(info::churn_pool_size::SHORT),
+        long_help = tr!(info::churn_pool_size::LONG)
+    )]
     pub churn_pool_size: Option<usize>,
-    /// Ignore all files & directories matching EXCLUDE
-    #[arg(long, short, num_args = 1..)]
+    #[arg(long, short, num_args = 1.., help = tr!(info::EXCLUDE), value_name = tr!(value::EXCLUDE))]
     pub exclude: Vec<String>,
-    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
     #[arg(
         long,
         num_args = 0..=1,
         require_equals = true,
         default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
-        value_name = "REGEX"
+        value_name = tr!(value::REGEX),
+        help = tr!(info::NO_BOTS)
     )]
     pub no_bots: Option<MyRegex>,
-    /// Ignores merge commits
-    #[arg(long)]
+    #[arg(long, help = tr!(info::NO_MERGES))]
     pub no_merges: bool,
-    /// Show the email address of each author
-    #[arg(long, short = 'E')]
+    #[arg(long, short = 'E', help = tr!(info::EMAIL))]
     pub email: bool,
-    /// Display repository URL as HTTP
-    #[arg(long)]
+    #[arg(long, help = tr!(info::HTTP_URL))]
     pub http_url: bool,
-    /// Hide token in repository URL
-    #[arg(long)]
+    #[arg(long, help = tr!(info::HIDE_TOKEN))]
     pub hide_token: bool,
-    /// Count hidden files and directories
-    #[arg(long)]
+    #[arg(long, help = tr!(info::INCLUDE_HIDDEN))]
     pub include_hidden: bool,
-    /// Filters output by language type
     #[arg(
         long,
         num_args = 1..,
+        value_name = tr!(value::TYPE),
         default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
+    )]
+    #[arg(
+        help = tr!(info::tipe::SHORT, def => "programming, markup", pos => "programming, markup, prose, data"),
+        long_help = tr!(info::tipe::LONG, def => "programming, markup", pos => "programming, markup, prose, data"),
+        hide_default_value = true,
+        hide_possible_values = true,
     )]
     pub r#type: Vec<LanguageType>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "ASCII")]
+#[command(next_help_heading = tr!(ascii::HEADING))]
 pub struct AsciiCliOptions {
-    /// Takes a non-empty STRING as input to replace the ASCII logo
-    ///
-    /// It is possible to pass a generated STRING by command substitution
-    ///
-    /// For example:
-    ///
-    /// '--ascii-input "$(fortune | cowsay -W 25)"'
-    #[arg(long, value_name = "STRING", value_hint = ValueHint::CommandString)]
+    #[arg(long, value_name = tr!(value::STRING), value_hint = ValueHint::CommandString)]
+    #[arg(
+        help = tr!(ascii::ascii_input::SHORT),
+        long_help = tr!(ascii::ascii_input::LONG)
+    )]
     pub ascii_input: Option<String>,
-    /// Colors (X X X...) to print the ascii art
     #[arg(
         long,
         num_args = 1..,
         value_name = "X",
         short = 'c',
         value_parser = value_parser!(u8).range(..16),
+        help = tr!(ascii::ASCII_COLORS)
     )]
     pub ascii_colors: Vec<u8>,
-    /// Which LANGUAGE's ascii art to print
     #[arg(
         long,
         short,
-        value_name = "LANGUAGE",
+        value_name = tr!(value::LANGUAGE),
         value_enum,
-        hide_possible_values = true
+        hide_possible_values = true,
+        help = tr!(ascii::ASCII_LANGUAGE)
     )]
     pub ascii_language: Option<Language>,
-    /// Specify when to use true color
-    ///
-    /// If set to auto: true color will be enabled if supported by the terminal
-    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
+    #[arg(long, value_name = tr!(value::WHEN), value_enum, default_value = "auto")]
+    #[arg(
+        help = tr!(ascii::true_color::SHORT, def => "auto", pos => "auto, never, always"),
+        long_help = tr!(ascii::true_color::LONG, def => "auto", pos => "auto, never, always"),
+        hide_possible_values = true,
+        hide_default_value = true
+    )]
     pub true_color: When,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "IMAGE")]
+#[command(next_help_heading = tr!(image::HEADING))]
 pub struct ImageCliOptions {
-    /// Path to the IMAGE file
-    #[arg(long, short, value_hint = ValueHint::FilePath)]
+    #[arg(long, short, value_name = tr!(value::IMAGE), value_hint = ValueHint::FilePath, help = tr!(image::IMAGE))]
     pub image: Option<PathBuf>,
-    /// Which image PROTOCOL to use
-    #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
+    #[arg(long, value_enum, requires = "image", value_name = tr!(value::PROTOCOL))]
+    #[arg(
+        help = tr!(image::image_protocol::SHORT, pos => "kitty, sixel, iterm"),
+        long_help = tr!(image::image_protocol::LONG, pos => "kitty, sixel, iterm"),
+        hide_possible_values = true
+    )]
     pub image_protocol: Option<ImageProtocol>,
-    /// VALUE of color resolution to use with SIXEL backend
     #[arg(
         long,
-        value_name = "VALUE",
+        value_name = tr!(value::VALUE),
         requires = "image",
         default_value_t = 16usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
+    #[arg(
+        help = tr!(image::color_resolution::SHORT, def => 16, pos => COLOR_RESOLUTIONS.join(", ")),
+        long_help = tr!(image::color_resolution::LONG, def => 16, pos => COLOR_RESOLUTIONS.join(", ")),
+        hide_default_value = true,
+        hide_possible_values = true
+    )]
     pub color_resolution: usize,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
-#[command(next_help_heading = "TEXT FORMATTING")]
+#[command(next_help_heading = tr!(text::HEADING))]
 pub struct TextForamttingCliOptions {
-    /// Changes the text colors (X X X...)
-    ///
-    /// Goes in order of title, ~, underline, subtitle, colon, and info
-    ///
-    /// For example:
-    ///
-    /// '--text-colors 9 10 11 12 13 14'
     #[arg(
         long,
         short,
         value_name = "X",
         value_parser = value_parser!(u8).range(..16),
-        num_args = 1..=6
+        num_args = 1..=6,
+    )]
+    #[arg(
+        help = tr!(text::colors::SHORT),
+        long_help = tr!(text::colors::LONG)
     )]
     pub text_colors: Vec<u8>,
-    /// Use ISO 8601 formatted timestamps
-    #[arg(long, short = 'z')]
+    #[arg(long, short = 'z', help = tr!(text::ISO_TIME))]
     pub iso_time: bool,
-    /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
+    #[arg(long, value_name = tr!(value::SEPARATOR), value_enum, default_value = "plain")]
+    #[arg(
+        help = tr!(text::number_separator::SHORT, def => "plain", pos => "plain, comma, space, underscore"),
+        long_help = tr!(text::number_separator::LONG, def => "plain", pos => "plain, comma, space, underscore"),
+        hide_default_value = true,
+        hide_possible_values = true,
+    )]
     pub number_separator: NumberSeparator,
-    /// Turns off bold formatting
-    #[arg(long)]
+    #[arg(long, help = tr!(text::NO_BOLD))]
     pub no_bold: bool,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "VISUALS")]
+#[command(next_help_heading = tr!(visuals::HEADING))]
 pub struct VisualsCliOptions {
-    /// Hides the color palette
-    #[arg(long)]
+    #[arg(long, help = tr!(visuals::NO_COLOR_PALETTE))]
     pub no_color_palette: bool,
-    /// Hides the ascii art or image if provided
-    #[arg(long)]
+    #[arg(long, help = tr!(visuals::NO_ART))]
     pub no_art: bool,
-    /// Use Nerd Font icons
-    ///
-    /// Replaces language chips with Nerd Font icons
-    #[arg(long)]
+    #[arg(long, help = tr!(visuals::NERD_FONTS))]
     pub nerd_fonts: bool,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "DEVELOPER")]
+#[command(next_help_heading = tr!(dev::HEADING))]
 pub struct DeveloperCliOptions {
-    /// Outputs Onefetch in a specific format
-    #[arg(long, short, value_name = "FORMAT", value_enum)]
+    #[arg(long, short, value_name = tr!(value::FORMAT), value_enum)]
+    #[arg(
+        help = tr!(dev::output::SHORT, pos => "json, yaml"),
+        long_help = tr!(dev::output::LONG, pos => "json, yaml"),
+        hide_possible_values = true
+    )]
     pub output: Option<SerializationFormat>,
-    /// If provided, outputs the completion file for given SHELL
-    #[arg(long = "generate", value_name = "SHELL", value_enum)]
+    #[arg(long = "generate", value_name = tr!(value::SHELL), value_enum)]
+    #[arg(
+        help = tr!(dev::completion::SHORT, pos => "bash, elvish, fish, powershell, zsh"),
+        long_help = tr!(dev::completion::LONG, pos => "bash, elvish, fish, powershell, zsh"),
+        hide_possible_values = true,
+    )]
     pub completion: Option<Shell>,
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "OTHER")]
+#[command(next_help_heading = tr!(other::HEADING))]
 pub struct OtherCliOptions {
-    /// Prints out supported languages
-    #[arg(long, short)]
+    #[arg(long, short, help = tr!(other::LANGUAGES))]
     pub languages: bool,
-    /// Prints out supported package managers
-    #[arg(long, short)]
+    #[arg(long, short, help = tr!(other::PACKAGE_MANAGERS))]
     pub package_managers: bool,
 }
 
 impl Default for CliOptions {
     fn default() -> CliOptions {
         CliOptions {
+            help: None,
+            version: None,
             input: PathBuf::from("."),
             info: InfoCliOptions::default(),
             text_formatting: TextForamttingCliOptions::default(),

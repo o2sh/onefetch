@@ -7,6 +7,9 @@ use std::path::Path;
 use std::sync::LazyLock;
 use tera::{Context, Tera};
 
+#[path = "locales/build.rs"]
+mod locales;
+
 fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(windows)]
     {
@@ -28,6 +31,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         &Context::from_value(serde_json::json!({ "languages": lang_data, }))?,
     )?;
     fs::write(output_path, rust_code)?;
+
+    locales::concat_locales()?;
+    locales::generate_consts(&out_dir)?;
 
     Ok(())
 }

@@ -69,6 +69,13 @@ time = { version = "0.3.41", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "13.0.0-alpha.9"
 typetag = "0.2"
+i18n-embed = { version = "0.16.0", features = [
+    "desktop-requester",
+    "fluent-system",
+] }
+i18n-embed-fl = "0.10.0"
+rust-embed = "8.9.0"
+clap-i18n-richformatter = { git = "https://github.com/Sk7Str1p3/clap-i18n-richformatter-0.1.4" }
 
 [dev-dependencies]
 criterion = "0.7.0"
@@ -82,9 +89,12 @@ harness = false
 
 [build-dependencies]
 lazy_static = "1"
+proc-macro2 = "1.0.103"
+quote = "1.0.42"
 regex = "1"
 serde_json = "1"
 serde_yaml = "0.9"
+syn = "2.0.110"
 tera = { version = "1", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]

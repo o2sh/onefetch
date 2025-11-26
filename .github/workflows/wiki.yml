@@ -16,7 +16,7 @@ jobs:
   wiki:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v5
       - uses: spenserblack/actions-wiki@v0.3.0
         with:
           path: docs/wiki

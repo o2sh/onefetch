@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
 
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
