@@ -12,13 +12,9 @@ use libc::{
 use std::io::{stdout, Write};
 use std::time::Instant;
 
-pub struct SixelBackend {}
+pub struct SixelBackend;
 
 impl SixelBackend {
-    pub fn new() -> Self {
-        Self {}
-    }
-
     pub fn supported() -> bool {
         // save terminal attributes and disable canonical input processing mode
         let old_attributes = unsafe {
@@ -69,12 +65,6 @@ impl SixelBackend {
                 }
             }
         }
-    }
-}
-
-impl Default for SixelBackend {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

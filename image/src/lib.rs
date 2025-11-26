@@ -22,11 +22,11 @@ pub trait ImageBackend {
 pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
     #[cfg(not(windows))]
     if sixel::SixelBackend::supported() {
-        Some(Box::new(sixel::SixelBackend::new()))
+        Some(Box::new(sixel::SixelBackend))
     } else if kitty::KittyBackend::supported() {
-        Some(Box::new(kitty::KittyBackend::new()))
+        Some(Box::new(kitty::KittyBackend))
     } else if iterm::ITermBackend::supported() {
-        Some(Box::new(iterm::ITermBackend::new()))
+        Some(Box::new(iterm::ITermBackend))
     } else {
         None
     }
@@ -39,9 +39,9 @@ pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
 pub fn get_image_backend(image_protocol: ImageProtocol) -> Option<Box<dyn ImageBackend>> {
     #[cfg(not(windows))]
     let backend = Some(match image_protocol {
-        ImageProtocol::Kitty => Box::new(kitty::KittyBackend::new()) as Box<dyn ImageBackend>,
-        ImageProtocol::Iterm => Box::new(iterm::ITermBackend::new()) as Box<dyn ImageBackend>,
-        ImageProtocol::Sixel => Box::new(sixel::SixelBackend::new()) as Box<dyn ImageBackend>,
+        ImageProtocol::Kitty => Box::new(kitty::KittyBackend) as Box<dyn ImageBackend>,
+        ImageProtocol::Iterm => Box::new(iterm::ITermBackend) as Box<dyn ImageBackend>,
+        ImageProtocol::Sixel => Box::new(sixel::SixelBackend) as Box<dyn ImageBackend>,
     });
 
     #[cfg(windows)]

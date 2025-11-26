@@ -9,13 +9,9 @@ use libc::{
 use std::io::{stdout, Write};
 use std::time::Instant;
 
-pub struct KittyBackend {}
+pub struct KittyBackend;
 
 impl KittyBackend {
-    pub fn new() -> Self {
-        Self {}
-    }
-
     pub fn supported() -> bool {
         // save terminal attributes and disable canonical input processing mode
         let old_attributes = unsafe {
@@ -72,12 +68,6 @@ impl KittyBackend {
                 return true;
             }
         }
-    }
-}
-
-impl Default for KittyBackend {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

@@ -5,22 +5,12 @@ use image::{imageops::FilterType, DynamicImage};
 use std::env;
 use std::io::Cursor;
 
-pub struct ITermBackend {}
+pub struct ITermBackend;
 
 impl ITermBackend {
-    pub fn new() -> Self {
-        ITermBackend {}
-    }
-
     pub fn supported() -> bool {
         let term_program = env::var("TERM_PROGRAM").unwrap_or_else(|_| "".to_string());
         term_program == "iTerm.app"
-    }
-}
-
-impl Default for ITermBackend {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
