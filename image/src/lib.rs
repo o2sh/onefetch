@@ -19,20 +19,20 @@ pub trait ImageBackend {
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String>;
 }
 
-pub fn get_best_backend() -> Option<Box<dyn ImageBackend>> {
+pub fn get_best_backend() -> Result<Option<Box<dyn ImageBackend>>> {
     #[cfg(not(windows))]
     if sixel::SixelBackend::supported() {
-        Some(Box::new(sixel::SixelBackend))
-    } else if kitty::KittyBackend::supported() {
-        Some(Box::new(kitty::KittyBackend))
+        Ok(Some(Box::new(sixel::SixelBackend)))
+    } else if kitty::KittyBackend::supported()? {
+        Ok(Some(Box::new(kitty::KittyBackend)))
     } else if iterm::ITermBackend::supported() {
-        Some(Box::new(iterm::ITermBackend))
+        Ok(Some(Box::new(iterm::ITermBackend)))
     } else {
-        None
+        Ok(None)
     }
 
     #[cfg(windows)]
-    None
+    Ok(None)
 }
 
 #[allow(unused_variables)]

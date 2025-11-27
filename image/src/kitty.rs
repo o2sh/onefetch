@@ -1,28 +1,31 @@
 use crate::get_dimensions;
-use anyhow::Result;
+use anyhow::{Context as _, Result};
 use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
-use libc::{
-    c_void, poll, pollfd, read, tcgetattr, tcsetattr, termios, ECHO, ICANON, POLLIN, STDIN_FILENO,
-    TCSANOW,
-};
+
+use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
+use nix::sys::termios::{tcgetattr, tcsetattr, LocalFlags, SetArg};
+use nix::unistd::read;
+
 use std::io::{stdout, Write};
+use std::os::fd::AsFd as _;
 use std::time::Instant;
 
 pub struct KittyBackend;
 
 impl KittyBackend {
-    pub fn supported() -> bool {
+    pub fn supported() -> Result<bool> {
+        let stdin = std::io::stdin();
         // save terminal attributes and disable canonical input processing mode
-        let old_attributes = unsafe {
-            let mut old_attributes: termios = std::mem::zeroed();
-            tcgetattr(STDIN_FILENO, &mut old_attributes);
+        let old_attributes = {
+            let old = tcgetattr(&stdin).context("Failed to recieve terminal attibutes")?;
 
-            let mut new_attributes = old_attributes;
-            new_attributes.c_lflag &= !ICANON;
-            new_attributes.c_lflag &= !ECHO;
-            tcsetattr(STDIN_FILENO, TCSANOW, &new_attributes);
-            old_attributes
+            let mut new = old.clone();
+            new.local_flags &= !LocalFlags::ICANON;
+            new.local_flags &= !LocalFlags::ECHO;
+            tcsetattr(&stdin, SetArg::TCSANOW, &new)
+                .context("Failed to update terminal attributes")?;
+            old
         };
 
         // generate red rgba test image
@@ -34,38 +37,30 @@ impl KittyBackend {
             "\x1B_Gi=1,f=32,s=32,v=32,a=q;{}\x1B\\",
             engine::general_purpose::STANDARD.encode(&test_image)
         );
-        stdout().flush().unwrap();
+        stdout().flush()?;
 
         let start_time = Instant::now();
-        let mut stdin_pollfd = pollfd {
-            fd: STDIN_FILENO,
-            events: POLLIN,
-            revents: 0,
-        };
+        let mut stdin_pollfd = [PollFd::new(stdin.as_fd(), PollFlags::POLLIN)];
         let allowed_bytes = [0x1B, b'_', b'G', b'\\'];
         let mut buf = Vec::<u8>::new();
         loop {
             // check for timeout while polling to avoid blocking the main thread
-            while unsafe { poll(&mut stdin_pollfd, 1, 0) < 1 } {
+            while poll(&mut stdin_pollfd, PollTimeout::ZERO)? < 1 {
                 if start_time.elapsed().as_millis() > 50 {
-                    unsafe {
-                        tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
-                    }
-                    return false;
+                    tcsetattr(&stdin, SetArg::TCSANOW, &old_attributes)
+                        .context("Failed to update terminal attributes")?;
+                    return Ok(false);
                 }
             }
-            let mut byte = 0;
-            unsafe {
-                read(STDIN_FILENO, &mut byte as *mut _ as *mut c_void, 1);
-            }
-            if allowed_bytes.contains(&byte) {
-                buf.push(byte);
+            let mut byte = [0];
+            read(&stdin, &mut byte)?;
+            if allowed_bytes.contains(&byte[0]) {
+                buf.push(byte[0]);
             }
             if buf.starts_with(&[0x1B, b'_', b'G']) && buf.ends_with(&[0x1B, b'\\']) {
-                unsafe {
-                    tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
-                }
-                return true;
+                tcsetattr(&stdin, SetArg::TCSANOW, &old_attributes)
+                    .context("Failed to update terminal attributes")?;
+                return Ok(true);
             }
         }
     }
