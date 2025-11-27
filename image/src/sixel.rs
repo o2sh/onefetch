@@ -1,66 +1,61 @@
 use crate::get_dimensions;
-use anyhow::{Context, Result};
+use anyhow::{Context as _, Result};
 use color_quant::NeuQuant;
 use image::{
     imageops::{colorops, FilterType},
     DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
 };
-use libc::{
-    c_void, poll, pollfd, read, tcgetattr, tcsetattr, termios, ECHO, ICANON, POLLIN, STDIN_FILENO,
-    TCSANOW,
-};
+
+use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
+use nix::sys::termios::{tcgetattr, tcsetattr, LocalFlags, SetArg};
+use nix::unistd::read;
+
 use std::io::{stdout, Write};
+use std::os::fd::AsFd;
 use std::time::Instant;
 
 pub struct SixelBackend;
 
 impl SixelBackend {
-    pub fn supported() -> bool {
+    pub fn supported() -> Result<bool> {
+        let stdin = std::io::stdin();
         // save terminal attributes and disable canonical input processing mode
-        let old_attributes = unsafe {
-            let mut old_attributes: termios = std::mem::zeroed();
-            tcgetattr(STDIN_FILENO, &mut old_attributes);
+        let old_attributes = {
+            let old = tcgetattr(&stdin).context("Failed to recieve terminal attibutes")?;
 
-            let mut new_attributes = old_attributes;
-            new_attributes.c_lflag &= !ICANON;
-            new_attributes.c_lflag &= !ECHO;
-            tcsetattr(STDIN_FILENO, TCSANOW, &new_attributes);
-            old_attributes
+            let mut new = old.clone();
+            new.local_flags &= !LocalFlags::ICANON;
+            new.local_flags &= !LocalFlags::ECHO;
+            tcsetattr(&stdin, SetArg::TCSANOW, &new)
+                .context("Failed to update terminal attributes")?;
+            old
         };
 
         // ask for the primary device attribute string
         print!("\x1B[c");
-        stdout().flush().unwrap();
+        stdout().flush()?;
 
         let start_time = Instant::now();
-        let mut stdin_pollfd = pollfd {
-            fd: STDIN_FILENO,
-            events: POLLIN,
-            revents: 0,
-        };
+        let mut stdin_pollfd = [PollFd::new(stdin.as_fd(), PollFlags::POLLIN)];
         let mut buf = Vec::<u8>::new();
         loop {
             // check for timeout while polling to avoid blocking the main thread
-            while unsafe { poll(&mut stdin_pollfd, 1, 0) < 1 } {
+            while poll(&mut stdin_pollfd, PollTimeout::ZERO)? < 1 {
                 if start_time.elapsed().as_millis() > 50 {
-                    unsafe {
-                        tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
-                    }
-                    return false;
+                    tcsetattr(stdin, SetArg::TCSANOW, &old_attributes)
+                        .context("Failed to update terminal attributes")?;
+                    return Ok(false);
                 }
             }
-            let mut byte = 0;
-            unsafe {
-                read(STDIN_FILENO, &mut byte as *mut _ as *mut c_void, 1);
-            }
-            buf.push(byte);
+            let mut byte = [0];
+            read(&stdin, &mut byte)?;
+            buf.push(byte[0]);
             if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(b"c") {
                 for attribute in buf[3..(buf.len() - 1)].split(|x| *x == b';') {
                     if attribute == [b'4'] {
-                        unsafe {
-                            tcsetattr(STDIN_FILENO, TCSANOW, &old_attributes);
-                        }
-                        return true;
+                        tcsetattr(stdin, SetArg::TCSANOW, &old_attributes)
+                            .context("Failed to update terminal attributes")?;
+                        return Ok(true);
                     }
                 }
             }

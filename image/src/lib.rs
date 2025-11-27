@@ -21,7 +21,7 @@ pub trait ImageBackend {
 
 pub fn get_best_backend() -> Result<Option<Box<dyn ImageBackend>>> {
     #[cfg(not(windows))]
-    if sixel::SixelBackend::supported() {
+    if sixel::SixelBackend::supported()? {
         Ok(Some(Box::new(sixel::SixelBackend)))
     } else if kitty::KittyBackend::supported()? {
         Ok(Some(Box::new(kitty::KittyBackend)))
