@@ -2788,7 +2788,6 @@ dependencies = [
  "clap",
  "color_quant",
  "image",
- "libc",
  "nix",
 ]
 
