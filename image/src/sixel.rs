@@ -66,7 +66,7 @@ impl SixelBackend {
 impl super::ImageBackend for SixelBackend {
     #[allow(clippy::map_entry)]
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String> {
-        let tty_size = unsafe { get_dimensions() };
+        let tty_size = get_dimensions()?;
         let cw = tty_size.ws_xpixel / tty_size.ws_col;
         let lh = tty_size.ws_ypixel / tty_size.ws_row;
         let width_ratio = 1.0 / cw as f64;

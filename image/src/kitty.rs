@@ -73,7 +73,7 @@ impl super::ImageBackend for KittyBackend {
         image: &DynamicImage,
         _colors: usize,
     ) -> Result<String> {
-        let tty_size = unsafe { get_dimensions() };
+        let tty_size = get_dimensions()?;
         let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
         let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 
