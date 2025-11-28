@@ -2,10 +2,9 @@ use anyhow::{Context as _, Result};
 use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
 
-use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
-use nix::sys::termios::{tcgetattr, tcsetattr, LocalFlags, SetArg};
-use nix::unistd::read;
-use rustix::termios::tcgetwinsize;
+use rustix::event::{poll, PollFd, PollFlags, Timespec};
+use rustix::io::read;
+use rustix::termios::{tcgetattr, tcgetwinsize, tcsetattr, LocalModes, OptionalActions};
 
 use std::io::{stdout, Write};
 use std::os::fd::AsFd as _;
@@ -21,9 +20,9 @@ impl KittyBackend {
             let old = tcgetattr(&stdin).context("Failed to recieve terminal attibutes")?;
 
             let mut new = old.clone();
-            new.local_flags &= !LocalFlags::ICANON;
-            new.local_flags &= !LocalFlags::ECHO;
-            tcsetattr(&stdin, SetArg::TCSANOW, &new)
+            new.local_modes &= !LocalModes::ICANON;
+            new.local_modes &= !LocalModes::ECHO;
+            tcsetattr(&stdin, OptionalActions::Now, &new)
                 .context("Failed to update terminal attributes")?;
             old
         };
@@ -40,14 +39,15 @@ impl KittyBackend {
         stdout().flush()?;
 
         let start_time = Instant::now();
-        let mut stdin_pollfd = [PollFd::new(stdin.as_fd(), PollFlags::POLLIN)];
+        let stdin_fd = stdin.as_fd();
+        let mut stdin_pollfd = [PollFd::new(&stdin_fd, PollFlags::IN)];
         let allowed_bytes = [0x1B, b'_', b'G', b'\\'];
         let mut buf = Vec::<u8>::new();
         loop {
             // check for timeout while polling to avoid blocking the main thread
-            while poll(&mut stdin_pollfd, PollTimeout::ZERO)? < 1 {
+            while poll(&mut stdin_pollfd, Some(&Timespec::default()))? < 1 {
                 if start_time.elapsed().as_millis() > 50 {
-                    tcsetattr(&stdin, SetArg::TCSANOW, &old_attributes)
+                    tcsetattr(&stdin, OptionalActions::Now, &old_attributes)
                         .context("Failed to update terminal attributes")?;
                     return Ok(false);
                 }
@@ -58,7 +58,7 @@ impl KittyBackend {
                 buf.push(byte[0]);
             }
             if buf.starts_with(&[0x1B, b'_', b'G']) && buf.ends_with(&[0x1B, b'\\']) {
-                tcsetattr(&stdin, SetArg::TCSANOW, &old_attributes)
+                tcsetattr(&stdin, OptionalActions::Now, &old_attributes)
                     .context("Failed to update terminal attributes")?;
                 return Ok(true);
             }

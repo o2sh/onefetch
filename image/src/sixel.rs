@@ -5,10 +5,9 @@ use image::{
     DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
 };
 
-use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
-use nix::sys::termios::{tcgetattr, tcsetattr, LocalFlags, SetArg};
-use nix::unistd::read;
-use rustix::termios::tcgetwinsize;
+use rustix::event::{poll, PollFd, PollFlags, Timespec};
+use rustix::io::read;
+use rustix::termios::{tcgetattr, tcgetwinsize, tcsetattr, LocalModes, OptionalActions};
 
 use std::io::{stdout, Write};
 use std::os::fd::AsFd;
@@ -24,9 +23,9 @@ impl SixelBackend {
             let old = tcgetattr(&stdin).context("Failed to recieve terminal attibutes")?;
 
             let mut new = old.clone();
-            new.local_flags &= !LocalFlags::ICANON;
-            new.local_flags &= !LocalFlags::ECHO;
-            tcsetattr(&stdin, SetArg::TCSANOW, &new)
+            new.local_modes &= !LocalModes::ICANON;
+            new.local_modes &= !LocalModes::ECHO;
+            tcsetattr(&stdin, OptionalActions::Now, &new)
                 .context("Failed to update terminal attributes")?;
             old
         };
@@ -36,13 +35,14 @@ impl SixelBackend {
         stdout().flush()?;
 
         let start_time = Instant::now();
-        let mut stdin_pollfd = [PollFd::new(stdin.as_fd(), PollFlags::POLLIN)];
+        let stdin_fd = stdin.as_fd();
+        let mut stdin_pollfd = [PollFd::new(&stdin_fd, PollFlags::IN)];
         let mut buf = Vec::<u8>::new();
         loop {
             // check for timeout while polling to avoid blocking the main thread
-            while poll(&mut stdin_pollfd, PollTimeout::ZERO)? < 1 {
+            while poll(&mut stdin_pollfd, Some(&Timespec::default()))? < 1 {
                 if start_time.elapsed().as_millis() > 50 {
-                    tcsetattr(stdin, SetArg::TCSANOW, &old_attributes)
+                    tcsetattr(stdin, OptionalActions::Now, &old_attributes)
                         .context("Failed to update terminal attributes")?;
                     return Ok(false);
                 }
@@ -53,7 +53,7 @@ impl SixelBackend {
             if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(b"c") {
                 for attribute in buf[3..(buf.len() - 1)].split(|x| *x == b';') {
                     if attribute == [b'4'] {
-                        tcsetattr(stdin, SetArg::TCSANOW, &old_attributes)
+                        tcsetattr(stdin, OptionalActions::Now, &old_attributes)
                             .context("Failed to update terminal attributes")?;
                         return Ok(true);
                     }
