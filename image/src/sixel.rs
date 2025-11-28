@@ -1,4 +1,3 @@
-use crate::get_dimensions;
 use anyhow::{Context as _, Result};
 use color_quant::NeuQuant;
 use image::{
@@ -9,6 +8,7 @@ use image::{
 use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
 use nix::sys::termios::{tcgetattr, tcsetattr, LocalFlags, SetArg};
 use nix::unistd::read;
+use rustix::termios::tcgetwinsize;
 
 use std::io::{stdout, Write};
 use std::os::fd::AsFd;
@@ -66,7 +66,7 @@ impl SixelBackend {
 impl super::ImageBackend for SixelBackend {
     #[allow(clippy::map_entry)]
     fn add_image(&self, lines: Vec<String>, image: &DynamicImage, colors: usize) -> Result<String> {
-        let tty_size = get_dimensions()?;
+        let tty_size = tcgetwinsize(std::io::stdin())?;
         let cw = tty_size.ws_xpixel / tty_size.ws_col;
         let lh = tty_size.ws_ypixel / tty_size.ws_row;
         let width_ratio = 1.0 / cw as f64;

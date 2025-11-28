@@ -1,4 +1,3 @@
-use crate::get_dimensions;
 use anyhow::{Context as _, Result};
 use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
@@ -6,6 +5,7 @@ use image::{imageops::FilterType, DynamicImage};
 use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
 use nix::sys::termios::{tcgetattr, tcsetattr, LocalFlags, SetArg};
 use nix::unistd::read;
+use rustix::termios::tcgetwinsize;
 
 use std::io::{stdout, Write};
 use std::os::fd::AsFd as _;
@@ -73,7 +73,7 @@ impl super::ImageBackend for KittyBackend {
         image: &DynamicImage,
         _colors: usize,
     ) -> Result<String> {
-        let tty_size = get_dimensions()?;
+        let tty_size = tcgetwinsize(std::io::stdin())?;
         let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
         let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 

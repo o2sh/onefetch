@@ -1,7 +1,7 @@
-use crate::get_dimensions;
 use anyhow::Result;
 use base64::{engine, Engine};
 use image::{imageops::FilterType, DynamicImage};
+use rustix::termios::tcgetwinsize;
 use std::env;
 use std::io::Cursor;
 
@@ -21,7 +21,7 @@ impl super::ImageBackend for ITermBackend {
         image: &DynamicImage,
         _colors: usize,
     ) -> Result<String> {
-        let tty_size = get_dimensions()?;
+        let tty_size = tcgetwinsize(std::io::stdin())?;
         let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
         let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 

@@ -1,6 +1,6 @@
-use anyhow::{bail, Result};
+use anyhow::Result;
 use image::DynamicImage;
-use nix::pty::Winsize;
+
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
 pub enum ImageProtocol {
@@ -48,26 +48,4 @@ pub fn get_image_backend(image_protocol: ImageProtocol) -> Option<Box<dyn ImageB
     #[cfg(windows)]
     let backend = None;
     backend
-}
-
-#[cfg(not(windows))]
-fn get_dimensions() -> Result<Winsize> {
-    nix::ioctl_read_bad!(ioctl, nix::libc::TIOCGWINSZ, nix::libc::winsize);
-
-    let mut window = Winsize {
-        ws_col: 0,
-        ws_row: 0,
-        ws_xpixel: 0,
-        ws_ypixel: 0,
-    };
-    let result = unsafe {
-        use std::os::fd::AsRawFd as _;
-        ioctl(std::io::stdout().as_raw_fd(), &mut window)?
-    };
-
-    if result == -1 {
-        bail!("ioctl error!")
-    } else {
-        Ok(window)
-    }
 }

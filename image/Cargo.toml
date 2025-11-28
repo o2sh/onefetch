@@ -16,3 +16,4 @@ image.workspace = true
 color_quant = "1.1.0"
 base64 = "0.22.1"
 nix = { version = "0.30.1", features = ["poll", "term", "ioctl"] }
+rustix = { version = "1.1.2", features = ["termios"] }
