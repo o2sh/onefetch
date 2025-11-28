@@ -34,8 +34,8 @@ impl PrinterFactory {
                 .image
                 .image_protocol
                 .map_or_else(onefetch_image::get_best_backend, |s| {
-                    onefetch_image::get_image_backend(s)
-                })
+                    Ok(onefetch_image::get_image_backend(s))
+                })?
         } else {
             None
         };
