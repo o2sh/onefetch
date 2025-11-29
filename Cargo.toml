@@ -90,7 +90,7 @@ tera = { version = "1", default-features = false }
 winres = "0.1"
 
 [target.'cfg(windows)'.dependencies]
-enable-ansi-support = "0.2.1"
+enable-ansi-support = "0.3.1"
 
 [features]
 fail-on-deprecated = []
