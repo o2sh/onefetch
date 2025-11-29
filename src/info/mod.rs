@@ -79,17 +79,17 @@ struct InfoBuilder {
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        //Title
+        // Title
         if let Some(title) = &self.title {
             write!(f, "{title}")?;
         }
 
-        //Info lines
+        // Info lines
         for info_field in self.info_fields.iter() {
             info_field.write_styled(f, self.no_bold, &self.text_colors)?;
         }
 
-        //Palette
+        // Palette
         if !self.no_color_palette {
             writeln!(
                 f,
