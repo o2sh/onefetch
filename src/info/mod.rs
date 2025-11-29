@@ -159,7 +159,9 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .join()
         .ok()
         .context("BUG: panic in language statistics thread")?;
-    let dominant_language = langs::get_main_language(loc_by_language.as_ref());
+    let dominant_language = loc_by_language
+        .as_ref()
+        .map(|v| langs::get_main_language(v));
     let ascii_colors = get_ascii_colors(
         dominant_language.as_ref(),
         cli_options.ascii.ascii_language.as_ref(),
