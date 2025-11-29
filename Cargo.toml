@@ -11,7 +11,7 @@ members = ["ascii", "image", "manifest"]
 [workspace.dependencies]
 owo-colors = "4.2.3"
 anyhow = "1.0"
-clap = { version = "4.5.43", features = ["derive"] }
+clap = { version = "4.5.53", features = ["derive"] }
 image = { version = "0.25.9", default-features = false, features = [
     "color_quant",
     "jpeg",
@@ -37,9 +37,9 @@ rust-version = "1.82.0"
 [dependencies]
 anyhow.workspace = true
 askalono = "0.5.0"
-byte-unit = "5.1.6"
+byte-unit = "5.2.0"
 clap.workspace = true
-clap_complete = "4.5.55"
+clap_complete = "4.5.61"
 crossbeam-channel = "0.5.15"
 gix = { version = "0.73.0", default-features = false, features = [
     "max-performance-safe",
@@ -49,30 +49,30 @@ gix = { version = "0.73.0", default-features = false, features = [
     "status",
 ] }
 gix-features = { version = "0.43.1", features = ["zlib-ng"] }
-globset = "0.4.16"
-human-panic = "2.0.3"
+globset = "0.4.18"
+human-panic = "2.0.4"
 image.workspace = true
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.19.0" }
 onefetch-image = { path = "image", version = "2.19.0" }
 onefetch-manifest = { path = "manifest", version = "2.19.0" }
 owo-colors.workspace = true
-regex = "1.11.1"
+regex = "1.12.2"
 serde = "1.0"
 serde_json = "1.0"
 serde_yaml = "0.9.34"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
 strum.workspace = true
-time = { version = "0.3.41", features = ["formatting"] }
+time = { version = "0.3.44", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
-tokei = "13.0.0-alpha.9"
+tokei = "13.0.0"
 typetag = "0.2"
 
 [dev-dependencies]
 criterion = "0.7.0"
 gix-testtools = "0.16.1"
-insta = { version = "1.43.1", features = ["json", "redactions"] }
+insta = { version = "1.44.3", features = ["json", "redactions"] }
 rstest = "0.26.1"
 
 [[bench]]
