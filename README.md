@@ -26,7 +26,7 @@
   <a href="docs/README.pl.md">Polski</a>
 </p>
 
-<img src="assets/screenshot-1.png" align="right" height="265px">
+<img src="assets/screenshot-1.png" align="right" height="275px">
 
 Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly to your terminal. The tool is completely offline - no network access is required.
 
@@ -34,7 +34,7 @@ By default, the repo's information is displayed alongside the dominant language'
 
 It automatically detects open source licenses from texts and provides the user with valuable information like language distribution, pending changes, number of dependencies (by package manager), top contributors (by number of commits), size on disk, creation date, LOC (lines of code), etc.
 
-<img src="assets/screenshot-2.png" align="right" height="265px">
+<img src="assets/screenshot-2.png" align="right" height="275px">
 
 Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc.
 
