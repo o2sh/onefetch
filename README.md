@@ -1,30 +1,26 @@
-<h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
+<div align="center">
 
-<h5 align="center">Command-line Git information tool written in Rust</h5>
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="/assets/onefetch.svg">
+  <img src="/assets/onefetch.svg" width="20%">
+</picture>
 
-<p align="center">
-	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
-	<a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
-  <a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
-	<a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-	<img src="assets/msrv-badge.svg">
-</p>
+<h5>Command-line Git information tool written in Rust</h5>
 
-<p align="center">
-  <a href="docs/README.ar.md">العربية</a> |
-  <a href="docs/README.cs.md">Česky</a> |
-  <a href="docs/README.cn.md">简体中文</a> |
-  <a href="docs/README.de.md">Deutsch</a> |
-  <a href="docs/README.es.md">Español</a> |
-  <a href="docs/README.fa.md">فارسی</a> |
-  <a href="docs/README.fr.md">Français</a> |
-  <a href="docs/README.it.md">Italiano</a> |
-  <a href="docs/README.ja.md">日本語</a> |
-  <a href="docs/README.kr.md">한국어</a> |
-  <a href="docs/README.ru.md">Русский</a> |
-  <a href="docs/README.tr.md">Türkçe</a> |
-  <a href="docs/README.pl.md">Polski</a>
-</p>
+[![cargo](https://img.shields.io/crates/v/onefetch.svg)](https://crates.io/crates/onefetch)
+[![Build Status](https://github.com/o2sh/onefetch/workflows/CI/badge.svg)](https://github.com/o2sh/onefetch/actions)
+[![help wanted](https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green)](https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+![MSRV](assets/msrv-badge.svg)
+
+<h3>
+  
+[Wiki](https://github.com/o2sh/onefetch/wiki) | [Installation](https://github.com/o2sh/onefetch/wiki/Installation) | [Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)
+
+</h3>
+
+</div>
+
+---
 
 <img src="assets/screenshot-1.png" align="right" height="280px">
 
@@ -43,5 +39,3 @@ As of now, onefetch supports more than [100 different programming languages](htt
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
 *Artwork by @Kuvshinov_Ilya*
-
-### More: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\]
