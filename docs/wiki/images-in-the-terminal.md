@@ -10,7 +10,7 @@ If you decide to go manual, and want to force the use of a specific image protoc
 
 ### Sixel
 
-The Sixel protocol is handled by multiple terminal emulators such as [`xterm`](https://invisible-island.net/xterm/) (enabled via flag `-ti 340`), [`mlterm`](https://wiki.ubuntu.com/Mlterm) and [`WezTerm`](https://github.com/wez/wezterm) which are actively maintained.
+The Sixel protocol is handled by multiple terminal emulators such as iterm2, [`xterm`](https://invisible-island.net/xterm/) (enabled via flag `-ti 340`), [`mlterm`](https://wiki.ubuntu.com/Mlterm) and [`WezTerm`](https://github.com/wez/wezterm) which are actively maintained.
 
 You can increase the color resolution using the `--color-resolution` flag.
 
