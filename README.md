@@ -21,17 +21,17 @@
 
 <img src="assets/screenshot-1.png" align="right" height="280px">
 
-Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly to your terminal. The tool is completely offline - no network access is required.
+Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly in your terminal. The tool works completely offline with a focus on performance and customizability.
 
-By default, the repo's information is displayed alongside the dominant language's logo, but you can further configure onefetch to instead use an image - on supported terminals -, a text input or nothing at all.
+By default, repository information is shown alongside the dominant language’s logo. However, you can configure Onefetch to display an image (on supported terminals), custom text, or nothing at all.
 
-It automatically detects open source licenses from texts and provides the user with valuable information like language distribution, pending changes, number of dependencies (by package manager), top contributors (by number of commits), size on disk, creation date, LOC (lines of code), etc.
+It automatically detects open-source licenses from their text and provides valuable information such as language distribution, pending changes, dependency counts (per package manager), top contributors (by number of commits), disk usage, creation date, lines of code (LOC), and more.
 
 <img src="assets/screenshot-2.png" align="right" height="280px">
 
-Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc.
+Onefetch can be customized via command-line flags to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), and more.
 
-As of now, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported: Open up an issue and support will be added.
+Currently, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported: Open an issue and support will be added.
 
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
