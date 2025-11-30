@@ -11,7 +11,7 @@
 
 <h3>
 
-[Wiki](https://github.com/o2sh/onefetch/wiki) | [Installation](https://github.com/o2sh/onefetch/wiki/Installation) | [Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)
+[Homepage](https://onefetch.dev/) | [Installation](https://github.com/o2sh/onefetch/wiki/Installation) | [Documentation](https://github.com/o2sh/onefetch/wiki/)
 
 </h3>
 
