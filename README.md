@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/onefetch.svg" height=130px>
+<img src="assets/onefetch.svg" height=120px>
 
 <h5>Command-line Git information tool written in Rust</h5>
 
