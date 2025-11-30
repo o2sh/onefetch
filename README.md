@@ -4,7 +4,7 @@
 
 <h5>Command-line Git information tool written in Rust</h5>
 
-[![cargo](https://img.shields.io/crates/v/onefetch.svg)](https://crates.io/crates/onefetch)
+[![Github release](https://img.shields.io/github/v/release/o2sh/onefetch?logo=github)](https://github.com/o2sh/onefetch/releases)
 [![Build Status](https://github.com/o2sh/onefetch/workflows/CI/badge.svg)](https://github.com/o2sh/onefetch/actions)
 [![help wanted](https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green)](https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 ![MSRV](assets/msrv-badge.svg)
