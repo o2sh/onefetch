@@ -1,9 +1,6 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: light)" srcset="/assets/onefetch.svg">
-  <img src="/assets/onefetch.svg" width="20%">
-</picture>
+<img src="assets/onefetch.svg" height=130px>
 
 <h5>Command-line Git information tool written in Rust</h5>
 
@@ -13,7 +10,7 @@
 ![MSRV](assets/msrv-badge.svg)
 
 <h3>
-  
+
 [Wiki](https://github.com/o2sh/onefetch/wiki) | [Installation](https://github.com/o2sh/onefetch/wiki/Installation) | [Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)
 
 </h3>
@@ -38,4 +35,4 @@ As of now, onefetch supports more than [100 different programming languages](htt
 
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
-*Artwork by @Kuvshinov_Ilya*
+_Artwork by @Kuvshinov_Ilya_
