@@ -34,5 +34,3 @@ Onefetch can be customized via [command-line options](https://github.com/o2sh/on
 Currently, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported: Open an issue and support will be added.
 
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
-
-_Artwork by @Kuvshinov_Ilya_
