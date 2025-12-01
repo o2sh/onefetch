@@ -4,7 +4,6 @@ Welcome to the onefetch's wiki!
 - **General**
   - [Installation](https://github.com/o2sh/onefetch/wiki/installation)
   - [Getting started](https://github.com/o2sh/onefetch/wiki/getting-started)
-  - [Nix local setup](https://github.com/o2sh/onefetch/wiki/nix-local-setup)
 - **Options**
   - [Command-line options](https://github.com/o2sh/onefetch/wiki/command-line-options)
 - **Images**
