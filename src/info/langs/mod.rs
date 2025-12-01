@@ -5,8 +5,8 @@ use strum::IntoEnumIterator;
 
 pub mod language;
 
-pub fn get_main_language(loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Option<Language> {
-    loc_by_language_opt.map(|loc_by_language| loc_by_language[0].0)
+pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
+    loc_by_language[0].0
 }
 
 /// Returns a vector of tuples containing all the languages detected inside the repository.
@@ -35,15 +35,12 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
     for (language_name, language) in languages {
         let loc = language::loc(language_name, language);
 
-        if loc == 0 {
-            continue;
+        if loc > 0 {
+            loc_by_language.insert(Language::from(*language_name), loc);
         }
-
-        loc_by_language.insert(Language::from(*language_name), loc);
     }
 
-    let total_loc: usize = loc_by_language.values().sum();
-    if total_loc == 0 {
+    if loc_by_language.is_empty() {
         None
     } else {
         Some(loc_by_language)

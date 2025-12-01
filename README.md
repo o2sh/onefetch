@@ -1,47 +1,38 @@
-<h3 align="center"><img src="assets/onefetch.svg" height="130px"></h3>
+<div align="center">
 
-<h5 align="center">Command-line Git information tool written in Rust</h5>
+<img src="assets/onefetch.svg" height=120px>
 
-<p align="center">
-	<a href="https://crates.io/crates/onefetch"><img src="https://img.shields.io/crates/v/onefetch.svg" alt="cargo"></a>
-	<a href="https://github.com/o2sh/onefetch/actions"><img src="https://github.com/o2sh/onefetch/workflows/CI/badge.svg" alt="Build Status"></a>
-  <a href="https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green" alt="help wanted"></a>
-	<a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-	<img src="assets/msrv-badge.svg">
-</p>
+<h5>Command-line Git information tool written in Rust</h5>
 
-<p align="center">
-  <a href="docs/README.ar.md">العربية</a> |
-  <a href="docs/README.cs.md">Česky</a> |
-  <a href="docs/README.cn.md">简体中文</a> |
-  <a href="docs/README.de.md">Deutsch</a> |
-  <a href="docs/README.es.md">Español</a> |
-  <a href="docs/README.fa.md">فارسی</a> |
-  <a href="docs/README.fr.md">Français</a> |
-  <a href="docs/README.it.md">Italiano</a> |
-  <a href="docs/README.ja.md">日本語</a> |
-  <a href="docs/README.kr.md">한국어</a> |
-  <a href="docs/README.ru.md">Русский</a> |
-  <a href="docs/README.tr.md">Türkçe</a> |
-  <a href="docs/README.pl.md">Polski</a>
-</p>
+[![Github release](https://img.shields.io/github/v/release/o2sh/onefetch?logo=github)](https://github.com/o2sh/onefetch/releases)
+[![Build Status](https://github.com/o2sh/onefetch/workflows/CI/badge.svg)](https://github.com/o2sh/onefetch/actions)
+[![help wanted](https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green)](https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+![MSRV](assets/msrv-badge.svg)
 
-<img src="assets/screenshot-1.png" align="right" height="250px">
+<h3>
 
-Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly to your terminal. The tool is completely offline - no network access is required.
+[Homepage](https://onefetch.dev/) | [Installation](https://github.com/o2sh/onefetch/wiki/Installation) | [Documentation](https://github.com/o2sh/onefetch/wiki/)
 
-By default, the repo's information is displayed alongside the dominant language's logo, but you can further configure onefetch to instead use an image - on supported terminals -, a text input or nothing at all.
+</h3>
 
-It automatically detects open source licenses from texts and provides the user with valuable information like language distribution, pending changes, number of dependencies (by package manager), top contributors (by number of commits), size on disk, creation date, LOC (lines of code), etc.
+</div>
 
-<img src="assets/screenshot-2.png" align="right" height="250px">
+---
 
-Onefetch can be configured via command-line flags to display exactly what you want, the way you want it to: you can customize ASCII/Text formatting, disable info lines, ignore files & directories, output in multiple formats (Json, Yaml), etc.
+<img src="assets/screenshot-2.png" align="right" height="270px">
 
-As of now, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported: Open up an issue and support will be added.
+Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly in your terminal.
+
+The tool works completely offline with a focus on performance and customizability.
+
+By default, repository information is shown alongside the dominant language’s ASCII logo, but you can configure onefetch to display an image on [supported terminals](https://github.com/o2sh/onefetch/wiki/images-in-the-terminal).
+
+It automatically detects open-source licenses from their text and provides valuable information such as language distribution, pending changes, dependency counts (per package manager), top contributors (by number of commits), disk usage, creation date, lines of code (LOC), and more.
+
+<img src="assets/screenshot-1.png" align="right" height="270px">
+
+Onefetch can be customized via [command-line options](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
+
+Currently, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported: Open an issue and support will be added.
 
 Contributions are very welcome! See [CONTRIBUTING](CONTRIBUTING.md) for more info.
-
-*Artwork by @Kuvshinov_Ilya*
-
-### More: \[[Wiki](https://github.com/o2sh/onefetch/wiki)\] \[[Installation](https://github.com/o2sh/onefetch/wiki/Installation)\] \[[Getting Started](https://github.com/o2sh/onefetch/wiki/getting-started)\]
