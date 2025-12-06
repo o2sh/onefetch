@@ -1,8 +1,8 @@
 <div align="center">
+  
+# Onefetch - Command-line Git information tool
 
-<img src="assets/onefetch.svg" height=120px>
-
-<h5>Command-line Git information tool written in Rust</h5>
+<p><img src="assets/onefetch.svg" height=120px></p>
 
 [![Github release](https://img.shields.io/github/v/release/o2sh/onefetch?logo=github)](https://github.com/o2sh/onefetch/releases)
 [![Build Status](https://github.com/o2sh/onefetch/workflows/CI/badge.svg)](https://github.com/o2sh/onefetch/actions)
