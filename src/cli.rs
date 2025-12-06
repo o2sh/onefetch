@@ -306,7 +306,7 @@ impl Default for ImageCliOptions {
         ImageCliOptions {
             image: Option::default(),
             image_protocol: Option::default(),
-            color_resolution: 16,
+            color_resolution: 64,
         }
     }
 }
