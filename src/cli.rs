@@ -171,7 +171,7 @@ pub struct ImageCliOptions {
         long,
         value_name = "VALUE",
         requires = "image",
-        default_value_t = 16usize,
+        default_value_t = 64usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
