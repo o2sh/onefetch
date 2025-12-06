@@ -4,8 +4,8 @@
 
 <p><img src="assets/onefetch.svg" height=100px></p>
 
-[![Github release](https://img.shields.io/github/v/release/o2sh/onefetch?logo=github)](https://github.com/o2sh/onefetch/releases)
-[![Build Status](https://github.com/o2sh/onefetch/workflows/CI/badge.svg)](https://github.com/o2sh/onefetch/actions)
+![Crates.io Version](https://img.shields.io/crates/v/onefetch)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/o2sh/onefetch/ci.yml)
 [![help wanted](https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green)](https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 ![MSRV](assets/msrv-badge.svg)
 
