@@ -873,7 +873,6 @@ checksum = "a2152dbcb980c05735e2a651d96011320a949eb31a0c8b38b72645ce97dec676"
 dependencies = [
  "crc32fast",
  "miniz_oxide",
- "zlib-rs",
 ]
 
 [[package]]
@@ -1304,18 +1303,6 @@ dependencies = [
  "libc",
  "prodash 29.0.2",
  "walkdir",
-]
-
-[[package]]
-name = "gix-features"
-version = "0.43.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd1543cd9b8abcbcebaa1a666a5c168ee2cda4dea50d3961ee0e6d1c42f81e5b"
-dependencies = [
- "flate2",
- "gix-trace",
- "libc",
- "thiserror 2.0.17",
 ]
 
 [[package]]
@@ -2828,7 +2815,7 @@ dependencies = [
  "crossbeam-channel",
  "enable-ansi-support",
  "gix",
- "gix-features 0.43.1",
+ "gix-features 0.44.1",
  "gix-testtools",
  "globset",
  "human-panic",
