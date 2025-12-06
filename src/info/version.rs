@@ -17,6 +17,12 @@ impl VersionInfo {
 }
 
 fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String> {
+    if let Some(m) = manifest {
+        if !m.version.is_empty() {
+            return Ok(m.version.clone());
+        }
+    }
+
     let mut version = String::new();
     let mut most_recent = 0;
 
@@ -30,15 +36,7 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
         }
     }
 
-    if version.is_empty() {
-        let version_from_manifest = match manifest {
-            Some(m) => m.version.clone(),
-            None => String::new(),
-        };
-        Ok(version_from_manifest)
-    } else {
-        Ok(version)
-    }
+    Ok(version)
 }
 
 #[typetag::serialize]
