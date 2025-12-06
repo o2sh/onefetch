@@ -2,7 +2,7 @@
   
 # Onefetch - Command-line Git information tool
 
-<p><img src="assets/onefetch.svg" height=120px></p>
+<p><img src="assets/onefetch.svg" height=100px></p>
 
 [![Github release](https://img.shields.io/github/v/release/o2sh/onefetch?logo=github)](https://github.com/o2sh/onefetch/releases)
 [![Build Status](https://github.com/o2sh/onefetch/workflows/CI/badge.svg)](https://github.com/o2sh/onefetch/actions)
