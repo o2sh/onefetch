@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.25.0 (2025-07-06)
+
+### New Features
+
+- add language support for Text by @Kajiih in https://github.com/o2sh/onefetch/pull/1579
+- support repos "without source code" by @o2sh in https://github.com/o2sh/onefetch/pull/1580
+
+### Chores
+
+- improve error handling by @Mahdiglm in https://github.com/o2sh/onefetch/pull/1560
+
+### Bug Fixes
+
+- remove extra line break by @o2sh in 886d942c510864612c1ad58a64a9c91b1193b9e9
+
 ## 2.24.0 (2025-04-12)
 
 ### New Features
