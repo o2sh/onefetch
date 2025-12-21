@@ -3,7 +3,7 @@ use gix::date::Time;
 use num_format::ToFormattedString;
 use owo_colors::{DynColors, Style};
 use std::time::SystemTime;
-use time::{format_description::well_known::Rfc3339, OffsetDateTime};
+use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use time_humanize::HumanTime;
 
 pub mod info_field;

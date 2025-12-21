@@ -1,6 +1,6 @@
 use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
 use anyhow::Result;
-use gix::{bstr::ByteSlice, Repository};
+use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;

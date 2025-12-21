@@ -1,12 +1,12 @@
 use anyhow::{Context as _, Result};
-use base64::{engine, Engine};
-use image::{imageops::FilterType, DynamicImage};
+use base64::{Engine, engine};
+use image::{DynamicImage, imageops::FilterType};
 
-use rustix::event::{poll, PollFd, PollFlags, Timespec};
+use rustix::event::{PollFd, PollFlags, Timespec, poll};
 use rustix::io::read;
-use rustix::termios::{tcgetattr, tcgetwinsize, tcsetattr, LocalModes, OptionalActions};
+use rustix::termios::{LocalModes, OptionalActions, tcgetattr, tcgetwinsize, tcsetattr};
 
-use std::io::{stdout, Write};
+use std::io::{Write, stdout};
 use std::os::fd::AsFd as _;
 use std::time::Instant;
 

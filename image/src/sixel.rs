@@ -1,15 +1,15 @@
 use anyhow::{Context as _, Result};
 use color_quant::NeuQuant;
 use image::{
-    imageops::{colorops, FilterType},
     DynamicImage, GenericImageView, ImageBuffer, Pixel, Rgb,
+    imageops::{FilterType, colorops},
 };
 
-use rustix::event::{poll, PollFd, PollFlags, Timespec};
+use rustix::event::{PollFd, PollFlags, Timespec, poll};
 use rustix::io::read;
-use rustix::termios::{tcgetattr, tcgetwinsize, tcsetattr, LocalModes, OptionalActions};
+use rustix::termios::{LocalModes, OptionalActions, tcgetattr, tcgetwinsize, tcsetattr};
 
-use std::io::{stdout, Write};
+use std::io::{Write, stdout};
 use std::os::fd::AsFd;
 use std::time::Instant;
 

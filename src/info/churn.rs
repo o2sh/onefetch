@@ -167,9 +167,11 @@ mod tests {
             churn_pool_size: 5,
         };
 
-        assert!(churn_info
-            .value()
-            .contains(&"\u{2026}/to/file.txt 50".to_string()));
+        assert!(
+            churn_info
+                .value()
+                .contains(&"\u{2026}/to/file.txt 50".to_string())
+        );
 
         assert!(churn_info.value().contains(&"file_2.txt 30".to_string()));
     }

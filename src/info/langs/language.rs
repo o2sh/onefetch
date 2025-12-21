@@ -279,21 +279,27 @@ mod test {
             nerd_fonts: false,
         };
 
-        assert!(languages_info.value().contains(
-            &"Go (30.0 %)"
-                .color(DynColors::Ansi(AnsiColors::White))
-                .to_string()
-        ));
-        assert!(languages_info.value().contains(
-            &"Erlang (40.0 %)"
-                .color(DynColors::Ansi(AnsiColors::White))
-                .to_string()
-        ));
-        assert!(languages_info.value().contains(
-            &"Other (30.0 %)"
-                .color(DynColors::Ansi(AnsiColors::White))
-                .to_string()
-        ));
+        assert!(
+            languages_info.value().contains(
+                &"Go (30.0 %)"
+                    .color(DynColors::Ansi(AnsiColors::White))
+                    .to_string()
+            )
+        );
+        assert!(
+            languages_info.value().contains(
+                &"Erlang (40.0 %)"
+                    .color(DynColors::Ansi(AnsiColors::White))
+                    .to_string()
+            )
+        );
+        assert!(
+            languages_info.value().contains(
+                &"Other (30.0 %)"
+                    .color(DynColors::Ansi(AnsiColors::White))
+                    .to_string()
+            )
+        );
     }
 
     #[test]

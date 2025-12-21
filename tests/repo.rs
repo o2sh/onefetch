@@ -1,5 +1,5 @@
 use anyhow::Result;
-use gix::{open, Repository, ThreadSafeRepository};
+use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
 use onefetch::info::{build_info, get_work_dir};
 

@@ -45,14 +45,12 @@ fn format_url(url: &str, hide_token: bool, http_url: bool) -> String {
 
 fn remove_token_from_url(url: &str) -> String {
     let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
-    let replaced_url = pattern.replace(url, "$1").to_string();
-    replaced_url
+    pattern.replace(url, "$1").to_string()
 }
 
 fn create_http_url_from_ssh(url: &str) -> String {
     let pattern = Regex::new(r"([^@]+)@([^:]+):(.*)").unwrap();
-    let replaced_url = pattern.replace(url, "https://${2}/${3}").to_string();
-    replaced_url
+    pattern.replace(url, "https://${2}/${3}").to_string()
 }
 
 #[typetag::serialize]

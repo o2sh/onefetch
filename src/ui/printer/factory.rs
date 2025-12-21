@@ -1,7 +1,7 @@
 use super::Printer;
 use crate::cli::CliOptions;
-use crate::info::langs::language::Language;
 use crate::info::Info;
+use crate::info::langs::language::Language;
 use crate::ui::printer::{PrinterType, SerializationFormat};
 use anyhow::{Context, Result};
 use image::DynamicImage;
@@ -117,8 +117,8 @@ impl PrinterFactory {
 mod tests {
     use crate::{
         cli::CliOptions,
-        info::{langs::language::Language, Info},
-        ui::printer::{factory::PrinterFactory, PrinterType, SerializationFormat},
+        info::{Info, langs::language::Language},
+        ui::printer::{PrinterType, SerializationFormat, factory::PrinterFactory},
     };
     use image::DynamicImage;
 

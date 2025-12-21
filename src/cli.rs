@@ -2,12 +2,12 @@ use crate::info::langs::language::{Language, LanguageType};
 use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
-use clap::builder::styling::AnsiColor;
 use clap::builder::PossibleValuesParser;
 use clap::builder::Styles;
 use clap::builder::TypedValueParser as _;
-use clap::{value_parser, Args, Command, Parser, ValueHint};
-use clap_complete::{generate, Generator, Shell};
+use clap::builder::styling::AnsiColor;
+use clap::{Args, Command, Parser, ValueHint, value_parser};
+use clap_complete::{Generator, Shell, generate};
 use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
@@ -342,8 +342,13 @@ pub fn get_git_version() -> String {
     }
 }
 
-pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
-    generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
+pub fn print_completions<G: Generator>(generator: G, cmd: &mut Command) {
+    generate(
+        generator,
+        cmd,
+        cmd.get_name().to_string(),
+        &mut io::stdout(),
+    );
 }
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]

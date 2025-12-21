@@ -17,16 +17,16 @@ use self::pending::PendingInfo;
 use self::project::ProjectInfo;
 use self::size::SizeInfo;
 use self::title::Title;
-use self::url::get_repo_url;
 use self::url::UrlInfo;
+use self::url::get_repo_url;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
-use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
+use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
-use gix::sec::trust::Mapping;
 use gix::Repository;
+use gix::sec::trust::Mapping;
 use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
@@ -326,17 +326,17 @@ impl InfoBuilder {
         text_colors: &TextColors,
         cli_options: &CliOptions,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Languages) {
-            if let Some(loc_by_language) = loc_by_language_opt {
-                let languages = LanguagesInfo::new(
-                    loc_by_language,
-                    true_color,
-                    number_of_languages,
-                    text_colors.info,
-                    cli_options.visuals.nerd_fonts,
-                );
-                self.info_fields.push(Box::new(languages));
-            }
+        if !self.disabled_fields.contains(&InfoType::Languages)
+            && let Some(loc_by_language) = loc_by_language_opt
+        {
+            let languages = LanguagesInfo::new(
+                loc_by_language,
+                true_color,
+                number_of_languages,
+                text_colors.info,
+                cli_options.visuals.nerd_fonts,
+            );
+            self.info_fields.push(Box::new(languages));
         }
         self
     }
@@ -436,11 +436,11 @@ impl InfoBuilder {
         loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::LinesOfCode) {
-            if let Some(loc_by_language) = loc_by_language_opt {
-                let lines_of_code = LocInfo::new(loc_by_language, number_separator);
-                self.info_fields.push(Box::new(lines_of_code));
-            }
+        if !self.disabled_fields.contains(&InfoType::LinesOfCode)
+            && let Some(loc_by_language) = loc_by_language_opt
+        {
+            let lines_of_code = LocInfo::new(loc_by_language, number_separator);
+            self.info_fields.push(Box::new(lines_of_code));
         }
         self
     }

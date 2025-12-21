@@ -233,11 +233,7 @@ impl<'a> Tokens<'a> {
 
 fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Option<()> {
     |input| {
-        if predicate(input) {
-            Some(())
-        } else {
-            None
-        }
+        if predicate(input) { Some(()) } else { None }
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::info::utils::info_field::InfoField;
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
 use serde::Serialize;

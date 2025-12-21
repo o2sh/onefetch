@@ -1,6 +1,6 @@
 [workspace.package]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 version = "2.25.0"
 repository = "https://github.com/o2sh/onefetch"

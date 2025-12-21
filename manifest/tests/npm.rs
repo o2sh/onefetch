@@ -1,5 +1,5 @@
 use anyhow::Result;
-use onefetch_manifest::{get_manifests, ManifestType};
+use onefetch_manifest::{ManifestType, get_manifests};
 
 #[test]
 fn should_detect_and_parse_npm_manifest() -> Result<()> {

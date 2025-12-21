@@ -1,6 +1,6 @@
 use anyhow::Result;
-use base64::{engine, Engine};
-use image::{imageops::FilterType, DynamicImage};
+use base64::{Engine, engine};
+use image::{DynamicImage, imageops::FilterType};
 use rustix::termios::tcgetwinsize;
 use std::env;
 use std::io::Cursor;
