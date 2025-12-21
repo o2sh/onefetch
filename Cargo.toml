@@ -2,7 +2,7 @@
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 edition = "2024"
 license = "MIT"
-version = "2.26.0"
+version = "2.26.1"
 repository = "https://github.com/o2sh/onefetch"
 
 [workspace]
