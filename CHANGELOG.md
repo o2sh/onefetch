@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.26.1 (2025-12-21)
+
+### Bug Fixes
+
+- Fix CD pipeline by @o2sh in becddb963ce78f25f2a1f88921b34f9a61e08cc9
+
+## 2.26.0 (2025-12-21)
+
+### New Features
+
+- Add colors to --help by @starsep in https://github.com/o2sh/onefetch/pull/1633
+
+### Chores
+
+- No unsafe by @Sk7Str1p3 in https://github.com/o2sh/onefetch/pull/1646
+- bump cargo edition to 2024 by @o2sh in a3062f48db4eb2ff43cf8965f33f60b9454b4908
+
+### Bug Fixes
+
+- skip get_main_language call if no language detected by @o2sh in 10603ae2e6259c93595f5e5e7ff35b1d312541af
+
 ## 2.25.0 (2025-07-06)
 
 ### New Features
