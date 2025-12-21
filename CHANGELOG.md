@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - No unsafe by @Sk7Str1p3 in https://github.com/o2sh/onefetch/pull/1646
 - bump cargo edition to 2024 by @o2sh in a3062f48db4eb2ff43cf8965f33f60b9454b4908
+- increase default color resolution for sixel by @o2sh in 73300b60e38920aced8cfee376ad1051a1706f76
 
 ### Bug Fixes
 
