@@ -172,8 +172,6 @@ sudo apt-get update
 sudo apt-get install onefetch
 ```
 
-If your Ubuntu version isn't supported, use [snap](#snap).
-
 ## Void Linux
 
 Install it from the official repositories
