@@ -55,9 +55,9 @@
 <header>
   {#if tagName && htmlUrl}
     <div class="banner">
-      🎉 New release {tagName}! Check out the
+      Onefetch {tagName} is here 🎉
       <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-      <a href={htmlUrl}>release notes</a>! 📝
+      <a href={htmlUrl}>Learn More</a>📝
     </div>
   {/if}
   <h1>Onefetch</h1>

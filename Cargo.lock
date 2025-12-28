@@ -1337,16 +1337,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gix-features"
-version = "0.45.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba0ba40b1ca17f2cb3987c8d54e596aba924201cd8e5947098b441067e6686a0"
-dependencies = [
- "gix-trace",
- "libc",
-]
-
-[[package]]
 name = "gix-filter"
 version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2837,7 +2827,7 @@ dependencies = [
  "crossbeam-channel",
  "enable-ansi-support",
  "gix",
- "gix-features 0.45.0",
+ "gix-features 0.44.1",
  "gix-testtools",
  "globset",
  "human-panic",
