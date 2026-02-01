@@ -1,7 +1,6 @@
 <script lang="ts">
   import { mapToDefaultTerminalFgColor } from '../lib/utils';
   import toast from 'svelte-hot-french-toast';
-  import TitleLink from './TitleLink.svelte';
 
   export let name: string;
   export let ansi: string[];
@@ -43,7 +42,7 @@
 
 <div class="language-name">
   <h3 class="nerd-font" style="color: {chipColor}">{chipIcon}</h3>
-  <TitleLink {name} />
+  <h3 id={name}><a href="#{name}">{name}</a></h3>
 </div>
 
 <div class="logo-container" class:dark>
