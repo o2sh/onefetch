@@ -1,5 +1,6 @@
 <script lang="ts">
   import { mapToDefaultTerminalFgColor } from '../lib/utils';
+  import toast from 'svelte-hot-french-toast';
   import TitleLink from './TitleLink.svelte';
 
   export let name: string;
@@ -12,10 +13,20 @@
   let dark = true;
   let trueColor = hex != null;
 
+  const copyAscii = async () => {
+    const plainAscii = ascii.replace(/\{\d+\}/g, '');
+
+    try {
+      await navigator.clipboard.writeText(plainAscii);
+      toast.success('Copied to clipboard');
+    } catch {
+      toast.error('Could not copy to clipboard');
+    }
+  };
+
   $: html = ascii
     .split('\n')
     .map((line) => {
-      // TODO Clean up, this is hard to read
       let spanCount = 0;
       const htmlLine = line.replace(/\{(\d+)\}/g, (_match, index) => {
         const i = Number.parseInt(index, 10);
@@ -30,27 +41,38 @@
     .join('\n');
 </script>
 
-<div class="title-row">
-  <div class="language-name">
-    <h3 class="nerd-font" style="color: {chipColor}">{chipIcon}</h3>
-    <TitleLink {name} />
-  </div>
-  <div class="checkbox">
-    <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />
-    <label for="dark-checkbox-{name}">Dark</label>
-  </div>
-  <div class="checkbox">
-    <input
-      id="hex-checkbox-{name}"
-      type="checkbox"
-      disabled={hex == null}
-      bind:checked={trueColor} />
-    <label for="hex-checkbox-{name}">True Color</label>
-  </div>
+<div class="language-name">
+  <h3 class="nerd-font" style="color: {chipColor}">{chipIcon}</h3>
+  <TitleLink {name} />
 </div>
+
 <div class="logo-container" class:dark>
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   <pre class:dark>{@html html}</pre>
+</div>
+
+<div class="controls">
+  <div class="checkboxes">
+    <div class="checkbox">
+      <input id="dark-checkbox-{name}" type="checkbox" bind:checked={dark} />
+      <label for="dark-checkbox-{name}">Dark</label>
+    </div>
+    <div class="checkbox">
+      <input
+        id="hex-checkbox-{name}"
+        type="checkbox"
+        disabled={hex == null}
+        bind:checked={trueColor} />
+      <label for="hex-checkbox-{name}">True Color</label>
+    </div>
+  </div>
+  <button
+    class="copy-button"
+    type="button"
+    on:click={copyAscii}
+    aria-label="Copy ASCII to clipboard">
+    Copy
+  </button>
 </div>
 
 <style>
@@ -64,13 +86,6 @@
 
   .logo-container.dark {
     background-color: black;
-  }
-
-  .title-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
   }
 
   pre {
@@ -94,6 +109,17 @@
   .checkbox {
     display: flex;
     align-items: baseline;
-    gap: 0.1rem;
+  }
+
+  .checkboxes {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .controls {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
   }
 </style>
