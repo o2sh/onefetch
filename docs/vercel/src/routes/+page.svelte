@@ -4,6 +4,7 @@
   import type { Languages, Language } from '../../../languages.yaml';
   import { onMount } from 'svelte';
   import { writable, derived } from 'svelte/store';
+  import { Toaster } from 'svelte-hot-french-toast';
   import '../app.css';
 
   let tagName: string;
@@ -51,6 +52,8 @@
     htmlUrl = data.html_url;
   });
 </script>
+
+<Toaster position="bottom-center" />
 
 <header>
   {#if tagName && htmlUrl}
