@@ -76,12 +76,6 @@ pub struct InfoCliOptions {
     /// Maximum NUM of file churns to be shown
     #[arg(long, default_value_t = 3usize, value_name = "NUM")]
     pub number_of_file_churns: usize,
-    /// Minimum NUM of commits from HEAD used to compute the churn summary
-    ///
-    /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under the info title "Churn (NUM)"
-    #[arg(long, value_name = "NUM")]
-    pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1..)]
     pub exclude: Vec<String>,
@@ -265,7 +259,6 @@ impl Default for InfoCliOptions {
             number_of_authors: 3,
             number_of_languages: 6,
             number_of_file_churns: 3,
-            churn_pool_size: Option::default(),
             exclude: Vec::default(),
             no_bots: Option::default(),
             no_merges: Default::default(),

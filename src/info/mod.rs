@@ -120,7 +120,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
-        cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )
     .context("Failed to traverse Git commit history")?;
