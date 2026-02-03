@@ -109,13 +109,8 @@ expression: info
     },
     {
       "ChurnInfo": {
-        "file_churns": [
-          {
-            "filePath": "code.rs",
-            "nbrOfCommits": 1
-          }
-        ],
-        "churn_pool_size": 1
+        "file_churns": "[file churns]",
+        "churn_pool_size": "churn pool size"
       }
     },
     {

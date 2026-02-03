@@ -42,8 +42,8 @@ pub fn traverse_commit_graph(
         .with_commit_graph(commit_graph)
         .all()?;
 
-    // Best-effort strategy for Churn computation: keep computing churn while traversal runs;
-    // it stops once traversal is done
+    // Best-effort churn computation: compute churn concurrently with the traversal.
+    // Stop when traversal completes; churn results are therefore non-deterministic.
     let (churn_thread, churn_tx) =
         get_churn_channel(repo, &mailmap, no_bots.clone(), &is_traversal_complete);
 

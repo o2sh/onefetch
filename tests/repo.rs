@@ -53,6 +53,8 @@ fn test_repo() -> Result<()> {
         {
             ".title.gitVersion" => "git version",
             ".infoFields[].HeadInfo.headRefs.shortCommitId" => "short commit",
+            ".infoFields[].ChurnInfo.file_churns" => "[file churns]",
+            ".infoFields[].ChurnInfo.churn_pool_size" => "churn pool size",
         }
     );
 
