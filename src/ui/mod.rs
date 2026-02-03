@@ -10,8 +10,8 @@ pub fn get_ascii_colors(
     ascii_colors: &[u8],
     true_color: bool,
 ) -> Vec<DynColors> {
-    let language_colors = match language_opt {
-        Some(lang) => override_language_opt.unwrap_or(lang).get_colors(true_color),
+    let language_colors = match override_language_opt.or(language_opt) {
+        Some(lang) => lang.get_colors(true_color),
         None => vec![DynColors::Ansi(AnsiColors::White)],
     };
     if ascii_colors.is_empty() {
@@ -79,8 +79,14 @@ mod test {
     #[test]
     fn get_ascii_colors_no_language_with_custom_language() {
         let colors = get_ascii_colors(None, Some(&Language::Python), &[], false);
-        assert_eq!(colors.len(), 1);
-        assert_eq!(colors, vec![DynColors::Ansi(AnsiColors::White)]);
+        assert_eq!(colors.len(), 2);
+        assert_eq!(
+            colors,
+            vec![
+                DynColors::Ansi(AnsiColors::Blue),
+                DynColors::Ansi(AnsiColors::Yellow)
+            ]
+        );
     }
 
     #[test]
