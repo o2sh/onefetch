@@ -26,7 +26,6 @@ use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
 use gix::Repository;
-use gix::sec::trust::Mapping;
 use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize};
 use serde::Serialize;
@@ -110,32 +109,14 @@ impl std::fmt::Display for Info {
 }
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
-    let mut repo = gix::ThreadSafeRepository::discover_opts(
-        &cli_options.input,
-        gix::discover::upwards::Options {
-            dot_git_only: true,
-            ..Default::default()
-        },
-        Mapping::default(),
-    )?
-    .to_thread_local();
-    // Having an object cache is important for getting much better traversal and diff performance.
-    repo.object_cache_size_if_unset(4 * 1024 * 1024);
+    let repo = gix::discover(&cli_options.input)?;
     let repo_path = get_work_dir(&repo)?;
-    let loc_by_language_sorted_handle = std::thread::spawn({
-        let globs_to_exclude = cli_options.info.exclude.clone();
-        let language_types = cli_options.info.r#type.clone();
-        let include_hidden = cli_options.info.include_hidden;
-        let workdir = repo_path.clone();
-        move || {
-            langs::get_loc_by_language_sorted(
-                &workdir,
-                &globs_to_exclude,
-                &language_types,
-                include_hidden,
-            )
-        }
-    });
+    let loc_by_language = langs::get_loc_by_language_sorted(
+        &repo_path,
+        &cli_options.info.exclude,
+        &cli_options.info.r#type,
+        cli_options.info.include_hidden,
+    );
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
@@ -155,10 +136,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
     };
-    let loc_by_language = loc_by_language_sorted_handle
-        .join()
-        .ok()
-        .context("BUG: panic in language statistics thread")?;
     let dominant_language = loc_by_language
         .as_ref()
         .map(|v| langs::get_main_language(v));
