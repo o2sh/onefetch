@@ -44,6 +44,8 @@ pub fn traverse_commit_graph(
         .with_commit_graph(commit_graph)
         .all()?;
 
+    // Best-effort strategy for Churn computation: keep computing churn while traversal runs;
+    // it stops once traversal is done or churn_pool_size is reached.
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
         &mailmap,
