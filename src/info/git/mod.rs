@@ -22,7 +22,7 @@ pub mod sig;
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
     no_bots: Option<MyRegex>,
-    min_churn_pool_size: Option<usize>,
+    churn_pool_size: Option<usize>,
     no_merges: bool,
 ) -> Result<GitMetrics> {
     let mut time_of_most_recent_commit = None;
@@ -32,32 +32,28 @@ pub fn traverse_commit_graph(
     let is_traversal_complete = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
-    let num_threads = std::thread::available_parallelism()
-        .map(std::num::NonZero::get)
-        .unwrap_or(1);
     let commit_graph = repo.commit_graph().ok();
-    let can_use_author_threads = num_threads > 1 && commit_graph.is_some();
+    let can_use_commit_graph = commit_graph.is_some();
 
     let commit_iter = repo
         .head_commit()?
         .id()
         .ancestors()
         .sorting(Sorting::ByCommitTime(CommitTimeOrder::NewestFirst))
-        .use_commit_graph(can_use_author_threads)
+        .use_commit_graph(can_use_commit_graph)
         .with_commit_graph(commit_graph)
         .all()?;
 
+    // Best-effort strategy for Churn computation: keep computing churn while traversal runs;
+    // it stops once traversal is done and churn_pool_size is reached (if provided).
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
         &mailmap,
         no_bots.clone(),
         &is_traversal_complete,
         &total_number_of_commits,
-        min_churn_pool_size,
+        churn_pool_size,
     );
-
-    let author_threads = can_use_author_threads
-        .then(|| get_author_channel(repo, num_threads, no_bots.clone(), &mailmap));
 
     let mut count = 0;
     for commit in commit_iter {
@@ -67,16 +63,12 @@ pub fn traverse_commit_graph(
                 continue;
             }
 
-            if let Some((_threads, author_tx)) = author_threads.as_ref() {
-                author_tx.send(commit.id)?;
-            } else {
-                update_signature_counts(
-                    &commit.object()?,
-                    &mailmap,
-                    no_bots.as_ref(),
-                    &mut number_of_commits_by_signature,
-                )?;
-            }
+            update_signature_counts(
+                &commit.object()?,
+                &mailmap,
+                no_bots.as_ref(),
+                &mut number_of_commits_by_signature,
+            )?;
 
             churn_tx.send(commit.id)?;
 
@@ -90,16 +82,6 @@ pub fn traverse_commit_graph(
             time_of_first_commit = commit_time.into();
 
             count += 1;
-        }
-    }
-
-    if let Some((threads, sender)) = author_threads {
-        drop(sender);
-        for thread in threads {
-            let mapping = thread.join().expect("never panics")?;
-            for (sig, num_commits) in mapping {
-                *number_of_commits_by_signature.entry(sig).or_insert(0) += num_commits;
-            }
         }
     }
 
@@ -122,51 +104,6 @@ pub fn traverse_commit_graph(
     Ok(git_metrics)
 }
 
-type NumberOfCommitsBySignature = HashMap<Sig, usize>;
-
-fn get_author_channel(
-    repo: &gix::Repository,
-    num_threads: usize,
-    bot_regex_pattern: Option<MyRegex>,
-    mailmap: &gix::mailmap::Snapshot,
-) -> (
-    Vec<JoinHandle<Result<NumberOfCommitsBySignature>>>,
-    crossbeam_channel::Sender<ObjectId>,
-) {
-    // we intentionally over-allocate threads a little as the main thread won't be very busy anyway
-    // traversing commits with the graph available.
-    // The channel is generously bounded to assure all threads are fed, without consuming excessive memory.
-    // We have to wait for the threads to finish anyway so some synchronization here will be fine, while tests
-    // show that this is about as fast as if it was unbounded.
-    let (tx, rx) = crossbeam_channel::bounded::<ObjectId>(num_threads * 100);
-    let threads: Vec<_> = (0..num_threads)
-        .map(|_| {
-            std::thread::spawn({
-                let mut repo = repo.clone();
-                let mailmap = mailmap.clone();
-                let bot_regex_pattern = bot_regex_pattern.clone();
-                let rx = rx.clone();
-                move || -> anyhow::Result<_> {
-                    let mut number_of_commits_by_signature = NumberOfCommitsBySignature::new();
-                    // We are sure to see each object only once.
-                    repo.object_cache_size(0);
-                    while let Ok(commit_id) = rx.recv() {
-                        let commit = repo.find_object(commit_id)?.into_commit();
-                        update_signature_counts(
-                            &commit,
-                            &mailmap,
-                            bot_regex_pattern.as_ref(),
-                            &mut number_of_commits_by_signature,
-                        )?;
-                    }
-                    Ok(number_of_commits_by_signature)
-                }
-            })
-        })
-        .collect();
-    (threads, tx)
-}
-
 type NumberOfCommitsByFilepath = HashMap<BString, usize>;
 type ChurnPair = (NumberOfCommitsByFilepath, usize);
 
@@ -176,7 +113,7 @@ fn get_churn_channel(
     bot_regex_pattern: Option<MyRegex>,
     is_traversal_complete: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
-    max_churn_pool_size: Option<usize>,
+    churn_pool_size: Option<usize>,
 ) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
@@ -185,6 +122,7 @@ fn get_churn_channel(
         let bot_regex_pattern = bot_regex_pattern.clone();
         let is_traversal_complete = is_traversal_complete.clone();
         let total_number_of_commits = total_number_of_commits.clone();
+        let churn_pool_size = churn_pool_size.clone();
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
             let mut diffs_computed = 0;
@@ -198,7 +136,7 @@ fn get_churn_channel(
                 if should_break(
                     is_traversal_complete.load(Ordering::Relaxed),
                     total_number_of_commits.load(Ordering::Relaxed),
-                    max_churn_pool_size,
+                    churn_pool_size,
                     diffs_computed,
                 ) {
                     break;
@@ -215,15 +153,15 @@ fn get_churn_channel(
 fn should_break(
     is_traversal_complete: bool,
     total_number_of_commits: usize,
-    min_churn_pool_size_opt: Option<usize>,
+    churn_pool_size_opt: Option<usize>,
     diffs_computed: usize,
 ) -> bool {
     if !is_traversal_complete {
         return false;
     }
 
-    min_churn_pool_size_opt.is_none_or(|min_churn_pool_size| {
-        diffs_computed >= min_churn_pool_size.min(total_number_of_commits)
+    churn_pool_size_opt.is_none_or(|churn_pool_size| {
+        diffs_computed >= churn_pool_size.min(total_number_of_commits)
     })
 }
 
@@ -316,13 +254,11 @@ mod tests {
     }
 
     #[rstest]
-    #[case(true, 10, Some(8), 4, false)]
-    #[case(false, 10, Some(10), 10, false)]
+    #[case(false, 10, Some(5), 5, false)]
     #[case(true, 10, Some(5), 5, true)]
-    #[case(true, 5, Some(10), 5, true)]
-    #[case(true, 5, Some(10), 3, false)]
-    #[case(true, 10, Some(5), 3, false)]
-    #[case(true, 100, Some(30), 90, true)]
+    #[case(true, 10, Some(8), 5, false)]
+    #[case(true, 10, Some(20), 10, true)]
+    #[case(true, 10, None, 5, true)]
     fn test_should_break(
         #[case] has_commit_graph_traversal_ended: bool,
         #[case] total_number_of_commits: usize,

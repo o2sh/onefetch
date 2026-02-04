@@ -2646,7 +2646,6 @@ dependencies = [
  "clap",
  "clap_complete",
  "criterion",
- "crossbeam-channel",
  "enable-ansi-support",
  "gix",
  "gix-features 0.45.0",
