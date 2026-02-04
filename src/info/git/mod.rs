@@ -122,7 +122,6 @@ fn get_churn_channel(
         let bot_regex_pattern = bot_regex_pattern.clone();
         let is_traversal_complete = is_traversal_complete.clone();
         let total_number_of_commits = total_number_of_commits.clone();
-        let churn_pool_size = churn_pool_size.clone();
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
             let mut diffs_computed = 0;
