@@ -112,10 +112,10 @@ expression: info
         "file_churns": [
           {
             "filePath": "code.rs",
-            "nbrOfCommits": 1
+            "nbrOfCommits": 4
           }
         ],
-        "churn_pool_size": 1
+        "churn_pool_size": 4
       }
     },
     {

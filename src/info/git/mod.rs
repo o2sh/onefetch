@@ -12,7 +12,7 @@ use gix::traverse::commit::simple::CommitTimeOrder;
 use gix::{Commit, ObjectId};
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::mpsc::{Sender, channel};
 use std::thread::JoinHandle;
 
@@ -22,6 +22,7 @@ pub mod sig;
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
     no_bots: Option<MyRegex>,
+    churn_pool_size: Option<usize>,
     no_merges: bool,
 ) -> Result<GitMetrics> {
     let mut time_of_most_recent_commit = None;
@@ -29,6 +30,7 @@ pub fn traverse_commit_graph(
     let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
     let mailmap = repo.open_mailmap();
     let is_traversal_complete = Arc::new(AtomicBool::default());
+    let total_number_of_commits = Arc::new(AtomicUsize::default());
 
     let commit_graph = repo.commit_graph().ok();
     let can_use_commit_graph = commit_graph.is_some();
@@ -43,10 +45,17 @@ pub fn traverse_commit_graph(
         .all()?;
 
     // Best-effort strategy for Churn computation: keep computing churn while traversal runs;
-    // it stops once traversal is done
-    let (churn_thread, churn_tx) =
-        get_churn_channel(repo, &mailmap, no_bots.clone(), &is_traversal_complete);
+    // it stops once traversal is done and churn_pool_size is reached (if provided).
+    let (churn_thread, churn_tx) = get_churn_channel(
+        repo,
+        &mailmap,
+        no_bots.clone(),
+        &is_traversal_complete,
+        &total_number_of_commits,
+        churn_pool_size,
+    );
 
+    let mut count = 0;
     for commit in commit_iter {
         let commit = commit?;
         {
@@ -71,9 +80,12 @@ pub fn traverse_commit_graph(
             );
             time_of_most_recent_commit.get_or_insert(commit_time);
             time_of_first_commit = commit_time.into();
+
+            count += 1;
         }
     }
 
+    total_number_of_commits.store(count, Ordering::SeqCst);
     is_traversal_complete.store(true, Ordering::SeqCst);
 
     drop(churn_tx);
@@ -100,6 +112,8 @@ fn get_churn_channel(
     mailmap: &gix::mailmap::Snapshot,
     bot_regex_pattern: Option<MyRegex>,
     is_traversal_complete: &Arc<AtomicBool>,
+    total_number_of_commits: &Arc<AtomicUsize>,
+    churn_pool_size: Option<usize>,
 ) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
@@ -107,6 +121,8 @@ fn get_churn_channel(
         let mailmap = mailmap.clone();
         let bot_regex_pattern = bot_regex_pattern.clone();
         let is_traversal_complete = is_traversal_complete.clone();
+        let total_number_of_commits = total_number_of_commits.clone();
+        let churn_pool_size = churn_pool_size.clone();
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
             let mut diffs_computed = 0;
@@ -117,7 +133,12 @@ fn get_churn_channel(
                 }
                 compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
                 diffs_computed += 1;
-                if is_traversal_complete.load(Ordering::Relaxed) {
+                if should_break(
+                    is_traversal_complete.load(Ordering::Relaxed),
+                    total_number_of_commits.load(Ordering::Relaxed),
+                    churn_pool_size,
+                    diffs_computed,
+                ) {
                     break;
                 }
             }
@@ -127,6 +148,21 @@ fn get_churn_channel(
     });
 
     (thread, tx)
+}
+
+fn should_break(
+    is_traversal_complete: bool,
+    total_number_of_commits: usize,
+    churn_pool_size_opt: Option<usize>,
+    diffs_computed: usize,
+) -> bool {
+    if !is_traversal_complete {
+        return false;
+    }
+
+    churn_pool_size_opt.is_none_or(|churn_pool_size| {
+        diffs_computed >= churn_pool_size.min(total_number_of_commits)
+    })
 }
 
 fn update_signature_counts(
@@ -215,5 +251,28 @@ mod tests {
         let no_bots: Option<MyRegex> = Some(from_str?);
         assert_eq!(is_bot(&author_name.into(), no_bots.as_ref()), expected);
         Ok(())
+    }
+
+    #[rstest]
+    #[case(false, 10, Some(5), 5, false)]
+    #[case(true, 10, Some(5), 5, true)]
+    #[case(true, 10, Some(8), 5, false)]
+    #[case(true, 10, Some(20), 10, true)]
+    #[case(true, 10, None, 5, true)]
+    fn test_should_break(
+        #[case] has_commit_graph_traversal_ended: bool,
+        #[case] total_number_of_commits: usize,
+        #[case] churn_pool_size_opt: Option<usize>,
+        #[case] number_of_diffs_computed: usize,
+        #[case] expected: bool,
+    ) {
+        let result = should_break(
+            has_commit_graph_traversal_ended,
+            total_number_of_commits,
+            churn_pool_size_opt,
+            number_of_diffs_computed,
+        );
+
+        assert_eq!(result, expected);
     }
 }
