@@ -260,6 +260,33 @@ C:
       - "#FFFFFF"
     chip: "#555555"
   icon: '\u{E61E}'
+C3:
+  type: programming
+  ascii: |
+    {0} .d8{1}888{2}b.  {3} .d8{4}888{5}b.
+    {0}d88P{1}  Y{2}88b {3}d88P{4}  Y{5}88b
+    {0}888 {1}   {2}888 {3}    {4} .d{5}88P
+    {0}888 {1}   {2}    {3}    {4}888{5}8"
+    {0}888 {1}   {2}    {3}    {4} "Y{5}8b.
+    {0}888 {1}   {2}888 {3}888 {4}   {5}888
+    {0}Y88b{1}  d{2}88P {3}Y88b{4}  d{5}88P
+    {0} "Y8{1}888{2}P"  {3} "Y8{4}888{5}P"
+  colors:
+    ansi:
+      - blue
+      - blue
+      - blue
+      - magenta
+      - magenta
+      - magenta
+    hex:
+      - "#2D64EB"
+      - "#355EEB"
+      - "#4857EC"
+      - "#5C51ED"
+      - "#6A47ED"
+      - "#7640ED"
+    chip: "#2563EB"
 Ceylon:
   type: programming
   ascii: |

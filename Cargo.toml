@@ -65,7 +65,7 @@ serde_yaml = "0.9.34"
 strum.workspace = true
 time = { version = "0.3.44", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
-tokei = "13.0.0"
+tokei = "15.0.0"
 typetag = "0.2"
 
 [dev-dependencies]
