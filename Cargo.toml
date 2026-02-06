@@ -45,9 +45,9 @@ image = { version = "0.25.9", default-features = false, features = [
     "webp",
 ] }
 num-format = "0.4.4"
-onefetch-ascii = { path = "ascii", version = "2.19.0" }
-onefetch-image = { path = "image", version = "2.19.0" }
-onefetch-manifest = { path = "manifest", version = "2.19.0" }
+onefetch-ascii = { path = "ascii" }
+onefetch-image = { path = "image" }
+onefetch-manifest = { path = "manifest" }
 owo-colors = "4.2.3"
 regex = "1.12.2"
 serde = "1.0.228"
