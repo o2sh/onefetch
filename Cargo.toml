@@ -62,7 +62,7 @@ typetag = "0.2.21"
 [dev-dependencies]
 criterion = "0.8.1"
 gix-testtools = "0.18.0"
-insta = { version = "1.45.0", features = ["json", "redactions"] }
+insta = { version = "1.46.3", features = ["json", "redactions"] }
 rstest = "0.26.1"
 
 [[bench]]
