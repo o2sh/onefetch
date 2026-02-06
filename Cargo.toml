@@ -60,7 +60,7 @@ tokei = "14.0.0"
 typetag = "0.2.21"
 
 [dev-dependencies]
-criterion = "0.8.1"
+criterion = "0.8.2"
 gix-testtools = "0.18.0"
 insta = { version = "1.45.0", features = ["json", "redactions"] }
 rstest = "0.26.1"
