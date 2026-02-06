@@ -8,18 +8,6 @@ repository = "https://github.com/o2sh/onefetch"
 [workspace]
 members = ["ascii", "image", "manifest"]
 
-[workspace.dependencies]
-owo-colors = "4.2.3"
-anyhow = "1.0.101"
-clap = { version = "4.5.53", features = ["derive"] }
-image = { version = "0.25.9", default-features = false, features = [
-    "color_quant",
-    "jpeg",
-    "png",
-    "webp",
-] }
-strum = { version = "0.27.2", features = ["derive"] }
-
 [package]
 authors.workspace = true
 edition.workspace = true
@@ -35,10 +23,10 @@ homepage = "https://onefetch.dev"
 rust-version = "1.88.0"
 
 [dependencies]
-anyhow.workspace = true
+anyhow = "1.0.101"
 askalono = "0.5.0"
 byte-unit = "5.2.0"
-clap.workspace = true
+clap = { version = "4.5.53", features = ["derive"] }
 clap_complete = "4.5.62"
 gix = { version = "0.76.0", default-features = false, features = [
     "max-performance-safe",
@@ -50,19 +38,22 @@ gix = { version = "0.76.0", default-features = false, features = [
 gix-features = "0.45.0"
 globset = "0.4.18"
 human-panic = "2.0.5"
-image.workspace = true
+image = { version = "0.25.9", default-features = false, features = [
+    "color_quant",
+    "jpeg",
+    "png",
+    "webp",
+] }
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.19.0" }
 onefetch-image = { path = "image", version = "2.19.0" }
 onefetch-manifest = { path = "manifest", version = "2.19.0" }
-owo-colors.workspace = true
+owo-colors = "4.2.3"
 regex = "1.12.2"
 serde = "1.0.228"
 serde_json = "1.0.149"
 serde_yaml = "0.9.34"
-# TODO With the new value parsers, we're really close to being able to eliminate
-# the strum dependency
-strum.workspace = true
+strum = { version = "0.27.2", features = ["derive"] }
 time = { version = "0.3.44", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "13.0.0"

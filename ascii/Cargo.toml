@@ -8,4 +8,4 @@ name = "onefetch-ascii"
 description = "Display colorized ascii art to the terminal"
 
 [dependencies]
-owo-colors.workspace = true
+owo-colors = "4.2.3"
