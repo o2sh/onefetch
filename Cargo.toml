@@ -10,7 +10,7 @@ members = ["ascii", "image", "manifest"]
 
 [workspace.dependencies]
 owo-colors = "4.2.3"
-anyhow = "1.0"
+anyhow = "1.0.101"
 clap = { version = "4.5.53", features = ["derive"] }
 image = { version = "0.25.9", default-features = false, features = [
     "color_quant",
@@ -57,8 +57,8 @@ onefetch-image = { path = "image", version = "2.19.0" }
 onefetch-manifest = { path = "manifest", version = "2.19.0" }
 owo-colors.workspace = true
 regex = "1.12.2"
-serde = "1.0"
-serde_json = "1.0"
+serde = "1.0.228"
+serde_json = "1.0.149"
 serde_yaml = "0.9.34"
 # TODO With the new value parsers, we're really close to being able to eliminate
 # the strum dependency
@@ -66,7 +66,7 @@ strum.workspace = true
 time = { version = "0.3.44", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "13.0.0"
-typetag = "0.2"
+typetag = "0.2.21"
 
 [dev-dependencies]
 criterion = "0.8.1"
@@ -79,14 +79,14 @@ name = "repo"
 harness = false
 
 [build-dependencies]
-lazy_static = "1"
-regex = "1"
-serde_json = "1"
-serde_yaml = "0.9"
-tera = { version = "1", default-features = false }
+lazy_static = "1.5.0"
+regex = "1.12.2"
+serde_json = "1.0.149"
+serde_yaml = "0.9.34"
+tera = { version = "1.20.1", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
+winres = "0.1.12"
 
 [target.'cfg(windows)'.dependencies]
 enable-ansi-support = "0.3.1"
