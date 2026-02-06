@@ -442,9 +442,9 @@ dependencies = [
 
 [[package]]
 name = "clap-cargo"
-version = "0.13.0"
+version = "0.18.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38ae55615695e768a76899c8411b4ebacfbe525e964f94fd24f0007b10b45cd3"
+checksum = "936551935c8258754bb8216aec040957d261f977303754b9bf1a213518388006"
 dependencies = [
  "anstyle",
  "clap",
@@ -3777,9 +3777,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokei"
-version = "13.0.0"
+version = "14.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a9791c506cf4a8b6ab053c88ec41a1e2ae19df2f6e81f3bfc34380d1d6e2964"
+checksum = "e4de7875c0c312f30e090edb0da5df9f6586033132d36d94c8f9133e82826797"
 dependencies = [
  "aho-corasick",
  "arbitrary",
