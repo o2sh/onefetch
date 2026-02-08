@@ -111,12 +111,21 @@ impl std::fmt::Display for Info {
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let repo = gix::discover(&cli_options.input)?;
     let repo_path = get_work_dir(&repo)?;
-    let loc_by_language = langs::get_loc_by_language_sorted(
-        &repo_path,
-        &cli_options.info.exclude,
-        &cli_options.info.r#type,
-        cli_options.info.include_hidden,
-    );
+    // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
+    let loc_by_language_sorted_handle = std::thread::spawn({
+        let globs_to_exclude = cli_options.info.exclude.clone();
+        let language_types = cli_options.info.r#type.clone();
+        let include_hidden = cli_options.info.include_hidden;
+        let workdir = repo_path.clone();
+        move || {
+            langs::get_loc_by_language_sorted(
+                &workdir,
+                &globs_to_exclude,
+                &language_types,
+                include_hidden,
+            )
+        }
+    });
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
@@ -136,6 +145,10 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
     };
+    let loc_by_language = loc_by_language_sorted_handle
+        .join()
+        .ok()
+        .context("BUG: panic in language statistics thread")?;
     let dominant_language = loc_by_language
         .as_ref()
         .map(|v| langs::get_main_language(v));
