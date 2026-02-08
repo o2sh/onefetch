@@ -1,6 +1,6 @@
 <div align="center">
   
-# Onefetch - Command-line Git information tool
+## Onefetch - Command-line Git information tool
 
 <p><img src="assets/onefetch.svg" height=100px></p>
 
