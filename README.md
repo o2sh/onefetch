@@ -19,12 +19,9 @@
 
 ---
 
-<table>
-  <tr>
-    <td><img src="assets/screenshot-1.png" width="100%"></td>
-    <td><img src="assets/screenshot-2.png" width="100%"></td>
-  </tr>
-</table>
+|  |  |
+|---|---|
+| ![Screenshot 1](assets/screenshot-1.png) | ![Screenshot 2](assets/screenshot-2.png) |
 
 Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly in your terminal.
 
