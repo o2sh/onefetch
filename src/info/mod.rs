@@ -111,6 +111,7 @@ impl std::fmt::Display for Info {
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let repo = gix::discover(&cli_options.input)?;
     let repo_path = get_work_dir(&repo)?;
+    // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
         let language_types = cli_options.info.r#type.clone();
