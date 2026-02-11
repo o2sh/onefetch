@@ -21,7 +21,7 @@
 
 Onefetch is a command-line Git information tool written in `Rust` that displays project information and code statistics for a local Git repository directly in your terminal. The tool works completely offline with a focus on performance and customizability.
 
-| Screenshot 1 | Screenshot 2 |
+|||
 |---|---|
 | ![Screenshot 1](assets/screenshot-1.png) | ![Screenshot 2](assets/screenshot-2.png) |
 
