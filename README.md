@@ -51,15 +51,15 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
 
 ### macOS
   
-  ```sh
-  brew install onefetch
-  ```
+```sh
+brew install onefetch
+```
 
 ### Windows
   
-  ```sh
-  winget install onefetch
-  ```
+```sh
+winget install onefetch
+```
 
 ## Usage
 
@@ -67,7 +67,7 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
 onefetch /path/of/your/repo
 ```
 
-Or:
+Or
 
 ```sh
 cd /path/of/your/repo
