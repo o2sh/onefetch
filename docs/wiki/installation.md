@@ -158,6 +158,12 @@ Install it from the official repositories.
 
 ## Ubuntu
 
+Use debian package from release
+
+```
+wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb
+```
+
 Use Snap
 
 ```
