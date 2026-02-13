@@ -50,16 +50,12 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
   ```
 
 ### macOS
-
-- Homebrew
   
   ```sh
   brew install onefetch
   ```
 
 ### Windows
-
-- Winget
   
   ```sh
   winget install onefetch
