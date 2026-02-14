@@ -33,43 +33,43 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
 
 - Ubuntu
   
-  ```sh
+  ```
   wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb
   ```
 
 - Arch Linux
   
-  ```sh
+  ```
   pacman -S onefetch
   ```
 
 - openSUSE
   
-  ```sh
+  ```
   zypper install onefetch
   ```
 
 ### macOS
   
-```sh
+```
 brew install onefetch
 ```
 
 ### Windows
   
-```sh
+```
 winget install onefetch
 ```
 
 ## Usage
 
-```sh
+```
 onefetch /path/of/your/repo
 ```
 
 Or
 
-```sh
+```
 cd /path/of/your/repo
 onefetch
 ```
