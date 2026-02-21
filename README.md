@@ -34,7 +34,7 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
 - Ubuntu
   
   ```
-  wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb
+  wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb && rm onefetch_amd64.deb
   ```
 
 - Arch Linux
