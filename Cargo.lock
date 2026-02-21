@@ -2247,17 +2247,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "npm-package-json"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df163f89771bd6654d5e116952b9ab2d0b952cd8e3315ddaa615f6d2bfbb1fde"
-dependencies = [
- "serde",
- "serde_json",
- "thiserror 1.0.69",
-]
-
-[[package]]
 name = "ntapi"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2394,7 +2383,7 @@ version = "2.26.1"
 dependencies = [
  "anyhow",
  "cargo_toml",
- "npm-package-json",
+ "serde_json",
  "strum",
 ]
 

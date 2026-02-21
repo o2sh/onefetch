@@ -58,15 +58,28 @@ fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
 }
 
 fn parse_npm_manifest(path: &Path) -> Result<Manifest> {
-    let package = npm_package_json::Package::from_path(path)
+    let content = fs::read_to_string(path)
+        .with_context(|| format!("Failed to read package.json at '{}'", path.display()))?;
+    let value: serde_json::Value = serde_json::from_str(&content)
         .with_context(|| format!("Failed to parse package.json at '{}'", path.display()))?;
+    let string_field = |key| {
+        value
+            .get(key)
+            .and_then(serde_json::Value::as_str)
+            .map(ToOwned::to_owned)
+    };
+    let number_of_dependencies = value
+        .get("dependencies")
+        .and_then(serde_json::Value::as_object)
+        .map_or(0, serde_json::Map::len);
+
     Ok(Manifest {
         manifest_type: ManifestType::Npm,
-        number_of_dependencies: package.dependencies.len(),
-        name: package.name,
-        description: package.description,
-        version: package.version,
-        license: package.license,
+        number_of_dependencies,
+        name: string_field("name").unwrap_or_default(),
+        description: string_field("description"),
+        version: string_field("version").unwrap_or_default(),
+        license: string_field("license"),
     })
 }
 
