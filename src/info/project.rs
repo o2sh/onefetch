@@ -50,10 +50,9 @@ fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> 
         .unwrap_or_default();
 
     if repo_name.is_empty() {
-        let repo_name_from_manifest = match manifest {
-            Some(m) => m.name.clone(),
-            None => String::new(),
-        };
+        let repo_name_from_manifest = manifest
+            .and_then(|m| m.name.clone())
+            .unwrap_or_default();
         Ok(repo_name_from_manifest)
     } else {
         Ok(repo_name)
