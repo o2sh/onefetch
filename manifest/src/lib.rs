@@ -11,9 +11,9 @@ use strum::{Display, EnumIter};
 pub struct Manifest {
     pub manifest_type: ManifestType,
     pub number_of_dependencies: usize,
-    pub name: String,
+    pub name: Option<String>,
     pub description: Option<String>,
-    pub version: String,
+    pub version: Option<String>,
     pub license: Option<String>,
 }
 
@@ -51,9 +51,9 @@ fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
     Ok(Manifest {
         manifest_type: ManifestType::Cargo,
         number_of_dependencies: m.dependencies.len(),
-        name: package.name.clone(),
+        name: Some(package.name.clone()),
         description,
-        version: package.version().into(),
+        version: Some(package.version().into()),
         license: package.license().map(Into::into),
     })
 }
@@ -78,9 +78,9 @@ fn parse_npm_manifest(path: &Path) -> Result<Manifest> {
     Ok(Manifest {
         manifest_type: ManifestType::Npm,
         number_of_dependencies: pkg.dependencies.len(),
-        name: pkg.name.unwrap_or_default(),
+        name: pkg.name,
         description: pkg.description,
-        version: pkg.version.unwrap_or_default(),
+        version: pkg.version,
         license: pkg.license,
     })
 }

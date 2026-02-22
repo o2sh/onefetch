@@ -132,10 +132,10 @@ mod test {
             Path::new("."),
             Some(&Manifest {
                 manifest_type: ManifestType::Cargo,
-                name: String::new(),
+                name: None,
                 description: None,
                 number_of_dependencies: 0,
-                version: String::new(),
+                version: None,
                 license: Some("LICENSE".into()),
             }),
         )?;

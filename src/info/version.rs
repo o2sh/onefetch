@@ -31,10 +31,9 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
     }
 
     if version.is_empty() {
-        let version_from_manifest = match manifest {
-            Some(m) => m.version.clone(),
-            None => String::new(),
-        };
+        let version_from_manifest = manifest
+            .and_then(|m| m.version.clone())
+            .unwrap_or_default();
         Ok(version_from_manifest)
     } else {
         Ok(version)
