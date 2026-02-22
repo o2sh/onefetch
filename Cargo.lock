@@ -2383,6 +2383,7 @@ version = "2.26.1"
 dependencies = [
  "anyhow",
  "cargo_toml",
+ "serde",
  "serde_json",
  "strum",
 ]
