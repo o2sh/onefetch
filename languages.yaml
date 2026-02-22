@@ -1810,6 +1810,22 @@ Nix:
       - blue
     chip: "#7E7EFF"
   icon: '\u{f313}'
+Nushell:
+  type: programming
+  ascii: |
+    {0} _ __  
+    {0}| '_ \      {1}__
+    {0}| | | |     {1}\ \
+    {0}| | |_|  _  {1} \ \
+    {0}|_|  _  | | {1} / /
+    {0}    | | | | {1}/_/
+    {0}    | |_| |
+    {0}     \__,_|
+  colors:
+    ansi:
+      - green
+      - white
+    chip: "#4E9906"
 ObjectiveC:
   type: programming
   ascii: |
