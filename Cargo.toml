@@ -48,7 +48,7 @@ num-format = "0.4.4"
 onefetch-ascii = { path = "ascii" }
 onefetch-image = { path = "image" }
 onefetch-manifest = { path = "manifest" }
-owo-colors = "4.2.3"
+owo-colors = "4.3.0"
 regex = "1.12.2"
 serde = "1.0.228"
 serde_json = "1.0.149"
