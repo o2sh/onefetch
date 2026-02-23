@@ -9,7 +9,7 @@ description = "Display images in the terminal"
 
 [dependencies]
 anyhow = "1.0.101"
-clap = { version = "4.5.57", features = ["derive"] }
+clap = { version = "4.5.60", features = ["derive"] }
 image = { version = "0.25.9", default-features = false, features = [
     "color_quant",
     "jpeg",
