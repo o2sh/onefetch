@@ -8,7 +8,7 @@ name = "onefetch-image"
 description = "Display images in the terminal"
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = "1.0.102"
 clap = { version = "4.5.57", features = ["derive"] }
 image = { version = "0.25.9", default-features = false, features = [
     "color_quant",
