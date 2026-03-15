@@ -2558,26 +2558,26 @@ Sh:
 Slint:
   type: markup
   ascii: |                                                                    
-    {0}                      ***              
-    {0}                  *****               
-    {0}                *****                 
-    {0}              ******                   
-    {0}          *******                     
-    {0}        ********                       
-    {0}      ********                         
-    {0}  *********                           
-    {0}**********    ****                    
-    {0}  **********    ********               
-    {0}      ********    **********           
-    {0}          ****    **********          
-    {0}                  **********           
-    {0}                ********               
-    {0}              ********                 
-    {0}            *******                    
-    {0}          ******                       
-    {0}        *****                          
-    {0}      *****                            
-    {0}    ***                               
+    {0}                      SSS              
+    {0}                  SSSSS               
+    {0}                SSSSS                 
+    {0}              SSSSSS                   
+    {0}          SSSSSSS                     
+    {0}        SSSSSSSS                       
+    {0}      SSSSSSSS                         
+    {0}  SSSSSSSSS                           
+    {0}SSSSSSSSSS    SSSS                    
+    {0}  SSSSSSSSSS    SSSSSSSS               
+    {0}      SSSSSSSS    SSSSSSSSSS           
+    {0}          SSSS    SSSSSSSSSS          
+    {0}                  SSSSSSSSSS           
+    {0}                SSSSSSSS               
+    {0}              SSSSSSSS                 
+    {0}            SSSSSSS                    
+    {0}          SSSSSS                       
+    {0}        SSSSS                          
+    {0}      SSSSS                            
+    {0}    SSS                               
   colors:
     ansi:
       - blue
