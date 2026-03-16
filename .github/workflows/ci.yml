@@ -5,13 +5,13 @@ on:
     paths-ignore:
       - "docs/**"
       - "**.md"
-      - "docs/vercel/**"
+      - "docs/web/**"
   pull_request:
     branches: [main]
     paths-ignore:
       - "docs/**"
       - "**.md"
-      - "docs/vercel/**"
+      - "docs/web/**"
 env:
   CARGO_TERM_COLOR: always
 

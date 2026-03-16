@@ -3,19 +3,19 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "docs/vercel/**"
+      - "docs/web/**"
   pull_request:
     branches: [main]
     paths:
-      - "docs/vercel/**"
+      - "docs/web/**"
 
 jobs:
   check:
-    name: Check Vercel Code Quality
+    name: Check Code Quality
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: docs/vercel
+        working-directory: docs/web
 
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: docs/vercel/package-lock.json
+          cache-dependency-path: docs/web/package-lock.json
 
       - name: Install Dependencies
         run: npm ci
