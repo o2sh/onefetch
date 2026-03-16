@@ -2581,6 +2581,8 @@ Slint:
   colors:
     ansi:
       - blue
+    hex: 
+      - "#2379F4"
     chip: "#119900"
 Solidity:
   type: programming
