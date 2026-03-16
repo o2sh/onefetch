@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "vite",
+    "prebuild": "svelte-kit sync",
     "build": "vite build",
     "format": "prettier -w .",
     "preview": "vite preview",
