@@ -2557,33 +2557,34 @@ Sh:
   serialization: shell
 Slint:
   type: markup
-  ascii: |                                                                    
-    {0}                      SSS              
-    {0}                  SSSSS               
-    {0}                SSSSS                 
-    {0}              SSSSSS                   
-    {0}          SSSSSSS                     
-    {0}        SSSSSSSS                       
-    {0}      SSSSSSSS                         
-    {0}  SSSSSSSSS                           
-    {0}SSSSSSSSSS    SSSS                    
-    {0}  SSSSSSSSSS    SSSSSSSS               
-    {0}      SSSSSSSS    SSSSSSSSSS           
-    {0}          SSSS    SSSSSSSSSS          
-    {0}                  SSSSSSSSSS           
-    {0}                SSSSSSSS               
-    {0}              SSSSSSSS                 
-    {0}            SSSSSSS                    
-    {0}          SSSSSS                       
-    {0}        SSSSS                          
-    {0}      SSSSS                            
-    {0}    SSS                               
+  ascii: |
+    {0}                        s
+    {0}                     ss
+    {0}                  sss
+    {0}               ssss
+    {0}            ssss
+    {0}         sssss
+    {0}      ssssss
+    {0}   ssssssss
+    {0}sssssssss    s
+    {0}    sssssss    sss
+    {0}        sssss    sssss
+    {0}            sss    sssssss
+    {0}                s    sssssssss
+    {0}                   ssssssss
+    {0}                 ssssss
+    {0}               sssss
+    {0}             ssss
+    {0}           ssss
+    {0}         sss
+    {0}       ss
+    {0}     s
   colors:
     ansi:
       - blue
-    hex: 
+    hex:
       - "#2379F4"
-    chip: "#119900"
+    chip: "#2379F4"
 Solidity:
   type: programming
   ascii: |
