@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.27.1 (2025-3-19)
+
+### Bug Fixes
+
+- Fix CD pipeline by @o2sh in 497d4c0
+
+## 2.27.0 (2025-3-19)
+
+### New Features
+
+- add language support for Nushell by @o2sh in #1687
+- add language support for Slint by @opmr0 in #1710
+
+### Bug Fixes
+
+- fix npm manifest parsing by @o2sh in #1693
+- always show ascii-language when provided by CLI by @o2sh in #1713
+- ascii_colors should match ascii-language colors when provided by CLI when no language detected bcfca6b
+
+### Chores
+
+- simplify logic for commit graph traversal, reduce parallelization by @o2sh in #1682
+
+### onefetch.dev
+
+- Add Copy button with toaster to Ascii preview by @o2sh in #1679
+
 ## 2.26.1 (2025-12-21)
 
 ### Bug Fixes
