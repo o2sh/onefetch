@@ -2,7 +2,7 @@
 authors = ["o2sh <ossama-hjaji@live.fr>"]
 edition = "2024"
 license = "MIT"
-version = "2.27.0"
+version = "2.27.1"
 repository = "https://github.com/o2sh/onefetch"
 
 [workspace]
@@ -45,9 +45,9 @@ image = { version = "0.25.10", default-features = false, features = [
     "webp",
 ] }
 num-format = "0.4.4"
-onefetch-ascii = { path = "ascii" }
-onefetch-image = { path = "image" }
-onefetch-manifest = { path = "manifest" }
+onefetch-ascii = { path = "ascii", version = "2.27.1" }
+onefetch-image = { path = "image", version = "2.27.1" }
+onefetch-manifest = { path = "manifest", version = "2.27.1" }
 owo-colors = "4.3.0"
 regex = "1.12.2"
 serde = "1.0.228"
