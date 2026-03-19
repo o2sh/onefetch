@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
--Fix CD pipeline by @o2sh in 497d4c0
+- Fix CD pipeline by @o2sh in 497d4c0
 
 ## 2.27.0 (2025-3-19)
 
