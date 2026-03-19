@@ -9,28 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- Fix CD pipeline by @o2sh in 497d4c0
+- Fix CD pipeline by @o2sh in 497d4c011ede6acba4b3ca4c1e62f9aecaf20528
 
 ## 2.27.0 (2025-3-19)
 
 ### New Features
 
-- add language support for Nushell by @o2sh in #1687
-- add language support for Slint by @opmr0 in #1710
+- add language support for Nushell by @o2sh in https://github.com/o2sh/onefetch/pull/1687
+- add language support for Slint by @opmr0 in https://github.com/o2sh/onefetch/pull/1710
 
 ### Bug Fixes
 
-- fix npm manifest parsing by @o2sh in #1693
-- always show ascii-language when provided by CLI by @o2sh in #1713
-- ascii_colors should match ascii-language colors when provided by CLI when no language detected bcfca6b
+- fix npm manifest parsing by @o2sh in https://github.com/o2sh/onefetch/pull/1693
+- always show ascii-language when provided by CLI by @o2sh in https://github.com/o2sh/onefetch/pull/1713
+- ascii_colors should match ascii-language colors when provided by CLI when no language detected bcfca6ba6f4fb05b723b64c5a2d6b315d7c74e71
 
 ### Chores
 
-- simplify logic for commit graph traversal, reduce parallelization by @o2sh in #1682
+- simplify logic for commit graph traversal, reduce parallelization by @o2sh in https://github.com/o2sh/onefetch/pull/1682
 
 ### onefetch.dev
 
-- Add Copy button with toaster to Ascii preview by @o2sh in #1679
+- Add Copy button with toaster to Ascii preview by @o2sh in https://github.com/o2sh/onefetch/pull/1679
 
 ## 2.26.1 (2025-12-21)
 
