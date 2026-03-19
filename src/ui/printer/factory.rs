@@ -76,7 +76,7 @@ impl PrinterFactory {
                 info,
             }),
             None => {
-                if art_off || (ascii_input.is_none() && info.dominant_language.is_none()) {
+                if art_off {
                     Ok(Printer {
                         r#type: PrinterType::Plain,
                         info,
@@ -91,22 +91,27 @@ impl PrinterFactory {
                         info,
                     })
                 } else {
-                    let ascii_art = ascii_input.unwrap_or_else(|| {
-                        let language = if let Some(lang) = &ascii_language {
-                            lang
-                        } else {
-                            &info.dominant_language.unwrap()
-                        };
-                        language.get_ascii_art().to_string()
-                    });
+                    let ascii_art = ascii_input
+                        .or_else(|| {
+                            ascii_language.map(|language| language.get_ascii_art().to_string())
+                        })
+                        .or_else(|| {
+                            info.dominant_language
+                                .as_ref()
+                                .map(|language| language.get_ascii_art().to_string())
+                        });
 
-                    Ok(Printer {
-                        r#type: PrinterType::Ascii {
-                            art: ascii_art.to_string(),
-                            no_bold,
-                        },
-                        info,
-                    })
+                    if let Some(art) = ascii_art {
+                        Ok(Printer {
+                            r#type: PrinterType::Ascii { art, no_bold },
+                            info,
+                        })
+                    } else {
+                        Ok(Printer {
+                            r#type: PrinterType::Plain,
+                            info,
+                        })
+                    }
                 }
             }
         }
@@ -182,6 +187,18 @@ mod tests {
         assert!(matches!(printer.r#type, PrinterType::Ascii { .. }));
     }
 
+    #[test]
+    fn test_create_ascii_printer_when_ascii_language_without_dominant_language() {
+        let info = Info::default();
+        let mut options = CliOptions::default();
+        options.ascii.ascii_language = Some(Language::Rust);
+
+        let factory = PrinterFactory::new(info, options).unwrap();
+        let printer = factory.create().unwrap();
+
+        assert!(matches!(printer.r#type, PrinterType::Ascii { .. }));
+    }
+
     pub struct DummyBackend {}
     impl DummyBackend {
         pub fn new() -> Self {
@@ -201,7 +218,7 @@ mod tests {
 
     #[test]
     fn test_create_image_printer() {
-        let mut factory = PrinterFactory {
+        let factory = PrinterFactory {
             output: None,
             info: Info::default(),
             image: Some(DynamicImage::default()),
@@ -213,7 +230,6 @@ mod tests {
             ascii_language: None,
         };
 
-        factory.info.dominant_language = Some(Language::ABNF);
         let printer = factory.create().unwrap();
 
         assert!(matches!(printer.r#type, PrinterType::Image { .. }));
