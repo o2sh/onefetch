@@ -1496,6 +1496,36 @@ Julia:
       - magenta
     chip: "#A270BA"
   icon: '\u{E624}'
+Just:
+  type: programming
+  ascii: |
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}       jjjjj
+    {0}jj     jjjjj
+    {0}jj     jjjjj
+    {0}jjj   jjjjjj
+    {0} jjjjjjjjjj
+    {0}  jjjjjjjjj
+    {0}   jjjjjjj
+    {0}    jjjjj
+    {0}     jjj
+  colors:
+    ansi:
+      - yellow
+    hex:
+      - "#F5A623"
+    chip: "#F5A623"
 Jupyter:
   type: programming
   ascii: |
