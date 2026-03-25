@@ -1499,21 +1499,18 @@ Julia:
 Just:
   type: programming
   ascii: |
-    {0}                   jjjj
-    {0}                   jjjj
-    {0}                   jjjj
-    {0}                   jjjj
-    {0}       jjjj  uuu      uuu   ssssssss    tttttttttttt
-    {0}       jjjj  uuu      uuu  sss    sss      tttttt
-    {0}       jjjj  uuu      uuu  sss             tttttt
-    {0}       jjjj  uuu      uuu   ssssssss       tttttt
-    {0}       jjjj  uuu      uuu        sss       tttttt
-    {0}       jjjj  uuu      uuu  sss    sss      tttttt
-    {0} jjjj  jjjj   uuuuuuuuuu    ssssssss        tttt
-    {0}  jjjjjjjjj
-    {0}   jjjjjjj
-    {0}    jjjjj
-    {0}     jjj
+    {0}  jjjj
+    {0}  jjjj
+    {0}
+    {0}   jjj  uu   uu  sssss  tttttttt
+    {0}   jjj  uu   uu ss   ss   tttt
+    {0}   jjj  uu   uu ss        tttt
+    {0}   jjj  uu   uu  sssss    tttt
+    {0}   jjj  uu   uu      ss   tttt
+    {0}   jjj  uu   uu ss   ss   tttt
+    {0}  jjjj   uuuuu   sssss     ttt
+    {0}  jjj
+    {0}   jj
   colors:
     ansi:
       - yellow
