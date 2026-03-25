@@ -1499,23 +1499,17 @@ Julia:
 Just:
   type: programming
   ascii: |
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}       jjjjj
-    {0}jj     jjjjj
-    {0}jj     jjjjj
-    {0}jjj   jjjjjj
-    {0} jjjjjjjjjj
+    {0}                   jjjj
+    {0}                   jjjj
+    {0}                   jjjj
+    {0}                   jjjj
+    {0}       jjjj  uuu      uuu   ssssssss    tttttttttttt
+    {0}       jjjj  uuu      uuu  sss    sss      tttttt
+    {0}       jjjj  uuu      uuu  sss             tttttt
+    {0}       jjjj  uuu      uuu   ssssssss       tttttt
+    {0}       jjjj  uuu      uuu        sss       tttttt
+    {0}       jjjj  uuu      uuu  sss    sss      tttttt
+    {0} jjjj  jjjj   uuuuuuuuuu    ssssssss        tttt
     {0}  jjjjjjjjj
     {0}   jjjjjjj
     {0}    jjjjj
