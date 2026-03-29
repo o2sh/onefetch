@@ -1496,6 +1496,22 @@ Julia:
       - magenta
     chip: "#A270BA"
   icon: '\u{E624}'
+Just:
+  type: programming
+  ascii: |
+    {0}     db                    ,d
+    {0}     ""                    MM
+    {0} MMMMMM MM    MM ,pP"Ybd mmMMmm
+    {0}     MM MM    MM 8I   `"   MM
+    {0}     MM MM    MM `YMMMa.   MM
+    {0}     MM MM    MM L.   I8   MM,
+    {0}     MM `Mbod"YM M9mmmP'   "Mbmo
+    {0}M.  ,MM
+    {0}"MMMMM"
+  colors:
+    ansi:
+      - white
+    chip: "#384d54"
 Jupyter:
   type: programming
   ascii: |
