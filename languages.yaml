@@ -3200,6 +3200,32 @@ WebAssembly:
       - "#FFFFFF"
     chip: "#04133B"
   icon: '\u{E6A1}'
+WGSL:
+  type: programming
+  ascii: |
+    {0}
+    {0}    WW              WW
+    {0}    WW              WW
+    {0}     WW            WW
+    {0}     WW    WWWW    WW
+    {0}      WW  WW  WW  WW
+    {0}      WW WW    WW WW
+    {0}       WWW      WWW
+    {0}       WW        WW
+    {0}
+    {0}  WW   GG   SSSS   LL
+    {0}  WW   GG  SS      LL
+    {0}  WW W GG   SSS    LL
+    {0}  WWWWWGG     SS   LL
+    {0}   WW  GGG SSSS   LLLL
+    {0}
+  colors:
+    ansi:
+      - blue
+    hex:
+      - "#4285F4"
+    chip: "#4285F4"
+
 Wolfram:
   type: programming
   ascii: |
