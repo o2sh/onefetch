@@ -13,8 +13,8 @@ Adding support for a new Language consists in adding a new entry to [language.ya
 **Example**:
 
 ```yaml
-CSharp: # required, this will be the name of the enum variant for the language as specified by tokei (link 1)
-  type: programming # required, can be programming, data, markup, or prose as specified by linguist (link 2)
+CSharp: # required, this will be the name of the enum variant for the language as specified by tokei [1]
+  type: programming # required, can be programming, data, markup, or prose as specified by linguist [2]
   # required, this is the logo. If it's not within 25x40 bounds, you will get a compiler error. Use `{i}` to color the ascii with `i` the color index.
   ascii: |
     {0}                 ++++++
@@ -51,16 +51,16 @@ CSharp: # required, this will be the name of the enum variant for the language a
       - "#67217A"
       - "#803788"
       - "#FFFFFF"
-    chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist (link 2).
+    chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist [3].
   icon: '\u{E648}' # optional, the UTF-16 code point of the nerd font icon if supported (link 3).
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
-- link 1: https://github.com/XAMPPRocky/tokei#supported-languages
-- link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-- link 3: https://www.nerdfonts.com/cheat-sheet
+[^1]: https://github.com/XAMPPRocky/tokei#supported-languages
 
-When adding ASCII art for a new language, follow these guidelines:
+[^2]: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
+
+[^3]: https://www.nerdfonts.com/cheat-sheet
 
 - Match the original language logo as closely as possible so it is easyily recognizable.
 - Prioritize clean proportions and strong shape symmetry.
