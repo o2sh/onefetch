@@ -2,6 +2,10 @@
 
 Follow the instructions for [installing onefetch from source](https://github.com/o2sh/onefetch/wiki/Installation#build-from-source).
 
+> [!NOTE]
+>
+> Please be respectful and constructive in issues, pull requests, and reviews. Keep in mind that this project is maintained in contributors' free time.
+
 ### Adding support for a new language
 
 Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.
@@ -55,6 +59,13 @@ CSharp: # required, this will be the name of the enum variant for the language a
 - link 1: https://github.com/XAMPPRocky/tokei#supported-languages
 - link 2: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
 - link 3: https://www.nerdfonts.com/cheat-sheet
+
+When adding ASCII art for a new language, follow these guidelines:
+
+- Match the original language logo as closely as possible so it is easyily recognizable.
+- Prioritize clean proportions and strong shape symmetry.
+- You may use AI or online ASCII-art tools to generate a starting point, but the final result must be polished by hand.
+- Use existing ASCII art as inspiration and reference material where helpful, for example: https://ascii.co.uk/art
 
 <h2 align="center">Special Thanks to</h2>
 
