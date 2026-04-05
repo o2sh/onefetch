@@ -4,6 +4,15 @@
 >
 > Please be respectful and constructive in issues, pull requests, and reviews. This project is open source and maintained by volunteers in their free time. Thank you. :heart:
 
+### AI Policy
+
+The Onefetch project permits the use of AI-assisted tools but only with human oversight:
+
+- The human in the loop must fully understand all code.
+- Any content generated with AI must be reviewed by a human before submission.
+
+Low-quality AI-generated PRs or issues will be closed without review.
+
 ### Getting started
 
 Follow the instructions for [installing onefetch from source](https://github.com/o2sh/onefetch/wiki/Installation#build-from-source).
