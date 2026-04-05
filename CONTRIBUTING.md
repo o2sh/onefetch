@@ -64,7 +64,7 @@ CSharp: # required, this will be the name of the enum variant for the language a
 
 ### Quality Requirements
 
-- Keep the ASCII art faithful to the original logo and easily recognizable, with clean symmetry and edges.
+- THE ASCII art must be faithful to the original logo and be easily recognizable, with perfect symmetry, clean edges and matching colors.
 - AI or online tools may be used as a base, but the final art must be polished by hand. For inspiration: https://ascii.co.uk/art
 
 <h2 align="center">Special Thanks to</h2>
