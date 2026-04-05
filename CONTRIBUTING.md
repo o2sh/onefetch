@@ -67,16 +67,6 @@ CSharp: # required, this will be the name of the enum variant for the language a
 - You may use AI or online ASCII-art tools to generate a starting point, but the final result must be polished by hand.
 - Use existing ASCII art as inspiration and reference material where helpful, for example: https://ascii.co.uk/art
 
-Here is a simple footnote[^1].
-
-A footnote can also have multiple lines[^2].
-
-[^1]: My reference.
-
-[^2]:
-    To add line breaks within a footnote, add 2 spaces to the end of a line.  
-    This is a second line.
-
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
