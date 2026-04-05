@@ -62,6 +62,11 @@ CSharp: # required, this will be the name of the enum variant for the language a
 - [2] https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
 - [3] https://www.nerdfonts.com/cheat-sheet
 
+### Quality Requirements
+
+- Match the original logo while keeping it easily recognizable, with clean symmetry and edges.
+- AI or online tools may be used as a base, but the final art must be polished by hand. For inspiration: https://ascii.co.uk/art
+
 <h2 align="center">Special Thanks to</h2>
 
 - Every onefetch user, who contributed to the project by writing issues or PRs.
