@@ -2,7 +2,7 @@
 
 > [!NOTE]
 >
-> Please be respectful and constructive in issues, pull requests, and reviews. Keep in mind that this project is maintained in contributors' free time. Thank you. :heart:
+> Please be respectful and constructive in issues, pull requests, and reviews. This project is open source and maintained by volunteers in their free time. Thank you. :heart:
 
 ### Getting started
 
