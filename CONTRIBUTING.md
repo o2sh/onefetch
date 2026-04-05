@@ -8,7 +8,7 @@
 
 The Onefetch project permits the use of AI-assisted tools but with human oversight:
 
-- The human in the loop must fully understand all code.
+- The human in the loop must understand the code they submit.
 - Any content generated with AI must be reviewed by a human before submission.
 
 Low-quality AI-generated PRs or issues will be closed without review.
