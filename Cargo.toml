@@ -34,8 +34,8 @@ gix = { version = "0.81.0", default-features = false, features = [
     "mailmap",
     "index",
     "status",
+    "sha1",
 ] }
-gix-features = "0.46.0"
 globset = "0.4.18"
 human-panic = "2.0.6"
 image = { version = "0.25.10", default-features = false, features = [
