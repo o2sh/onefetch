@@ -6,7 +6,7 @@
 
 ### AI Policy
 
-The Onefetch project permits the use of AI-assisted tools but with human oversight:
+The usage of AI tools is permitted but with human oversight:
 
 - The human in the loop must understand the code they submit.
 - Any content generated with AI must be reviewed by a human before submission.
