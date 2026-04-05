@@ -56,11 +56,9 @@ CSharp: # required, this will be the name of the enum variant for the language a
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
-[^1]: https://github.com/XAMPPRocky/tokei#supported-languages
-
-[^2]: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-
-[^3]: https://www.nerdfonts.com/cheat-sheet
+[1]: https://github.com/XAMPPRocky/tokei#supported-languages
+[2]: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
+[3]: https://www.nerdfonts.com/cheat-sheet
 
 - Match the original language logo as closely as possible so it is easyily recognizable.
 - Prioritize clean proportions and strong shape symmetry.
