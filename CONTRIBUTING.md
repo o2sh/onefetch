@@ -8,7 +8,7 @@ Follow the instructions for [installing onefetch from source](https://github.com
 
 ### Adding support for a new language
 
-Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.
+Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data. [^1]
 
 **Example**:
 
@@ -66,6 +66,16 @@ CSharp: # required, this will be the name of the enum variant for the language a
 - Prioritize clean proportions and strong shape symmetry.
 - You may use AI or online ASCII-art tools to generate a starting point, but the final result must be polished by hand.
 - Use existing ASCII art as inspiration and reference material where helpful, for example: https://ascii.co.uk/art
+
+Here is a simple footnote[^1].
+
+A footnote can also have multiple lines[^2].
+
+[^1]: My reference.
+
+[^2]:
+    To add line breaks within a footnote, add 2 spaces to the end of a line.  
+    This is a second line.
 
 <h2 align="center">Special Thanks to</h2>
 
