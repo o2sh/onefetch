@@ -28,14 +28,14 @@ askalono = "0.5.0"
 byte-unit = "5.2.0"
 clap = { version = "4.5.57", features = ["derive"] }
 clap_complete = "4.5.65"
-gix = { version = "0.80.0", default-features = false, features = [
+gix = { version = "0.81.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
     "index",
     "status",
+    "sha1",
 ] }
-gix-features = "0.46.0"
 globset = "0.4.18"
 human-panic = "2.0.6"
 image = { version = "0.25.10", default-features = false, features = [
