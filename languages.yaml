@@ -3203,27 +3203,36 @@ WebAssembly:
 WGSL:
   type: programming
   ascii: |
-    {0}
-    {0}    WW              WW
-    {0}    WW              WW
-    {0}     WW            WW
-    {0}     WW    WWWW    WW
-    {0}      WW  WW  WW  WW
-    {0}      WW WW    WW WW
-    {0}       WWW      WWW
-    {0}       WW        WW
-    {0}
-    {0}  WW   GG   SSSS   LL
-    {0}  WW   GG  SS      LL
-    {0}  WW W GG   SSS    LL
-    {0}  WWWWWGG     SS   LL
-    {0}   WW  GGG SSSS   LLLL
-    {0}
+    {0}WWWWWWWWWWWWWWWWWWWWWWWWWW{1}W
+    {0}WWWWWWWWWWWWWWWWWWWWWWWWW{1}WWW    {4}WW
+     {0}WWWWWWWWWWWWWWWWWWWWWWWW{1}WWW   {4}WWWW
+      {0}WWWWWWWWWWWWWWWWWWWWWW{1}WWWWW {4}WWWWWW
+      {0}WWWWWWWWWWWWWWWWWWWWW{1}WWWWWWW{4}WWWWWW
+       {0}WWWWWWWWWWWWWWWWWWW{1}WWWWWWWW{3}WWWWWW
+        {0}WWWWWWWWWWWWWWWWWW{1}WWWWWWWWW{3}WWWW
+         {0}WWWWWWWWWWWWWWWW{1}WWWWWWWWWWW{3}WW
+          {0}WWWWWWWWWWWWWW{1}WWWWWWWWWWWWWW
+          {0}WWWWWWWWWWWWW{2}WWWWWWWWWWWWWW
+           {0}WWWWWWWWWWWW {2}WWWWWWWWWWWW
+            {0}WWWWWWWWWW   {2}WWWWWWWWWW
+             {0}WWWWWWWW     {2}WWWWWWWWW
+             {0}WWWWWWW       {2}WWWWWWW
+              {0}WWWWWW        {2}WWWWW
+               {0}WWWW          {2}WWWW
+                {0}WW            {2}WW
   colors:
     ansi:
       - blue
+      - blue
+      - cyan
+      - cyan
+      - cyan
     hex:
-      - "#4285F4"
+      - "#005A9C"
+      - "#0066B0"
+      - "#0076CC"
+      - "#0086E8"
+      - "#0093FF"
     chip: "#4285F4"
 
 Wolfram:
