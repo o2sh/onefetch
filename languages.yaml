@@ -401,11 +401,11 @@ ColdFusion:
 Cobol:
   type: programming
   ascii: |
-    {0}   CCCC   OOOOO  BBBBB  OOOOO  LL
+    {0}   CCCC   OOOOO  BBBBB   OOOOO  LL
     {0}  CC  CC OO   OO BB  BB OO   OO LL
     {0}  CC     OO   OO BBBBB  OO   OO LL
     {0}  CC  CC OO   OO BB  BB OO   OO LL
-    {0}   CCCC   OOOOO  BBBBB  OOOOO  LLLLLL
+    {0}   CCCC   OOOOO  BBBBB   OOOOO  LLLLLL
     {0}  ====================================
     {0}     IDENTIFICATION DIVISION.
     {0}     PROGRAM-ID. ONEFETCH.
