@@ -130,8 +130,9 @@ fn get_churn_channel(
                 if is_bot_commit(&commit, &mailmap, bot_regex_pattern.as_ref())? {
                     continue;
                 }
-                compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
-                diffs_computed += 1;
+                if compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)? {
+                    diffs_computed += 1;
+                }
                 if should_break(
                     is_traversal_complete.load(Ordering::Relaxed),
                     total_number_of_commits.load(Ordering::Relaxed),
@@ -183,7 +184,7 @@ fn compute_diff_with_parent(
     change_map: &mut HashMap<BString, usize>,
     commit: &Commit,
     repo: &gix::Repository,
-) -> Result<()> {
+) -> Result<bool> {
     let mut parents = commit.parent_ids();
     let parents = (
         parents
@@ -194,8 +195,12 @@ fn compute_diff_with_parent(
     );
 
     if let (parent_tree_id, None) = parents {
-        let old_tree = parent_tree_id.object()?.into_tree();
-        let new_tree = commit.tree()?;
+        let Some(old_tree) = parent_tree_id.try_object()?.map(|tree| tree.into_tree()) else {
+            return Ok(false);
+        };
+        let Some(new_tree) = commit.tree_id()?.try_object()?.map(|tree| tree.into_tree()) else {
+            return Ok(false);
+        };
         let changes =
             repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default().with_rewrites(None))?;
         for change in &changes {
@@ -212,7 +217,7 @@ fn compute_diff_with_parent(
         }
     }
 
-    Ok(())
+    Ok(true)
 }
 
 fn is_bot_commit(
