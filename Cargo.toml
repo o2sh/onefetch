@@ -23,7 +23,7 @@ homepage = "https://onefetch.dev"
 rust-version = "1.88.0"
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = "1.0.102"
 askalono = "0.5.0"
 byte-unit = "5.2.0"
 clap = { version = "4.5.57", features = ["derive"] }
