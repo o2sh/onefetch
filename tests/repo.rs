@@ -1,5 +1,5 @@
 use anyhow::Result;
-use gix::{open, Repository, ThreadSafeRepository};
+use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
 use onefetch::info::{build_info, get_work_dir};
 
@@ -87,6 +87,17 @@ fn test_partial_repo() -> Result<()> {
 #[test]
 fn test_repo_with_pre_epoch_dates() -> Result<()> {
     let repo = repo("make_pre_epoch_repo.sh")?;
+    let config: CliOptions = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let _info = build_info(&config).expect("no error");
+    Ok(())
+}
+
+#[test]
+fn test_repo_without_code() -> Result<()> {
+    let repo = repo("make_repo_without_code.sh")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()

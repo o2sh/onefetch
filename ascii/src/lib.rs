@@ -205,24 +205,22 @@ impl<'a> Tokens<'a> {
         let mut whole_string = String::new();
         let mut color = &DynColors::Ansi(AnsiColors::Default);
 
-        self.truncate(start, end).for_each(|token| {
-            match token {
-                Token::Char(chr) => {
-                    width = width.saturating_sub(1);
-                    colored_segment.push(chr);
-                }
-                Token::Color(col) => {
-                    add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
-                    colored_segment = String::new();
-                    color = colors
-                        .get(col as usize)
-                        .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-                }
-                Token::Space => {
-                    width = width.saturating_sub(1);
-                    colored_segment.push(' ')
-                }
-            };
+        self.truncate(start, end).for_each(|token| match token {
+            Token::Char(chr) => {
+                width = width.saturating_sub(1);
+                colored_segment.push(chr);
+            }
+            Token::Color(col) => {
+                add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
+                colored_segment = String::new();
+                color = colors
+                    .get(col as usize)
+                    .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
+            }
+            Token::Space => {
+                width = width.saturating_sub(1);
+                colored_segment.push(' ');
+            }
         });
 
         add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
@@ -235,11 +233,7 @@ impl<'a> Tokens<'a> {
 
 fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Option<()> {
     |input| {
-        if predicate(input) {
-            Some(())
-        } else {
-            None
-        }
+        if predicate(input) { Some(()) } else { None }
     }
 }
 
@@ -256,7 +250,7 @@ fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: 
 
 type ParseResult<'a, R> = Option<(&'a str, R)>;
 
-fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R> {
+fn token<'a, R>(s: &'a str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<'a, R> {
     let mut chars = s.chars();
     let token = chars.next()?;
     let result = predicate(token)?;
@@ -266,20 +260,20 @@ fn token<R>(s: &str, predicate: impl FnOnce(char) -> Option<R>) -> ParseResult<R
 // Parsers
 
 /// Parses a color indicator of the format `{n}` where `n` is a digit.
-fn color_token(s: &str) -> ParseResult<Token> {
-    let (s, _) = token(s, succeed_when(|c| c == '{'))?;
+fn color_token<'a>(s: &'a str) -> ParseResult<'a, Token> {
+    let (s, ()) = token(s, succeed_when(|c| c == '{'))?;
     let (s, color_index) = token(s, |c| c.to_digit(10))?;
-    let (s, _) = token(s, succeed_when(|c| c == '}'))?;
+    let (s, ()) = token(s, succeed_when(|c| c == '}'))?;
     Some((s, Token::Color(color_index)))
 }
 
 /// Parses a space.
-fn space_token(s: &str) -> ParseResult<Token> {
-    token(s, succeed_when(|c| c == ' ')).map(|(s, _)| (s, Token::Space))
+fn space_token<'a>(s: &'a str) -> ParseResult<'a, Token> {
+    token(s, succeed_when(|c| c == ' ')).map(|(s, ())| (s, Token::Space))
 }
 
 /// Parses any arbitrary character. This cannot fail.
-fn char_token(s: &str) -> ParseResult<Token> {
+fn char_token<'a>(s: &'a str) -> ParseResult<'a, Token> {
     token(s, |c| Some(Token::Char(c)))
 }
 

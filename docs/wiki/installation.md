@@ -7,7 +7,6 @@ This wiki page will guide you through getting onefetch working on your system.
 - [Universal Install](#universal-install)
   - [Build from source](#build-from-source)
   - [Cargo](#cargo)
-  - [Snap](#snap)
 - [OS/Distro Packages](#osdistro-packages)
   - [Alpine Linux](#alpine-linux)
   - [Arch](#arch)
@@ -20,7 +19,7 @@ This wiki page will guide you through getting onefetch working on your system.
   - [NetBSD](#netbsd)
   - [NixOS](#nixos)
   - [openSUSE](#openSUSE-Leap-or-Tumbleweed)
-  - [Ubuntu](#ubuntu-ppa)
+  - [Ubuntu](#ubuntu)
   - [Void Linux](#void-linux)
   - [Windows](#windows)
     - [Winget](#Winget)
@@ -70,16 +69,6 @@ To update, run
 ```
 cargo install onefetch --force
 ```
-
-## Snap
-
-For a system with Snap installed, run
-
-```
-snap install onefetch
-```
-
-The stable version will be installed for you automatically.
 
 # OS/Distro Packages
 
@@ -167,15 +156,27 @@ Install it from the official repositories.
 
 - `zypper install onefetch`
 
-## Ubuntu (ppa)
+## Ubuntu
+
+Use debian package from release
+
+```
+wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb
+```
+
+Use Snap
+
+```
+snap install onefetch
+```
+
+or
 
 ```
 sudo add-apt-repository ppa:o2sh/onefetch
 sudo apt-get update
 sudo apt-get install onefetch
 ```
-
-If your Ubuntu version isn't supported, use [snap](#snap).
 
 ## Void Linux
 

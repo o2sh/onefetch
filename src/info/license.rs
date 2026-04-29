@@ -1,5 +1,5 @@
 use crate::info::utils::info_field::InfoField;
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
@@ -22,8 +22,8 @@ impl Detector {
     pub fn new() -> Result<Self> {
         match Store::from_cache(CACHE_DATA) {
             Ok(store) => Ok(Self { store }),
-            Err(_) => {
-                bail!("Could not initialize the license detector")
+            Err(e) => {
+                bail!("Could not initialize the license detector: {}", e)
             }
         }
     }
@@ -39,8 +39,7 @@ impl Detector {
                         && entry
                             .file_name()
                             .map(OsStr::to_string_lossy)
-                            .map(is_license_file)
-                            .unwrap_or_default()
+                            .is_some_and(is_license_file)
                 })
                 .filter_map(|entry| {
                     let contents = fs::read_to_string(entry).unwrap_or_default();
@@ -133,10 +132,10 @@ mod test {
             Path::new("."),
             Some(&Manifest {
                 manifest_type: ManifestType::Cargo,
-                name: String::new(),
+                name: None,
                 description: None,
                 number_of_dependencies: 0,
-                version: String::new(),
+                version: None,
                 license: Some("LICENSE".into()),
             }),
         )?;

@@ -4,16 +4,16 @@ use crate::cli::MyRegex;
 use anyhow::Result;
 use gix::bstr::BString;
 use gix::bstr::ByteSlice;
-use gix::diff::tree_with_rewrites::Change;
 use gix::diff::Options;
+use gix::diff::tree_with_rewrites::Change;
 use gix::prelude::ObjectIdExt;
 use gix::revision::walk::Sorting;
 use gix::traverse::commit::simple::CommitTimeOrder;
 use gix::{Commit, ObjectId};
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::mpsc::{channel, Sender};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::sync::mpsc::{Sender, channel};
 use std::thread::JoinHandle;
 
 pub mod metrics;
@@ -22,42 +22,38 @@ pub mod sig;
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
     no_bots: Option<MyRegex>,
-    max_churn_pool_size: Option<usize>,
+    churn_pool_size: Option<usize>,
     no_merges: bool,
 ) -> Result<GitMetrics> {
     let mut time_of_most_recent_commit = None;
     let mut time_of_first_commit = None;
     let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
     let mailmap = repo.open_mailmap();
-    let has_commit_graph_traversal_ended = Arc::new(AtomicBool::default());
+    let is_traversal_complete = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
 
-    let num_threads = std::thread::available_parallelism()
-        .map(|p| p.get())
-        .unwrap_or(1);
     let commit_graph = repo.commit_graph().ok();
-    let can_use_author_threads = num_threads > 1 && commit_graph.is_some();
+    let can_use_commit_graph = commit_graph.is_some();
 
     let commit_iter = repo
         .head_commit()?
         .id()
         .ancestors()
         .sorting(Sorting::ByCommitTime(CommitTimeOrder::NewestFirst))
-        .use_commit_graph(can_use_author_threads)
+        .use_commit_graph(can_use_commit_graph)
         .with_commit_graph(commit_graph)
         .all()?;
 
+    // Best-effort strategy for Churn computation: keep computing churn while traversal runs;
+    // it stops once traversal is done and churn_pool_size is reached (if provided).
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
         &mailmap,
         no_bots.clone(),
-        &has_commit_graph_traversal_ended,
+        &is_traversal_complete,
         &total_number_of_commits,
-        max_churn_pool_size,
-    )?;
-
-    let author_threads = can_use_author_threads
-        .then(|| get_author_channel(repo, num_threads, no_bots.clone(), &mailmap));
+        churn_pool_size,
+    );
 
     let mut count = 0;
     for commit in commit_iter {
@@ -67,16 +63,12 @@ pub fn traverse_commit_graph(
                 continue;
             }
 
-            if let Some((_threads, author_tx)) = author_threads.as_ref() {
-                author_tx.send(commit.id)?;
-            } else {
-                update_signature_counts(
-                    &commit.object()?,
-                    &mailmap,
-                    no_bots.as_ref(),
-                    &mut number_of_commits_by_signature,
-                )?;
-            }
+            update_signature_counts(
+                &commit.object()?,
+                &mailmap,
+                no_bots.as_ref(),
+                &mut number_of_commits_by_signature,
+            )?;
 
             churn_tx.send(commit.id)?;
 
@@ -93,18 +85,8 @@ pub fn traverse_commit_graph(
         }
     }
 
-    if let Some((threads, sender)) = author_threads {
-        drop(sender);
-        for thread in threads {
-            let mapping = thread.join().expect("never panics")?;
-            for (sig, num_commits) in mapping {
-                *number_of_commits_by_signature.entry(sig).or_insert(0) += num_commits;
-            }
-        }
-    }
-
     total_number_of_commits.store(count, Ordering::SeqCst);
-    has_commit_graph_traversal_ended.store(true, Ordering::SeqCst);
+    is_traversal_complete.store(true, Ordering::SeqCst);
 
     drop(churn_tx);
 
@@ -117,54 +99,9 @@ pub fn traverse_commit_graph(
         churn_pool_size,
         time_of_first_commit,
         time_of_most_recent_commit,
-    )?;
+    );
 
     Ok(git_metrics)
-}
-
-type NumberOfCommitsBySignature = HashMap<Sig, usize>;
-
-fn get_author_channel(
-    repo: &gix::Repository,
-    num_threads: usize,
-    bot_regex_pattern: Option<MyRegex>,
-    mailmap: &gix::mailmap::Snapshot,
-) -> (
-    Vec<JoinHandle<Result<NumberOfCommitsBySignature>>>,
-    crossbeam_channel::Sender<ObjectId>,
-) {
-    // we intentionally over-allocate threads a little as the main thread won't be very busy anyway
-    // traversing commits with the graph available.
-    // The channel is generously bounded to assure all threads are fed, without consuming excessive memory.
-    // We have to wait for the threads to finish anyway so some synchronization here will be fine, while tests
-    // show that this is about as fast as if it was unbounded.
-    let (tx, rx) = crossbeam_channel::bounded::<ObjectId>(num_threads * 100);
-    let threads: Vec<_> = (0..num_threads)
-        .map(|_| {
-            std::thread::spawn({
-                let mut repo = repo.clone();
-                let mailmap = mailmap.clone();
-                let bot_regex_pattern = bot_regex_pattern.clone();
-                let rx = rx.clone();
-                move || -> anyhow::Result<_> {
-                    let mut number_of_commits_by_signature = NumberOfCommitsBySignature::new();
-                    // We are sure to see each object only once.
-                    repo.object_cache_size(0);
-                    while let Ok(commit_id) = rx.recv() {
-                        let commit = repo.find_object(commit_id)?.into_commit();
-                        update_signature_counts(
-                            &commit,
-                            &mailmap,
-                            bot_regex_pattern.as_ref(),
-                            &mut number_of_commits_by_signature,
-                        )?;
-                    }
-                    Ok(number_of_commits_by_signature)
-                }
-            })
-        })
-        .collect();
-    (threads, tx)
 }
 
 type NumberOfCommitsByFilepath = HashMap<BString, usize>;
@@ -174,56 +111,56 @@ fn get_churn_channel(
     repo: &gix::Repository,
     mailmap: &gix::mailmap::Snapshot,
     bot_regex_pattern: Option<MyRegex>,
-    has_commit_graph_traversal_ended: &Arc<AtomicBool>,
+    is_traversal_complete: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
-    max_churn_pool_size: Option<usize>,
-) -> Result<(JoinHandle<Result<ChurnPair>>, Sender<ObjectId>)> {
+    churn_pool_size: Option<usize>,
+) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
         let mailmap = mailmap.clone();
         let bot_regex_pattern = bot_regex_pattern.clone();
-        let has_commit_graph_traversal_ended = has_commit_graph_traversal_ended.clone();
+        let is_traversal_complete = is_traversal_complete.clone();
         let total_number_of_commits = total_number_of_commits.clone();
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
-            let mut number_of_diffs_computed = 0;
+            let mut diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
                 if is_bot_commit(&commit, &mailmap, bot_regex_pattern.as_ref())? {
                     continue;
                 }
                 compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)?;
-                number_of_diffs_computed += 1;
+                diffs_computed += 1;
                 if should_break(
-                    has_commit_graph_traversal_ended.load(Ordering::Relaxed),
+                    is_traversal_complete.load(Ordering::Relaxed),
                     total_number_of_commits.load(Ordering::Relaxed),
-                    max_churn_pool_size,
-                    number_of_diffs_computed,
+                    churn_pool_size,
+                    diffs_computed,
                 ) {
                     break;
                 }
             }
 
-            Ok((number_of_commits_by_file_path, number_of_diffs_computed))
+            Ok((number_of_commits_by_file_path, diffs_computed))
         }
     });
 
-    Ok((thread, tx))
+    (thread, tx)
 }
 
 fn should_break(
-    has_commit_graph_traversal_ended: bool,
+    is_traversal_complete: bool,
     total_number_of_commits: usize,
-    max_churn_pool_size_opt: Option<usize>,
-    number_of_diffs_computed: usize,
+    churn_pool_size_opt: Option<usize>,
+    diffs_computed: usize,
 ) -> bool {
-    if !has_commit_graph_traversal_ended {
+    if !is_traversal_complete {
         return false;
     }
 
-    max_churn_pool_size_opt.map_or(true, |max_churn_pool_size| {
-        number_of_diffs_computed >= max_churn_pool_size.min(total_number_of_commits)
+    churn_pool_size_opt.is_none_or(|churn_pool_size| {
+        diffs_computed >= churn_pool_size.min(total_number_of_commits)
     })
 }
 
@@ -261,7 +198,7 @@ fn compute_diff_with_parent(
         let new_tree = commit.tree()?;
         let changes =
             repo.diff_tree_to_tree(&old_tree, &new_tree, Options::default().with_rewrites(None))?;
-        for change in changes.iter() {
+        for change in &changes {
             let is_file_change = match change {
                 Change::Addition { entry_mode, .. } | Change::Modification { entry_mode, .. } => {
                     entry_mode.is_blob()
@@ -292,9 +229,7 @@ fn is_bot_commit(
 }
 
 fn is_bot(author_name: &BString, bot_regex_pattern: Option<&MyRegex>) -> bool {
-    bot_regex_pattern.map_or(false, |regex| {
-        regex.0.is_match(author_name.to_str_lossy().as_ref())
-    })
+    bot_regex_pattern.is_some_and(|regex| regex.0.is_match(author_name.to_str_lossy().as_ref()))
 }
 
 #[cfg(test)]
@@ -318,13 +253,11 @@ mod tests {
     }
 
     #[rstest]
-    #[case(true, 10, Some(8), 4, false)]
-    #[case(false, 10, Some(10), 10, false)]
+    #[case(false, 10, Some(5), 5, false)]
     #[case(true, 10, Some(5), 5, true)]
-    #[case(true, 5, Some(10), 5, true)]
-    #[case(true, 5, Some(10), 3, false)]
-    #[case(true, 10, Some(5), 3, false)]
-    #[case(true, 100, Some(30), 90, true)]
+    #[case(true, 10, Some(8), 5, false)]
+    #[case(true, 10, Some(20), 10, true)]
+    #[case(true, 10, None, 5, true)]
     fn test_should_break(
         #[case] has_commit_graph_traversal_ended: bool,
         #[case] total_number_of_commits: usize,

@@ -63,10 +63,10 @@ mod test {
     fn should_display_description() {
         let description_info = DescriptionInfo::new(Some(&Manifest {
             manifest_type: ManifestType::Cargo,
-            name: String::new(),
+            name: None,
             description: Some("test".into()),
             number_of_dependencies: 0,
-            version: "0.1.0".into(),
+            version: Some("0.1.0".into()),
             license: None,
         }));
 

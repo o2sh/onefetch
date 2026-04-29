@@ -1,24 +1,12 @@
 [workspace.package]
 authors = ["o2sh <ossama-hjaji@live.fr>"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
-version = "2.22.0"
+version = "2.27.1"
 repository = "https://github.com/o2sh/onefetch"
 
 [workspace]
 members = ["ascii", "image", "manifest"]
-
-[workspace.dependencies]
-owo-colors = "3.5.0"
-anyhow = "1.0"
-clap = { version = "4.5.23", features = ["derive"] }
-image = { version = "0.25.2", default-features = false, features = [
-    "color_quant",
-    "jpeg",
-    "png",
-    "webp"
-] }
-strum = { version = "0.26.3", features = ["derive"] }
 
 [package]
 authors.workspace = true
@@ -28,69 +16,71 @@ license.workspace = true
 repository.workspace = true
 categories = ["command-line-utilities"]
 description = "Command-line Git information tool"
-exclude = ["docs/vercel/*"]
+exclude = ["docs/web/*"]
 keywords = ["git", "cli", "terminal"]
 name = "onefetch"
 homepage = "https://onefetch.dev"
-rust-version = "1.74.1"
+rust-version = "1.88.0"
 
 [dependencies]
-anyhow.workspace = true
+anyhow = "1.0.101"
 askalono = "0.5.0"
-byte-unit = "5.1.6"
-clap.workspace = true
-clap_complete = "4.5.40"
-crossbeam-channel = "0.5.14"
-gix = { version = "0.69.1", default-features = false, features = [
+byte-unit = "5.2.0"
+clap = { version = "4.6.1", features = ["derive"] }
+clap_complete = "4.6.2"
+gix = { version = "0.81.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
     "index",
     "status",
+    "sha1",
 ] }
-gix-features = { version = "0.39.0", features = ["zlib-ng"] }
-globset = "0.4.15"
-human-panic = "2.0.2"
-image.workspace = true
+globset = "0.4.18"
+human-panic = "2.0.8"
+image = { version = "0.25.10", default-features = false, features = [
+    "color_quant",
+    "jpeg",
+    "png",
+    "webp",
+] }
 num-format = "0.4.4"
-onefetch-ascii = { path = "ascii", version = "2.19.0" }
-onefetch-image = { path = "image", version = "2.19.0" }
-onefetch-manifest = { path = "manifest", version = "2.19.0" }
-owo-colors.workspace = true
-regex = "1.11.1"
-serde = "1.0"
-serde_json = "1.0"
+onefetch-ascii = { path = "ascii", version = "2.27.1" }
+onefetch-image = { path = "image", version = "2.27.1" }
+onefetch-manifest = { path = "manifest", version = "2.27.1" }
+owo-colors = "4.3.0"
+regex = "1.12.2"
+serde = "1.0.228"
+serde_json = "1.0.149"
 serde_yaml = "0.9.34"
-# TODO With the new value parsers, we're really close to being able to eliminate
-# the strum dependency
-strum.workspace = true
-time = { version = "0.3.37", features = ["formatting"] }
+strum = { version = "0.28.0", features = ["derive"] }
+time = { version = "0.3.47", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
-tokei = "12.1.2"
-typetag = "0.2"
+tokei = "14.0.0"
+typetag = "0.2.21"
 
 [dev-dependencies]
-criterion = "0.5.1"
-gix-testtools = "0.15.0"
-insta = { version = "1.41.1", features = ["json", "redactions"] }
-rstest = "0.23.0"
+criterion = "0.8.2"
+gix-testtools = "0.18.0"
+insta = { version = "1.47.2", features = ["json", "redactions"] }
+rstest = "0.26.1"
 
 [[bench]]
 name = "repo"
 harness = false
 
 [build-dependencies]
-lazy_static = "1"
-regex = "1"
-serde_json = "1"
-serde_yaml = "0.9"
-tera = { version = "1", default-features = false }
+lazy_static = "1.5.0"
+regex = "1.12.2"
+serde_json = "1.0.149"
+serde_yaml = "0.9.34"
+tera = { version = "1.20.1", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
+winres = "0.1.12"
 
 [target.'cfg(windows)'.dependencies]
-enable-ansi-support = "0.2.1"
+enable-ansi-support = "0.3.1"
 
 [features]
 fail-on-deprecated = []

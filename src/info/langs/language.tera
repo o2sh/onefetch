@@ -123,29 +123,6 @@ impl Language {
     }
 }
 
-fn __loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
-    match language_type {
-        {% for language, attrs in languages -%}
-            {%- set line_types = attrs.line_types | default(value=['code']) -%}
-            tokei::LanguageType::{{ language }} => language.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + language.{{ line_type }}{% endfor %},
-        {% endfor %}
-        _ => unimplemented!("Language Type {:?}", language_type),
-    }
-}
-
-
-fn __stats_loc(language_type: &tokei::LanguageType, stats: &tokei::CodeStats) -> usize {
-    match language_type {
-	{% for language, attrs in languages -%}
-        {%- set line_types = attrs.line_types | default(value=['code']) -%}
-	    {%- if attrs.line_types -%}
-            tokei::LanguageType::{{ language }} => stats.{{ line_types.0 }}{% for line_type in line_types | slice(start=1) %} + stats.{{ line_type }}{% endfor %},
-	    {% endif -%}
-    {% endfor %}
-	_ => stats.code
-    }
-}
-
 {% for language, attrs in languages -%}
     {% if attrs.colors.rgb %}
         {% set ansi_length = attrs.colors.ansi | length -%}

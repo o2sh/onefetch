@@ -19,7 +19,7 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: npm
-    directory: /docs/vercel
+    directory: /docs/web
     groups:
       site:
         patterns:

@@ -8,11 +8,16 @@ name = "onefetch-image"
 description = "Display images in the terminal"
 
 [dependencies]
-anyhow.workspace = true
-clap.workspace = true
-image.workspace = true
+anyhow = "1.0.101"
+clap = { version = "4.6.1", features = ["derive"] }
+image = { version = "0.25.10", default-features = false, features = [
+    "color_quant",
+    "jpeg",
+    "png",
+    "webp",
+] }
 
 [target.'cfg(not(windows))'.dependencies]
 color_quant = "1.1.0"
 base64 = "0.22.1"
-libc = "0.2.169"
+rustix = { version = "1.1.4", features = ["termios", "event"] }

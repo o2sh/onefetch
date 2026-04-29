@@ -87,14 +87,14 @@ fn compute_file_churns(
     Ok(number_of_commits_by_file_path_sorted
         .into_iter()
         .filter_map(|(file_path, nbr_of_commits)| {
-            if !glob_set.is_match(file_path.to_string()) {
+            if glob_set.is_match(file_path.to_string()) {
+                None
+            } else {
                 Some(FileChurn::new(
                     file_path.to_string(),
                     *nbr_of_commits,
                     number_separator,
                 ))
-            } else {
-                None
             }
         })
         .take(number_of_file_churns_to_display)
@@ -167,9 +167,11 @@ mod tests {
             churn_pool_size: 5,
         };
 
-        assert!(churn_info
-            .value()
-            .contains(&"\u{2026}/to/file.txt 50".to_string()));
+        assert!(
+            churn_info
+                .value()
+                .contains(&"\u{2026}/to/file.txt 50".to_string())
+        );
 
         assert!(churn_info.value().contains(&"file_2.txt 30".to_string()));
     }

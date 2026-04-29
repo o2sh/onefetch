@@ -1,10 +1,10 @@
-use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::fs::{self, File};
 use std::path::Path;
+use std::sync::LazyLock;
 use tera::{Context, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -37,12 +37,9 @@ fn strip_color_tokens_filter(
     value: &tera::Value,
     _args: &HashMap<String, tera::Value>,
 ) -> tera::Result<tera::Value> {
-    lazy_static! {
-        static ref COLOR_INDEX_REGEX: Regex = Regex::new(r"\{\d+\}").unwrap();
-    }
-    let s = match value {
-        tera::Value::String(s) => s,
-        _ => return Err(tera::Error::msg("expected string")),
+    static COLOR_INDEX_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\{\d+\}").unwrap());
+    let tera::Value::String(s) = value else {
+        return Err(tera::Error::msg("expected string"));
     };
     Ok(tera::Value::String(
         COLOR_INDEX_REGEX.replace_all(s, "").to_string(),
@@ -53,20 +50,17 @@ fn hex_to_rgb_filter(
     value: &tera::Value,
     _args: &HashMap<String, tera::Value>,
 ) -> tera::Result<tera::Value> {
-    let hex_string = match value {
-        tera::Value::String(s) => s,
-        _ => return Err(tera::Error::msg("expected string")),
+    let tera::Value::String(hex_string) = value else {
+        return Err(tera::Error::msg("expected string"));
     };
-    let hex_string = match hex_string.strip_prefix('#') {
-        Some(s) => s,
-        None => return Err(tera::Error::msg("expected hex string starting with `#`")),
+    let Some(hex_string) = hex_string.strip_prefix('#') else {
+        return Err(tera::Error::msg("expected hex string starting with `#`"));
     };
     if hex_string.len() != 6 {
         return Err(tera::Error::msg("expected a 6 digit hex string"));
     }
-    let channel_bytes = match u32::from_str_radix(hex_string, 16) {
-        Ok(n) => n,
-        Err(_) => return Err(tera::Error::msg("expected a valid hex string")),
+    let Ok(channel_bytes) = u32::from_str_radix(hex_string, 16) else {
+        return Err(tera::Error::msg("expected a valid hex string"));
     };
     let r = (channel_bytes >> 16) & 0xFF;
     let g = (channel_bytes >> 8) & 0xFF;

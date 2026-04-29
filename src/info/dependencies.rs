@@ -49,10 +49,10 @@ mod test {
         let dependencies_info = DependenciesInfo::new(
             Some(&Manifest {
                 manifest_type: ManifestType::Cargo,
-                name: String::new(),
+                name: None,
                 description: None,
                 number_of_dependencies: 21,
-                version: String::new(),
+                version: None,
                 license: None,
             }),
             NumberSeparator::Plain,

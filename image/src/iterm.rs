@@ -1,26 +1,16 @@
-use crate::get_dimensions;
 use anyhow::Result;
-use base64::{engine, Engine};
-use image::{imageops::FilterType, DynamicImage};
+use base64::{Engine, engine};
+use image::{DynamicImage, imageops::FilterType};
+use rustix::termios::tcgetwinsize;
 use std::env;
 use std::io::Cursor;
 
-pub struct ITermBackend {}
+pub struct ITermBackend;
 
 impl ITermBackend {
-    pub fn new() -> Self {
-        ITermBackend {}
-    }
-
     pub fn supported() -> bool {
         let term_program = env::var("TERM_PROGRAM").unwrap_or_else(|_| "".to_string());
         term_program == "iTerm.app"
-    }
-}
-
-impl Default for ITermBackend {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
@@ -31,7 +21,7 @@ impl super::ImageBackend for ITermBackend {
         image: &DynamicImage,
         _colors: usize,
     ) -> Result<String> {
-        let tty_size = unsafe { get_dimensions() };
+        let tty_size = tcgetwinsize(std::io::stdin())?;
         let width_ratio = f64::from(tty_size.ws_col) / f64::from(tty_size.ws_xpixel);
         let height_ratio = f64::from(tty_size.ws_row) / f64::from(tty_size.ws_ypixel);
 
@@ -56,7 +46,7 @@ impl super::ImageBackend for ITermBackend {
         image_data.extend(format!("\x1B[{}A", image_rows as u32 - 1).as_bytes()); // move cursor to start of image
         let mut i = 0;
         for line in &lines {
-            image_data.extend(format!("\x1B[s{}\x1B[u\x1B[1B", line).as_bytes());
+            image_data.extend(format!("\x1B[s{line}\x1B[u\x1B[1B").as_bytes());
             i += 1;
         }
         image_data

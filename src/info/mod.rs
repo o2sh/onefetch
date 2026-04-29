@@ -17,15 +17,14 @@ use self::pending::PendingInfo;
 use self::project::ProjectInfo;
 use self::size::SizeInfo;
 use self::title::Title;
-use self::url::get_repo_url;
 use self::url::UrlInfo;
+use self::url::get_repo_url;
 use self::utils::info_field::{InfoField, InfoType};
 use self::version::VersionInfo;
-use crate::cli::{is_truecolor_terminal, CliOptions, NumberSeparator, When};
+use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
-use gix::sec::trust::Mapping;
 use gix::Repository;
 use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize};
@@ -53,7 +52,7 @@ mod url;
 pub mod utils;
 mod version;
 
-#[derive(Serialize)]
+#[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     title: Option<Title>,
@@ -65,7 +64,7 @@ pub struct Info {
     #[serde(skip_serializing)]
     no_bold: bool,
     #[serde(skip_serializing)]
-    pub dominant_language: Language,
+    pub dominant_language: Option<Language>,
     #[serde(skip_serializing)]
     pub ascii_colors: Vec<DynColors>,
 }
@@ -79,17 +78,17 @@ struct InfoBuilder {
 
 impl std::fmt::Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        //Title
+        // Title
         if let Some(title) = &self.title {
             write!(f, "{title}")?;
         }
 
-        //Info lines
+        // Info lines
         for info_field in self.info_fields.iter() {
             info_field.write_styled(f, self.no_bold, &self.text_colors)?;
         }
 
-        //Palette
+        // Palette
         if !self.no_color_palette {
             writeln!(
                 f,
@@ -110,19 +109,9 @@ impl std::fmt::Display for Info {
 }
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
-    let mut repo = gix::ThreadSafeRepository::discover_opts(
-        &cli_options.input,
-        gix::discover::upwards::Options {
-            dot_git_only: true,
-            ..Default::default()
-        },
-        Mapping::default(),
-    )?
-    .to_thread_local();
-    // Having an object cache is important for getting much better traversal and diff performance.
-    repo.object_cache_size_if_unset(4 * 1024 * 1024);
+    let repo = gix::discover(&cli_options.input)?;
     let repo_path = get_work_dir(&repo)?;
-
+    // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
         let language_types = cli_options.info.r#type.clone();
@@ -137,37 +126,38 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             )
         }
     });
-
-    let loc_by_language = loc_by_language_sorted_handle
-        .join()
-        .ok()
-        .context("BUG: panic in language statistics thread")??;
-    let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(
-        &repo,
-        cli_options.info.hide_token,
-        cli_options.info.http_url,
-    );
-
     let git_metrics = traverse_commit_graph(
         &repo,
         cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
-    )?;
+    )
+    .context("Failed to traverse Git commit history")?;
+    let manifest = get_manifest(&repo_path)?;
+    let repo_url = get_repo_url(
+        &repo,
+        cli_options.info.hide_token,
+        cli_options.info.http_url,
+    )
+    .context("Failed to determine repository URL")?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
         When::Auto => is_truecolor_terminal(),
     };
-    let dominant_language = langs::get_main_language(&loc_by_language);
+    let loc_by_language = loc_by_language_sorted_handle
+        .join()
+        .ok()
+        .context("BUG: panic in language statistics thread")?;
+    let dominant_language = loc_by_language
+        .as_ref()
+        .map(|v| langs::get_main_language(v));
     let ascii_colors = get_ascii_colors(
+        dominant_language.as_ref(),
         cli_options.ascii.ascii_language.as_ref(),
-        &dominant_language,
         &cli_options.ascii.ascii_colors,
         true_color,
     );
-
     let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
     let no_bold = cli_options.text_formatting.no_bold;
     let number_separator = cli_options.text_formatting.number_separator;
@@ -187,7 +177,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .version(&repo, manifest.as_ref())?
         .created(&git_metrics, iso_time)
         .languages(
-            &loc_by_language,
+            loc_by_language.as_ref(),
             true_color,
             number_of_languages_to_display,
             &text_colors,
@@ -210,7 +200,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             globs_to_exclude,
             number_separator,
         )?
-        .loc(&loc_by_language, number_separator)
+        .loc(loc_by_language.as_ref(), number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
@@ -320,13 +310,15 @@ impl InfoBuilder {
 
     fn languages(
         mut self,
-        loc_by_language: &[(Language, usize)],
+        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         true_color: bool,
         number_of_languages: usize,
         text_colors: &TextColors,
         cli_options: &CliOptions,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Languages) {
+        if !self.disabled_fields.contains(&InfoType::Languages)
+            && let Some(loc_by_language) = loc_by_language_opt
+        {
             let languages = LanguagesInfo::new(
                 loc_by_language,
                 true_color,
@@ -431,10 +423,12 @@ impl InfoBuilder {
 
     fn loc(
         mut self,
-        loc_by_language: &[(Language, usize)],
+        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::LinesOfCode) {
+        if !self.disabled_fields.contains(&InfoType::LinesOfCode)
+            && let Some(loc_by_language) = loc_by_language_opt
+        {
             let lines_of_code = LocInfo::new(loc_by_language, number_separator);
             self.info_fields.push(Box::new(lines_of_code));
         }
@@ -445,7 +439,7 @@ impl InfoBuilder {
         self,
         cli_options: &CliOptions,
         text_colors: TextColors,
-        dominant_language: Language,
+        dominant_language: Option<Language>,
         ascii_colors: Vec<DynColors>,
     ) -> Info {
         Info {
@@ -472,7 +466,7 @@ fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
 
 pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
     Ok(repo
-        .work_dir()
+        .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
 }

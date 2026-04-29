@@ -1,6 +1,6 @@
 use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
 use anyhow::Result;
-use gix::{bstr::ByteSlice, Repository};
+use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
@@ -50,10 +50,7 @@ fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> 
         .unwrap_or_default();
 
     if repo_name.is_empty() {
-        let repo_name_from_manifest = match manifest {
-            Some(m) => m.name.clone(),
-            None => String::new(),
-        };
+        let repo_name_from_manifest = manifest.and_then(|m| m.name.clone()).unwrap_or_default();
         Ok(repo_name_from_manifest)
     } else {
         Ok(repo_name)

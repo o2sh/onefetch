@@ -3,9 +3,11 @@ use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
+use clap::builder::Styles;
 use clap::builder::TypedValueParser as _;
-use clap::{value_parser, Args, Command, Parser, ValueHint};
-use clap_complete::{generate, Generator, Shell};
+use clap::builder::styling::AnsiColor;
+use clap::{Args, Command, Parser, ValueHint, value_parser};
+use clap_complete::{Generator, Shell, generate};
 use num_format::CustomFormat;
 use onefetch_image::ImageProtocol;
 use onefetch_manifest::ManifestType;
@@ -20,8 +22,15 @@ use strum::IntoEnumIterator;
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 pub const NO_BOTS_DEFAULT_REGEX_PATTERN: &str = r"(?:-|\s)[Bb]ot$|\[[Bb]ot\]";
 
+const STYLES: Styles = Styles::styled()
+    .header(AnsiColor::Yellow.on_default())
+    .usage(AnsiColor::Green.on_default())
+    .literal(AnsiColor::Green.on_default())
+    .placeholder(AnsiColor::Green.on_default());
+
 #[derive(Clone, Debug, Parser, PartialEq, Eq)]
 #[command(version, about)]
+#[command(styles = STYLES)]
 pub struct CliOptions {
     /// Run as if onefetch was started in <input> instead of the current working directory
     #[arg(default_value = ".", hide_default_value = true, value_hint = ValueHint::DirPath)]
@@ -162,7 +171,7 @@ pub struct ImageCliOptions {
         long,
         value_name = "VALUE",
         requires = "image",
-        default_value_t = 16usize,
+        default_value_t = 64usize,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
@@ -274,7 +283,7 @@ impl Default for InfoCliOptions {
 impl Default for TextForamttingCliOptions {
     fn default() -> Self {
         TextForamttingCliOptions {
-            text_colors: Default::default(),
+            text_colors: Vec::default(),
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
             no_bold: Default::default(),
@@ -296,8 +305,8 @@ impl Default for ImageCliOptions {
     fn default() -> Self {
         ImageCliOptions {
             image: Option::default(),
-            image_protocol: Default::default(),
-            color_resolution: 16,
+            image_protocol: Option::default(),
+            color_resolution: 64,
         }
     }
 }
@@ -333,8 +342,13 @@ pub fn get_git_version() -> String {
     }
 }
 
-pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
-    generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
+pub fn print_completions<G: Generator>(generator: G, cmd: &mut Command) {
+    generate(
+        generator,
+        cmd,
+        cmd.get_name().to_string(),
+        &mut io::stdout(),
+    );
 }
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
@@ -353,7 +367,7 @@ pub enum NumberSeparator {
 }
 
 impl NumberSeparator {
-    fn separator(&self) -> &'static str {
+    fn separator(self) -> &'static str {
         match self {
             Self::Plain => "",
             Self::Comma => ",",

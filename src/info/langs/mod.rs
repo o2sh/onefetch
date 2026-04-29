@@ -1,4 +1,3 @@
-use anyhow::{Context, Result};
 use language::{Language, LanguageType};
 use std::collections::HashMap;
 use std::path::Path;
@@ -18,15 +17,10 @@ pub fn get_loc_by_language_sorted(
     globs_to_exclude: &[String],
     language_types: &[LanguageType],
     include_hidden: bool,
-) -> Result<Vec<(Language, usize)>> {
-    let stats = get_statistics(dir, globs_to_exclude, language_types, include_hidden);
-
-    let loc_by_language =
-        get_loc_by_language(&stats).context("Could not find any source code in this repository")?;
-
-    let loc_by_language_sorted = sort_by_loc(loc_by_language);
-
-    Ok(loc_by_language_sorted)
+) -> Option<Vec<(Language, usize)>> {
+    let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
+    let loc_by_language_opt = get_loc_by_language(&locs);
+    loc_by_language_opt.map(sort_by_loc)
 }
 
 fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
@@ -38,18 +32,15 @@ fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
 fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language, usize>> {
     let mut loc_by_language = HashMap::new();
 
-    for (language_name, language) in languages.iter() {
+    for (language_name, language) in languages {
         let loc = language::loc(language_name, language);
 
-        if loc == 0 {
-            continue;
+        if loc > 0 {
+            loc_by_language.insert(Language::from(*language_name), loc);
         }
-
-        loc_by_language.insert(Language::from(*language_name), loc);
     }
 
-    let total_loc: usize = loc_by_language.values().sum();
-    if total_loc == 0 {
+    if loc_by_language.is_empty() {
         None
     } else {
         Some(loc_by_language)
@@ -61,7 +52,7 @@ pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
     total_loc
 }
 
-fn get_statistics(
+fn get_locs(
     dir: &Path,
     globs_to_exclude: &[String],
     language_types: &[LanguageType],
