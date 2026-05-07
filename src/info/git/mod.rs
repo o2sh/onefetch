@@ -180,6 +180,11 @@ fn update_signature_counts(
     Ok(())
 }
 
+
+/// This will get the trees for a commit and its parent and compute the diff. On success, this
+/// returns `Ok(true)`. If the trees are not available due to a partial clone, this will return
+/// `Ok(false)`. Essentially, this function will have successfully determined that there is no diff
+/// to compute. Other issues that prevent calculation will return `Err`. 
 fn compute_diff_with_parent(
     change_map: &mut HashMap<BString, usize>,
     commit: &Commit,
