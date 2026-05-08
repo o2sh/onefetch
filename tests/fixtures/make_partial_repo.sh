@@ -28,3 +28,8 @@ git clone --filter=blob:none file://$PWD/base partial
 (cd partial
     git config diff.renames true
 )
+
+git clone --filter=tree:0 file://$PWD/base partial_treeless
+(cd partial_treeless
+    git config diff.renames true
+)
