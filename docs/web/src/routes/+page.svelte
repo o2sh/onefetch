@@ -53,6 +53,15 @@
   });
 </script>
 
+<svelte:head>
+  <meta
+    name="description"
+    content="Preview the ASCII logos and colors for every programming language supported by Onefetch." />
+  <meta
+    property="og:description"
+    content="Preview the ASCII logos and colors for every programming language supported by Onefetch." />
+</svelte:head>
+
 <Toaster position="bottom-center" />
 
 <header>
