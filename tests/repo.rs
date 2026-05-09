@@ -85,6 +85,17 @@ fn test_partial_repo() -> Result<()> {
 }
 
 #[test]
+fn test_treeless_partial_repo() -> Result<()> {
+    let repo = named_repo("make_partial_repo.sh", "partial_treeless")?;
+    let config: CliOptions = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let _info = build_info(&config).expect("no error");
+    Ok(())
+}
+
+#[test]
 fn test_repo_with_pre_epoch_dates() -> Result<()> {
     let repo = repo("make_pre_epoch_repo.sh")?;
     let config: CliOptions = CliOptions {
