@@ -235,10 +235,8 @@ Batch:
   colors:
     ansi:
       - white
-    hex:
-      - "#888888"
-    chip: "#44AAFF"
-  icon: '\u{E70F}'
+    chip: "#C1F12E"
+  icon: '\u{EBC4}'
 C:
   type: programming
   ascii: |
