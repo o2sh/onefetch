@@ -1,4 +1,5 @@
 use language::{Language, LanguageType};
+use std::cmp;
 use std::collections::HashMap;
 use std::path::Path;
 use strum::IntoEnumIterator;
@@ -25,7 +26,7 @@ pub fn get_loc_by_language_sorted(
 
 fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
     let mut vec: Vec<(Language, usize)> = map.into_iter().collect();
-    vec.sort_by(|a, b| b.1.cmp(&a.1));
+    vec.sort_by_key(|b| cmp::Reverse(b.1));
     vec
 }
 
