@@ -221,6 +221,24 @@ Bash:
       - green
     chip: "#89E051"
   icon: '\u{EBCA}'
+Batch:
+  type: programming
+  ascii: |
+    {0}┌────────────────────────┐
+    {0}│Command Prompt    - □ x │
+    {0}├────────────────────────┤
+    {0}│C:\>                    │
+    {0}│                        │
+    {0}│                        │
+    {0}│                        │
+    {0}└────────────────────────┘
+  colors:
+    ansi:
+      - white
+    hex:
+      - "#888888"
+    chip: "#44AAFF"
+  icon: '\u{E70F}'
 C:
   type: programming
   ascii: |
