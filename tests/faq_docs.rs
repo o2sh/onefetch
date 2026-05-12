@@ -1,12 +1,18 @@
 use std::fs;
+use std::path::Path;
 
 fn faq() -> String {
-    fs::read_to_string("docs/wiki/faq.md").unwrap()
+    let faq_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("docs/wiki/faq.md");
+    fs::read_to_string(&faq_path)
+        .expect("failed to read FAQ at repo path docs/wiki/faq.md")
 }
 
 #[test]
 fn faq_has_title() {
-    assert!(faq().starts_with("# FAQ\n"));
+    let faq = faq();
+    let first_line = faq.lines().next().unwrap_or("").trim();
+
+    assert_eq!(first_line, "# FAQ");
 }
 
 #[test]
