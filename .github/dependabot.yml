@@ -11,6 +11,10 @@ updates:
         patterns:
           - "gix"
           - "gix-*"
+      image:
+        patterns:
+          - "image"
+          - "color_quant"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10

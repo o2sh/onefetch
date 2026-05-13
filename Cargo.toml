@@ -38,12 +38,7 @@ gix = { version = "0.83.0", default-features = false, features = [
 ] }
 globset = "0.4.18"
 human-panic = "2.0.8"
-image = { version = "0.25.10", default-features = false, features = [
-    "color_quant",
-    "jpeg",
-    "png",
-    "webp",
-] }
+image = { version = "0.25.10", default-features = false }
 num-format = "0.4.4"
 onefetch-ascii = { path = "ascii", version = "2.27.1" }
 onefetch-image = { path = "image", version = "2.27.1" }
