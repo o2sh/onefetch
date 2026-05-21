@@ -132,6 +132,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )
+    .map_err(add_reftable_head_hint)
     .context("Failed to traverse Git commit history")?;
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(
@@ -204,6 +205,31 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
+}
+
+fn add_reftable_head_hint(error: anyhow::Error) -> anyhow::Error {
+    if has_reftable_invalid_head_error(&error) {
+        error.context(
+            "This repository appears to use Git's reftable reference format, which onefetch cannot read yet. Run `git refs migrate --ref-format=files` and try again",
+        )
+    } else {
+        error
+    }
+}
+
+fn has_reftable_invalid_head_error(error: &anyhow::Error) -> bool {
+    let mut has_invalid_head_ref = false;
+    let mut has_invalid_dot_ref = false;
+
+    for cause in error.chain() {
+        let message = cause.to_string();
+        has_invalid_head_ref |=
+            message.contains("The reference at \"HEAD\" could not be instantiated");
+        has_invalid_dot_ref |= message.contains("refs/heads/.invalid")
+            || message.contains("Reference name cannot start with a dot");
+    }
+
+    has_invalid_head_ref && has_invalid_dot_ref
 }
 
 impl InfoBuilder {
@@ -469,4 +495,31 @@ pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
         .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_add_reftable_head_hint() {
+        let error = anyhow::anyhow!("Reference name cannot start with a dot")
+            .context(
+                "The path \"refs/heads/.invalid\" to a symbolic reference within a ref file is invalid",
+            )
+            .context("The reference at \"HEAD\" could not be instantiated");
+
+        let error = add_reftable_head_hint(error);
+        let message = format!("{error:#}");
+
+        assert!(message.contains("Git's reftable reference format"));
+        assert!(message.contains("git refs migrate --ref-format=files"));
+    }
+
+    #[test]
+    fn test_add_reftable_head_hint_ignores_unrelated_errors() {
+        let error = add_reftable_head_hint(anyhow::anyhow!("object not found"));
+
+        assert_eq!(error.to_string(), "object not found");
+    }
 }
