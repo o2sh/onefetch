@@ -2644,7 +2644,7 @@ Slang:
       - cyan
       - blue
     chip: "#1fbec9"
-  icon: '\u{f1183}'
+  icon: '\u{f1c5}'
 
 Slint:
   type: markup
