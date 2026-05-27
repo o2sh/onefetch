@@ -1816,7 +1816,7 @@ Mojo:
       - "#FF4500"
       - "#FFD700"
     chip: "#FF4C1F"
-  icon: '\u{1F525}'
+  icon: '\u{eaf2}'
 Nim:
   type: programming
   ascii: |
