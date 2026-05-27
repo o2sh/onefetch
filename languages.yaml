@@ -2665,7 +2665,6 @@ Slang:
       - blue
     chip: "#1fbec9"
   icon: '\u{f1183}'
-  serialization: slang
 
 Slint:
   type: markup
