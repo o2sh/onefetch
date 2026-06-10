@@ -78,6 +78,46 @@ onefetch
 
 Onefetch can be customized via [command-line arguments](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
 
+## FAQ
+
+### Why isn't my language detected?
+
+By default, onefetch only displays `programming` and `markup` languages.
+Languages classified as `prose` or `data`, such as Org mode, Markdown, Text,
+JSON, YAML, or TOML, are hidden unless you include them with `--type`:
+
+```
+onefetch --type programming markup prose data
+```
+
+If a language still does not appear, check whether files are ignored by
+`.gitignore`, `.tokeignore`, or `--exclude`. Onefetch uses
+[tokei](https://github.com/XAMPPRocky/tokei) for language detection, so
+unsupported languages need to be added there first. Onefetch also shows the top
+6 languages by default; use `--number-of-languages <NUM>` to display more.
+
+### Why is the ASCII art different or missing?
+
+Onefetch chooses ASCII art from the dominant detected language. You can force a
+specific language's art with `--ascii-language <LANGUAGE>`:
+
+```
+onefetch --ascii-language rust
+```
+
+### Why do duplicate authors appear?
+
+Onefetch follows Git's mailmap support when reading author identities. If the
+same person appears multiple times in the Authors line because they committed
+with different names or emails, add a
+[`.mailmap`](https://git-scm.com/docs/gitmailmap) file to the repository and map
+those commit identities to one canonical identity:
+
+```
+Correct Name <correct@example.com> <old@example.com>
+Correct Name <correct@example.com> Old Name <old@example.com>
+```
+
 ## Contributing
 
 Currently, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported, open an issue and support will be added.
