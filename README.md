@@ -90,20 +90,10 @@ JSON, YAML, or TOML, are hidden unless you include them with `--type`:
 onefetch --type programming markup prose data
 ```
 
-If a language still does not appear, check whether files are ignored by
-`.gitignore`, `.tokeignore`, or `--exclude`. Onefetch uses
+If a language still does not appear, note that onefetch uses
 [tokei](https://github.com/XAMPPRocky/tokei) for language detection, so
 unsupported languages need to be added there first. Onefetch also shows the top
 6 languages by default; use `--number-of-languages <NUM>` to display more.
-
-### Why is the ASCII art different or missing?
-
-Onefetch chooses ASCII art from the dominant detected language. You can force a
-specific language's art with `--ascii-language <LANGUAGE>`:
-
-```
-onefetch --ascii-language rust
-```
 
 ### Why do duplicate authors appear?
 
