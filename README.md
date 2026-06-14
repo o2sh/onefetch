@@ -90,7 +90,7 @@ By default, onefetch only displays **programming** and **markup** languages. Lan
 
 To include all language types, use the `--type` option:
 
-```sh
+```
 # Show all language types
 onefetch --type programming markup prose data
 
@@ -116,7 +116,7 @@ Onefetch uses [tokei](https://github.com/XAMPPRocky/tokei) for language detectio
 
 By default, onefetch only shows the top 6 languages. To show more:
 
-```sh
+```
 onefetch --number-of-languages 10
 ```
 
@@ -124,7 +124,7 @@ onefetch --number-of-languages 10
 
 Onefetch chooses ASCII art based on the dominant language. To display a specific language's art:
 
-```sh
+```
 onefetch --ascii-language rust
 ```
 
@@ -132,7 +132,7 @@ onefetch --ascii-language rust
 
 Common customizations:
 
-```sh
+```
 # Hide specific fields
 onefetch --disabled-fields version created
 
