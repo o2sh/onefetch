@@ -82,78 +82,17 @@ Onefetch can be customized via [command-line arguments](https://github.com/o2sh/
 
 ### Why isn't my language detected?
 
-This is one of the most common questions! There are a few reasons why your language might not appear in onefetch's output:
-
-#### 1. Language type filtering
-
-By default, onefetch only displays **programming** and **markup** languages. Languages classified as **prose** (like Org mode, Markdown, or Text) or **data** (like JSON, YAML, or TOML) are hidden by default.
-
-To include all language types, use the `--type` option:
+By default, onefetch only displays `programming` and `markup` languages. Languages classified as `prose` (like Org mode, Markdown, or Text) or `data` (like JSON, YAML, or TOML) are hidden unless you include them with `--type`.
 
 ```
-# Show all language types
 onefetch --type programming markup prose data
-
-# Show only prose languages
-onefetch --type prose
-```
-
-**Available language types:** `programming`, `markup`, `prose`, `data`
-
-#### 2. Files are being ignored
-
-Check if your files are being excluded by:
-
-- `.gitignore` patterns
-- The `--exclude` flag
-- The `.tokeignore` file in your repository
-
-#### 3. Language not supported by tokei
-
-Onefetch uses [tokei](https://github.com/XAMPPRocky/tokei) for language detection. If tokei doesn't support your language, onefetch won't detect it either. Consider [opening an issue on tokei's repository](https://github.com/XAMPPRocky/tokei/issues).
-
-#### 4. Number of languages limit
-
-By default, onefetch only shows the top 6 languages. To show more:
-
-```
-onefetch --number-of-languages 10
-```
-
-### Why is the ASCII art different/missing?
-
-Onefetch chooses ASCII art based on the dominant language. To display a specific language's art:
-
-```
-onefetch --ascii-language rust
-```
-
-### How do I customize the output?
-
-Common customizations:
-
-```
-# Hide specific fields
-onefetch --disabled-fields version created
-
-# Change text colors
-onefetch --text-colors 9 10 11 12 13 14
-
-# Use a custom image instead of ASCII art
-onefetch --image /path/to/image.png
-
-# Output as JSON
-onefetch --output json
 ```
 
 ### Why do duplicate authors appear?
 
-Onefetch follows Git's mailmap support when reading author identities. If the same person appears multiple times in the Authors line because they committed with different names or emails, add a .mailmap file to the repository and map those commit identities to one canonical identity:
+If the same person committed with different names or email addresses, they may be listed more than once.
 
-```
-Correct Name <correct@example.com> <old@example.com>
-Correct Name <correct@example.com> Old Name <old@example.com>
-```
+Add a `.mailmap` file to the repository to normalize those identities. See the [Git mailmap documentation](https://git-scm.com/docs/gitmailmap).
 
 ## Contributing
 
