@@ -78,8 +78,6 @@ onefetch
 
 Onefetch can be customized via [command-line arguments](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
 
-Hey! I'd like to help with this FAQ page. Here's a draft that covers the most common question ("Why isn't my language detected?") as mentioned in #1517, along with some other frequently asked topics:
-
 ## Frequently Asked Questions
 
 ### Why isn't my language detected?
