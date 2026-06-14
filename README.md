@@ -146,6 +146,15 @@ onefetch --image /path/to/image.png
 onefetch --output json
 ```
 
+### Why do duplicate authors appear?
+
+Onefetch follows Git's mailmap support when reading author identities. If the same person appears multiple times in the Authors line because they committed with different names or emails, add a .mailmap file to the repository and map those commit identities to one canonical identity:
+
+```
+Correct Name <correct@example.com> <old@example.com>
+Correct Name <correct@example.com> Old Name <old@example.com>
+```
+
 ## Contributing
 
 Currently, onefetch supports more than [100 different programming languages](https://onefetch.dev); if your language of choice isn't supported, open an issue and support will be added.
