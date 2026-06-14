@@ -90,9 +90,9 @@ onefetch --type programming markup prose data
 
 ### Why do duplicate authors appear?
 
-If the same person committed with different names or email addresses, they may be listed more than once.
+Onefetch reads authors from the Git history. If the same person committed with different names or emails, they may appear more than once.
 
-Add a `.mailmap` file to the repository to normalize those identities. See the [Git mailmap documentation](https://git-scm.com/docs/gitmailmap).
+To merge those entries, add a [`.mailmap`](https://git-scm.com/docs/gitmailmap) file to the repository.
 
 ## Contributing
 
