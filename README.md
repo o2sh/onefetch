@@ -21,8 +21,8 @@
 
 Onefetch is a command-line Git information tool that displays project information and code statistics for a local Git repository directly in your terminal. The tool works completely offline with a focus on performance and customizability.
 
-|||
-|---|---|
+|                                          |                                          |
+| ---------------------------------------- | ---------------------------------------- |
 | ![Screenshot 1](assets/screenshot-1.png) | ![Screenshot 2](assets/screenshot-2.png) |
 
 ## Installation
@@ -32,31 +32,31 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
 ### Linux
 
 - Ubuntu
-  
+
   ```
   wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb && rm onefetch_amd64.deb
   ```
 
 - Arch Linux
-  
+
   ```
   pacman -S onefetch
   ```
 
 - openSUSE
-  
+
   ```
   zypper install onefetch
   ```
 
 ### macOS
-  
+
 ```
 brew install onefetch
 ```
 
 ### Windows
-  
+
 ```
 winget install onefetch
 ```
@@ -77,6 +77,76 @@ onefetch
 ## Customization
 
 Onefetch can be customized via [command-line arguments](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
+
+Hey! I'd like to help with this FAQ page. Here's a draft that covers the most common question ("Why isn't my language detected?") as mentioned in #1517, along with some other frequently asked topics:
+
+## Frequently Asked Questions
+
+### Why isn't my language detected?
+
+This is one of the most common questions! There are a few reasons why your language might not appear in onefetch's output:
+
+#### 1. Language type filtering
+
+By default, onefetch only displays **programming** and **markup** languages. Languages classified as **prose** (like Org mode, Markdown, or Text) or **data** (like JSON, YAML, or TOML) are hidden by default.
+
+To include all language types, use the `--type` option:
+
+```sh
+# Show all language types
+onefetch --type programming markup prose data
+
+# Show only prose languages
+onefetch --type prose
+```
+
+**Available language types:** `programming`, `markup`, `prose`, `data`
+
+#### 2. Files are being ignored
+
+Check if your files are being excluded by:
+
+- `.gitignore` patterns
+- The `--exclude` flag
+- The `.tokeignore` file in your repository
+
+#### 3. Language not supported by tokei
+
+Onefetch uses [tokei](https://github.com/XAMPPRocky/tokei) for language detection. If tokei doesn't support your language, onefetch won't detect it either. Consider [opening an issue on tokei's repository](https://github.com/XAMPPRocky/tokei/issues).
+
+#### 4. Number of languages limit
+
+By default, onefetch only shows the top 6 languages. To show more:
+
+```sh
+onefetch --number-of-languages 10
+```
+
+### Why is the ASCII art different/missing?
+
+Onefetch chooses ASCII art based on the dominant language. To display a specific language's art:
+
+```sh
+onefetch --ascii-language rust
+```
+
+### How do I customize the output?
+
+Common customizations:
+
+```sh
+# Hide specific fields
+onefetch --disabled-fields version created
+
+# Change text colors
+onefetch --text-colors 9 10 11 12 13 14
+
+# Use a custom image instead of ASCII art
+onefetch --image /path/to/image.png
+
+# Output as JSON
+onefetch --output json
+```
 
 ## Contributing
 
