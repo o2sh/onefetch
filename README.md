@@ -21,8 +21,8 @@
 
 Onefetch is a command-line Git information tool that displays project information and code statistics for a local Git repository directly in your terminal. The tool works completely offline with a focus on performance and customizability.
 
-|||
-|---|---|
+|                                          |                                          |
+| ---------------------------------------- | ---------------------------------------- |
 | ![Screenshot 1](assets/screenshot-1.png) | ![Screenshot 2](assets/screenshot-2.png) |
 
 ## Installation
@@ -32,31 +32,31 @@ Onefetch is available on Linux, macOS, and Windows platforms. Binaries for Linux
 ### Linux
 
 - Ubuntu
-  
+
   ```
   wget https://github.com/o2sh/onefetch/releases/latest/download/onefetch_amd64.deb && sudo dpkg -i ./onefetch_amd64.deb && rm onefetch_amd64.deb
   ```
 
 - Arch Linux
-  
+
   ```
   pacman -S onefetch
   ```
 
 - openSUSE
-  
+
   ```
   zypper install onefetch
   ```
 
 ### macOS
-  
+
 ```
 brew install onefetch
 ```
 
 ### Windows
-  
+
 ```
 winget install onefetch
 ```
@@ -77,6 +77,22 @@ onefetch
 ## Customization
 
 Onefetch can be customized via [command-line arguments](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
+
+## Frequently Asked Questions
+
+### Why isn't my language detected?
+
+By default, onefetch only displays `programming` and `markup` languages. Languages classified as `prose` (like Org mode, Markdown, or Text) or `data` (like JSON, YAML, or TOML) are hidden unless you include them with `--type`.
+
+```
+onefetch --type programming markup prose data
+```
+
+### Why do duplicate authors appear?
+
+Onefetch reads authors from the Git history. If the same person committed with different names or emails, they may appear more than once.
+
+To merge those entries, add a [`.mailmap`](https://git-scm.com/docs/gitmailmap) file to the repository.
 
 ## Contributing
 
