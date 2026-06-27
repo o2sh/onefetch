@@ -53,7 +53,7 @@ fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
         number_of_dependencies: m.dependencies.len(),
         name: Some(package.name.clone()),
         description,
-        version: Some(package.version().into()),
+        version: Some(package.version().to_string()),
         license: package.license().map(Into::into),
     })
 }
