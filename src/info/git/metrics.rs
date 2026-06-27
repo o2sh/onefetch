@@ -26,7 +26,7 @@ impl GitMetrics {
 
         // This could happen if a branch pointed to non-commit object, so no traversal actually happens.
         let (time_of_first_commit, time_of_most_recent_commit) = time_of_first_commit
-            .and_then(|a| time_of_most_recent_commit.map(|b| (a, b)))
+            .zip(time_of_most_recent_commit)
             .unwrap_or_default();
 
         Self {
