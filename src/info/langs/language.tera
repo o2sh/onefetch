@@ -66,7 +66,7 @@ impl Language {
     pub fn get_ascii_art(&self) -> &'static str {
         match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => "{{ attrs.ascii | addslashes }}",
+                Language::{{ language }} => r#"{{ attrs.ascii }}"#,
             {% endfor %}
         }
     }
