@@ -1,11 +1,10 @@
 use regex::Regex;
-use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::fs::{self, File};
 use std::path::Path;
 use std::sync::LazyLock;
-use tera::{Context, Tera};
+use tera::{Context, Kwargs, State, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(windows)]
@@ -25,7 +24,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let rust_code = tera.render_str(
         &std::fs::read_to_string("src/info/langs/language.tera")?,
-        &Context::from_value(serde_json::json!({ "languages": lang_data, }))?,
+        &Context::from_serialize(&serde_json::json!({ "languages": lang_data, }))?,
+        false,
     )?;
     fs::write(output_path, rust_code)?;
 
@@ -33,40 +33,32 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 /// Strips out `{n}` from the given string.
-fn strip_color_tokens_filter(
-    value: &tera::Value,
-    _args: &HashMap<String, tera::Value>,
-) -> tera::Result<tera::Value> {
+fn strip_color_tokens_filter(value: &str, _args: Kwargs, _state: &State) -> String {
     static COLOR_INDEX_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\{\d+\}").unwrap());
-    let tera::Value::String(s) = value else {
-        return Err(tera::Error::msg("expected string"));
-    };
-    Ok(tera::Value::String(
-        COLOR_INDEX_REGEX.replace_all(s, "").to_string(),
-    ))
+    COLOR_INDEX_REGEX.replace_all(value, "").to_string()
 }
 
 fn hex_to_rgb_filter(
-    value: &tera::Value,
-    _args: &HashMap<String, tera::Value>,
-) -> tera::Result<tera::Value> {
-    let tera::Value::String(hex_string) = value else {
-        return Err(tera::Error::msg("expected string"));
-    };
+    hex_string: &str,
+    _args: Kwargs,
+    _state: &State,
+) -> tera::TeraResult<tera::Value> {
     let Some(hex_string) = hex_string.strip_prefix('#') else {
-        return Err(tera::Error::msg("expected hex string starting with `#`"));
+        return Err(tera::Error::message(
+            "expected hex string starting with `#`",
+        ));
     };
     if hex_string.len() != 6 {
-        return Err(tera::Error::msg("expected a 6 digit hex string"));
+        return Err(tera::Error::message("expected a 6 digit hex string"));
     }
     let Ok(channel_bytes) = u32::from_str_radix(hex_string, 16) else {
-        return Err(tera::Error::msg("expected a valid hex string"));
+        return Err(tera::Error::message("expected a valid hex string"));
     };
     let r = (channel_bytes >> 16) & 0xFF;
     let g = (channel_bytes >> 8) & 0xFF;
     let b = channel_bytes & 0xFF;
 
-    Ok(serde_json::json!({
+    tera::Value::try_from_serializable(&serde_json::json!({
         "r": r,
         "g": g,
         "b": b,
