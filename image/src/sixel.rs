@@ -20,7 +20,7 @@ impl SixelBackend {
         let stdin = std::io::stdin();
         // save terminal attributes and disable canonical input processing mode
         let old_attributes = {
-            let old = tcgetattr(&stdin).context("Failed to recieve terminal attibutes")?;
+            let old = tcgetattr(&stdin).context("Failed to receive terminal attributes")?;
 
             let mut new = old.clone();
             new.local_modes &= !LocalModes::ICANON;
