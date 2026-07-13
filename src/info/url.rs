@@ -1,7 +1,7 @@
 use crate::info::utils::info_field::InfoField;
 use anyhow::Result;
 use gix::Repository;
-use regex::Regex;
+use regex::regex;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -44,13 +44,15 @@ fn format_url(url: &str, hide_token: bool, http_url: bool) -> String {
 }
 
 fn remove_token_from_url(url: &str) -> String {
-    let pattern = Regex::new(r"(https?://)([^@]+@)").unwrap();
-    pattern.replace(url, "$1").to_string()
+    regex!(r"(https?://)([^@]+@)")
+        .replace(url, "$1")
+        .to_string()
 }
 
 fn create_http_url_from_ssh(url: &str) -> String {
-    let pattern = Regex::new(r"([^@]+)@([^:]+):(.*)").unwrap();
-    pattern.replace(url, "https://${2}/${3}").to_string()
+    regex!(r"([^@]+)@([^:]+):(.*)")
+        .replace(url, "https://${2}/${3}")
+        .to_string()
 }
 
 #[typetag::serialize]
