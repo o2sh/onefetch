@@ -1,9 +1,8 @@
-use regex::Regex;
+use regex::regex;
 use std::env;
 use std::error::Error;
 use std::fs::{self, File};
 use std::path::Path;
-use std::sync::LazyLock;
 use tera::{Context, Kwargs, State, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -34,8 +33,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 /// Strips out `{n}` from the given string.
 fn strip_color_tokens_filter(value: &str, _args: Kwargs, _state: &State) -> String {
-    static COLOR_INDEX_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\{\d+\}").unwrap());
-    COLOR_INDEX_REGEX.replace_all(value, "").to_string()
+    regex!(r"\{\d+\}").replace_all(value, "").to_string()
 }
 
 fn hex_to_rgb_filter(
