@@ -30,7 +30,8 @@
       "matchManagers": ["npm"],
       "matchFileNames": ["docs/web/**"],
       "schedule": ["before 4am on the first day of the month"],
-      "groupName": "site"
+      "groupName": "site",
+      "rangeStrategy": "bump"
     }
   ]
 }
