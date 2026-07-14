@@ -1,5 +1,6 @@
 {
   "extends": ["config:recommended"],
+  "dependencyDashboard": false,
   "enabledManagers": ["cargo", "github-actions", "npm"],
   "packageRules": [
     {
