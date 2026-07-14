@@ -4,7 +4,8 @@
   "packageRules": [
     {
       "matchManagers": ["cargo"],
-      "schedule": ["before 4am on Monday"]
+      "schedule": ["before 4am on Monday"],
+      "rangeStrategy": "bump"
     },
     {
       "matchManagers": ["cargo"],
