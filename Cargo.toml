@@ -52,7 +52,7 @@ strum = { version = "0.28.0", features = ["derive"] }
 time = { version = "0.3.47", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "14.0.0"
-typetag = "0.2.21"
+typetag = "0.2.22"
 
 [dev-dependencies]
 criterion = "0.8.2"
