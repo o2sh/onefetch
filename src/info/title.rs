@@ -57,9 +57,9 @@ impl std::fmt::Display for Title {
                     (
                         format!(
                             "{} {} {}",
-                            &self.git_username.style(title_style),
+                            self.git_username.style(title_style),
                             "~".style(tilde_style),
-                            &self.git_version.style(title_style)
+                            self.git_version.style(title_style)
                         ),
                         git_info_length + 3,
                     )
@@ -67,8 +67,8 @@ impl std::fmt::Display for Title {
                     (
                         format!(
                             "{}{}",
-                            &self.git_username.style(title_style),
-                            &self.git_version.style(title_style)
+                            self.git_username.style(title_style),
+                            self.git_version.style(title_style)
                         ),
                         git_info_length,
                     )

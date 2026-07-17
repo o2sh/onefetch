@@ -47,7 +47,7 @@ fn bytes_to_human_readable(bytes: u64) -> String {
 impl std::fmt::Display for SizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.file_count {
-            0 => write!(f, "{}", &self.repo_size),
+            0 => write!(f, "{}", self.repo_size),
             1 => write!(f, "{} (1 file)", self.repo_size),
             _ => {
                 write!(
