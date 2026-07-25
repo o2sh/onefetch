@@ -1,2 +1,2 @@
-docs/web/** linguist-documentation
+site/** linguist-documentation
 **.snap linguist-language=Plain-Text
