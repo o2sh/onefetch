@@ -29,7 +29,7 @@
     },
     {
       "matchManagers": ["npm"],
-      "matchFileNames": ["docs/web/**"],
+      "matchFileNames": ["site/**"],
       "schedule": ["before 4am on the first day of the month"],
       "groupName": "site",
       "rangeStrategy": "bump"

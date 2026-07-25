@@ -1,13 +1,15 @@
-name: Web UI CI
+name: Site CI
 on:
   push:
     branches: ["main"]
     paths:
-      - "docs/web/**"
+      - "site/**"
+      - "languages.yaml"
   pull_request:
     branches: [main]
     paths:
-      - "docs/web/**"
+      - "site/**"
+      - "languages.yaml"
 
 jobs:
   check:
@@ -15,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: docs/web
+        working-directory: site
 
     steps:
       - name: Checkout
