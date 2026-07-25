@@ -5,13 +5,13 @@ on:
     paths-ignore:
       - "docs/**"
       - "**.md"
-      - "docs/web/**"
+      - "site/**"
   pull_request:
     branches: [main]
     paths-ignore:
       - "docs/**"
       - "**.md"
-      - "docs/web/**"
+      - "site/**"
 env:
   CARGO_TERM_COLOR: always
 

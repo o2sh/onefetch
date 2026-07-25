@@ -1,6 +1,6 @@
 <script lang="ts">
   import AsciiPreview from './AsciiPreview.svelte';
-  import data from '../../../../languages.yaml';
+  import data from '../../../languages.yaml';
   import type { Languages, Language } from '../../../languages.yaml';
   import { onMount } from 'svelte';
   import { writable, derived } from 'svelte/store';
