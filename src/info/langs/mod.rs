@@ -13,6 +13,10 @@ pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
 /// Returns a vector of tuples containing all the languages detected inside the repository.
 /// Each tuple is composed of the language and its corresponding loc (lines of code).
 /// The vector is sorted by loc in descending order.
+///
+/// If the given `language_types` filter doesn't match any language in the repository,
+/// this falls back to counting every language type instead of reporting nothing.
+/// See <https://github.com/o2sh/onefetch/issues/1705>.
 pub fn get_loc_by_language_sorted(
     dir: &Path,
     globs_to_exclude: &[String],
@@ -20,8 +24,19 @@ pub fn get_loc_by_language_sorted(
     include_hidden: bool,
 ) -> Option<Vec<(Language, usize)>> {
     let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
-    let loc_by_language_opt = get_loc_by_language(&locs);
+    let loc_by_language_opt = get_loc_by_language(&locs).or_else(|| {
+        if all_types_selected(language_types) {
+            return None;
+        }
+        let all_types: Vec<LanguageType> = LanguageType::iter().collect();
+        let locs = get_locs(dir, globs_to_exclude, &all_types, include_hidden);
+        get_loc_by_language(&locs)
+    });
     loc_by_language_opt.map(sort_by_loc)
+}
+
+fn all_types_selected(language_types: &[LanguageType]) -> bool {
+    LanguageType::iter().all(|t| language_types.contains(&t))
 }
 
 fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
@@ -199,5 +214,16 @@ mod test {
     fn test_get_total_loc() {
         let loc_by_language = [(Language::JavaScript, 100), (Language::Markdown, 300)];
         assert_eq!(get_total_loc(&loc_by_language), 400);
+    }
+
+    #[test]
+    fn all_types_selected_is_true_for_every_language_type() {
+        let all_types: Vec<LanguageType> = LanguageType::iter().collect();
+        assert!(all_types_selected(&all_types));
+    }
+
+    #[test]
+    fn all_types_selected_is_false_for_a_partial_selection() {
+        assert!(!all_types_selected(&[LanguageType::Programming]));
     }
 }
