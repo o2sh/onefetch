@@ -1,5 +1,7 @@
 {
   "extends": ["config:recommended"],
+  "commitMessagePrefix": "chore(deps):",
+  "labels": ["dependencies"],
   "dependencyDashboard": false,
   "enabledManagers": ["cargo", "github-actions", "npm"],
   "packageRules": [
