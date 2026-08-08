@@ -2,6 +2,18 @@ use crate::{info::utils::get_style, ui::text_colors::TextColors};
 use owo_colors::OwoColorize;
 use std::fmt;
 
+/// Replaces control characters (which can include terminal escape sequences)
+/// with the Unicode replacement character, since some field values (a
+/// project manifest's version, name, description, or license, for example)
+/// come from data with no character restrictions and shouldn't be trusted
+/// to display as-is. `\n` is preserved since some fields intentionally span
+/// multiple lines.
+fn sanitize_for_display(s: &str) -> String {
+    s.chars()
+        .map(|c| if c != '\n' && c.is_control() { '\u{FFFD}' } else { c })
+        .collect()
+}
+
 #[typetag::serialize]
 pub trait InfoField {
     fn value(&self) -> String;
@@ -46,8 +58,7 @@ pub trait InfoField {
             return None;
         }
         let style = get_style(false, text_colors.info);
-        let styled_lines: Vec<String> = self
-            .value()
+        let styled_lines: Vec<String> = sanitize_for_display(&self.value())
             .lines()
             .map(|line| format!("{}", line.style(style)))
             .collect();
