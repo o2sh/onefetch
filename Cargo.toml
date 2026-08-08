@@ -68,7 +68,7 @@ onefetch-image = { path = "image", version = "2.27.1" }
 onefetch-manifest = { path = "manifest", version = "2.27.1" }
 owo-colors = "4.3.0"
 regex = "1.13.0"
-serde = "1.0.228"
+serde = "1.0.229"
 serde_json = "1.0.150"
 serde_yaml = "0.9.34"
 strum = { version = "0.28.0", features = ["derive"] }
