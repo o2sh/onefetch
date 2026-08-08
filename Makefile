@@ -25,3 +25,7 @@ release-linux:
 	strip target/release/onefetch
 	mkdir -p release
 	tar -C ./target/release/ -czvf ./release/onefetch-linux.tar.gz ./onefetch
+
+release-deb:
+	mkdir -p release
+	cargo deb --no-build --output ./release/onefetch_amd64.deb

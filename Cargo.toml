@@ -22,6 +22,29 @@ name = "onefetch"
 homepage = "https://onefetch.dev"
 rust-version = "1.88.0"
 
+[package.metadata.deb]
+maintainer = "Ossama Hjaji <ossama-hjaji@live.fr>"
+copyright = "2018, Ossama Hjaji <ossama-hjaji@live.fr>"
+license-file = ["LICENSE.md", "4"]
+extended-description = """\
+A command-line Git information tool that displays project information \
+and code statistics for a local Git repository directly in your terminal."""
+depends = "$auto"
+section = "utils"
+priority = "optional"
+assets = [
+    [
+        "target/release/onefetch",
+        "usr/bin/",
+        "755",
+    ],
+    [
+        "docs/onefetch.1",
+        "usr/share/man/man1/onefetch.1",
+        "644",
+    ],
+]
+
 [dependencies]
 anyhow = "1.0.103"
 askalono = "0.5.0"
