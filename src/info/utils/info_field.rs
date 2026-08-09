@@ -131,4 +131,40 @@ mod test {
         info.write_styled(&mut buffer, false, &colors).unwrap();
         assert_eq!(buffer, "", "It should not write anything");
     }
+
+    #[test]
+    fn test_sanitize_for_display_strips_control_chars() {
+        // ESC ] 0 ; PWNED BEL, an OSC title-set sequence
+        let input = "1.0.0\u{1b}]0;PWNED\u{07}";
+        let sanitized = sanitize_for_display(input);
+        assert_eq!(sanitized, "1.0.0\u{FFFD}]0;PWNED\u{FFFD}");
+        assert!(!sanitized.contains('\u{1b}'));
+        assert!(!sanitized.contains('\u{07}'));
+    }
+
+    #[test]
+    fn test_sanitize_for_display_preserves_newlines() {
+        let input = "line one\nline two";
+        assert_eq!(sanitize_for_display(input), input);
+    }
+
+    #[test]
+    fn test_sanitize_for_display_leaves_normal_text_untouched() {
+        let input = "some normal description, with punctuation! 42";
+        assert_eq!(sanitize_for_display(input), input);
+    }
+
+    #[test]
+    fn test_style_value_strips_control_chars_from_field() {
+        // style_value wraps the value in its own SGR escape codes, so this
+        // checks for the injected control bytes specifically, not for the
+        // absence of ESC entirely. The harmless leftover text ("]0;PWNED")
+        // is expected to remain once the ESC/BEL bytes around it are gone.
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let info = InfoFieldImpl("1.0.0\u{1b}]0;PWNED\u{07}");
+        let styled = info.style_value(&colors).unwrap();
+        assert!(!styled.contains('\u{07}'));
+        assert!(styled.contains("1.0.0"));
+        assert_eq!(styled.matches('\u{FFFD}').count(), 2);
+    }
 }
