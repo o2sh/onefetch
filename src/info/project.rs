@@ -40,7 +40,7 @@ fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> 
     if repo_url.is_empty() {
         return Ok(String::default());
     }
-    let url = gix::url::parse(repo_url.into())?;
+    let url = gix::url::parse(repo_url)?;
     let path = gix::path::from_bstr(url.path.as_bstr());
     let repo_name = path
         .with_extension("")
