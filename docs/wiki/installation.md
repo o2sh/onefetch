@@ -1,6 +1,6 @@
 This wiki page will guide you through getting onefetch working on your system.
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/onefetch.svg)](https://repology.org/project/onefetch/versions)
+[![Packaging status](https://repology.org/badge/vertical-allrepos/onefetch.svg?columns=2)](https://repology.org/project/onefetch/versions)
 
 # Table of Contents
 
