@@ -16,4 +16,4 @@ strum = { version = "0.28.0", features = ["derive"] }
 toml = "1.0.0"
 
 [dev-dependencies]
-rstest = "0.26.1"
+rstest.workspace = true
