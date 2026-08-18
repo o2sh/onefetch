@@ -21,7 +21,6 @@ pub struct Manifest {
 pub enum ManifestType {
     Npm,
     Cargo,
-    #[strum(to_string = "pyproject.toml")]
     PyProject,
 }
 
@@ -108,7 +107,16 @@ struct PyProjectTable {
 }
 
 /// PEP 621 allows `license` to be either an SPDX expression string (PEP 639) or
-/// a table pointing at the license text or a file.
+/// a table with a `text` or `file` key.
+///
+/// - `Spdx` is the PEP 639 form, e.g. `license = "MIT"`.
+/// - `Table.text` is the older PEP 621 form, e.g. `license = { text = "MIT" }`.
+///   Its value is free-form: it is conventionally an SPDX identifier, but the
+///   spec permits any string (for example the full text of a non-standard
+///   license). We surface it verbatim and let the caller decide how to render
+///   it, rather than trying to validate it as SPDX.
+/// - `license = { file = "LICENSE" }` points at a file and carries no
+///   identifier, so it deserializes to `text: None` (the `file` key is ignored).
 #[derive(Deserialize)]
 #[serde(untagged)]
 enum PyProjectLicense {
@@ -127,8 +135,11 @@ fn parse_pyproject_manifest(path: &Path) -> Result<Manifest> {
         .project
         .context("pyproject.toml has no [project] table")?;
 
-    // A `license = { file = "LICENSE" }` table carries no identifier, so leave it
-    // unset and let onefetch fall back to detecting the license from the repo.
+    // The SPDX string and a `{ text = "..." }` table both carry a license
+    // identifier (usually SPDX, though `text` may be any free-form string), so
+    // use them directly. A `{ file = "LICENSE" }` table has no identifier, so
+    // leave it unset and let onefetch fall back to detecting the license from
+    // the repo.
     let license = project.license.and_then(|license| match license {
         PyProjectLicense::Spdx(spdx) => Some(spdx),
         PyProjectLicense::Table { text } => text,
@@ -156,24 +167,21 @@ fn file_name_to_manifest_type(filename: &str) -> Option<ManifestType> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
 
-    #[test]
-    fn parses_pep621_license_forms() {
-        // SPDX expression string (PEP 639)
-        let spdx: PyProjectTable = toml::from_str("license = \"MIT\"").unwrap();
-        assert!(matches!(spdx.license, Some(PyProjectLicense::Spdx(s)) if s == "MIT"));
-
-        // `{ text = "..." }` table (older PEP 621 form)
-        let text: PyProjectTable = toml::from_str("license = { text = \"Apache-2.0\" }").unwrap();
-        assert!(
-            matches!(text.license, Some(PyProjectLicense::Table { text: Some(t) }) if t == "Apache-2.0")
-        );
-
-        // `{ file = "LICENSE" }` table carries no identifier
-        let file: PyProjectTable = toml::from_str("license = { file = \"LICENSE\" }").unwrap();
-        assert!(matches!(
-            file.license,
-            Some(PyProjectLicense::Table { text: None })
-        ));
+    #[rstest]
+    // SPDX expression string (PEP 639)
+    #[case("license = \"MIT\"", Some("MIT"))]
+    // `{ text = "..." }` table (older PEP 621 form)
+    #[case("license = { text = \"Apache-2.0\" }", Some("Apache-2.0"))]
+    // `{ file = "LICENSE" }` table carries no identifier
+    #[case("license = { file = \"LICENSE\" }", None)]
+    fn parses_pep621_license_forms(#[case] source: &str, #[case] expected: Option<&str>) {
+        let table: PyProjectTable = toml::from_str(source).unwrap();
+        let license = table.license.and_then(|license| match license {
+            PyProjectLicense::Spdx(spdx) => Some(spdx),
+            PyProjectLicense::Table { text } => text,
+        });
+        assert_eq!(license.as_deref(), expected);
     }
 }
