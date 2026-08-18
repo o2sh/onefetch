@@ -170,12 +170,9 @@ mod tests {
     use rstest::rstest;
 
     #[rstest]
-    // SPDX expression string (PEP 639)
-    #[case("license = \"MIT\"", Some("MIT"))]
-    // `{ text = "..." }` table (older PEP 621 form)
-    #[case("license = { text = \"Apache-2.0\" }", Some("Apache-2.0"))]
-    // `{ file = "LICENSE" }` table carries no identifier
-    #[case("license = { file = \"LICENSE\" }", None)]
+    #[case::pep_639("license = \"MIT\"", Some("MIT"))]
+    #[case::pep_621_text("license = { text = \"Apache-2.0\" }", Some("Apache-2.0"))]
+    #[case::pep_621_file("license = { file = \"LICENSE\" }", None)]
     fn parses_pep621_license_forms(#[case] source: &str, #[case] expected: Option<&str>) {
         let table: PyProjectTable = toml::from_str(source).unwrap();
         let license = table.license.and_then(|license| match license {
