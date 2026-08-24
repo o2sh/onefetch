@@ -112,6 +112,11 @@ impl std::fmt::Display for Info {
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let discovered_repo = DiscoveredRepository::discover(&cli_options.input)?;
+    if discovered_repo.is_jujutsu() {
+        eprintln!(
+            "Jujutsu support is experimental: pending changes and size are not yet supported"
+        );
+    }
     let repo = discovered_repo.git();
     let repo_path = discovered_repo.work_dir().to_owned();
     // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
@@ -240,6 +245,7 @@ impl InfoBuilder {
     }
 
     fn pending(mut self, repo: &Repository, is_jujutsu: bool) -> Result<Self> {
+        // Jujutsu records working-copy changes in @, and its bare Git store has no worktree status.
         if !is_jujutsu && !self.disabled_fields.contains(&InfoType::Pending) {
             let pending = PendingInfo::new(repo)?;
             self.info_fields.push(Box::new(pending));

@@ -56,14 +56,15 @@ impl Repository {
     }
 
     pub fn head_id(&self) -> Result<ObjectId> {
-        match self.jujutsu_head {
-            Some(head_id) => Ok(head_id),
-            None => Ok(self
-                .git
-                .head_id()
-                .context("Failed to retrieve HEAD ID")?
-                .detach()),
-        }
+        self.jujutsu_head.map_or_else(
+            || {
+                self.git
+                    .head_id()
+                    .context("Failed to retrieve HEAD ID")
+                    .map(|head_id| head_id.detach())
+            },
+            Ok,
+        )
     }
 
     pub fn jujutsu_head(&self) -> Option<ObjectId> {
@@ -79,15 +80,11 @@ fn find_jujutsu_root(input: &Path) -> Result<Option<PathBuf>> {
     let input = input
         .canonicalize()
         .with_context(|| format!("Failed to resolve repository path '{}'.", input.display()))?;
-    let start = if input.is_dir() {
-        input.as_path()
-    } else {
-        input
-            .parent()
-            .context("The repository path has no parent directory")?
-    };
+    if !input.is_dir() {
+        bail!("Repository path '{}' is not a directory", input.display());
+    }
 
-    Ok(start
+    Ok(input
         .ancestors()
         .find(|path| path.join(".jj").is_dir())
         .map(Path::to_owned))
@@ -124,10 +121,13 @@ mod tests {
         let fixture =
             std::env::temp_dir().join(format!("onefetch-jj-root-test-{}", std::process::id()));
         let nested = fixture.join("a/b");
+        let file = fixture.join("file");
         std::fs::create_dir_all(fixture.join(".jj"))?;
         std::fs::create_dir_all(&nested)?;
+        std::fs::write(&file, b"")?;
 
         assert_eq!(find_jujutsu_root(&nested)?, Some(fixture.canonicalize()?));
+        assert!(find_jujutsu_root(&file).is_err());
 
         std::fs::remove_dir_all(fixture)?;
         Ok(())
