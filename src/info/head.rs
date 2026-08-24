@@ -1,6 +1,7 @@
 use crate::info::utils::info_field::InfoField;
 use anyhow::{Context, Result};
 use gix::Repository;
+use gix::prelude::ObjectIdExt;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -45,6 +46,12 @@ impl HeadInfo {
     pub fn new(repo: &Repository) -> Result<Self> {
         let head_refs = get_head_refs(repo)?;
         Ok(Self { head_refs })
+    }
+
+    pub fn from_id(repo: &Repository, head_id: gix::ObjectId) -> Result<Self> {
+        Ok(Self {
+            head_refs: HeadRefs::new(head_id.attach(repo).shorten()?.to_string(), Vec::new()),
+        })
     }
 }
 

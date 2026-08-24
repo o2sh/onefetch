@@ -21,6 +21,8 @@ pub mod sig;
 
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
+    head_id: ObjectId,
+    skip_head: bool,
     no_bots: Option<MyRegex>,
     churn_pool_size: Option<usize>,
     no_merges: bool,
@@ -36,7 +38,7 @@ pub fn traverse_commit_graph(
     let can_use_commit_graph = commit_graph.is_some();
 
     let commit_iter = repo
-        .head_commit()?
+        .find_commit(head_id)?
         .id()
         .ancestors()
         .sorting(Sorting::ByCommitTime(CommitTimeOrder::NewestFirst))
@@ -59,6 +61,10 @@ pub fn traverse_commit_graph(
     for commit in commit_iter {
         let commit = commit?;
         {
+            if skip_head && commit.id == head_id {
+                continue;
+            }
+
             if no_merges && commit.parent_ids.len() > 1 {
                 continue;
             }
