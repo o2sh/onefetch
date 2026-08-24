@@ -127,7 +127,7 @@ mod tests {
         std::fs::create_dir_all(fixture.join(".jj"))?;
         std::fs::create_dir_all(&nested)?;
 
-        assert_eq!(find_jujutsu_root(&nested)?, Some(fixture.clone()));
+        assert_eq!(find_jujutsu_root(&nested)?, Some(fixture.canonicalize()?));
 
         std::fs::remove_dir_all(fixture)?;
         Ok(())
