@@ -2465,7 +2465,7 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "strum",
- "tera 2.1.1",
+ "tera 2.2.0",
  "time",
  "time-humanize",
  "tokei",
@@ -3473,9 +3473,9 @@ dependencies = [
 
 [[package]]
 name = "tera"
-version = "2.1.1"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "638c0720e7c1f61722366256d369ea46139634e77738735d6d9bb287bbbad35f"
+checksum = "a3e9db9fa0629187ae0a53f3278a99d35f74647f0259c633c9504af85bd0d506"
 dependencies = [
  "serde",
 ]
