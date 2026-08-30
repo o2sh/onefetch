@@ -4,9 +4,9 @@ Onefetch is installed, then what?
 
 ```sh
 > onefetch /path/of/your/repo
- ```
+```
 
- Or
+Or
 
 ```sh
 > cd /path/of/your/repo
@@ -20,6 +20,13 @@ By [**@spenserblack**](https://github.com/spenserblack)
 ```sh
 # Runs `onefetch -a Assembly`, `onefetch -a C`, etc.
 onefetch -l | tr "[:upper:] " "[:lower:]-" | while read line; do echo "$line"; onefetch -a $line; done;
+```
+
+By [**@o2sh**](https://github.com/o2sh)
+
+```sh
+# Runs onefetch on every Git repository in current directory
+for d in */; do [ -d "$d/.git" ] && { echo "$d"; onefetch "$d"; }; done
 ```
 
 ### Automatic repo detection and running
@@ -37,7 +44,7 @@ A script to put in your `.bashrc` - or `.zshrc` - to run onefetch whenever you o
 last_repository=
 check_directory_for_new_repository() {
  current_repository=$(git rev-parse --show-toplevel 2> /dev/null)
- 
+
  if [ "$current_repository" ] && \
     [ "$current_repository" != "$last_repository" ]; then
   onefetch
@@ -140,7 +147,7 @@ function Check-DirectoryForNewRepository {
 }
 
 function Set-Location {
-    Microsoft.PowerShell.Management\Set-Location @args  
+    Microsoft.PowerShell.Management\Set-Location @args
     Check-DirectoryForNewRepository
 }
 
