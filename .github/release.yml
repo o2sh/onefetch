@@ -9,6 +9,9 @@ changelog:
     - title: Bug Fixes
       labels:
         - fix
+    - title: CI/CD
+      labels:
+        - ci
     - title: Chores
       labels:
         - chore
