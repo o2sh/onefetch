@@ -52,7 +52,7 @@ impl SixelBackend {
             buf.push(byte[0]);
             if buf.starts_with(&[0x1B, b'[', b'?']) && buf.ends_with(b"c") {
                 for attribute in buf[3..(buf.len() - 1)].split(|x| *x == b';') {
-                    if attribute == [b'4'] {
+                    if attribute == *b"4" {
                         tcsetattr(stdin, OptionalActions::Now, &old_attributes)
                             .context("Failed to update terminal attributes")?;
                         return Ok(true);
