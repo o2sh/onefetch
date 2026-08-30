@@ -12,6 +12,7 @@ changelog:
     - title: CI/CD
       labels:
         - ci
+        - cd
     - title: Chores
       labels:
         - chore
