@@ -5,13 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2.27.1 (2025-3-19)
+## 2.28.1 (2026-3-19)
+
+### CI/CD
+
+- Fix CD pipeline by @o2sh
+
+## 2.28.0 (2026-3-19)
+
+### New Features
+
+- add language support for Just by @o2sh in b0b974263e7bda087c85e9d20d446a5a3d7ccdd2
+- add language support for Mojo by @ruvasqm in https://github.com/o2sh/onefetch/pull/1500
+- add language support for Batch file by @spenserblack in https://github.com/o2sh/onefetch/pull/1745
+- Add language support for Slang by @arealsquirrel in https://github.com/o2sh/onefetch/pull/1759
+
+### Bug Fixes
+
+- Prevent churn calculation from returning an error on partial clones by @lawrence3699 in https://github.com/o2sh/onefetch/pull/1736
+
+### CI/CD
+
+- Use renovate for dependency updates by @o2sh in https://github.com/o2sh/onefetch/pull/1793
+- Automate debian package release in CD by @o2sh in https://github.com/o2sh/onefetch/pull/1831
+
+### Chores
+
+- add FAQ to README by @o2sh in https://github.com/o2sh/onefetch/pull/1769
+- Fix typos in comments and documentation by @maxtaran2010 in https://github.com/o2sh/onefetch/pull/1791
+
+## 2.27.1 (2026-3-19)
 
 ### Bug Fixes
 
 - Fix CD pipeline by @o2sh in 497d4c011ede6acba4b3ca4c1e62f9aecaf20528
 
-## 2.27.0 (2025-3-19)
+## 2.27.0 (2026-3-19)
 
 ### New Features
 
