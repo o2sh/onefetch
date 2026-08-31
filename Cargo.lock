@@ -2498,9 +2498,11 @@ version = "2.28.1"
 dependencies = [
  "anyhow",
  "cargo_toml",
+ "rstest",
  "serde",
  "serde_json",
  "strum",
+ "toml 1.1.2+spec-1.1.0",
 ]
 
 [[package]]
