@@ -132,6 +132,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )
+    .map_err(reftable_head_hint)
     .context("Failed to traverse Git commit history")?;
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(
@@ -469,4 +470,52 @@ pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
         .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
+}
+
+/// When a repository uses git's `reftable` backend, `HEAD` is intentionally pointed at the
+/// invalid sentinel `refs/heads/.invalid` to make older clients fail early. `gitoxide` cannot
+/// yet read the `reftable` format, so any `HEAD` resolution fails with an opaque error. Detect
+/// that specific case and turn it into an actionable suggestion.
+///
+/// `refs/heads/.invalid` is a sentinel hard-coded by git itself, so matching on it is stable
+/// across `gitoxide` versions.
+fn reftable_head_hint(err: anyhow::Error) -> anyhow::Error {
+    if err
+        .chain()
+        .any(|cause| cause.to_string().contains("refs/heads/.invalid"))
+    {
+        return err.context(
+            "This repository uses git's reftable backend, which onefetch cannot yet read. \
+             Convert it with `git refs migrate --ref-format=files`.",
+        );
+    }
+    err
+}
+
+#[cfg(test)]
+mod tests {
+    use super::reftable_head_hint;
+    use anyhow::anyhow;
+
+    #[test]
+    fn reftable_sentinel_error_gets_migration_hint() {
+        // Mimics the gitoxide error chain seen on reftable repos (issue #1743).
+        let err = anyhow!("Reference name cannot start with a dot").context(
+            "The path \"refs/heads/.invalid\" to a symbolic reference within a ref file is invalid",
+        );
+        let hinted = reftable_head_hint(err);
+        assert!(
+            hinted
+                .to_string()
+                .contains("git refs migrate --ref-format=files"),
+            "expected reftable migration hint, got: {hinted:#}"
+        );
+    }
+
+    #[test]
+    fn unrelated_error_is_left_untouched() {
+        let err = anyhow!("some other traversal failure");
+        let out = reftable_head_hint(err);
+        assert_eq!(out.to_string(), "some other traversal failure");
+    }
 }
