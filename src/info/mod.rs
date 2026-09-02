@@ -132,6 +132,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )
+    .map_err(reftable_head_hint)
     .context("Failed to traverse Git commit history")?;
     let manifest = get_manifest(&repo_path)?;
     let repo_url = get_repo_url(
@@ -469,4 +470,66 @@ pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
         .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
+}
+
+/// When a repository uses git's `reftable` backend, `HEAD` is intentionally pointed at the
+/// sentinel `refs/heads/.invalid` to make older clients fail early. `gitoxide` cannot yet read
+/// the `reftable` format, so resolving `HEAD` fails when it decodes that symbolic reference and
+/// its target name (`.invalid`) fails ref-name validation. Detect that specific typed error and
+/// turn it into an actionable suggestion.
+///
+/// We match on `gix`'s [`decode::Error::RefnameValidation`] rather than the error text, so this
+/// stays correct regardless of how the messages are worded.
+fn reftable_head_hint(err: anyhow::Error) -> anyhow::Error {
+    use gix::refs::file::loose::reference::decode;
+
+    let is_invalid_symref = err.chain().any(|cause| {
+        matches!(
+            cause.downcast_ref::<decode::Error>(),
+            Some(decode::Error::RefnameValidation { .. })
+        )
+    });
+    if is_invalid_symref {
+        return err.context(
+            "This repository uses git's reftable backend, which onefetch cannot yet read. \
+             Convert it with `git refs migrate --ref-format=files`.",
+        );
+    }
+    err
+}
+
+#[cfg(test)]
+mod tests {
+    use super::reftable_head_hint;
+    use anyhow::anyhow;
+    use gix::bstr::ByteSlice;
+    use gix::refs::file::loose::reference::decode;
+
+    #[test]
+    fn reftable_sentinel_error_gets_migration_hint() {
+        // Reproduce the exact typed error gitoxide raises on a reftable repo (issue #1743):
+        // decoding `HEAD` fails because its target `refs/heads/.invalid` is not a valid ref name.
+        let source = gix::validate::reference::name(b"refs/heads/.invalid".as_bstr()).unwrap_err();
+        let decode_err = decode::Error::RefnameValidation {
+            source,
+            path: "refs/heads/.invalid".into(),
+        };
+        let err = anyhow::Error::new(decode_err)
+            .context("The reference at \"HEAD\" could not be instantiated");
+
+        let hinted = reftable_head_hint(err);
+        assert!(
+            hinted
+                .to_string()
+                .contains("git refs migrate --ref-format=files"),
+            "expected reftable migration hint, got: {hinted:#}"
+        );
+    }
+
+    #[test]
+    fn unrelated_error_is_left_untouched() {
+        let err = anyhow!("some other traversal failure");
+        let out = reftable_head_hint(err);
+        assert_eq!(out.to_string(), "some other traversal failure");
+    }
 }
