@@ -473,17 +473,23 @@ pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
 }
 
 /// When a repository uses git's `reftable` backend, `HEAD` is intentionally pointed at the
-/// invalid sentinel `refs/heads/.invalid` to make older clients fail early. `gitoxide` cannot
-/// yet read the `reftable` format, so any `HEAD` resolution fails with an opaque error. Detect
-/// that specific case and turn it into an actionable suggestion.
+/// sentinel `refs/heads/.invalid` to make older clients fail early. `gitoxide` cannot yet read
+/// the `reftable` format, so resolving `HEAD` fails when it decodes that symbolic reference and
+/// its target name (`.invalid`) fails ref-name validation. Detect that specific typed error and
+/// turn it into an actionable suggestion.
 ///
-/// `refs/heads/.invalid` is a sentinel hard-coded by git itself, so matching on it is stable
-/// across `gitoxide` versions.
+/// We match on `gix`'s [`decode::Error::RefnameValidation`] rather than the error text, so this
+/// stays correct regardless of how the messages are worded.
 fn reftable_head_hint(err: anyhow::Error) -> anyhow::Error {
-    if err
-        .chain()
-        .any(|cause| cause.to_string().contains("refs/heads/.invalid"))
-    {
+    use gix::refs::file::loose::reference::decode;
+
+    let is_invalid_symref = err.chain().any(|cause| {
+        matches!(
+            cause.downcast_ref::<decode::Error>(),
+            Some(decode::Error::RefnameValidation { .. })
+        )
+    });
+    if is_invalid_symref {
         return err.context(
             "This repository uses git's reftable backend, which onefetch cannot yet read. \
              Convert it with `git refs migrate --ref-format=files`.",
@@ -496,13 +502,21 @@ fn reftable_head_hint(err: anyhow::Error) -> anyhow::Error {
 mod tests {
     use super::reftable_head_hint;
     use anyhow::anyhow;
+    use gix::bstr::ByteSlice;
+    use gix::refs::file::loose::reference::decode;
 
     #[test]
     fn reftable_sentinel_error_gets_migration_hint() {
-        // Mimics the gitoxide error chain seen on reftable repos (issue #1743).
-        let err = anyhow!("Reference name cannot start with a dot").context(
-            "The path \"refs/heads/.invalid\" to a symbolic reference within a ref file is invalid",
-        );
+        // Reproduce the exact typed error gitoxide raises on a reftable repo (issue #1743):
+        // decoding `HEAD` fails because its target `refs/heads/.invalid` is not a valid ref name.
+        let source = gix::validate::reference::name(b"refs/heads/.invalid".as_bstr()).unwrap_err();
+        let decode_err = decode::Error::RefnameValidation {
+            source,
+            path: "refs/heads/.invalid".into(),
+        };
+        let err = anyhow::Error::new(decode_err)
+            .context("The reference at \"HEAD\" could not be instantiated");
+
         let hinted = reftable_head_hint(err);
         assert!(
             hinted
