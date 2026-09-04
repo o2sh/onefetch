@@ -2,6 +2,18 @@ use crate::{info::utils::get_style, ui::text_colors::TextColors};
 use owo_colors::OwoColorize;
 use std::fmt;
 
+/// Replaces control characters (which can include terminal escape sequences)
+/// with the Unicode replacement character, since some field values (a
+/// project manifest's version, name, description, or license, for example)
+/// come from data with no character restrictions and shouldn't be trusted
+/// to display as-is. `\n` is preserved since some fields intentionally span
+/// multiple lines.
+fn sanitize_for_display(s: &str) -> String {
+    s.chars()
+        .map(|c| if c != '\n' && c.is_control() { '\u{FFFD}' } else { c })
+        .collect()
+}
+
 #[typetag::serialize]
 pub trait InfoField {
     fn value(&self) -> String;
@@ -46,8 +58,7 @@ pub trait InfoField {
             return None;
         }
         let style = get_style(false, text_colors.info);
-        let styled_lines: Vec<String> = self
-            .value()
+        let styled_lines: Vec<String> = sanitize_for_display(&self.value())
             .lines()
             .map(|line| format!("{}", line.style(style)))
             .collect();
@@ -119,5 +130,41 @@ mod test {
         let mut buffer = String::new();
         info.write_styled(&mut buffer, false, &colors).unwrap();
         assert_eq!(buffer, "", "It should not write anything");
+    }
+
+    #[test]
+    fn test_sanitize_for_display_strips_control_chars() {
+        // ESC ] 0 ; PWNED BEL, an OSC title-set sequence
+        let input = "1.0.0\u{1b}]0;PWNED\u{07}";
+        let sanitized = sanitize_for_display(input);
+        assert_eq!(sanitized, "1.0.0\u{FFFD}]0;PWNED\u{FFFD}");
+        assert!(!sanitized.contains('\u{1b}'));
+        assert!(!sanitized.contains('\u{07}'));
+    }
+
+    #[test]
+    fn test_sanitize_for_display_preserves_newlines() {
+        let input = "line one\nline two";
+        assert_eq!(sanitize_for_display(input), input);
+    }
+
+    #[test]
+    fn test_sanitize_for_display_leaves_normal_text_untouched() {
+        let input = "some normal description, with punctuation! 42";
+        assert_eq!(sanitize_for_display(input), input);
+    }
+
+    #[test]
+    fn test_style_value_strips_control_chars_from_field() {
+        // style_value wraps the value in its own SGR escape codes, so this
+        // checks for the injected control bytes specifically, not for the
+        // absence of ESC entirely. The harmless leftover text ("]0;PWNED")
+        // is expected to remain once the ESC/BEL bytes around it are gone.
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let info = InfoFieldImpl("1.0.0\u{1b}]0;PWNED\u{07}");
+        let styled = info.style_value(&colors).unwrap();
+        assert!(!styled.contains('\u{07}'));
+        assert!(styled.contains("1.0.0"));
+        assert_eq!(styled.matches('\u{FFFD}').count(), 2);
     }
 }
