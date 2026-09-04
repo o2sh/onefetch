@@ -1,6 +1,7 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
+use onefetch::info::langs::language::Language;
 use onefetch::info::{build_info, get_work_dir};
 
 fn repo(name: &str) -> Result<Repository> {
@@ -114,5 +115,20 @@ fn test_repo_without_code() -> Result<()> {
         ..Default::default()
     };
     let _info = build_info(&config).expect("no error");
+    Ok(())
+}
+
+// https://github.com/o2sh/onefetch/issues/1705
+#[test]
+fn test_repo_with_only_prose_falls_back_to_all_language_types() -> Result<()> {
+    let repo = repo("make_repo_with_only_prose.sh")?;
+    let config: CliOptions = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let info = build_info(&config)?;
+    // The default `--type programming markup` matches nothing in this repo, so
+    // without the fallback there is no dominant language and no Languages field.
+    assert_eq!(info.dominant_language, Some(Language::Markdown));
     Ok(())
 }
