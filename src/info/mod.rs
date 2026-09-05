@@ -15,6 +15,7 @@ use self::license::LicenseInfo;
 use self::loc::LocInfo;
 use self::pending::PendingInfo;
 use self::project::ProjectInfo;
+use self::repository::Repository as DiscoveredRepository;
 use self::size::SizeInfo;
 use self::title::Title;
 use self::url::UrlInfo;
@@ -46,6 +47,7 @@ mod license;
 mod loc;
 mod pending;
 mod project;
+mod repository;
 mod size;
 mod title;
 mod url;
@@ -109,8 +111,14 @@ impl std::fmt::Display for Info {
 }
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
-    let repo = gix::discover(&cli_options.input)?;
-    let repo_path = get_work_dir(&repo)?;
+    let discovered_repo = DiscoveredRepository::discover(&cli_options.input)?;
+    if discovered_repo.is_jujutsu() {
+        eprintln!(
+            "Jujutsu support is experimental: pending changes and size are not yet supported"
+        );
+    }
+    let repo = discovered_repo.git();
+    let repo_path = discovered_repo.work_dir().to_owned();
     // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
     let loc_by_language_sorted_handle = std::thread::spawn({
         let globs_to_exclude = cli_options.info.exclude.clone();
@@ -127,19 +135,17 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         }
     });
     let git_metrics = traverse_commit_graph(
-        &repo,
+        repo,
+        discovered_repo.head_id()?,
+        discovered_repo.is_jujutsu(),
         cli_options.info.no_bots.clone(),
         cli_options.info.churn_pool_size,
         cli_options.info.no_merges,
     )
     .context("Failed to traverse Git commit history")?;
     let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(
-        &repo,
-        cli_options.info.hide_token,
-        cli_options.info.http_url,
-    )
-    .context("Failed to determine repository URL")?;
+    let repo_url = get_repo_url(repo, cli_options.info.hide_token, cli_options.info.http_url)
+        .context("Failed to determine repository URL")?;
     let true_color = match cli_options.ascii.true_color {
         When::Always => true,
         When::Never => false,
@@ -169,12 +175,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let show_email = cli_options.info.email;
 
     Ok(InfoBuilder::new(cli_options)
-        .title(&repo, no_bold, &text_colors)
-        .project(&repo, &repo_url, manifest.as_ref(), number_separator)?
+        .title(repo, no_bold, &text_colors)
+        .project(repo, &repo_url, manifest.as_ref(), number_separator)?
         .description(manifest.as_ref())
-        .head(&repo)?
-        .pending(&repo)?
-        .version(&repo, manifest.as_ref())?
+        .head(repo, discovered_repo.jujutsu_head())?
+        .pending(repo, discovered_repo.is_jujutsu())?
+        .version(repo, manifest.as_ref())?
         .created(&git_metrics, iso_time)
         .languages(
             loc_by_language.as_ref(),
@@ -201,7 +207,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
             number_separator,
         )?
         .loc(loc_by_language.as_ref(), number_separator)
-        .size(&repo, number_separator)
+        .size(repo, number_separator, discovered_repo.is_jujutsu())
         .license(&repo_path, manifest.as_ref())?
         .build(cli_options, text_colors, dominant_language, ascii_colors))
 }
@@ -238,8 +244,9 @@ impl InfoBuilder {
         self
     }
 
-    fn pending(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::Pending) {
+    fn pending(mut self, repo: &Repository, is_jujutsu: bool) -> Result<Self> {
+        // Jujutsu records working-copy changes in @, and its bare Git store has no worktree status.
+        if !is_jujutsu && !self.disabled_fields.contains(&InfoType::Pending) {
             let pending = PendingInfo::new(repo)?;
             self.info_fields.push(Box::new(pending));
         }
@@ -268,9 +275,12 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    fn head(mut self, repo: &Repository) -> Result<Self> {
+    fn head(mut self, repo: &Repository, jujutsu_head: Option<gix::ObjectId>) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Head) {
-            let head = HeadInfo::new(repo)?;
+            let head = match jujutsu_head {
+                Some(head_id) => HeadInfo::from_id(repo, head_id)?,
+                None => HeadInfo::new(repo)?,
+            };
             self.info_fields.push(Box::new(head));
         }
         Ok(self)
@@ -284,8 +294,13 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    fn size(mut self, repo: &Repository, number_separator: NumberSeparator) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Size) {
+    fn size(
+        mut self,
+        repo: &Repository,
+        number_separator: NumberSeparator,
+        is_jujutsu: bool,
+    ) -> Self {
+        if !is_jujutsu && !self.disabled_fields.contains(&InfoType::Size) {
             let size = SizeInfo::new(repo, number_separator);
             self.info_fields.push(Box::new(size));
         }
