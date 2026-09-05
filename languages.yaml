@@ -3234,6 +3234,7 @@ WGSL:
       - "#0086E8"
       - "#0093FF"
     chip: "#4285F4"
+  icon: '\u{E955}'
 
 Wolfram:
   type: programming
