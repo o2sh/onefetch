@@ -6,7 +6,6 @@
 
 [![Crates.io Version](https://img.shields.io/crates/v/onefetch)](https://crates.io/crates/onefetch)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/o2sh/onefetch/ci.yml)](https://github.com/o2sh/onefetch/actions/workflows/ci.yml)
-[![help wanted](https://img.shields.io/github/issues/o2sh/onefetch/help%20wanted?color=green)](https://github.com/o2sh/onefetch/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 ![MSRV](assets/msrv-badge.svg)
 
 <h3>
