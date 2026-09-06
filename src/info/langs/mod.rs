@@ -37,7 +37,9 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
         let loc = language::loc(language_name, language);
 
         if loc > 0 {
-            loc_by_language.insert(Language::from(*language_name), loc);
+            *loc_by_language
+                .entry(Language::from(*language_name))
+                .or_insert(0) += loc;
         }
     }
 
@@ -75,7 +77,7 @@ fn get_locs(
 fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
         .filter(|language| types.contains(&language.get_type()))
-        .map(std::convert::Into::into)
+        .flat_map(|language| language.get_tokei_types())
         .collect()
 }
 
@@ -111,6 +113,34 @@ mod test {
         // NOTE: JS  with 100 lines of code, MD with 300 lines of code + comments
         assert_eq!(loc_by_language[&Language::JavaScript], 100);
         assert_eq!(loc_by_language[&Language::Markdown], 300);
+    }
+
+    #[test]
+    fn cpp_modules_are_aggregated_with_cpp() {
+        let cpp = tokei::Language {
+            code: 100,
+            ..Default::default()
+        };
+        let cpp_module = tokei::Language {
+            code: 25,
+            ..Default::default()
+        };
+
+        let mut languages = tokei::Languages::new();
+        languages.insert(tokei::LanguageType::Cpp, cpp);
+        languages.insert(tokei::LanguageType::CppModule, cpp_module);
+
+        let loc_by_language = get_loc_by_language(&languages).unwrap();
+
+        assert_eq!(loc_by_language[&Language::Cpp], 125);
+    }
+
+    #[test]
+    fn programming_filter_includes_cpp_modules() {
+        let languages = filter_languages_on_type(&[LanguageType::Programming]);
+
+        assert!(languages.contains(&tokei::LanguageType::Cpp));
+        assert!(languages.contains(&tokei::LanguageType::CppModule));
     }
 
     #[test]

@@ -67,6 +67,10 @@ CSharp: # required, this will be the name of the enum variant for the language a
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
 ```
 
+When Tokei splits a language into variants that Onefetch should display
+together, list the extra enum names under `tokei_aliases`. For example, the
+`Cpp` entry aliases `CppModule`, so both contribute to the C++ total.
+
 - [1] https://github.com/XAMPPRocky/tokei#supported-languages
 - [2] https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
 - [3] https://www.nerdfonts.com/cheat-sheet
