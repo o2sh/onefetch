@@ -1,5 +1,8 @@
 set -eu -o pipefail
 
+mkdir repo_without_remote
+cd repo_without_remote
+
 git init -q
 
 git checkout -b main

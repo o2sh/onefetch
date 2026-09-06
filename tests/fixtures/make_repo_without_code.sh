@@ -1,5 +1,8 @@
 set -eu -o pipefail
 
+mkdir repo_without_code
+cd repo_without_code
+
 git init -q
 
 # BOTH NAME AND EMAIL ARE NEEDED FOR RECOGNITION

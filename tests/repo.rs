@@ -3,14 +3,8 @@ use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
 use onefetch::info::{build_info, get_work_dir};
 
-fn repo(name: &str) -> Result<Repository> {
-    let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
-    let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
-    Ok(safe_repo.to_thread_local())
-}
-
-pub fn named_repo(fixture: &str, name: &str) -> Result<Repository> {
-    let repo_path = gix_testtools::scripted_fixture_read_only(fixture)
+pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
+    let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
         .unwrap()
         .join(name);
     let safe_repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated())?;
@@ -19,7 +13,7 @@ pub fn named_repo(fixture: &str, name: &str) -> Result<Repository> {
 
 #[test]
 fn test_bare_repo() -> Result<()> {
-    let repo = repo("make_bare_repo.sh")?;
+    let repo = named_repo("make_bare_repo.sh", "bare_repo")?;
     let work_dir = get_work_dir(&repo);
     assert!(
         work_dir.is_err(),
@@ -34,7 +28,7 @@ fn test_bare_repo() -> Result<()> {
 
 #[test]
 fn test_repo() -> Result<()> {
-    let repo = repo("make_repo.sh")?;
+    let repo = named_repo("make_repo.sh", "repo")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         info: InfoCliOptions {
@@ -62,7 +56,7 @@ fn test_repo() -> Result<()> {
 
 #[test]
 fn test_repo_without_remote() -> Result<()> {
-    let repo = repo("make_repo_without_remote.sh")?;
+    let repo = named_repo("make_repo_without_remote.sh", "repo_without_remote")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
@@ -75,7 +69,7 @@ fn test_repo_without_remote() -> Result<()> {
 
 #[test]
 fn test_partial_repo() -> Result<()> {
-    let repo = named_repo("make_partial_repo.sh", "partial")?;
+    let repo = named_repo("make_partial_repo.sh", "partial_repo/partial")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
@@ -86,7 +80,7 @@ fn test_partial_repo() -> Result<()> {
 
 #[test]
 fn test_treeless_partial_repo() -> Result<()> {
-    let repo = named_repo("make_partial_repo.sh", "partial_treeless")?;
+    let repo = named_repo("make_partial_repo.sh", "partial_repo/partial_treeless")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
@@ -97,7 +91,7 @@ fn test_treeless_partial_repo() -> Result<()> {
 
 #[test]
 fn test_repo_with_pre_epoch_dates() -> Result<()> {
-    let repo = repo("make_pre_epoch_repo.sh")?;
+    let repo = named_repo("make_pre_epoch_repo.sh", "pre_epoch_repo")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()
@@ -108,7 +102,7 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
 
 #[test]
 fn test_repo_without_code() -> Result<()> {
-    let repo = repo("make_repo_without_code.sh")?;
+    let repo = named_repo("make_repo_without_code.sh", "repo_without_code")?;
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
         ..Default::default()

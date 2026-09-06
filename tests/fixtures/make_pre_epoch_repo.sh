@@ -1,5 +1,8 @@
 set -eu -o pipefail
 
+mkdir pre_epoch_repo
+cd pre_epoch_repo
+
 git init -q
 git checkout -b main
 
@@ -25,4 +28,3 @@ EOF
 
 new_commit=$(git hash-object -w -t commit to-be-patched.txt || git hash-object --literally -w -t commit to-be-patched.txt)
 git update-ref refs/heads/main $new_commit
-

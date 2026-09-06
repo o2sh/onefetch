@@ -1,5 +1,8 @@
 set -eu -o pipefail
 
+mkdir partial_repo
+cd partial_repo
+
 mkdir base
 (cd base
     git init -q

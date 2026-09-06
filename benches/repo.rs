@@ -5,7 +5,9 @@ use std::hint::black_box;
 
 fn bench_repo_info(c: &mut Criterion) {
     let name = "make_repo.sh".to_string();
-    let repo_path = gix_testtools::scripted_fixture_read_only(name).unwrap();
+    let repo_path = gix_testtools::scripted_fixture_read_only(name)
+        .unwrap()
+        .join("repo");
     let repo = ThreadSafeRepository::open_opts(repo_path, open::Options::isolated()).unwrap();
     let config: CliOptions = CliOptions {
         input: repo.path().to_path_buf(),
