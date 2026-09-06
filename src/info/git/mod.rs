@@ -19,6 +19,12 @@ use std::thread::JoinHandle;
 pub mod metrics;
 pub mod sig;
 
+pub fn uses_reftables(repo: &gix::Repository) -> bool {
+    repo.config_snapshot()
+        .string("extensions.refstorage")
+        .is_some_and(|kind| kind.as_bstr() == "reftable")
+}
+
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
     no_bots: Option<MyRegex>,
