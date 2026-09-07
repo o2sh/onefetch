@@ -81,7 +81,7 @@ typetag = "0.2.23"
 criterion = "0.8.2"
 gix-testtools = "0.20.0"
 insta = { version = "1.48.0", features = ["json", "redactions"] }
-rstest = "0.26.1"
+rstest = "0.27.0"
 
 [[bench]]
 name = "repo"
