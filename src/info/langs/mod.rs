@@ -77,7 +77,7 @@ fn get_locs(
 fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
         .filter(|language| types.contains(&language.get_type()))
-        .flat_map(|language| language.get_tokei_types())
+        .flat_map(|language| language.get_tokei_types().iter().copied())
         .collect()
 }
 

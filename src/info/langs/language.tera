@@ -68,10 +68,10 @@ impl From<Language> for tokei::LanguageType {
 }
 
 impl Language {
-    pub fn get_tokei_types(&self) -> Vec<tokei::LanguageType> {
+    pub fn get_tokei_types(&self) -> &'static [tokei::LanguageType] {
         match self {
             {% for language, attrs in languages -%}
-                Language::{{ language }} => vec![
+                Language::{{ language }} => &[
                     tokei::LanguageType::{{ language }},
                     {% if attrs.tokei_aliases is defined -%}
                         {% for alias in attrs.tokei_aliases -%}
