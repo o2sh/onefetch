@@ -113,7 +113,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let repo = gix::discover(&cli_options.input)?;
     if uses_reftables(&repo) {
         // TODO: remove once gitoxide supports reftable
-        bail!("reftable repositories are not supported");
+        bail!("reftable repositories are not yet supported");
     }
     let repo_path = get_work_dir(&repo)?;
     // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
