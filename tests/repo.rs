@@ -118,7 +118,7 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
         Err(error) => error,
     };
 
-    assert_eq!(error.to_string(), "reftable repositories are not supported");
+    assert_eq!(error.to_string(), "reftable repositories are not yet supported");
     Ok(())
 }
 
