@@ -101,6 +101,22 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
 }
 
 #[test]
+fn test_reftable_repo_is_rejected() -> Result<()> {
+    let repo = named_repo("make_reftable_repo.sh", "reftable")?;
+    let config = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let error = match build_info(&config) {
+        Ok(_) => panic!("reftable repository should be rejected"),
+        Err(error) => error,
+    };
+
+    assert_eq!(error.to_string(), "reftable repositories are not yet supported");
+    Ok(())
+}
+
+#[test]
 fn test_repo_without_code() -> Result<()> {
     let repo = named_repo("make_repo_without_code.sh", "repo_without_code")?;
     let config: CliOptions = CliOptions {

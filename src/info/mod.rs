@@ -7,6 +7,7 @@ use self::dependencies::DependenciesInfo;
 use self::description::DescriptionInfo;
 use self::git::metrics::GitMetrics;
 use self::git::traverse_commit_graph;
+use self::git::uses_reftables;
 use self::head::HeadInfo;
 use self::langs::language::Language;
 use self::langs::language::LanguagesInfo;
@@ -24,7 +25,7 @@ use self::version::VersionInfo;
 use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
 use gix::Repository;
 use onefetch_manifest::Manifest;
 use owo_colors::{DynColors, OwoColorize};
@@ -110,6 +111,10 @@ impl std::fmt::Display for Info {
 
 pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let repo = gix::discover(&cli_options.input)?;
+    if uses_reftables(&repo) {
+        // TODO: remove once gitoxide supports reftable
+        bail!("reftable repositories are not yet supported");
+    }
     let repo_path = get_work_dir(&repo)?;
     // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
     let loc_by_language_sorted_handle = std::thread::spawn({
