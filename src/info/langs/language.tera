@@ -46,6 +46,11 @@ impl From<tokei::LanguageType> for Language {
         match language {
             {% for language, _ in languages -%}
                 tokei::LanguageType::{{ language }} => Self::{{ language }},
+                {% if languages[language].tokei_aliases is defined -%}
+                    {% for alias in languages[language].tokei_aliases -%}
+                        tokei::LanguageType::{{ alias }} => Self::{{ language }},
+                    {% endfor %}
+                {% endif -%}
             {% endfor %}
             _ => unimplemented!("Language {:?}", language),
         }
@@ -63,6 +68,21 @@ impl From<Language> for tokei::LanguageType {
 }
 
 impl Language {
+    pub fn get_tokei_types(&self) -> &'static [tokei::LanguageType] {
+        match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => &[
+                    tokei::LanguageType::{{ language }},
+                    {% if attrs.tokei_aliases is defined -%}
+                        {% for alias in attrs.tokei_aliases -%}
+                            tokei::LanguageType::{{ alias }},
+                        {% endfor %}
+                    {% endif -%}
+                ],
+            {% endfor %}
+        }
+    }
+
     pub fn get_ascii_art(&self) -> &'static str {
         match self {
             {% for language, attrs in languages -%}

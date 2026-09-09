@@ -444,6 +444,8 @@ Coq:
     chip: "#D0B68C"
 Cpp:
   type: programming
+  tokei_aliases:
+    - CppModule
   ascii: |
     {0}                 ++++++
     {0}              ++++++++++++
