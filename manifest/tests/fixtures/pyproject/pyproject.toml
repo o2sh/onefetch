@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "my_package"
+version = "1.0.0"
+description = "description for my_package"
+license = "MIT"
+dependencies = [
+    "requests>=2.31",
+    "click>=8.1",
+    "rich>=13.0",
+]
+
+[dependency-groups]
+dev = ["pytest", "ruff"]
