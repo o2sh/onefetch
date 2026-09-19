@@ -729,7 +729,9 @@ Elixir:
   colors:
     ansi:
       - magenta
-    chip: "#6E4A7E"
+    hex:
+      - "#8847B9"
+    chip: "#8847B9"
   icon: '\u{E62D}'
 Elm:
   type: programming
