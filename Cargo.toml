@@ -1,5 +1,5 @@
 [workspace.package]
-authors = ["o2sh <ossama-hjaji@live.fr>"]
+authors = ["o2sh <hjajiossama@gmail.com>"]
 edition = "2024"
 license = "MIT"
 version = "2.28.1"
@@ -23,8 +23,8 @@ homepage = "https://onefetch.dev"
 rust-version = "1.88.0"
 
 [package.metadata.deb]
-maintainer = "Ossama Hjaji <ossama-hjaji@live.fr>"
-copyright = "2018, Ossama Hjaji <ossama-hjaji@live.fr>"
+maintainer = "Ossama Hjaji <hjajiossama@gmail.com>"
+copyright = "2018, Ossama Hjaji <hjajiossama@gmail.com>"
 license-file = ["LICENSE.md", "4"]
 extended-description = """\
 A command-line Git information tool that displays project information \
