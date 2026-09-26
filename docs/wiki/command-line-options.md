@@ -63,6 +63,8 @@ INFO:
   -T, --type <TYPE>...
           Filters output by language type
 
+          If no language of the selected TYPE(s) is found, falls back to counting every language type instead of showing no languages at all
+
           [default: programming markup]
           [possible values: programming, markup, prose, data]
 
