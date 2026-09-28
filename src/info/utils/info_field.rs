@@ -5,9 +5,7 @@ use std::fmt;
 /// Replaces control characters so untrusted repository data can't inject
 /// terminal escape sequences.
 fn sanitize(s: &str) -> String {
-    s.chars()
-        .map(|c| if c.is_control() { '\u{FFFD}' } else { c })
-        .collect()
+    s.replace(char::is_control, "\u{FFFD}")
 }
 
 #[typetag::serialize]
