@@ -58,6 +58,7 @@ gix = { version = "0.88.0", default-features = false, features = [
     "index",
     "status",
     "sha1",
+    "anyhow",
 ] }
 globset = "0.4.20"
 human-panic = "2.0.8"
