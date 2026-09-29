@@ -18,7 +18,7 @@ impl UrlInfo {
 }
 
 pub fn get_repo_url(repo: &Repository, hide_token: bool, http_url: bool) -> Result<String> {
-    let remote = match repo.try_find_remote("origin") {
+    let remote = match repo.find_default_remote(gix::remote::Direction::Push) {
         Some(remote) => remote?,
         None => return Ok(String::new()),
     };

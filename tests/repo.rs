@@ -68,6 +68,26 @@ fn test_repo_without_remote() -> Result<()> {
 }
 
 #[test]
+fn test_repo_with_non_origin_remote() -> Result<()> {
+    let repo = named_repo(
+        "make_repo_with_non_origin_remote.sh",
+        "repo_with_non_origin_remote",
+    )?;
+    let config: CliOptions = CliOptions {
+        input: repo.path().to_path_buf(),
+        ..Default::default()
+    };
+    let info = serde_json::to_value(build_info(&config)?)?;
+    let repo_url = info["infoFields"]
+        .as_array()
+        .and_then(|fields| fields.iter().find_map(|field| field.get("UrlInfo")))
+        .and_then(|url_info| url_info["repoUrl"].as_str());
+    assert_eq!(repo_url, Some("https://github.com/user/upstream.git"));
+
+    Ok(())
+}
+
+#[test]
 fn test_partial_repo() -> Result<()> {
     let repo = named_repo("make_partial_repo.sh", "partial_repo/partial")?;
     let config: CliOptions = CliOptions {
