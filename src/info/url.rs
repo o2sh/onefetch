@@ -18,13 +18,13 @@ impl UrlInfo {
 }
 
 pub fn get_repo_url(repo: &Repository, hide_token: bool, http_url: bool) -> Result<String> {
-    let remote = match repo.find_default_remote(gix::remote::Direction::Push) {
+    let remote = match repo.find_default_remote(gix::remote::Direction::Fetch) {
         Some(remote) => remote?,
         None => return Ok(String::new()),
     };
 
     Ok(remote
-        .url(gix::remote::Direction::Push)
+        .url(gix::remote::Direction::Fetch)
         .map(|url| format_url(&url.to_string(), hide_token, http_url))
         .unwrap_or_default())
 }
