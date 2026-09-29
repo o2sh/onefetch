@@ -110,6 +110,9 @@ pub struct InfoCliOptions {
     #[arg(long)]
     pub include_hidden: bool,
     /// Filters output by language type
+    ///
+    /// If no language of the selected TYPE(s) is found, falls back to counting
+    /// every language type instead of showing no languages at all
     #[arg(
         long,
         num_args = 1..,
