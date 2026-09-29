@@ -51,13 +51,14 @@ askalono = "0.5.0"
 byte-unit = "5.2.6"
 clap = { version = "4.6.7", features = ["derive"] }
 clap_complete = "4.6.11"
-gix = { version = "0.87.1", default-features = false, features = [
+gix = { version = "0.88.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
     "index",
     "status",
     "sha1",
+    "anyhow",
 ] }
 globset = "0.4.20"
 human-panic = "2.0.8"
@@ -79,7 +80,7 @@ typetag = "0.2.23"
 
 [dev-dependencies]
 criterion = "0.8.2"
-gix-testtools = "0.20.0"
+gix-testtools = "0.21.0"
 insta = { version = "1.48.0", features = ["json", "redactions"] }
 rstest = "0.27.0"
 
