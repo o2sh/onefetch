@@ -2,6 +2,12 @@ use crate::{info::utils::get_style, ui::text_colors::TextColors};
 use owo_colors::OwoColorize;
 use std::fmt;
 
+/// Replaces control characters so untrusted repository data can't inject
+/// terminal escape sequences.
+fn sanitize(s: &str) -> String {
+    s.replace(char::is_control, "\u{FFFD}")
+}
+
 #[typetag::serialize]
 pub trait InfoField {
     fn value(&self) -> String;
@@ -46,10 +52,9 @@ pub trait InfoField {
             return None;
         }
         let style = get_style(false, text_colors.info);
-        let styled_lines: Vec<String> = self
-            .value()
+        let styled_lines: Vec<String> = value
             .lines()
-            .map(|line| format!("{}", line.style(style)))
+            .map(|line| format!("{}", sanitize(line).style(style)))
             .collect();
         Some(styled_lines.join("\n"))
     }
@@ -119,5 +124,47 @@ mod test {
         let mut buffer = String::new();
         info.write_styled(&mut buffer, false, &colors).unwrap();
         assert_eq!(buffer, "", "It should not write anything");
+    }
+
+    #[test]
+    fn test_sanitize_strips_control_chars() {
+        // OSC set-title sequence
+        assert_eq!(
+            sanitize("1.0.0\u{1b}]0;PWNED\u{07}"),
+            "1.0.0\u{FFFD}]0;PWNED\u{FFFD}"
+        );
+    }
+
+    #[test]
+    fn test_sanitize_leaves_normal_text_untouched() {
+        let input = "some normal description, with punctuation! 42";
+        assert_eq!(sanitize(input), input);
+    }
+
+    #[test]
+    fn test_style_value_strips_control_chars_from_field() {
+        // Output still contains ESC from our own color codes.
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let info = InfoFieldImpl("1.0.0\u{1b}]0;PWNED\u{07}");
+        let styled = info.style_value(&colors).unwrap();
+        assert!(!styled.contains('\u{07}'));
+        assert!(styled.contains("1.0.0"));
+        assert_eq!(styled.matches('\u{FFFD}').count(), 2);
+    }
+
+    #[test]
+    fn test_style_value_crlf_lines() {
+        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
+        let styled = InfoFieldImpl("line one\r\nline two")
+            .style_value(&colors)
+            .unwrap();
+        assert_eq!(styled.lines().count(), 2);
+        assert!(!styled.contains('\u{FFFD}'), "{styled:?}");
+    }
+
+    #[test]
+    fn test_sanitize_strips_c1_and_cr() {
+        assert_eq!(sanitize("1.0\u{9b}2J"), "1.0\u{FFFD}2J");
+        assert_eq!(sanitize("evil\rOK"), "evil\u{FFFD}OK");
     }
 }
