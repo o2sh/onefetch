@@ -124,6 +124,15 @@ enum PyProjectLicense {
     Table { text: Option<String> },
 }
 
+impl PyProjectLicense {
+    fn map_to_string(self) -> Option<String> {
+        match self {
+            Self::Spdx(spdx) => Some(spdx),
+            Self::Table { text } => text,
+        }
+    }
+}
+
 fn parse_pyproject_manifest(path: &Path) -> Result<Manifest> {
     let content = fs::read_to_string(path)
         .with_context(|| format!("Failed to read pyproject.toml at '{}'", path.display()))?;
@@ -131,19 +140,11 @@ fn parse_pyproject_manifest(path: &Path) -> Result<Manifest> {
     let pyproject: PyProject = toml::from_str(&content)
         .with_context(|| format!("Failed to parse pyproject.toml at '{}'", path.display()))?;
 
-    let project = pyproject
+    let project: PyProjectTable = pyproject
         .project
         .context("pyproject.toml has no [project] table")?;
 
-    // The SPDX string and a `{ text = "..." }` table both carry a license
-    // identifier (usually SPDX, though `text` may be any free-form string), so
-    // use them directly. A `{ file = "LICENSE" }` table has no identifier, so
-    // leave it unset and let onefetch fall back to detecting the license from
-    // the repo.
-    let license = project.license.and_then(|license| match license {
-        PyProjectLicense::Spdx(spdx) => Some(spdx),
-        PyProjectLicense::Table { text } => text,
-    });
+    let license = project.license.and_then(PyProjectLicense::map_to_string);
 
     Ok(Manifest {
         manifest_type: ManifestType::PyProject,
@@ -175,10 +176,7 @@ mod tests {
     #[case::pep_621_file("license = { file = \"LICENSE\" }", None)]
     fn parses_pep621_license_forms(#[case] source: &str, #[case] expected: Option<&str>) {
         let table: PyProjectTable = toml::from_str(source).unwrap();
-        let license = table.license.and_then(|license| match license {
-            PyProjectLicense::Spdx(spdx) => Some(spdx),
-            PyProjectLicense::Table { text } => text,
-        });
+        let license = table.license.and_then(PyProjectLicense::map_to_string);
         assert_eq!(license.as_deref(), expected);
     }
 }
