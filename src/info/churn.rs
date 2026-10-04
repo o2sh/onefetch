@@ -1,4 +1,4 @@
-use super::utils::{module::Module, text::Line};
+use super::utils::{info_field::InfoField, text::Line};
 use crate::{cli::NumberSeparator, info::utils::format_number};
 use anyhow::Result;
 use gix::bstr::BString;
@@ -91,7 +91,7 @@ fn compute_file_churns(
 }
 
 #[typetag::serialize]
-impl Module for ChurnInfo {
+impl InfoField for ChurnInfo {
     fn value(&self) -> Vec<Line> {
         self.file_churns
             .iter()

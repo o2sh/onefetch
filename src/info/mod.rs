@@ -20,7 +20,7 @@ use self::size::SizeInfo;
 use self::title::Title;
 use self::url::UrlInfo;
 use self::url::get_repo_url;
-use self::utils::module::{InfoType, Module};
+use self::utils::info_field::{InfoField, InfoType};
 use self::utils::text::Line;
 use self::version::VersionInfo;
 use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
@@ -59,8 +59,7 @@ mod version;
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     title: Option<Title>,
-    #[serde(rename = "infoFields")]
-    modules: Vec<Box<dyn Module>>,
+    info_fields: Vec<Box<dyn InfoField>>,
     #[serde(skip_serializing)]
     pub text_colors: TextColors,
     #[serde(skip_serializing)]
@@ -73,20 +72,20 @@ pub struct Info {
 
 struct InfoBuilder {
     title: Option<Title>,
-    modules: Vec<Box<dyn Module>>,
+    info_fields: Vec<Box<dyn InfoField>>,
     disabled_fields: Vec<InfoType>,
     no_title: bool,
 }
 
 impl Info {
-    /// The info as lines: the title, the modules and the color palette.
+    /// The info as lines: the title, the info fields and the color palette.
     pub fn lines(&self) -> Vec<Line> {
         let mut lines = Vec::new();
         if let Some(title) = &self.title {
             lines.extend(layout::title_lines(title));
         }
-        for module in &self.modules {
-            lines.extend(layout::module_lines(module.as_ref()));
+        for info_field in &self.info_fields {
+            lines.extend(layout::field_lines(info_field.as_ref()));
         }
         if !self.no_color_palette {
             lines.extend(layout::palette_lines());
@@ -199,7 +198,7 @@ impl InfoBuilder {
     fn new(cli_options: &CliOptions) -> Self {
         Self {
             title: None,
-            modules: Vec::new(),
+            info_fields: Vec::new(),
             disabled_fields: cli_options.info.disabled_fields.clone(),
             no_title: cli_options.info.no_title,
         }
@@ -215,7 +214,7 @@ impl InfoBuilder {
     fn description(mut self, manifest: Option<&Manifest>) -> Self {
         if !self.disabled_fields.contains(&InfoType::Description) {
             let description = DescriptionInfo::new(manifest);
-            self.modules.push(Box::new(description));
+            self.info_fields.push(Box::new(description));
         }
         self
     }
@@ -223,7 +222,7 @@ impl InfoBuilder {
     fn pending(mut self, repo: &Repository) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Pending) {
             let pending = PendingInfo::new(repo)?;
-            self.modules.push(Box::new(pending));
+            self.info_fields.push(Box::new(pending));
         }
         Ok(self)
     }
@@ -231,7 +230,7 @@ impl InfoBuilder {
     fn url(mut self, repo_url: &str) -> Self {
         if !self.disabled_fields.contains(&InfoType::URL) {
             let repo_url = UrlInfo::new(repo_url);
-            self.modules.push(Box::new(repo_url));
+            self.info_fields.push(Box::new(repo_url));
         }
         self
     }
@@ -245,7 +244,7 @@ impl InfoBuilder {
     ) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Project) {
             let project = ProjectInfo::new(repo, repo_url, manifest, number_separator)?;
-            self.modules.push(Box::new(project));
+            self.info_fields.push(Box::new(project));
         }
         Ok(self)
     }
@@ -253,7 +252,7 @@ impl InfoBuilder {
     fn head(mut self, repo: &Repository) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Head) {
             let head = HeadInfo::new(repo)?;
-            self.modules.push(Box::new(head));
+            self.info_fields.push(Box::new(head));
         }
         Ok(self)
     }
@@ -261,7 +260,7 @@ impl InfoBuilder {
     fn version(mut self, repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::Version) {
             let version = VersionInfo::new(repo, manifest)?;
-            self.modules.push(Box::new(version));
+            self.info_fields.push(Box::new(version));
         }
         Ok(self)
     }
@@ -269,7 +268,7 @@ impl InfoBuilder {
     fn size(mut self, repo: &Repository, number_separator: NumberSeparator) -> Self {
         if !self.disabled_fields.contains(&InfoType::Size) {
             let size = SizeInfo::new(repo, number_separator);
-            self.modules.push(Box::new(size));
+            self.info_fields.push(Box::new(size));
         }
         self
     }
@@ -277,7 +276,7 @@ impl InfoBuilder {
     fn license(mut self, repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
         if !self.disabled_fields.contains(&InfoType::License) {
             let license = LicenseInfo::new(repo_path, manifest)?;
-            self.modules.push(Box::new(license));
+            self.info_fields.push(Box::new(license));
         }
         Ok(self)
     }
@@ -285,7 +284,7 @@ impl InfoBuilder {
     fn created(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
         if !self.disabled_fields.contains(&InfoType::Created) {
             let created = CreatedInfo::new(iso_time, git_metrics);
-            self.modules.push(Box::new(created));
+            self.info_fields.push(Box::new(created));
         }
         self
     }
@@ -306,7 +305,7 @@ impl InfoBuilder {
                 number_of_languages,
                 cli_options.visuals.nerd_fonts,
             );
-            self.modules.push(Box::new(languages));
+            self.info_fields.push(Box::new(languages));
         }
         self
     }
@@ -318,7 +317,7 @@ impl InfoBuilder {
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Dependencies) {
             let dependencies = DependenciesInfo::new(manifest, number_separator);
-            self.modules.push(Box::new(dependencies));
+            self.info_fields.push(Box::new(dependencies));
         }
         self
     }
@@ -338,7 +337,7 @@ impl InfoBuilder {
                 show_email,
                 number_separator,
             );
-            self.modules.push(Box::new(authors));
+            self.info_fields.push(Box::new(authors));
         }
         self
     }
@@ -346,7 +345,7 @@ impl InfoBuilder {
     fn last_change(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
         if !self.disabled_fields.contains(&InfoType::LastChange) {
             let last_change = LastChangeInfo::new(iso_time, git_metrics);
-            self.modules.push(Box::new(last_change));
+            self.info_fields.push(Box::new(last_change));
         }
         self
     }
@@ -363,7 +362,7 @@ impl InfoBuilder {
                 number_of_authors_to_display,
                 number_separator,
             );
-            self.modules.push(Box::new(contributors));
+            self.info_fields.push(Box::new(contributors));
         }
         self
     }
@@ -376,7 +375,7 @@ impl InfoBuilder {
     ) -> Self {
         if !self.disabled_fields.contains(&InfoType::Commits) {
             let commits = CommitsInfo::new(git_metrics, is_shallow, number_separator);
-            self.modules.push(Box::new(commits));
+            self.info_fields.push(Box::new(commits));
         }
         self
     }
@@ -396,7 +395,7 @@ impl InfoBuilder {
                 globs_to_exclude,
                 number_separator,
             )?;
-            self.modules.push(Box::new(churn));
+            self.info_fields.push(Box::new(churn));
         }
         Ok(self)
     }
@@ -410,7 +409,7 @@ impl InfoBuilder {
             && let Some(loc_by_language) = loc_by_language_opt
         {
             let lines_of_code = LocInfo::new(loc_by_language, number_separator);
-            self.modules.push(Box::new(lines_of_code));
+            self.info_fields.push(Box::new(lines_of_code));
         }
         self
     }
@@ -424,7 +423,7 @@ impl InfoBuilder {
     ) -> Info {
         Info {
             title: self.title,
-            modules: self.modules,
+            info_fields: self.info_fields,
             text_colors,
             dominant_language,
             ascii_colors,

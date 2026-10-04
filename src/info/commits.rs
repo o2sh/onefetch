@@ -1,7 +1,7 @@
 use super::git::metrics::GitMetrics;
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, module::Module, text::Line},
+    info::utils::{format_number, info_field::InfoField, text::Line},
 };
 use serde::Serialize;
 
@@ -29,7 +29,7 @@ impl CommitsInfo {
 }
 
 #[typetag::serialize]
-impl Module for CommitsInfo {
+impl InfoField for CommitsInfo {
     fn value(&self) -> Vec<Line> {
         let commits = format!(
             "{}{}",

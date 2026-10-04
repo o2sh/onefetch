@@ -1,5 +1,5 @@
 use crate::info::langs::language::{Language, LanguageType};
-use crate::info::utils::module::InfoType;
+use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
@@ -54,15 +54,14 @@ pub struct CliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "INFO")]
 pub struct InfoCliOptions {
-    /// Allows you to disable MODULE(s) from appearing in the output
+    /// Allows you to disable FIELD(s) from appearing in the output
     #[arg(
         long,
         short,
-        visible_alias = "disabled-modules",
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = "MODULE"
+        value_name = "FIELD"
     )]
     pub disabled_fields: Vec<InfoType>,
     /// Hides the title
@@ -436,14 +435,6 @@ mod test {
                 "--ascii-language",
                 "lisp"
             ])
-        );
-    }
-
-    #[test]
-    fn test_disabled_modules_alias() {
-        assert_eq!(
-            CliOptions::parse_from(["onefetch", "--disabled-modules", "version"]),
-            CliOptions::parse_from(["onefetch", "--disabled-fields", "version"])
         );
     }
 

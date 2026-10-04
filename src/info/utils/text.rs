@@ -11,9 +11,9 @@ use owo_colors::DynColors;
 pub enum Style {
     /// No styling, for spacing.
     Plain,
-    /// A module's value.
+    /// A field's value.
     Value,
-    /// A module's key.
+    /// A field's key.
     Key,
     /// The separator between a key and its value.
     Separator,

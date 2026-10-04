@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, module::Module, text::Line},
+    info::utils::{format_number, info_field::InfoField, text::Line},
 };
 use onefetch_manifest::Manifest;
 use serde::Serialize;
@@ -29,7 +29,7 @@ impl DependenciesInfo {
 }
 
 #[typetag::serialize]
-impl Module for DependenciesInfo {
+impl InfoField for DependenciesInfo {
     fn value(&self) -> Vec<Line> {
         vec![Line::from(self.dependencies.clone())]
     }

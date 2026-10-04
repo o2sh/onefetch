@@ -1,5 +1,5 @@
 use super::{git::metrics::GitMetrics, utils::format_time};
-use crate::info::utils::{module::Module, text::Line};
+use crate::info::utils::{info_field::InfoField, text::Line};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -21,7 +21,7 @@ fn get_date_of_last_commit(git_metrics: &GitMetrics, iso_time: bool) -> String {
 }
 
 #[typetag::serialize]
-impl Module for LastChangeInfo {
+impl InfoField for LastChangeInfo {
     fn value(&self) -> Vec<Line> {
         vec![Line::from(self.last_change.to_string())]
     }

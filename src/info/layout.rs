@@ -1,7 +1,7 @@
-//! Lays out the info as lines: the title, the modules and the color palette.
+//! Lays out the info as lines: the title, the info fields and the color palette.
 
 use crate::info::title::Title;
-use crate::info::utils::module::Module;
+use crate::info::utils::info_field::InfoField;
 use crate::info::utils::text::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
@@ -28,13 +28,13 @@ pub fn title_lines(title: &Title) -> Vec<Line> {
 
 /// `key: value`, with the next lines of the value aligned under the first one.
 /// Empty if the value is.
-pub fn module_lines(module: &dyn Module) -> Vec<Line> {
-    let value = module.value();
+pub fn field_lines(field: &dyn InfoField) -> Vec<Line> {
+    let value = field.value();
     if value.iter().all(Line::is_empty) {
         return Vec::new();
     }
 
-    let key = module.key();
+    let key = field.key();
     let indent = " ".repeat(key.chars().count() + 2);
 
     value
@@ -71,13 +71,13 @@ mod test {
     use serde::Serialize;
 
     #[derive(Serialize)]
-    struct ModuleImpl {
+    struct InfoFieldImpl {
         #[serde(skip)]
         value: Vec<Line>,
     }
 
     #[typetag::serialize]
-    impl Module for ModuleImpl {
+    impl InfoField for InfoFieldImpl {
         fn key(&self) -> String {
             "key".into()
         }
@@ -88,12 +88,12 @@ mod test {
     }
 
     #[test]
-    fn test_module_lines() {
-        let module = ModuleImpl {
+    fn test_field_lines() {
+        let field = InfoFieldImpl {
             value: vec![Line::from("one"), Line::from("two")],
         };
         assert_eq!(
-            module_lines(&module),
+            field_lines(&field),
             vec![
                 Line::from(vec![
                     Span::new("key", Style::Key),
@@ -107,14 +107,14 @@ mod test {
     }
 
     #[test]
-    fn test_module_lines_no_value() {
-        let module = ModuleImpl { value: vec![] };
-        assert!(module_lines(&module).is_empty());
+    fn test_field_lines_no_value() {
+        let field = InfoFieldImpl { value: vec![] };
+        assert!(field_lines(&field).is_empty());
 
-        let module = ModuleImpl {
+        let field = InfoFieldImpl {
             value: vec![Line::from("")],
         };
-        assert!(module_lines(&module).is_empty());
+        assert!(field_lines(&field).is_empty());
     }
 
     #[test]

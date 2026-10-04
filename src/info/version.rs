@@ -1,4 +1,4 @@
-use crate::info::utils::{module::Module, text::Line};
+use crate::info::utils::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use onefetch_manifest::Manifest;
@@ -39,7 +39,7 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
 }
 
 #[typetag::serialize]
-impl Module for VersionInfo {
+impl InfoField for VersionInfo {
     fn value(&self) -> Vec<Line> {
         vec![Line::from(self.version.to_string())]
     }

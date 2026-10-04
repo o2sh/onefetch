@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, module::Module, text::Line},
+    info::utils::{format_number, info_field::InfoField, text::Line},
 };
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
@@ -45,7 +45,7 @@ fn bytes_to_human_readable(bytes: u64) -> String {
 }
 
 #[typetag::serialize]
-impl Module for SizeInfo {
+impl InfoField for SizeInfo {
     fn value(&self) -> Vec<Line> {
         let size = match self.file_count {
             0 => self.repo_size.clone(),

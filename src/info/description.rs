@@ -1,4 +1,4 @@
-use crate::info::utils::{module::Module, text::Line};
+use crate::info::utils::{info_field::InfoField, text::Line};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 
@@ -21,7 +21,7 @@ impl DescriptionInfo {
 }
 
 #[typetag::serialize]
-impl Module for DescriptionInfo {
+impl InfoField for DescriptionInfo {
     fn value(&self) -> Vec<Line> {
         match &self.description {
             Some(description) => break_sentence_into_lines(description)

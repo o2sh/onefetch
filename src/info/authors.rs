@@ -1,7 +1,7 @@
 use super::git::sig::Sig;
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, module::Module, text::Line},
+    info::utils::{format_number, info_field::InfoField, text::Line},
 };
 use serde::Serialize;
 use std::collections::HashMap;
@@ -108,7 +108,7 @@ fn digit_difference(num1: usize, num2: usize) -> usize {
 }
 
 #[typetag::serialize]
-impl Module for AuthorsInfo {
+impl InfoField for AuthorsInfo {
     fn value(&self) -> Vec<Line> {
         self.authors
             .iter()

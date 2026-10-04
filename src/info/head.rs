@@ -1,4 +1,4 @@
-use crate::info::utils::{module::Module, text::Line};
+use crate::info::utils::{info_field::InfoField, text::Line};
 use anyhow::{Context, Result};
 use gix::Repository;
 use serde::Serialize;
@@ -53,7 +53,7 @@ fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
 }
 
 #[typetag::serialize]
-impl Module for HeadInfo {
+impl InfoField for HeadInfo {
     fn value(&self) -> Vec<Line> {
         let HeadRefs {
             short_commit_id,

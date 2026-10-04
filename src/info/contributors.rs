@@ -1,7 +1,7 @@
 use super::utils::format_number;
 use crate::{
     cli::NumberSeparator,
-    info::utils::{module::Module, text::Line},
+    info::utils::{info_field::InfoField, text::Line},
 };
 use serde::Serialize;
 
@@ -30,7 +30,7 @@ impl ContributorsInfo {
 }
 
 #[typetag::serialize]
-impl Module for ContributorsInfo {
+impl InfoField for ContributorsInfo {
     fn value(&self) -> Vec<Line> {
         if self.total_number_of_authors > self.number_of_authors_to_display {
             vec![Line::from(format_number(

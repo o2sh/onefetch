@@ -1,4 +1,4 @@
-use crate::info::utils::{module::Module, text::Line};
+use crate::info::utils::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use serde::Serialize;
@@ -43,7 +43,7 @@ impl PendingInfo {
 }
 
 #[typetag::serialize]
-impl Module for PendingInfo {
+impl InfoField for PendingInfo {
     fn value(&self) -> Vec<Line> {
         let mut pending = String::new();
         if self.modified > 0 {

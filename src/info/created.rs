@@ -1,5 +1,5 @@
 use super::{git::metrics::GitMetrics, utils::format_time};
-use crate::info::utils::{module::Module, text::Line};
+use crate::info::utils::{info_field::InfoField, text::Line};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -20,7 +20,7 @@ fn get_creation_date(git_metrics: &GitMetrics, iso_time: bool) -> String {
 }
 
 #[typetag::serialize]
-impl Module for CreatedInfo {
+impl InfoField for CreatedInfo {
     fn value(&self) -> Vec<Line> {
         vec![Line::from(self.creation_date.to_string())]
     }

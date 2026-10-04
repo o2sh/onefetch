@@ -3,7 +3,7 @@ use crate::info::langs::get_total_loc;
 use crate::info::langs::language::Language;
 use crate::{
     cli::NumberSeparator,
-    info::utils::{module::Module, text::Line},
+    info::utils::{info_field::InfoField, text::Line},
 };
 use serde::Serialize;
 
@@ -26,7 +26,7 @@ impl LocInfo {
 }
 
 #[typetag::serialize]
-impl Module for LocInfo {
+impl InfoField for LocInfo {
     fn value(&self) -> Vec<Line> {
         vec![Line::from(format_number(
             &self.lines_of_code,

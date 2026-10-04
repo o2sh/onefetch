@@ -1,11 +1,11 @@
 use crate::info::utils::text::Line;
 
 #[typetag::serialize]
-pub trait Module {
+pub trait InfoField {
     fn key(&self) -> String;
 
-    /// Returns the lines of the module's value. Nothing is displayed for the
-    /// module if all of them are empty.
+    /// Returns the lines of the field's value. Nothing is displayed for the
+    /// field if all of them are empty.
     fn value(&self) -> Vec<Line>;
 }
 

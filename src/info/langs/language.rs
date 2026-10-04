@@ -1,4 +1,4 @@
-use crate::info::utils::module::Module;
+use crate::info::utils::info_field::InfoField;
 use crate::info::utils::text::{Line, Span, Style};
 use serde::Serialize;
 use tokei;
@@ -170,7 +170,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 }
 
 #[typetag::serialize]
-impl Module for LanguagesInfo {
+impl InfoField for LanguagesInfo {
     fn value(&self) -> Vec<Line> {
         let languages = prepare_languages(self, &COLOR_PALETTE);
 

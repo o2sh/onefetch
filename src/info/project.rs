@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{module::Module, text::Line},
+    info::utils::{info_field::InfoField, text::Line},
 };
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
@@ -72,7 +72,7 @@ fn get_number_of_branches(repo: &Repository) -> Result<usize> {
 }
 
 #[typetag::serialize]
-impl Module for ProjectInfo {
+impl InfoField for ProjectInfo {
     fn value(&self) -> Vec<Line> {
         if self.repo_name.is_empty() {
             return Vec::new();

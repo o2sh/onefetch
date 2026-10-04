@@ -6,7 +6,7 @@ use std::time::SystemTime;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use time_humanize::HumanTime;
 
-pub mod module;
+pub mod info_field;
 pub mod text;
 
 pub fn format_time(time: Time, iso_time: bool) -> String {
