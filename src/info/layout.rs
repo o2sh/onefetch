@@ -1,6 +1,6 @@
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span, Style};
 use crate::info::title::Title;
-use crate::info::utils::info_field::InfoField;
-use crate::info::utils::text::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
 const PALETTE: [AnsiColors; 8] = [
@@ -51,12 +51,12 @@ pub fn field_lines(field: &dyn InfoField) -> Vec<Line> {
         .collect()
 }
 
-pub fn palette_lines() -> Vec<Line> {
-    let colors = PALETTE
+pub fn palette_line() -> Line {
+    PALETTE
         .into_iter()
         .map(|color| Span::new("   ", Style::Background(DynColors::Ansi(color))))
-        .collect::<Vec<_>>();
-    vec![Line::default(), Line::from(colors)]
+        .collect::<Vec<_>>()
+        .into()
 }
 
 #[cfg(test)]
@@ -136,9 +136,7 @@ mod test {
     }
 
     #[test]
-    fn test_palette_lines() {
-        let lines = palette_lines();
-        assert_eq!(lines[0], Line::default());
-        assert_eq!(lines[1].0.len(), PALETTE.len());
+    fn test_palette_line() {
+        assert_eq!(palette_line().0.len(), PALETTE.len());
     }
 }

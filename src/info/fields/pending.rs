@@ -1,4 +1,4 @@
-use crate::info::utils::{info_field::InfoField, text::Line};
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use serde::Serialize;

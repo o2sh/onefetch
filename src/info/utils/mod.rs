@@ -1,13 +1,9 @@
 use crate::cli::NumberSeparator;
 use gix::date::Time;
 use num_format::ToFormattedString;
-use owo_colors::{DynColors, Style};
 use std::time::SystemTime;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use time_humanize::HumanTime;
-
-pub mod info_field;
-pub mod text;
 
 pub fn format_time(time: Time, iso_time: bool) -> String {
     if iso_time {
@@ -44,18 +40,9 @@ pub fn format_number<T: ToFormattedString + std::fmt::Display>(
     number.to_formatted_string(&number_separator.get_format())
 }
 
-pub fn get_style(is_bold: bool, color: DynColors) -> Style {
-    let mut style = Style::new().color(color);
-    if is_bold {
-        style = style.bold();
-    }
-    style
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use owo_colors::AnsiColors;
     use rstest::rstest;
     use std::time::{Duration, SystemTime};
 
@@ -133,20 +120,5 @@ mod tests {
         #[case] expected: &str,
     ) {
         assert_eq!(&format_number(&number, number_separator), expected);
-    }
-
-    #[test]
-    fn test_get_style() {
-        let style = get_style(true, DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(
-            style,
-            Style::new().color(DynColors::Ansi(AnsiColors::Cyan)).bold()
-        );
-    }
-
-    #[test]
-    fn test_get_style_no_bold() {
-        let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(style, Style::new().color(DynColors::Ansi(AnsiColors::Cyan)));
     }
 }

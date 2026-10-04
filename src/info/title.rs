@@ -1,5 +1,5 @@
 use crate::cli;
-use crate::info::utils::text::{Line, Span, Style};
+use crate::info::text::{Line, Span, Style};
 use gix::Repository;
 use serde::Serialize;
 

@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, info_field::InfoField, text::Line},
+    info::{info_field::InfoField, text::Line, utils::format_number},
 };
 use onefetch_manifest::Manifest;
 use serde::Serialize;

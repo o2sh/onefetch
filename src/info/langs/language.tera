@@ -10,7 +10,7 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
-const DEFAULT_CHIP_ICON: char = '\u{25CF}';
+pub const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
 #[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
 pub enum LanguageType {

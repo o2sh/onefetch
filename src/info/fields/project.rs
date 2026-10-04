@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{info_field::InfoField, text::Line},
+    info::{info_field::InfoField, text::Line},
 };
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
@@ -8,7 +8,7 @@ use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
 
-use super::utils::format_number;
+use crate::info::utils::format_number;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

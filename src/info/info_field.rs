@@ -1,11 +1,8 @@
-use crate::info::utils::text::Line;
+use crate::info::text::Line;
 
 #[typetag::serialize]
 pub trait InfoField {
     fn key(&self) -> String;
-
-    /// Returns the lines of the field's value. Nothing is displayed for the
-    /// field if all of them are empty.
     fn value(&self) -> Vec<Line>;
 }
 

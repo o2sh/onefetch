@@ -1,28 +1,28 @@
-use self::authors::AuthorsInfo;
-use self::churn::ChurnInfo;
-use self::commits::CommitsInfo;
-use self::contributors::ContributorsInfo;
-use self::created::CreatedInfo;
-use self::dependencies::DependenciesInfo;
-use self::description::DescriptionInfo;
+use self::fields::authors::AuthorsInfo;
+use self::fields::churn::ChurnInfo;
+use self::fields::commits::CommitsInfo;
+use self::fields::contributors::ContributorsInfo;
+use self::fields::created::CreatedInfo;
+use self::fields::dependencies::DependenciesInfo;
+use self::fields::description::DescriptionInfo;
+use self::fields::head::HeadInfo;
+use self::fields::languages::LanguagesInfo;
+use self::fields::last_change::LastChangeInfo;
+use self::fields::license::LicenseInfo;
+use self::fields::loc::LocInfo;
+use self::fields::pending::PendingInfo;
+use self::fields::project::ProjectInfo;
+use self::fields::size::SizeInfo;
+use self::fields::url::UrlInfo;
+use self::fields::url::get_repo_url;
+use self::fields::version::VersionInfo;
 use self::git::metrics::GitMetrics;
 use self::git::traverse_commit_graph;
 use self::git::uses_reftables;
-use self::head::HeadInfo;
+use self::info_field::{InfoField, InfoKind};
 use self::langs::language::Language;
-use self::langs::language::LanguagesInfo;
-use self::last_change::LastChangeInfo;
-use self::license::LicenseInfo;
-use self::loc::LocInfo;
-use self::pending::PendingInfo;
-use self::project::ProjectInfo;
-use self::size::SizeInfo;
+use self::text::Line;
 use self::title::Title;
-use self::url::UrlInfo;
-use self::url::get_repo_url;
-use self::utils::info_field::{InfoField, InfoKind};
-use self::utils::text::Line;
-use self::version::VersionInfo;
 use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
 use crate::ui::text_colors::TextColors;
@@ -33,27 +33,14 @@ use owo_colors::DynColors;
 use serde::Serialize;
 use std::path::Path;
 
-mod authors;
-mod churn;
-mod commits;
-mod contributors;
-mod created;
-mod dependencies;
-mod description;
+mod fields;
 mod git;
-mod head;
+pub mod info_field;
 pub mod langs;
-mod last_change;
 mod layout;
-mod license;
-mod loc;
-mod pending;
-mod project;
-mod size;
+pub mod text;
 pub mod title;
-mod url;
 pub mod utils;
-mod version;
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -87,7 +74,8 @@ impl Info {
             lines.extend(layout::field_lines(info_field.as_ref()));
         }
         if !self.no_color_palette {
-            lines.extend(layout::palette_lines());
+            lines.push(Line::default());
+            lines.push(layout::palette_line());
         }
         lines
     }

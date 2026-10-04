@@ -1,7 +1,6 @@
-use crate::info::utils::get_style;
-use crate::info::utils::text::{Line, Style};
+use crate::info::text::{Line, Style};
 use crate::ui::text_colors::TextColors;
-use owo_colors::{OwoColorize, Style as AnsiStyle};
+use owo_colors::{DynColors, OwoColorize, Style as AnsiStyle};
 
 pub fn render(lines: &[Line], text_colors: &TextColors, no_bold: bool) -> String {
     let mut output = String::new();
@@ -29,6 +28,14 @@ fn ansi_style(style: Style, colors: &TextColors, bold: bool) -> AnsiStyle {
     }
 }
 
+fn get_style(is_bold: bool, color: DynColors) -> AnsiStyle {
+    let mut style = AnsiStyle::new().color(color);
+    if is_bold {
+        style = style.bold();
+    }
+    style
+}
+
 fn paint(text: &str, style: AnsiStyle) -> String {
     sanitize(text).style(style).to_string()
 }
@@ -42,7 +49,7 @@ fn sanitize(text: &str) -> String {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::utils::text::Span;
+    use crate::info::text::Span;
     use owo_colors::{AnsiColors, DynColors};
 
     fn render_with_white(lines: &[Line], no_bold: bool) -> String {
@@ -88,6 +95,26 @@ mod test {
     #[test]
     fn test_render_empty_line() {
         assert_eq!(render_with_white(&[Line::default()], false), "\n");
+    }
+
+    #[test]
+    fn test_get_style() {
+        let style = get_style(true, DynColors::Ansi(AnsiColors::Cyan));
+        assert_eq!(
+            style,
+            AnsiStyle::new()
+                .color(DynColors::Ansi(AnsiColors::Cyan))
+                .bold()
+        );
+    }
+
+    #[test]
+    fn test_get_style_no_bold() {
+        let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
+        assert_eq!(
+            style,
+            AnsiStyle::new().color(DynColors::Ansi(AnsiColors::Cyan))
+        );
     }
 
     #[test]

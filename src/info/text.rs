@@ -1,6 +1,5 @@
 use owo_colors::DynColors;
 
-/// What a span is. Each role is shown in the text color of the same name.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Style {
     Plain,

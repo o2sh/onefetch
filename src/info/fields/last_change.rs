@@ -1,5 +1,5 @@
-use super::{git::metrics::GitMetrics, utils::format_time};
-use crate::info::utils::{info_field::InfoField, text::Line};
+use crate::info::{git::metrics::GitMetrics, utils::format_time};
+use crate::info::{info_field::InfoField, text::Line};
 use serde::Serialize;
 
 #[derive(Serialize)]

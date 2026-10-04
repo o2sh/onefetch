@@ -1,4 +1,4 @@
-use super::utils::{info_field::InfoField, text::Line};
+use crate::info::{info_field::InfoField, text::Line};
 use crate::{cli::NumberSeparator, info::utils::format_number};
 use anyhow::Result;
 use gix::bstr::BString;
