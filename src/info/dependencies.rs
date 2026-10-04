@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, info_field::InfoField},
+    info::utils::{format_number, module::Module, text::Line},
 };
 use onefetch_manifest::Manifest;
 use serde::Serialize;
@@ -29,12 +29,12 @@ impl DependenciesInfo {
 }
 
 #[typetag::serialize]
-impl InfoField for DependenciesInfo {
-    fn value(&self) -> String {
-        self.dependencies.clone()
+impl Module for DependenciesInfo {
+    fn value(&self) -> Vec<Line> {
+        vec![Line::from(self.dependencies.clone())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Dependencies".into()
     }
 }
@@ -58,6 +58,6 @@ mod test {
             NumberSeparator::Plain,
         );
 
-        assert_eq!(dependencies_info.value(), "21 (Cargo)".to_string());
+        assert_eq!(dependencies_info.value(), vec![Line::from("21 (Cargo)")]);
     }
 }

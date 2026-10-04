@@ -1,7 +1,7 @@
 use super::git::metrics::GitMetrics;
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, info_field::InfoField},
+    info::utils::{format_number, module::Module, text::Line},
 };
 use serde::Serialize;
 
@@ -29,9 +29,9 @@ impl CommitsInfo {
 }
 
 #[typetag::serialize]
-impl InfoField for CommitsInfo {
-    fn value(&self) -> String {
-        format!(
+impl Module for CommitsInfo {
+    fn value(&self) -> Vec<Line> {
+        let commits = format!(
             "{}{}",
             format_number(&self.number_of_commits, self.number_separator),
             if self.is_shallow {
@@ -39,10 +39,11 @@ impl InfoField for CommitsInfo {
             } else {
                 Default::default()
             }
-        )
+        );
+        vec![Line::from(commits)]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Commits".into()
     }
 }
@@ -59,7 +60,7 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(commits_info.value(), "3".to_string());
+        assert_eq!(commits_info.value(), vec![Line::from("3")]);
     }
 
     #[test]
@@ -70,6 +71,6 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(commits_info.value(), "2 (shallow)".to_string());
+        assert_eq!(commits_info.value(), vec![Line::from("2 (shallow)")]);
     }
 }

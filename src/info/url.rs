@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::utils::{module::Module, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use regex::regex;
@@ -56,12 +56,12 @@ fn create_http_url_from_ssh(url: &str) -> String {
 }
 
 #[typetag::serialize]
-impl InfoField for UrlInfo {
-    fn value(&self) -> String {
-        self.repo_url.to_string()
+impl Module for UrlInfo {
+    fn value(&self) -> Vec<Line> {
+        vec![Line::from(self.repo_url.to_string())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "URL".into()
     }
 }
@@ -79,7 +79,7 @@ mod test {
 
         assert_eq!(
             url_info.value(),
-            "git@github.com:o2sh/onefetch.git".to_string()
+            vec![Line::from("git@github.com:o2sh/onefetch.git")]
         );
     }
 

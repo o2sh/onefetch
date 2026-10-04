@@ -1,7 +1,10 @@
 use super::utils::format_number;
 use crate::info::langs::get_total_loc;
 use crate::info::langs::language::Language;
-use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+use crate::{
+    cli::NumberSeparator,
+    info::utils::{module::Module, text::Line},
+};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -23,12 +26,15 @@ impl LocInfo {
 }
 
 #[typetag::serialize]
-impl InfoField for LocInfo {
-    fn value(&self) -> String {
-        format_number(&self.lines_of_code, self.number_separator)
+impl Module for LocInfo {
+    fn value(&self) -> Vec<Line> {
+        vec![Line::from(format_number(
+            &self.lines_of_code,
+            self.number_separator,
+        ))]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Lines of code".into()
     }
 }
@@ -44,6 +50,6 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(loc_info.value(), "1235".to_string());
+        assert_eq!(loc_info.value(), vec![Line::from("1235")]);
     }
 }

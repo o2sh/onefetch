@@ -1,11 +1,23 @@
-use crate::info::utils::info_field::InfoField;
-use owo_colors::OwoColorize;
+use crate::info::utils::module::Module;
+use crate::info::utils::text::{Line, Span, Style};
 use serde::Serialize;
 use tokei;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
+
+const LANGUAGES_PER_LINE: usize = 2;
+
+/// Chip colors used when the terminal doesn't support true colors.
+const COLOR_PALETTE: [DynColors; 6] = [
+    DynColors::Ansi(AnsiColors::Red),
+    DynColors::Ansi(AnsiColors::Green),
+    DynColors::Ansi(AnsiColors::Yellow),
+    DynColors::Ansi(AnsiColors::Blue),
+    DynColors::Ansi(AnsiColors::Magenta),
+    DynColors::Ansi(AnsiColors::Cyan),
+];
 
 #[derive(Serialize)]
 pub struct LanguageWithPercentage {
@@ -22,8 +34,6 @@ pub struct LanguagesInfo {
     #[serde(skip_serializing)]
     number_of_languages_to_display: usize,
     #[serde(skip_serializing)]
-    info_color: DynColors,
-    #[serde(skip_serializing)]
     nerd_fonts: bool,
 }
 
@@ -32,7 +42,6 @@ impl LanguagesInfo {
         loc_by_language: &[(Language, usize)],
         true_color: bool,
         number_of_languages_to_display: usize,
-        info_color: DynColors,
         nerd_fonts: bool,
     ) -> Self {
         let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
@@ -58,53 +67,8 @@ impl LanguagesInfo {
             languages_with_percentage,
             true_color,
             number_of_languages_to_display,
-            info_color,
             nerd_fonts,
         }
-    }
-}
-
-impl std::fmt::Display for LanguagesInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let color_palette = [
-            DynColors::Ansi(AnsiColors::Red),
-            DynColors::Ansi(AnsiColors::Green),
-            DynColors::Ansi(AnsiColors::Yellow),
-            DynColors::Ansi(AnsiColors::Blue),
-            DynColors::Ansi(AnsiColors::Magenta),
-            DynColors::Ansi(AnsiColors::Cyan),
-        ];
-
-        let languages: Vec<LanguageDisplayData> = prepare_languages(self, &color_palette);
-
-        let mut languages_info = build_language_bar(&languages);
-
-        for (i, language_display_data) in languages.iter().enumerate() {
-            let formatted_number = format!("{:.*}", 1, language_display_data.percentage);
-            let chip = language_display_data
-                .chip_icon
-                .color(language_display_data.chip_color);
-            let language_str = format!(
-                "{} {} ",
-                chip,
-                format!("{0} ({formatted_number} %)", language_display_data.language)
-                    .color(self.info_color)
-            );
-            if i % 2 == 0 {
-                write!(
-                    languages_info,
-                    "\n{:<width$}{}",
-                    "",
-                    language_str,
-                    width = self.title().len() + 2
-                )
-                .unwrap();
-            } else {
-                languages_info.push_str(language_str.trim_end());
-            }
-        }
-
-        write!(f, "{languages_info}")
     }
 }
 
@@ -114,6 +78,12 @@ struct LanguageDisplayData {
     percentage: f64,
     chip_color: DynColors,
     chip_icon: char,
+}
+
+impl LanguageDisplayData {
+    fn label(&self) -> String {
+        format!("{} ({:.1} %)", self.language, self.percentage)
+    }
 }
 
 fn prepare_languages(
@@ -168,32 +138,48 @@ fn prepare_languages(
     }
 }
 
-fn build_language_bar(languages: &[LanguageDisplayData]) -> String {
+fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
     languages
         .iter()
-        .fold(String::new(), |mut output, language_display_data| {
-            let bar_width = std::cmp::max(
-                (language_display_data.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round()
-                    as usize,
-                1,
-            );
-            let _ = write!(
-                output,
-                "{:<width$}",
-                "".on_color(language_display_data.chip_color),
-                width = bar_width
-            );
-            output
+        .map(|language| {
+            let width = (language.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize;
+            Span::new(
+                " ".repeat(width.max(1)),
+                Style::Background(language.chip_color),
+            )
         })
+        .collect::<Vec<_>>()
+        .into()
+}
+
+/// Returns a line with the chip and the label of each language.
+fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
+    let mut spans = Vec::new();
+    for language in languages {
+        if !spans.is_empty() {
+            spans.push(Span::plain(" "));
+        }
+        spans.push(Span::new(
+            language.chip_icon,
+            Style::Color(language.chip_color),
+        ));
+        spans.push(Span::plain(" "));
+        spans.push(Span::value(language.label()));
+    }
+    spans.into()
 }
 
 #[typetag::serialize]
-impl InfoField for LanguagesInfo {
-    fn value(&self) -> String {
-        self.to_string()
+impl Module for LanguagesInfo {
+    fn value(&self) -> Vec<Line> {
+        let languages = prepare_languages(self, &COLOR_PALETTE);
+
+        let mut lines = vec![build_language_bar(&languages)];
+        lines.extend(languages.chunks(LANGUAGES_PER_LINE).map(build_legend_line));
+        lines
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         let mut title: String = "Language".into();
         if self.languages_with_percentage.len() > 1 {
             title.push('s');
@@ -236,20 +222,24 @@ mod test {
             }],
             true_color: false,
             number_of_languages_to_display: 6,
-            info_color: DynColors::Ansi(AnsiColors::White),
             nerd_fonts: false,
         };
-        let expected_languages_info = format!(
-            "{:<width$}\n{:<pad$}{} {} ",
-            "".on_color(DynColors::Ansi(AnsiColors::Red)),
-            "",
-            DEFAULT_CHIP_ICON.color(DynColors::Ansi(AnsiColors::Red)),
-            "Go (100.0 %)".color(DynColors::Ansi(AnsiColors::White)),
-            width = LANGUAGES_BAR_LENGTH,
-            pad = "Language".len() + 2
-        );
+        let red = DynColors::Ansi(AnsiColors::Red);
 
-        assert_eq!(languages_info.value(), expected_languages_info);
+        assert_eq!(
+            languages_info.value(),
+            vec![
+                Line::from(vec![Span::new(
+                    " ".repeat(LANGUAGES_BAR_LENGTH),
+                    Style::Background(red),
+                )]),
+                Line::from(vec![
+                    Span::new(DEFAULT_CHIP_ICON, Style::Color(red)),
+                    Span::plain(" "),
+                    Span::value("Go (100.0 %)"),
+                ]),
+            ]
+        );
     }
 
     #[test]
@@ -275,31 +265,15 @@ mod test {
             ],
             true_color: false,
             number_of_languages_to_display: 2,
-            info_color: DynColors::Ansi(AnsiColors::White),
             nerd_fonts: false,
         };
 
-        assert!(
-            languages_info.value().contains(
-                &"Go (30.0 %)"
-                    .color(DynColors::Ansi(AnsiColors::White))
-                    .to_string()
-            )
-        );
-        assert!(
-            languages_info.value().contains(
-                &"Erlang (40.0 %)"
-                    .color(DynColors::Ansi(AnsiColors::White))
-                    .to_string()
-            )
-        );
-        assert!(
-            languages_info.value().contains(
-                &"Other (30.0 %)"
-                    .color(DynColors::Ansi(AnsiColors::White))
-                    .to_string()
-            )
-        );
+        let labels: Vec<String> = prepare_languages(&languages_info, &COLOR_PALETTE)
+            .iter()
+            .map(LanguageDisplayData::label)
+            .collect();
+
+        assert_eq!(labels, ["Go (30.0 %)", "Erlang (40.0 %)", "Other (30.0 %)"]);
     }
 
     #[test]
@@ -323,14 +297,16 @@ mod test {
         let rust_bar_width = (0.6 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
         let python_bar_width = (0.4 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
 
-        let rust_bar = " ".repeat(rust_bar_width);
-        let python_bar = " ".repeat(python_bar_width);
-
-        let expected_result = format!(
-            "{}{}",
-            rust_bar.on_color(DynColors::Ansi(AnsiColors::Red)),
-            python_bar.on_color(DynColors::Ansi(AnsiColors::Yellow))
-        );
+        let expected_result = Line::from(vec![
+            Span::new(
+                " ".repeat(rust_bar_width),
+                Style::Background(DynColors::Ansi(AnsiColors::Red)),
+            ),
+            Span::new(
+                " ".repeat(python_bar_width),
+                Style::Background(DynColors::Ansi(AnsiColors::Yellow)),
+            ),
+        ]);
 
         assert_eq!(result, expected_result);
     }
@@ -358,7 +334,6 @@ mod test {
             ],
             true_color: false,
             number_of_languages_to_display: 2,
-            info_color: DynColors::Ansi(AnsiColors::White),
             nerd_fonts: false,
         };
 

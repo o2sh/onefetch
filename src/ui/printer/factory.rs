@@ -66,30 +66,17 @@ impl PrinterFactory {
             ascii_language,
         } = self;
 
-        match output {
-            Some(SerializationFormat::Json) => Ok(Printer {
-                r#type: PrinterType::Json,
-                info,
-            }),
-            Some(SerializationFormat::Yaml) => Ok(Printer {
-                r#type: PrinterType::Yaml,
-                info,
-            }),
+        let r#type = match output {
+            Some(SerializationFormat::Json) => PrinterType::Json,
+            Some(SerializationFormat::Yaml) => PrinterType::Yaml,
+            None if art_off => PrinterType::Plain,
             None => {
-                if art_off {
-                    Ok(Printer {
-                        r#type: PrinterType::Plain,
-                        info,
-                    })
-                } else if let Some(image) = image {
-                    Ok(Printer {
-                        r#type: PrinterType::Image {
-                            image,
-                            backend: image_backend.context("No supported image backend")?,
-                            resolution: color_resolution,
-                        },
-                        info,
-                    })
+                if let Some(image) = image {
+                    PrinterType::Image {
+                        image,
+                        backend: image_backend.context("No supported image backend")?,
+                        resolution: color_resolution,
+                    }
                 } else {
                     let ascii_art = ascii_input
                         .or_else(|| {
@@ -101,20 +88,19 @@ impl PrinterFactory {
                                 .map(|language| language.get_ascii_art().to_string())
                         });
 
-                    if let Some(art) = ascii_art {
-                        Ok(Printer {
-                            r#type: PrinterType::Ascii { art, no_bold },
-                            info,
-                        })
-                    } else {
-                        Ok(Printer {
-                            r#type: PrinterType::Plain,
-                            info,
-                        })
+                    match ascii_art {
+                        Some(art) => PrinterType::Ascii { art },
+                        None => PrinterType::Plain,
                     }
                 }
             }
-        }
+        };
+
+        Ok(Printer {
+            info,
+            r#type,
+            no_bold,
+        })
     }
 }
 

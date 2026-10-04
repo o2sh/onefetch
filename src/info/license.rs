@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::utils::{module::Module, text::Line};
 use anyhow::{Result, bail};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
@@ -86,12 +86,12 @@ impl LicenseInfo {
 }
 
 #[typetag::serialize]
-impl InfoField for LicenseInfo {
-    fn value(&self) -> String {
-        self.license.to_string()
+impl Module for LicenseInfo {
+    fn value(&self) -> Vec<Line> {
+        vec![Line::from(self.license.to_string())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "License".into()
     }
 }
@@ -139,7 +139,7 @@ mod test {
                 license: Some("LICENSE".into()),
             }),
         )?;
-        assert_eq!(license_info.value(), "LICENSE");
+        assert_eq!(license_info.value(), vec![Line::from("LICENSE")]);
         Ok(())
     }
 }

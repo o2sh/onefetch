@@ -1,6 +1,6 @@
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, info_field::InfoField},
+    info::utils::{format_number, module::Module, text::Line},
 };
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
@@ -44,29 +44,21 @@ fn bytes_to_human_readable(bytes: u64) -> String {
     format!("{adjusted_byte_based:#.2}")
 }
 
-impl std::fmt::Display for SizeInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.file_count {
-            0 => write!(f, "{}", self.repo_size),
-            1 => write!(f, "{} (1 file)", self.repo_size),
-            _ => {
-                write!(
-                    f,
-                    "{} ({} files)",
-                    self.repo_size,
-                    format_number(&self.file_count, self.number_separator)
-                )
-            }
-        }
-    }
-}
-
 #[typetag::serialize]
-impl InfoField for SizeInfo {
-    fn value(&self) -> String {
-        self.to_string()
+impl Module for SizeInfo {
+    fn value(&self) -> Vec<Line> {
+        let size = match self.file_count {
+            0 => self.repo_size.clone(),
+            1 => format!("{} (1 file)", self.repo_size),
+            _ => format!(
+                "{} ({} files)",
+                self.repo_size,
+                format_number(&self.file_count, self.number_separator)
+            ),
+        };
+        vec![Line::from(size)]
     }
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Size".into()
     }
 }
@@ -85,7 +77,7 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), "2.40 MiB (123 files)".to_string());
+        assert_eq!(size_info.value(), vec![Line::from("2.40 MiB (123 files)")]);
     }
 
     #[test]
@@ -96,7 +88,7 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), "2.40 MiB".to_string());
+        assert_eq!(size_info.value(), vec![Line::from("2.40 MiB")]);
     }
 
     #[test]
@@ -107,7 +99,7 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());
+        assert_eq!(size_info.value(), vec![Line::from("2.40 MiB (1 file)")]);
     }
 
     #[rstest(

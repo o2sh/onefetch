@@ -1,4 +1,7 @@
-use crate::{cli::NumberSeparator, info::utils::info_field::InfoField};
+use crate::{
+    cli::NumberSeparator,
+    info::utils::{module::Module, text::Line},
+};
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
@@ -68,47 +71,42 @@ fn get_number_of_branches(repo: &Repository) -> Result<usize> {
     Ok(number_of_branches)
 }
 
-impl std::fmt::Display for ProjectInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.repo_name.is_empty() {
-            Ok(())
-        } else {
-            let branches_str = match self.number_of_branches {
-                0 => String::new(),
-                1 => "1 branch".into(),
-                _ => format!(
-                    "{} branches",
-                    format_number(&self.number_of_branches, self.number_separator)
-                ),
-            };
-
-            let tags_str = match self.number_of_tags {
-                0 => String::new(),
-                1 => "1 tag".into(),
-                _ => format!(
-                    "{} tags",
-                    format_number(&self.number_of_tags, self.number_separator)
-                ),
-            };
-
-            if tags_str.is_empty() && branches_str.is_empty() {
-                write!(f, "{}", self.repo_name)
-            } else if branches_str.is_empty() || tags_str.is_empty() {
-                write!(f, "{} ({}{})", self.repo_name, tags_str, branches_str)
-            } else {
-                write!(f, "{} ({}, {})", self.repo_name, branches_str, tags_str)
-            }
-        }
-    }
-}
-
 #[typetag::serialize]
-impl InfoField for ProjectInfo {
-    fn value(&self) -> String {
-        self.to_string()
+impl Module for ProjectInfo {
+    fn value(&self) -> Vec<Line> {
+        if self.repo_name.is_empty() {
+            return Vec::new();
+        }
+
+        let branches = match self.number_of_branches {
+            0 => String::new(),
+            1 => "1 branch".into(),
+            _ => format!(
+                "{} branches",
+                format_number(&self.number_of_branches, self.number_separator)
+            ),
+        };
+
+        let tags = match self.number_of_tags {
+            0 => String::new(),
+            1 => "1 tag".into(),
+            _ => format!(
+                "{} tags",
+                format_number(&self.number_of_tags, self.number_separator)
+            ),
+        };
+
+        let project = if tags.is_empty() && branches.is_empty() {
+            self.repo_name.clone()
+        } else if branches.is_empty() || tags.is_empty() {
+            format!("{} ({}{})", self.repo_name, tags, branches)
+        } else {
+            format!("{} ({}, {})", self.repo_name, branches, tags)
+        };
+        vec![Line::from(project)]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Project".into()
     }
 }
@@ -128,7 +126,7 @@ mod test {
 
         assert_eq!(
             project_info.value(),
-            "onefetch (3 branches, 2 tags)".to_string()
+            vec![Line::from("onefetch (3 branches, 2 tags)")]
         );
     }
 
@@ -141,7 +139,7 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(project_info.value(), "onefetch".to_string());
+        assert_eq!(project_info.value(), vec![Line::from("onefetch")]);
     }
 
     #[test]
@@ -153,7 +151,10 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(project_info.value(), "onefetch (3 branches)".to_string());
+        assert_eq!(
+            project_info.value(),
+            vec![Line::from("onefetch (3 branches)")]
+        );
     }
 
     #[test]
@@ -165,7 +166,7 @@ mod test {
             number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(project_info.value(), "onefetch (2 tags)".to_string());
+        assert_eq!(project_info.value(), vec![Line::from("onefetch (2 tags)")]);
     }
 
     #[test]
@@ -179,7 +180,7 @@ mod test {
 
         assert_eq!(
             project_info.value(),
-            "onefetch (1 branch, 1 tag)".to_string()
+            vec![Line::from("onefetch (1 branch, 1 tag)")]
         );
     }
 

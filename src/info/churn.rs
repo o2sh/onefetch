@@ -1,10 +1,10 @@
-use super::utils::info_field::InfoField;
+use super::utils::{module::Module, text::Line};
 use crate::{cli::NumberSeparator, info::utils::format_number};
 use anyhow::Result;
 use gix::bstr::BString;
 use globset::{Glob, GlobSetBuilder};
 use serde::Serialize;
-use std::{collections::HashMap, fmt::Write};
+use std::collections::HashMap;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -26,17 +26,6 @@ impl FileChurn {
             nbr_of_commits,
             number_separator,
         }
-    }
-}
-
-impl std::fmt::Display for FileChurn {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{} {}",
-            shorten_file_path(&self.file_path, 2),
-            format_number(&self.nbr_of_commits, self.number_separator)
-        )
     }
 }
 
@@ -101,31 +90,22 @@ fn compute_file_churns(
         .collect())
 }
 
-impl std::fmt::Display for ChurnInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut churn_info = String::new();
-
-        let pad = self.title().len() + 2;
-
-        for (i, file_churn) in self.file_churns.iter().enumerate() {
-            if i == 0 {
-                write!(churn_info, "{file_churn}")?;
-            } else {
-                write!(churn_info, "\n{:<width$}{}", "", file_churn, width = pad)?;
-            }
-        }
-
-        write!(f, "{churn_info}")
-    }
-}
-
 #[typetag::serialize]
-impl InfoField for ChurnInfo {
-    fn value(&self) -> String {
-        self.to_string()
+impl Module for ChurnInfo {
+    fn value(&self) -> Vec<Line> {
+        self.file_churns
+            .iter()
+            .map(|file_churn| {
+                Line::from(format!(
+                    "{} {}",
+                    shorten_file_path(&file_churn.file_path, 2),
+                    format_number(&file_churn.nbr_of_commits, file_churn.number_separator)
+                ))
+            })
+            .collect()
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         format!("Churn ({})", self.churn_pool_size)
     }
 }
@@ -154,7 +134,14 @@ mod tests {
     fn test_display_file_churn() {
         let file_churn = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
 
-        assert_eq!(file_churn.to_string(), "\u{2026}/to/file.txt 50");
+        let churn_info = ChurnInfo {
+            file_churns: vec![file_churn],
+            churn_pool_size: 5,
+        };
+        assert_eq!(
+            churn_info.value(),
+            vec![Line::from("\u{2026}/to/file.txt 50")]
+        );
     }
 
     #[test]
@@ -167,13 +154,13 @@ mod tests {
             churn_pool_size: 5,
         };
 
-        assert!(
-            churn_info
-                .value()
-                .contains(&"\u{2026}/to/file.txt 50".to_string())
+        assert_eq!(
+            churn_info.value(),
+            vec![
+                Line::from("\u{2026}/to/file.txt 50"),
+                Line::from("file_2.txt 30"),
+            ]
         );
-
-        assert!(churn_info.value().contains(&"file_2.txt 30".to_string()));
     }
 
     #[test]

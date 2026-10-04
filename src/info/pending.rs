@@ -1,4 +1,4 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::utils::{module::Module, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use serde::Serialize;
@@ -42,32 +42,26 @@ impl PendingInfo {
     }
 }
 
-impl std::fmt::Display for PendingInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut result = String::new();
+#[typetag::serialize]
+impl Module for PendingInfo {
+    fn value(&self) -> Vec<Line> {
+        let mut pending = String::new();
         if self.modified > 0 {
-            result = format!("{}+-", self.modified);
+            pending = format!("{}+-", self.modified);
         }
 
         if self.added > 0 {
-            result = format!("{result} {}+", self.added);
+            pending = format!("{pending} {}+", self.added);
         }
 
         if self.deleted > 0 {
-            result = format!("{result} {}-", self.deleted);
+            pending = format!("{pending} {}-", self.deleted);
         }
 
-        write!(f, "{}", result.trim())
-    }
-}
-
-#[typetag::serialize]
-impl InfoField for PendingInfo {
-    fn value(&self) -> String {
-        self.to_string()
+        vec![Line::from(pending.trim())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Pending".into()
     }
 }
@@ -84,6 +78,6 @@ mod test {
             modified: 4,
         };
 
-        assert_eq!(pending_info.value(), "4+-".to_string());
+        assert_eq!(pending_info.value(), vec![Line::from("4+-")]);
     }
 }

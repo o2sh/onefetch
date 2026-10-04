@@ -1,10 +1,10 @@
 use super::git::sig::Sig;
 use crate::{
     cli::NumberSeparator,
-    info::utils::{format_number, info_field::InfoField},
+    info::utils::{format_number, module::Module, text::Line},
 };
 use serde::Serialize;
-use std::{collections::HashMap, fmt::Write};
+use std::collections::HashMap;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -33,29 +33,6 @@ impl Author {
             nbr_of_commits,
             contribution,
             number_separator,
-        }
-    }
-}
-
-impl std::fmt::Display for Author {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if let Some(email) = &self.email {
-            write!(
-                f,
-                "{}% {} <{}> {}",
-                self.contribution,
-                self.name,
-                email,
-                format_number(&self.nbr_of_commits, self.number_separator)
-            )
-        } else {
-            write!(
-                f,
-                "{}% {} {}",
-                self.contribution,
-                self.name,
-                format_number(&self.nbr_of_commits, self.number_separator)
-            )
         }
     }
 }
@@ -130,36 +107,25 @@ fn digit_difference(num1: usize, num2: usize) -> usize {
     count_digits(num1).abs_diff(count_digits(num2))
 }
 
-impl std::fmt::Display for AuthorsInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut authors_info = String::new();
-
-        let pad = self.title().len() + 2;
-        for (i, author) in self.authors.iter().enumerate() {
-            if i == 0 {
-                write!(authors_info, "{author}")?;
-            } else {
-                write!(
-                    authors_info,
-                    "\n{:<width$}{}",
-                    "",
-                    author,
-                    width = pad + digit_difference(self.top_contribution(), author.contribution)
-                )?;
-            }
-        }
-
-        write!(f, "{authors_info}")
-    }
-}
-
 #[typetag::serialize]
-impl InfoField for AuthorsInfo {
-    fn value(&self) -> String {
-        self.to_string()
+impl Module for AuthorsInfo {
+    fn value(&self) -> Vec<Line> {
+        self.authors
+            .iter()
+            .map(|author| {
+                let pad = digit_difference(self.top_contribution(), author.contribution);
+                let contribution = format!("{:pad$}{}%", "", author.contribution);
+                let commits = format_number(&author.nbr_of_commits, author.number_separator);
+                let line = match &author.email {
+                    Some(email) => format!("{contribution} {} <{email}> {commits}", author.name),
+                    None => format!("{contribution} {} {commits}", author.name),
+                };
+                Line::from(line)
+            })
+            .collect()
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         let mut title: String = "Author".into();
         if self.authors.len() > 1 {
             title.push('s');
@@ -171,9 +137,6 @@ impl InfoField for AuthorsInfo {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::ui::text_colors::TextColors;
-    use insta::assert_snapshot;
-    use owo_colors::DynColors;
     use rstest::rstest;
 
     #[test]
@@ -186,14 +149,23 @@ mod test {
             NumberSeparator::Plain,
         );
 
-        assert_eq!(author.to_string(), "75% John Doe <john.doe@email.com> 1500");
+        let authors_info = AuthorsInfo {
+            authors: vec![author],
+        };
+        assert_eq!(
+            authors_info.value(),
+            vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
+        );
     }
 
     #[test]
     fn test_display_author_with_no_email() {
         let author = Author::new("John Doe".into(), None, 1500, 2000, NumberSeparator::Plain);
 
-        assert_eq!(author.to_string(), "75% John Doe 1500");
+        let authors_info = AuthorsInfo {
+            authors: vec![author],
+        };
+        assert_eq!(authors_info.value(), vec![Line::from("75% John Doe 1500")]);
     }
 
     #[test]
@@ -210,7 +182,7 @@ mod test {
             authors: vec![author],
         };
 
-        assert_eq!(authors_info.title(), "Author");
+        assert_eq!(authors_info.key(), "Author");
     }
 
     #[test]
@@ -235,7 +207,7 @@ mod test {
             authors: vec![author, author_2],
         };
 
-        assert_eq!(authors_info.title(), "Authors");
+        assert_eq!(authors_info.key(), "Authors");
     }
 
     #[test]
@@ -251,13 +223,10 @@ mod test {
         let authors_info = AuthorsInfo {
             authors: vec![author],
         };
-        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
-        let mut buffer = String::new();
-        authors_info
-            .write_styled(&mut buffer, false, &colors)
-            .unwrap();
-
-        assert_snapshot!(buffer);
+        assert_eq!(
+            authors_info.value(),
+            vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
+        );
     }
 
     #[test]
@@ -281,14 +250,13 @@ mod test {
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2],
         };
-
-        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
-        let mut buffer = String::new();
-        authors_info
-            .write_styled(&mut buffer, false, &colors)
-            .unwrap();
-
-        assert_snapshot!(buffer);
+        assert_eq!(
+            authors_info.value(),
+            vec![
+                Line::from("75% John Doe <john.doe@email.com> 1500"),
+                Line::from("80% Roberto Berto 240"),
+            ]
+        );
     }
     #[test]
     fn test_author_info_alignment_with_three_authors() {
@@ -313,14 +281,14 @@ mod test {
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2, author_3],
         };
-
-        let colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
-        let mut buffer = String::new();
-        authors_info
-            .write_styled(&mut buffer, false, &colors)
-            .unwrap();
-
-        assert_snapshot!(buffer);
+        assert_eq!(
+            authors_info.value(),
+            vec![
+                Line::from("75% John Doe <john.doe@email.com> 1500"),
+                Line::from("80% Roberto Berto 240"),
+                Line::from(" 1% Jane Doe 1"),
+            ]
+        );
     }
 
     #[rstest]

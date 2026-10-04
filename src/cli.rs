@@ -1,5 +1,5 @@
 use crate::info::langs::language::{Language, LanguageType};
-use crate::info::utils::info_field::InfoType;
+use crate::info::utils::module::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
