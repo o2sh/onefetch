@@ -1,14 +1,11 @@
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line},
-};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
+use crate::info::utils::quantity;
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
-
-use crate::info::utils::format_number;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -16,17 +13,10 @@ pub struct ProjectInfo {
     pub repo_name: String,
     pub number_of_branches: usize,
     pub number_of_tags: usize,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl ProjectInfo {
-    pub fn new(
-        repo: &Repository,
-        repo_url: &str,
-        manifest: Option<&Manifest>,
-        number_separator: NumberSeparator,
-    ) -> Result<Self> {
+    pub fn new(repo: &Repository, repo_url: &str, manifest: Option<&Manifest>) -> Result<Self> {
         let repo_name = get_repo_name(repo_url, manifest)?;
         let number_of_branches = get_number_of_branches(repo)?;
         let number_of_tags = get_number_of_tags(repo)?;
@@ -34,7 +24,6 @@ impl ProjectInfo {
             repo_name,
             number_of_branches,
             number_of_tags,
-            number_separator,
         })
     }
 }
@@ -78,32 +67,26 @@ impl InfoField for ProjectInfo {
             return Vec::new();
         }
 
-        let branches = match self.number_of_branches {
-            0 => String::new(),
-            1 => "1 branch".into(),
-            _ => format!(
-                "{} branches",
-                format_number(&self.number_of_branches, self.number_separator)
-            ),
-        };
+        let counts: Vec<[Span; 2]> = [
+            quantity(self.number_of_branches as u64, "branch", "branches"),
+            quantity(self.number_of_tags as u64, "tag", "tags"),
+        ]
+        .into_iter()
+        .flatten()
+        .collect();
 
-        let tags = match self.number_of_tags {
-            0 => String::new(),
-            1 => "1 tag".into(),
-            _ => format!(
-                "{} tags",
-                format_number(&self.number_of_tags, self.number_separator)
-            ),
-        };
-
-        let project = if tags.is_empty() && branches.is_empty() {
-            self.repo_name.clone()
-        } else if branches.is_empty() || tags.is_empty() {
-            format!("{} ({}{})", self.repo_name, tags, branches)
-        } else {
-            format!("{} ({}, {})", self.repo_name, branches, tags)
-        };
-        vec![Line::from(project)]
+        let mut spans = vec![Span::value(self.repo_name.clone())];
+        if !counts.is_empty() {
+            spans.push(Span::value(" ("));
+            for (i, count) in counts.into_iter().enumerate() {
+                if i > 0 {
+                    spans.push(Span::value(", "));
+                }
+                spans.extend(count);
+            }
+            spans.push(Span::value(")"));
+        }
+        vec![spans.into()]
     }
 
     fn key(&self) -> String {
@@ -121,12 +104,20 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 3,
             number_of_tags: 2,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(
             project_info.value(),
-            vec![Line::from("onefetch (3 branches, 2 tags)")]
+            vec![Line::from(vec![
+                Span::value("onefetch"),
+                Span::value(" ("),
+                Span::number(3),
+                Span::value(" branches"),
+                Span::value(", "),
+                Span::number(2),
+                Span::value(" tags"),
+                Span::value(")")
+            ])]
         );
     }
 
@@ -136,7 +127,6 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
             number_of_tags: 0,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(project_info.value(), vec![Line::from("onefetch")]);
@@ -148,12 +138,17 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 3,
             number_of_tags: 0,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(
             project_info.value(),
-            vec![Line::from("onefetch (3 branches)")]
+            vec![Line::from(vec![
+                Span::value("onefetch"),
+                Span::value(" ("),
+                Span::number(3),
+                Span::value(" branches"),
+                Span::value(")")
+            ])]
         );
     }
 
@@ -163,10 +158,18 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 0,
             number_of_tags: 2,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(project_info.value(), vec![Line::from("onefetch (2 tags)")]);
+        assert_eq!(
+            project_info.value(),
+            vec![Line::from(vec![
+                Span::value("onefetch"),
+                Span::value(" ("),
+                Span::number(2),
+                Span::value(" tags"),
+                Span::value(")")
+            ])]
+        );
     }
 
     #[test]
@@ -175,12 +178,20 @@ mod test {
             repo_name: "onefetch".to_string(),
             number_of_branches: 1,
             number_of_tags: 1,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(
             project_info.value(),
-            vec![Line::from("onefetch (1 branch, 1 tag)")]
+            vec![Line::from(vec![
+                Span::value("onefetch"),
+                Span::value(" ("),
+                Span::number(1),
+                Span::value(" branch"),
+                Span::value(", "),
+                Span::number(1),
+                Span::value(" tag"),
+                Span::value(")")
+            ])]
         );
     }
 
@@ -198,7 +209,6 @@ mod test {
             repo_name: String::new(),
             number_of_branches: 0,
             number_of_tags: 0,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert!(project_info.value().is_empty());

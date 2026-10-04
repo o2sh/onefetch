@@ -1,5 +1,5 @@
-use crate::info::{info_field::InfoField, text::Line};
-use crate::{cli::NumberSeparator, info::utils::format_number};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
 use anyhow::Result;
 use gix::bstr::BString;
 use globset::{Glob, GlobSetBuilder};
@@ -11,20 +11,13 @@ use std::collections::HashMap;
 pub struct FileChurn {
     pub file_path: String,
     pub nbr_of_commits: usize,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl FileChurn {
-    pub fn new(
-        file_path: String,
-        nbr_of_commits: usize,
-        number_separator: NumberSeparator,
-    ) -> Self {
+    pub fn new(file_path: String, nbr_of_commits: usize) -> Self {
         Self {
             file_path,
             nbr_of_commits,
-            number_separator,
         }
     }
 }
@@ -41,13 +34,11 @@ impl ChurnInfo {
         churn_pool_size: usize,
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
-        number_separator: NumberSeparator,
     ) -> Result<Self> {
         let file_churns = compute_file_churns(
             number_of_commits_by_file_path,
             number_of_file_churns_to_display,
             globs_to_exclude,
-            number_separator,
         )?;
 
         Ok(Self {
@@ -61,7 +52,6 @@ fn compute_file_churns(
     number_of_commits_by_file_path: &HashMap<BString, usize>,
     number_of_file_churns_to_display: usize,
     globs_to_exclude: &[String],
-    number_separator: NumberSeparator,
 ) -> Result<Vec<FileChurn>> {
     let mut builder = GlobSetBuilder::new();
     for glob in globs_to_exclude {
@@ -79,11 +69,7 @@ fn compute_file_churns(
             if glob_set.is_match(file_path.to_string()) {
                 None
             } else {
-                Some(FileChurn::new(
-                    file_path.to_string(),
-                    *nbr_of_commits,
-                    number_separator,
-                ))
+                Some(FileChurn::new(file_path.to_string(), *nbr_of_commits))
             }
         })
         .take(number_of_file_churns_to_display)
@@ -96,11 +82,10 @@ impl InfoField for ChurnInfo {
         self.file_churns
             .iter()
             .map(|file_churn| {
-                Line::from(format!(
-                    "{} {}",
-                    shorten_file_path(&file_churn.file_path, 2),
-                    format_number(&file_churn.nbr_of_commits, file_churn.number_separator)
-                ))
+                Line::from(vec![
+                    Span::value(format!("{} ", shorten_file_path(&file_churn.file_path, 2))),
+                    Span::number(file_churn.nbr_of_commits as u64),
+                ])
             })
             .collect()
     }
@@ -132,7 +117,7 @@ mod tests {
 
     #[test]
     fn test_display_file_churn() {
-        let file_churn = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
+        let file_churn = FileChurn::new("path/to/file.txt".into(), 50);
 
         let churn_info = ChurnInfo {
             file_churns: vec![file_churn],
@@ -140,14 +125,17 @@ mod tests {
         };
         assert_eq!(
             churn_info.value(),
-            vec![Line::from("\u{2026}/to/file.txt 50")]
+            vec![Line::from(vec![
+                Span::value("\u{2026}/to/file.txt "),
+                Span::number(50)
+            ])]
         );
     }
 
     #[test]
     fn test_churn_info_value_with_two_file_churns() {
-        let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
-        let file_churn_2 = FileChurn::new("file_2.txt".into(), 30, NumberSeparator::Plain);
+        let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50);
+        let file_churn_2 = FileChurn::new("file_2.txt".into(), 30);
 
         let churn_info = ChurnInfo {
             file_churns: vec![file_churn_1, file_churn_2],
@@ -157,8 +145,8 @@ mod tests {
         assert_eq!(
             churn_info.value(),
             vec![
-                Line::from("\u{2026}/to/file.txt 50"),
-                Line::from("file_2.txt 30"),
+                Line::from(vec![Span::value("\u{2026}/to/file.txt "), Span::number(50)]),
+                Line::from(vec![Span::value("file_2.txt "), Span::number(30)]),
             ]
         );
     }
@@ -190,7 +178,6 @@ mod tests {
         number_of_commits_by_file_path.insert("foo/x/file.txt".into(), 10);
 
         let number_of_file_churns_to_display = 3;
-        let number_separator = NumberSeparator::Comma;
         let globs_to_exclude = vec![
             "foo/**/file.txt".to_string(),
             "path/to/file2.txt".to_string(),
@@ -199,12 +186,11 @@ mod tests {
             &number_of_commits_by_file_path,
             number_of_file_churns_to_display,
             &globs_to_exclude,
-            number_separator,
         )?;
         let expected = vec![
-            FileChurn::new(String::from("path/to/file4.txt"), 7, number_separator),
-            FileChurn::new(String::from("path/to/file3.txt"), 3, number_separator),
-            FileChurn::new(String::from("path/to/file1.txt"), 2, number_separator),
+            FileChurn::new(String::from("path/to/file4.txt"), 7),
+            FileChurn::new(String::from("path/to/file3.txt"), 3),
+            FileChurn::new(String::from("path/to/file1.txt"), 2),
         ];
         assert_eq!(actual, expected);
         Ok(())

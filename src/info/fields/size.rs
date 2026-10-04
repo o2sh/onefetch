@@ -1,7 +1,6 @@
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
+use crate::info::utils::quantity;
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
 use serde::Serialize;
@@ -11,17 +10,14 @@ use serde::Serialize;
 pub struct SizeInfo {
     pub repo_size: String,
     pub file_count: u64,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl SizeInfo {
-    pub fn new(repo: &Repository, number_separator: NumberSeparator) -> Self {
+    pub fn new(repo: &Repository) -> Self {
         let (repo_size, file_count) = get_repo_size(repo);
         Self {
             repo_size,
             file_count,
-            number_separator,
         }
     }
 }
@@ -47,16 +43,13 @@ fn bytes_to_human_readable(bytes: u64) -> String {
 #[typetag::serialize]
 impl InfoField for SizeInfo {
     fn value(&self) -> Vec<Line> {
-        let size = match self.file_count {
-            0 => self.repo_size.clone(),
-            1 => format!("{} (1 file)", self.repo_size),
-            _ => format!(
-                "{} ({} files)",
-                self.repo_size,
-                format_number(&self.file_count, self.number_separator)
-            ),
-        };
-        vec![Line::from(size)]
+        let mut spans = vec![Span::value(self.repo_size.clone())];
+        if let Some(files) = quantity(self.file_count, "file", "files") {
+            spans.push(Span::value(" ("));
+            spans.extend(files);
+            spans.push(Span::value(")"));
+        }
+        vec![spans.into()]
     }
     fn key(&self) -> String {
         "Size".into()
@@ -74,10 +67,18 @@ mod test {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 123,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), vec![Line::from("2.40 MiB (123 files)")]);
+        assert_eq!(
+            size_info.value(),
+            vec![Line::from(vec![
+                Span::value("2.40 MiB"),
+                Span::value(" ("),
+                Span::number(123),
+                Span::value(" files"),
+                Span::value(")")
+            ])]
+        );
     }
 
     #[test]
@@ -85,7 +86,6 @@ mod test {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 0,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert_eq!(size_info.value(), vec![Line::from("2.40 MiB")]);
@@ -96,10 +96,18 @@ mod test {
         let size_info = SizeInfo {
             repo_size: "2.40 MiB".to_string(),
             file_count: 1,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), vec![Line::from("2.40 MiB (1 file)")]);
+        assert_eq!(
+            size_info.value(),
+            vec![Line::from(vec![
+                Span::value("2.40 MiB"),
+                Span::value(" ("),
+                Span::number(1),
+                Span::value(" file"),
+                Span::value(")")
+            ])]
+        );
     }
 
     #[rstest(

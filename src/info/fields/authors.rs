@@ -1,8 +1,6 @@
 use crate::info::git::sig::Sig;
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -13,8 +11,6 @@ pub struct Author {
     email: Option<String>,
     nbr_of_commits: usize,
     contribution: usize,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl Author {
@@ -23,7 +19,6 @@ impl Author {
         email: Option<String>,
         nbr_of_commits: usize,
         total_nbr_of_commits: usize,
-        number_separator: NumberSeparator,
     ) -> Self {
         let contribution =
             (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
@@ -32,7 +27,6 @@ impl Author {
             email,
             nbr_of_commits,
             contribution,
-            number_separator,
         }
     }
 }
@@ -48,14 +42,12 @@ impl AuthorsInfo {
         total_number_of_commits: usize,
         number_of_authors_to_display: usize,
         show_email: bool,
-        number_separator: NumberSeparator,
     ) -> Self {
         let authors = compute_authors(
             number_of_commits_by_signature,
             total_number_of_commits,
             number_of_authors_to_display,
             show_email,
-            number_separator,
         );
         Self { authors }
     }
@@ -73,7 +65,6 @@ fn compute_authors(
     total_number_of_commits: usize,
     number_of_authors_to_display: usize,
     show_email: bool,
-    number_separator: NumberSeparator,
 ) -> Vec<Author> {
     let mut signature_with_number_of_commits_sorted: Vec<(&Sig, &usize)> =
         Vec::from_iter(number_of_commits_by_signature);
@@ -94,7 +85,6 @@ fn compute_authors(
                 },
                 *author_nbr_of_commits,
                 total_number_of_commits,
-                number_separator,
             )
         })
         .take(number_of_authors_to_display)
@@ -115,12 +105,14 @@ impl InfoField for AuthorsInfo {
             .map(|author| {
                 let pad = digit_difference(self.top_contribution(), author.contribution);
                 let contribution = format!("{:pad$}{}%", "", author.contribution);
-                let commits = format_number(&author.nbr_of_commits, author.number_separator);
-                let line = match &author.email {
-                    Some(email) => format!("{contribution} {} <{email}> {commits}", author.name),
-                    None => format!("{contribution} {} {commits}", author.name),
+                let author_text = match &author.email {
+                    Some(email) => format!("{contribution} {} <{email}> ", author.name),
+                    None => format!("{contribution} {} ", author.name),
                 };
-                Line::from(line)
+                Line::from(vec![
+                    Span::value(author_text),
+                    Span::number(author.nbr_of_commits as u64),
+                ])
             })
             .collect()
     }
@@ -146,7 +138,6 @@ mod test {
             Some("john.doe@email.com".into()),
             1500,
             2000,
-            NumberSeparator::Plain,
         );
 
         let authors_info = AuthorsInfo {
@@ -154,18 +145,27 @@ mod test {
         };
         assert_eq!(
             authors_info.value(),
-            vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
+            vec![Line::from(vec![
+                Span::value("75% John Doe <john.doe@email.com> "),
+                Span::number(1500)
+            ])]
         );
     }
 
     #[test]
     fn test_display_author_with_no_email() {
-        let author = Author::new("John Doe".into(), None, 1500, 2000, NumberSeparator::Plain);
+        let author = Author::new("John Doe".into(), None, 1500, 2000);
 
         let authors_info = AuthorsInfo {
             authors: vec![author],
         };
-        assert_eq!(authors_info.value(), vec![Line::from("75% John Doe 1500")]);
+        assert_eq!(
+            authors_info.value(),
+            vec![Line::from(vec![
+                Span::value("75% John Doe "),
+                Span::number(1500)
+            ])]
+        );
     }
 
     #[test]
@@ -175,7 +175,6 @@ mod test {
             Some("john.doe@email.com".into()),
             1500,
             2000,
-            NumberSeparator::Plain,
         );
 
         let authors_info = AuthorsInfo {
@@ -192,16 +191,9 @@ mod test {
             Some("john.doe@email.com".into()),
             1500,
             2000,
-            NumberSeparator::Plain,
         );
 
-        let author_2 = Author::new(
-            "Roberto Berto".into(),
-            None,
-            240,
-            300,
-            NumberSeparator::Plain,
-        );
+        let author_2 = Author::new("Roberto Berto".into(), None, 240, 300);
 
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2],
@@ -217,16 +209,9 @@ mod test {
             Some("john.doe@email.com".into()),
             1500,
             2000,
-            NumberSeparator::Plain,
         );
 
-        let author_2 = Author::new(
-            "Roberto Berto".into(),
-            None,
-            240,
-            300,
-            NumberSeparator::Plain,
-        );
+        let author_2 = Author::new("Roberto Berto".into(), None, 240, 300);
 
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2],
@@ -234,8 +219,11 @@ mod test {
         assert_eq!(
             authors_info.value(),
             vec![
-                Line::from("75% John Doe <john.doe@email.com> 1500"),
-                Line::from("80% Roberto Berto 240"),
+                Line::from(vec![
+                    Span::value("75% John Doe <john.doe@email.com> "),
+                    Span::number(1500)
+                ]),
+                Line::from(vec![Span::value("80% Roberto Berto "), Span::number(240)]),
             ]
         );
     }
@@ -246,18 +234,11 @@ mod test {
             Some("john.doe@email.com".into()),
             1500,
             2000,
-            NumberSeparator::Plain,
         );
 
-        let author_2 = Author::new(
-            "Roberto Berto".into(),
-            None,
-            240,
-            300,
-            NumberSeparator::Plain,
-        );
+        let author_2 = Author::new("Roberto Berto".into(), None, 240, 300);
 
-        let author_3 = Author::new("Jane Doe".into(), None, 1, 100, NumberSeparator::Plain);
+        let author_3 = Author::new("Jane Doe".into(), None, 1, 100);
 
         let authors_info = AuthorsInfo {
             authors: vec![author, author_2, author_3],
@@ -265,9 +246,12 @@ mod test {
         assert_eq!(
             authors_info.value(),
             vec![
-                Line::from("75% John Doe <john.doe@email.com> 1500"),
-                Line::from("80% Roberto Berto 240"),
-                Line::from(" 1% Jane Doe 1"),
+                Line::from(vec![
+                    Span::value("75% John Doe <john.doe@email.com> "),
+                    Span::number(1500)
+                ]),
+                Line::from(vec![Span::value("80% Roberto Berto "), Span::number(240)]),
+                Line::from(vec![Span::value(" 1% Jane Doe "), Span::number(1)]),
             ]
         );
     }
@@ -308,19 +292,17 @@ mod test {
         let total_number_of_commits = 100;
         let number_of_authors_to_display = 2;
         let show_email = false;
-        let number_separator = NumberSeparator::Comma;
 
         let actual = compute_authors(
             &number_of_commits_by_signature,
             total_number_of_commits,
             number_of_authors_to_display,
             show_email,
-            number_separator,
         );
 
         let expected = vec![
-            Author::new(String::from("Ellen Smith"), None, 50, 100, number_separator),
-            Author::new(String::from("John Doe"), None, 30, 100, number_separator),
+            Author::new(String::from("Ellen Smith"), None, 50, 100),
+            Author::new(String::from("John Doe"), None, 30, 100),
         ];
         assert_eq!(actual, expected);
     }

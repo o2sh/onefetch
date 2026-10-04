@@ -1,5 +1,5 @@
 use super::Printer;
-use crate::cli::CliOptions;
+use crate::cli::{CliOptions, NumberSeparator};
 use crate::info::Info;
 use crate::info::langs::language::Language;
 use crate::ui::printer::{PrinterType, SerializationFormat};
@@ -15,6 +15,7 @@ pub struct PrinterFactory {
     image: Option<DynamicImage>,
     pub no_bold: bool,
     text_colors: TextColors,
+    number_separator: NumberSeparator,
     pub art_off: bool,
     image_backend: Option<Box<dyn ImageBackend>>,
     color_resolution: usize,
@@ -56,6 +57,7 @@ impl PrinterFactory {
             image,
             no_bold: cli_options.text_formatting.no_bold,
             text_colors,
+            number_separator: cli_options.text_formatting.number_separator,
             art_off: cli_options.visuals.no_art,
             image_backend,
             color_resolution: cli_options.image.color_resolution,
@@ -71,6 +73,7 @@ impl PrinterFactory {
             image,
             no_bold,
             text_colors,
+            number_separator,
             art_off,
             image_backend,
             color_resolution,
@@ -113,6 +116,7 @@ impl PrinterFactory {
             r#type,
             no_bold,
             text_colors,
+            number_separator,
         })
     }
 }
@@ -120,7 +124,7 @@ impl PrinterFactory {
 #[cfg(test)]
 mod tests {
     use crate::{
-        cli::CliOptions,
+        cli::{CliOptions, NumberSeparator},
         info::{Info, langs::language::Language},
         ui::{
             printer::{PrinterType, SerializationFormat, factory::PrinterFactory},
@@ -226,6 +230,7 @@ mod tests {
             image: Some(DynamicImage::default()),
             no_bold: false,
             text_colors: TextColors::default(),
+            number_separator: NumberSeparator::Plain,
             art_off: false,
             image_backend: Some(Box::new(DummyBackend::new())),
             color_resolution: 8,

@@ -1,37 +1,34 @@
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DependenciesInfo {
-    pub dependencies: String,
+    pub number_of_dependencies: usize,
+    pub manifest_type: Option<String>,
 }
 
 impl DependenciesInfo {
-    pub fn new(manifest: Option<&Manifest>, number_separator: NumberSeparator) -> Self {
-        let dependencies = manifest
-            .and_then(|m| {
-                (m.number_of_dependencies != 0).then(|| {
-                    format!(
-                        "{} ({})",
-                        format_number(&m.number_of_dependencies, number_separator),
-                        m.manifest_type
-                    )
-                })
-            })
-            .unwrap_or_default();
-
-        Self { dependencies }
+    pub fn new(manifest: Option<&Manifest>) -> Self {
+        Self {
+            number_of_dependencies: manifest.map_or(0, |m| m.number_of_dependencies),
+            manifest_type: manifest.map(|m| m.manifest_type.to_string()),
+        }
     }
 }
 
 #[typetag::serialize]
 impl InfoField for DependenciesInfo {
     fn value(&self) -> Vec<Line> {
-        vec![Line::from(self.dependencies.clone())]
+        match &self.manifest_type {
+            Some(manifest_type) if self.number_of_dependencies > 0 => vec![Line::from(vec![
+                Span::number(self.number_of_dependencies as u64),
+                Span::value(format!(" ({manifest_type})")),
+            ])],
+            _ => Vec::new(),
+        }
     }
 
     fn key(&self) -> String {
@@ -46,18 +43,18 @@ mod test {
 
     #[test]
     fn should_display_license() {
-        let dependencies_info = DependenciesInfo::new(
-            Some(&Manifest {
-                manifest_type: ManifestType::Cargo,
-                name: None,
-                description: None,
-                number_of_dependencies: 21,
-                version: None,
-                license: None,
-            }),
-            NumberSeparator::Plain,
-        );
+        let dependencies_info = DependenciesInfo::new(Some(&Manifest {
+            manifest_type: ManifestType::Cargo,
+            name: None,
+            description: None,
+            number_of_dependencies: 21,
+            version: None,
+            license: None,
+        }));
 
-        assert_eq!(dependencies_info.value(), vec![Line::from("21 (Cargo)")]);
+        assert_eq!(
+            dependencies_info.value(),
+            vec![Line::from(vec![Span::number(21), Span::value(" (Cargo)")])]
+        );
     }
 }

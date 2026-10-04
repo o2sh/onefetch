@@ -1,8 +1,5 @@
-use crate::info::utils::format_number;
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line},
-};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -11,20 +8,13 @@ pub struct ContributorsInfo {
     pub total_number_of_authors: usize,
     #[serde(skip_serializing)]
     pub number_of_authors_to_display: usize,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl ContributorsInfo {
-    pub fn new(
-        total_number_of_authors: usize,
-        number_of_authors_to_display: usize,
-        number_separator: NumberSeparator,
-    ) -> Self {
+    pub fn new(total_number_of_authors: usize, number_of_authors_to_display: usize) -> Self {
         Self {
             total_number_of_authors,
             number_of_authors_to_display,
-            number_separator,
         }
     }
 }
@@ -33,10 +23,7 @@ impl ContributorsInfo {
 impl InfoField for ContributorsInfo {
     fn value(&self) -> Vec<Line> {
         if self.total_number_of_authors > self.number_of_authors_to_display {
-            vec![Line::from(format_number(
-                &self.total_number_of_authors,
-                self.number_separator,
-            ))]
+            vec![Span::number(self.total_number_of_authors as u64).into()]
         } else {
             Vec::new()
         }
@@ -53,8 +40,11 @@ mod test {
 
     #[test]
     fn test_display_contributors_info() {
-        let contributors_info = ContributorsInfo::new(12, 2, NumberSeparator::Plain);
-        assert_eq!(contributors_info.value(), vec![Line::from("12")]);
+        let contributors_info = ContributorsInfo::new(12, 2);
+        assert_eq!(
+            contributors_info.value(),
+            vec![Line::from(vec![Span::number(12)])]
+        );
         assert_eq!(contributors_info.key(), "Contributors".to_string());
     }
 
@@ -63,7 +53,6 @@ mod test {
         let contributors_info = ContributorsInfo {
             total_number_of_authors: 1,
             number_of_authors_to_display: 3,
-            number_separator: NumberSeparator::Plain,
         };
 
         assert!(contributors_info.value().is_empty());

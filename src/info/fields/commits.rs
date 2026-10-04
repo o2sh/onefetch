@@ -1,8 +1,6 @@
 use crate::info::git::metrics::GitMetrics;
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::info_field::InfoField;
+use crate::info::text::{Line, Span};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -10,20 +8,13 @@ use serde::Serialize;
 pub struct CommitsInfo {
     pub number_of_commits: usize,
     is_shallow: bool,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl CommitsInfo {
-    pub fn new(
-        git_metrics: &GitMetrics,
-        is_shallow: bool,
-        number_separator: NumberSeparator,
-    ) -> Self {
+    pub fn new(git_metrics: &GitMetrics, is_shallow: bool) -> Self {
         Self {
             number_of_commits: git_metrics.total_number_of_commits,
             is_shallow,
-            number_separator,
         }
     }
 }
@@ -31,16 +22,11 @@ impl CommitsInfo {
 #[typetag::serialize]
 impl InfoField for CommitsInfo {
     fn value(&self) -> Vec<Line> {
-        let commits = format!(
-            "{}{}",
-            format_number(&self.number_of_commits, self.number_separator),
-            if self.is_shallow {
-                " (shallow)"
-            } else {
-                Default::default()
-            }
-        );
-        vec![Line::from(commits)]
+        let mut spans = vec![Span::number(self.number_of_commits as u64)];
+        if self.is_shallow {
+            spans.push(Span::value(" (shallow)"));
+        }
+        vec![spans.into()]
     }
 
     fn key(&self) -> String {
@@ -57,10 +43,12 @@ mod test {
         let commits_info = CommitsInfo {
             number_of_commits: 3,
             is_shallow: false,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(commits_info.value(), vec![Line::from("3")]);
+        assert_eq!(
+            commits_info.value(),
+            vec![Line::from(vec![Span::number(3)])]
+        );
     }
 
     #[test]
@@ -68,9 +56,11 @@ mod test {
         let commits_info = CommitsInfo {
             number_of_commits: 2,
             is_shallow: true,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(commits_info.value(), vec![Line::from("2 (shallow)")]);
+        assert_eq!(
+            commits_info.value(),
+            vec![Line::from(vec![Span::number(2), Span::value(" (shallow)")])]
+        );
     }
 }
