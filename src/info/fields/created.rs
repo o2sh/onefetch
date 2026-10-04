@@ -1,29 +1,29 @@
-use crate::cli::NumberSeparator;
-use crate::info::{git::metrics::GitMetrics, utils::format_time};
+use crate::info::format::Format;
+use crate::info::format::serialize_time;
+use crate::info::git::metrics::GitMetrics;
 use crate::info::{info_field::InfoField, text::Line};
+use gix::date::Time;
 use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreatedInfo {
-    pub creation_date: String,
+    #[serde(serialize_with = "serialize_time")]
+    pub creation_date: Time,
 }
 
 impl CreatedInfo {
-    pub fn new(iso_time: bool, git_metrics: &GitMetrics) -> Self {
-        let creation_date = get_creation_date(git_metrics, iso_time);
-        Self { creation_date }
+    pub fn new(git_metrics: &GitMetrics) -> Self {
+        Self {
+            creation_date: git_metrics.time_of_first_commit,
+        }
     }
-}
-
-fn get_creation_date(git_metrics: &GitMetrics, iso_time: bool) -> String {
-    format_time(git_metrics.time_of_first_commit, iso_time)
 }
 
 #[typetag::serialize]
 impl InfoField for CreatedInfo {
-    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
-        vec![Line::from(self.creation_date.to_string())]
+    fn value(&self, format: &Format) -> Vec<Line> {
+        vec![Line::from(format.time(self.creation_date))]
     }
 
     fn key(&self) -> String {
@@ -38,12 +38,28 @@ mod test {
     #[test]
     fn test_display_created_info() {
         let created_info = CreatedInfo {
-            creation_date: "2 years ago".to_string(),
+            creation_date: Time::new(946_771_200, 0),
+        };
+        let iso_time = Format {
+            iso_time: true,
+            ..Format::default()
         };
 
         assert_eq!(
-            created_info.value(NumberSeparator::Plain),
-            vec![Line::from("2 years ago")]
+            created_info.value(&iso_time),
+            vec![Line::from("2000-01-02T00:00:00Z")]
+        );
+    }
+
+    #[test]
+    fn test_serialize_created_info() {
+        let created_info = CreatedInfo {
+            creation_date: Time::new(946_771_200, 0),
+        };
+
+        assert_eq!(
+            serde_json::to_value(&created_info).unwrap()["creationDate"],
+            "2000-01-02T00:00:00Z"
         );
     }
 }

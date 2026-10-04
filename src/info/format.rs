@@ -1,23 +1,50 @@
 use crate::cli::NumberSeparator;
 use gix::date::Time;
 use num_format::ToFormattedString;
+use serde::Serializer;
 use std::time::SystemTime;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use time_humanize::HumanTime;
 
-pub fn format_time(time: Time, iso_time: bool) -> String {
-    if iso_time {
-        to_rfc3339(HumanTime::from(time.seconds))
-    } else {
-        to_human_time(time)
+/// How numbers and dates are written in the terminal output. Fields keep raw
+/// values and use this to display them.
+#[derive(Clone, Copy, Debug)]
+pub struct Format {
+    pub number_separator: NumberSeparator,
+    pub iso_time: bool,
+}
+
+impl Default for Format {
+    fn default() -> Self {
+        Self {
+            number_separator: NumberSeparator::Plain,
+            iso_time: false,
+        }
     }
 }
 
-fn to_rfc3339<T>(dt: T) -> String
-where
-    T: Into<OffsetDateTime>,
-{
-    dt.into().format(&Rfc3339).unwrap()
+impl Format {
+    pub fn number<T: ToFormattedString>(&self, number: &T) -> String {
+        number.to_formatted_string(&self.number_separator.get_format())
+    }
+
+    pub fn time(&self, time: Time) -> String {
+        if self.iso_time {
+            to_rfc3339(time)
+        } else {
+            to_human_time(time)
+        }
+    }
+}
+
+/// Serializes a time as RFC 3339, whatever the display format.
+pub fn serialize_time<S: Serializer>(time: &Time, serializer: S) -> Result<S::Ok, S::Error> {
+    serializer.serialize_str(&to_rfc3339(*time))
+}
+
+fn to_rfc3339(time: Time) -> String {
+    let date_time: OffsetDateTime = HumanTime::from(time.seconds).into();
+    date_time.format(&Rfc3339).unwrap()
 }
 
 fn to_human_time(time: Time) -> String {
@@ -33,18 +60,21 @@ fn to_human_time(time: Time) -> String {
     ht.to_string()
 }
 
-pub fn format_number<T: ToFormattedString + std::fmt::Display>(
-    number: &T,
-    number_separator: NumberSeparator,
-) -> String {
-    number.to_formatted_string(&number_separator.get_format())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use rstest::rstest;
     use std::time::{Duration, SystemTime};
+
+    const HUMAN_TIME: Format = Format {
+        number_separator: NumberSeparator::Plain,
+        iso_time: false,
+    };
+
+    const ISO_TIME: Format = Format {
+        number_separator: NumberSeparator::Plain,
+        iso_time: true,
+    };
 
     #[test]
     fn display_time_as_human_time_current_time_now() {
@@ -56,8 +86,7 @@ mod tests {
             current_time.as_secs() as gix::date::SecondsSinceUnixEpoch,
             0,
         );
-        let result = format_time(time, false);
-        assert_eq!(result, "now");
+        assert_eq!(HUMAN_TIME.time(time), "now");
     }
 
     #[test]
@@ -69,25 +98,20 @@ mod tests {
         // NOTE 366 so that it's a year ago even with leap years.
         let year_ago = current_time - (day * 366);
         let time = Time::new(year_ago.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        let result = format_time(time, false);
-        assert_eq!(result, "a year ago");
+        assert_eq!(HUMAN_TIME.time(time), "a year ago");
     }
 
     #[test]
     fn display_time_as_iso_time_some_time() {
         // Set "current" time to 11/18/2021 11:02:22
-        let time_sample = 1_637_233_282;
-        let time = Time::new(time_sample, 0);
-        let result = format_time(time, true);
-        assert_eq!(result, "2021-11-18T11:01:22Z");
+        let time = Time::new(1_637_233_282, 0);
+        assert_eq!(ISO_TIME.time(time), "2021-11-18T11:01:22Z");
     }
 
     #[test]
     fn display_time_as_iso_time_current_epoch() {
-        let time_sample = 0;
-        let time = Time::new(time_sample, 0);
-        let result = format_time(time, true);
-        assert_eq!(result, "1970-01-01T00:00:00Z");
+        let time = Time::new(0, 0);
+        assert_eq!(ISO_TIME.time(time), "1970-01-01T00:00:00Z");
     }
 
     #[test]
@@ -98,15 +122,13 @@ mod tests {
             .unwrap();
         let tomorrow = current_time + day;
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        let result = format_time(time, false);
-        assert_eq!(result, "in a day");
+        assert_eq!(HUMAN_TIME.time(time), "in a day");
     }
 
     #[test]
     fn display_time_before_epoch() {
         let time = Time::new(gix::date::SecondsSinceUnixEpoch::MIN, 0);
-        let result = to_human_time(time);
-        assert!(result.ends_with(" years ago"));
+        assert!(HUMAN_TIME.time(time).ends_with(" years ago"));
     }
 
     #[rstest]
@@ -114,11 +136,15 @@ mod tests {
     #[case(1_000_000, NumberSeparator::Space, "1\u{202f}000\u{202f}000")]
     #[case(1_000_000, NumberSeparator::Underscore, "1_000_000")]
     #[case(1_000_000, NumberSeparator::Plain, "1000000")]
-    fn test_format_number(
+    fn test_number(
         #[case] number: usize,
         #[case] number_separator: NumberSeparator,
         #[case] expected: &str,
     ) {
-        assert_eq!(&format_number(&number, number_separator), expected);
+        let format = Format {
+            number_separator,
+            iso_time: false,
+        };
+        assert_eq!(format.number(&number), expected);
     }
 }

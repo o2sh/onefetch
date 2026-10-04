@@ -1,30 +1,29 @@
-use crate::cli::NumberSeparator;
-use crate::info::{git::metrics::GitMetrics, utils::format_time};
+use crate::info::format::Format;
+use crate::info::format::serialize_time;
+use crate::info::git::metrics::GitMetrics;
 use crate::info::{info_field::InfoField, text::Line};
+use gix::date::Time;
 use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LastChangeInfo {
-    pub last_change: String,
+    #[serde(serialize_with = "serialize_time")]
+    pub last_change: Time,
 }
 
 impl LastChangeInfo {
-    pub fn new(iso_time: bool, git_metrics: &GitMetrics) -> Self {
-        let last_change = get_date_of_last_commit(git_metrics, iso_time);
-
-        Self { last_change }
+    pub fn new(git_metrics: &GitMetrics) -> Self {
+        Self {
+            last_change: git_metrics.time_of_most_recent_commit,
+        }
     }
-}
-
-fn get_date_of_last_commit(git_metrics: &GitMetrics, iso_time: bool) -> String {
-    format_time(git_metrics.time_of_most_recent_commit, iso_time)
 }
 
 #[typetag::serialize]
 impl InfoField for LastChangeInfo {
-    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
-        vec![Line::from(self.last_change.to_string())]
+    fn value(&self, format: &Format) -> Vec<Line> {
+        vec![Line::from(format.time(self.last_change))]
     }
 
     fn key(&self) -> String {
@@ -39,12 +38,28 @@ mod test {
     #[test]
     fn test_display_last_change_info() {
         let last_change_info = LastChangeInfo {
-            last_change: "34 minutes ago".to_string(),
+            last_change: Time::new(946_771_200, 0),
+        };
+        let iso_time = Format {
+            iso_time: true,
+            ..Format::default()
         };
 
         assert_eq!(
-            last_change_info.value(NumberSeparator::Plain),
-            vec![Line::from("34 minutes ago")]
+            last_change_info.value(&iso_time),
+            vec![Line::from("2000-01-02T00:00:00Z")]
+        );
+    }
+
+    #[test]
+    fn test_serialize_last_change_info() {
+        let last_change_info = LastChangeInfo {
+            last_change: Time::new(946_771_200, 0),
+        };
+
+        assert_eq!(
+            serde_json::to_value(&last_change_info).unwrap()["lastChange"],
+            "2000-01-02T00:00:00Z"
         );
     }
 }

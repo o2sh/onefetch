@@ -1,8 +1,5 @@
-use crate::info::utils::format_number;
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line},
-};
+use crate::info::format::Format;
+use crate::info::{info_field::InfoField, text::Line};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -24,12 +21,9 @@ impl ContributorsInfo {
 
 #[typetag::serialize]
 impl InfoField for ContributorsInfo {
-    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, format: &Format) -> Vec<Line> {
         if self.total_number_of_authors > self.number_of_authors_to_display {
-            vec![Line::from(format_number(
-                &self.total_number_of_authors,
-                separator,
-            ))]
+            vec![Line::from(format.number(&self.total_number_of_authors))]
         } else {
             Vec::new()
         }
@@ -48,7 +42,7 @@ mod test {
     fn test_display_contributors_info() {
         let contributors_info = ContributorsInfo::new(12, 2);
         assert_eq!(
-            contributors_info.value(NumberSeparator::Plain),
+            contributors_info.value(&Format::default()),
             vec![Line::from("12")]
         );
         assert_eq!(contributors_info.key(), "Contributors".to_string());
@@ -61,6 +55,6 @@ mod test {
             number_of_authors_to_display: 3,
         };
 
-        assert!(contributors_info.value(NumberSeparator::Plain).is_empty());
+        assert!(contributors_info.value(&Format::default()).is_empty());
     }
 }

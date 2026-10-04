@@ -1,4 +1,4 @@
-use crate::cli::NumberSeparator;
+use crate::info::format::Format;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
@@ -45,7 +45,7 @@ impl PendingInfo {
 
 #[typetag::serialize]
 impl InfoField for PendingInfo {
-    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, _format: &Format) -> Vec<Line> {
         let mut pending = String::new();
         if self.modified > 0 {
             pending = format!("{}+-", self.modified);
@@ -80,7 +80,7 @@ mod test {
         };
 
         assert_eq!(
-            pending_info.value(NumberSeparator::Plain),
+            pending_info.value(&Format::default()),
             vec![Line::from("4+-")]
         );
     }

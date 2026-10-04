@@ -1,6 +1,7 @@
 use super::Printer;
-use crate::cli::{CliOptions, NumberSeparator};
+use crate::cli::CliOptions;
 use crate::info::Info;
+use crate::info::format::Format;
 use crate::info::langs::language::Language;
 use crate::ui::printer::{PrinterType, SerializationFormat};
 use crate::ui::text_colors::TextColors;
@@ -15,7 +16,7 @@ pub struct PrinterFactory {
     image: Option<DynamicImage>,
     pub no_bold: bool,
     text_colors: TextColors,
-    number_separator: NumberSeparator,
+    format: Format,
     pub art_off: bool,
     image_backend: Option<Box<dyn ImageBackend>>,
     color_resolution: usize,
@@ -57,7 +58,10 @@ impl PrinterFactory {
             image,
             no_bold: cli_options.text_formatting.no_bold,
             text_colors,
-            number_separator: cli_options.text_formatting.number_separator,
+            format: Format {
+                number_separator: cli_options.text_formatting.number_separator,
+                iso_time: cli_options.text_formatting.iso_time,
+            },
             art_off: cli_options.visuals.no_art,
             image_backend,
             color_resolution: cli_options.image.color_resolution,
@@ -73,7 +77,7 @@ impl PrinterFactory {
             image,
             no_bold,
             text_colors,
-            number_separator,
+            format,
             art_off,
             image_backend,
             color_resolution,
@@ -116,7 +120,7 @@ impl PrinterFactory {
             r#type,
             no_bold,
             text_colors,
-            number_separator,
+            format,
         })
     }
 }
@@ -124,8 +128,8 @@ impl PrinterFactory {
 #[cfg(test)]
 mod tests {
     use crate::{
-        cli::{CliOptions, NumberSeparator},
-        info::{Info, langs::language::Language},
+        cli::CliOptions,
+        info::{Info, format::Format, langs::language::Language},
         ui::{
             printer::{PrinterType, SerializationFormat, factory::PrinterFactory},
             text_colors::TextColors,
@@ -230,7 +234,7 @@ mod tests {
             image: Some(DynamicImage::default()),
             no_bold: false,
             text_colors: TextColors::default(),
-            number_separator: NumberSeparator::Plain,
+            format: Format::default(),
             art_off: false,
             image_backend: Some(Box::new(DummyBackend::new())),
             color_resolution: 8,

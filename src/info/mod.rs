@@ -16,6 +16,7 @@ use self::fields::size::SizeInfo;
 use self::fields::url::UrlInfo;
 use self::fields::url::get_repo_url;
 use self::fields::version::VersionInfo;
+use self::format::Format;
 use self::git::metrics::GitMetrics;
 use self::git::traverse_commit_graph;
 use self::git::uses_reftables;
@@ -23,7 +24,7 @@ use self::info_field::{InfoField, InfoKind};
 use self::langs::language::Language;
 use self::text::Line;
 use self::title::Title;
-use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
+use crate::cli::{CliOptions, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
 use anyhow::{Context, Result, bail};
 use gix::Repository;
@@ -33,13 +34,13 @@ use serde::Serialize;
 use std::path::Path;
 
 mod fields;
+pub mod format;
 mod git;
 pub mod info_field;
 pub mod langs;
 mod layout;
 pub mod text;
 mod title;
-pub mod utils;
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -62,13 +63,13 @@ struct InfoBuilder {
 }
 
 impl Info {
-    pub fn lines(&self, separator: NumberSeparator) -> Vec<Line> {
+    pub fn lines(&self, format: &Format) -> Vec<Line> {
         let mut lines = Vec::new();
         if let Some(title) = &self.title {
             lines.extend(layout::title_lines(title));
         }
         for info_field in &self.info_fields {
-            lines.extend(layout::field_lines(info_field.as_ref(), separator));
+            lines.extend(layout::field_lines(info_field.as_ref(), format));
         }
         if !self.no_color_palette {
             lines.push(Line::default());
@@ -132,7 +133,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         &cli_options.ascii.ascii_colors,
         true_color,
     );
-    let iso_time = cli_options.text_formatting.iso_time;
     let number_of_languages_to_display = cli_options.info.number_of_languages;
     let number_of_authors_to_display = cli_options.info.number_of_authors;
     let number_of_file_churns_to_display = cli_options.info.number_of_file_churns;
@@ -146,7 +146,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .head(&repo)?
         .pending(&repo)?
         .version(&repo, manifest.as_ref())?
-        .created(&git_metrics, iso_time)
+        .created(&git_metrics)
         .languages(
             loc_by_language.as_ref(),
             true_color,
@@ -155,7 +155,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         )
         .dependencies(manifest.as_ref())
         .authors(&git_metrics, number_of_authors_to_display, show_email)
-        .last_change(&git_metrics, iso_time)
+        .last_change(&git_metrics)
         .contributors(&git_metrics, number_of_authors_to_display)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow())
@@ -256,9 +256,9 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    fn created(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
+    fn created(mut self, git_metrics: &GitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoKind::Created) {
-            let created = CreatedInfo::new(iso_time, git_metrics);
+            let created = CreatedInfo::new(git_metrics);
             self.info_fields.push(Box::new(created));
         }
         self
@@ -311,9 +311,9 @@ impl InfoBuilder {
         self
     }
 
-    fn last_change(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
+    fn last_change(mut self, git_metrics: &GitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoKind::LastChange) {
-            let last_change = LastChangeInfo::new(iso_time, git_metrics);
+            let last_change = LastChangeInfo::new(git_metrics);
             self.info_fields.push(Box::new(last_change));
         }
         self

@@ -1,5 +1,5 @@
-use crate::cli::NumberSeparator;
 use crate::info::Info;
+use crate::info::format::Format;
 use crate::ui::text_colors::TextColors;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
@@ -23,7 +23,7 @@ pub struct Printer {
     r#type: PrinterType,
     no_bold: bool,
     text_colors: TextColors,
-    number_separator: NumberSeparator,
+    format: Format,
 }
 
 enum PrinterType {
@@ -103,7 +103,7 @@ impl Printer {
 
     fn info_text(&self) -> String {
         ansi::render(
-            &self.info.lines(self.number_separator),
+            &self.info.lines(&self.format),
             &self.text_colors,
             self.no_bold,
         )

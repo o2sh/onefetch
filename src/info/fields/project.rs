@@ -1,14 +1,11 @@
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line},
-};
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
 
-use crate::info::utils::format_number;
+use crate::info::format::Format;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -65,7 +62,7 @@ fn get_number_of_branches(repo: &Repository) -> Result<usize> {
 
 #[typetag::serialize]
 impl InfoField for ProjectInfo {
-    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, format: &Format) -> Vec<Line> {
         if self.repo_name.is_empty() {
             return Vec::new();
         }
@@ -73,16 +70,13 @@ impl InfoField for ProjectInfo {
         let branches = match self.number_of_branches {
             0 => String::new(),
             1 => "1 branch".into(),
-            _ => format!(
-                "{} branches",
-                format_number(&self.number_of_branches, separator)
-            ),
+            _ => format!("{} branches", format.number(&self.number_of_branches)),
         };
 
         let tags = match self.number_of_tags {
             0 => String::new(),
             1 => "1 tag".into(),
-            _ => format!("{} tags", format_number(&self.number_of_tags, separator)),
+            _ => format!("{} tags", format.number(&self.number_of_tags)),
         };
 
         let project = if tags.is_empty() && branches.is_empty() {
@@ -113,7 +107,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(NumberSeparator::Plain),
+            project_info.value(&Format::default()),
             vec![Line::from("onefetch (3 branches, 2 tags)")]
         );
     }
@@ -127,7 +121,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(NumberSeparator::Plain),
+            project_info.value(&Format::default()),
             vec![Line::from("onefetch")]
         );
     }
@@ -141,7 +135,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(NumberSeparator::Plain),
+            project_info.value(&Format::default()),
             vec![Line::from("onefetch (3 branches)")]
         );
     }
@@ -155,7 +149,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(NumberSeparator::Plain),
+            project_info.value(&Format::default()),
             vec![Line::from("onefetch (2 tags)")]
         );
     }
@@ -169,7 +163,7 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(NumberSeparator::Plain),
+            project_info.value(&Format::default()),
             vec![Line::from("onefetch (1 branch, 1 tag)")]
         );
     }
@@ -190,6 +184,6 @@ mod test {
             number_of_tags: 0,
         };
 
-        assert!(project_info.value(NumberSeparator::Plain).is_empty());
+        assert!(project_info.value(&Format::default()).is_empty());
     }
 }

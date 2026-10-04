@@ -1,7 +1,4 @@
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::{format::Format, info_field::InfoField, text::Line};
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
 use serde::Serialize;
@@ -43,14 +40,14 @@ fn bytes_to_human_readable(bytes: u64) -> String {
 
 #[typetag::serialize]
 impl InfoField for SizeInfo {
-    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, format: &Format) -> Vec<Line> {
         let size = match self.file_count {
             0 => self.repo_size.clone(),
             1 => format!("{} (1 file)", self.repo_size),
             _ => format!(
                 "{} ({} files)",
                 self.repo_size,
-                format_number(&self.file_count, separator)
+                format.number(&self.file_count)
             ),
         };
         vec![Line::from(size)]
@@ -74,7 +71,7 @@ mod test {
         };
 
         assert_eq!(
-            size_info.value(NumberSeparator::Plain),
+            size_info.value(&Format::default()),
             vec![Line::from("2.40 MiB (123 files)")]
         );
     }
@@ -87,7 +84,7 @@ mod test {
         };
 
         assert_eq!(
-            size_info.value(NumberSeparator::Plain),
+            size_info.value(&Format::default()),
             vec![Line::from("2.40 MiB")]
         );
     }
@@ -100,7 +97,7 @@ mod test {
         };
 
         assert_eq!(
-            size_info.value(NumberSeparator::Plain),
+            size_info.value(&Format::default()),
             vec![Line::from("2.40 MiB (1 file)")]
         );
     }

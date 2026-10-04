@@ -1,7 +1,6 @@
-use crate::cli::NumberSeparator;
+use crate::info::format::Format;
 use crate::info::info_field::InfoField;
 use crate::info::text::Line;
-use crate::info::utils::format_number;
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 
@@ -23,10 +22,10 @@ impl DependenciesInfo {
 
 #[typetag::serialize]
 impl InfoField for DependenciesInfo {
-    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, format: &Format) -> Vec<Line> {
         match &self.manifest_type {
             Some(manifest_type) if self.number_of_dependencies > 0 => {
-                let dependencies = format_number(&self.number_of_dependencies, separator);
+                let dependencies = format.number(&self.number_of_dependencies);
                 vec![Line::from(format!("{dependencies} ({manifest_type})"))]
             }
             _ => Vec::new(),
@@ -55,7 +54,7 @@ mod test {
         }));
 
         assert_eq!(
-            dependencies_info.value(NumberSeparator::Plain),
+            dependencies_info.value(&Format::default()),
             vec![Line::from("21 (Cargo)")]
         );
     }

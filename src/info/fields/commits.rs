@@ -1,8 +1,5 @@
 use crate::info::git::metrics::GitMetrics;
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::{format::Format, info_field::InfoField, text::Line};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -23,10 +20,10 @@ impl CommitsInfo {
 
 #[typetag::serialize]
 impl InfoField for CommitsInfo {
-    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, format: &Format) -> Vec<Line> {
         let commits = format!(
             "{}{}",
-            format_number(&self.number_of_commits, separator),
+            format.number(&self.number_of_commits),
             if self.is_shallow {
                 " (shallow)"
             } else {
@@ -53,7 +50,7 @@ mod test {
         };
 
         assert_eq!(
-            commits_info.value(NumberSeparator::Plain),
+            commits_info.value(&Format::default()),
             vec![Line::from("3")]
         );
     }
@@ -66,7 +63,7 @@ mod test {
         };
 
         assert_eq!(
-            commits_info.value(NumberSeparator::Plain),
+            commits_info.value(&Format::default()),
             vec![Line::from("2 (shallow)")]
         );
     }

@@ -1,8 +1,5 @@
 use crate::info::git::sig::Sig;
-use crate::{
-    cli::NumberSeparator,
-    info::{info_field::InfoField, text::Line, utils::format_number},
-};
+use crate::info::{format::Format, info_field::InfoField, text::Line};
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -101,13 +98,13 @@ fn digit_difference(num1: usize, num2: usize) -> usize {
 
 #[typetag::serialize]
 impl InfoField for AuthorsInfo {
-    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+    fn value(&self, format: &Format) -> Vec<Line> {
         self.authors
             .iter()
             .map(|author| {
                 let pad = digit_difference(self.top_contribution(), author.contribution);
                 let contribution = format!("{:pad$}{}%", "", author.contribution);
-                let commits = format_number(&author.nbr_of_commits, separator);
+                let commits = format.number(&author.nbr_of_commits);
                 let line = match &author.email {
                     Some(email) => format!("{contribution} {} <{email}> {commits}", author.name),
                     None => format!("{contribution} {} {commits}", author.name),
@@ -144,7 +141,7 @@ mod test {
             authors: vec![author],
         };
         assert_eq!(
-            authors_info.value(NumberSeparator::Plain),
+            authors_info.value(&Format::default()),
             vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
         );
     }
@@ -157,7 +154,7 @@ mod test {
             authors: vec![author],
         };
         assert_eq!(
-            authors_info.value(NumberSeparator::Plain),
+            authors_info.value(&Format::default()),
             vec![Line::from("75% John Doe 1500")]
         );
     }
@@ -211,7 +208,7 @@ mod test {
             authors: vec![author, author_2],
         };
         assert_eq!(
-            authors_info.value(NumberSeparator::Plain),
+            authors_info.value(&Format::default()),
             vec![
                 Line::from("75% John Doe <john.doe@email.com> 1500"),
                 Line::from("80% Roberto Berto 240"),
@@ -235,7 +232,7 @@ mod test {
             authors: vec![author, author_2, author_3],
         };
         assert_eq!(
-            authors_info.value(NumberSeparator::Plain),
+            authors_info.value(&Format::default()),
             vec![
                 Line::from("75% John Doe <john.doe@email.com> 1500"),
                 Line::from("80% Roberto Berto 240"),
