@@ -1,4 +1,5 @@
 use crate::info::Info;
+use crate::ui::text_colors::TextColors;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
 use onefetch_ascii::AsciiArt;
@@ -20,6 +21,7 @@ pub struct Printer {
     info: Info,
     r#type: PrinterType,
     no_bold: bool,
+    text_colors: TextColors,
 }
 
 enum PrinterType {
@@ -96,11 +98,9 @@ impl Printer {
             }
         }
     }
-}
 
-impl Printer {
     fn info_text(&self) -> String {
-        ansi::render(&self.info.lines(), &self.info.text_colors, self.no_bold)
+        ansi::render(&self.info.lines(), &self.text_colors, self.no_bold)
     }
 }
 

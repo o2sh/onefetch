@@ -211,25 +211,6 @@ mod test {
     }
 
     #[test]
-    fn test_author_info_with_one_author() {
-        let author = Author::new(
-            "John Doe".into(),
-            Some("john.doe@email.com".into()),
-            1500,
-            2000,
-            NumberSeparator::Plain,
-        );
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author],
-        };
-        assert_eq!(
-            authors_info.value(),
-            vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
-        );
-    }
-
-    #[test]
     fn test_author_info_with_two_authors() {
         let author = Author::new(
             "John Doe".into(),

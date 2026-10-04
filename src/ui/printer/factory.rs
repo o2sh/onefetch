@@ -3,15 +3,18 @@ use crate::cli::CliOptions;
 use crate::info::Info;
 use crate::info::langs::language::Language;
 use crate::ui::printer::{PrinterType, SerializationFormat};
+use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result};
 use image::DynamicImage;
 use onefetch_image::ImageBackend;
+use owo_colors::{AnsiColors, DynColors};
 
 pub struct PrinterFactory {
     pub output: Option<SerializationFormat>,
     pub info: Info,
     image: Option<DynamicImage>,
     pub no_bold: bool,
+    text_colors: TextColors,
     pub art_off: bool,
     image_backend: Option<Box<dyn ImageBackend>>,
     color_resolution: usize,
@@ -40,11 +43,19 @@ impl PrinterFactory {
             None
         };
 
+        let primary_color = info
+            .ascii_colors
+            .first()
+            .copied()
+            .unwrap_or(DynColors::Ansi(AnsiColors::Default));
+        let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, primary_color);
+
         Ok(Self {
             output: cli_options.developer.output,
             info,
             image,
             no_bold: cli_options.text_formatting.no_bold,
+            text_colors,
             art_off: cli_options.visuals.no_art,
             image_backend,
             color_resolution: cli_options.image.color_resolution,
@@ -59,6 +70,7 @@ impl PrinterFactory {
             info,
             image,
             no_bold,
+            text_colors,
             art_off,
             image_backend,
             color_resolution,
@@ -100,6 +112,7 @@ impl PrinterFactory {
             info,
             r#type,
             no_bold,
+            text_colors,
         })
     }
 }
@@ -109,7 +122,10 @@ mod tests {
     use crate::{
         cli::CliOptions,
         info::{Info, langs::language::Language},
-        ui::printer::{PrinterType, SerializationFormat, factory::PrinterFactory},
+        ui::{
+            printer::{PrinterType, SerializationFormat, factory::PrinterFactory},
+            text_colors::TextColors,
+        },
     };
     use image::DynamicImage;
 
@@ -209,6 +225,7 @@ mod tests {
             info: Info::default(),
             image: Some(DynamicImage::default()),
             no_bold: false,
+            text_colors: TextColors::default(),
             art_off: false,
             image_backend: Some(Box::new(DummyBackend::new())),
             color_resolution: 8,

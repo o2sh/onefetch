@@ -25,7 +25,6 @@ use self::text::Line;
 use self::title::Title;
 use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
-use crate::ui::text_colors::TextColors;
 use anyhow::{Context, Result, bail};
 use gix::Repository;
 use onefetch_manifest::Manifest;
@@ -39,7 +38,7 @@ pub mod info_field;
 pub mod langs;
 mod layout;
 pub mod text;
-pub mod title;
+mod title;
 pub mod utils;
 
 #[derive(Serialize, Default)]
@@ -47,8 +46,6 @@ pub mod utils;
 pub struct Info {
     title: Option<Title>,
     info_fields: Vec<Box<dyn InfoField>>,
-    #[serde(skip_serializing)]
-    pub text_colors: TextColors,
     #[serde(skip_serializing)]
     no_color_palette: bool,
     #[serde(skip_serializing)]
@@ -135,7 +132,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         &cli_options.ascii.ascii_colors,
         true_color,
     );
-    let text_colors = TextColors::new(&cli_options.text_formatting.text_colors, ascii_colors[0]);
     let number_separator = cli_options.text_formatting.number_separator;
     let iso_time = cli_options.text_formatting.iso_time;
     let number_of_languages_to_display = cli_options.info.number_of_languages;
@@ -178,7 +174,7 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .loc(loc_by_language.as_ref(), number_separator)
         .size(&repo, number_separator)
         .license(&repo_path, manifest.as_ref())?
-        .build(cli_options, text_colors, dominant_language, ascii_colors))
+        .build(cli_options, dominant_language, ascii_colors))
 }
 
 impl InfoBuilder {
@@ -404,14 +400,12 @@ impl InfoBuilder {
     fn build(
         self,
         cli_options: &CliOptions,
-        text_colors: TextColors,
         dominant_language: Option<Language>,
         ascii_colors: Vec<DynColors>,
     ) -> Info {
         Info {
             title: self.title,
             info_fields: self.info_fields,
-            text_colors,
             dominant_language,
             ascii_colors,
             no_color_palette: cli_options.visuals.no_color_palette,
