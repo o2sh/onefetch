@@ -20,7 +20,7 @@ use self::size::SizeInfo;
 use self::title::Title;
 use self::url::UrlInfo;
 use self::url::get_repo_url;
-use self::utils::info_field::{InfoField, InfoType};
+use self::utils::info_field::{InfoField, InfoKind};
 use self::utils::text::Line;
 use self::version::VersionInfo;
 use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
@@ -73,7 +73,7 @@ pub struct Info {
 struct InfoBuilder {
     title: Option<Title>,
     info_fields: Vec<Box<dyn InfoField>>,
-    disabled_fields: Vec<InfoType>,
+    disabled_fields: Vec<InfoKind>,
     no_title: bool,
 }
 
@@ -211,7 +211,7 @@ impl InfoBuilder {
     }
 
     fn description(mut self, manifest: Option<&Manifest>) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Description) {
+        if !self.disabled_fields.contains(&InfoKind::Description) {
             let description = DescriptionInfo::new(manifest);
             self.info_fields.push(Box::new(description));
         }
@@ -219,7 +219,7 @@ impl InfoBuilder {
     }
 
     fn pending(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::Pending) {
+        if !self.disabled_fields.contains(&InfoKind::Pending) {
             let pending = PendingInfo::new(repo)?;
             self.info_fields.push(Box::new(pending));
         }
@@ -227,7 +227,7 @@ impl InfoBuilder {
     }
 
     fn url(mut self, repo_url: &str) -> Self {
-        if !self.disabled_fields.contains(&InfoType::URL) {
+        if !self.disabled_fields.contains(&InfoKind::URL) {
             let repo_url = UrlInfo::new(repo_url);
             self.info_fields.push(Box::new(repo_url));
         }
@@ -241,7 +241,7 @@ impl InfoBuilder {
         manifest: Option<&Manifest>,
         number_separator: NumberSeparator,
     ) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::Project) {
+        if !self.disabled_fields.contains(&InfoKind::Project) {
             let project = ProjectInfo::new(repo, repo_url, manifest, number_separator)?;
             self.info_fields.push(Box::new(project));
         }
@@ -249,7 +249,7 @@ impl InfoBuilder {
     }
 
     fn head(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::Head) {
+        if !self.disabled_fields.contains(&InfoKind::Head) {
             let head = HeadInfo::new(repo)?;
             self.info_fields.push(Box::new(head));
         }
@@ -257,7 +257,7 @@ impl InfoBuilder {
     }
 
     fn version(mut self, repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::Version) {
+        if !self.disabled_fields.contains(&InfoKind::Version) {
             let version = VersionInfo::new(repo, manifest)?;
             self.info_fields.push(Box::new(version));
         }
@@ -265,7 +265,7 @@ impl InfoBuilder {
     }
 
     fn size(mut self, repo: &Repository, number_separator: NumberSeparator) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Size) {
+        if !self.disabled_fields.contains(&InfoKind::Size) {
             let size = SizeInfo::new(repo, number_separator);
             self.info_fields.push(Box::new(size));
         }
@@ -273,7 +273,7 @@ impl InfoBuilder {
     }
 
     fn license(mut self, repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::License) {
+        if !self.disabled_fields.contains(&InfoKind::License) {
             let license = LicenseInfo::new(repo_path, manifest)?;
             self.info_fields.push(Box::new(license));
         }
@@ -281,7 +281,7 @@ impl InfoBuilder {
     }
 
     fn created(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Created) {
+        if !self.disabled_fields.contains(&InfoKind::Created) {
             let created = CreatedInfo::new(iso_time, git_metrics);
             self.info_fields.push(Box::new(created));
         }
@@ -295,7 +295,7 @@ impl InfoBuilder {
         number_of_languages: usize,
         cli_options: &CliOptions,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Languages)
+        if !self.disabled_fields.contains(&InfoKind::Languages)
             && let Some(loc_by_language) = loc_by_language_opt
         {
             let languages = LanguagesInfo::new(
@@ -314,7 +314,7 @@ impl InfoBuilder {
         manifest: Option<&Manifest>,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Dependencies) {
+        if !self.disabled_fields.contains(&InfoKind::Dependencies) {
             let dependencies = DependenciesInfo::new(manifest, number_separator);
             self.info_fields.push(Box::new(dependencies));
         }
@@ -328,7 +328,7 @@ impl InfoBuilder {
         show_email: bool,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Authors) {
+        if !self.disabled_fields.contains(&InfoKind::Authors) {
             let authors = AuthorsInfo::new(
                 &git_metrics.number_of_commits_by_signature,
                 git_metrics.total_number_of_commits,
@@ -342,7 +342,7 @@ impl InfoBuilder {
     }
 
     fn last_change(mut self, git_metrics: &GitMetrics, iso_time: bool) -> Self {
-        if !self.disabled_fields.contains(&InfoType::LastChange) {
+        if !self.disabled_fields.contains(&InfoKind::LastChange) {
             let last_change = LastChangeInfo::new(iso_time, git_metrics);
             self.info_fields.push(Box::new(last_change));
         }
@@ -355,7 +355,7 @@ impl InfoBuilder {
         number_of_authors_to_display: usize,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Contributors) {
+        if !self.disabled_fields.contains(&InfoKind::Contributors) {
             let contributors = ContributorsInfo::new(
                 git_metrics.total_number_of_authors,
                 number_of_authors_to_display,
@@ -372,7 +372,7 @@ impl InfoBuilder {
         is_shallow: bool,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::Commits) {
+        if !self.disabled_fields.contains(&InfoKind::Commits) {
             let commits = CommitsInfo::new(git_metrics, is_shallow, number_separator);
             self.info_fields.push(Box::new(commits));
         }
@@ -386,7 +386,7 @@ impl InfoBuilder {
         globs_to_exclude: &[String],
         number_separator: NumberSeparator,
     ) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoType::Churn) {
+        if !self.disabled_fields.contains(&InfoKind::Churn) {
             let churn = ChurnInfo::new(
                 &git_metrics.number_of_commits_by_file_path,
                 git_metrics.churn_pool_size,
@@ -404,7 +404,7 @@ impl InfoBuilder {
         loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         number_separator: NumberSeparator,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoType::LinesOfCode)
+        if !self.disabled_fields.contains(&InfoKind::LinesOfCode)
             && let Some(loc_by_language) = loc_by_language_opt
         {
             let lines_of_code = LocInfo::new(loc_by_language, number_separator);

@@ -1,5 +1,5 @@
 use crate::info::langs::language::{Language, LanguageType};
-use crate::info::utils::info_field::InfoType;
+use crate::info::utils::info_field::InfoKind;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
@@ -63,7 +63,7 @@ pub struct InfoCliOptions {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<InfoType>,
+    pub disabled_fields: Vec<InfoKind>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -402,7 +402,7 @@ mod test {
             info: InfoCliOptions {
                 number_of_authors: 4,
                 no_merges: true,
-                disabled_fields: vec![InfoType::Version, InfoType::URL],
+                disabled_fields: vec![InfoKind::Version, InfoKind::URL],
                 ..Default::default()
             },
             ascii: AsciiCliOptions {
