@@ -1,26 +1,27 @@
 //! Text as lines of styled spans, kept apart from how it is displayed.
 //!
-//! A span's style is either a role from the text colors (title, info, ...) or an
-//! explicit color. Turning styles into terminal escape sequences is the renderer's
+//! A span's style is either a role from the text colors (title, key, value, ...) or
+//! an explicit color. Turning styles into terminal escape sequences is the printer's
 //! job.
 
 use owo_colors::DynColors;
 
+/// What a span is. Each role is shown in the text color of the same name.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Style {
     /// No styling, for spacing.
     Plain,
-    /// A module's value, in the info color.
+    /// A module's value.
     Value,
-    /// A module's key, in the subtitle color.
+    /// A module's key.
     Key,
-    /// The separator between a key and its value, in the colon color.
+    /// The separator between a key and its value.
     Separator,
-    /// The title, in the title color.
+    /// The git username and version.
     Title,
-    /// Text in the tilde color.
+    /// The `~` between the git username and version.
     Tilde,
-    /// Text in the underline color.
+    /// The line under the title.
     Underline,
     /// Text in a specific color.
     Color(DynColors),

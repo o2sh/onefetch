@@ -24,9 +24,9 @@ pub fn render(lines: &[Line], text_colors: &TextColors, no_bold: bool) -> String
 fn ansi_style(style: Style, colors: &TextColors, bold: bool) -> AnsiStyle {
     match style {
         Style::Plain => AnsiStyle::new(),
-        Style::Value => get_style(false, colors.info),
-        Style::Key => get_style(bold, colors.subtitle),
-        Style::Separator => get_style(bold, colors.colon),
+        Style::Value => get_style(false, colors.value),
+        Style::Key => get_style(bold, colors.key),
+        Style::Separator => get_style(bold, colors.separator),
         Style::Title => get_style(bold, colors.title),
         Style::Tilde => get_style(bold, colors.tilde),
         Style::Underline => get_style(false, colors.underline),

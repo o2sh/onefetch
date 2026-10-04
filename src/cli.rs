@@ -54,14 +54,15 @@ pub struct CliOptions {
 #[derive(Clone, Debug, Args, PartialEq, Eq)]
 #[command(next_help_heading = "INFO")]
 pub struct InfoCliOptions {
-    /// Allows you to disable FIELD(s) from appearing in the output
+    /// Allows you to disable MODULE(s) from appearing in the output
     #[arg(
         long,
         short,
+        visible_alias = "disabled-modules",
         num_args = 1..,
         hide_possible_values = true,
         value_enum,
-        value_name = "FIELD"
+        value_name = "MODULE"
     )]
     pub disabled_fields: Vec<InfoType>,
     /// Hides the title
@@ -79,7 +80,7 @@ pub struct InfoCliOptions {
     /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under the info title "Churn (NUM)"
+    /// and will be displayed under the key "Churn (NUM)"
     #[arg(long, value_name = "NUM")]
     pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
@@ -183,7 +184,7 @@ pub struct ImageCliOptions {
 pub struct TextForamttingCliOptions {
     /// Changes the text colors (X X X...)
     ///
-    /// Goes in order of title, ~, underline, subtitle, colon, and info
+    /// Goes in order of title, ~, underline, key, separator, and value
     ///
     /// For example:
     ///
@@ -435,6 +436,14 @@ mod test {
                 "--ascii-language",
                 "lisp"
             ])
+        );
+    }
+
+    #[test]
+    fn test_disabled_modules_alias() {
+        assert_eq!(
+            CliOptions::parse_from(["onefetch", "--disabled-modules", "version"]),
+            CliOptions::parse_from(["onefetch", "--disabled-fields", "version"])
         );
     }
 
