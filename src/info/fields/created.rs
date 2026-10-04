@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::{git::metrics::GitMetrics, utils::format_time};
 use crate::info::{info_field::InfoField, text::Line};
 use serde::Serialize;
@@ -21,7 +22,7 @@ fn get_creation_date(git_metrics: &GitMetrics, iso_time: bool) -> String {
 
 #[typetag::serialize]
 impl InfoField for CreatedInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         vec![Line::from(self.creation_date.to_string())]
     }
 
@@ -40,6 +41,9 @@ mod test {
             creation_date: "2 years ago".to_string(),
         };
 
-        assert_eq!(created_info.value(), vec![Line::from("2 years ago")]);
+        assert_eq!(
+            created_info.value(NumberSeparator::Plain),
+            vec![Line::from("2 years ago")]
+        );
     }
 }

@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::{git::metrics::GitMetrics, utils::format_time};
 use crate::info::{info_field::InfoField, text::Line};
 use serde::Serialize;
@@ -22,7 +23,7 @@ fn get_date_of_last_commit(git_metrics: &GitMetrics, iso_time: bool) -> String {
 
 #[typetag::serialize]
 impl InfoField for LastChangeInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         vec![Line::from(self.last_change.to_string())]
     }
 
@@ -41,6 +42,9 @@ mod test {
             last_change: "34 minutes ago".to_string(),
         };
 
-        assert_eq!(last_change_info.value(), vec![Line::from("34 minutes ago")]);
+        assert_eq!(
+            last_change_info.value(NumberSeparator::Plain),
+            vec![Line::from("34 minutes ago")]
+        );
     }
 }

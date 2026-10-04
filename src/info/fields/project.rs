@@ -1,11 +1,14 @@
-use crate::info::info_field::InfoField;
-use crate::info::text::{Line, Span};
-use crate::info::utils::quantity;
+use crate::{
+    cli::NumberSeparator,
+    info::{info_field::InfoField, text::Line},
+};
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
+
+use crate::info::utils::format_number;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -62,31 +65,34 @@ fn get_number_of_branches(repo: &Repository) -> Result<usize> {
 
 #[typetag::serialize]
 impl InfoField for ProjectInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
         if self.repo_name.is_empty() {
             return Vec::new();
         }
 
-        let counts: Vec<[Span; 2]> = [
-            quantity(self.number_of_branches as u64, "branch", "branches"),
-            quantity(self.number_of_tags as u64, "tag", "tags"),
-        ]
-        .into_iter()
-        .flatten()
-        .collect();
+        let branches = match self.number_of_branches {
+            0 => String::new(),
+            1 => "1 branch".into(),
+            _ => format!(
+                "{} branches",
+                format_number(&self.number_of_branches, separator)
+            ),
+        };
 
-        let mut spans = vec![Span::value(self.repo_name.clone())];
-        if !counts.is_empty() {
-            spans.push(Span::value(" ("));
-            for (i, count) in counts.into_iter().enumerate() {
-                if i > 0 {
-                    spans.push(Span::value(", "));
-                }
-                spans.extend(count);
-            }
-            spans.push(Span::value(")"));
-        }
-        vec![spans.into()]
+        let tags = match self.number_of_tags {
+            0 => String::new(),
+            1 => "1 tag".into(),
+            _ => format!("{} tags", format_number(&self.number_of_tags, separator)),
+        };
+
+        let project = if tags.is_empty() && branches.is_empty() {
+            self.repo_name.clone()
+        } else if branches.is_empty() || tags.is_empty() {
+            format!("{} ({}{})", self.repo_name, tags, branches)
+        } else {
+            format!("{} ({}, {})", self.repo_name, branches, tags)
+        };
+        vec![Line::from(project)]
     }
 
     fn key(&self) -> String {
@@ -107,17 +113,8 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(),
-            vec![Line::from(vec![
-                Span::value("onefetch"),
-                Span::value(" ("),
-                Span::number(3),
-                Span::value(" branches"),
-                Span::value(", "),
-                Span::number(2),
-                Span::value(" tags"),
-                Span::value(")")
-            ])]
+            project_info.value(NumberSeparator::Plain),
+            vec![Line::from("onefetch (3 branches, 2 tags)")]
         );
     }
 
@@ -129,7 +126,10 @@ mod test {
             number_of_tags: 0,
         };
 
-        assert_eq!(project_info.value(), vec![Line::from("onefetch")]);
+        assert_eq!(
+            project_info.value(NumberSeparator::Plain),
+            vec![Line::from("onefetch")]
+        );
     }
 
     #[test]
@@ -141,14 +141,8 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(),
-            vec![Line::from(vec![
-                Span::value("onefetch"),
-                Span::value(" ("),
-                Span::number(3),
-                Span::value(" branches"),
-                Span::value(")")
-            ])]
+            project_info.value(NumberSeparator::Plain),
+            vec![Line::from("onefetch (3 branches)")]
         );
     }
 
@@ -161,14 +155,8 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(),
-            vec![Line::from(vec![
-                Span::value("onefetch"),
-                Span::value(" ("),
-                Span::number(2),
-                Span::value(" tags"),
-                Span::value(")")
-            ])]
+            project_info.value(NumberSeparator::Plain),
+            vec![Line::from("onefetch (2 tags)")]
         );
     }
 
@@ -181,17 +169,8 @@ mod test {
         };
 
         assert_eq!(
-            project_info.value(),
-            vec![Line::from(vec![
-                Span::value("onefetch"),
-                Span::value(" ("),
-                Span::number(1),
-                Span::value(" branch"),
-                Span::value(", "),
-                Span::number(1),
-                Span::value(" tag"),
-                Span::value(")")
-            ])]
+            project_info.value(NumberSeparator::Plain),
+            vec![Line::from("onefetch (1 branch, 1 tag)")]
         );
     }
 
@@ -211,6 +190,6 @@ mod test {
             number_of_tags: 0,
         };
 
-        assert!(project_info.value().is_empty());
+        assert!(project_info.value(NumberSeparator::Plain).is_empty());
     }
 }

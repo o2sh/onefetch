@@ -1,6 +1,8 @@
 use crate::info::git::metrics::GitMetrics;
-use crate::info::info_field::InfoField;
-use crate::info::text::{Line, Span};
+use crate::{
+    cli::NumberSeparator,
+    info::{info_field::InfoField, text::Line, utils::format_number},
+};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -21,12 +23,17 @@ impl CommitsInfo {
 
 #[typetag::serialize]
 impl InfoField for CommitsInfo {
-    fn value(&self) -> Vec<Line> {
-        let mut spans = vec![Span::number(self.number_of_commits as u64)];
-        if self.is_shallow {
-            spans.push(Span::value(" (shallow)"));
-        }
-        vec![spans.into()]
+    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+        let commits = format!(
+            "{}{}",
+            format_number(&self.number_of_commits, separator),
+            if self.is_shallow {
+                " (shallow)"
+            } else {
+                Default::default()
+            }
+        );
+        vec![Line::from(commits)]
     }
 
     fn key(&self) -> String {
@@ -46,8 +53,8 @@ mod test {
         };
 
         assert_eq!(
-            commits_info.value(),
-            vec![Line::from(vec![Span::number(3)])]
+            commits_info.value(NumberSeparator::Plain),
+            vec![Line::from("3")]
         );
     }
 
@@ -59,8 +66,8 @@ mod test {
         };
 
         assert_eq!(
-            commits_info.value(),
-            vec![Line::from(vec![Span::number(2), Span::value(" (shallow)")])]
+            commits_info.value(NumberSeparator::Plain),
+            vec![Line::from("2 (shallow)")]
         );
     }
 }

@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
@@ -40,7 +41,7 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
 
 #[typetag::serialize]
 impl InfoField for VersionInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         vec![Line::from(self.version.to_string())]
     }
 
@@ -59,6 +60,9 @@ mod test {
             version: "v.1.50.0".to_string(),
         };
 
-        assert_eq!(version_info.value(), vec![Line::from("v.1.50.0")],);
+        assert_eq!(
+            version_info.value(NumberSeparator::Plain),
+            vec![Line::from("v.1.50.0")],
+        );
     }
 }

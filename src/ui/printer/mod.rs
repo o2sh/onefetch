@@ -103,10 +103,9 @@ impl Printer {
 
     fn info_text(&self) -> String {
         ansi::render(
-            &self.info.lines(),
+            &self.info.lines(self.number_separator),
             &self.text_colors,
             self.no_bold,
-            self.number_separator,
         )
     }
 }

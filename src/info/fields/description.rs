@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::{info_field::InfoField, text::Line};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
@@ -22,7 +23,7 @@ impl DescriptionInfo {
 
 #[typetag::serialize]
 impl InfoField for DescriptionInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         match &self.description {
             Some(description) => break_sentence_into_lines(description)
                 .into_iter()
@@ -62,7 +63,10 @@ mod test {
             license: None,
         }));
 
-        assert_eq!(description_info.value(), vec![Line::from("test")]);
+        assert_eq!(
+            description_info.value(NumberSeparator::Plain),
+            vec![Line::from("test")]
+        );
     }
 
     #[rstest]

@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
@@ -57,7 +58,7 @@ fn create_http_url_from_ssh(url: &str) -> String {
 
 #[typetag::serialize]
 impl InfoField for UrlInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         vec![Line::from(self.repo_url.to_string())]
     }
 
@@ -78,7 +79,7 @@ mod test {
         };
 
         assert_eq!(
-            url_info.value(),
+            url_info.value(NumberSeparator::Plain),
             vec![Line::from("git@github.com:o2sh/onefetch.git")]
         );
     }

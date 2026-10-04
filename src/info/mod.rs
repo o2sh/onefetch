@@ -23,7 +23,7 @@ use self::info_field::{InfoField, InfoKind};
 use self::langs::language::Language;
 use self::text::Line;
 use self::title::Title;
-use crate::cli::{CliOptions, When, is_truecolor_terminal};
+use crate::cli::{CliOptions, NumberSeparator, When, is_truecolor_terminal};
 use crate::ui::get_ascii_colors;
 use anyhow::{Context, Result, bail};
 use gix::Repository;
@@ -62,13 +62,13 @@ struct InfoBuilder {
 }
 
 impl Info {
-    pub fn lines(&self) -> Vec<Line> {
+    pub fn lines(&self, separator: NumberSeparator) -> Vec<Line> {
         let mut lines = Vec::new();
         if let Some(title) = &self.title {
             lines.extend(layout::title_lines(title));
         }
         for info_field in &self.info_fields {
-            lines.extend(layout::field_lines(info_field.as_ref()));
+            lines.extend(layout::field_lines(info_field.as_ref(), separator));
         }
         if !self.no_color_palette {
             lines.push(Line::default());

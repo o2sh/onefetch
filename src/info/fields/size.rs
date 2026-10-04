@@ -1,6 +1,7 @@
-use crate::info::info_field::InfoField;
-use crate::info::text::{Line, Span};
-use crate::info::utils::quantity;
+use crate::{
+    cli::NumberSeparator,
+    info::{info_field::InfoField, text::Line, utils::format_number},
+};
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
 use serde::Serialize;
@@ -42,14 +43,17 @@ fn bytes_to_human_readable(bytes: u64) -> String {
 
 #[typetag::serialize]
 impl InfoField for SizeInfo {
-    fn value(&self) -> Vec<Line> {
-        let mut spans = vec![Span::value(self.repo_size.clone())];
-        if let Some(files) = quantity(self.file_count, "file", "files") {
-            spans.push(Span::value(" ("));
-            spans.extend(files);
-            spans.push(Span::value(")"));
-        }
-        vec![spans.into()]
+    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+        let size = match self.file_count {
+            0 => self.repo_size.clone(),
+            1 => format!("{} (1 file)", self.repo_size),
+            _ => format!(
+                "{} ({} files)",
+                self.repo_size,
+                format_number(&self.file_count, separator)
+            ),
+        };
+        vec![Line::from(size)]
     }
     fn key(&self) -> String {
         "Size".into()
@@ -70,14 +74,8 @@ mod test {
         };
 
         assert_eq!(
-            size_info.value(),
-            vec![Line::from(vec![
-                Span::value("2.40 MiB"),
-                Span::value(" ("),
-                Span::number(123),
-                Span::value(" files"),
-                Span::value(")")
-            ])]
+            size_info.value(NumberSeparator::Plain),
+            vec![Line::from("2.40 MiB (123 files)")]
         );
     }
 
@@ -88,7 +86,10 @@ mod test {
             file_count: 0,
         };
 
-        assert_eq!(size_info.value(), vec![Line::from("2.40 MiB")]);
+        assert_eq!(
+            size_info.value(NumberSeparator::Plain),
+            vec![Line::from("2.40 MiB")]
+        );
     }
 
     #[test]
@@ -99,14 +100,8 @@ mod test {
         };
 
         assert_eq!(
-            size_info.value(),
-            vec![Line::from(vec![
-                Span::value("2.40 MiB"),
-                Span::value(" ("),
-                Span::number(1),
-                Span::value(" file"),
-                Span::value(")")
-            ])]
+            size_info.value(NumberSeparator::Plain),
+            vec![Line::from("2.40 MiB (1 file)")]
         );
     }
 

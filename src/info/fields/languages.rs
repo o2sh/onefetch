@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::info_field::InfoField;
 use crate::info::langs::language::{DEFAULT_CHIP_ICON, Language};
 use crate::info::text::{Line, Span, Style};
@@ -169,7 +170,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 
 #[typetag::serialize]
 impl InfoField for LanguagesInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         let languages = prepare_languages(self, &COLOR_PALETTE);
 
         let mut lines = vec![build_language_bar(&languages)];
@@ -204,7 +205,7 @@ mod test {
         let red = DynColors::Ansi(AnsiColors::Red);
 
         assert_eq!(
-            languages_info.value(),
+            languages_info.value(NumberSeparator::Plain),
             vec![
                 Line::from(vec![Span::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),

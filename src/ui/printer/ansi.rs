@@ -1,24 +1,13 @@
-use crate::cli::NumberSeparator;
-use crate::info::text::{Content, Line, Style};
+use crate::info::text::{Line, Style};
 use crate::ui::text_colors::TextColors;
-use num_format::ToFormattedString;
 use owo_colors::{DynColors, OwoColorize, Style as AnsiStyle};
 
-pub fn render(
-    lines: &[Line],
-    text_colors: &TextColors,
-    no_bold: bool,
-    number_separator: NumberSeparator,
-) -> String {
+pub fn render(lines: &[Line], text_colors: &TextColors, no_bold: bool) -> String {
     let mut output = String::new();
     for line in lines {
         for span in &line.0 {
-            let text = match &span.content {
-                Content::Text(text) => sanitize(text),
-                Content::Number(number) => format_number(*number, number_separator),
-            };
             let style = ansi_style(span.style, text_colors, !no_bold);
-            output.push_str(&text.style(style).to_string());
+            output.push_str(&sanitize(&span.text).style(style).to_string());
         }
         output.push('\n');
     }
@@ -47,10 +36,6 @@ fn get_style(is_bold: bool, color: DynColors) -> AnsiStyle {
     style
 }
 
-fn format_number(number: u64, number_separator: NumberSeparator) -> String {
-    number.to_formatted_string(&number_separator.get_format())
-}
-
 /// Replaces control characters so untrusted repository data can't inject
 /// terminal escape sequences.
 fn sanitize(text: &str) -> String {
@@ -62,11 +47,10 @@ mod test {
     use super::*;
     use crate::info::text::Span;
     use owo_colors::AnsiColors;
-    use rstest::rstest;
 
     fn render_with_white(lines: &[Line], no_bold: bool) -> String {
         let text_colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
-        render(lines, &text_colors, no_bold, NumberSeparator::Plain)
+        render(lines, &text_colors, no_bold)
     }
 
     #[test]
@@ -103,29 +87,6 @@ mod test {
             render_with_white(&[line], false),
             "\u{1b}[41m  \u{1b}[0m\u{1b}[31m●\u{1b}[0m\n"
         );
-    }
-
-    #[test]
-    fn test_render_number() {
-        let text_colors = TextColors::default();
-        let line = Line::from(vec![Span::number(1_234_567)]);
-        assert_eq!(
-            render(&[line], &text_colors, false, NumberSeparator::Comma),
-            "\u{1b}[39m1,234,567\u{1b}[0m\n"
-        );
-    }
-
-    #[rstest]
-    #[case(1_000_000, NumberSeparator::Comma, "1,000,000")]
-    #[case(1_000_000, NumberSeparator::Space, "1\u{202f}000\u{202f}000")]
-    #[case(1_000_000, NumberSeparator::Underscore, "1_000_000")]
-    #[case(1_000_000, NumberSeparator::Plain, "1000000")]
-    fn test_format_number(
-        #[case] number: u64,
-        #[case] number_separator: NumberSeparator,
-        #[case] expected: &str,
-    ) {
-        assert_eq!(format_number(number, number_separator), expected);
     }
 
     #[test]

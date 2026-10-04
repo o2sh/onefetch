@@ -1,6 +1,8 @@
 use crate::info::git::sig::Sig;
-use crate::info::info_field::InfoField;
-use crate::info::text::{Line, Span};
+use crate::{
+    cli::NumberSeparator,
+    info::{info_field::InfoField, text::Line, utils::format_number},
+};
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -99,20 +101,18 @@ fn digit_difference(num1: usize, num2: usize) -> usize {
 
 #[typetag::serialize]
 impl InfoField for AuthorsInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
         self.authors
             .iter()
             .map(|author| {
                 let pad = digit_difference(self.top_contribution(), author.contribution);
                 let contribution = format!("{:pad$}{}%", "", author.contribution);
-                let author_text = match &author.email {
-                    Some(email) => format!("{contribution} {} <{email}> ", author.name),
-                    None => format!("{contribution} {} ", author.name),
+                let commits = format_number(&author.nbr_of_commits, separator);
+                let line = match &author.email {
+                    Some(email) => format!("{contribution} {} <{email}> {commits}", author.name),
+                    None => format!("{contribution} {} {commits}", author.name),
                 };
-                Line::from(vec![
-                    Span::value(author_text),
-                    Span::number(author.nbr_of_commits as u64),
-                ])
+                Line::from(line)
             })
             .collect()
     }
@@ -144,11 +144,8 @@ mod test {
             authors: vec![author],
         };
         assert_eq!(
-            authors_info.value(),
-            vec![Line::from(vec![
-                Span::value("75% John Doe <john.doe@email.com> "),
-                Span::number(1500)
-            ])]
+            authors_info.value(NumberSeparator::Plain),
+            vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
         );
     }
 
@@ -160,11 +157,8 @@ mod test {
             authors: vec![author],
         };
         assert_eq!(
-            authors_info.value(),
-            vec![Line::from(vec![
-                Span::value("75% John Doe "),
-                Span::number(1500)
-            ])]
+            authors_info.value(NumberSeparator::Plain),
+            vec![Line::from("75% John Doe 1500")]
         );
     }
 
@@ -217,13 +211,10 @@ mod test {
             authors: vec![author, author_2],
         };
         assert_eq!(
-            authors_info.value(),
+            authors_info.value(NumberSeparator::Plain),
             vec![
-                Line::from(vec![
-                    Span::value("75% John Doe <john.doe@email.com> "),
-                    Span::number(1500)
-                ]),
-                Line::from(vec![Span::value("80% Roberto Berto "), Span::number(240)]),
+                Line::from("75% John Doe <john.doe@email.com> 1500"),
+                Line::from("80% Roberto Berto 240"),
             ]
         );
     }
@@ -244,14 +235,11 @@ mod test {
             authors: vec![author, author_2, author_3],
         };
         assert_eq!(
-            authors_info.value(),
+            authors_info.value(NumberSeparator::Plain),
             vec![
-                Line::from(vec![
-                    Span::value("75% John Doe <john.doe@email.com> "),
-                    Span::number(1500)
-                ]),
-                Line::from(vec![Span::value("80% Roberto Berto "), Span::number(240)]),
-                Line::from(vec![Span::value(" 1% Jane Doe "), Span::number(1)]),
+                Line::from("75% John Doe <john.doe@email.com> 1500"),
+                Line::from("80% Roberto Berto 240"),
+                Line::from(" 1% Jane Doe 1"),
             ]
         );
     }

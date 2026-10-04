@@ -1,3 +1,4 @@
+use crate::cli::NumberSeparator;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::{Result, bail};
 use askalono::{Store, TextData};
@@ -87,7 +88,7 @@ impl LicenseInfo {
 
 #[typetag::serialize]
 impl InfoField for LicenseInfo {
-    fn value(&self) -> Vec<Line> {
+    fn value(&self, _separator: NumberSeparator) -> Vec<Line> {
         vec![Line::from(self.license.to_string())]
     }
 
@@ -139,7 +140,10 @@ mod test {
                 license: Some("LICENSE".into()),
             }),
         )?;
-        assert_eq!(license_info.value(), vec![Line::from("LICENSE")]);
+        assert_eq!(
+            license_info.value(NumberSeparator::Plain),
+            vec![Line::from("LICENSE")]
+        );
         Ok(())
     }
 }

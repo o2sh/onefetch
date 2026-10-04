@@ -1,18 +1,9 @@
-use crate::info::text::Span;
+use crate::cli::NumberSeparator;
 use gix::date::Time;
+use num_format::ToFormattedString;
 use std::time::SystemTime;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use time_humanize::HumanTime;
-
-/// `1 tag`, `12 tags`, or nothing when there are none.
-pub fn quantity(count: u64, singular: &str, plural: &str) -> Option<[Span; 2]> {
-    let noun = match count {
-        0 => return None,
-        1 => singular,
-        _ => plural,
-    };
-    Some([Span::number(count), Span::value(format!(" {noun}"))])
-}
 
 pub fn format_time(time: Time, iso_time: bool) -> String {
     if iso_time {
@@ -42,9 +33,17 @@ fn to_human_time(time: Time) -> String {
     ht.to_string()
 }
 
+pub fn format_number<T: ToFormattedString + std::fmt::Display>(
+    number: &T,
+    number_separator: NumberSeparator,
+) -> String {
+    number.to_formatted_string(&number_separator.get_format())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
     use std::time::{Duration, SystemTime};
 
     #[test]
@@ -108,5 +107,18 @@ mod tests {
         let time = Time::new(gix::date::SecondsSinceUnixEpoch::MIN, 0);
         let result = to_human_time(time);
         assert!(result.ends_with(" years ago"));
+    }
+
+    #[rstest]
+    #[case(1_000_000, NumberSeparator::Comma, "1,000,000")]
+    #[case(1_000_000, NumberSeparator::Space, "1\u{202f}000\u{202f}000")]
+    #[case(1_000_000, NumberSeparator::Underscore, "1_000_000")]
+    #[case(1_000_000, NumberSeparator::Plain, "1000000")]
+    fn test_format_number(
+        #[case] number: usize,
+        #[case] number_separator: NumberSeparator,
+        #[case] expected: &str,
+    ) {
+        assert_eq!(&format_number(&number, number_separator), expected);
     }
 }

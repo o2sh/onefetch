@@ -1,7 +1,10 @@
-use crate::info::info_field::InfoField;
 use crate::info::langs::get_total_loc;
 use crate::info::langs::language::Language;
-use crate::info::text::{Line, Span};
+use crate::info::utils::format_number;
+use crate::{
+    cli::NumberSeparator,
+    info::{info_field::InfoField, text::Line},
+};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -19,8 +22,8 @@ impl LocInfo {
 
 #[typetag::serialize]
 impl InfoField for LocInfo {
-    fn value(&self) -> Vec<Line> {
-        vec![Span::number(self.lines_of_code as u64).into()]
+    fn value(&self, separator: NumberSeparator) -> Vec<Line> {
+        vec![Line::from(format_number(&self.lines_of_code, separator))]
     }
 
     fn key(&self) -> String {
@@ -38,6 +41,9 @@ mod test {
             lines_of_code: 1235,
         };
 
-        assert_eq!(loc_info.value(), vec![Line::from(vec![Span::number(1235)])]);
+        assert_eq!(
+            loc_info.value(NumberSeparator::Plain),
+            vec![Line::from("1235")]
+        );
     }
 }
