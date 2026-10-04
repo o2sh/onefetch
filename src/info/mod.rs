@@ -78,7 +78,6 @@ struct InfoBuilder {
 }
 
 impl Info {
-    /// The info as lines: the title, the info fields and the color palette.
     pub fn lines(&self) -> Vec<Line> {
         let mut lines = Vec::new();
         if let Some(title) = &self.title {

@@ -18,7 +18,6 @@ impl Title {
         }
     }
 
-    /// Returns `username ~ git version`. This is empty if both are unknown.
     pub fn line(&self) -> Line {
         let mut spans = Vec::new();
         for part in [&self.git_username, &self.git_version] {

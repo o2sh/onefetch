@@ -1,9 +1,3 @@
-//! Turns lines of styled text into text with ANSI escape sequences.
-//!
-//! This is the only place where text is styled, and all text goes through
-//! `paint`, which sanitizes it first. Data read from a repository therefore can't
-//! inject terminal escape sequences.
-
 use crate::info::utils::get_style;
 use crate::info::utils::text::{Line, Style};
 use crate::ui::text_colors::TextColors;

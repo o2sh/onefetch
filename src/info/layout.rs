@@ -1,5 +1,3 @@
-//! Lays out the info as lines: the title, the info fields and the color palette.
-
 use crate::info::title::Title;
 use crate::info::utils::info_field::InfoField;
 use crate::info::utils::text::{Line, Span, Style};
@@ -16,7 +14,6 @@ const PALETTE: [AnsiColors; 8] = [
     AnsiColors::White,
 ];
 
-/// The title, underlined. Empty if the title is.
 pub fn title_lines(title: &Title) -> Vec<Line> {
     let title = title.line();
     if title.is_empty() {
@@ -26,8 +23,6 @@ pub fn title_lines(title: &Title) -> Vec<Line> {
     vec![title, Line::from(vec![underline])]
 }
 
-/// `key: value`, with the next lines of the value aligned under the first one.
-/// Empty if the value is.
 pub fn field_lines(field: &dyn InfoField) -> Vec<Line> {
     let value = field.value();
     if value.iter().all(Line::is_empty) {
@@ -56,7 +51,6 @@ pub fn field_lines(field: &dyn InfoField) -> Vec<Line> {
         .collect()
 }
 
-/// A blank line followed by the terminal's color palette.
 pub fn palette_lines() -> Vec<Line> {
     let colors = PALETTE
         .into_iter()

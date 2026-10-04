@@ -152,7 +152,6 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
         .into()
 }
 
-/// Returns a line with the chip and the label of each language.
 fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
     let mut spans = Vec::new();
     for language in languages {

@@ -99,7 +99,6 @@ impl Printer {
 }
 
 impl Printer {
-    /// The info as text styled for the terminal.
     fn info_text(&self) -> String {
         ansi::render(&self.info.lines(), &self.info.text_colors, self.no_bold)
     }
