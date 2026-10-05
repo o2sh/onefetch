@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::info_field::InfoField;
 use crate::info::text::{Line, Span, Style};
 use crate::info::title::Title;
@@ -24,8 +24,8 @@ pub fn title_lines(title: &Title) -> Vec<Line> {
     vec![title, Line::from(vec![underline])]
 }
 
-pub fn field_lines(field: &dyn InfoField, format: &Format) -> Vec<Line> {
-    let value = field.value(format);
+pub fn field_lines(field: &dyn InfoField, options: &DisplayOptions) -> Vec<Line> {
+    let value = field.value(options);
     if value.iter().all(Line::is_empty) {
         return Vec::new();
     }
@@ -77,7 +77,7 @@ mod test {
             "key".into()
         }
 
-        fn value(&self, _format: &Format) -> Vec<Line> {
+        fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
             self.value.clone()
         }
     }
@@ -88,7 +88,7 @@ mod test {
             value: vec![Line::from("one"), Line::from("two")],
         };
         assert_eq!(
-            field_lines(&field, &Format::default()),
+            field_lines(&field, &DisplayOptions::default()),
             vec![
                 Line::from(vec![
                     Span::new("key", Style::Key),
@@ -104,12 +104,12 @@ mod test {
     #[test]
     fn test_field_lines_no_value() {
         let field = InfoFieldImpl { value: vec![] };
-        assert!(field_lines(&field, &Format::default()).is_empty());
+        assert!(field_lines(&field, &DisplayOptions::default()).is_empty());
 
         let field = InfoFieldImpl {
             value: vec![Line::from("")],
         };
-        assert!(field_lines(&field, &Format::default()).is_empty());
+        assert!(field_lines(&field, &DisplayOptions::default()).is_empty());
     }
 
     #[test]

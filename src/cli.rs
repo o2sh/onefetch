@@ -333,6 +333,16 @@ pub fn is_truecolor_terminal() -> bool {
         .unwrap_or(false)
 }
 
+impl CliOptions {
+    pub fn true_color(&self) -> bool {
+        match self.ascii.true_color {
+            When::Always => true,
+            When::Never => false,
+            When::Auto => is_truecolor_terminal(),
+        }
+    }
+}
+
 pub fn get_git_version() -> String {
     let version = std::process::Command::new("git").arg("--version").output();
 

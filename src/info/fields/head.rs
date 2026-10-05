@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::{Context, Result};
 use gix::Repository;
@@ -55,7 +55,7 @@ fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
 
 #[typetag::serialize]
 impl InfoField for HeadInfo {
-    fn value(&self, _format: &Format) -> Vec<Line> {
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
         let HeadRefs {
             short_commit_id,
             refs,
@@ -83,7 +83,7 @@ mod test {
             head_refs: HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]),
         };
         assert_eq!(
-            head_info.value(&Format::default()),
+            head_info.value(&DisplayOptions::default()),
             vec![Line::from("be561d5 (main, origin/main)")]
         );
     }
@@ -94,7 +94,7 @@ mod test {
             head_refs: HeadRefs::new("be561d5".into(), vec![]),
         };
         assert_eq!(
-            head_info.value(&Format::default()),
+            head_info.value(&DisplayOptions::default()),
             vec![Line::from("be561d5")]
         );
     }

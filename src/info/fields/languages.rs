@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::info_field::InfoField;
 use crate::info::langs::language::{DEFAULT_CHIP_ICON, Language};
 use crate::info::text::{Line, Span, Style};
@@ -29,21 +29,10 @@ pub struct LanguageWithPercentage {
 #[serde(rename_all = "camelCase")]
 pub struct LanguagesInfo {
     pub languages_with_percentage: Vec<LanguageWithPercentage>,
-    #[serde(skip_serializing)]
-    true_color: bool,
-    #[serde(skip_serializing)]
-    number_of_languages_to_display: usize,
-    #[serde(skip_serializing)]
-    nerd_fonts: bool,
 }
 
 impl LanguagesInfo {
-    pub fn new(
-        loc_by_language: &[(Language, usize)],
-        true_color: bool,
-        number_of_languages_to_display: usize,
-        nerd_fonts: bool,
-    ) -> Self {
+    pub fn new(loc_by_language: &[(Language, usize)]) -> Self {
         let total: usize = loc_by_language.iter().map(|(_, v)| v).sum();
 
         let weight_by_language: Vec<(Language, f64)> = loc_by_language
@@ -65,9 +54,6 @@ impl LanguagesInfo {
             .collect();
         Self {
             languages_with_percentage,
-            true_color,
-            number_of_languages_to_display,
-            nerd_fonts,
         }
     }
 }
@@ -88,6 +74,7 @@ impl LanguageDisplayData {
 
 fn prepare_languages(
     languages_info: &LanguagesInfo,
+    options: &DisplayOptions,
     color_palette: &[DynColors],
 ) -> Vec<LanguageDisplayData> {
     let mut iter = languages_info
@@ -102,13 +89,13 @@ fn prepare_languages(
                     percentage,
                 },
             )| {
-                let chip_color = if languages_info.true_color {
+                let chip_color = if options.true_color {
                     language.get_chip_color()
                 } else {
                     color_palette[i % color_palette.len()]
                 };
 
-                let chip_icon = language.get_chip_icon(languages_info.nerd_fonts);
+                let chip_icon = language.get_chip_icon(options.nerd_fonts);
 
                 LanguageDisplayData {
                     language: language.to_string(),
@@ -118,12 +105,10 @@ fn prepare_languages(
                 }
             },
         );
-    if languages_info.languages_with_percentage.len()
-        > languages_info.number_of_languages_to_display
-    {
+    if languages_info.languages_with_percentage.len() > options.number_of_languages {
         let mut languages = iter
             .by_ref()
-            .take(languages_info.number_of_languages_to_display)
+            .take(options.number_of_languages)
             .collect::<Vec<_>>();
         let other_perc = iter.fold(0.0, |acc, x| acc + x.percentage);
         languages.push(LanguageDisplayData {
@@ -170,8 +155,8 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 
 #[typetag::serialize]
 impl InfoField for LanguagesInfo {
-    fn value(&self, _format: &Format) -> Vec<Line> {
-        let languages = prepare_languages(self, &COLOR_PALETTE);
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+        let languages = prepare_languages(self, options, &COLOR_PALETTE);
 
         let mut lines = vec![build_language_bar(&languages)];
         lines.extend(languages.chunks(LANGUAGES_PER_LINE).map(build_legend_line));
@@ -191,6 +176,13 @@ impl InfoField for LanguagesInfo {
 mod test {
     use super::*;
 
+    fn languages_options(number_of_languages: usize) -> DisplayOptions {
+        DisplayOptions {
+            number_of_languages,
+            ..DisplayOptions::default()
+        }
+    }
+
     #[test]
     fn test_display_languages_info() {
         let languages_info = LanguagesInfo {
@@ -198,14 +190,11 @@ mod test {
                 language: Language::Go,
                 percentage: 100_f64,
             }],
-            true_color: false,
-            number_of_languages_to_display: 6,
-            nerd_fonts: false,
         };
         let red = DynColors::Ansi(AnsiColors::Red);
 
         assert_eq!(
-            languages_info.value(&Format::default()),
+            languages_info.value(&languages_options(6)),
             vec![
                 Line::from(vec![Span::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),
@@ -241,15 +230,13 @@ mod test {
                     percentage: 10_f64,
                 },
             ],
-            true_color: false,
-            number_of_languages_to_display: 2,
-            nerd_fonts: false,
         };
 
-        let labels: Vec<String> = prepare_languages(&languages_info, &COLOR_PALETTE)
-            .iter()
-            .map(LanguageDisplayData::label)
-            .collect();
+        let labels: Vec<String> =
+            prepare_languages(&languages_info, &languages_options(2), &COLOR_PALETTE)
+                .iter()
+                .map(LanguageDisplayData::label)
+                .collect();
 
         assert_eq!(labels, ["Go (30.0 %)", "Erlang (40.0 %)", "Other (30.0 %)"]);
     }
@@ -310,9 +297,6 @@ mod test {
                     percentage: 10_f64,
                 },
             ],
-            true_color: false,
-            number_of_languages_to_display: 2,
-            nerd_fonts: false,
         };
 
         let color_palette = [
@@ -320,7 +304,7 @@ mod test {
             DynColors::Ansi(AnsiColors::Green),
         ];
 
-        let result = prepare_languages(&languages_info, &color_palette);
+        let result = prepare_languages(&languages_info, &languages_options(2), &color_palette);
 
         let expected_result = vec![
             LanguageDisplayData {

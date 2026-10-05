@@ -1,3 +1,4 @@
+use self::display_options::DisplayOptions;
 use self::fields::authors::AuthorsInfo;
 use self::fields::churn::ChurnInfo;
 use self::fields::commits::CommitsInfo;
@@ -16,7 +17,6 @@ use self::fields::size::SizeInfo;
 use self::fields::url::UrlInfo;
 use self::fields::url::get_repo_url;
 use self::fields::version::VersionInfo;
-use self::format::Format;
 use self::git::metrics::GitMetrics;
 use self::git::traverse_commit_graph;
 use self::git::uses_reftables;
@@ -24,7 +24,7 @@ use self::info_field::{InfoField, InfoKind};
 use self::langs::language::Language;
 use self::text::Line;
 use self::title::Title;
-use crate::cli::{CliOptions, When, is_truecolor_terminal};
+use crate::cli::CliOptions;
 use crate::ui::get_ascii_colors;
 use anyhow::{Context, Result, bail};
 use gix::Repository;
@@ -33,8 +33,9 @@ use owo_colors::DynColors;
 use serde::Serialize;
 use std::path::Path;
 
+mod dates;
+pub mod display_options;
 mod fields;
-pub mod format;
 mod git;
 pub mod info_field;
 pub mod langs;
@@ -63,13 +64,13 @@ struct InfoBuilder {
 }
 
 impl Info {
-    pub fn lines(&self, format: &Format) -> Vec<Line> {
+    pub fn lines(&self, options: &DisplayOptions) -> Vec<Line> {
         let mut lines = Vec::new();
         if let Some(title) = &self.title {
             lines.extend(layout::title_lines(title));
         }
         for info_field in &self.info_fields {
-            lines.extend(layout::field_lines(info_field.as_ref(), format));
+            lines.extend(layout::field_lines(info_field.as_ref(), options));
         }
         if !self.no_color_palette {
             lines.push(Line::default());
@@ -115,11 +116,6 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         cli_options.info.http_url,
     )
     .context("Failed to determine repository URL")?;
-    let true_color = match cli_options.ascii.true_color {
-        When::Always => true,
-        When::Never => false,
-        When::Auto => is_truecolor_terminal(),
-    };
     let loc_by_language = loc_by_language_sorted_handle
         .join()
         .ok()
@@ -131,9 +127,8 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         dominant_language.as_ref(),
         cli_options.ascii.ascii_language.as_ref(),
         &cli_options.ascii.ascii_colors,
-        true_color,
+        cli_options.true_color(),
     );
-    let number_of_languages_to_display = cli_options.info.number_of_languages;
     let number_of_authors_to_display = cli_options.info.number_of_authors;
     let number_of_file_churns_to_display = cli_options.info.number_of_file_churns;
     let globs_to_exclude = &cli_options.info.exclude;
@@ -147,16 +142,11 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .pending(&repo)?
         .version(&repo, manifest.as_ref())?
         .created(&git_metrics)
-        .languages(
-            loc_by_language.as_ref(),
-            true_color,
-            number_of_languages_to_display,
-            cli_options,
-        )
+        .languages(loc_by_language.as_ref())
         .dependencies(manifest.as_ref())
         .authors(&git_metrics, number_of_authors_to_display, show_email)
         .last_change(&git_metrics)
-        .contributors(&git_metrics, number_of_authors_to_display)
+        .contributors(&git_metrics)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow())
         .churn(
@@ -264,22 +254,11 @@ impl InfoBuilder {
         self
     }
 
-    fn languages(
-        mut self,
-        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
-        true_color: bool,
-        number_of_languages: usize,
-        cli_options: &CliOptions,
-    ) -> Self {
+    fn languages(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
         if !self.disabled_fields.contains(&InfoKind::Languages)
             && let Some(loc_by_language) = loc_by_language_opt
         {
-            let languages = LanguagesInfo::new(
-                loc_by_language,
-                true_color,
-                number_of_languages,
-                cli_options.visuals.nerd_fonts,
-            );
+            let languages = LanguagesInfo::new(loc_by_language);
             self.info_fields.push(Box::new(languages));
         }
         self
@@ -319,16 +298,9 @@ impl InfoBuilder {
         self
     }
 
-    fn contributors(
-        mut self,
-        git_metrics: &GitMetrics,
-        number_of_authors_to_display: usize,
-    ) -> Self {
+    fn contributors(mut self, git_metrics: &GitMetrics) -> Self {
         if !self.disabled_fields.contains(&InfoKind::Contributors) {
-            let contributors = ContributorsInfo::new(
-                git_metrics.total_number_of_authors,
-                number_of_authors_to_display,
-            );
+            let contributors = ContributorsInfo::new(git_metrics.total_number_of_authors);
             self.info_fields.push(Box::new(contributors));
         }
         self

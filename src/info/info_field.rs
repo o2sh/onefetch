@@ -1,10 +1,10 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::text::Line;
 
 #[typetag::serialize]
 pub trait InfoField {
     fn key(&self) -> String;
-    fn value(&self, format: &Format) -> Vec<Line>;
+    fn value(&self, options: &DisplayOptions) -> Vec<Line>;
 }
 
 #[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]

@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::langs::get_total_loc;
 use crate::info::langs::language::Language;
 use crate::info::{info_field::InfoField, text::Line};
@@ -19,8 +19,8 @@ impl LocInfo {
 
 #[typetag::serialize]
 impl InfoField for LocInfo {
-    fn value(&self, format: &Format) -> Vec<Line> {
-        vec![Line::from(format.number(&self.lines_of_code))]
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+        vec![Line::from(options.number(&self.lines_of_code))]
     }
 
     fn key(&self) -> String {
@@ -38,6 +38,9 @@ mod test {
             lines_of_code: 1235,
         };
 
-        assert_eq!(loc_info.value(&Format::default()), vec![Line::from("1235")]);
+        assert_eq!(
+            loc_info.value(&DisplayOptions::default()),
+            vec![Line::from("1235")]
+        );
     }
 }

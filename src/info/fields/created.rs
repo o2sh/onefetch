@@ -1,4 +1,5 @@
-use crate::info::format::{Format, serialize_time};
+use crate::info::dates::serialize_time;
+use crate::info::display_options::DisplayOptions;
 use crate::info::git::metrics::GitMetrics;
 use crate::info::{info_field::InfoField, text::Line};
 use gix::date::Time;
@@ -21,8 +22,8 @@ impl CreatedInfo {
 
 #[typetag::serialize]
 impl InfoField for CreatedInfo {
-    fn value(&self, format: &Format) -> Vec<Line> {
-        vec![Line::from(format.time(self.creation_date))]
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+        vec![Line::from(options.time(self.creation_date))]
     }
 
     fn key(&self) -> String {
@@ -39,9 +40,9 @@ mod test {
         let created_info = CreatedInfo {
             creation_date: Time::new(946_771_200, 0),
         };
-        let iso_time = Format {
+        let iso_time = DisplayOptions {
             iso_time: true,
-            ..Format::default()
+            ..DisplayOptions::default()
         };
 
         assert_eq!(

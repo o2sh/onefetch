@@ -1,5 +1,5 @@
 use crate::info::Info;
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::ui::text_colors::TextColors;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
@@ -23,7 +23,7 @@ pub struct Printer {
     r#type: PrinterType,
     no_bold: bool,
     text_colors: TextColors,
-    format: Format,
+    display_options: DisplayOptions,
 }
 
 enum PrinterType {
@@ -103,7 +103,7 @@ impl Printer {
 
     fn info_text(&self) -> String {
         ansi::render(
-            &self.info.lines(&self.format),
+            &self.info.lines(&self.display_options),
             &self.text_colors,
             self.no_bold,
         )

@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::bstr::BString;
@@ -78,14 +78,14 @@ fn compute_file_churns(
 
 #[typetag::serialize]
 impl InfoField for ChurnInfo {
-    fn value(&self, format: &Format) -> Vec<Line> {
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
         self.file_churns
             .iter()
             .map(|file_churn| {
                 Line::from(format!(
                     "{} {}",
                     shorten_file_path(&file_churn.file_path, 2),
-                    format.number(&file_churn.nbr_of_commits)
+                    options.number(&file_churn.nbr_of_commits)
                 ))
             })
             .collect()
@@ -125,7 +125,7 @@ mod tests {
             churn_pool_size: 5,
         };
         assert_eq!(
-            churn_info.value(&Format::default()),
+            churn_info.value(&DisplayOptions::default()),
             vec![Line::from("\u{2026}/to/file.txt 50")]
         );
     }
@@ -141,7 +141,7 @@ mod tests {
         };
 
         assert_eq!(
-            churn_info.value(&Format::default()),
+            churn_info.value(&DisplayOptions::default()),
             vec![
                 Line::from("\u{2026}/to/file.txt 50"),
                 Line::from("file_2.txt 30"),

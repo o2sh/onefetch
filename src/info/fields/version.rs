@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
@@ -41,7 +41,7 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
 
 #[typetag::serialize]
 impl InfoField for VersionInfo {
-    fn value(&self, _format: &Format) -> Vec<Line> {
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
         vec![Line::from(self.version.to_string())]
     }
 
@@ -61,7 +61,7 @@ mod test {
         };
 
         assert_eq!(
-            version_info.value(&Format::default()),
+            version_info.value(&DisplayOptions::default()),
             vec![Line::from("v.1.50.0")],
         );
     }

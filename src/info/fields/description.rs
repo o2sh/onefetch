@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::{info_field::InfoField, text::Line};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
@@ -23,7 +23,7 @@ impl DescriptionInfo {
 
 #[typetag::serialize]
 impl InfoField for DescriptionInfo {
-    fn value(&self, _format: &Format) -> Vec<Line> {
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
         match &self.description {
             Some(description) => break_sentence_into_lines(description)
                 .into_iter()
@@ -64,7 +64,7 @@ mod test {
         }));
 
         assert_eq!(
-            description_info.value(&Format::default()),
+            description_info.value(&DisplayOptions::default()),
             vec![Line::from("test")]
         );
     }

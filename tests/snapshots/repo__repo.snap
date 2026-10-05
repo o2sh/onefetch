@@ -126,7 +126,7 @@ expression: info
     },
     {
       "SizeInfo": {
-        "repoSize": "22 B",
+        "repoSize": 22,
         "fileCount": 1
       }
     },

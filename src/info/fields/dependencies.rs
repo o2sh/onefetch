@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::info_field::InfoField;
 use crate::info::text::Line;
 use onefetch_manifest::Manifest;
@@ -22,10 +22,10 @@ impl DependenciesInfo {
 
 #[typetag::serialize]
 impl InfoField for DependenciesInfo {
-    fn value(&self, format: &Format) -> Vec<Line> {
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
         match &self.manifest_type {
             Some(manifest_type) if self.number_of_dependencies > 0 => {
-                let dependencies = format.number(&self.number_of_dependencies);
+                let dependencies = options.number(&self.number_of_dependencies);
                 vec![Line::from(format!("{dependencies} ({manifest_type})"))]
             }
             _ => Vec::new(),
@@ -54,7 +54,7 @@ mod test {
         }));
 
         assert_eq!(
-            dependencies_info.value(&Format::default()),
+            dependencies_info.value(&DisplayOptions::default()),
             vec![Line::from("21 (Cargo)")]
         );
     }

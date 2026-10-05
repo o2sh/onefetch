@@ -1,4 +1,4 @@
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
@@ -58,7 +58,7 @@ fn create_http_url_from_ssh(url: &str) -> String {
 
 #[typetag::serialize]
 impl InfoField for UrlInfo {
-    fn value(&self, _format: &Format) -> Vec<Line> {
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
         vec![Line::from(self.repo_url.to_string())]
     }
 
@@ -79,7 +79,7 @@ mod test {
         };
 
         assert_eq!(
-            url_info.value(&Format::default()),
+            url_info.value(&DisplayOptions::default()),
             vec![Line::from("git@github.com:o2sh/onefetch.git")]
         );
     }

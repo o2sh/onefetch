@@ -1,7 +1,7 @@
 use super::Printer;
 use crate::cli::CliOptions;
 use crate::info::Info;
-use crate::info::format::Format;
+use crate::info::display_options::DisplayOptions;
 use crate::info::langs::language::Language;
 use crate::ui::printer::{PrinterType, SerializationFormat};
 use crate::ui::text_colors::TextColors;
@@ -16,7 +16,7 @@ pub struct PrinterFactory {
     image: Option<DynamicImage>,
     pub no_bold: bool,
     text_colors: TextColors,
-    format: Format,
+    display_options: DisplayOptions,
     pub art_off: bool,
     image_backend: Option<Box<dyn ImageBackend>>,
     color_resolution: usize,
@@ -26,6 +26,7 @@ pub struct PrinterFactory {
 
 impl PrinterFactory {
     pub fn new(info: Info, cli_options: CliOptions) -> Result<Self> {
+        let display_options = DisplayOptions::from(&cli_options);
         let image =
             match cli_options.image.image {
                 Some(p) => Some(image::open(&p).with_context(|| {
@@ -58,10 +59,7 @@ impl PrinterFactory {
             image,
             no_bold: cli_options.text_formatting.no_bold,
             text_colors,
-            format: Format {
-                number_separator: cli_options.text_formatting.number_separator,
-                iso_time: cli_options.text_formatting.iso_time,
-            },
+            display_options,
             art_off: cli_options.visuals.no_art,
             image_backend,
             color_resolution: cli_options.image.color_resolution,
@@ -77,7 +75,7 @@ impl PrinterFactory {
             image,
             no_bold,
             text_colors,
-            format,
+            display_options,
             art_off,
             image_backend,
             color_resolution,
@@ -120,7 +118,7 @@ impl PrinterFactory {
             r#type,
             no_bold,
             text_colors,
-            format,
+            display_options,
         })
     }
 }
@@ -129,7 +127,7 @@ impl PrinterFactory {
 mod tests {
     use crate::{
         cli::CliOptions,
-        info::{Info, format::Format, langs::language::Language},
+        info::{Info, display_options::DisplayOptions, langs::language::Language},
         ui::{
             printer::{PrinterType, SerializationFormat, factory::PrinterFactory},
             text_colors::TextColors,
@@ -234,7 +232,7 @@ mod tests {
             image: Some(DynamicImage::default()),
             no_bold: false,
             text_colors: TextColors::default(),
-            format: Format::default(),
+            display_options: DisplayOptions::default(),
             art_off: false,
             image_backend: Some(Box::new(DummyBackend::new())),
             color_resolution: 8,
