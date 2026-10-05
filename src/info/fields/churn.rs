@@ -1,42 +1,24 @@
-use super::utils::info_field::InfoField;
-use crate::{cli::NumberSeparator, info::utils::format_number};
+use crate::info::display_options::DisplayOptions;
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::bstr::BString;
 use globset::{Glob, GlobSetBuilder};
 use serde::Serialize;
-use std::{collections::HashMap, fmt::Write};
+use std::collections::HashMap;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct FileChurn {
     pub file_path: String,
     pub nbr_of_commits: usize,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl FileChurn {
-    pub fn new(
-        file_path: String,
-        nbr_of_commits: usize,
-        number_separator: NumberSeparator,
-    ) -> Self {
+    pub fn new(file_path: String, nbr_of_commits: usize) -> Self {
         Self {
             file_path,
             nbr_of_commits,
-            number_separator,
         }
-    }
-}
-
-impl std::fmt::Display for FileChurn {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{} {}",
-            shorten_file_path(&self.file_path, 2),
-            format_number(&self.nbr_of_commits, self.number_separator)
-        )
     }
 }
 
@@ -52,13 +34,11 @@ impl ChurnInfo {
         churn_pool_size: usize,
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
-        number_separator: NumberSeparator,
     ) -> Result<Self> {
         let file_churns = compute_file_churns(
             number_of_commits_by_file_path,
             number_of_file_churns_to_display,
             globs_to_exclude,
-            number_separator,
         )?;
 
         Ok(Self {
@@ -72,7 +52,6 @@ fn compute_file_churns(
     number_of_commits_by_file_path: &HashMap<BString, usize>,
     number_of_file_churns_to_display: usize,
     globs_to_exclude: &[String],
-    number_separator: NumberSeparator,
 ) -> Result<Vec<FileChurn>> {
     let mut builder = GlobSetBuilder::new();
     for glob in globs_to_exclude {
@@ -90,42 +69,29 @@ fn compute_file_churns(
             if glob_set.is_match(file_path.to_string()) {
                 None
             } else {
-                Some(FileChurn::new(
-                    file_path.to_string(),
-                    *nbr_of_commits,
-                    number_separator,
-                ))
+                Some(FileChurn::new(file_path.to_string(), *nbr_of_commits))
             }
         })
         .take(number_of_file_churns_to_display)
         .collect())
 }
 
-impl std::fmt::Display for ChurnInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut churn_info = String::new();
-
-        let pad = self.title().len() + 2;
-
-        for (i, file_churn) in self.file_churns.iter().enumerate() {
-            if i == 0 {
-                write!(churn_info, "{file_churn}")?;
-            } else {
-                write!(churn_info, "\n{:<width$}{}", "", file_churn, width = pad)?;
-            }
-        }
-
-        write!(f, "{churn_info}")
-    }
-}
-
 #[typetag::serialize]
 impl InfoField for ChurnInfo {
-    fn value(&self) -> String {
-        self.to_string()
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+        self.file_churns
+            .iter()
+            .map(|file_churn| {
+                Line::from(format!(
+                    "{} {}",
+                    shorten_file_path(&file_churn.file_path, 2),
+                    options.number(&file_churn.nbr_of_commits)
+                ))
+            })
+            .collect()
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         format!("Churn ({})", self.churn_pool_size)
     }
 }
@@ -151,29 +117,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_display_file_churn() {
-        let file_churn = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
-
-        assert_eq!(file_churn.to_string(), "\u{2026}/to/file.txt 50");
-    }
-
-    #[test]
     fn test_churn_info_value_with_two_file_churns() {
-        let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50, NumberSeparator::Plain);
-        let file_churn_2 = FileChurn::new("file_2.txt".into(), 30, NumberSeparator::Plain);
+        let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50);
+        let file_churn_2 = FileChurn::new("file_2.txt".into(), 30);
 
         let churn_info = ChurnInfo {
             file_churns: vec![file_churn_1, file_churn_2],
             churn_pool_size: 5,
         };
 
-        assert!(
-            churn_info
-                .value()
-                .contains(&"\u{2026}/to/file.txt 50".to_string())
+        assert_eq!(
+            churn_info.value(&DisplayOptions::default()),
+            vec![
+                Line::from("\u{2026}/to/file.txt 50"),
+                Line::from("file_2.txt 30"),
+            ]
         );
-
-        assert!(churn_info.value().contains(&"file_2.txt 30".to_string()));
     }
 
     #[test]
@@ -203,7 +162,6 @@ mod tests {
         number_of_commits_by_file_path.insert("foo/x/file.txt".into(), 10);
 
         let number_of_file_churns_to_display = 3;
-        let number_separator = NumberSeparator::Comma;
         let globs_to_exclude = vec![
             "foo/**/file.txt".to_string(),
             "path/to/file2.txt".to_string(),
@@ -212,12 +170,11 @@ mod tests {
             &number_of_commits_by_file_path,
             number_of_file_churns_to_display,
             &globs_to_exclude,
-            number_separator,
         )?;
         let expected = vec![
-            FileChurn::new(String::from("path/to/file4.txt"), 7, number_separator),
-            FileChurn::new(String::from("path/to/file3.txt"), 3, number_separator),
-            FileChurn::new(String::from("path/to/file1.txt"), 2, number_separator),
+            FileChurn::new(String::from("path/to/file4.txt"), 7),
+            FileChurn::new(String::from("path/to/file3.txt"), 3),
+            FileChurn::new(String::from("path/to/file1.txt"), 2),
         ];
         assert_eq!(actual, expected);
         Ok(())

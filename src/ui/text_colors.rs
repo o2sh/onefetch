@@ -6,9 +6,9 @@ pub struct TextColors {
     pub title: DynColors,
     pub tilde: DynColors,
     pub underline: DynColors,
-    pub subtitle: DynColors,
-    pub colon: DynColors,
-    pub info: DynColors,
+    pub key: DynColors,
+    pub separator: DynColors,
+    pub value: DynColors,
 }
 
 impl TextColors {
@@ -17,9 +17,9 @@ impl TextColors {
             title: primary_color,
             tilde: DynColors::Ansi(AnsiColors::Default),
             underline: DynColors::Ansi(AnsiColors::Default),
-            subtitle: primary_color,
-            colon: DynColors::Ansi(AnsiColors::Default),
-            info: DynColors::Ansi(AnsiColors::Default),
+            key: primary_color,
+            separator: DynColors::Ansi(AnsiColors::Default),
+            value: DynColors::Ansi(AnsiColors::Default),
         };
 
         if !colors.is_empty() {
@@ -32,11 +32,11 @@ impl TextColors {
             text_colors.underline = *custom_color
                 .get(2)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            text_colors.subtitle = *custom_color.get(3).unwrap_or(&primary_color);
-            text_colors.colon = *custom_color
+            text_colors.key = *custom_color.get(3).unwrap_or(&primary_color);
+            text_colors.separator = *custom_color
                 .get(4)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            text_colors.info = *custom_color
+            text_colors.value = *custom_color
                 .get(5)
                 .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
         }
@@ -50,9 +50,9 @@ impl Default for TextColors {
             title: DynColors::Ansi(AnsiColors::Default),
             tilde: DynColors::Ansi(AnsiColors::Default),
             underline: DynColors::Ansi(AnsiColors::Default),
-            subtitle: DynColors::Ansi(AnsiColors::Default),
-            colon: DynColors::Ansi(AnsiColors::Default),
-            info: DynColors::Ansi(AnsiColors::Default),
+            key: DynColors::Ansi(AnsiColors::Default),
+            separator: DynColors::Ansi(AnsiColors::Default),
+            value: DynColors::Ansi(AnsiColors::Default),
         }
     }
 }
@@ -68,9 +68,9 @@ mod test {
         assert_eq!(text_colors.title, primary_color);
         assert_eq!(text_colors.tilde, DynColors::Ansi(AnsiColors::Default));
         assert_eq!(text_colors.underline, DynColors::Ansi(AnsiColors::Default));
-        assert_eq!(text_colors.subtitle, primary_color);
-        assert_eq!(text_colors.colon, DynColors::Ansi(AnsiColors::Default));
-        assert_eq!(text_colors.info, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.key, primary_color);
+        assert_eq!(text_colors.separator, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.value, DynColors::Ansi(AnsiColors::Default));
     }
 
     #[test]
@@ -80,9 +80,9 @@ mod test {
         assert_eq!(text_colors.title, num_to_color(&custom_colors[0]));
         assert_eq!(text_colors.tilde, num_to_color(&custom_colors[1]));
         assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
-        assert_eq!(text_colors.subtitle, num_to_color(&custom_colors[3]));
-        assert_eq!(text_colors.colon, num_to_color(&custom_colors[4]));
-        assert_eq!(text_colors.info, num_to_color(&custom_colors[5]));
+        assert_eq!(text_colors.key, num_to_color(&custom_colors[3]));
+        assert_eq!(text_colors.separator, num_to_color(&custom_colors[4]));
+        assert_eq!(text_colors.value, num_to_color(&custom_colors[5]));
     }
 
     #[test]
@@ -93,8 +93,8 @@ mod test {
         assert_eq!(text_colors.title, num_to_color(&custom_colors[0]));
         assert_eq!(text_colors.tilde, num_to_color(&custom_colors[1]));
         assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
-        assert_eq!(text_colors.subtitle, primary_color);
-        assert_eq!(text_colors.colon, DynColors::Ansi(AnsiColors::Default));
-        assert_eq!(text_colors.info, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.key, primary_color);
+        assert_eq!(text_colors.separator, DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(text_colors.value, DynColors::Ansi(AnsiColors::Default));
     }
 }

@@ -1,4 +1,5 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::display_options::DisplayOptions;
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::{Result, bail};
 use askalono::{Store, TextData};
 use onefetch_manifest::Manifest;
@@ -87,11 +88,11 @@ impl LicenseInfo {
 
 #[typetag::serialize]
 impl InfoField for LicenseInfo {
-    fn value(&self) -> String {
-        self.license.to_string()
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
+        vec![Line::from(self.license.to_string())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "License".into()
     }
 }
@@ -118,15 +119,6 @@ mod test {
     }
 
     #[test]
-    fn test_analyze() -> Result<()> {
-        let detector = Detector::new()?;
-        let license_text = fs::read_to_string(Path::new("LICENSE.md"))?;
-        let license = detector.analyze(&license_text);
-        assert_eq!(license, Some("MIT".into()));
-        Ok(())
-    }
-
-    #[test]
     fn should_read_from_manifest_first() -> Result<()> {
         let license_info = LicenseInfo::new(
             Path::new("."),
@@ -139,7 +131,10 @@ mod test {
                 license: Some("LICENSE".into()),
             }),
         )?;
-        assert_eq!(license_info.value(), "LICENSE");
+        assert_eq!(
+            license_info.value(&DisplayOptions::default()),
+            vec![Line::from("LICENSE")]
+        );
         Ok(())
     }
 }

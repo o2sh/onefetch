@@ -1,10 +1,13 @@
 use crate::info::Info;
+use crate::info::display_options::DisplayOptions;
+use crate::ui::text_colors::TextColors;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
 use onefetch_ascii::AsciiArt;
 use onefetch_image::ImageBackend;
 use std::fmt::Write as _;
 
+mod ansi;
 pub mod factory;
 
 const CENTER_PAD_LENGTH: usize = 3;
@@ -18,6 +21,9 @@ pub enum SerializationFormat {
 pub struct Printer {
     info: Info,
     r#type: PrinterType,
+    no_bold: bool,
+    text_colors: TextColors,
+    display_options: DisplayOptions,
 }
 
 enum PrinterType {
@@ -26,7 +32,6 @@ enum PrinterType {
     Yaml,
     Ascii {
         art: String,
-        no_bold: bool,
     },
     Image {
         image: DynamicImage,
@@ -47,7 +52,7 @@ impl Printer {
                 Ok(())
             }
             PrinterType::Plain => {
-                write_with_line_wrapping(writer, &self.info.to_string())?;
+                write_with_line_wrapping(writer, &self.info_text())?;
                 Ok(())
             }
             PrinterType::Image {
@@ -56,8 +61,8 @@ impl Printer {
                 resolution,
             } => {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
-                let info_str = self.info.to_string();
-                let info_lines = info_str
+                let info_text = self.info_text();
+                let info_lines = info_text
                     .lines()
                     .map(|s| format!("{center_pad}{s}"))
                     .collect();
@@ -69,12 +74,12 @@ impl Printer {
                 write_with_line_wrapping(writer, &rendered)?;
                 Ok(())
             }
-            PrinterType::Ascii { art, no_bold } => {
+            PrinterType::Ascii { art } => {
                 let mut buf = String::new();
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
-                let info_str = self.info.to_string();
-                let mut info_lines = info_str.lines();
-                let mut logo_lines = AsciiArt::new(art, &self.info.ascii_colors, !no_bold);
+                let info_text = self.info_text();
+                let mut info_lines = info_text.lines();
+                let mut logo_lines = AsciiArt::new(art, &self.info.ascii_colors, !self.no_bold);
 
                 loop {
                     match (logo_lines.next(), info_lines.next()) {
@@ -94,6 +99,14 @@ impl Printer {
                 Ok(())
             }
         }
+    }
+
+    fn info_text(&self) -> String {
+        ansi::render(
+            &self.info.lines(&self.display_options),
+            &self.text_colors,
+            self.no_bold,
+        )
     }
 }
 

@@ -1,5 +1,5 @@
+use crate::info::info_field::InfoKind;
 use crate::info::langs::language::{Language, LanguageType};
-use crate::info::utils::info_field::InfoType;
 use crate::ui::printer::SerializationFormat;
 use anyhow::Result;
 use clap::builder::PossibleValuesParser;
@@ -63,7 +63,7 @@ pub struct InfoCliOptions {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<InfoType>,
+    pub disabled_fields: Vec<InfoKind>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -79,7 +79,7 @@ pub struct InfoCliOptions {
     /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under the info title "Churn (NUM)"
+    /// and will be displayed under as "Churn (NUM)"
     #[arg(long, value_name = "NUM")]
     pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
@@ -183,7 +183,7 @@ pub struct ImageCliOptions {
 pub struct TextForamttingCliOptions {
     /// Changes the text colors (X X X...)
     ///
-    /// Goes in order of title, ~, underline, subtitle, colon, and info
+    /// Goes in order of title, ~, underline, key, separator, and value
     ///
     /// For example:
     ///
@@ -333,6 +333,16 @@ pub fn is_truecolor_terminal() -> bool {
         .unwrap_or(false)
 }
 
+impl CliOptions {
+    pub fn true_color(&self) -> bool {
+        match self.ascii.true_color {
+            When::Always => true,
+            When::Never => false,
+            When::Auto => is_truecolor_terminal(),
+        }
+    }
+}
+
 pub fn get_git_version() -> String {
     let version = std::process::Command::new("git").arg("--version").output();
 
@@ -358,8 +368,9 @@ pub enum When {
     Always,
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy, Default)]
 pub enum NumberSeparator {
+    #[default]
     Plain,
     Comma,
     Space,
@@ -402,7 +413,7 @@ mod test {
             info: InfoCliOptions {
                 number_of_authors: 4,
                 no_merges: true,
-                disabled_fields: vec![InfoType::Version, InfoType::URL],
+                disabled_fields: vec![InfoKind::Version, InfoKind::URL],
                 ..Default::default()
             },
             ascii: AsciiCliOptions {

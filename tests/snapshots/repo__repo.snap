@@ -59,7 +59,8 @@ expression: info
     },
     {
       "DependenciesInfo": {
-        "dependencies": "1 (Cargo)"
+        "numberOfDependencies": 1,
+        "manifestType": "Cargo"
       }
     },
     {
@@ -125,7 +126,7 @@ expression: info
     },
     {
       "SizeInfo": {
-        "repoSize": "22 B",
+        "repoSize": 22,
         "fileCount": 1
       }
     },

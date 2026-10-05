@@ -1,7 +1,4 @@
-use crate::{
-    cli::NumberSeparator,
-    info::utils::{format_number, info_field::InfoField},
-};
+use crate::info::{display_options::DisplayOptions, info_field::InfoField, text::Line};
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
 use serde::Serialize;
@@ -9,33 +6,28 @@ use serde::Serialize;
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SizeInfo {
-    pub repo_size: String,
+    pub repo_size: u64,
     pub file_count: u64,
-    #[serde(skip_serializing)]
-    number_separator: NumberSeparator,
 }
 
 impl SizeInfo {
-    pub fn new(repo: &Repository, number_separator: NumberSeparator) -> Self {
+    pub fn new(repo: &Repository) -> Self {
         let (repo_size, file_count) = get_repo_size(repo);
         Self {
             repo_size,
             file_count,
-            number_separator,
         }
     }
 }
 
-fn get_repo_size(repo: &Repository) -> (String, u64) {
-    let (repo_size, file_count) = match repo.index() {
+fn get_repo_size(repo: &Repository) -> (u64, u64) {
+    match repo.index() {
         Ok(index) => {
             let repo_size = index.entries().iter().map(|e| e.stat.size as u64).sum();
             (repo_size, index.entries().len() as u64)
         }
         _ => (0, 0),
-    };
-
-    (bytes_to_human_readable(repo_size), file_count)
+    }
 }
 
 fn bytes_to_human_readable(bytes: u64) -> String {
@@ -44,29 +36,18 @@ fn bytes_to_human_readable(bytes: u64) -> String {
     format!("{adjusted_byte_based:#.2}")
 }
 
-impl std::fmt::Display for SizeInfo {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.file_count {
-            0 => write!(f, "{}", self.repo_size),
-            1 => write!(f, "{} (1 file)", self.repo_size),
-            _ => {
-                write!(
-                    f,
-                    "{} ({} files)",
-                    self.repo_size,
-                    format_number(&self.file_count, self.number_separator)
-                )
-            }
-        }
-    }
-}
-
 #[typetag::serialize]
 impl InfoField for SizeInfo {
-    fn value(&self) -> String {
-        self.to_string()
+    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+        let repo_size = bytes_to_human_readable(self.repo_size);
+        let size = match self.file_count {
+            0 => repo_size,
+            1 => format!("{repo_size} (1 file)"),
+            _ => format!("{repo_size} ({} files)", options.number(&self.file_count)),
+        };
+        vec![Line::from(size)]
     }
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Size".into()
     }
 }
@@ -80,34 +61,40 @@ mod test {
     #[test]
     fn test_display_size_info() {
         let size_info = SizeInfo {
-            repo_size: "2.40 MiB".to_string(),
+            repo_size: 2_577_152,
             file_count: 123,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), "2.40 MiB (123 files)".to_string());
+        assert_eq!(
+            size_info.value(&DisplayOptions::default()),
+            vec![Line::from("2.46 MiB (123 files)")]
+        );
     }
 
     #[test]
     fn test_display_size_info_no_files() {
         let size_info = SizeInfo {
-            repo_size: "2.40 MiB".to_string(),
+            repo_size: 2_577_152,
             file_count: 0,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), "2.40 MiB".to_string());
+        assert_eq!(
+            size_info.value(&DisplayOptions::default()),
+            vec![Line::from("2.46 MiB")]
+        );
     }
 
     #[test]
     fn test_display_size_info_one_files() {
         let size_info = SizeInfo {
-            repo_size: "2.40 MiB".to_string(),
+            repo_size: 2_577_152,
             file_count: 1,
-            number_separator: NumberSeparator::Plain,
         };
 
-        assert_eq!(size_info.value(), "2.40 MiB (1 file)".to_string());
+        assert_eq!(
+            size_info.value(&DisplayOptions::default()),
+            vec![Line::from("2.46 MiB (1 file)")]
+        );
     }
 
     #[rstest(

@@ -1,4 +1,5 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::display_options::DisplayOptions;
+use crate::info::{info_field::InfoField, text::Line};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 
@@ -22,35 +23,27 @@ impl DescriptionInfo {
 
 #[typetag::serialize]
 impl InfoField for DescriptionInfo {
-    fn value(&self) -> String {
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
         match &self.description {
-            Some(description) => {
-                let left_pad = self.title().len() + 2;
-                break_sentence_into_lines(description, left_pad)
-            }
-            None => String::new(),
+            Some(description) => break_sentence_into_lines(description)
+                .into_iter()
+                .map(Line::from)
+                .collect(),
+            None => Vec::new(),
         }
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Description".into()
     }
 }
 
-fn break_sentence_into_lines(sentence: &str, left_pad: usize) -> String {
+fn break_sentence_into_lines(sentence: &str) -> Vec<String> {
     let words: Vec<&str> = sentence.split_whitespace().collect();
-    let mut lines = Vec::new();
-
-    for (i, chunk) in words.chunks(NUMBER_OF_WORDS_PER_LINE).enumerate() {
-        let line = if i == 0 {
-            chunk.join(" ")
-        } else {
-            format!("{:>width$}{}", "", chunk.join(" "), width = left_pad)
-        };
-        lines.push(line);
-    }
-
-    lines.join("\n")
+    words
+        .chunks(NUMBER_OF_WORDS_PER_LINE)
+        .map(|chunk| chunk.join(" "))
+        .collect()
 }
 
 #[cfg(test)]
@@ -70,20 +63,20 @@ mod test {
             license: None,
         }));
 
-        assert_eq!(description_info.value(), "test".to_string());
+        assert_eq!(
+            description_info.value(&DisplayOptions::default()),
+            vec![Line::from("test")]
+        );
     }
 
     #[rstest]
-    #[case("Hello", "Hello")]
-    #[case(
-        "Hello world, how are you doing?",
-        "Hello world, how are you\n    doing?"
-    )]
+    #[case("Hello", &["Hello"])]
+    #[case("Hello world, how are you doing?", &["Hello world, how are you", "doing?"])]
     #[case(
         "This is a long sentence that needs to be broken into multiple lines.",
-        "This is a long sentence\n    that needs to be broken\n    into multiple lines."
+        &["This is a long sentence", "that needs to be broken", "into multiple lines."]
     )]
-    fn test_break_sentence_into_lines(#[case] sentence: &str, #[case] expected_result: &str) {
-        assert_eq!(break_sentence_into_lines(sentence, 4), expected_result);
+    fn test_break_sentence_into_lines(#[case] sentence: &str, #[case] expected_result: &[&str]) {
+        assert_eq!(break_sentence_into_lines(sentence), expected_result);
     }
 }

@@ -1,4 +1,5 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::display_options::DisplayOptions;
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::{Context, Result};
 use gix::Repository;
 use serde::Serialize;
@@ -15,22 +16,6 @@ impl HeadRefs {
         HeadRefs {
             short_commit_id,
             refs,
-        }
-    }
-}
-
-impl std::fmt::Display for HeadRefs {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.refs.is_empty() {
-            write!(f, "{}", self.short_commit_id)
-        } else {
-            let refs_str = self
-                .refs
-                .iter()
-                .map(String::as_str)
-                .collect::<Vec<&str>>()
-                .join(", ");
-            write!(f, "{} ({})", self.short_commit_id, refs_str)
         }
     }
 }
@@ -70,11 +55,20 @@ fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
 
 #[typetag::serialize]
 impl InfoField for HeadInfo {
-    fn value(&self) -> String {
-        self.head_refs.to_string()
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
+        let HeadRefs {
+            short_commit_id,
+            refs,
+        } = &self.head_refs;
+        let head = if refs.is_empty() {
+            short_commit_id.clone()
+        } else {
+            format!("{short_commit_id} ({})", refs.join(", "))
+        };
+        vec![Line::from(head)]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "HEAD".into()
     }
 }
@@ -85,13 +79,23 @@ mod test {
 
     #[test]
     fn test_display_head_refs() {
-        let head = HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]);
-        assert_eq!(head.to_string(), "be561d5 (main, origin/main)");
+        let head_info = HeadInfo {
+            head_refs: HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]),
+        };
+        assert_eq!(
+            head_info.value(&DisplayOptions::default()),
+            vec![Line::from("be561d5 (main, origin/main)")]
+        );
     }
 
     #[test]
     fn test_display_head_refs_with_no_refs() {
-        let head = HeadRefs::new("be561d5".into(), vec![]);
-        assert_eq!(head.to_string(), "be561d5");
+        let head_info = HeadInfo {
+            head_refs: HeadRefs::new("be561d5".into(), vec![]),
+        };
+        assert_eq!(
+            head_info.value(&DisplayOptions::default()),
+            vec![Line::from("be561d5")]
+        );
     }
 }

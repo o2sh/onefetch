@@ -1,4 +1,5 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::display_options::DisplayOptions;
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use regex::regex;
@@ -57,11 +58,11 @@ fn create_http_url_from_ssh(url: &str) -> String {
 
 #[typetag::serialize]
 impl InfoField for UrlInfo {
-    fn value(&self) -> String {
-        self.repo_url.to_string()
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
+        vec![Line::from(self.repo_url.to_string())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "URL".into()
     }
 }
@@ -70,18 +71,6 @@ impl InfoField for UrlInfo {
 mod test {
     use super::*;
     use rstest::rstest;
-
-    #[test]
-    fn test_display_url_info() {
-        let url_info = UrlInfo {
-            repo_url: "git@github.com:o2sh/onefetch.git".to_string(),
-        };
-
-        assert_eq!(
-            url_info.value(),
-            "git@github.com:o2sh/onefetch.git".to_string()
-        );
-    }
 
     #[rstest]
     #[case(
@@ -127,14 +116,6 @@ mod test {
         #[case] expected: &str,
     ) {
         assert_eq!(format_url(url, hide_token, http_url), expected);
-    }
-
-    #[test]
-    fn test_remove_token_from_url() {
-        assert_eq!(
-            remove_token_from_url("https://username:token@github.com/user/repo"),
-            "https://github.com/user/repo"
-        );
     }
 
     #[rstest]

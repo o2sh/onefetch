@@ -3,7 +3,6 @@ use owo_colors::{
     DynColors::{self, Ansi, Rgb},
 };
 use std::fmt;
-use std::fmt::Write;
 use strum::EnumIter;
 
 pub struct Colors {
@@ -11,7 +10,7 @@ pub struct Colors {
     true_colors: Option<Vec<DynColors>>,
 }
 
-const DEFAULT_CHIP_ICON: char = '\u{25CF}';
+pub const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
 #[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
 pub enum LanguageType {

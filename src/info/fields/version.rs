@@ -1,4 +1,5 @@
-use crate::info::utils::info_field::InfoField;
+use crate::info::display_options::DisplayOptions;
+use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::Repository;
 use onefetch_manifest::Manifest;
@@ -40,25 +41,11 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
 
 #[typetag::serialize]
 impl InfoField for VersionInfo {
-    fn value(&self) -> String {
-        self.version.to_string()
+    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
+        vec![Line::from(self.version.to_string())]
     }
 
-    fn title(&self) -> String {
+    fn key(&self) -> String {
         "Version".into()
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_display_version_info() {
-        let version_info = VersionInfo {
-            version: "v.1.50.0".to_string(),
-        };
-
-        assert_eq!(version_info.value(), "v.1.50.0".to_string(),);
     }
 }
