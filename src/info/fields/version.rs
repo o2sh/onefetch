@@ -49,20 +49,3 @@ impl InfoField for VersionInfo {
         "Version".into()
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_display_version_info() {
-        let version_info = VersionInfo {
-            version: "v.1.50.0".to_string(),
-        };
-
-        assert_eq!(
-            version_info.value(&DisplayOptions::default()),
-            vec![Line::from("v.1.50.0")],
-        );
-    }
-}

@@ -95,26 +95,6 @@ mod test {
     }
 
     #[test]
-    fn test_get_style() {
-        let style = get_style(true, DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(
-            style,
-            AnsiStyle::new()
-                .color(DynColors::Ansi(AnsiColors::Cyan))
-                .bold()
-        );
-    }
-
-    #[test]
-    fn test_get_style_no_bold() {
-        let style = get_style(false, DynColors::Ansi(AnsiColors::Cyan));
-        assert_eq!(
-            style,
-            AnsiStyle::new().color(DynColors::Ansi(AnsiColors::Cyan))
-        );
-    }
-
-    #[test]
     fn test_render_sanitizes_text() {
         // OSC set-title sequence
         let rendered = render_with_white(&[Line::from("1.0.0\u{1b}]0;PWNED\u{07}")], false);

@@ -1,6 +1,7 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{CliOptions, InfoCliOptions};
+use onefetch::info::display_options::DisplayOptions;
 use onefetch::info::{build_info, get_work_dir};
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
@@ -112,7 +113,30 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let info = build_info(&config).expect("no error");
+
+    let json = serde_json::to_value(&info)?;
+    let created = json["infoFields"]
+        .as_array()
+        .and_then(|fields| fields.iter().find_map(|field| field.get("CreatedInfo")))
+        .and_then(|created| created["creationDate"].as_str());
+    assert_eq!(created, Some("1803-03-14T23:51:00Z"));
+
+    let created_line = |iso_time| {
+        let options = DisplayOptions {
+            iso_time,
+            ..Default::default()
+        };
+        info.lines(&options)
+            .into_iter()
+            .map(|line| line.0.into_iter().map(|span| span.text).collect::<String>())
+            .find(|line| line.starts_with("Created:"))
+    };
+    assert_eq!(
+        created_line(true).as_deref(),
+        Some("Created: 1803-03-14T23:51:00Z")
+    );
+    assert!(created_line(false).is_some_and(|line| line.ends_with(" years ago")));
     Ok(())
 }
 

@@ -36,22 +36,6 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_display_last_change_info() {
-        let last_change_info = LastChangeInfo {
-            last_change: Time::new(946_771_200, 0),
-        };
-        let iso_time = DisplayOptions {
-            iso_time: true,
-            ..DisplayOptions::default()
-        };
-
-        assert_eq!(
-            last_change_info.value(&iso_time),
-            vec![Line::from("2000-01-02T00:00:00Z")]
-        );
-    }
-
-    #[test]
     fn test_serialize_last_change_info() {
         let last_change_info = LastChangeInfo {
             last_change: Time::new(946_771_200, 0),

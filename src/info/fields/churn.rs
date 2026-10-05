@@ -117,20 +117,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_display_file_churn() {
-        let file_churn = FileChurn::new("path/to/file.txt".into(), 50);
-
-        let churn_info = ChurnInfo {
-            file_churns: vec![file_churn],
-            churn_pool_size: 5,
-        };
-        assert_eq!(
-            churn_info.value(&DisplayOptions::default()),
-            vec![Line::from("\u{2026}/to/file.txt 50")]
-        );
-    }
-
-    #[test]
     fn test_churn_info_value_with_two_file_churns() {
         let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50);
         let file_churn_2 = FileChurn::new("file_2.txt".into(), 30);

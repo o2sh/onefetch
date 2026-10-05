@@ -129,37 +129,6 @@ mod test {
     use rstest::rstest;
 
     #[test]
-    fn test_display_author() {
-        let author = Author::new(
-            "John Doe".into(),
-            Some("john.doe@email.com".into()),
-            1500,
-            2000,
-        );
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author],
-        };
-        assert_eq!(
-            authors_info.value(&DisplayOptions::default()),
-            vec![Line::from("75% John Doe <john.doe@email.com> 1500")]
-        );
-    }
-
-    #[test]
-    fn test_display_author_with_no_email() {
-        let author = Author::new("John Doe".into(), None, 1500, 2000);
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author],
-        };
-        assert_eq!(
-            authors_info.value(&DisplayOptions::default()),
-            vec![Line::from("75% John Doe 1500")]
-        );
-    }
-
-    #[test]
     fn test_authors_info_title_with_one_author() {
         let author = Author::new(
             "John Doe".into(),

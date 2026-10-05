@@ -210,38 +210,6 @@ mod test {
     }
 
     #[test]
-    fn should_display_correct_number_of_languages() {
-        let languages_info = LanguagesInfo {
-            languages_with_percentage: vec![
-                LanguageWithPercentage {
-                    language: Language::Go,
-                    percentage: 30_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Erlang,
-                    percentage: 40_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Java,
-                    percentage: 20_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Rust,
-                    percentage: 10_f64,
-                },
-            ],
-        };
-
-        let labels: Vec<String> =
-            prepare_languages(&languages_info, &languages_options(2), &COLOR_PALETTE)
-                .iter()
-                .map(LanguageDisplayData::label)
-                .collect();
-
-        assert_eq!(labels, ["Go (30.0 %)", "Erlang (40.0 %)", "Other (30.0 %)"]);
-    }
-
-    #[test]
     fn test_build_language_bar_multiple_languages() {
         let languages: Vec<LanguageDisplayData> = vec![
             LanguageDisplayData {

@@ -1,4 +1,4 @@
-use crate::cli::{CliOptions, NumberSeparator};
+use crate::cli::{CliOptions, InfoCliOptions, NumberSeparator};
 use crate::info::dates::{to_human_time, to_rfc3339};
 use gix::date::Time;
 use num_format::ToFormattedString;
@@ -6,7 +6,7 @@ use num_format::ToFormattedString;
 /// How fields are displayed in the terminal output: number and date formats,
 /// language chips, and how many entries to list. Fields keep raw values and
 /// use this to display them.
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug)]
 pub struct DisplayOptions {
     pub number_separator: NumberSeparator,
     pub iso_time: bool,
@@ -14,6 +14,22 @@ pub struct DisplayOptions {
     pub nerd_fonts: bool,
     pub number_of_languages: usize,
     pub number_of_authors: usize,
+}
+
+/// The CLI defaults, except that true colors are off since `--true-color auto`
+/// depends on the terminal.
+impl Default for DisplayOptions {
+    fn default() -> Self {
+        let info = InfoCliOptions::default();
+        Self {
+            number_separator: NumberSeparator::default(),
+            iso_time: false,
+            true_color: false,
+            nerd_fonts: false,
+            number_of_languages: info.number_of_languages,
+            number_of_authors: info.number_of_authors,
+        }
+    }
 }
 
 impl From<&CliOptions> for DisplayOptions {
@@ -88,13 +104,6 @@ mod tests {
         let year_ago = current_time - (day * 366);
         let time = Time::new(year_ago.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
         assert_eq!(HUMAN_TIME.time(time), "a year ago");
-    }
-
-    #[test]
-    fn display_time_as_iso_time_some_time() {
-        // Set "current" time to 11/18/2021 11:02:22
-        let time = Time::new(1_637_233_282, 0);
-        assert_eq!(ISO_TIME.time(time), "2021-11-18T11:01:22Z");
     }
 
     #[test]

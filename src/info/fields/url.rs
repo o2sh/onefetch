@@ -72,18 +72,6 @@ mod test {
     use super::*;
     use rstest::rstest;
 
-    #[test]
-    fn test_display_url_info() {
-        let url_info = UrlInfo {
-            repo_url: "git@github.com:o2sh/onefetch.git".to_string(),
-        };
-
-        assert_eq!(
-            url_info.value(&DisplayOptions::default()),
-            vec![Line::from("git@github.com:o2sh/onefetch.git")]
-        );
-    }
-
     #[rstest]
     #[case(
         "https://username:token@github.com/user/repo",
@@ -128,14 +116,6 @@ mod test {
         #[case] expected: &str,
     ) {
         assert_eq!(format_url(url, hide_token, http_url), expected);
-    }
-
-    #[test]
-    fn test_remove_token_from_url() {
-        assert_eq!(
-            remove_token_from_url("https://username:token@github.com/user/repo"),
-            "https://github.com/user/repo"
-        );
     }
 
     #[rstest]

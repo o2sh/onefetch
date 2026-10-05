@@ -43,7 +43,7 @@ mod test {
     use onefetch_manifest::ManifestType;
 
     #[test]
-    fn should_display_license() {
+    fn should_display_dependencies() {
         let dependencies_info = DependenciesInfo::new(Some(&Manifest {
             manifest_type: ManifestType::Cargo,
             name: None,

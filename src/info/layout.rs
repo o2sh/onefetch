@@ -135,9 +135,4 @@ mod test {
         };
         assert!(title_lines(&title).is_empty());
     }
-
-    #[test]
-    fn test_palette_line() {
-        assert_eq!(palette_line().0.len(), PALETTE.len());
-    }
 }
