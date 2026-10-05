@@ -1,5 +1,4 @@
-use crate::info::format::Format;
-use crate::info::format::serialize_time;
+use crate::info::format::{Format, serialize_time};
 use crate::info::git::metrics::GitMetrics;
 use crate::info::{info_field::InfoField, text::Line};
 use gix::date::Time;

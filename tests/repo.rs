@@ -1,6 +1,6 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
-use onefetch::cli::{CliOptions, InfoCliOptions, TextForamttingCliOptions};
+use onefetch::cli::{CliOptions, InfoCliOptions};
 use onefetch::info::{build_info, get_work_dir};
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
@@ -34,10 +34,6 @@ fn test_repo() -> Result<()> {
         info: InfoCliOptions {
             email: true,
             churn_pool_size: Some(10),
-            ..Default::default()
-        },
-        text_formatting: TextForamttingCliOptions {
-            iso_time: true,
             ..Default::default()
         },
         ..Default::default()

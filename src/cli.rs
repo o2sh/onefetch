@@ -358,8 +358,9 @@ pub enum When {
     Always,
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy, Default)]
 pub enum NumberSeparator {
+    #[default]
     Plain,
     Comma,
     Space,

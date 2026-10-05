@@ -1,11 +1,10 @@
+use crate::info::format::Format;
 use crate::info::{info_field::InfoField, text::Line};
 use anyhow::Result;
 use gix::{Repository, bstr::ByteSlice};
 use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::ffi::OsStr;
-
-use crate::info::format::Format;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
