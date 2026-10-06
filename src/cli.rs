@@ -79,7 +79,7 @@ pub struct InfoCliOptions {
     /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
-    /// and will be displayed under as "Churn (NUM)"
+    /// and will be shown in the field label as "Churn (NUM)"
     #[arg(long, value_name = "NUM")]
     pub churn_pool_size: Option<usize>,
     /// Ignore all files & directories matching EXCLUDE
