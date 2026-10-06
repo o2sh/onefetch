@@ -1,5 +1,5 @@
 ```man
-Usage: onefetch.exe [OPTIONS] [INPUT]
+Usage: onefetch [OPTIONS] [INPUT]
 
 Arguments:
   [INPUT]
@@ -37,7 +37,8 @@ INFO:
       --churn-pool-size <NUM>
           Minimum NUM of commits from HEAD used to compute the churn summary
 
-          By default, the actual value is non-deterministic due to time-based computation and will be displayed under the info title "Churn (NUM)"
+          By default, the actual value is non-deterministic due to time-based computation and will be shown in the field label as
+          "Churn (NUM)"
 
   -e, --exclude <EXCLUDE>...
           Ignore all files & directories matching EXCLUDE
@@ -70,7 +71,7 @@ TEXT FORMATTING:
   -t, --text-colors <X>...
           Changes the text colors (X X X...)
 
-          Goes in order of title, ~, underline, subtitle, colon, and info
+          Goes in order of title, ~, underline, key, separator, and value
 
           For example:
 
@@ -124,7 +125,7 @@ IMAGE:
       --color-resolution <VALUE>
           VALUE of color resolution to use with SIXEL backend
 
-          [default: 16]
+          [default: 64]
           [possible values: 16, 32, 64, 128, 256]
 
 VISUALS:
