@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.0 (2026-10-6)
+
+### Breaking Changes
+
+JSON/YAML output (`-o json`, `-o yaml`) now contains raw values instead of display text:
+
+- `creationDate` and `lastChange` are always ISO 8601 timestamps (`"2018-09-14T18:51:00Z"`). Previously they were relative text (`"8 years ago"`) unless `--iso-time` was passed.
+- `repoSize` is a number of bytes (`2161012`) instead of formatted text (`"2.06 MiB"`).
+- `dependencies` is replaced by `numberOfDependencies` (number) and `manifestType` (`"Cargo"`, `"Npm"`, `"PyProject"`, or `null` when there is no manifest).
+
+`onefetch-manifest` crate: `ManifestType` has a new `PyProject` variant.
+
+### Security Fix
+
+- Fix terminal escape sequence injection through repository data ([CVE-2026-100866](https://www.cve.org/CVERecord?id=CVE-2026-100866)) By @carfeii in https://github.com/o2sh/onefetch/pull/1829
+
+### New Features
+
+- Add pyproject.toml manifest support (PEP 621) by @ChrisJr404 in https://github.com/o2sh/onefetch/pull/1842
+- Update Elixir colors to the official brand color by @georgeguimaraes in https://github.com/o2sh/onefetch/pull/1868
+
+### Bug Fixes
+
+- Use the default remote for the repository URL by @o2sh in https://github.com/o2sh/onefetch/pull/1873
+- Exit with clear error message when repository uses reftable by @Jorge-Polanco-Roque in https://github.com/o2sh/onefetch/pull/1853
+
+### Chores
+
+- Separate repository info building from styling by @o2sh in https://github.com/o2sh/onefetch/pull/1880
+
+### CI / CD
+
+- Remove manual homebrew release in favor of brew bot auto bump by @o2sh in https://github.com/o2sh/onefetch/commit/81c49b8b1a5cdc52ed0bd14cf6d59a01c4a326fe
+
 ## 2.28.1 (2026-8-30)
 
 ### CI/CD
