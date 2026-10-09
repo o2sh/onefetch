@@ -1,5 +1,6 @@
 use crate::info::display_options::DisplayOptions;
-use crate::info::{info_field::InfoField, text::Line};
+use crate::info::fields::InfoField;
+use crate::info::text::Line;
 use anyhow::Result;
 use gix::Repository;
 use onefetch_manifest::Manifest;

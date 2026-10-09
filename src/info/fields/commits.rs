@@ -1,5 +1,7 @@
-use crate::info::git::metrics::GitMetrics;
-use crate::info::{display_options::DisplayOptions, info_field::InfoField, text::Line};
+use crate::git::metrics::GitMetrics;
+use crate::info::display_options::DisplayOptions;
+use crate::info::fields::InfoField;
+use crate::info::text::Line;
 use serde::Serialize;
 
 #[derive(Serialize)]

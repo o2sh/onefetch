@@ -1,5 +1,5 @@
 use crate::info::display_options::DisplayOptions;
-use crate::info::info_field::InfoField;
+use crate::info::fields::InfoField;
 use crate::info::text::Line;
 use onefetch_manifest::Manifest;
 use serde::Serialize;

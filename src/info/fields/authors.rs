@@ -1,5 +1,7 @@
-use crate::info::git::sig::Sig;
-use crate::info::{display_options::DisplayOptions, info_field::InfoField, text::Line};
+use crate::git::identity::Identity;
+use crate::info::display_options::DisplayOptions;
+use crate::info::fields::InfoField;
+use crate::info::text::Line;
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -37,13 +39,13 @@ pub struct AuthorsInfo {
 
 impl AuthorsInfo {
     pub fn new(
-        number_of_commits_by_signature: &HashMap<Sig, usize>,
+        number_of_commits_by_identity: &HashMap<Identity, usize>,
         total_number_of_commits: usize,
         number_of_authors_to_display: usize,
         show_email: bool,
     ) -> Self {
         let authors = compute_authors(
-            number_of_commits_by_signature,
+            number_of_commits_by_identity,
             total_number_of_commits,
             number_of_authors_to_display,
             show_email,
@@ -60,19 +62,19 @@ impl AuthorsInfo {
 }
 
 fn compute_authors(
-    number_of_commits_by_signature: &HashMap<Sig, usize>,
+    number_of_commits_by_identity: &HashMap<Identity, usize>,
     total_number_of_commits: usize,
     number_of_authors_to_display: usize,
     show_email: bool,
 ) -> Vec<Author> {
-    let mut signature_with_number_of_commits_sorted: Vec<(&Sig, &usize)> =
-        Vec::from_iter(number_of_commits_by_signature);
+    let mut identities_sorted_by_number_of_commits: Vec<(&Identity, &usize)> =
+        Vec::from_iter(number_of_commits_by_identity);
 
-    signature_with_number_of_commits_sorted.sort_by(|(sa, a_count), (sb, b_count)| {
-        b_count.cmp(a_count).then_with(|| sa.name.cmp(&sb.name))
+    identities_sorted_by_number_of_commits.sort_by(|(a, a_count), (b, b_count)| {
+        b_count.cmp(a_count).then_with(|| a.name.cmp(&b.name))
     });
 
-    let authors: Vec<Author> = signature_with_number_of_commits_sorted
+    let authors: Vec<Author> = identities_sorted_by_number_of_commits
         .into_iter()
         .map(|(author, author_nbr_of_commits)| {
             Author::new(
@@ -221,23 +223,23 @@ mod test {
 
     #[test]
     fn test_compute_authors() {
-        let mut number_of_commits_by_signature: HashMap<Sig, usize> = HashMap::new();
-        number_of_commits_by_signature.insert(
-            Sig {
+        let mut number_of_commits_by_identity: HashMap<Identity, usize> = HashMap::new();
+        number_of_commits_by_identity.insert(
+            Identity {
                 name: "John Doe".into(),
                 email: "johndoe@example.com".into(),
             },
             30,
         );
-        number_of_commits_by_signature.insert(
-            Sig {
+        number_of_commits_by_identity.insert(
+            Identity {
                 name: "Jane Doe".into(),
                 email: "janedoe@example.com".into(),
             },
             20,
         );
-        number_of_commits_by_signature.insert(
-            Sig {
+        number_of_commits_by_identity.insert(
+            Identity {
                 name: "Ellen Smith".into(),
                 email: "ellensmith@example.com".into(),
             },
@@ -248,7 +250,7 @@ mod test {
         let show_email = false;
 
         let actual = compute_authors(
-            &number_of_commits_by_signature,
+            &number_of_commits_by_identity,
             total_number_of_commits,
             number_of_authors_to_display,
             show_email,

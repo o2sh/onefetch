@@ -1,7 +1,8 @@
 use crate::info::display_options::DisplayOptions;
-use crate::info::langs::get_total_loc;
-use crate::info::langs::language::Language;
-use crate::info::{info_field::InfoField, text::Line};
+use crate::info::fields::InfoField;
+use crate::info::text::Line;
+use crate::language::Language;
+use crate::language::stats::get_total_loc;
 use serde::Serialize;
 
 #[derive(Serialize)]
