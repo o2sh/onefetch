@@ -1,7 +1,8 @@
+use crate::git::metrics::GitMetrics;
 use crate::info::dates::serialize_time;
 use crate::info::display_options::DisplayOptions;
-use crate::info::git::metrics::GitMetrics;
-use crate::info::{info_field::InfoField, text::Line};
+use crate::info::fields::InfoField;
+use crate::info::text::Line;
 use gix::date::Time;
 use serde::Serialize;
 

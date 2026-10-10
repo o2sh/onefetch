@@ -2,11 +2,15 @@
 
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
+use clap_complete::{Generator, generate};
 use human_panic::setup_panic;
-use onefetch::cli::{self, CliOptions};
-use onefetch::info::build_info;
-use onefetch::ui::printer::factory::PrinterFactory;
+use onefetch::cli::Cli;
+use onefetch::info::{InfoOptions, build_info};
+use onefetch::language::Language;
+use onefetch::ui::printer::Printer;
+use onefetch_manifest::ManifestType;
 use std::io;
+use strum::IntoEnumIterator;
 
 fn main() -> Result<()> {
     setup_panic!();
@@ -14,29 +18,48 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     enable_ansi_support::enable_ansi_support()?;
 
-    let cli_options = cli::CliOptions::parse();
+    let cli = Cli::parse();
 
-    if cli_options.other.languages {
-        return cli::print_supported_languages();
-    }
-
-    if cli_options.other.package_managers {
-        return cli::print_supported_package_managers();
-    }
-
-    if let Some(generator) = cli_options.developer.completion {
-        let mut cmd = CliOptions::command();
-        cli::print_completions(generator, &mut cmd);
+    if cli.other.languages {
+        print_supported_languages();
         return Ok(());
     }
 
-    let info = build_info(&cli_options)?;
+    if cli.other.package_managers {
+        print_supported_package_managers();
+        return Ok(());
+    }
 
-    let printer = PrinterFactory::new(info, cli_options)?.create()?;
+    if let Some(generator) = cli.developer.completion {
+        print_completions(generator);
+        return Ok(());
+    }
+
+    let info = build_info(&InfoOptions::from(&cli))?;
+
+    let printer = Printer::new(info, &cli)?;
 
     let mut writer = io::BufWriter::new(io::stdout());
 
     printer.print(&mut writer)?;
 
     Ok(())
+}
+
+fn print_supported_languages() {
+    for l in Language::iter() {
+        println!("{l}");
+    }
+}
+
+fn print_supported_package_managers() {
+    for p in ManifestType::iter() {
+        println!("{p}");
+    }
+}
+
+fn print_completions<G: Generator>(generator: G) {
+    let mut cmd = Cli::command();
+    let name = cmd.get_name().to_string();
+    generate(generator, &mut cmd, name, &mut io::stdout());
 }

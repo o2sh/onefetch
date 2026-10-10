@@ -1,5 +1,6 @@
+use crate::info::Info;
 use crate::info::display_options::DisplayOptions;
-use crate::info::info_field::InfoField;
+use crate::info::fields::InfoField;
 use crate::info::text::{Line, Span, Style};
 use crate::info::title::Title;
 use owo_colors::{AnsiColors, DynColors};
@@ -15,7 +16,22 @@ const PALETTE: [AnsiColors; 8] = [
     AnsiColors::White,
 ];
 
-pub fn title_lines(title: &Title) -> Vec<Line> {
+pub fn info_lines(info: &Info, options: &DisplayOptions) -> Vec<Line> {
+    let mut lines = Vec::new();
+    if let Some(title) = &info.title {
+        lines.extend(title_lines(title));
+    }
+    for info_field in &info.info_fields {
+        lines.extend(field_lines(info_field.as_ref(), options));
+    }
+    if !options.no_color_palette {
+        lines.push(Line::default());
+        lines.push(palette_line());
+    }
+    lines
+}
+
+fn title_lines(title: &Title) -> Vec<Line> {
     let title = title.line();
     if title.is_empty() {
         return Vec::new();
@@ -24,7 +40,7 @@ pub fn title_lines(title: &Title) -> Vec<Line> {
     vec![title, Line::from(vec![underline])]
 }
 
-pub fn field_lines(field: &dyn InfoField, options: &DisplayOptions) -> Vec<Line> {
+fn field_lines(field: &dyn InfoField, options: &DisplayOptions) -> Vec<Line> {
     let value = field.value(options);
     if value.iter().all(Line::is_empty) {
         return Vec::new();
@@ -52,7 +68,7 @@ pub fn field_lines(field: &dyn InfoField, options: &DisplayOptions) -> Vec<Line>
         .collect()
 }
 
-pub fn palette_line() -> Line {
+fn palette_line() -> Line {
     PALETTE
         .into_iter()
         .map(|color| Span::new("   ", Style::Background(DynColors::Ansi(color))))

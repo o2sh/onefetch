@@ -1,17 +1,21 @@
-use crate::cli::{CliOptions, InfoCliOptions, NumberSeparator};
 use crate::info::dates::{to_human_time, to_rfc3339};
 use gix::date::Time;
-use num_format::ToFormattedString;
+use num_format::{CustomFormat, ToFormattedString};
+use serde::Serialize;
+
+pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
+pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
 
 /// How fields are displayed in the terminal output: number and date formats,
-/// language chips, and how many entries to list. Fields keep raw values and
-/// use this to display them.
+/// language chips, the color palette, and how many entries to list. Fields
+/// keep raw values and use this to display them.
 #[derive(Clone, Copy, Debug)]
 pub struct DisplayOptions {
     pub number_separator: NumberSeparator,
     pub iso_time: bool,
     pub true_color: bool,
     pub nerd_fonts: bool,
+    pub no_color_palette: bool,
     pub number_of_languages: usize,
     pub number_of_authors: usize,
 }
@@ -20,28 +24,43 @@ pub struct DisplayOptions {
 /// depends on the terminal.
 impl Default for DisplayOptions {
     fn default() -> Self {
-        let info = InfoCliOptions::default();
         Self {
             number_separator: NumberSeparator::default(),
             iso_time: false,
             true_color: false,
             nerd_fonts: false,
-            number_of_languages: info.number_of_languages,
-            number_of_authors: info.number_of_authors,
+            no_color_palette: false,
+            number_of_languages: DEFAULT_NUMBER_OF_LANGUAGES,
+            number_of_authors: DEFAULT_NUMBER_OF_AUTHORS,
         }
     }
 }
 
-impl From<&CliOptions> for DisplayOptions {
-    fn from(cli_options: &CliOptions) -> Self {
-        Self {
-            number_separator: cli_options.text_formatting.number_separator,
-            iso_time: cli_options.text_formatting.iso_time,
-            true_color: cli_options.true_color(),
-            nerd_fonts: cli_options.visuals.nerd_fonts,
-            number_of_languages: cli_options.info.number_of_languages,
-            number_of_authors: cli_options.info.number_of_authors,
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy, Default)]
+pub enum NumberSeparator {
+    #[default]
+    Plain,
+    Comma,
+    Space,
+    Underscore,
+}
+
+impl NumberSeparator {
+    fn separator(self) -> &'static str {
+        match self {
+            Self::Plain => "",
+            Self::Comma => ",",
+            Self::Space => "\u{202f}",
+            Self::Underscore => "_",
         }
+    }
+
+    pub fn get_format(&self) -> CustomFormat {
+        num_format::CustomFormat::builder()
+            .grouping(num_format::Grouping::Standard)
+            .separator(self.separator())
+            .build()
+            .unwrap()
     }
 }
 
@@ -72,6 +91,7 @@ mod tests {
         iso_time: false,
         true_color: false,
         nerd_fonts: false,
+        no_color_palette: false,
         number_of_languages: 0,
         number_of_authors: 0,
     };

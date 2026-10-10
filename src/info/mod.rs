@@ -1,87 +1,54 @@
-use self::display_options::DisplayOptions;
-use self::fields::authors::AuthorsInfo;
-use self::fields::churn::ChurnInfo;
-use self::fields::commits::CommitsInfo;
-use self::fields::contributors::ContributorsInfo;
-use self::fields::created::CreatedInfo;
-use self::fields::dependencies::DependenciesInfo;
-use self::fields::description::DescriptionInfo;
-use self::fields::head::HeadInfo;
-use self::fields::languages::LanguagesInfo;
-use self::fields::last_change::LastChangeInfo;
-use self::fields::license::LicenseInfo;
-use self::fields::loc::LocInfo;
-use self::fields::pending::PendingInfo;
-use self::fields::project::ProjectInfo;
-use self::fields::size::SizeInfo;
-use self::fields::url::UrlInfo;
+use self::builder::InfoBuilder;
+use self::fields::InfoField;
 use self::fields::url::get_repo_url;
-use self::fields::version::VersionInfo;
-use self::git::metrics::GitMetrics;
-use self::git::traverse_commit_graph;
-use self::git::uses_reftables;
-use self::info_field::{InfoField, InfoKind};
-use self::langs::language::Language;
-use self::text::Line;
 use self::title::Title;
-use crate::cli::CliOptions;
-use crate::ui::get_ascii_colors;
+use crate::git::bots::BotRegex;
+use crate::git::{get_work_dir, traverse_commit_graph, uses_reftables};
+use crate::language::{Language, LanguageType, stats};
 use anyhow::{Context, Result, bail};
-use gix::Repository;
 use onefetch_manifest::Manifest;
-use owo_colors::DynColors;
 use serde::Serialize;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
+mod builder;
 mod dates;
 pub mod display_options;
-mod fields;
-mod git;
-pub mod info_field;
-pub mod langs;
-mod layout;
+pub(crate) mod fields;
 pub mod text;
-mod title;
+pub(crate) mod title;
+
+pub use fields::InfoKind;
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
-    title: Option<Title>,
-    info_fields: Vec<Box<dyn InfoField>>,
-    #[serde(skip_serializing)]
-    no_color_palette: bool,
+    pub(crate) title: Option<Title>,
+    pub(crate) info_fields: Vec<Box<dyn InfoField>>,
     #[serde(skip_serializing)]
     pub dominant_language: Option<Language>,
-    #[serde(skip_serializing)]
-    pub ascii_colors: Vec<DynColors>,
 }
 
-struct InfoBuilder {
-    title: Option<Title>,
-    info_fields: Vec<Box<dyn InfoField>>,
-    disabled_fields: Vec<InfoKind>,
-    no_title: bool,
+/// What to collect from the repository and which fields to show.
+#[derive(Clone, Debug)]
+pub struct InfoOptions {
+    pub input: PathBuf,
+    pub disabled_fields: Vec<InfoKind>,
+    pub no_title: bool,
+    pub number_of_authors: usize,
+    pub number_of_file_churns: usize,
+    pub churn_pool_size: Option<usize>,
+    pub exclude: Vec<String>,
+    pub no_bots: Option<BotRegex>,
+    pub no_merges: bool,
+    pub email: bool,
+    pub http_url: bool,
+    pub hide_token: bool,
+    pub include_hidden: bool,
+    pub language_types: Vec<LanguageType>,
 }
 
-impl Info {
-    pub fn lines(&self, options: &DisplayOptions) -> Vec<Line> {
-        let mut lines = Vec::new();
-        if let Some(title) = &self.title {
-            lines.extend(layout::title_lines(title));
-        }
-        for info_field in &self.info_fields {
-            lines.extend(layout::field_lines(info_field.as_ref(), options));
-        }
-        if !self.no_color_palette {
-            lines.push(Line::default());
-            lines.push(layout::palette_line());
-        }
-        lines
-    }
-}
-
-pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
-    let repo = gix::discover(&cli_options.input)?;
+pub fn build_info(options: &InfoOptions) -> Result<Info> {
+    let repo = gix::discover(&options.input)?;
     if uses_reftables(&repo) {
         // TODO: remove once gitoxide supports reftable
         bail!("reftable repositories are not yet supported");
@@ -89,12 +56,12 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     let repo_path = get_work_dir(&repo)?;
     // Compute LOC in a separate thread so it runs in parallel with commit-graph traversal.
     let loc_by_language_sorted_handle = std::thread::spawn({
-        let globs_to_exclude = cli_options.info.exclude.clone();
-        let language_types = cli_options.info.r#type.clone();
-        let include_hidden = cli_options.info.include_hidden;
+        let globs_to_exclude = options.exclude.clone();
+        let language_types = options.language_types.clone();
+        let include_hidden = options.include_hidden;
         let workdir = repo_path.clone();
         move || {
-            langs::get_loc_by_language_sorted(
+            stats::get_loc_by_language_sorted(
                 &workdir,
                 &globs_to_exclude,
                 &language_types,
@@ -104,37 +71,23 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
     });
     let git_metrics = traverse_commit_graph(
         &repo,
-        cli_options.info.no_bots.clone(),
-        cli_options.info.churn_pool_size,
-        cli_options.info.no_merges,
+        options.no_bots.clone(),
+        options.churn_pool_size,
+        options.no_merges,
     )
     .context("Failed to traverse Git commit history")?;
     let manifest = get_manifest(&repo_path)?;
-    let repo_url = get_repo_url(
-        &repo,
-        cli_options.info.hide_token,
-        cli_options.info.http_url,
-    )
-    .context("Failed to determine repository URL")?;
+    let repo_url = get_repo_url(&repo, options.hide_token, options.http_url)
+        .context("Failed to determine repository URL")?;
     let loc_by_language = loc_by_language_sorted_handle
         .join()
         .ok()
         .context("BUG: panic in language statistics thread")?;
     let dominant_language = loc_by_language
         .as_ref()
-        .map(|v| langs::get_main_language(v));
-    let ascii_colors = get_ascii_colors(
-        dominant_language.as_ref(),
-        cli_options.ascii.ascii_language.as_ref(),
-        &cli_options.ascii.ascii_colors,
-        cli_options.true_color(),
-    );
-    let number_of_authors_to_display = cli_options.info.number_of_authors;
-    let number_of_file_churns_to_display = cli_options.info.number_of_file_churns;
-    let globs_to_exclude = &cli_options.info.exclude;
-    let show_email = cli_options.info.email;
+        .map(|v| stats::get_main_language(v));
 
-    Ok(InfoBuilder::new(cli_options)
+    Ok(InfoBuilder::new(options)
         .title(&repo)
         .project(&repo, &repo_url, manifest.as_ref())?
         .description(manifest.as_ref())
@@ -144,218 +97,20 @@ pub fn build_info(cli_options: &CliOptions) -> Result<Info> {
         .created(&git_metrics)
         .languages(loc_by_language.as_ref())
         .dependencies(manifest.as_ref())
-        .authors(&git_metrics, number_of_authors_to_display, show_email)
+        .authors(&git_metrics, options.number_of_authors, options.email)
         .last_change(&git_metrics)
         .contributors(&git_metrics)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow())
         .churn(
             &git_metrics,
-            number_of_file_churns_to_display,
-            globs_to_exclude,
+            options.number_of_file_churns,
+            &options.exclude,
         )?
-        .loc(loc_by_language.as_ref())
+        .lines_of_code(loc_by_language.as_ref())
         .size(&repo)
         .license(&repo_path, manifest.as_ref())?
-        .build(cli_options, dominant_language, ascii_colors))
-}
-
-impl InfoBuilder {
-    fn new(cli_options: &CliOptions) -> Self {
-        Self {
-            title: None,
-            info_fields: Vec::new(),
-            disabled_fields: cli_options.info.disabled_fields.clone(),
-            no_title: cli_options.info.no_title,
-        }
-    }
-
-    fn title(mut self, repo: &Repository) -> Self {
-        if !self.no_title {
-            self.title = Some(Title::new(repo));
-        }
-        self
-    }
-
-    fn description(mut self, manifest: Option<&Manifest>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Description) {
-            let description = DescriptionInfo::new(manifest);
-            self.info_fields.push(Box::new(description));
-        }
-        self
-    }
-
-    fn pending(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Pending) {
-            let pending = PendingInfo::new(repo)?;
-            self.info_fields.push(Box::new(pending));
-        }
-        Ok(self)
-    }
-
-    fn url(mut self, repo_url: &str) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::URL) {
-            let repo_url = UrlInfo::new(repo_url);
-            self.info_fields.push(Box::new(repo_url));
-        }
-        self
-    }
-
-    fn project(
-        mut self,
-        repo: &Repository,
-        repo_url: &str,
-        manifest: Option<&Manifest>,
-    ) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Project) {
-            let project = ProjectInfo::new(repo, repo_url, manifest)?;
-            self.info_fields.push(Box::new(project));
-        }
-        Ok(self)
-    }
-
-    fn head(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Head) {
-            let head = HeadInfo::new(repo)?;
-            self.info_fields.push(Box::new(head));
-        }
-        Ok(self)
-    }
-
-    fn version(mut self, repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Version) {
-            let version = VersionInfo::new(repo, manifest)?;
-            self.info_fields.push(Box::new(version));
-        }
-        Ok(self)
-    }
-
-    fn size(mut self, repo: &Repository) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Size) {
-            let size = SizeInfo::new(repo);
-            self.info_fields.push(Box::new(size));
-        }
-        self
-    }
-
-    fn license(mut self, repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::License) {
-            let license = LicenseInfo::new(repo_path, manifest)?;
-            self.info_fields.push(Box::new(license));
-        }
-        Ok(self)
-    }
-
-    fn created(mut self, git_metrics: &GitMetrics) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Created) {
-            let created = CreatedInfo::new(git_metrics);
-            self.info_fields.push(Box::new(created));
-        }
-        self
-    }
-
-    fn languages(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Languages)
-            && let Some(loc_by_language) = loc_by_language_opt
-        {
-            let languages = LanguagesInfo::new(loc_by_language);
-            self.info_fields.push(Box::new(languages));
-        }
-        self
-    }
-
-    fn dependencies(mut self, manifest: Option<&Manifest>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Dependencies) {
-            let dependencies = DependenciesInfo::new(manifest);
-            self.info_fields.push(Box::new(dependencies));
-        }
-        self
-    }
-
-    fn authors(
-        mut self,
-        git_metrics: &GitMetrics,
-        number_of_authors_to_display: usize,
-        show_email: bool,
-    ) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Authors) {
-            let authors = AuthorsInfo::new(
-                &git_metrics.number_of_commits_by_signature,
-                git_metrics.total_number_of_commits,
-                number_of_authors_to_display,
-                show_email,
-            );
-            self.info_fields.push(Box::new(authors));
-        }
-        self
-    }
-
-    fn last_change(mut self, git_metrics: &GitMetrics) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::LastChange) {
-            let last_change = LastChangeInfo::new(git_metrics);
-            self.info_fields.push(Box::new(last_change));
-        }
-        self
-    }
-
-    fn contributors(mut self, git_metrics: &GitMetrics) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Contributors) {
-            let contributors = ContributorsInfo::new(git_metrics.total_number_of_authors);
-            self.info_fields.push(Box::new(contributors));
-        }
-        self
-    }
-
-    fn commits(mut self, git_metrics: &GitMetrics, is_shallow: bool) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Commits) {
-            let commits = CommitsInfo::new(git_metrics, is_shallow);
-            self.info_fields.push(Box::new(commits));
-        }
-        self
-    }
-
-    fn churn(
-        mut self,
-        git_metrics: &GitMetrics,
-        number_of_file_churns_to_display: usize,
-        globs_to_exclude: &[String],
-    ) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Churn) {
-            let churn = ChurnInfo::new(
-                &git_metrics.number_of_commits_by_file_path,
-                git_metrics.churn_pool_size,
-                number_of_file_churns_to_display,
-                globs_to_exclude,
-            )?;
-            self.info_fields.push(Box::new(churn));
-        }
-        Ok(self)
-    }
-
-    fn loc(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::LinesOfCode)
-            && let Some(loc_by_language) = loc_by_language_opt
-        {
-            let lines_of_code = LocInfo::new(loc_by_language);
-            self.info_fields.push(Box::new(lines_of_code));
-        }
-        self
-    }
-
-    fn build(
-        self,
-        cli_options: &CliOptions,
-        dominant_language: Option<Language>,
-        ascii_colors: Vec<DynColors>,
-    ) -> Info {
-        Info {
-            title: self.title,
-            info_fields: self.info_fields,
-            dominant_language,
-            ascii_colors,
-            no_color_palette: cli_options.visuals.no_color_palette,
-        }
-    }
+        .build(dominant_language))
 }
 
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
@@ -366,11 +121,4 @@ fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
     } else {
         Ok(manifests.first().cloned())
     }
-}
-
-pub fn get_work_dir(repo: &gix::Repository) -> Result<std::path::PathBuf> {
-    Ok(repo
-        .workdir()
-        .context("please run onefetch inside of a non-bare git repository")?
-        .to_owned())
 }

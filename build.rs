@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let output_path = Path::new(&out_dir).join("language.rs");
 
     let rust_code = tera.render_str(
-        &std::fs::read_to_string("src/info/langs/language.tera")?,
+        &std::fs::read_to_string("src/language/language.tera")?,
         &Context::from_serialize(&serde_json::json!({ "languages": lang_data, }))?,
         false,
     )?;
