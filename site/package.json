@@ -19,18 +19,18 @@
     "@sveltejs/kit": "2.70.3",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
     "@types/eslint": "9.6.1",
-    "@types/node": "26.6.3",
-    "eslint": "10.11.0",
+    "@types/node": "26.6.5",
+    "eslint": "10.12.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-svelte": "3.23.0",
-    "globals": "17.12.0",
-    "prettier": "3.9.9",
+    "eslint-plugin-svelte": "3.23.1",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
     "prettier-plugin-svelte": "4.1.1",
-    "svelte": "5.57.1",
+    "svelte": "5.57.2",
     "svelte-check": "4.7.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.0",
-    "vite": "8.3.1"
+    "typescript-eslint": "8.71.1",
+    "vite": "8.3.4"
   },
   "dependencies": {
     "svelte-hot-french-toast": "4.1.0"
