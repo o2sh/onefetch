@@ -1,5 +1,5 @@
 use crate::info::text::{Line, Style};
-use crate::ui::text_colors::TextColors;
+use crate::ui::colors::TextColors;
 use owo_colors::{DynColors, OwoColorize, Style as AnsiStyle};
 
 pub fn render(lines: &[Line], text_colors: &TextColors, no_bold: bool) -> String {

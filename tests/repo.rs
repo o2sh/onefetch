@@ -1,8 +1,10 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
-use onefetch::cli::{CliOptions, InfoCliOptions};
+use onefetch::cli::{Cli, InfoArgs};
+use onefetch::git::get_work_dir;
 use onefetch::info::display_options::DisplayOptions;
-use onefetch::info::{build_info, get_work_dir};
+use onefetch::info::{InfoOptions, build_info};
+use onefetch::ui::layout::info_lines;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
@@ -30,16 +32,16 @@ fn test_bare_repo() -> Result<()> {
 #[test]
 fn test_repo() -> Result<()> {
     let repo = named_repo("make_repo.sh", "repo")?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
-        info: InfoCliOptions {
+        info: InfoArgs {
             email: true,
             churn_pool_size: Some(10),
             ..Default::default()
         },
         ..Default::default()
     };
-    let info = build_info(&config)?;
+    let info = build_info(&InfoOptions::from(&config))?;
     insta::assert_json_snapshot!(
         info,
         {
@@ -54,11 +56,11 @@ fn test_repo() -> Result<()> {
 #[test]
 fn test_repo_without_remote() -> Result<()> {
     let repo = named_repo("make_repo_without_remote.sh", "repo_without_remote")?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = build_info(&config);
+    let info = build_info(&InfoOptions::from(&config));
     assert!(info.is_ok());
 
     Ok(())
@@ -70,11 +72,11 @@ fn test_repo_with_non_origin_remote() -> Result<()> {
         "make_repo_with_non_origin_remote.sh",
         "repo_with_non_origin_remote",
     )?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = serde_json::to_value(build_info(&config)?)?;
+    let info = serde_json::to_value(build_info(&InfoOptions::from(&config))?)?;
     let repo_url = info["infoFields"]
         .as_array()
         .and_then(|fields| fields.iter().find_map(|field| field.get("UrlInfo")))
@@ -87,33 +89,33 @@ fn test_repo_with_non_origin_remote() -> Result<()> {
 #[test]
 fn test_partial_repo() -> Result<()> {
     let repo = named_repo("make_partial_repo.sh", "partial_repo/partial")?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let _info = build_info(&InfoOptions::from(&config)).expect("no error");
     Ok(())
 }
 
 #[test]
 fn test_treeless_partial_repo() -> Result<()> {
     let repo = named_repo("make_partial_repo.sh", "partial_repo/partial_treeless")?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let _info = build_info(&InfoOptions::from(&config)).expect("no error");
     Ok(())
 }
 
 #[test]
 fn test_repo_with_pre_epoch_dates() -> Result<()> {
     let repo = named_repo("make_pre_epoch_repo.sh", "pre_epoch_repo")?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let info = build_info(&config).expect("no error");
+    let info = build_info(&InfoOptions::from(&config)).expect("no error");
 
     let json = serde_json::to_value(&info)?;
     let created = json["infoFields"]
@@ -127,7 +129,7 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
             iso_time,
             ..Default::default()
         };
-        info.lines(&options)
+        info_lines(&info, &options)
             .into_iter()
             .map(|line| line.0.into_iter().map(|span| span.text).collect::<String>())
             .find(|line| line.starts_with("Created:"))
@@ -143,26 +145,29 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
 #[test]
 fn test_reftable_repo_is_rejected() -> Result<()> {
     let repo = named_repo("make_reftable_repo.sh", "reftable")?;
-    let config = CliOptions {
+    let config = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let error = match build_info(&config) {
+    let error = match build_info(&InfoOptions::from(&config)) {
         Ok(_) => panic!("reftable repository should be rejected"),
         Err(error) => error,
     };
 
-    assert_eq!(error.to_string(), "reftable repositories are not yet supported");
+    assert_eq!(
+        error.to_string(),
+        "reftable repositories are not yet supported"
+    );
     Ok(())
 }
 
 #[test]
 fn test_repo_without_code() -> Result<()> {
     let repo = named_repo("make_repo_without_code.sh", "repo_without_code")?;
-    let config: CliOptions = CliOptions {
+    let config: Cli = Cli {
         input: repo.path().to_path_buf(),
         ..Default::default()
     };
-    let _info = build_info(&config).expect("no error");
+    let _info = build_info(&InfoOptions::from(&config)).expect("no error");
     Ok(())
 }

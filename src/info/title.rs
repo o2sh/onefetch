@@ -1,4 +1,4 @@
-use crate::cli;
+use crate::git::{get_git_username, get_git_version};
 use crate::info::text::{Line, Span, Style};
 use gix::Repository;
 use serde::Serialize;
@@ -14,7 +14,7 @@ impl Title {
     pub fn new(repo: &Repository) -> Self {
         Self {
             git_username: get_git_username(repo),
-            git_version: cli::get_git_version(),
+            git_version: get_git_version(),
         }
     }
 
@@ -33,13 +33,6 @@ impl Title {
         }
         Line::from(spans)
     }
-}
-
-pub fn get_git_username(repo: &Repository) -> String {
-    repo.committer()
-        .and_then(Result::ok)
-        .map(|c| c.name.to_string())
-        .unwrap_or_default()
 }
 
 #[cfg(test)]

@@ -1,10 +1,8 @@
-use language::{Language, LanguageType};
+use super::{Language, LanguageType};
 use std::cmp;
 use std::collections::HashMap;
 use std::path::Path;
 use strum::IntoEnumIterator;
-
-pub mod language;
 
 pub fn get_main_language(loc_by_language: &[(Language, usize)]) -> Language {
     loc_by_language[0].0
@@ -34,7 +32,7 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
     let mut loc_by_language = HashMap::new();
 
     for (language_name, language) in languages {
-        let loc = language::loc(language_name, language);
+        let loc = count_loc(language_name, language);
 
         if loc > 0 {
             loc_by_language.insert(Language::from(*language_name), loc);
@@ -51,6 +49,26 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
 pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
     let total_loc: usize = loc_by_language.iter().map(|(_, v)| v).sum();
     total_loc
+}
+
+fn count_loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
+    count_loc_for_type(language_type, language.code, language.comments)
+        + language
+            .children
+            .iter()
+            .fold(0, |sum, (lang_type, reports)| {
+                sum + reports.iter().fold(0, |sum, report| {
+                    let stats = report.stats.summarise();
+                    sum + count_loc_for_type(lang_type, stats.code, stats.comments)
+                })
+            })
+}
+
+fn count_loc_for_type(language_type: &tokei::LanguageType, code: usize, comments: usize) -> usize {
+    match language_type {
+        tokei::LanguageType::Markdown => code + comments,
+        _ => code,
+    }
 }
 
 fn get_locs(
