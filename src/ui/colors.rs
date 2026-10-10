@@ -15,7 +15,7 @@ pub fn get_ascii_colors(
         return language_colors;
     }
 
-    let mut colors: Vec<DynColors> = ascii_colors.iter().map(num_to_color).collect();
+    let mut colors: Vec<DynColors> = ascii_colors.iter().copied().map(num_to_color).collect();
 
     if language_colors.len() > colors.len() {
         colors.extend(language_colors.into_iter().skip(colors.len()));
@@ -24,26 +24,27 @@ pub fn get_ascii_colors(
     colors
 }
 
-pub fn num_to_color(num: &u8) -> DynColors {
-    match num {
-        0 => DynColors::Ansi(AnsiColors::Black),
-        1 => DynColors::Ansi(AnsiColors::Red),
-        2 => DynColors::Ansi(AnsiColors::Green),
-        3 => DynColors::Ansi(AnsiColors::Yellow),
-        4 => DynColors::Ansi(AnsiColors::Blue),
-        5 => DynColors::Ansi(AnsiColors::Magenta),
-        6 => DynColors::Ansi(AnsiColors::Cyan),
-        7 => DynColors::Ansi(AnsiColors::White),
-        8 => DynColors::Ansi(AnsiColors::BrightBlack),
-        9 => DynColors::Ansi(AnsiColors::BrightRed),
-        10 => DynColors::Ansi(AnsiColors::BrightGreen),
-        11 => DynColors::Ansi(AnsiColors::BrightYellow),
-        12 => DynColors::Ansi(AnsiColors::BrightBlue),
-        13 => DynColors::Ansi(AnsiColors::BrightMagenta),
-        14 => DynColors::Ansi(AnsiColors::BrightCyan),
-        15 => DynColors::Ansi(AnsiColors::BrightWhite),
-        _ => DynColors::Ansi(AnsiColors::Default),
-    }
+pub fn num_to_color(num: u8) -> DynColors {
+    let ansi_color = match num {
+        0 => AnsiColors::Black,
+        1 => AnsiColors::Red,
+        2 => AnsiColors::Green,
+        3 => AnsiColors::Yellow,
+        4 => AnsiColors::Blue,
+        5 => AnsiColors::Magenta,
+        6 => AnsiColors::Cyan,
+        7 => AnsiColors::White,
+        8 => AnsiColors::BrightBlack,
+        9 => AnsiColors::BrightRed,
+        10 => AnsiColors::BrightGreen,
+        11 => AnsiColors::BrightYellow,
+        12 => AnsiColors::BrightBlue,
+        13 => AnsiColors::BrightMagenta,
+        14 => AnsiColors::BrightCyan,
+        15 => AnsiColors::BrightWhite,
+        _ => AnsiColors::Default,
+    };
+    DynColors::Ansi(ansi_color)
 }
 
 pub struct TextColors {
@@ -67,7 +68,11 @@ impl TextColors {
         };
 
         if !colors.is_empty() {
-            let custom_color = colors.iter().map(num_to_color).collect::<Vec<DynColors>>();
+            let custom_color = colors
+                .iter()
+                .copied()
+                .map(num_to_color)
+                .collect::<Vec<DynColors>>();
 
             text_colors.title = *custom_color.first().unwrap_or(&primary_color);
             text_colors.tilde = *custom_color
@@ -94,8 +99,8 @@ mod test {
 
     #[test]
     fn test_num_to_color() {
-        assert_eq!(num_to_color(&2), DynColors::Ansi(AnsiColors::Green));
-        assert_eq!(num_to_color(&u8::MAX), DynColors::Ansi(AnsiColors::Default));
+        assert_eq!(num_to_color(2), DynColors::Ansi(AnsiColors::Green));
+        assert_eq!(num_to_color(u8::MAX), DynColors::Ansi(AnsiColors::Default));
     }
 
     #[test]
@@ -104,7 +109,7 @@ mod test {
         assert_eq!(colors.len(), 3);
         assert_eq!(
             colors,
-            vec![num_to_color(&3), num_to_color(&5), num_to_color(&8)]
+            vec![num_to_color(3), num_to_color(5), num_to_color(8)]
         );
     }
 
@@ -162,7 +167,7 @@ mod test {
     fn get_ascii_colors_no_custom_language_custom_colors_no_true_color() {
         let colors = get_ascii_colors(Some(&Language::Rust), None, &[2, 3], false);
         assert_eq!(colors.len(), 2);
-        assert_eq!(colors, vec![num_to_color(&2), num_to_color(&3)]);
+        assert_eq!(colors, vec![num_to_color(2), num_to_color(3)]);
     }
 
     #[test]
@@ -174,7 +179,7 @@ mod test {
         assert_eq!(
             colors,
             vec![
-                num_to_color(&0),
+                num_to_color(0),
                 DynColors::Ansi(AnsiColors::Default),
                 DynColors::Ansi(AnsiColors::Yellow)
             ]
@@ -197,12 +202,12 @@ mod test {
     fn with_custom_colors() {
         let custom_colors = vec![0, 1, 2, 3, 4, 5];
         let text_colors = TextColors::new(&custom_colors, DynColors::Ansi(AnsiColors::Blue));
-        assert_eq!(text_colors.title, num_to_color(&custom_colors[0]));
-        assert_eq!(text_colors.tilde, num_to_color(&custom_colors[1]));
-        assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
-        assert_eq!(text_colors.key, num_to_color(&custom_colors[3]));
-        assert_eq!(text_colors.separator, num_to_color(&custom_colors[4]));
-        assert_eq!(text_colors.value, num_to_color(&custom_colors[5]));
+        assert_eq!(text_colors.title, num_to_color(custom_colors[0]));
+        assert_eq!(text_colors.tilde, num_to_color(custom_colors[1]));
+        assert_eq!(text_colors.underline, num_to_color(custom_colors[2]));
+        assert_eq!(text_colors.key, num_to_color(custom_colors[3]));
+        assert_eq!(text_colors.separator, num_to_color(custom_colors[4]));
+        assert_eq!(text_colors.value, num_to_color(custom_colors[5]));
     }
 
     #[test]
@@ -210,9 +215,9 @@ mod test {
         let custom_colors = vec![0, 1, 2];
         let primary_color = DynColors::Ansi(AnsiColors::Blue);
         let text_colors = TextColors::new(&custom_colors, primary_color);
-        assert_eq!(text_colors.title, num_to_color(&custom_colors[0]));
-        assert_eq!(text_colors.tilde, num_to_color(&custom_colors[1]));
-        assert_eq!(text_colors.underline, num_to_color(&custom_colors[2]));
+        assert_eq!(text_colors.title, num_to_color(custom_colors[0]));
+        assert_eq!(text_colors.tilde, num_to_color(custom_colors[1]));
+        assert_eq!(text_colors.underline, num_to_color(custom_colors[2]));
         assert_eq!(text_colors.key, primary_color);
         assert_eq!(text_colors.separator, DynColors::Ansi(AnsiColors::Default));
         assert_eq!(text_colors.value, DynColors::Ansi(AnsiColors::Default));
