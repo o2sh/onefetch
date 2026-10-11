@@ -1,4 +1,4 @@
-use crate::git::metrics::GitMetrics;
+use crate::info::git::metrics::GitMetrics;
 use serde::Serialize;
 
 #[derive(Serialize)]
