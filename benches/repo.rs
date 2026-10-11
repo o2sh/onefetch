@@ -1,7 +1,7 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 use gix::{ThreadSafeRepository, open};
 use onefetch::cli::Cli;
-use onefetch::info::{InfoOptions, build_info};
+use onefetch::data::{InfoOptions, build_info};
 use std::hint::black_box;
 
 fn bench_repo_info(c: &mut Criterion) {

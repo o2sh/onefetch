@@ -1,4 +1,4 @@
-use crate::info::manifest::Manifest;
+use crate::data::manifest::Manifest;
 use serde::Serialize;
 
 #[derive(Serialize)]

@@ -4,7 +4,7 @@ use super::lines::info_lines;
 use super::logo::AsciiArt;
 use super::style;
 use super::{RenderOptions, SerializationFormat};
-use crate::info::Info;
+use crate::data::Info;
 use crate::language::Language;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};

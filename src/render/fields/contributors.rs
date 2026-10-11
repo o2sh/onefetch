@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::contributors::Contributors;
+use crate::data::fields::contributors::Contributors;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 

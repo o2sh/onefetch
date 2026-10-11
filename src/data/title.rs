@@ -1,4 +1,4 @@
-use crate::info::git::{get_git_username, get_git_version};
+use crate::data::git::{get_git_username, get_git_version};
 use gix::Repository;
 use serde::Serialize;
 

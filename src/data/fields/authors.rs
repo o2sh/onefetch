@@ -1,4 +1,4 @@
-use crate::info::git::identity::Identity;
+use crate::data::git::identity::Identity;
 use serde::Serialize;
 use std::collections::HashMap;
 

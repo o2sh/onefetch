@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::churn::Churn;
+use crate::data::fields::churn::Churn;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 
@@ -41,7 +41,7 @@ fn shorten_file_path(file_path: &str, depth: usize) -> String {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::fields::churn::FileChurn;
+    use crate::data::fields::churn::FileChurn;
 
     #[test]
     fn test_display_churn_with_two_file_churns() {

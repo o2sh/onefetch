@@ -1,5 +1,5 @@
-use crate::info::dates::serialize_time;
-use crate::info::git::metrics::GitMetrics;
+use crate::data::dates::serialize_time;
+use crate::data::git::metrics::GitMetrics;
 use gix::date::Time;
 use serde::Serialize;
 

@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::project::Project;
+use crate::data::fields::project::Project;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 

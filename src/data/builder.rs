@@ -19,7 +19,7 @@ use super::fields::{Field, FieldKind};
 use super::manifest::Manifest;
 use super::title::Title;
 use super::{Info, InfoOptions};
-use crate::info::git::metrics::GitMetrics;
+use crate::data::git::metrics::GitMetrics;
 use crate::language::Language;
 use anyhow::Result;
 use gix::Repository;

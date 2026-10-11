@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::pending::Pending;
+use crate::data::fields::pending::Pending;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 

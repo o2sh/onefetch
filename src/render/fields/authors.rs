@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::authors::Authors;
+use crate::data::fields::authors::Authors;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 
@@ -38,7 +38,7 @@ fn digit_difference(num1: usize, num2: usize) -> usize {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::fields::authors::Author;
+    use crate::data::fields::authors::Author;
     use rstest::rstest;
 
     fn john_and_roberto() -> Vec<Author> {

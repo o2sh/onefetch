@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::languages::{LanguageWithPercentage, Languages};
+use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
 use crate::render::style::{Line, Span, Style};

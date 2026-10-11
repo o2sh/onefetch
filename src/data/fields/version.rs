@@ -1,4 +1,4 @@
-use crate::info::manifest::Manifest;
+use crate::data::manifest::Manifest;
 use anyhow::Result;
 use gix::Repository;
 use serde::Serialize;

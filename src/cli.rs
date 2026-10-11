@@ -1,5 +1,5 @@
-use crate::info::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::{
+use crate::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
+use crate::data::{
     DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, DEFAULT_NUMBER_OF_LANGUAGES,
     FieldKind,
 };

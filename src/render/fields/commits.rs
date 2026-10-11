@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::commits::Commits;
+use crate::data::fields::commits::Commits;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 

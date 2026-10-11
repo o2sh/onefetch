@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::url::Url;
+use crate::data::fields::url::Url;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 

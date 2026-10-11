@@ -1,5 +1,5 @@
 use super::FieldView;
-use crate::info::fields::last_change::LastChange;
+use crate::data::fields::last_change::LastChange;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 

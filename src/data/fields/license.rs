@@ -1,4 +1,4 @@
-use crate::info::manifest::Manifest;
+use crate::data::manifest::Manifest;
 use anyhow::{Result, bail};
 use askalono::{Store, TextData};
 use serde::Serialize;
@@ -87,7 +87,7 @@ impl License {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::manifest::ManifestType;
+    use crate::data::manifest::ManifestType;
 
     #[test]
     fn test_detect_license() -> Result<()> {
