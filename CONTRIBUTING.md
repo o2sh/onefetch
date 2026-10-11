@@ -17,6 +17,8 @@ Low-quality AI-generated PRs or issues will be closed without review.
 
 Follow the instructions for [installing onefetch from source](https://github.com/o2sh/onefetch/wiki/Installation#build-from-source).
 
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for how the code is organized.
+
 ### Adding support for a new language
 
 Adding support for a new Language consists in adding a new entry to [language.yaml](./languages.yaml) and filling it in with the right data.

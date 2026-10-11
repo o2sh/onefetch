@@ -1,4 +1,4 @@
-use super::{Language, LanguageType};
+use crate::language::{Language, LanguageType};
 use std::cmp;
 use std::collections::HashMap;
 use std::path::Path;
@@ -46,11 +46,6 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
     }
 }
 
-pub fn get_total_loc(loc_by_language: &[(Language, usize)]) -> usize {
-    let total_loc: usize = loc_by_language.iter().map(|(_, v)| v).sum();
-    total_loc
-}
-
 fn count_loc(language_type: &tokei::LanguageType, language: &tokei::Language) -> usize {
     count_loc_for_type(language_type, language.code, language.comments)
         + language
@@ -92,7 +87,7 @@ fn get_locs(
 
 fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
-        .filter(|language| types.contains(&language.get_type()))
+        .filter(|language| types.contains(&language.language_type()))
         .map(std::convert::Into::into)
         .collect()
 }
@@ -211,11 +206,5 @@ mod test {
         let actual_order: Vec<_> = sorted_map.into_iter().collect();
 
         assert_eq!(expected_order, actual_order);
-    }
-
-    #[test]
-    fn test_get_total_loc() {
-        let loc_by_language = [(Language::JavaScript, 100), (Language::Markdown, 300)];
-        assert_eq!(get_total_loc(&loc_by_language), 400);
     }
 }

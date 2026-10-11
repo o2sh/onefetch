@@ -1,5 +1,5 @@
-use crate::info::text::{Line, Style};
-use crate::ui::colors::TextColors;
+use crate::render::colors::TextColors;
+use crate::render::text::{Line, Style};
 use owo_colors::{DynColors, OwoColorize, Style as AnsiStyle};
 
 pub fn render(lines: &[Line], text_colors: &TextColors, no_bold: bool) -> String {
@@ -45,7 +45,7 @@ fn sanitize(text: &str) -> String {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::text::Span;
+    use crate::render::text::Span;
     use owo_colors::AnsiColors;
 
     fn render_with_white(lines: &[Line], no_bold: bool) -> String {

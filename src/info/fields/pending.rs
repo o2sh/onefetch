@@ -1,19 +1,16 @@
-use crate::info::display_options::DisplayOptions;
-use crate::info::fields::InfoField;
-use crate::info::text::Line;
 use anyhow::Result;
 use gix::Repository;
 use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PendingInfo {
-    added: usize,
-    deleted: usize,
-    modified: usize,
+pub struct Pending {
+    pub added: usize,
+    pub deleted: usize,
+    pub modified: usize,
 }
 
-impl PendingInfo {
+impl Pending {
     pub fn new(repo: &Repository) -> Result<Self> {
         let statuses = repo
             .status(gix::progress::Discard)?
@@ -41,48 +38,5 @@ impl PendingInfo {
             deleted,
             modified,
         })
-    }
-}
-
-#[typetag::serialize]
-impl InfoField for PendingInfo {
-    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
-        let mut pending = String::new();
-        if self.modified > 0 {
-            pending = format!("{}+-", self.modified);
-        }
-
-        if self.added > 0 {
-            pending = format!("{pending} {}+", self.added);
-        }
-
-        if self.deleted > 0 {
-            pending = format!("{pending} {}-", self.deleted);
-        }
-
-        vec![Line::from(pending.trim())]
-    }
-
-    fn key(&self) -> String {
-        "Pending".into()
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_display_pending_info() {
-        let pending_info = PendingInfo {
-            added: 0,
-            deleted: 0,
-            modified: 4,
-        };
-
-        assert_eq!(
-            pending_info.value(&DisplayOptions::default()),
-            vec![Line::from("4+-")]
-        );
     }
 }

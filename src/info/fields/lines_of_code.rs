@@ -1,31 +1,16 @@
-use crate::info::display_options::DisplayOptions;
-use crate::info::fields::InfoField;
-use crate::info::text::Line;
 use crate::language::Language;
-use crate::language::stats::get_total_loc;
 use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct LocInfo {
+pub struct LinesOfCode {
     pub lines_of_code: usize,
 }
 
-impl LocInfo {
+impl LinesOfCode {
     pub fn new(loc_by_language: &[(Language, usize)]) -> Self {
-        let lines_of_code = get_total_loc(loc_by_language);
+        let lines_of_code = loc_by_language.iter().map(|(_, loc)| loc).sum();
         Self { lines_of_code }
-    }
-}
-
-#[typetag::serialize]
-impl InfoField for LocInfo {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
-        vec![Line::from(options.number(&self.lines_of_code))]
-    }
-
-    fn key(&self) -> String {
-        "Lines of code".into()
     }
 }
 
@@ -34,14 +19,8 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_display_loc_info() {
-        let loc_info = LocInfo {
-            lines_of_code: 1235,
-        };
-
-        assert_eq!(
-            loc_info.value(&DisplayOptions::default()),
-            vec![Line::from("1235")]
-        );
+    fn test_total_lines_of_code() {
+        let loc_by_language = [(Language::JavaScript, 100), (Language::Markdown, 300)];
+        assert_eq!(LinesOfCode::new(&loc_by_language).lines_of_code, 400);
     }
 }

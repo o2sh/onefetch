@@ -1,9 +1,9 @@
-//! # onefetch-ascii
+//! Ascii art rendering.
 //!
-//! Provides the ascii template interface for [onefetch](https://github.com/o2sh/onefetch).
+//! Renders an ascii template, colored with `{0}`..`{n}` tokens, to the terminal.
 //!
 //! ```rust,no_run
-//! use onefetch_ascii::AsciiArt;
+//! use onefetch::render::ascii::AsciiArt;
 //! use owo_colors::{DynColors, AnsiColors};
 //!
 //! const ASCII: &str = r#"

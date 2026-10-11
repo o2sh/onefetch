@@ -1,22 +1,20 @@
-use crate::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::display_options::{
-    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_LANGUAGES, DisplayOptions, NumberSeparator,
+use crate::info::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
+use crate::info::{
+    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, DEFAULT_NUMBER_OF_LANGUAGES,
+    FieldKind,
 };
-use crate::info::{InfoKind, InfoOptions};
 use crate::language::{Language, LanguageType};
-use crate::ui::printer::SerializationFormat;
-use clap::builder::PossibleValuesParser;
-use clap::builder::Styles;
-use clap::builder::TypedValueParser as _;
+use crate::render::format::NumberSeparator;
+use crate::render::image::ImageProtocol;
+use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;
+use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};
 use clap_complete::Shell;
-use onefetch_image::ImageProtocol;
 use std::env;
 use std::path::PathBuf;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
-const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
 
 const STYLES: Styles = Styles::styled()
     .header(AnsiColor::Yellow.on_default())
@@ -59,7 +57,7 @@ pub struct InfoArgs {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<InfoKind>,
+    pub disabled_fields: Vec<FieldKind>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -168,7 +166,7 @@ pub struct ImageArgs {
         long,
         value_name = "VALUE",
         requires = "image",
-        default_value_t = 64usize,
+        default_value_t = DEFAULT_COLOR_RESOLUTION,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
@@ -303,12 +301,12 @@ impl Default for ImageArgs {
         ImageArgs {
             image: Option::default(),
             image_protocol: Option::default(),
-            color_resolution: 64,
+            color_resolution: DEFAULT_COLOR_RESOLUTION,
         }
     }
 }
 
-pub fn is_truecolor_terminal() -> bool {
+fn is_truecolor_terminal() -> bool {
     env::var("COLORTERM")
         .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
         .unwrap_or(false)
@@ -320,41 +318,6 @@ impl Cli {
             When::Always => true,
             When::Never => false,
             When::Auto => is_truecolor_terminal(),
-        }
-    }
-}
-
-impl From<&Cli> for InfoOptions {
-    fn from(cli: &Cli) -> Self {
-        Self {
-            input: cli.input.clone(),
-            disabled_fields: cli.info.disabled_fields.clone(),
-            no_title: cli.info.no_title,
-            number_of_authors: cli.info.number_of_authors,
-            number_of_file_churns: cli.info.number_of_file_churns,
-            churn_pool_size: cli.info.churn_pool_size,
-            exclude: cli.info.exclude.clone(),
-            no_bots: cli.info.no_bots.clone(),
-            no_merges: cli.info.no_merges,
-            email: cli.info.email,
-            http_url: cli.info.http_url,
-            hide_token: cli.info.hide_token,
-            include_hidden: cli.info.include_hidden,
-            language_types: cli.info.language_types.clone(),
-        }
-    }
-}
-
-impl From<&Cli> for DisplayOptions {
-    fn from(cli: &Cli) -> Self {
-        Self {
-            number_separator: cli.text_formatting.number_separator,
-            iso_time: cli.text_formatting.iso_time,
-            true_color: cli.true_color(),
-            nerd_fonts: cli.visuals.nerd_fonts,
-            no_color_palette: cli.visuals.no_color_palette,
-            number_of_languages: cli.info.number_of_languages,
-            number_of_authors: cli.info.number_of_authors,
         }
     }
 }
@@ -383,7 +346,7 @@ mod test {
             info: InfoArgs {
                 number_of_authors: 4,
                 no_merges: true,
-                disabled_fields: vec![InfoKind::Version, InfoKind::URL],
+                disabled_fields: vec![FieldKind::Version, FieldKind::Url],
                 ..Default::default()
             },
             ascii: AsciiArgs {

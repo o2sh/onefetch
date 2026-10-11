@@ -1,10 +1,10 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{Cli, InfoArgs};
-use onefetch::git::get_work_dir;
-use onefetch::info::display_options::DisplayOptions;
+use onefetch::info::git::get_work_dir;
 use onefetch::info::{InfoOptions, build_info};
-use onefetch::ui::layout::info_lines;
+use onefetch::render::RenderOptions;
+use onefetch::render::layout::info_lines;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
@@ -125,7 +125,7 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
     assert_eq!(created, Some("1803-03-14T23:51:00Z"));
 
     let created_line = |iso_time| {
-        let options = DisplayOptions {
+        let options = RenderOptions {
             iso_time,
             ..Default::default()
         };

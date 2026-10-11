@@ -1,19 +1,9 @@
-[workspace.package]
+[package]
 authors = ["o2sh <hjajiossama@gmail.com>"]
 edition = "2024"
 license = "MIT"
 version = "3.0.0"
 repository = "https://github.com/o2sh/onefetch"
-
-[workspace]
-members = ["ascii", "image", "manifest"]
-
-[package]
-authors.workspace = true
-edition.workspace = true
-version.workspace = true
-license.workspace = true
-repository.workspace = true
 categories = ["command-line-utilities"]
 description = "Command-line Git information tool"
 exclude = ["site/*"]
@@ -49,6 +39,7 @@ assets = [
 anyhow = "1.0.104"
 askalono = "0.5.0"
 byte-unit = "5.2.6"
+cargo_toml = "1.0.1"
 clap = { version = "4.6.7", features = ["derive"] }
 clap_complete = "4.6.11"
 gix = { version = "0.88.0", default-features = false, features = [
@@ -62,21 +53,23 @@ gix = { version = "0.88.0", default-features = false, features = [
 ] }
 globset = "0.4.20"
 human-panic = "2.0.8"
-image = { version = "0.25.10", default-features = false }
+image = { version = "0.25.10", default-features = false, features = [
+    "color_quant",
+    "jpeg",
+    "png",
+    "webp",
+] }
 num-format = "0.4.4"
-onefetch-ascii = { path = "ascii", version = "3.0.0" }
-onefetch-image = { path = "image", version = "3.0.0" }
-onefetch-manifest = { path = "manifest", version = "3.0.0" }
 owo-colors = "4.4.0"
 regex = "1.13.1"
-serde = "1.0.229"
+serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 serde_yaml = "0.9.34"
 strum = { version = "0.28.0", features = ["derive"] }
 time = { version = "0.3.55", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "15.0.0"
-typetag = "0.2.23"
+toml = "1.1.6"
 
 [dev-dependencies]
 criterion = "0.8.2"
@@ -89,7 +82,6 @@ name = "repo"
 harness = false
 
 [build-dependencies]
-lazy_static = "1.5.1"
 regex = "1.13.1"
 serde_json = "1.0.151"
 serde_yaml = "0.9.34"
@@ -100,6 +92,11 @@ winres = "0.1.12"
 
 [target.'cfg(windows)'.dependencies]
 enable-ansi-support = "0.3.1"
+
+[target.'cfg(not(windows))'.dependencies]
+base64 = "0.23.1"
+color_quant = "1.1.0"
+rustix = { version = "1.1.5", features = ["termios", "event"] }
 
 [features]
 fail-on-deprecated = []

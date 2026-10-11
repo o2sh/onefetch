@@ -1,42 +1,11 @@
-use crate::info::dates::{to_human_time, to_rfc3339};
+use super::RenderOptions;
+use crate::info::dates::to_rfc3339;
 use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
-use serde::Serialize;
+use std::time::SystemTime;
+use time_humanize::HumanTime;
 
-pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
-pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
-
-/// How fields are displayed in the terminal output: number and date formats,
-/// language chips, the color palette, and how many entries to list. Fields
-/// keep raw values and use this to display them.
-#[derive(Clone, Copy, Debug)]
-pub struct DisplayOptions {
-    pub number_separator: NumberSeparator,
-    pub iso_time: bool,
-    pub true_color: bool,
-    pub nerd_fonts: bool,
-    pub no_color_palette: bool,
-    pub number_of_languages: usize,
-    pub number_of_authors: usize,
-}
-
-/// The CLI defaults, except that true colors are off since `--true-color auto`
-/// depends on the terminal.
-impl Default for DisplayOptions {
-    fn default() -> Self {
-        Self {
-            number_separator: NumberSeparator::default(),
-            iso_time: false,
-            true_color: false,
-            nerd_fonts: false,
-            no_color_palette: false,
-            number_of_languages: DEFAULT_NUMBER_OF_LANGUAGES,
-            number_of_authors: DEFAULT_NUMBER_OF_AUTHORS,
-        }
-    }
-}
-
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy, Default)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Copy, Default)]
 pub enum NumberSeparator {
     #[default]
     Plain,
@@ -55,7 +24,7 @@ impl NumberSeparator {
         }
     }
 
-    pub fn get_format(&self) -> CustomFormat {
+    pub fn format(&self) -> CustomFormat {
         num_format::CustomFormat::builder()
             .grouping(num_format::Grouping::Standard)
             .separator(self.separator())
@@ -64,9 +33,10 @@ impl NumberSeparator {
     }
 }
 
-impl DisplayOptions {
+/// Number and date formatting of the info lines.
+impl RenderOptions {
     pub fn number<T: ToFormattedString>(&self, number: &T) -> String {
-        number.to_formatted_string(&self.number_separator.get_format())
+        number.to_formatted_string(&self.number_separator.format())
     }
 
     /// Dates that RFC 3339 can't represent are shown as relative time.
@@ -80,26 +50,35 @@ impl DisplayOptions {
     }
 }
 
+fn to_human_time(time: Time) -> String {
+    let since_epoch_duration = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .expect("System time is before the Unix epoch");
+    // Calculate the distance from the current time. This handles
+    // future dates gracefully and will simply return something like `in 5 minutes`
+    let delta_in_seconds = time
+        .seconds
+        .saturating_sub(since_epoch_duration.as_secs() as i64);
+    let ht = HumanTime::from(delta_in_seconds);
+    ht.to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use rstest::rstest;
     use std::time::{Duration, SystemTime};
 
-    const HUMAN_TIME: DisplayOptions = DisplayOptions {
-        number_separator: NumberSeparator::Plain,
-        iso_time: false,
-        true_color: false,
-        nerd_fonts: false,
-        no_color_palette: false,
-        number_of_languages: 0,
-        number_of_authors: 0,
-    };
+    fn human_time() -> RenderOptions {
+        RenderOptions::default()
+    }
 
-    const ISO_TIME: DisplayOptions = DisplayOptions {
-        iso_time: true,
-        ..HUMAN_TIME
-    };
+    fn iso_time() -> RenderOptions {
+        RenderOptions {
+            iso_time: true,
+            ..RenderOptions::default()
+        }
+    }
 
     #[test]
     fn display_time_as_human_time_current_time_now() {
@@ -111,7 +90,7 @@ mod tests {
             current_time.as_secs() as gix::date::SecondsSinceUnixEpoch,
             0,
         );
-        assert_eq!(HUMAN_TIME.time(time), "now");
+        assert_eq!(human_time().time(time), "now");
     }
 
     #[test]
@@ -123,13 +102,13 @@ mod tests {
         // NOTE 366 so that it's a year ago even with leap years.
         let year_ago = current_time - (day * 366);
         let time = Time::new(year_ago.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        assert_eq!(HUMAN_TIME.time(time), "a year ago");
+        assert_eq!(human_time().time(time), "a year ago");
     }
 
     #[test]
     fn display_time_as_iso_time_current_epoch() {
         let time = Time::new(0, 0);
-        assert_eq!(ISO_TIME.time(time), "1970-01-01T00:00:00Z");
+        assert_eq!(iso_time().time(time), "1970-01-01T00:00:00Z");
     }
 
     #[test]
@@ -140,13 +119,13 @@ mod tests {
             .unwrap();
         let tomorrow = current_time + day;
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        assert_eq!(HUMAN_TIME.time(time), "in a day");
+        assert_eq!(human_time().time(time), "in a day");
     }
 
     #[test]
     fn display_time_before_epoch() {
         let time = Time::new(gix::date::SecondsSinceUnixEpoch::MIN, 0);
-        assert!(HUMAN_TIME.time(time).ends_with(" years ago"));
+        assert!(human_time().time(time).ends_with(" years ago"));
     }
 
     #[rstest]
@@ -157,7 +136,7 @@ mod tests {
         #[case] seconds: gix::date::SecondsSinceUnixEpoch,
     ) {
         let time = Time::new(seconds, 0);
-        assert_eq!(ISO_TIME.time(time), HUMAN_TIME.time(time));
+        assert_eq!(iso_time().time(time), human_time().time(time));
     }
 
     #[rstest]
@@ -170,9 +149,9 @@ mod tests {
         #[case] number_separator: NumberSeparator,
         #[case] expected: &str,
     ) {
-        let options = DisplayOptions {
+        let options = RenderOptions {
             number_separator,
-            ..DisplayOptions::default()
+            ..RenderOptions::default()
         };
         assert_eq!(options.number(&number), expected);
     }

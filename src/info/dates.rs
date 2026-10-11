@@ -1,8 +1,6 @@
 use gix::date::Time;
 use serde::Serializer;
-use std::time::SystemTime;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
-use time_humanize::HumanTime;
 
 /// Serializes a time as RFC 3339, whatever `--iso-time` is set to, or as
 /// seconds since the epoch when RFC 3339 can't represent it.
@@ -20,19 +18,6 @@ pub fn to_rfc3339(time: Time) -> Option<String> {
         .ok()?
         .format(&Rfc3339)
         .ok()
-}
-
-pub fn to_human_time(time: Time) -> String {
-    let since_epoch_duration = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .expect("System time is before the Unix epoch");
-    // Calculate the distance from the current time. This handles
-    // future dates gracefully and will simply return something like `in 5 minutes`
-    let delta_in_seconds = time
-        .seconds
-        .saturating_sub(since_epoch_duration.as_secs() as i64);
-    let ht = HumanTime::from(delta_in_seconds);
-    ht.to_string()
 }
 
 #[cfg(test)]

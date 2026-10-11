@@ -1,18 +1,27 @@
-use crate::cli::Cli;
+use self::ascii::AsciiArt;
+use self::colors::{TextColors, get_ascii_colors};
+use self::format::NumberSeparator;
+use self::image::{ImageBackend, ImageProtocol};
 use crate::info::Info;
-use crate::info::display_options::DisplayOptions;
 use crate::language::Language;
-use crate::ui::ansi;
-use crate::ui::colors::{TextColors, get_ascii_colors};
-use crate::ui::layout;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
-use onefetch_ascii::AsciiArt;
-use onefetch_image::ImageBackend;
 use owo_colors::{AnsiColors, DynColors};
 use std::fmt::Write as _;
+use std::path::PathBuf;
+
+mod ansi;
+pub mod ascii;
+mod colors;
+mod fields;
+pub mod format;
+pub mod image;
+pub mod layout;
+pub mod text;
 
 const CENTER_PAD_LENGTH: usize = 3;
+
+pub const DEFAULT_COLOR_RESOLUTION: usize = 64;
 
 #[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
@@ -20,13 +29,57 @@ pub enum SerializationFormat {
     Yaml,
 }
 
+/// How to print an `Info`: output format, art, colors, and how values look in
+/// the info lines.
+#[derive(Clone, Debug, PartialEq)]
+pub struct RenderOptions {
+    pub output: Option<SerializationFormat>,
+    pub no_art: bool,
+    pub image: Option<PathBuf>,
+    pub image_protocol: Option<ImageProtocol>,
+    pub color_resolution: usize,
+    pub ascii_input: Option<String>,
+    pub ascii_language: Option<Language>,
+    pub ascii_colors: Vec<u8>,
+    pub text_colors: Vec<u8>,
+    pub no_bold: bool,
+    pub number_separator: NumberSeparator,
+    pub iso_time: bool,
+    pub true_color: bool,
+    pub nerd_fonts: bool,
+    pub no_color_palette: bool,
+}
+
+/// The CLI defaults, except that true colors are off since `--true-color auto`
+/// depends on the terminal.
+impl Default for RenderOptions {
+    fn default() -> Self {
+        Self {
+            output: None,
+            no_art: false,
+            image: None,
+            image_protocol: None,
+            color_resolution: DEFAULT_COLOR_RESOLUTION,
+            ascii_input: None,
+            ascii_language: None,
+            ascii_colors: Vec::new(),
+            text_colors: Vec::new(),
+            no_bold: false,
+            number_separator: NumberSeparator::default(),
+            iso_time: false,
+            true_color: false,
+            nerd_fonts: false,
+            no_color_palette: false,
+        }
+    }
+}
+
 pub struct Printer {
     info: Info,
     kind: PrinterKind,
-    no_bold: bool,
+    options: RenderOptions,
     text_colors: TextColors,
     ascii_colors: Vec<DynColors>,
-    display_options: DisplayOptions,
 }
 
 enum PrinterKind {
@@ -44,9 +97,9 @@ enum PrinterKind {
 }
 
 impl Printer {
-    pub fn new(info: Info, cli: &Cli) -> Result<Self> {
+    pub fn new(info: Info, options: &RenderOptions) -> Result<Self> {
         let image =
-            match &cli.image.image {
+            match &options.image {
                 Some(p) => Some(::image::open(p).with_context(|| {
                     format!("Could not load the image file at '{}'", p.display())
                 })?),
@@ -54,37 +107,34 @@ impl Printer {
             };
 
         let image_backend = if image.is_some() {
-            cli.image
+            options
                 .image_protocol
                 .clone()
-                .map_or_else(onefetch_image::get_best_backend, |s| {
-                    Ok(onefetch_image::get_image_backend(s))
-                })?
+                .map_or_else(image::get_best_backend, |s| Ok(image::get_image_backend(s)))?
         } else {
             None
         };
 
         let ascii_colors = get_ascii_colors(
             info.dominant_language.as_ref(),
-            cli.ascii.ascii_language.as_ref(),
-            &cli.ascii.ascii_colors,
-            cli.true_color(),
+            options.ascii_language.as_ref(),
+            &options.ascii_colors,
+            options.true_color,
         );
         let primary_color = ascii_colors
             .first()
             .copied()
             .unwrap_or(DynColors::Ansi(AnsiColors::Default));
-        let text_colors = TextColors::new(&cli.text_formatting.text_colors, primary_color);
+        let text_colors = TextColors::new(&options.text_colors, primary_color);
 
-        let kind = PrinterKind::new(cli, info.dominant_language, image, image_backend)?;
+        let kind = PrinterKind::new(options, info.dominant_language, image, image_backend)?;
 
         Ok(Self {
             info,
             kind,
-            no_bold: cli.text_formatting.no_bold,
+            options: options.clone(),
             text_colors,
             ascii_colors,
-            display_options: DisplayOptions::from(cli),
         })
     }
 
@@ -126,7 +176,7 @@ impl Printer {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
                 let info_text = self.info_text();
                 let mut info_lines = info_text.lines();
-                let mut logo_lines = AsciiArt::new(art, &self.ascii_colors, !self.no_bold);
+                let mut logo_lines = AsciiArt::new(art, &self.ascii_colors, !self.options.no_bold);
 
                 loop {
                     match (logo_lines.next(), info_lines.next()) {
@@ -150,43 +200,42 @@ impl Printer {
 
     fn info_text(&self) -> String {
         ansi::render(
-            &layout::info_lines(&self.info, &self.display_options),
+            &layout::info_lines(&self.info, &self.options),
             &self.text_colors,
-            self.no_bold,
+            self.options.no_bold,
         )
     }
 }
 
 impl PrinterKind {
     fn new(
-        cli: &Cli,
+        options: &RenderOptions,
         dominant_language: Option<Language>,
         image: Option<DynamicImage>,
         image_backend: Option<Box<dyn ImageBackend>>,
     ) -> Result<Self> {
-        let kind = match cli.developer.output {
+        let kind = match options.output {
             Some(SerializationFormat::Json) => Self::Json,
             Some(SerializationFormat::Yaml) => Self::Yaml,
-            None if cli.visuals.no_art => Self::Plain,
+            None if options.no_art => Self::Plain,
             None => {
                 if let Some(image) = image {
                     Self::Image {
                         image,
                         backend: image_backend.context("No supported image backend")?,
-                        resolution: cli.image.color_resolution,
+                        resolution: options.color_resolution,
                     }
                 } else {
-                    let ascii_art = cli
-                        .ascii
+                    let ascii_art = options
                         .ascii_input
                         .clone()
                         .or_else(|| {
-                            cli.ascii
+                            options
                                 .ascii_language
-                                .map(|language| language.get_ascii_art().to_string())
+                                .map(|language| language.ascii_art().to_string())
                         })
                         .or_else(|| {
-                            dominant_language.map(|language| language.get_ascii_art().to_string())
+                            dominant_language.map(|language| language.ascii_art().to_string())
                         });
 
                     match ascii_art {
@@ -238,20 +287,24 @@ mod tests {
 
     #[test]
     fn test_create_json_printer() {
-        let mut cli = Cli::default();
-        cli.developer.output = Some(SerializationFormat::Json);
+        let options = RenderOptions {
+            output: Some(SerializationFormat::Json),
+            ..Default::default()
+        };
 
-        let printer = Printer::new(Info::default(), &cli).unwrap();
+        let printer = Printer::new(Info::default(), &options).unwrap();
 
         assert_eq!(printer.kind, PrinterKind::Json);
     }
 
     #[test]
     fn test_create_yaml_printer() {
-        let mut cli = Cli::default();
-        cli.developer.output = Some(SerializationFormat::Yaml);
+        let options = RenderOptions {
+            output: Some(SerializationFormat::Yaml),
+            ..Default::default()
+        };
 
-        let printer = Printer::new(Info::default(), &cli).unwrap();
+        let printer = Printer::new(Info::default(), &options).unwrap();
 
         assert_eq!(printer.kind, PrinterKind::Yaml);
     }
@@ -262,17 +315,19 @@ mod tests {
             dominant_language: Some(Language::Rust),
             ..Default::default()
         };
-        let mut cli = Cli::default();
-        cli.visuals.no_art = true;
+        let options = RenderOptions {
+            no_art: true,
+            ..Default::default()
+        };
 
-        let printer = Printer::new(info, &cli).unwrap();
+        let printer = Printer::new(info, &options).unwrap();
 
         assert_eq!(printer.kind, PrinterKind::Plain);
     }
 
     #[test]
     fn test_create_plain_printer_when_no_dominant_language_no_ascii_input() {
-        let printer = Printer::new(Info::default(), &Cli::default()).unwrap();
+        let printer = Printer::new(Info::default(), &RenderOptions::default()).unwrap();
 
         assert_eq!(printer.kind, PrinterKind::Plain);
     }
@@ -284,17 +339,19 @@ mod tests {
             ..Default::default()
         };
 
-        let printer = Printer::new(info, &Cli::default()).unwrap();
+        let printer = Printer::new(info, &RenderOptions::default()).unwrap();
 
         assert!(matches!(printer.kind, PrinterKind::Ascii { .. }));
     }
 
     #[test]
     fn test_create_ascii_printer_when_ascii_language_without_dominant_language() {
-        let mut cli = Cli::default();
-        cli.ascii.ascii_language = Some(Language::Rust);
+        let options = RenderOptions {
+            ascii_language: Some(Language::Rust),
+            ..Default::default()
+        };
 
-        let printer = Printer::new(Info::default(), &cli).unwrap();
+        let printer = Printer::new(Info::default(), &options).unwrap();
 
         assert!(matches!(printer.kind, PrinterKind::Ascii { .. }));
     }
@@ -305,14 +362,12 @@ mod tests {
             dominant_language: Some(Language::Rust),
             ..Default::default()
         };
-        let mut cli = Cli::default();
-        cli.ascii.true_color = crate::cli::When::Never;
-
-        let printer = Printer::new(info, &cli).unwrap();
+        // The default `RenderOptions` have true colors off.
+        let printer = Printer::new(info, &RenderOptions::default()).unwrap();
 
         assert_eq!(
             printer.ascii_colors,
-            Language::Rust.get_colors(false),
+            Language::Rust.colors(false),
             "ascii colors should come from the dominant language"
         );
     }
@@ -333,7 +388,7 @@ mod tests {
     #[test]
     fn test_create_image_printer() {
         let kind = PrinterKind::new(
-            &Cli::default(),
+            &RenderOptions::default(),
             None,
             Some(DynamicImage::default()),
             Some(Box::new(DummyBackend)),

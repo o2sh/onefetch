@@ -1,6 +1,3 @@
-use crate::info::display_options::DisplayOptions;
-use crate::info::fields::InfoField;
-use crate::info::text::Line;
 use anyhow::Result;
 use gix::bstr::BString;
 use globset::{Glob, GlobSetBuilder};
@@ -24,12 +21,12 @@ impl FileChurn {
 }
 
 #[derive(Serialize)]
-pub struct ChurnInfo {
+pub struct Churn {
     pub file_churns: Vec<FileChurn>,
     pub churn_pool_size: usize,
 }
 
-impl ChurnInfo {
+impl Churn {
     pub fn new(
         number_of_commits_by_file_path: &HashMap<BString, usize>,
         churn_pool_size: usize,
@@ -77,80 +74,9 @@ fn compute_file_churns(
         .collect())
 }
 
-#[typetag::serialize]
-impl InfoField for ChurnInfo {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
-        self.file_churns
-            .iter()
-            .map(|file_churn| {
-                Line::from(format!(
-                    "{} {}",
-                    shorten_file_path(&file_churn.file_path, 2),
-                    options.number(&file_churn.nbr_of_commits)
-                ))
-            })
-            .collect()
-    }
-
-    fn key(&self) -> String {
-        format!("Churn ({})", self.churn_pool_size)
-    }
-}
-
-fn shorten_file_path(file_path: &str, depth: usize) -> String {
-    let components: Vec<&str> = file_path.split('/').collect();
-
-    if depth == 0 || components.len() <= depth {
-        return file_path.to_string();
-    }
-
-    let truncated_components: Vec<&str> = components
-        .iter()
-        .skip(components.len() - depth)
-        .copied()
-        .collect();
-
-    format!("\u{2026}/{}", truncated_components.join("/"))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_churn_info_value_with_two_file_churns() {
-        let file_churn_1 = FileChurn::new("path/to/file.txt".into(), 50);
-        let file_churn_2 = FileChurn::new("file_2.txt".into(), 30);
-
-        let churn_info = ChurnInfo {
-            file_churns: vec![file_churn_1, file_churn_2],
-            churn_pool_size: 5,
-        };
-
-        assert_eq!(
-            churn_info.value(&DisplayOptions::default()),
-            vec![
-                Line::from("\u{2026}/to/file.txt 50"),
-                Line::from("file_2.txt 30"),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_truncate_file_path() {
-        assert_eq!(shorten_file_path("path/to/file.txt", 3), "path/to/file.txt");
-        assert_eq!(shorten_file_path("another/file.txt", 2), "another/file.txt");
-        assert_eq!(shorten_file_path("file.txt", 1), "file.txt");
-        assert_eq!(
-            shorten_file_path("path/to/file.txt", 2),
-            "\u{2026}/to/file.txt"
-        );
-        assert_eq!(
-            shorten_file_path("another/file.txt", 1),
-            "\u{2026}/file.txt"
-        );
-        assert_eq!(shorten_file_path("file.txt", 0), "file.txt");
-    }
 
     #[test]
     fn test_compute_file_churns() -> Result<()> {

@@ -1,35 +1,34 @@
-use super::fields::InfoField;
-use super::fields::InfoKind;
-use super::fields::authors::AuthorsInfo;
-use super::fields::churn::ChurnInfo;
-use super::fields::commits::CommitsInfo;
-use super::fields::contributors::ContributorsInfo;
-use super::fields::created::CreatedInfo;
-use super::fields::dependencies::DependenciesInfo;
-use super::fields::description::DescriptionInfo;
-use super::fields::head::HeadInfo;
-use super::fields::languages::LanguagesInfo;
-use super::fields::last_change::LastChangeInfo;
-use super::fields::license::LicenseInfo;
-use super::fields::lines_of_code::LocInfo;
-use super::fields::pending::PendingInfo;
-use super::fields::project::ProjectInfo;
-use super::fields::size::SizeInfo;
-use super::fields::url::UrlInfo;
-use super::fields::version::VersionInfo;
+use super::fields::authors::Authors;
+use super::fields::churn::Churn;
+use super::fields::commits::Commits;
+use super::fields::contributors::Contributors;
+use super::fields::created::Created;
+use super::fields::dependencies::Dependencies;
+use super::fields::description::Description;
+use super::fields::head::Head;
+use super::fields::languages::Languages;
+use super::fields::last_change::LastChange;
+use super::fields::license::License;
+use super::fields::lines_of_code::LinesOfCode;
+use super::fields::pending::Pending;
+use super::fields::project::Project;
+use super::fields::size::Size;
+use super::fields::url::Url;
+use super::fields::version::Version;
+use super::fields::{Field, FieldKind};
+use super::manifest::Manifest;
 use super::title::Title;
 use super::{Info, InfoOptions};
-use crate::git::metrics::GitMetrics;
+use crate::info::git::metrics::GitMetrics;
 use crate::language::Language;
 use anyhow::Result;
 use gix::Repository;
-use onefetch_manifest::Manifest;
 use std::path::Path;
 
 pub struct InfoBuilder {
     title: Option<Title>,
-    info_fields: Vec<Box<dyn InfoField>>,
-    disabled_fields: Vec<InfoKind>,
+    info_fields: Vec<Field>,
+    disabled_fields: Vec<FieldKind>,
     no_title: bool,
 }
 
@@ -51,25 +50,25 @@ impl InfoBuilder {
     }
 
     pub fn description(mut self, manifest: Option<&Manifest>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Description) {
-            let description = DescriptionInfo::new(manifest);
-            self.info_fields.push(Box::new(description));
+        if !self.disabled_fields.contains(&FieldKind::Description) {
+            let description = Description::new(manifest);
+            self.info_fields.push(Field::Description(description));
         }
         self
     }
 
     pub fn pending(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Pending) {
-            let pending = PendingInfo::new(repo)?;
-            self.info_fields.push(Box::new(pending));
+        if !self.disabled_fields.contains(&FieldKind::Pending) {
+            let pending = Pending::new(repo)?;
+            self.info_fields.push(Field::Pending(pending));
         }
         Ok(self)
     }
 
     pub fn url(mut self, repo_url: &str) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::URL) {
-            let repo_url = UrlInfo::new(repo_url);
-            self.info_fields.push(Box::new(repo_url));
+        if !self.disabled_fields.contains(&FieldKind::Url) {
+            let repo_url = Url::new(repo_url);
+            self.info_fields.push(Field::Url(repo_url));
         }
         self
     }
@@ -80,67 +79,71 @@ impl InfoBuilder {
         repo_url: &str,
         manifest: Option<&Manifest>,
     ) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Project) {
-            let project = ProjectInfo::new(repo, repo_url, manifest)?;
-            self.info_fields.push(Box::new(project));
+        if !self.disabled_fields.contains(&FieldKind::Project) {
+            let project = Project::new(repo, repo_url, manifest)?;
+            self.info_fields.push(Field::Project(project));
         }
         Ok(self)
     }
 
     pub fn head(mut self, repo: &Repository) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Head) {
-            let head = HeadInfo::new(repo)?;
-            self.info_fields.push(Box::new(head));
+        if !self.disabled_fields.contains(&FieldKind::Head) {
+            let head = Head::new(repo)?;
+            self.info_fields.push(Field::Head(head));
         }
         Ok(self)
     }
 
     pub fn version(mut self, repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Version) {
-            let version = VersionInfo::new(repo, manifest)?;
-            self.info_fields.push(Box::new(version));
+        if !self.disabled_fields.contains(&FieldKind::Version) {
+            let version = Version::new(repo, manifest)?;
+            self.info_fields.push(Field::Version(version));
         }
         Ok(self)
     }
 
     pub fn size(mut self, repo: &Repository) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Size) {
-            let size = SizeInfo::new(repo);
-            self.info_fields.push(Box::new(size));
+        if !self.disabled_fields.contains(&FieldKind::Size) {
+            let size = Size::new(repo);
+            self.info_fields.push(Field::Size(size));
         }
         self
     }
 
     pub fn license(mut self, repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::License) {
-            let license = LicenseInfo::new(repo_path, manifest)?;
-            self.info_fields.push(Box::new(license));
+        if !self.disabled_fields.contains(&FieldKind::License) {
+            let license = License::new(repo_path, manifest)?;
+            self.info_fields.push(Field::License(license));
         }
         Ok(self)
     }
 
     pub fn created(mut self, git_metrics: &GitMetrics) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Created) {
-            let created = CreatedInfo::new(git_metrics);
-            self.info_fields.push(Box::new(created));
+        if !self.disabled_fields.contains(&FieldKind::Created) {
+            let created = Created::new(git_metrics);
+            self.info_fields.push(Field::Created(created));
         }
         self
     }
 
-    pub fn languages(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Languages)
+    pub fn languages(
+        mut self,
+        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
+        number_of_languages: usize,
+    ) -> Self {
+        if !self.disabled_fields.contains(&FieldKind::Languages)
             && let Some(loc_by_language) = loc_by_language_opt
         {
-            let languages = LanguagesInfo::new(loc_by_language);
-            self.info_fields.push(Box::new(languages));
+            let languages = Languages::new(loc_by_language, number_of_languages);
+            self.info_fields.push(Field::Languages(languages));
         }
         self
     }
 
     pub fn dependencies(mut self, manifest: Option<&Manifest>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Dependencies) {
-            let dependencies = DependenciesInfo::new(manifest);
-            self.info_fields.push(Box::new(dependencies));
+        if !self.disabled_fields.contains(&FieldKind::Dependencies) {
+            let dependencies = Dependencies::new(manifest);
+            self.info_fields.push(Field::Dependencies(dependencies));
         }
         self
     }
@@ -151,38 +154,39 @@ impl InfoBuilder {
         number_of_authors_to_display: usize,
         show_email: bool,
     ) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Authors) {
-            let authors = AuthorsInfo::new(
+        if !self.disabled_fields.contains(&FieldKind::Authors) {
+            let authors = Authors::new(
                 &git_metrics.number_of_commits_by_identity,
                 git_metrics.total_number_of_commits,
                 number_of_authors_to_display,
                 show_email,
             );
-            self.info_fields.push(Box::new(authors));
+            self.info_fields.push(Field::Authors(authors));
         }
         self
     }
 
     pub fn last_change(mut self, git_metrics: &GitMetrics) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::LastChange) {
-            let last_change = LastChangeInfo::new(git_metrics);
-            self.info_fields.push(Box::new(last_change));
+        if !self.disabled_fields.contains(&FieldKind::LastChange) {
+            let last_change = LastChange::new(git_metrics);
+            self.info_fields.push(Field::LastChange(last_change));
         }
         self
     }
 
-    pub fn contributors(mut self, git_metrics: &GitMetrics) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Contributors) {
-            let contributors = ContributorsInfo::new(git_metrics.total_number_of_authors);
-            self.info_fields.push(Box::new(contributors));
+    pub fn contributors(mut self, git_metrics: &GitMetrics, number_of_authors: usize) -> Self {
+        if !self.disabled_fields.contains(&FieldKind::Contributors) {
+            let contributors =
+                Contributors::new(git_metrics.total_number_of_authors, number_of_authors);
+            self.info_fields.push(Field::Contributors(contributors));
         }
         self
     }
 
     pub fn commits(mut self, git_metrics: &GitMetrics, is_shallow: bool) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::Commits) {
-            let commits = CommitsInfo::new(git_metrics, is_shallow);
-            self.info_fields.push(Box::new(commits));
+        if !self.disabled_fields.contains(&FieldKind::Commits) {
+            let commits = Commits::new(git_metrics, is_shallow);
+            self.info_fields.push(Field::Commits(commits));
         }
         self
     }
@@ -193,24 +197,24 @@ impl InfoBuilder {
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
     ) -> Result<Self> {
-        if !self.disabled_fields.contains(&InfoKind::Churn) {
-            let churn = ChurnInfo::new(
+        if !self.disabled_fields.contains(&FieldKind::Churn) {
+            let churn = Churn::new(
                 &git_metrics.number_of_commits_by_file_path,
                 git_metrics.churn_pool_size,
                 number_of_file_churns_to_display,
                 globs_to_exclude,
             )?;
-            self.info_fields.push(Box::new(churn));
+            self.info_fields.push(Field::Churn(churn));
         }
         Ok(self)
     }
 
     pub fn lines_of_code(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
-        if !self.disabled_fields.contains(&InfoKind::LinesOfCode)
+        if !self.disabled_fields.contains(&FieldKind::LinesOfCode)
             && let Some(loc_by_language) = loc_by_language_opt
         {
-            let lines_of_code = LocInfo::new(loc_by_language);
-            self.info_fields.push(Box::new(lines_of_code));
+            let lines_of_code = LinesOfCode::new(loc_by_language);
+            self.info_fields.push(Field::LinesOfCode(lines_of_code));
         }
         self
     }

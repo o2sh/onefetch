@@ -1,17 +1,14 @@
-use crate::info::display_options::DisplayOptions;
-use crate::info::fields::InfoField;
-use crate::info::text::Line;
+use crate::info::manifest::Manifest;
 use anyhow::Result;
 use gix::Repository;
-use onefetch_manifest::Manifest;
 use serde::Serialize;
 
 #[derive(Serialize)]
-pub struct VersionInfo {
+pub struct Version {
     pub version: String,
 }
 
-impl VersionInfo {
+impl Version {
     pub fn new(repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
         let version = get_version(repo, manifest)?;
         Ok(Self { version })
@@ -37,16 +34,5 @@ fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String>
         Ok(version_from_manifest)
     } else {
         Ok(version)
-    }
-}
-
-#[typetag::serialize]
-impl InfoField for VersionInfo {
-    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
-        vec![Line::from(self.version.to_string())]
-    }
-
-    fn key(&self) -> String {
-        "Version".into()
     }
 }

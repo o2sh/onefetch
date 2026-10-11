@@ -1,7 +1,4 @@
-use crate::git::identity::Identity;
-use crate::info::display_options::DisplayOptions;
-use crate::info::fields::InfoField;
-use crate::info::text::Line;
+use crate::info::git::identity::Identity;
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -9,9 +6,9 @@ use std::collections::HashMap;
 #[serde(rename_all = "camelCase")]
 pub struct Author {
     pub name: String,
-    email: Option<String>,
-    nbr_of_commits: usize,
-    contribution: usize,
+    pub email: Option<String>,
+    pub nbr_of_commits: usize,
+    pub contribution: usize,
 }
 
 impl Author {
@@ -33,11 +30,11 @@ impl Author {
 }
 
 #[derive(Serialize)]
-pub struct AuthorsInfo {
+pub struct Authors {
     pub authors: Vec<Author>,
 }
 
-impl AuthorsInfo {
+impl Authors {
     pub fn new(
         number_of_commits_by_identity: &HashMap<Identity, usize>,
         total_number_of_commits: usize,
@@ -51,13 +48,6 @@ impl AuthorsInfo {
             show_email,
         );
         Self { authors }
-    }
-
-    fn top_contribution(&self) -> usize {
-        if let Some(top_contributor) = self.authors.first() {
-            return top_contributor.contribution;
-        }
-        0
     }
 }
 
@@ -93,133 +83,9 @@ fn compute_authors(
     authors
 }
 
-fn digit_difference(num1: usize, num2: usize) -> usize {
-    let count_digits = |num: usize| (num.checked_ilog10().unwrap_or(0) + 1) as usize;
-    count_digits(num1).abs_diff(count_digits(num2))
-}
-
-#[typetag::serialize]
-impl InfoField for AuthorsInfo {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
-        self.authors
-            .iter()
-            .map(|author| {
-                let pad = digit_difference(self.top_contribution(), author.contribution);
-                let contribution = format!("{:pad$}{}%", "", author.contribution);
-                let commits = options.number(&author.nbr_of_commits);
-                let line = match &author.email {
-                    Some(email) => format!("{contribution} {} <{email}> {commits}", author.name),
-                    None => format!("{contribution} {} {commits}", author.name),
-                };
-                Line::from(line)
-            })
-            .collect()
-    }
-
-    fn key(&self) -> String {
-        let mut title: String = "Author".into();
-        if self.authors.len() > 1 {
-            title.push('s');
-        }
-        title
-    }
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
-    use rstest::rstest;
-
-    #[test]
-    fn test_authors_info_title_with_one_author() {
-        let author = Author::new(
-            "John Doe".into(),
-            Some("john.doe@email.com".into()),
-            1500,
-            2000,
-        );
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author],
-        };
-
-        assert_eq!(authors_info.key(), "Author");
-    }
-
-    #[test]
-    fn test_authors_info_title_with_two_authors() {
-        let author = Author::new(
-            "John Doe".into(),
-            Some("john.doe@email.com".into()),
-            1500,
-            2000,
-        );
-
-        let author_2 = Author::new("Roberto Berto".into(), None, 240, 300);
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author, author_2],
-        };
-
-        assert_eq!(authors_info.key(), "Authors");
-    }
-
-    #[test]
-    fn test_author_info_with_two_authors() {
-        let author = Author::new(
-            "John Doe".into(),
-            Some("john.doe@email.com".into()),
-            1500,
-            2000,
-        );
-
-        let author_2 = Author::new("Roberto Berto".into(), None, 240, 300);
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author, author_2],
-        };
-        assert_eq!(
-            authors_info.value(&DisplayOptions::default()),
-            vec![
-                Line::from("75% John Doe <john.doe@email.com> 1500"),
-                Line::from("80% Roberto Berto 240"),
-            ]
-        );
-    }
-    #[test]
-    fn test_author_info_alignment_with_three_authors() {
-        let author = Author::new(
-            "John Doe".into(),
-            Some("john.doe@email.com".into()),
-            1500,
-            2000,
-        );
-
-        let author_2 = Author::new("Roberto Berto".into(), None, 240, 300);
-
-        let author_3 = Author::new("Jane Doe".into(), None, 1, 100);
-
-        let authors_info = AuthorsInfo {
-            authors: vec![author, author_2, author_3],
-        };
-        assert_eq!(
-            authors_info.value(&DisplayOptions::default()),
-            vec![
-                Line::from("75% John Doe <john.doe@email.com> 1500"),
-                Line::from("80% Roberto Berto 240"),
-                Line::from(" 1% Jane Doe 1"),
-            ]
-        );
-    }
-
-    #[rstest]
-    #[case(456, 123, 0)]
-    #[case(456789, 123, 3)]
-    #[case(1, 12, 1)]
-    fn test_digit_difference(#[case] num1: usize, #[case] num2: usize, #[case] expected: usize) {
-        let result = digit_difference(num1, num2);
-        assert_eq!(result, expected);
-    }
 
     #[test]
     fn test_compute_authors() {
