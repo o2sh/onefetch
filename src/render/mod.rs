@@ -13,6 +13,7 @@ use std::fmt::Write as _;
 mod ansi;
 pub mod ascii;
 mod colors;
+mod fields;
 pub mod format;
 pub mod image;
 pub mod layout;
@@ -189,10 +190,10 @@ impl PrinterKind {
                         .or_else(|| {
                             cli.ascii
                                 .ascii_language
-                                .map(|language| language.get_ascii_art().to_string())
+                                .map(|language| language.ascii_art().to_string())
                         })
                         .or_else(|| {
-                            dominant_language.map(|language| language.get_ascii_art().to_string())
+                            dominant_language.map(|language| language.ascii_art().to_string())
                         });
 
                     match ascii_art {
@@ -318,7 +319,7 @@ mod tests {
 
         assert_eq!(
             printer.ascii_colors,
-            Language::Rust.get_colors(false),
+            Language::Rust.colors(false),
             "ascii colors should come from the dominant language"
         );
     }

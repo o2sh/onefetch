@@ -1,7 +1,4 @@
-use crate::info::fields::InfoField;
 use crate::info::manifest::Manifest;
-use crate::render::format::DisplayOptions;
-use crate::render::text::Line;
 use anyhow::{Result, bail};
 use askalono::{Store, TextData};
 use serde::Serialize;
@@ -30,7 +27,7 @@ impl Detector {
         }
     }
 
-    fn get_license(&self, dir: &Path, manifest: Option<&Manifest>) -> Result<String> {
+    fn detect(&self, dir: &Path, manifest: Option<&Manifest>) -> Result<String> {
         let license_from_manifest = manifest.and_then(|m| m.license.clone()).unwrap_or_default();
         if license_from_manifest.is_empty() {
             let mut output = fs::read_dir(dir)?
@@ -76,25 +73,14 @@ fn is_license_file<S: AsRef<str>>(file_name: S) -> bool {
 }
 
 #[derive(Serialize)]
-pub struct LicenseInfo {
+pub struct License {
     pub license: String,
 }
 
-impl LicenseInfo {
+impl License {
     pub fn new(repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
-        let license = Detector::new()?.get_license(repo_path, manifest)?;
+        let license = Detector::new()?.detect(repo_path, manifest)?;
         Ok(Self { license })
-    }
-}
-
-#[typetag::serialize]
-impl InfoField for LicenseInfo {
-    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
-        vec![Line::from(self.license.to_string())]
-    }
-
-    fn key(&self) -> String {
-        "License".into()
     }
 }
 
@@ -104,9 +90,9 @@ mod test {
     use crate::info::manifest::ManifestType;
 
     #[test]
-    fn test_get_license() -> Result<()> {
+    fn test_detect_license() -> Result<()> {
         let detector = Detector::new()?;
-        let license = detector.get_license(Path::new("."), None)?;
+        let license = detector.detect(Path::new("."), None)?;
         assert_eq!(license, "MIT");
         Ok(())
     }
@@ -121,7 +107,7 @@ mod test {
 
     #[test]
     fn should_read_from_manifest_first() -> Result<()> {
-        let license_info = LicenseInfo::new(
+        let license = License::new(
             Path::new("."),
             Some(&Manifest {
                 manifest_type: ManifestType::Cargo,
@@ -132,10 +118,7 @@ mod test {
                 license: Some("LICENSE".into()),
             }),
         )?;
-        assert_eq!(
-            license_info.value(&DisplayOptions::default()),
-            vec![Line::from("LICENSE")]
-        );
+        assert_eq!(license.license, "LICENSE");
         Ok(())
     }
 }

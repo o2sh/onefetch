@@ -1,19 +1,18 @@
 use crate::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::{InfoKind, InfoOptions};
+use crate::info::FieldKind;
 use crate::language::{Language, LanguageType};
 use crate::render::SerializationFormat;
 use crate::render::format::{
-    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_LANGUAGES, DisplayOptions, NumberSeparator,
+    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_LANGUAGES, NumberSeparator,
 };
 use crate::render::image::ImageProtocol;
-use clap::builder::PossibleValuesParser;
-use clap::builder::Styles;
-use clap::builder::TypedValueParser as _;
 use clap::builder::styling::AnsiColor;
-use clap::{Args, Parser, ValueHint, value_parser};
+use clap::builder::{PossibleValue, PossibleValuesParser, Styles, TypedValueParser as _};
+use clap::{Args, Parser, ValueEnum, ValueHint, value_parser};
 use clap_complete::Shell;
 use std::env;
 use std::path::PathBuf;
+use strum::VariantArray;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
@@ -59,7 +58,7 @@ pub struct InfoArgs {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<InfoKind>,
+    pub disabled_fields: Vec<FieldKind>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -324,38 +323,15 @@ impl Cli {
     }
 }
 
-impl From<&Cli> for InfoOptions {
-    fn from(cli: &Cli) -> Self {
-        Self {
-            input: cli.input.clone(),
-            disabled_fields: cli.info.disabled_fields.clone(),
-            no_title: cli.info.no_title,
-            number_of_authors: cli.info.number_of_authors,
-            number_of_file_churns: cli.info.number_of_file_churns,
-            churn_pool_size: cli.info.churn_pool_size,
-            exclude: cli.info.exclude.clone(),
-            no_bots: cli.info.no_bots.clone(),
-            no_merges: cli.info.no_merges,
-            email: cli.info.email,
-            http_url: cli.info.http_url,
-            hide_token: cli.info.hide_token,
-            include_hidden: cli.info.include_hidden,
-            language_types: cli.info.language_types.clone(),
-        }
+/// `FieldKind` lives in `info`, which doesn't depend on clap, so its
+/// `--disabled-fields` values are defined here (kebab-case, e.g. `last-change`).
+impl ValueEnum for FieldKind {
+    fn value_variants<'a>() -> &'a [Self] {
+        Self::VARIANTS
     }
-}
 
-impl From<&Cli> for DisplayOptions {
-    fn from(cli: &Cli) -> Self {
-        Self {
-            number_separator: cli.text_formatting.number_separator,
-            iso_time: cli.text_formatting.iso_time,
-            true_color: cli.true_color(),
-            nerd_fonts: cli.visuals.nerd_fonts,
-            no_color_palette: cli.visuals.no_color_palette,
-            number_of_languages: cli.info.number_of_languages,
-            number_of_authors: cli.info.number_of_authors,
-        }
+    fn to_possible_value(&self) -> Option<PossibleValue> {
+        Some(PossibleValue::new(<&'static str>::from(self)))
     }
 }
 
@@ -383,7 +359,7 @@ mod test {
             info: InfoArgs {
                 number_of_authors: 4,
                 no_merges: true,
-                disabled_fields: vec![InfoKind::Version, InfoKind::URL],
+                disabled_fields: vec![FieldKind::Version, FieldKind::Url],
                 ..Default::default()
             },
             ascii: AsciiArgs {

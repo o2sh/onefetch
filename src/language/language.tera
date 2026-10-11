@@ -62,7 +62,7 @@ impl From<Language> for tokei::LanguageType {
 }
 
 impl Language {
-    pub fn get_ascii_art(&self) -> &'static str {
+    pub fn ascii_art(&self) -> &'static str {
         match self {
             {% for language, attrs in languages -%}
                 Language::{{ language }} => r#"{{ attrs.ascii }}"#,
@@ -70,7 +70,7 @@ impl Language {
         }
     }
 
-    pub fn get_colors(&self, true_color: bool) -> Vec<DynColors> {
+    pub fn colors(&self, true_color: bool) -> Vec<DynColors> {
         let colors = match self {
             {% for language, attrs in languages -%}
                 Language::{{ language }} => Colors {
@@ -92,7 +92,7 @@ impl Language {
         }
     }
 
-    pub fn get_type(&self) -> LanguageType {
+    pub fn language_type(&self) -> LanguageType {
         match self {
             {% for language, attrs in languages -%}
                 Language::{{ language }} => LanguageType::{{ attrs.type | title }},
@@ -100,7 +100,7 @@ impl Language {
         }
     }
 
-    pub fn get_chip_color(&self) -> DynColors {
+    pub fn chip_color(&self) -> DynColors {
         match self {
             {% for language, attrs in languages -%}
                 {% set rgb = attrs.colors.chip | hex_to_rgb -%}
@@ -109,7 +109,7 @@ impl Language {
         }
     }
 
-    pub fn get_chip_icon(&self, use_nerd_fonts: bool) -> char {
+    pub fn chip_icon(&self, use_nerd_fonts: bool) -> char {
         if use_nerd_fonts {
             match self {
                 {% for language, attrs in languages -%}

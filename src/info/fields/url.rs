@@ -1,6 +1,3 @@
-use crate::info::fields::InfoField;
-use crate::render::format::DisplayOptions;
-use crate::render::text::Line;
 use anyhow::Result;
 use gix::Repository;
 use regex::regex;
@@ -8,10 +5,10 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct UrlInfo {
+pub struct Url {
     pub repo_url: String,
 }
-impl UrlInfo {
+impl Url {
     pub fn new(repo_url: &str) -> Self {
         Self {
             repo_url: repo_url.into(),
@@ -55,17 +52,6 @@ fn create_http_url_from_ssh(url: &str) -> String {
     regex!(r"([^@]+)@([^:]+):(.*)")
         .replace(url, "https://${2}/${3}")
         .to_string()
-}
-
-#[typetag::serialize]
-impl InfoField for UrlInfo {
-    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
-        vec![Line::from(self.repo_url.to_string())]
-    }
-
-    fn key(&self) -> String {
-        "URL".into()
-    }
 }
 
 #[cfg(test)]

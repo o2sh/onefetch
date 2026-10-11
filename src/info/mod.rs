@@ -1,5 +1,4 @@
-use self::builder::InfoBuilder;
-use self::fields::InfoField;
+use self::context::Context as RepoContext;
 use self::fields::url::get_repo_url;
 use self::title::Title;
 use crate::git::bots::BotRegex;
@@ -9,21 +8,23 @@ use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
 use serde::Serialize;
 use std::path::{Path, PathBuf};
+use strum::VariantArray;
 
-mod builder;
+mod context;
 pub(crate) mod dates;
-pub(crate) mod fields;
+mod field;
+pub mod fields;
 pub(crate) mod loc;
 pub mod manifest;
-pub(crate) mod title;
+pub mod title;
 
-pub use fields::InfoKind;
+pub use field::{Field, FieldKind};
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
-    pub(crate) title: Option<Title>,
-    pub(crate) info_fields: Vec<Box<dyn InfoField>>,
+    pub title: Option<Title>,
+    pub info_fields: Vec<Field>,
     #[serde(skip_serializing)]
     pub dominant_language: Option<Language>,
 }
@@ -32,7 +33,7 @@ pub struct Info {
 #[derive(Clone, Debug)]
 pub struct InfoOptions {
     pub input: PathBuf,
-    pub disabled_fields: Vec<InfoKind>,
+    pub disabled_fields: Vec<FieldKind>,
     pub no_title: bool,
     pub number_of_authors: usize,
     pub number_of_file_churns: usize,
@@ -85,34 +86,32 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .context("BUG: panic in language statistics thread")?;
     let dominant_language = loc_by_language.as_ref().map(|v| loc::get_main_language(v));
 
-    Ok(InfoBuilder::new(options)
-        .title(&repo)
-        .project(&repo, &repo_url, manifest.as_ref())?
-        .description(manifest.as_ref())
-        .head(&repo)?
-        .pending(&repo)?
-        .version(&repo, manifest.as_ref())?
-        .created(&git_metrics)
-        .languages(loc_by_language.as_ref())
-        .dependencies(manifest.as_ref())
-        .authors(&git_metrics, options.number_of_authors, options.email)
-        .last_change(&git_metrics)
-        .contributors(&git_metrics)
-        .url(&repo_url)
-        .commits(&git_metrics, repo.is_shallow())
-        .churn(
-            &git_metrics,
-            options.number_of_file_churns,
-            &options.exclude,
-        )?
-        .lines_of_code(loc_by_language.as_ref())
-        .size(&repo)
-        .license(&repo_path, manifest.as_ref())?
-        .build(dominant_language))
+    let ctx = RepoContext {
+        repo,
+        repo_path,
+        repo_url,
+        manifest,
+        git_metrics,
+        loc_by_language,
+        options,
+    };
+
+    let title = (!options.no_title).then(|| Title::new(&ctx.repo));
+    let info_fields = FieldKind::VARIANTS
+        .iter()
+        .filter(|kind| !options.disabled_fields.contains(kind))
+        .filter_map(|&kind| Field::collect(kind, &ctx).transpose())
+        .collect::<Result<_>>()?;
+
+    Ok(Info {
+        title,
+        info_fields,
+        dominant_language,
+    })
 }
 
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
-    let manifests = crate::info::manifest::get_manifests(repo_path)?;
+    let manifests = manifest::get_manifests(repo_path)?;
 
     if manifests.is_empty() {
         Ok(None)

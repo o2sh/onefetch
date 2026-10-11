@@ -6,6 +6,11 @@ use std::path::Path;
 use tera::{Context, Kwargs, State, Tera};
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // Without these, Cargo reruns this script whenever any file in the package changes.
+    println!("cargo:rerun-if-changed=languages.yaml");
+    println!("cargo:rerun-if-changed=src/language/language.tera");
+    println!("cargo:rerun-if-changed=assets/onefetch.ico");
+
     #[cfg(windows)]
     {
         let mut res = winres::WindowsResource::new();

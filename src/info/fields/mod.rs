@@ -1,6 +1,3 @@
-use crate::render::format::DisplayOptions;
-use crate::render::text::Line;
-
 pub mod authors;
 pub mod churn;
 pub mod commits;
@@ -18,30 +15,3 @@ pub mod project;
 pub mod size;
 pub mod url;
 pub mod version;
-
-#[typetag::serialize]
-pub trait InfoField {
-    fn key(&self) -> String;
-    fn value(&self, options: &DisplayOptions) -> Vec<Line>;
-}
-
-#[derive(Clone, clap::ValueEnum, Debug, Eq, PartialEq)]
-pub enum InfoKind {
-    Project,
-    Description,
-    Head,
-    Pending,
-    Version,
-    Created,
-    Languages,
-    Dependencies,
-    Authors,
-    LastChange,
-    Contributors,
-    URL,
-    Commits,
-    Churn,
-    LinesOfCode,
-    Size,
-    License,
-}

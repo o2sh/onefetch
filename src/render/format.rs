@@ -1,7 +1,9 @@
-use crate::info::dates::{to_human_time, to_rfc3339};
+use crate::info::dates::to_rfc3339;
 use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
 use serde::Serialize;
+use std::time::SystemTime;
+use time_humanize::HumanTime;
 
 pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
 pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
@@ -55,7 +57,7 @@ impl NumberSeparator {
         }
     }
 
-    pub fn get_format(&self) -> CustomFormat {
+    pub fn format(&self) -> CustomFormat {
         num_format::CustomFormat::builder()
             .grouping(num_format::Grouping::Standard)
             .separator(self.separator())
@@ -66,7 +68,7 @@ impl NumberSeparator {
 
 impl DisplayOptions {
     pub fn number<T: ToFormattedString>(&self, number: &T) -> String {
-        number.to_formatted_string(&self.number_separator.get_format())
+        number.to_formatted_string(&self.number_separator.format())
     }
 
     /// Dates that RFC 3339 can't represent are shown as relative time.
@@ -78,6 +80,19 @@ impl DisplayOptions {
         }
         to_human_time(time)
     }
+}
+
+fn to_human_time(time: Time) -> String {
+    let since_epoch_duration = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .expect("System time is before the Unix epoch");
+    // Calculate the distance from the current time. This handles
+    // future dates gracefully and will simply return something like `in 5 minutes`
+    let delta_in_seconds = time
+        .seconds
+        .saturating_sub(since_epoch_duration.as_secs() as i64);
+    let ht = HumanTime::from(delta_in_seconds);
+    ht.to_string()
 }
 
 #[cfg(test)]

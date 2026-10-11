@@ -92,7 +92,7 @@ fn get_locs(
 
 fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
-        .filter(|language| types.contains(&language.get_type()))
+        .filter(|language| types.contains(&language.language_type()))
         .map(std::convert::Into::into)
         .collect()
 }

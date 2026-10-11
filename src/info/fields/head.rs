@@ -1,6 +1,3 @@
-use crate::info::fields::InfoField;
-use crate::render::format::DisplayOptions;
-use crate::render::text::Line;
 use anyhow::{Context, Result};
 use gix::Repository;
 use serde::Serialize;
@@ -8,8 +5,8 @@ use serde::Serialize;
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HeadRefs {
-    short_commit_id: String,
-    refs: Vec<String>,
+    pub short_commit_id: String,
+    pub refs: Vec<String>,
 }
 
 impl HeadRefs {
@@ -23,11 +20,11 @@ impl HeadRefs {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct HeadInfo {
+pub struct Head {
     pub head_refs: HeadRefs,
 }
 
-impl HeadInfo {
+impl Head {
     pub fn new(repo: &Repository) -> Result<Self> {
         let head_refs = get_head_refs(repo)?;
         Ok(Self { head_refs })
@@ -52,51 +49,4 @@ fn get_head_refs(repo: &Repository) -> Result<HeadRefs> {
     }
 
     Ok(HeadRefs::new(head_id.shorten()?.to_string(), ref_names))
-}
-
-#[typetag::serialize]
-impl InfoField for HeadInfo {
-    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
-        let HeadRefs {
-            short_commit_id,
-            refs,
-        } = &self.head_refs;
-        let head = if refs.is_empty() {
-            short_commit_id.clone()
-        } else {
-            format!("{short_commit_id} ({})", refs.join(", "))
-        };
-        vec![Line::from(head)]
-    }
-
-    fn key(&self) -> String {
-        "HEAD".into()
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_display_head_refs() {
-        let head_info = HeadInfo {
-            head_refs: HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]),
-        };
-        assert_eq!(
-            head_info.value(&DisplayOptions::default()),
-            vec![Line::from("be561d5 (main, origin/main)")]
-        );
-    }
-
-    #[test]
-    fn test_display_head_refs_with_no_refs() {
-        let head_info = HeadInfo {
-            head_refs: HeadRefs::new("be561d5".into(), vec![]),
-        };
-        assert_eq!(
-            head_info.value(&DisplayOptions::default()),
-            vec![Line::from("be561d5")]
-        );
-    }
 }
