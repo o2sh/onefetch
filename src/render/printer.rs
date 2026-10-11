@@ -1,6 +1,6 @@
 use super::colors::{TextColors, get_ascii_colors};
 use super::image::{self, ImageBackend};
-use super::info_lines::info_lines;
+use super::lines::info_lines;
 use super::logo::AsciiArt;
 use super::style;
 use super::{RenderOptions, SerializationFormat};

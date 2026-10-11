@@ -64,7 +64,7 @@ public format.
 
 `render/fields/<name>.rs` implements `FieldView` (`key` and `value` lines) for
 the field of the same name in `info/fields/`, using `RenderOptions` (and the
-number and date helpers in `render/format.rs`). `render::info_lines` turns an
+number and date helpers in `render/format.rs`). `render::lines` turns an
 `Info` into the title, the "Key: value" lines and the color palette row, as
 styled text (`render::style`), which `render::style::render` writes with
 terminal escape codes. `render::Printer` (`render/printer.rs`) places those lines next to the logo,

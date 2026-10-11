@@ -7,7 +7,7 @@ mod colors;
 mod fields;
 pub mod format;
 pub mod image;
-pub mod info_lines;
+pub mod lines;
 pub mod logo;
 mod printer;
 pub mod style;
