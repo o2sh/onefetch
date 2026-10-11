@@ -13,7 +13,7 @@ static CACHE_DATA: &[u8] = include_bytes!(concat!(
 ));
 const MIN_THRESHOLD: f32 = 0.8;
 
-pub struct Detector {
+struct Detector {
     store: Store,
 }
 

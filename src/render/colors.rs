@@ -24,7 +24,7 @@ pub fn get_ascii_colors(
     colors
 }
 
-pub fn num_to_color(num: u8) -> DynColors {
+fn num_to_color(num: u8) -> DynColors {
     let ansi_color = match num {
         0 => AnsiColors::Black,
         1 => AnsiColors::Red,

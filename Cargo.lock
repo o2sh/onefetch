@@ -2437,7 +2437,6 @@ dependencies = [
  "human-panic",
  "image",
  "insta",
- "lazy_static",
  "num-format",
  "owo-colors",
  "regex",

@@ -305,7 +305,7 @@ impl Default for ImageArgs {
     }
 }
 
-pub fn is_truecolor_terminal() -> bool {
+fn is_truecolor_terminal() -> bool {
     env::var("COLORTERM")
         .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
         .unwrap_or(false)
