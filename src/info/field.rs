@@ -105,9 +105,10 @@ impl Field {
                 options.email,
             )),
             FieldKind::LastChange => Self::LastChange(LastChange::new(metrics)),
-            FieldKind::Contributors => {
-                Self::Contributors(Contributors::new(metrics.total_number_of_authors))
-            }
+            FieldKind::Contributors => Self::Contributors(Contributors::new(
+                metrics.total_number_of_authors,
+                options.number_of_authors,
+            )),
             FieldKind::Url => Self::Url(Url::new(&ctx.repo_url)),
             FieldKind::Commits => Self::Commits(Commits::new(metrics, ctx.repo.is_shallow())),
             FieldKind::Churn => Self::Churn(Churn::new(

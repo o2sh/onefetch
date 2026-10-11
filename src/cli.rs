@@ -1,11 +1,9 @@
 use crate::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::FieldKind;
+use crate::info::{DEFAULT_NUMBER_OF_AUTHORS, FieldKind};
 use crate::language::{Language, LanguageType};
-use crate::render::SerializationFormat;
-use crate::render::format::{
-    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_LANGUAGES, NumberSeparator,
-};
+use crate::render::format::{DEFAULT_NUMBER_OF_LANGUAGES, NumberSeparator};
 use crate::render::image::ImageProtocol;
+use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValue, PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueEnum, ValueHint, value_parser};
@@ -167,7 +165,7 @@ pub struct ImageArgs {
         long,
         value_name = "VALUE",
         requires = "image",
-        default_value_t = 64usize,
+        default_value_t = DEFAULT_COLOR_RESOLUTION,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
@@ -302,7 +300,7 @@ impl Default for ImageArgs {
         ImageArgs {
             image: Option::default(),
             image_protocol: Option::default(),
-            color_resolution: 64,
+            color_resolution: DEFAULT_COLOR_RESOLUTION,
         }
     }
 }

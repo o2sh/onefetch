@@ -6,12 +6,11 @@ use std::time::SystemTime;
 use time_humanize::HumanTime;
 
 pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
-pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
 
 /// How fields are displayed in the terminal output: number and date formats,
-/// language chips, the color palette, and how many entries to list. Fields
+/// language chips, the color palette, and how many languages to list. Fields
 /// keep raw values and use this to display them.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DisplayOptions {
     pub number_separator: NumberSeparator,
     pub iso_time: bool,
@@ -19,7 +18,6 @@ pub struct DisplayOptions {
     pub nerd_fonts: bool,
     pub no_color_palette: bool,
     pub number_of_languages: usize,
-    pub number_of_authors: usize,
 }
 
 /// The CLI defaults, except that true colors are off since `--true-color auto`
@@ -33,7 +31,6 @@ impl Default for DisplayOptions {
             nerd_fonts: false,
             no_color_palette: false,
             number_of_languages: DEFAULT_NUMBER_OF_LANGUAGES,
-            number_of_authors: DEFAULT_NUMBER_OF_AUTHORS,
         }
     }
 }
@@ -108,7 +105,6 @@ mod tests {
         nerd_fonts: false,
         no_color_palette: false,
         number_of_languages: 0,
-        number_of_authors: 0,
     };
 
     const ISO_TIME: DisplayOptions = DisplayOptions {

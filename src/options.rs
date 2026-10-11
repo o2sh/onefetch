@@ -1,9 +1,10 @@
 //! Turns the parsed command line into the options of each stage: what to
-//! collect from the repository and how to display it. This is the only place
-//! where `cli` meets `info`.
+//! collect from the repository (`InfoOptions`) and how to print it
+//! (`RenderOptions`). Neither `info` nor `render` depends on `cli`.
 
 use crate::cli::Cli;
 use crate::info::InfoOptions;
+use crate::render::RenderOptions;
 use crate::render::format::DisplayOptions;
 
 impl From<&Cli> for InfoOptions {
@@ -36,7 +37,37 @@ impl From<&Cli> for DisplayOptions {
             nerd_fonts: cli.visuals.nerd_fonts,
             no_color_palette: cli.visuals.no_color_palette,
             number_of_languages: cli.info.number_of_languages,
-            number_of_authors: cli.info.number_of_authors,
         }
+    }
+}
+
+impl From<&Cli> for RenderOptions {
+    fn from(cli: &Cli) -> Self {
+        Self {
+            output: cli.developer.output.clone(),
+            no_art: cli.visuals.no_art,
+            image: cli.image.image.clone(),
+            image_protocol: cli.image.image_protocol.clone(),
+            color_resolution: cli.image.color_resolution,
+            ascii_input: cli.ascii.ascii_input.clone(),
+            ascii_language: cli.ascii.ascii_language,
+            ascii_colors: cli.ascii.ascii_colors.clone(),
+            text_colors: cli.text_formatting.text_colors.clone(),
+            no_bold: cli.text_formatting.no_bold,
+            display: DisplayOptions::from(cli),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cli::When;
+
+    #[test]
+    fn default_render_options_match_cli_defaults() {
+        let mut cli = Cli::default();
+        cli.ascii.true_color = When::Never;
+        assert_eq!(RenderOptions::from(&cli), RenderOptions::default());
     }
 }

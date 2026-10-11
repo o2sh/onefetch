@@ -29,6 +29,8 @@ pub struct Info {
     pub dominant_language: Option<Language>,
 }
 
+pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
+
 /// What to collect from the repository and which fields to show.
 #[derive(Clone, Debug)]
 pub struct InfoOptions {

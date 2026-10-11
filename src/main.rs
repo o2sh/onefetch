@@ -8,7 +8,7 @@ use onefetch::cli::Cli;
 use onefetch::info::manifest::ManifestType;
 use onefetch::info::{InfoOptions, build_info};
 use onefetch::language::Language;
-use onefetch::render::Printer;
+use onefetch::render::{Printer, RenderOptions};
 use std::io;
 use strum::IntoEnumIterator;
 
@@ -37,7 +37,7 @@ fn main() -> Result<()> {
 
     let info = build_info(&InfoOptions::from(&cli))?;
 
-    let printer = Printer::new(info, &cli)?;
+    let printer = Printer::new(info, &RenderOptions::from(&cli))?;
 
     let mut writer = io::BufWriter::new(io::stdout());
 
