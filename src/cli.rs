@@ -5,8 +5,8 @@ use crate::render::format::{DEFAULT_NUMBER_OF_LANGUAGES, NumberSeparator};
 use crate::render::image::ImageProtocol;
 use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;
-use clap::builder::{PossibleValue, PossibleValuesParser, Styles, TypedValueParser as _};
-use clap::{Args, Parser, ValueEnum, ValueHint, value_parser};
+use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
+use clap::{Args, Parser, ValueHint, value_parser};
 use clap_complete::Shell;
 use std::env;
 use std::path::PathBuf;
@@ -316,18 +316,6 @@ impl Cli {
             When::Never => false,
             When::Auto => is_truecolor_terminal(),
         }
-    }
-}
-
-/// `FieldKind` lives in `info`, which doesn't depend on clap, so its
-/// `--disabled-fields` values are wired up here from `FieldKind::ALL` and `name`.
-impl ValueEnum for FieldKind {
-    fn value_variants<'a>() -> &'a [Self] {
-        &Self::ALL
-    }
-
-    fn to_possible_value(&self) -> Option<PossibleValue> {
-        Some(PossibleValue::new(self.name()))
     }
 }
 

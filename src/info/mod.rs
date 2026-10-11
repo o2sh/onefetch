@@ -1,4 +1,4 @@
-use self::context::RepoContext;
+use self::builder::InfoBuilder;
 use self::fields::url::get_repo_url;
 use self::manifest::Manifest;
 use self::title::Title;
@@ -9,7 +9,7 @@ use anyhow::{Context, Result, bail};
 use serde::Serialize;
 use std::path::{Path, PathBuf};
 
-mod context;
+mod builder;
 pub(crate) mod dates;
 pub(crate) mod fields;
 pub(crate) mod loc;
@@ -88,28 +88,30 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .context("BUG: panic in language statistics thread")?;
     let dominant_language = loc_by_language.as_ref().map(|v| loc::get_main_language(v));
 
-    let ctx = RepoContext {
-        repo,
-        repo_path,
-        repo_url,
-        manifest,
-        git_metrics,
-        loc_by_language,
-        options,
-    };
-
-    let title = (!options.no_title).then(|| Title::new(&ctx.repo));
-    let info_fields = FieldKind::ALL
-        .iter()
-        .filter(|kind| !options.disabled_fields.contains(kind))
-        .filter_map(|&kind| Field::collect(kind, &ctx).transpose())
-        .collect::<Result<_>>()?;
-
-    Ok(Info {
-        title,
-        info_fields,
-        dominant_language,
-    })
+    Ok(InfoBuilder::new(options)
+        .title(&repo)
+        .project(&repo, &repo_url, manifest.as_ref())?
+        .description(manifest.as_ref())
+        .head(&repo)?
+        .pending(&repo)?
+        .version(&repo, manifest.as_ref())?
+        .created(&git_metrics)
+        .languages(loc_by_language.as_ref())
+        .dependencies(manifest.as_ref())
+        .authors(&git_metrics, options.number_of_authors, options.email)
+        .last_change(&git_metrics)
+        .contributors(&git_metrics, options.number_of_authors)
+        .url(&repo_url)
+        .commits(&git_metrics, repo.is_shallow())
+        .churn(
+            &git_metrics,
+            options.number_of_file_churns,
+            &options.exclude,
+        )?
+        .lines_of_code(loc_by_language.as_ref())
+        .size(&repo)
+        .license(&repo_path, manifest.as_ref())?
+        .build(dominant_language))
 }
 
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {

@@ -23,7 +23,7 @@ command line ──► cli ──► options ──┬── InfoOptions ──�
 
 Dependencies only go one way:
 
-- `info` and `git` must not depend on `cli`, `options`, `render`, clap, or colors.
+- `info` and `git` must not depend on `cli`, `options`, `render`, or colors.
 - `render` must not depend on `cli` or `options`. (`cli` uses a few `render`
   types as flag values, such as `SerializationFormat` and `ImageProtocol`.)
 - `language` is shared by `info` and `render`: its enum carries both data
@@ -36,17 +36,14 @@ them in mind when reviewing imports in these modules.
 
 `build_info` opens the repository and computes the expensive inputs once, in
 parallel: lines of code per language (tokei, in a thread) and commit statistics
-(one commit-graph traversal). They are stored in a `RepoContext` (`info/context.rs`).
+(one commit-graph traversal). `InfoBuilder` (`info/builder.rs`) then adds each
+enabled field, in the order `build_info` calls it.
 
 Each field is a plain data struct in `info/fields/<name>.rs` with a constructor.
-`info/fields/mod.rs` defines:
-
-- `FieldKind`, the list of fields in display order (`FieldKind::ALL`) with their
-  command-line names (`FieldKind::name`). This is what `--disabled-fields` takes.
-- `enum Field`, one variant per kind holding that field's data. Its `Serialize`
-  impl is the JSON/YAML format of `-o` (`{"HeadInfo": {...}}`), so treat it as a
-  public format.
-- `Field::collect`, which builds the field of a given kind from the `RepoContext`.
+`info/fields/mod.rs` defines `FieldKind` (what `--disabled-fields` takes) and
+`enum Field`, one variant per field holding its data. The `Serialize` impl of
+`Field` is the JSON/YAML format of `-o` (`{"HeadInfo": {...}}`), so treat it as a
+public format.
 
 ## Displaying data (`render`)
 
@@ -61,12 +58,10 @@ escape codes, and `render::Printer` places them next to the ascii art
 
 1. Add `info/fields/<name>.rs` with the data struct (`#[derive(Serialize)]`) and
    its constructor, and declare it in `info/fields/mod.rs`.
-2. In `info/fields/mod.rs`, add a variant to `FieldKind`, add it to
-   `FieldKind::ALL` at its display position, and add a variant to `Field`. The
-   compiler then points at the `match` arms to fill in: `FieldKind::name`,
-   `Field::collect`, `Serialize for Field`, and `render::fields::view`.
-3. Add `render/fields/<name>.rs` implementing `FieldView` for the struct, and
+2. In `info/fields/mod.rs`, add a variant to `FieldKind` and to `Field`. The
+   compiler then points at the `match` arms to fill in: `Serialize for Field`
+   and `render::fields::view`.
+3. Add a method for it to `InfoBuilder` (`info/builder.rs`) and call it in
+   `build_info` (`info/mod.rs`) at its display position.
+4. Add `render/fields/<name>.rs` implementing `FieldView` for the struct, and
    declare it in `render/fields/mod.rs`.
-
-`FieldKind::ALL` is the one list the compiler can't check: a kind missing from
-it is never collected or accepted by `--disabled-fields`.

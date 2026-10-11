@@ -33,12 +33,10 @@ use self::project::Project;
 use self::size::Size;
 use self::url::Url;
 use self::version::Version;
-use super::context::RepoContext;
-use anyhow::Result;
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
-/// The kinds of fields, in display order. This is what `--disabled-fields` takes.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// The fields `--disabled-fields` can turn off.
+#[derive(Clone, Copy, clap::ValueEnum, Debug, Eq, PartialEq)]
 pub enum FieldKind {
     Project,
     Description,
@@ -59,54 +57,7 @@ pub enum FieldKind {
     License,
 }
 
-impl FieldKind {
-    /// Every kind, in display order.
-    pub const ALL: [Self; 17] = [
-        Self::Project,
-        Self::Description,
-        Self::Head,
-        Self::Pending,
-        Self::Version,
-        Self::Created,
-        Self::Languages,
-        Self::Dependencies,
-        Self::Authors,
-        Self::LastChange,
-        Self::Contributors,
-        Self::Url,
-        Self::Commits,
-        Self::Churn,
-        Self::LinesOfCode,
-        Self::Size,
-        Self::License,
-    ];
-
-    /// The name used on the command line, e.g. `last-change`.
-    pub fn name(self) -> &'static str {
-        match self {
-            Self::Project => "project",
-            Self::Description => "description",
-            Self::Head => "head",
-            Self::Pending => "pending",
-            Self::Version => "version",
-            Self::Created => "created",
-            Self::Languages => "languages",
-            Self::Dependencies => "dependencies",
-            Self::Authors => "authors",
-            Self::LastChange => "last-change",
-            Self::Contributors => "contributors",
-            Self::Url => "url",
-            Self::Commits => "commits",
-            Self::Churn => "churn",
-            Self::LinesOfCode => "lines-of-code",
-            Self::Size => "size",
-            Self::License => "license",
-        }
-    }
-}
-
-/// One line (or block of lines) of repository information, built from its
-/// `FieldKind` by `Field::collect`.
+/// One info line (or block of lines) and its data.
 pub enum Field {
     Project(Project),
     Description(Description),
@@ -156,55 +107,6 @@ impl Serialize for Field {
     }
 }
 
-impl Field {
-    /// Computes the field of the given kind, or `None` if there is nothing to
-    /// show (no source code was found for the language fields).
-    pub(crate) fn collect(kind: FieldKind, ctx: &RepoContext) -> Result<Option<Self>> {
-        let manifest = ctx.manifest.as_ref();
-        let metrics = &ctx.git_metrics;
-        let options = ctx.options;
-        let field = match kind {
-            FieldKind::Project => Self::Project(Project::new(&ctx.repo, &ctx.repo_url, manifest)?),
-            FieldKind::Description => Self::Description(Description::new(manifest)),
-            FieldKind::Head => Self::Head(Head::new(&ctx.repo)?),
-            FieldKind::Pending => Self::Pending(Pending::new(&ctx.repo)?),
-            FieldKind::Version => Self::Version(Version::new(&ctx.repo, manifest)?),
-            FieldKind::Created => Self::Created(Created::new(metrics)),
-            FieldKind::Languages => match &ctx.loc_by_language {
-                Some(loc_by_language) => Self::Languages(Languages::new(loc_by_language)),
-                None => return Ok(None),
-            },
-            FieldKind::Dependencies => Self::Dependencies(Dependencies::new(manifest)),
-            FieldKind::Authors => Self::Authors(Authors::new(
-                &metrics.number_of_commits_by_identity,
-                metrics.total_number_of_commits,
-                options.number_of_authors,
-                options.email,
-            )),
-            FieldKind::LastChange => Self::LastChange(LastChange::new(metrics)),
-            FieldKind::Contributors => Self::Contributors(Contributors::new(
-                metrics.total_number_of_authors,
-                options.number_of_authors,
-            )),
-            FieldKind::Url => Self::Url(Url::new(&ctx.repo_url)),
-            FieldKind::Commits => Self::Commits(Commits::new(metrics, ctx.repo.is_shallow())),
-            FieldKind::Churn => Self::Churn(Churn::new(
-                &metrics.number_of_commits_by_file_path,
-                metrics.churn_pool_size,
-                options.number_of_file_churns,
-                &options.exclude,
-            )?),
-            FieldKind::LinesOfCode => match &ctx.loc_by_language {
-                Some(loc_by_language) => Self::LinesOfCode(LinesOfCode::new(loc_by_language)),
-                None => return Ok(None),
-            },
-            FieldKind::Size => Self::Size(Size::new(&ctx.repo)),
-            FieldKind::License => Self::License(License::new(&ctx.repo_path, manifest)?),
-        };
-        Ok(Some(field))
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -221,12 +123,5 @@ mod tests {
             serde_yaml::to_string(&fields).unwrap(),
             "- UrlInfo:\n    repoUrl: https://github.com/o2sh/onefetch\n"
         );
-    }
-
-    #[test]
-    fn every_field_kind_is_listed_once() {
-        let names: std::collections::HashSet<&str> =
-            FieldKind::ALL.iter().map(|kind| kind.name()).collect();
-        assert_eq!(names.len(), FieldKind::ALL.len());
     }
 }
