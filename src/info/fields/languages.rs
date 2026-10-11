@@ -12,9 +12,6 @@ pub struct LanguageWithPercentage {
 pub struct Languages {
     /// The `--number-of-languages` largest languages.
     pub languages_with_percentage: Vec<LanguageWithPercentage>,
-    /// The rest, shown as "Other" in the terminal.
-    #[serde(skip)]
-    pub other_languages: Vec<LanguageWithPercentage>,
 }
 
 impl Languages {
@@ -31,18 +28,16 @@ impl Languages {
             })
             .collect();
 
-        let mut languages_with_percentage: Vec<LanguageWithPercentage> = weight_by_language
+        let languages_with_percentage = weight_by_language
             .into_iter()
             .map(|(language, percentage)| LanguageWithPercentage {
                 language,
                 percentage,
             })
+            .take(number_of_languages)
             .collect();
-        let other_languages =
-            languages_with_percentage.split_off(number_of_languages.min(loc_by_language.len()));
         Self {
             languages_with_percentage,
-            other_languages,
         }
     }
 }
@@ -67,12 +62,6 @@ mod test {
             .iter()
             .map(|l| l.language)
             .collect();
-        let other: Vec<Language> = languages
-            .other_languages
-            .iter()
-            .map(|l| l.language)
-            .collect();
         assert_eq!(kept, [Language::Go, Language::Erlang]);
-        assert_eq!(other, [Language::Java, Language::Rust]);
     }
 }

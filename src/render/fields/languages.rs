@@ -67,15 +67,27 @@ fn prepare_languages(
             },
         )
         .collect();
-    if !languages.other_languages.is_empty() {
+    if let Some(percentage) = other_percentage(languages) {
         display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
-            percentage: languages.other_languages.iter().map(|l| l.percentage).sum(),
+            percentage,
             chip_color: DynColors::Ansi(AnsiColors::White),
             chip_icon: DEFAULT_CHIP_ICON,
         });
     }
     display_data
+}
+
+/// The share of the languages left out by `--number-of-languages`, if any.
+fn other_percentage(languages: &Languages) -> Option<f64> {
+    let shown: f64 = languages
+        .languages_with_percentage
+        .iter()
+        .map(|l| l.percentage)
+        .sum();
+    let other = 100.0 - shown;
+    // The tolerance absorbs floating-point error when no language was left out.
+    (other > 1e-9).then_some(other)
 }
 
 fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
@@ -119,7 +131,9 @@ impl FieldView for Languages {
 
     fn key(&self) -> String {
         let mut title: String = "Language".into();
-        if self.languages_with_percentage.len() + self.other_languages.len() > 1 {
+        let entries =
+            self.languages_with_percentage.len() + usize::from(other_percentage(self).is_some());
+        if entries > 1 {
             title.push('s');
         }
         title
@@ -142,7 +156,6 @@ mod test {
     fn test_display_languages() {
         let languages = Languages {
             languages_with_percentage: vec![language(Language::Go, 100_f64)],
-            other_languages: vec![],
         };
         let red = DynColors::Ansi(AnsiColors::Red);
 
@@ -204,10 +217,6 @@ mod test {
                 language(Language::Go, 40_f64),
                 language(Language::Erlang, 30_f64),
             ],
-            other_languages: vec![
-                language(Language::Java, 20_f64),
-                language(Language::Rust, 10_f64),
-            ],
         };
 
         let color_palette = [
@@ -245,7 +254,6 @@ mod test {
     fn test_key_counts_other_languages() {
         let languages = Languages {
             languages_with_percentage: vec![language(Language::Go, 60_f64)],
-            other_languages: vec![language(Language::Rust, 40_f64)],
         };
         assert_eq!(languages.key(), "Languages");
     }
