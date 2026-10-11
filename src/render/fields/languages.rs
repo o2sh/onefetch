@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 use crate::render::text::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
@@ -35,7 +35,7 @@ impl LanguageDisplayData {
 
 fn prepare_languages(
     languages: &Languages,
-    options: &DisplayOptions,
+    options: &FormatOptions,
     color_palette: &[DynColors],
 ) -> Vec<LanguageDisplayData> {
     let mut iter = languages.languages_with_percentage.iter().enumerate().map(
@@ -111,7 +111,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 }
 
 impl FieldView for Languages {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+    fn value(&self, options: &FormatOptions) -> Vec<Line> {
         let languages = prepare_languages(self, options, &COLOR_PALETTE);
 
         let mut lines = vec![build_language_bar(&languages)];
@@ -133,10 +133,10 @@ mod test {
     use super::*;
     use crate::language::Language;
 
-    fn languages_options(number_of_languages: usize) -> DisplayOptions {
-        DisplayOptions {
+    fn languages_options(number_of_languages: usize) -> FormatOptions {
+        FormatOptions {
             number_of_languages,
-            ..DisplayOptions::default()
+            ..FormatOptions::default()
         }
     }
 

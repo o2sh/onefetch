@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::dependencies::Dependencies;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 use crate::render::text::Line;
 
 impl FieldView for Dependencies {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+    fn value(&self, options: &FormatOptions) -> Vec<Line> {
         match &self.manifest_type {
             Some(manifest_type) if self.number_of_dependencies > 0 => {
                 let dependencies = options.number(&self.number_of_dependencies);
@@ -36,7 +36,7 @@ mod test {
         }));
 
         assert_eq!(
-            dependencies.value(&DisplayOptions::default()),
+            dependencies.value(&FormatOptions::default()),
             vec![Line::from("21 (Cargo)")]
         );
     }

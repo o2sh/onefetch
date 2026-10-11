@@ -2,7 +2,7 @@
 //! One file per field, mirroring `info/fields/`.
 
 use crate::info::Field;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 use crate::render::text::Line;
 
 mod authors;
@@ -25,7 +25,7 @@ mod version;
 
 pub(crate) trait FieldView {
     fn key(&self) -> String;
-    fn value(&self, options: &DisplayOptions) -> Vec<Line>;
+    fn value(&self, options: &FormatOptions) -> Vec<Line>;
 }
 
 pub(crate) fn view(field: &Field) -> &dyn FieldView {

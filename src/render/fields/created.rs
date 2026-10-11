@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::created::Created;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 use crate::render::text::Line;
 
 impl FieldView for Created {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+    fn value(&self, options: &FormatOptions) -> Vec<Line> {
         vec![Line::from(options.time(self.creation_date))]
     }
 
@@ -23,9 +23,9 @@ mod test {
         let created = Created {
             creation_date: Time::new(946_771_200, 0),
         };
-        let iso_time = DisplayOptions {
+        let iso_time = FormatOptions {
             iso_time: true,
-            ..DisplayOptions::default()
+            ..FormatOptions::default()
         };
 
         assert_eq!(

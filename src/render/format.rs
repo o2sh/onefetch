@@ -10,7 +10,7 @@ pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
 /// language chips, the color palette, and how many languages to list. Fields
 /// keep raw values and use this to display them.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct DisplayOptions {
+pub struct FormatOptions {
     pub number_separator: NumberSeparator,
     pub iso_time: bool,
     pub true_color: bool,
@@ -21,7 +21,7 @@ pub struct DisplayOptions {
 
 /// The CLI defaults, except that true colors are off since `--true-color auto`
 /// depends on the terminal.
-impl Default for DisplayOptions {
+impl Default for FormatOptions {
     fn default() -> Self {
         Self {
             number_separator: NumberSeparator::default(),
@@ -62,7 +62,7 @@ impl NumberSeparator {
     }
 }
 
-impl DisplayOptions {
+impl FormatOptions {
     pub fn number<T: ToFormattedString>(&self, number: &T) -> String {
         number.to_formatted_string(&self.number_separator.format())
     }
@@ -97,7 +97,7 @@ mod tests {
     use rstest::rstest;
     use std::time::{Duration, SystemTime};
 
-    const HUMAN_TIME: DisplayOptions = DisplayOptions {
+    const HUMAN_TIME: FormatOptions = FormatOptions {
         number_separator: NumberSeparator::Plain,
         iso_time: false,
         true_color: false,
@@ -106,7 +106,7 @@ mod tests {
         number_of_languages: 0,
     };
 
-    const ISO_TIME: DisplayOptions = DisplayOptions {
+    const ISO_TIME: FormatOptions = FormatOptions {
         iso_time: true,
         ..HUMAN_TIME
     };
@@ -180,9 +180,9 @@ mod tests {
         #[case] number_separator: NumberSeparator,
         #[case] expected: &str,
     ) {
-        let options = DisplayOptions {
+        let options = FormatOptions {
             number_separator,
-            ..DisplayOptions::default()
+            ..FormatOptions::default()
         };
         assert_eq!(options.number(&number), expected);
     }

@@ -1,4 +1,4 @@
-use self::context::Context as RepoContext;
+use self::context::RepoContext;
 use self::fields::url::get_repo_url;
 use self::manifest::Manifest;
 use self::title::Title;
@@ -12,14 +12,13 @@ use strum::VariantArray;
 
 mod context;
 pub(crate) mod dates;
-mod field;
 pub(crate) mod fields;
 pub(crate) mod loc;
 pub mod manifest;
 pub(crate) mod title;
 
-pub(crate) use field::Field;
-pub use field::FieldKind;
+pub(crate) use fields::Field;
+pub use fields::FieldKind;
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]

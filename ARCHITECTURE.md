@@ -36,29 +36,31 @@ them in mind when reviewing imports in these modules.
 
 `build_info` opens the repository and computes the expensive inputs once, in
 parallel: lines of code per language (tokei, in a thread) and commit statistics
-(one commit-graph traversal). They are stored in `info::context::Context`.
+(one commit-graph traversal). They are stored in a `RepoContext` (`info/context.rs`).
 
 Each field is a plain data struct in `info/fields/<name>.rs` with a constructor.
-`info/field.rs` defines:
+`info/fields/mod.rs` defines:
 
 - `enum Field`, one variant per field, in display order. Its `Serialize` impl is
   the JSON/YAML format of `-o` (`{"HeadInfo": {...}}`), so treat it as a public format.
 - `FieldKind`, generated from `Field` by strum, which is what `--disabled-fields` takes.
-- `Field::collect`, which builds the field of a given kind from the `Context`.
+- `Field::collect`, which builds the field of a given kind from the `RepoContext`.
 
 ## Displaying data (`render`)
 
 `render/fields/<name>.rs` implements `FieldView` (`key` and `value` lines) for
-the field of the same name in `info/fields/`. `render::layout` turns an `Info`
-into styled lines, `render::ansi` turns those into terminal escape codes, and
-`render::Printer` places them next to the ascii art (`render::ascii`) or an image
-(`render::image`), or prints JSON/YAML instead.
+the field of the same name in `info/fields/`, using `FormatOptions`
+(`render/format.rs`) for numbers, dates and language chips. `render::layout`
+turns an `Info` into styled lines, `render::ansi` turns those into terminal
+escape codes, and `render::Printer` places them next to the ascii art
+(`render::ascii`) or an image (`render::image`), or prints JSON/YAML instead.
 
 ## Adding an info field
 
-1. Add `info/fields/<name>.rs` with the data struct (`#[derive(Serialize)]`) and its constructor.
-2. Add a variant to `Field` in `info/field.rs`. The compiler then points at the
-   `match` arms to fill in: `Field::collect`, `Serialize for Field`, and
+1. Add `info/fields/<name>.rs` with the data struct (`#[derive(Serialize)]`) and
+   its constructor, and declare it in `info/fields/mod.rs`.
+2. Add a variant to `Field` in `info/fields/mod.rs`. The compiler then points at
+   the `match` arms to fill in: `Field::collect`, `Serialize for Field`, and
    `render::fields::view`.
 3. Add `render/fields/<name>.rs` implementing `FieldView` for the struct, and
    declare it in `render/fields/mod.rs`.

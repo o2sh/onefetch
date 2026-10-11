@@ -1,6 +1,6 @@
 use self::ascii::AsciiArt;
 use self::colors::{TextColors, get_ascii_colors};
-use self::format::DisplayOptions;
+use self::format::FormatOptions;
 use self::image::{ImageBackend, ImageProtocol};
 use crate::info::Info;
 use crate::language::Language;
@@ -42,10 +42,10 @@ pub struct RenderOptions {
     pub ascii_colors: Vec<u8>,
     pub text_colors: Vec<u8>,
     pub no_bold: bool,
-    pub display: DisplayOptions,
+    pub format: FormatOptions,
 }
 
-/// The CLI defaults, except that true colors are off (see `DisplayOptions`).
+/// The CLI defaults, except that true colors are off (see `FormatOptions`).
 impl Default for RenderOptions {
     fn default() -> Self {
         Self {
@@ -59,7 +59,7 @@ impl Default for RenderOptions {
             ascii_colors: Vec::new(),
             text_colors: Vec::new(),
             no_bold: false,
-            display: DisplayOptions::default(),
+            format: FormatOptions::default(),
         }
     }
 }
@@ -70,7 +70,7 @@ pub struct Printer {
     no_bold: bool,
     text_colors: TextColors,
     ascii_colors: Vec<DynColors>,
-    display_options: DisplayOptions,
+    format_options: FormatOptions,
 }
 
 enum PrinterKind {
@@ -110,7 +110,7 @@ impl Printer {
             info.dominant_language.as_ref(),
             options.ascii_language.as_ref(),
             &options.ascii_colors,
-            options.display.true_color,
+            options.format.true_color,
         );
         let primary_color = ascii_colors
             .first()
@@ -126,7 +126,7 @@ impl Printer {
             no_bold: options.no_bold,
             text_colors,
             ascii_colors,
-            display_options: options.display,
+            format_options: options.format,
         })
     }
 
@@ -192,7 +192,7 @@ impl Printer {
 
     fn info_text(&self) -> String {
         ansi::render(
-            &layout::info_lines(&self.info, &self.display_options),
+            &layout::info_lines(&self.info, &self.format_options),
             &self.text_colors,
             self.no_bold,
         )

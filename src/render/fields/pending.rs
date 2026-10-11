@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::pending::Pending;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 use crate::render::text::Line;
 
 impl FieldView for Pending {
-    fn value(&self, _options: &DisplayOptions) -> Vec<Line> {
+    fn value(&self, _options: &FormatOptions) -> Vec<Line> {
         let mut pending = String::new();
         if self.modified > 0 {
             pending = format!("{}+-", self.modified);
@@ -39,7 +39,7 @@ mod test {
         };
 
         assert_eq!(
-            pending.value(&DisplayOptions::default()),
+            pending.value(&FormatOptions::default()),
             vec![Line::from("4+-")]
         );
     }

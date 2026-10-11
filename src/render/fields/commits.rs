@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::commits::Commits;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 use crate::render::text::Line;
 
 impl FieldView for Commits {
-    fn value(&self, options: &DisplayOptions) -> Vec<Line> {
+    fn value(&self, options: &FormatOptions) -> Vec<Line> {
         let commits = format!(
             "{}{}",
             options.number(&self.number_of_commits),
@@ -37,7 +37,7 @@ mod test {
         };
 
         assert_eq!(
-            commits.value(&DisplayOptions::default()),
+            commits.value(&FormatOptions::default()),
             vec![Line::from(expected)]
         );
     }

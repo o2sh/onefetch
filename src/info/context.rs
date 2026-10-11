@@ -6,7 +6,7 @@ use gix::Repository;
 use std::path::PathBuf;
 
 /// Everything read from the repository once and shared by the fields.
-pub(crate) struct Context<'a> {
+pub(crate) struct RepoContext<'a> {
     pub repo: Repository,
     pub repo_path: PathBuf,
     pub repo_url: String,

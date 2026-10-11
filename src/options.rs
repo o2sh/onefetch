@@ -5,7 +5,7 @@
 use crate::cli::Cli;
 use crate::info::InfoOptions;
 use crate::render::RenderOptions;
-use crate::render::format::DisplayOptions;
+use crate::render::format::FormatOptions;
 
 impl From<&Cli> for InfoOptions {
     fn from(cli: &Cli) -> Self {
@@ -28,7 +28,7 @@ impl From<&Cli> for InfoOptions {
     }
 }
 
-impl From<&Cli> for DisplayOptions {
+impl From<&Cli> for FormatOptions {
     fn from(cli: &Cli) -> Self {
         Self {
             number_separator: cli.text_formatting.number_separator,
@@ -54,7 +54,7 @@ impl From<&Cli> for RenderOptions {
             ascii_colors: cli.ascii.ascii_colors.clone(),
             text_colors: cli.text_formatting.text_colors.clone(),
             no_bold: cli.text_formatting.no_bold,
-            display: DisplayOptions::from(cli),
+            format: FormatOptions::from(cli),
         }
     }
 }
