@@ -32,6 +32,28 @@ Dependencies only go one way:
 Everything is one crate, so the compiler doesn't enforce these rules; keep
 them in mind when reviewing imports in these modules.
 
+## Options
+
+The parsed command line (`Cli`) is only read by `options.rs` (and by `main` for
+`--languages`, `--package-managers` and `--generate`). It is split into three
+structs, each holding only what one stage needs:
+
+| Struct          | Defined in          | Read by                          | Holds                                                                 |
+| --------------- | ------------------- | -------------------------------- | --------------------------------------------------------------------- |
+| `InfoOptions`   | `info/mod.rs`       | `info::build_info`               | What to collect: input path, disabled fields, how many authors, languages and file churns to keep, excluded globs, bot/merge filters, URL format, language types. |
+| `RenderOptions` | `render/mod.rs`     | `render::Printer`                | How to print it: JSON/YAML or terminal, ascii art or image (and its protocol and color resolution), logo and text colors, bold. Contains a `FormatOptions`. |
+| `FormatOptions` | `render/format.rs`  | `render::layout`, `render::fields` | How values look in the info lines: number separator, ISO dates, true colors and Nerd Font icons for language chips, color palette row. |
+
+`FormatOptions` is the part of `RenderOptions` that the info lines need. It is
+small and `Copy`, so the field views get it without seeing image paths or the
+output format.
+
+When adding a flag, put it where it is first needed: if it changes what is
+collected, and therefore the JSON/YAML output, it belongs in `InfoOptions`
+(like `--number-of-authors`); if it only changes how a value looks in the
+terminal, in `FormatOptions` (like `--iso-time`); anything else about the
+output goes in `RenderOptions` (like `--no-art`).
+
 ## Collecting data (`info`)
 
 `build_info` opens the repository and computes the expensive inputs once, in
