@@ -1,11 +1,11 @@
 use super::FieldView;
 use crate::info::fields::size::Size;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 use byte_unit::{Byte, UnitType};
 
 impl FieldView for Size {
-    fn value(&self, options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
         let repo_size = bytes_to_human_readable(self.repo_size);
         let size = match self.file_count {
             0 => repo_size,
@@ -42,7 +42,7 @@ mod test {
         };
 
         assert_eq!(
-            size.value(&FormatOptions::default()),
+            size.value(&RenderOptions::default()),
             vec![Line::from(expected)]
         );
     }

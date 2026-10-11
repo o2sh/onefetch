@@ -1,34 +1,9 @@
+use super::RenderOptions;
 use crate::info::dates::to_rfc3339;
 use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
 use std::time::SystemTime;
 use time_humanize::HumanTime;
-
-/// How fields are displayed in the terminal output: number and date formats,
-/// language chips, and the color palette. Fields
-/// keep raw values and use this to display them.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct FormatOptions {
-    pub number_separator: NumberSeparator,
-    pub iso_time: bool,
-    pub true_color: bool,
-    pub nerd_fonts: bool,
-    pub no_color_palette: bool,
-}
-
-/// The CLI defaults, except that true colors are off since `--true-color auto`
-/// depends on the terminal.
-impl Default for FormatOptions {
-    fn default() -> Self {
-        Self {
-            number_separator: NumberSeparator::default(),
-            iso_time: false,
-            true_color: false,
-            nerd_fonts: false,
-            no_color_palette: false,
-        }
-    }
-}
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Copy, Default)]
 pub enum NumberSeparator {
@@ -58,7 +33,8 @@ impl NumberSeparator {
     }
 }
 
-impl FormatOptions {
+/// Number and date formatting of the info lines.
+impl RenderOptions {
     pub fn number<T: ToFormattedString>(&self, number: &T) -> String {
         number.to_formatted_string(&self.number_separator.format())
     }
@@ -93,18 +69,16 @@ mod tests {
     use rstest::rstest;
     use std::time::{Duration, SystemTime};
 
-    const HUMAN_TIME: FormatOptions = FormatOptions {
-        number_separator: NumberSeparator::Plain,
-        iso_time: false,
-        true_color: false,
-        nerd_fonts: false,
-        no_color_palette: false,
-    };
+    fn human_time() -> RenderOptions {
+        RenderOptions::default()
+    }
 
-    const ISO_TIME: FormatOptions = FormatOptions {
-        iso_time: true,
-        ..HUMAN_TIME
-    };
+    fn iso_time() -> RenderOptions {
+        RenderOptions {
+            iso_time: true,
+            ..RenderOptions::default()
+        }
+    }
 
     #[test]
     fn display_time_as_human_time_current_time_now() {
@@ -116,7 +90,7 @@ mod tests {
             current_time.as_secs() as gix::date::SecondsSinceUnixEpoch,
             0,
         );
-        assert_eq!(HUMAN_TIME.time(time), "now");
+        assert_eq!(human_time().time(time), "now");
     }
 
     #[test]
@@ -128,13 +102,13 @@ mod tests {
         // NOTE 366 so that it's a year ago even with leap years.
         let year_ago = current_time - (day * 366);
         let time = Time::new(year_ago.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        assert_eq!(HUMAN_TIME.time(time), "a year ago");
+        assert_eq!(human_time().time(time), "a year ago");
     }
 
     #[test]
     fn display_time_as_iso_time_current_epoch() {
         let time = Time::new(0, 0);
-        assert_eq!(ISO_TIME.time(time), "1970-01-01T00:00:00Z");
+        assert_eq!(iso_time().time(time), "1970-01-01T00:00:00Z");
     }
 
     #[test]
@@ -145,13 +119,13 @@ mod tests {
             .unwrap();
         let tomorrow = current_time + day;
         let time = Time::new(tomorrow.as_secs() as gix::date::SecondsSinceUnixEpoch, 0);
-        assert_eq!(HUMAN_TIME.time(time), "in a day");
+        assert_eq!(human_time().time(time), "in a day");
     }
 
     #[test]
     fn display_time_before_epoch() {
         let time = Time::new(gix::date::SecondsSinceUnixEpoch::MIN, 0);
-        assert!(HUMAN_TIME.time(time).ends_with(" years ago"));
+        assert!(human_time().time(time).ends_with(" years ago"));
     }
 
     #[rstest]
@@ -162,7 +136,7 @@ mod tests {
         #[case] seconds: gix::date::SecondsSinceUnixEpoch,
     ) {
         let time = Time::new(seconds, 0);
-        assert_eq!(ISO_TIME.time(time), HUMAN_TIME.time(time));
+        assert_eq!(iso_time().time(time), human_time().time(time));
     }
 
     #[rstest]
@@ -175,9 +149,9 @@ mod tests {
         #[case] number_separator: NumberSeparator,
         #[case] expected: &str,
     ) {
-        let options = FormatOptions {
+        let options = RenderOptions {
             number_separator,
-            ..FormatOptions::default()
+            ..RenderOptions::default()
         };
         assert_eq!(options.number(&number), expected);
     }

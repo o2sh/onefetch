@@ -1,12 +1,12 @@
 use super::FieldView;
 use crate::info::fields::description::Description;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 const NUMBER_OF_WORDS_PER_LINE: usize = 5;
 
 impl FieldView for Description {
-    fn value(&self, _options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, _options: &RenderOptions) -> Vec<Line> {
         match &self.description {
             Some(description) => break_sentence_into_lines(description)
                 .into_iter()
@@ -47,7 +47,7 @@ mod test {
         }));
 
         assert_eq!(
-            description.value(&FormatOptions::default()),
+            description.value(&RenderOptions::default()),
             vec![Line::from("test")]
         );
     }

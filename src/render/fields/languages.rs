@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
@@ -35,7 +35,7 @@ impl LanguageDisplayData {
 
 fn prepare_languages(
     languages: &Languages,
-    options: &FormatOptions,
+    options: &RenderOptions,
     color_palette: &[DynColors],
 ) -> Vec<LanguageDisplayData> {
     let mut display_data: Vec<_> = languages
@@ -121,7 +121,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 }
 
 impl FieldView for Languages {
-    fn value(&self, options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
         let languages = prepare_languages(self, options, &COLOR_PALETTE);
 
         let mut lines = vec![build_language_bar(&languages)];
@@ -160,7 +160,7 @@ mod test {
         let red = DynColors::Ansi(AnsiColors::Red);
 
         assert_eq!(
-            languages.value(&FormatOptions::default()),
+            languages.value(&RenderOptions::default()),
             vec![
                 Line::from(vec![Span::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),
@@ -224,7 +224,7 @@ mod test {
             DynColors::Ansi(AnsiColors::Green),
         ];
 
-        let result = prepare_languages(&languages, &FormatOptions::default(), &color_palette);
+        let result = prepare_languages(&languages, &RenderOptions::default(), &color_palette);
 
         let expected_result = vec![
             LanguageDisplayData {

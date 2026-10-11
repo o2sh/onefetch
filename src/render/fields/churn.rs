@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::churn::Churn;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 impl FieldView for Churn {
-    fn value(&self, options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
         self.file_churns
             .iter()
             .map(|file_churn| {
@@ -54,7 +54,7 @@ mod test {
         };
 
         assert_eq!(
-            churn.value(&FormatOptions::default()),
+            churn.value(&RenderOptions::default()),
             vec![
                 Line::from("\u{2026}/to/file.txt 50"),
                 Line::from("file_2.txt 30"),

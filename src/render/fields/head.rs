@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::head::{Head, HeadRefs};
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 impl FieldView for Head {
-    fn value(&self, _options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, _options: &RenderOptions) -> Vec<Line> {
         let HeadRefs {
             short_commit_id,
             refs,
@@ -32,7 +32,7 @@ mod test {
             head_refs: HeadRefs::new("be561d5".into(), vec!["main".into(), "origin/main".into()]),
         };
         assert_eq!(
-            head.value(&FormatOptions::default()),
+            head.value(&RenderOptions::default()),
             vec![Line::from("be561d5 (main, origin/main)")]
         );
     }
@@ -43,7 +43,7 @@ mod test {
             head_refs: HeadRefs::new("be561d5".into(), vec![]),
         };
         assert_eq!(
-            head.value(&FormatOptions::default()),
+            head.value(&RenderOptions::default()),
             vec![Line::from("be561d5")]
         );
     }

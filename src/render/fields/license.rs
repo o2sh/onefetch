@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::license::License;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 impl FieldView for License {
-    fn value(&self, _options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, _options: &RenderOptions) -> Vec<Line> {
         vec![Line::from(self.license.to_string())]
     }
 
@@ -23,7 +23,7 @@ mod test {
             license: "MIT".into(),
         };
         assert_eq!(
-            license.value(&FormatOptions::default()),
+            license.value(&RenderOptions::default()),
             vec![Line::from("MIT")]
         );
     }

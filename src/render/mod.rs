@@ -1,6 +1,6 @@
 use self::ascii::AsciiArt;
 use self::colors::{TextColors, get_ascii_colors};
-use self::format::FormatOptions;
+use self::format::NumberSeparator;
 use self::image::{ImageBackend, ImageProtocol};
 use crate::info::Info;
 use crate::language::Language;
@@ -29,7 +29,8 @@ pub enum SerializationFormat {
     Yaml,
 }
 
-/// How to print an `Info`: output format, art, and text styling.
+/// How to print an `Info`: output format, art, colors, and how values look in
+/// the info lines.
 #[derive(Clone, Debug, PartialEq)]
 pub struct RenderOptions {
     pub output: Option<SerializationFormat>,
@@ -42,10 +43,15 @@ pub struct RenderOptions {
     pub ascii_colors: Vec<u8>,
     pub text_colors: Vec<u8>,
     pub no_bold: bool,
-    pub format: FormatOptions,
+    pub number_separator: NumberSeparator,
+    pub iso_time: bool,
+    pub true_color: bool,
+    pub nerd_fonts: bool,
+    pub no_color_palette: bool,
 }
 
-/// The CLI defaults, except that true colors are off (see `FormatOptions`).
+/// The CLI defaults, except that true colors are off since `--true-color auto`
+/// depends on the terminal.
 impl Default for RenderOptions {
     fn default() -> Self {
         Self {
@@ -59,7 +65,11 @@ impl Default for RenderOptions {
             ascii_colors: Vec::new(),
             text_colors: Vec::new(),
             no_bold: false,
-            format: FormatOptions::default(),
+            number_separator: NumberSeparator::default(),
+            iso_time: false,
+            true_color: false,
+            nerd_fonts: false,
+            no_color_palette: false,
         }
     }
 }
@@ -67,10 +77,9 @@ impl Default for RenderOptions {
 pub struct Printer {
     info: Info,
     kind: PrinterKind,
-    no_bold: bool,
+    options: RenderOptions,
     text_colors: TextColors,
     ascii_colors: Vec<DynColors>,
-    format_options: FormatOptions,
 }
 
 enum PrinterKind {
@@ -110,7 +119,7 @@ impl Printer {
             info.dominant_language.as_ref(),
             options.ascii_language.as_ref(),
             &options.ascii_colors,
-            options.format.true_color,
+            options.true_color,
         );
         let primary_color = ascii_colors
             .first()
@@ -123,10 +132,9 @@ impl Printer {
         Ok(Self {
             info,
             kind,
-            no_bold: options.no_bold,
+            options: options.clone(),
             text_colors,
             ascii_colors,
-            format_options: options.format,
         })
     }
 
@@ -168,7 +176,7 @@ impl Printer {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
                 let info_text = self.info_text();
                 let mut info_lines = info_text.lines();
-                let mut logo_lines = AsciiArt::new(art, &self.ascii_colors, !self.no_bold);
+                let mut logo_lines = AsciiArt::new(art, &self.ascii_colors, !self.options.no_bold);
 
                 loop {
                     match (logo_lines.next(), info_lines.next()) {
@@ -192,9 +200,9 @@ impl Printer {
 
     fn info_text(&self) -> String {
         ansi::render(
-            &layout::info_lines(&self.info, &self.format_options),
+            &layout::info_lines(&self.info, &self.options),
             &self.text_colors,
-            self.no_bold,
+            self.options.no_bold,
         )
     }
 }

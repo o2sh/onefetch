@@ -1,7 +1,7 @@
 use crate::info::Info;
 use crate::info::title::Title;
+use crate::render::RenderOptions;
 use crate::render::fields::{FieldView, view};
-use crate::render::format::FormatOptions;
 use crate::render::text::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
@@ -16,7 +16,7 @@ const PALETTE: [AnsiColors; 8] = [
     AnsiColors::White,
 ];
 
-pub fn info_lines(info: &Info, options: &FormatOptions) -> Vec<Line> {
+pub fn info_lines(info: &Info, options: &RenderOptions) -> Vec<Line> {
     let mut lines = Vec::new();
     if let Some(title) = &info.title {
         lines.extend(title_lines(title));
@@ -56,7 +56,7 @@ fn title_line(title: &Title) -> Line {
     Line::from(spans)
 }
 
-fn field_lines(field: &dyn FieldView, options: &FormatOptions) -> Vec<Line> {
+fn field_lines(field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
     let value = field.value(options);
     if value.iter().all(Line::is_empty) {
         return Vec::new();
@@ -105,7 +105,7 @@ mod test {
             "key".into()
         }
 
-        fn value(&self, _options: &FormatOptions) -> Vec<Line> {
+        fn value(&self, _options: &RenderOptions) -> Vec<Line> {
             self.value.clone()
         }
     }
@@ -123,7 +123,7 @@ mod test {
             value: vec![Line::from("one"), Line::from("two")],
         };
         assert_eq!(
-            field_lines(&field, &FormatOptions::default()),
+            field_lines(&field, &RenderOptions::default()),
             vec![
                 Line::from(vec![
                     Span::new("key", Style::Key),
@@ -139,12 +139,12 @@ mod test {
     #[test]
     fn test_field_lines_no_value() {
         let field = TestField { value: vec![] };
-        assert!(field_lines(&field, &FormatOptions::default()).is_empty());
+        assert!(field_lines(&field, &RenderOptions::default()).is_empty());
 
         let field = TestField {
             value: vec![Line::from("")],
         };
-        assert!(field_lines(&field, &FormatOptions::default()).is_empty());
+        assert!(field_lines(&field, &RenderOptions::default()).is_empty());
     }
 
     #[test]

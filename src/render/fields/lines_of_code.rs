@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::lines_of_code::LinesOfCode;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 impl FieldView for LinesOfCode {
-    fn value(&self, options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
         vec![Line::from(options.number(&self.lines_of_code))]
     }
 
@@ -24,7 +24,7 @@ mod test {
         };
 
         assert_eq!(
-            lines_of_code.value(&FormatOptions::default()),
+            lines_of_code.value(&RenderOptions::default()),
             vec![Line::from("1235")]
         );
     }

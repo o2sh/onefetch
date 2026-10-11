@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::authors::Authors;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 impl FieldView for Authors {
-    fn value(&self, options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
         let top_contribution = self.authors.first().map_or(0, |a| a.contribution);
         self.authors
             .iter()
@@ -74,7 +74,7 @@ mod test {
             authors: john_and_roberto(),
         };
         assert_eq!(
-            authors.value(&FormatOptions::default()),
+            authors.value(&RenderOptions::default()),
             vec![
                 Line::from("75% John Doe <john.doe@email.com> 1500"),
                 Line::from("80% Roberto Berto 240"),
@@ -87,7 +87,7 @@ mod test {
         let mut authors = john_and_roberto();
         authors.push(Author::new("Jane Doe".into(), None, 1, 100));
         assert_eq!(
-            Authors { authors }.value(&FormatOptions::default()),
+            Authors { authors }.value(&RenderOptions::default()),
             vec![
                 Line::from("75% John Doe <john.doe@email.com> 1500"),
                 Line::from("80% Roberto Berto 240"),

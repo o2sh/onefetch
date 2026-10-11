@@ -1,10 +1,10 @@
 use super::FieldView;
 use crate::info::fields::project::Project;
-use crate::render::format::FormatOptions;
+use crate::render::RenderOptions;
 use crate::render::text::Line;
 
 impl FieldView for Project {
-    fn value(&self, options: &FormatOptions) -> Vec<Line> {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
         if self.repo_name.is_empty() {
             return Vec::new();
         }
@@ -57,7 +57,7 @@ mod test {
     #[case(project("onefetch", 1, 1), "onefetch (1 branch, 1 tag)")]
     fn test_display_project(#[case] project: Project, #[case] expected: &str) {
         assert_eq!(
-            project.value(&FormatOptions::default()),
+            project.value(&RenderOptions::default()),
             vec![Line::from(expected)]
         );
     }
@@ -66,7 +66,7 @@ mod test {
     fn test_display_project_when_no_repo_name() {
         assert!(
             project("", 0, 0)
-                .value(&FormatOptions::default())
+                .value(&RenderOptions::default())
                 .is_empty()
         );
     }
