@@ -23,7 +23,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_serialize_created_info() {
+    fn test_serialize_created() {
         let created = Created {
             creation_date: Time::new(946_771_200, 0),
         };

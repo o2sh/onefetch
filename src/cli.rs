@@ -1,5 +1,5 @@
 use crate::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::{DEFAULT_NUMBER_OF_AUTHORS, FieldKind};
+use crate::info::{DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, FieldKind};
 use crate::language::{Language, LanguageType};
 use crate::render::format::{DEFAULT_NUMBER_OF_LANGUAGES, NumberSeparator};
 use crate::render::image::ImageProtocol;
@@ -13,7 +13,6 @@ use std::path::PathBuf;
 use strum::VariantArray;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
-const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
 
 const STYLES: Styles = Styles::styled()
     .header(AnsiColor::Yellow.on_default())

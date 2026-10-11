@@ -18,7 +18,7 @@ struct Detector {
 }
 
 impl Detector {
-    pub fn new() -> Result<Self> {
+    fn new() -> Result<Self> {
         match Store::from_cache(CACHE_DATA) {
             Ok(store) => Ok(Self { store }),
             Err(e) => {

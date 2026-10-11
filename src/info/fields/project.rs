@@ -46,7 +46,6 @@ fn get_repo_name(repo_url: &str, manifest: Option<&Manifest>) -> Result<String> 
     }
 }
 
-// This collects the repo size excluding .git
 fn get_number_of_tags(repo: &Repository) -> Result<usize> {
     Ok(repo.references()?.tags()?.count())
 }

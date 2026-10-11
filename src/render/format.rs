@@ -1,7 +1,6 @@
 use crate::info::dates::to_rfc3339;
 use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
-use serde::Serialize;
 use std::time::SystemTime;
 use time_humanize::HumanTime;
 
@@ -35,7 +34,7 @@ impl Default for DisplayOptions {
     }
 }
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Serialize, Copy, Default)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Copy, Default)]
 pub enum NumberSeparator {
     #[default]
     Plain,

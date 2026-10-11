@@ -1,9 +1,9 @@
+use self::ascii::AsciiArt;
+use self::colors::{TextColors, get_ascii_colors};
+use self::format::DisplayOptions;
+use self::image::{ImageBackend, ImageProtocol};
 use crate::info::Info;
 use crate::language::Language;
-use crate::render::ascii::AsciiArt;
-use crate::render::colors::{TextColors, get_ascii_colors};
-use crate::render::format::DisplayOptions;
-use crate::render::image::{ImageBackend, ImageProtocol};
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
 use owo_colors::{AnsiColors, DynColors};

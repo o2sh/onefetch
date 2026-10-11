@@ -1,5 +1,4 @@
 use serde::Serialize;
-use tokei;
 
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 

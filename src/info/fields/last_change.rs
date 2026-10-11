@@ -23,7 +23,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_serialize_last_change_info() {
+    fn test_serialize_last_change() {
         let last_change = LastChange {
             last_change: Time::new(946_771_200, 0),
         };

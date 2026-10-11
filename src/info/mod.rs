@@ -1,9 +1,9 @@
 use self::context::Context as RepoContext;
 use self::fields::url::get_repo_url;
+use self::manifest::Manifest;
 use self::title::Title;
 use crate::git::bots::BotRegex;
 use crate::git::{get_work_dir, traverse_commit_graph, uses_reftables};
-use crate::info::manifest::Manifest;
 use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
 use serde::Serialize;
@@ -13,23 +13,25 @@ use strum::VariantArray;
 mod context;
 pub(crate) mod dates;
 mod field;
-pub mod fields;
+pub(crate) mod fields;
 pub(crate) mod loc;
 pub mod manifest;
-pub mod title;
+pub(crate) mod title;
 
-pub use field::{Field, FieldKind};
+pub(crate) use field::Field;
+pub use field::FieldKind;
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
-    pub title: Option<Title>,
-    pub info_fields: Vec<Field>,
+    pub(crate) title: Option<Title>,
+    pub(crate) info_fields: Vec<Field>,
     #[serde(skip_serializing)]
     pub dominant_language: Option<Language>,
 }
 
 pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
+pub const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
 
 /// What to collect from the repository and which fields to show.
 #[derive(Clone, Debug)]
