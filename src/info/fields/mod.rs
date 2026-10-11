@@ -36,18 +36,77 @@ use self::version::Version;
 use super::context::RepoContext;
 use anyhow::Result;
 use serde::ser::{Serialize, SerializeMap, Serializer};
-use strum::{EnumDiscriminants, IntoStaticStr, VariantArray};
 
-/// One line (or block of lines) of repository information.
-///
-/// Variants are declared in display order. `FieldKind` is generated from this
-/// enum and is what `--disabled-fields` takes.
-#[derive(EnumDiscriminants)]
-#[strum_discriminants(
-    name(FieldKind),
-    derive(VariantArray, IntoStaticStr),
-    strum(serialize_all = "kebab-case")
-)]
+/// The kinds of fields, in display order. This is what `--disabled-fields` takes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FieldKind {
+    Project,
+    Description,
+    Head,
+    Pending,
+    Version,
+    Created,
+    Languages,
+    Dependencies,
+    Authors,
+    LastChange,
+    Contributors,
+    Url,
+    Commits,
+    Churn,
+    LinesOfCode,
+    Size,
+    License,
+}
+
+impl FieldKind {
+    /// Every kind, in display order.
+    pub const ALL: [Self; 17] = [
+        Self::Project,
+        Self::Description,
+        Self::Head,
+        Self::Pending,
+        Self::Version,
+        Self::Created,
+        Self::Languages,
+        Self::Dependencies,
+        Self::Authors,
+        Self::LastChange,
+        Self::Contributors,
+        Self::Url,
+        Self::Commits,
+        Self::Churn,
+        Self::LinesOfCode,
+        Self::Size,
+        Self::License,
+    ];
+
+    /// The name used on the command line, e.g. `last-change`.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Project => "project",
+            Self::Description => "description",
+            Self::Head => "head",
+            Self::Pending => "pending",
+            Self::Version => "version",
+            Self::Created => "created",
+            Self::Languages => "languages",
+            Self::Dependencies => "dependencies",
+            Self::Authors => "authors",
+            Self::LastChange => "last-change",
+            Self::Contributors => "contributors",
+            Self::Url => "url",
+            Self::Commits => "commits",
+            Self::Churn => "churn",
+            Self::LinesOfCode => "lines-of-code",
+            Self::Size => "size",
+            Self::License => "license",
+        }
+    }
+}
+
+/// One line (or block of lines) of repository information, built from its
+/// `FieldKind` by `Field::collect`.
 pub enum Field {
     Project(Project),
     Description(Description),
@@ -165,29 +224,9 @@ mod tests {
     }
 
     #[test]
-    fn field_kind_names_are_kebab_case() {
-        let names: Vec<&str> = FieldKind::VARIANTS.iter().map(<&str>::from).collect();
-        assert_eq!(
-            names,
-            [
-                "project",
-                "description",
-                "head",
-                "pending",
-                "version",
-                "created",
-                "languages",
-                "dependencies",
-                "authors",
-                "last-change",
-                "contributors",
-                "url",
-                "commits",
-                "churn",
-                "lines-of-code",
-                "size",
-                "license",
-            ]
-        );
+    fn every_field_kind_is_listed_once() {
+        let names: std::collections::HashSet<&str> =
+            FieldKind::ALL.iter().map(|kind| kind.name()).collect();
+        assert_eq!(names.len(), FieldKind::ALL.len());
     }
 }

@@ -10,7 +10,6 @@ use clap::{Args, Parser, ValueEnum, ValueHint, value_parser};
 use clap_complete::Shell;
 use std::env;
 use std::path::PathBuf;
-use strum::VariantArray;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 
@@ -321,14 +320,14 @@ impl Cli {
 }
 
 /// `FieldKind` lives in `info`, which doesn't depend on clap, so its
-/// `--disabled-fields` values are defined here (kebab-case, e.g. `last-change`).
+/// `--disabled-fields` values are wired up here from `FieldKind::ALL` and `name`.
 impl ValueEnum for FieldKind {
     fn value_variants<'a>() -> &'a [Self] {
-        Self::VARIANTS
+        &Self::ALL
     }
 
     fn to_possible_value(&self) -> Option<PossibleValue> {
-        Some(PossibleValue::new(<&'static str>::from(self)))
+        Some(PossibleValue::new(self.name()))
     }
 }
 

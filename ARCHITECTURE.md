@@ -41,9 +41,11 @@ parallel: lines of code per language (tokei, in a thread) and commit statistics
 Each field is a plain data struct in `info/fields/<name>.rs` with a constructor.
 `info/fields/mod.rs` defines:
 
-- `enum Field`, one variant per field, in display order. Its `Serialize` impl is
-  the JSON/YAML format of `-o` (`{"HeadInfo": {...}}`), so treat it as a public format.
-- `FieldKind`, generated from `Field` by strum, which is what `--disabled-fields` takes.
+- `FieldKind`, the list of fields in display order (`FieldKind::ALL`) with their
+  command-line names (`FieldKind::name`). This is what `--disabled-fields` takes.
+- `enum Field`, one variant per kind holding that field's data. Its `Serialize`
+  impl is the JSON/YAML format of `-o` (`{"HeadInfo": {...}}`), so treat it as a
+  public format.
 - `Field::collect`, which builds the field of a given kind from the `RepoContext`.
 
 ## Displaying data (`render`)
@@ -59,10 +61,12 @@ escape codes, and `render::Printer` places them next to the ascii art
 
 1. Add `info/fields/<name>.rs` with the data struct (`#[derive(Serialize)]`) and
    its constructor, and declare it in `info/fields/mod.rs`.
-2. Add a variant to `Field` in `info/fields/mod.rs`. The compiler then points at
-   the `match` arms to fill in: `Field::collect`, `Serialize for Field`, and
-   `render::fields::view`.
+2. In `info/fields/mod.rs`, add a variant to `FieldKind`, add it to
+   `FieldKind::ALL` at its display position, and add a variant to `Field`. The
+   compiler then points at the `match` arms to fill in: `FieldKind::name`,
+   `Field::collect`, `Serialize for Field`, and `render::fields::view`.
 3. Add `render/fields/<name>.rs` implementing `FieldView` for the struct, and
    declare it in `render/fields/mod.rs`.
 
-The new kind is accepted by `--disabled-fields` automatically.
+`FieldKind::ALL` is the one list the compiler can't check: a kind missing from
+it is never collected or accepted by `--disabled-fields`.

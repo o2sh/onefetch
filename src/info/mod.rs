@@ -8,7 +8,6 @@ use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
 use serde::Serialize;
 use std::path::{Path, PathBuf};
-use strum::VariantArray;
 
 mod context;
 pub(crate) mod dates;
@@ -100,7 +99,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
     };
 
     let title = (!options.no_title).then(|| Title::new(&ctx.repo));
-    let info_fields = FieldKind::VARIANTS
+    let info_fields = FieldKind::ALL
         .iter()
         .filter(|kind| !options.disabled_fields.contains(kind))
         .filter_map(|&kind| Field::collect(kind, &ctx).transpose())
