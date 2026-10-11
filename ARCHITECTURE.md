@@ -29,8 +29,8 @@ Dependencies only go one way:
 - `language` is shared by `info` and `render`: its enum carries both data
   (tokei mapping, language type) and display information (logo, colors, chip).
 
-Everything is one crate, so the compiler can't enforce these rules;
-`tests/boundaries.rs` does, by resolving every path in those modules.
+Everything is one crate, so the compiler doesn't enforce these rules; keep
+them in mind when reviewing imports in these modules.
 
 ## Collecting data (`info`)
 
