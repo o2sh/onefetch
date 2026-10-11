@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::commits::Commits;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 impl FieldView for Commits {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {

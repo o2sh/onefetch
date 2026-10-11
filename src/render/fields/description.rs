@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::description::Description;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 const NUMBER_OF_WORDS_PER_LINE: usize = 5;
 

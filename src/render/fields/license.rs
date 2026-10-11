@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::license::License;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 impl FieldView for License {
     fn value(&self, _options: &RenderOptions) -> Vec<Line> {

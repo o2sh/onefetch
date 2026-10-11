@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::url::Url;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 impl FieldView for Url {
     fn value(&self, _options: &RenderOptions) -> Vec<Line> {

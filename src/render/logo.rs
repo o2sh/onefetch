@@ -1,9 +1,9 @@
-//! Ascii art rendering.
+//! The ascii logo.
 //!
 //! Renders an ascii template, colored with `{0}`..`{n}` tokens, to the terminal.
 //!
 //! ```rust,no_run
-//! use onefetch::render::ascii::AsciiArt;
+//! use onefetch::render::logo::AsciiArt;
 //! use owo_colors::{DynColors, AnsiColors};
 //!
 //! const ASCII: &str = r#"

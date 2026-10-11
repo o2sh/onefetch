@@ -7,7 +7,7 @@ information next to the logo of the repository's main language (or as JSON/YAML)
 command line ──► cli ──► options ──┬── InfoOptions ───► info::build_info ──► Info ──┐
                                    │                     (language)                ▼
                                    └── RenderOptions ─────────────────────► render::Printer ──► stdout
-                                                                            (layout, ascii, image)
+                                                                            (info lines, logo, image)
 ```
 
 ## Modules
@@ -64,7 +64,9 @@ public format.
 
 `render/fields/<name>.rs` implements `FieldView` (`key` and `value` lines) for
 the field of the same name in `info/fields/`, using `RenderOptions` (and the
-number and date helpers in `render/format.rs`). `render::layout`
-turns an `Info` into styled lines, `render::ansi` turns those into terminal
-escape codes, and `render::Printer` places them next to the ascii art
-(`render::ascii`) or an image (`render::image`), or prints JSON/YAML instead.
+number and date helpers in `render/format.rs`). `render::info_lines` turns an
+`Info` into the title, the "Key: value" lines and the color palette row, as
+styled text (`render::style`), which `render::style::render` writes with
+terminal escape codes. `render::Printer` (`render/printer.rs`) places those lines next to the logo,
+either ascii art (`render::logo`) or an image (`render::image`), or prints
+JSON/YAML instead.

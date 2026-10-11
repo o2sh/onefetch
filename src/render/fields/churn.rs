@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::info::fields::churn::Churn;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 impl FieldView for Churn {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
