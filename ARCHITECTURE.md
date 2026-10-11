@@ -69,15 +69,3 @@ number and date helpers in `render/format.rs`). `render::layout`
 turns an `Info` into styled lines, `render::ansi` turns those into terminal
 escape codes, and `render::Printer` places them next to the ascii art
 (`render::ascii`) or an image (`render::image`), or prints JSON/YAML instead.
-
-## Adding an info field
-
-1. Add `info/fields/<name>.rs` with the data struct (`#[derive(Serialize)]`) and
-   its constructor, and declare it in `info/fields/mod.rs`.
-2. In `info/fields/mod.rs`, add a variant to `FieldKind` and to `Field`. The
-   compiler then points at the `match` arms to fill in: `Serialize for Field`
-   and `render::fields::view`.
-3. Add a method for it to `InfoBuilder` (`info/builder.rs`) and call it in
-   `build_info` (`info/mod.rs`) at its display position.
-4. Add `render/fields/<name>.rs` implementing `FieldView` for the struct, and
-   declare it in `render/fields/mod.rs`.
