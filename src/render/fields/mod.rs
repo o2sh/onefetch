@@ -1,9 +1,9 @@
 //! How each field is shown in the terminal: its key and its value lines.
-//! One file per field, mirroring `info/fields/`.
+//! One file per field, mirroring `data/fields/`.
 
-use crate::info::Field;
+use crate::data::Field;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 mod authors;
 mod churn;

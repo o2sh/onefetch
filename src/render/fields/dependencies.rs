@@ -1,7 +1,7 @@
 use super::FieldView;
-use crate::info::fields::dependencies::Dependencies;
+use crate::data::fields::dependencies::Dependencies;
 use crate::render::RenderOptions;
-use crate::render::text::Line;
+use crate::render::style::Line;
 
 impl FieldView for Dependencies {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
@@ -22,7 +22,7 @@ impl FieldView for Dependencies {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::info::manifest::{Manifest, ManifestType};
+    use crate::data::manifest::{Manifest, ManifestType};
 
     #[test]
     fn should_display_dependencies() {

@@ -1,9 +1,9 @@
 //! Turns the parsed command line into the options of each stage: what to
 //! collect from the repository (`InfoOptions`) and how to print it
-//! (`RenderOptions`). Neither `info` nor `render` depends on `cli`.
+//! (`RenderOptions`). Neither `data` nor `render` depends on `cli`.
 
 use crate::cli::Cli;
-use crate::info::InfoOptions;
+use crate::data::InfoOptions;
 use crate::render::RenderOptions;
 
 impl From<&Cli> for InfoOptions {

@@ -1,8 +1,8 @@
-use crate::info::Info;
-use crate::info::title::Title;
+use crate::data::Info;
+use crate::data::title::Title;
 use crate::render::RenderOptions;
 use crate::render::fields::{FieldView, view};
-use crate::render::text::{Line, Span, Style};
+use crate::render::style::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
 const PALETTE: [AnsiColors; 8] = [

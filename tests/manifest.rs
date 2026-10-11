@@ -1,5 +1,5 @@
 use anyhow::Result;
-use onefetch::info::manifest::{ManifestType, get_manifests};
+use onefetch::data::manifest::{ManifestType, get_manifests};
 
 #[test]
 fn should_detect_and_parse_cargo_manifest() -> Result<()> {

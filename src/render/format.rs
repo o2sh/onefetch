@@ -1,5 +1,5 @@
 use super::RenderOptions;
-use crate::info::dates::to_rfc3339;
+use crate::data::dates::to_rfc3339;
 use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
 use std::time::SystemTime;
