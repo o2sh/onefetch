@@ -1,7 +1,10 @@
 use crate::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::{DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, FieldKind};
+use crate::info::{
+    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, DEFAULT_NUMBER_OF_LANGUAGES,
+    FieldKind,
+};
 use crate::language::{Language, LanguageType};
-use crate::render::format::{DEFAULT_NUMBER_OF_LANGUAGES, NumberSeparator};
+use crate::render::format::NumberSeparator;
 use crate::render::image::ImageProtocol;
 use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;

@@ -38,46 +38,44 @@ fn prepare_languages(
     options: &FormatOptions,
     color_palette: &[DynColors],
 ) -> Vec<LanguageDisplayData> {
-    let mut iter = languages.languages_with_percentage.iter().enumerate().map(
-        |(
-            i,
-            &LanguageWithPercentage {
-                language,
-                percentage,
+    let mut display_data: Vec<_> = languages
+        .languages_with_percentage
+        .iter()
+        .enumerate()
+        .map(
+            |(
+                i,
+                &LanguageWithPercentage {
+                    language,
+                    percentage,
+                },
+            )| {
+                let chip_color = if options.true_color {
+                    language.chip_color()
+                } else {
+                    color_palette[i % color_palette.len()]
+                };
+
+                let chip_icon = language.chip_icon(options.nerd_fonts);
+
+                LanguageDisplayData {
+                    language: language.to_string(),
+                    percentage,
+                    chip_color,
+                    chip_icon,
+                }
             },
-        )| {
-            let chip_color = if options.true_color {
-                language.chip_color()
-            } else {
-                color_palette[i % color_palette.len()]
-            };
-
-            let chip_icon = language.chip_icon(options.nerd_fonts);
-
-            LanguageDisplayData {
-                language: language.to_string(),
-                percentage,
-                chip_color,
-                chip_icon,
-            }
-        },
-    );
-    if languages.languages_with_percentage.len() > options.number_of_languages {
-        let mut languages = iter
-            .by_ref()
-            .take(options.number_of_languages)
-            .collect::<Vec<_>>();
-        let other_perc = iter.fold(0.0, |acc, x| acc + x.percentage);
-        languages.push(LanguageDisplayData {
+        )
+        .collect();
+    if !languages.other_languages.is_empty() {
+        display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
-            percentage: other_perc,
+            percentage: languages.other_languages.iter().map(|l| l.percentage).sum(),
             chip_color: DynColors::Ansi(AnsiColors::White),
             chip_icon: DEFAULT_CHIP_ICON,
         });
-        languages
-    } else {
-        iter.collect()
     }
+    display_data
 }
 
 fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
@@ -121,7 +119,7 @@ impl FieldView for Languages {
 
     fn key(&self) -> String {
         let mut title: String = "Language".into();
-        if self.languages_with_percentage.len() > 1 {
+        if self.languages_with_percentage.len() + self.other_languages.len() > 1 {
             title.push('s');
         }
         title
@@ -133,25 +131,23 @@ mod test {
     use super::*;
     use crate::language::Language;
 
-    fn languages_options(number_of_languages: usize) -> FormatOptions {
-        FormatOptions {
-            number_of_languages,
-            ..FormatOptions::default()
+    fn language(language: Language, percentage: f64) -> LanguageWithPercentage {
+        LanguageWithPercentage {
+            language,
+            percentage,
         }
     }
 
     #[test]
     fn test_display_languages() {
         let languages = Languages {
-            languages_with_percentage: vec![LanguageWithPercentage {
-                language: Language::Go,
-                percentage: 100_f64,
-            }],
+            languages_with_percentage: vec![language(Language::Go, 100_f64)],
+            other_languages: vec![],
         };
         let red = DynColors::Ansi(AnsiColors::Red);
 
         assert_eq!(
-            languages.value(&languages_options(6)),
+            languages.value(&FormatOptions::default()),
             vec![
                 Line::from(vec![Span::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),
@@ -205,22 +201,12 @@ mod test {
     fn test_prepare_languages() {
         let languages = Languages {
             languages_with_percentage: vec![
-                LanguageWithPercentage {
-                    language: Language::Go,
-                    percentage: 40_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Erlang,
-                    percentage: 30_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Java,
-                    percentage: 20_f64,
-                },
-                LanguageWithPercentage {
-                    language: Language::Rust,
-                    percentage: 10_f64,
-                },
+                language(Language::Go, 40_f64),
+                language(Language::Erlang, 30_f64),
+            ],
+            other_languages: vec![
+                language(Language::Java, 20_f64),
+                language(Language::Rust, 10_f64),
             ],
         };
 
@@ -229,7 +215,7 @@ mod test {
             DynColors::Ansi(AnsiColors::Green),
         ];
 
-        let result = prepare_languages(&languages, &languages_options(2), &color_palette);
+        let result = prepare_languages(&languages, &FormatOptions::default(), &color_palette);
 
         let expected_result = vec![
             LanguageDisplayData {
@@ -253,5 +239,14 @@ mod test {
         ];
 
         assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn test_key_counts_other_languages() {
+        let languages = Languages {
+            languages_with_percentage: vec![language(Language::Go, 60_f64)],
+            other_languages: vec![language(Language::Rust, 40_f64)],
+        };
+        assert_eq!(languages.key(), "Languages");
     }
 }

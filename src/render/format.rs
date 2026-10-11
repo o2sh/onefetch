@@ -4,10 +4,8 @@ use num_format::{CustomFormat, ToFormattedString};
 use std::time::SystemTime;
 use time_humanize::HumanTime;
 
-pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
-
 /// How fields are displayed in the terminal output: number and date formats,
-/// language chips, the color palette, and how many languages to list. Fields
+/// language chips, and the color palette. Fields
 /// keep raw values and use this to display them.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct FormatOptions {
@@ -16,7 +14,6 @@ pub struct FormatOptions {
     pub true_color: bool,
     pub nerd_fonts: bool,
     pub no_color_palette: bool,
-    pub number_of_languages: usize,
 }
 
 /// The CLI defaults, except that true colors are off since `--true-color auto`
@@ -29,7 +26,6 @@ impl Default for FormatOptions {
             true_color: false,
             nerd_fonts: false,
             no_color_palette: false,
-            number_of_languages: DEFAULT_NUMBER_OF_LANGUAGES,
         }
     }
 }
@@ -103,7 +99,6 @@ mod tests {
         true_color: false,
         nerd_fonts: false,
         no_color_palette: false,
-        number_of_languages: 0,
     };
 
     const ISO_TIME: FormatOptions = FormatOptions {

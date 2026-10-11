@@ -126,11 +126,15 @@ impl InfoBuilder {
         self
     }
 
-    pub fn languages(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
+    pub fn languages(
+        mut self,
+        loc_by_language_opt: Option<&Vec<(Language, usize)>>,
+        number_of_languages: usize,
+    ) -> Self {
         if !self.disabled_fields.contains(&FieldKind::Languages)
             && let Some(loc_by_language) = loc_by_language_opt
         {
-            let languages = Languages::new(loc_by_language);
+            let languages = Languages::new(loc_by_language, number_of_languages);
             self.info_fields.push(Field::Languages(languages));
         }
         self

@@ -29,6 +29,7 @@ pub struct Info {
 }
 
 pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
+pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
 pub const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
 
 /// What to collect from the repository and which fields to show.
@@ -38,6 +39,7 @@ pub struct InfoOptions {
     pub disabled_fields: Vec<FieldKind>,
     pub no_title: bool,
     pub number_of_authors: usize,
+    pub number_of_languages: usize,
     pub number_of_file_churns: usize,
     pub churn_pool_size: Option<usize>,
     pub exclude: Vec<String>,
@@ -96,7 +98,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .pending(&repo)?
         .version(&repo, manifest.as_ref())?
         .created(&git_metrics)
-        .languages(loc_by_language.as_ref())
+        .languages(loc_by_language.as_ref(), options.number_of_languages)
         .dependencies(manifest.as_ref())
         .authors(&git_metrics, options.number_of_authors, options.email)
         .last_change(&git_metrics)

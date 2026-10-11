@@ -14,6 +14,7 @@ impl From<&Cli> for InfoOptions {
             disabled_fields: cli.info.disabled_fields.clone(),
             no_title: cli.info.no_title,
             number_of_authors: cli.info.number_of_authors,
+            number_of_languages: cli.info.number_of_languages,
             number_of_file_churns: cli.info.number_of_file_churns,
             churn_pool_size: cli.info.churn_pool_size,
             exclude: cli.info.exclude.clone(),
@@ -36,7 +37,6 @@ impl From<&Cli> for FormatOptions {
             true_color: cli.true_color(),
             nerd_fonts: cli.visuals.nerd_fonts,
             no_color_palette: cli.visuals.no_color_palette,
-            number_of_languages: cli.info.number_of_languages,
         }
     }
 }
