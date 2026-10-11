@@ -3,4 +3,4 @@ pub mod cli;
 pub mod git;
 pub mod info;
 pub mod language;
-pub mod ui;
+pub mod render;

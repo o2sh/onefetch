@@ -2,9 +2,9 @@ use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{Cli, InfoArgs};
 use onefetch::git::get_work_dir;
-use onefetch::info::display_options::DisplayOptions;
 use onefetch::info::{InfoOptions, build_info};
-use onefetch::ui::layout::info_lines;
+use onefetch::render::format::DisplayOptions;
+use onefetch::render::layout::info_lines;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)

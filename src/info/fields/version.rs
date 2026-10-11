@@ -1,9 +1,9 @@
-use crate::info::display_options::DisplayOptions;
 use crate::info::fields::InfoField;
-use crate::info::text::Line;
+use crate::info::manifest::Manifest;
+use crate::render::format::DisplayOptions;
+use crate::render::text::Line;
 use anyhow::Result;
 use gix::Repository;
-use onefetch_manifest::Manifest;
 use serde::Serialize;
 
 #[derive(Serialize)]

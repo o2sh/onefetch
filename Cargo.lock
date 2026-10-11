@@ -2443,9 +2443,12 @@ version = "3.0.0"
 dependencies = [
  "anyhow",
  "askalono",
+ "base64",
  "byte-unit",
+ "cargo_toml",
  "clap",
  "clap_complete",
+ "color_quant",
  "criterion",
  "enable-ansi-support",
  "gix",
@@ -2456,12 +2459,10 @@ dependencies = [
  "insta",
  "lazy_static",
  "num-format",
- "onefetch-ascii",
- "onefetch-image",
- "onefetch-manifest",
  "owo-colors",
  "regex",
  "rstest",
+ "rustix",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -2470,40 +2471,9 @@ dependencies = [
  "time",
  "time-humanize",
  "tokei",
+ "toml 1.1.6+spec-1.1.0",
  "typetag",
  "winres",
-]
-
-[[package]]
-name = "onefetch-ascii"
-version = "3.0.0"
-dependencies = [
- "owo-colors",
-]
-
-[[package]]
-name = "onefetch-image"
-version = "3.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "clap",
- "color_quant",
- "image",
- "rustix",
-]
-
-[[package]]
-name = "onefetch-manifest"
-version = "3.0.0"
-dependencies = [
- "anyhow",
- "cargo_toml",
- "rstest",
- "serde",
- "serde_json",
- "strum",
- "toml 1.1.6+spec-1.1.0",
 ]
 
 [[package]]

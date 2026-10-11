@@ -1,7 +1,7 @@
-use crate::info::display_options::DisplayOptions;
 use crate::info::fields::InfoField;
-use crate::info::text::{Line, Span, Style};
 use crate::language::{DEFAULT_CHIP_ICON, Language};
+use crate::render::format::DisplayOptions;
+use crate::render::text::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 use serde::Serialize;
 

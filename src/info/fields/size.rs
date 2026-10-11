@@ -1,6 +1,6 @@
-use crate::info::display_options::DisplayOptions;
 use crate::info::fields::InfoField;
-use crate::info::text::Line;
+use crate::render::format::DisplayOptions;
+use crate::render::text::Line;
 use byte_unit::{Byte, UnitType};
 use gix::Repository;
 use serde::Serialize;

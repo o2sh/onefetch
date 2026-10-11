@@ -1,4 +1,4 @@
-use super::{Language, LanguageType};
+use crate::language::{Language, LanguageType};
 use std::cmp;
 use std::collections::HashMap;
 use std::path::Path;

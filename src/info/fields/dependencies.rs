@@ -1,7 +1,7 @@
-use crate::info::display_options::DisplayOptions;
 use crate::info::fields::InfoField;
-use crate::info::text::Line;
-use onefetch_manifest::Manifest;
+use crate::info::manifest::Manifest;
+use crate::render::format::DisplayOptions;
+use crate::render::text::Line;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -40,7 +40,7 @@ impl InfoField for DependenciesInfo {
 #[cfg(test)]
 mod test {
     use super::*;
-    use onefetch_manifest::ManifestType;
+    use crate::info::manifest::ManifestType;
 
     #[test]
     fn should_display_dependencies() {

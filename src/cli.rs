@@ -1,17 +1,17 @@
 use crate::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::info::display_options::{
-    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_LANGUAGES, DisplayOptions, NumberSeparator,
-};
 use crate::info::{InfoKind, InfoOptions};
 use crate::language::{Language, LanguageType};
-use crate::ui::printer::SerializationFormat;
+use crate::render::SerializationFormat;
+use crate::render::format::{
+    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_LANGUAGES, DisplayOptions, NumberSeparator,
+};
+use crate::render::image::ImageProtocol;
 use clap::builder::PossibleValuesParser;
 use clap::builder::Styles;
 use clap::builder::TypedValueParser as _;
 use clap::builder::styling::AnsiColor;
 use clap::{Args, Parser, ValueHint, value_parser};
 use clap_complete::Shell;
-use onefetch_image::ImageProtocol;
 use std::env;
 use std::path::PathBuf;
 

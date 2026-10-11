@@ -1,7 +1,7 @@
-use crate::info::display_options::DisplayOptions;
 use crate::info::fields::InfoField;
-use crate::info::text::Line;
-use onefetch_manifest::Manifest;
+use crate::info::manifest::Manifest;
+use crate::render::format::DisplayOptions;
+use crate::render::text::Line;
 use serde::Serialize;
 
 const NUMBER_OF_WORDS_PER_LINE: usize = 5;
@@ -50,7 +50,7 @@ fn break_sentence_into_lines(sentence: &str) -> Vec<String> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use onefetch_manifest::ManifestType;
+    use crate::info::manifest::ManifestType;
     use rstest::rstest;
 
     #[test]

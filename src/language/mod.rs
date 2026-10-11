@@ -1,8 +1,6 @@
 use serde::Serialize;
 use tokei;
 
-pub(crate) mod stats;
-
 include!(concat!(env!("OUT_DIR"), "/language.rs"));
 
 #[cfg(test)]

@@ -4,17 +4,17 @@ use self::fields::url::get_repo_url;
 use self::title::Title;
 use crate::git::bots::BotRegex;
 use crate::git::{get_work_dir, traverse_commit_graph, uses_reftables};
-use crate::language::{Language, LanguageType, stats};
+use crate::info::manifest::Manifest;
+use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
-use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::path::{Path, PathBuf};
 
 mod builder;
-mod dates;
-pub mod display_options;
+pub(crate) mod dates;
 pub(crate) mod fields;
-pub mod text;
+pub(crate) mod loc;
+pub mod manifest;
 pub(crate) mod title;
 
 pub use fields::InfoKind;
@@ -61,7 +61,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         let include_hidden = options.include_hidden;
         let workdir = repo_path.clone();
         move || {
-            stats::get_loc_by_language_sorted(
+            loc::get_loc_by_language_sorted(
                 &workdir,
                 &globs_to_exclude,
                 &language_types,
@@ -83,9 +83,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .join()
         .ok()
         .context("BUG: panic in language statistics thread")?;
-    let dominant_language = loc_by_language
-        .as_ref()
-        .map(|v| stats::get_main_language(v));
+    let dominant_language = loc_by_language.as_ref().map(|v| loc::get_main_language(v));
 
     Ok(InfoBuilder::new(options)
         .title(&repo)
@@ -114,7 +112,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
 }
 
 fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
-    let manifests = onefetch_manifest::get_manifests(repo_path)?;
+    let manifests = crate::info::manifest::get_manifests(repo_path)?;
 
     if manifests.is_empty() {
         Ok(None)

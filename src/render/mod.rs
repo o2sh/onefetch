@@ -1,16 +1,22 @@
 use crate::cli::Cli;
 use crate::info::Info;
-use crate::info::display_options::DisplayOptions;
 use crate::language::Language;
-use crate::ui::ansi;
-use crate::ui::colors::{TextColors, get_ascii_colors};
-use crate::ui::layout;
+use crate::render::ascii::AsciiArt;
+use crate::render::colors::{TextColors, get_ascii_colors};
+use crate::render::format::DisplayOptions;
+use crate::render::image::ImageBackend;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
-use onefetch_ascii::AsciiArt;
-use onefetch_image::ImageBackend;
 use owo_colors::{AnsiColors, DynColors};
 use std::fmt::Write as _;
+
+mod ansi;
+pub mod ascii;
+mod colors;
+pub mod format;
+pub mod image;
+pub mod layout;
+pub mod text;
 
 const CENTER_PAD_LENGTH: usize = 3;
 
@@ -57,8 +63,8 @@ impl Printer {
             cli.image
                 .image_protocol
                 .clone()
-                .map_or_else(onefetch_image::get_best_backend, |s| {
-                    Ok(onefetch_image::get_image_backend(s))
+                .map_or_else(crate::render::image::get_best_backend, |s| {
+                    Ok(crate::render::image::get_image_backend(s))
                 })?
         } else {
             None

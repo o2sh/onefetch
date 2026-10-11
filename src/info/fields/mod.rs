@@ -1,5 +1,5 @@
-use crate::info::display_options::DisplayOptions;
-use crate::info::text::Line;
+use crate::render::format::DisplayOptions;
+use crate::render::text::Line;
 
 pub mod authors;
 pub mod churn;

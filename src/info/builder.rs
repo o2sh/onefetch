@@ -20,10 +20,10 @@ use super::fields::version::VersionInfo;
 use super::title::Title;
 use super::{Info, InfoOptions};
 use crate::git::metrics::GitMetrics;
+use crate::info::manifest::Manifest;
 use crate::language::Language;
 use anyhow::Result;
 use gix::Repository;
-use onefetch_manifest::Manifest;
 use std::path::Path;
 
 pub struct InfoBuilder {

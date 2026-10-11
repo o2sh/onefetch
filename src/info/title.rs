@@ -1,5 +1,5 @@
 use crate::git::{get_git_username, get_git_version};
-use crate::info::text::{Line, Span, Style};
+use crate::render::text::{Line, Span, Style};
 use gix::Repository;
 use serde::Serialize;
 

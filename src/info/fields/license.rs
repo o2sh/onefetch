@@ -1,9 +1,9 @@
-use crate::info::display_options::DisplayOptions;
 use crate::info::fields::InfoField;
-use crate::info::text::Line;
+use crate::info::manifest::Manifest;
+use crate::render::format::DisplayOptions;
+use crate::render::text::Line;
 use anyhow::{Result, bail};
 use askalono::{Store, TextData};
-use onefetch_manifest::Manifest;
 use serde::Serialize;
 use std::path::Path;
 use std::{ffi::OsStr, fs};
@@ -101,7 +101,7 @@ impl InfoField for LicenseInfo {
 #[cfg(test)]
 mod test {
     use super::*;
-    use onefetch_manifest::ManifestType;
+    use crate::info::manifest::ManifestType;
 
     #[test]
     fn test_get_license() -> Result<()> {
