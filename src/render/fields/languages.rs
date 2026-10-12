@@ -2,22 +2,12 @@ use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
-use crate::render::style::{Line, Span, Style};
+use crate::render::style::{COLOR_PALETTE, Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
 
 const LANGUAGES_PER_LINE: usize = 2;
-
-/// Chip colors used when the terminal doesn't support true colors.
-const COLOR_PALETTE: [DynColors; 6] = [
-    DynColors::Ansi(AnsiColors::Red),
-    DynColors::Ansi(AnsiColors::Green),
-    DynColors::Ansi(AnsiColors::Yellow),
-    DynColors::Ansi(AnsiColors::Blue),
-    DynColors::Ansi(AnsiColors::Magenta),
-    DynColors::Ansi(AnsiColors::Cyan),
-];
 
 #[derive(Debug, PartialEq)]
 struct LanguageDisplayData {
@@ -122,7 +112,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 
 impl FieldView for Languages {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
-        let languages = prepare_languages(self, options, &COLOR_PALETTE);
+        let languages = prepare_languages(self, options, &COLOR_PALETTE[1..7]);
 
         let mut lines = vec![build_language_bar(&languages)];
         lines.extend(languages.chunks(LANGUAGES_PER_LINE).map(build_legend_line));

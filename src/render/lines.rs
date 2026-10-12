@@ -2,19 +2,7 @@ use crate::data::Info;
 use crate::data::title::Title;
 use crate::render::RenderOptions;
 use crate::render::fields::{FieldView, view};
-use crate::render::style::{Line, Span, Style};
-use owo_colors::{AnsiColors, DynColors};
-
-const PALETTE: [AnsiColors; 8] = [
-    AnsiColors::Black,
-    AnsiColors::Red,
-    AnsiColors::Green,
-    AnsiColors::Yellow,
-    AnsiColors::Blue,
-    AnsiColors::Magenta,
-    AnsiColors::Cyan,
-    AnsiColors::White,
-];
+use crate::render::style::{COLOR_PALETTE, Line, Span, Style};
 
 pub fn info_lines(info: &Info, options: &RenderOptions) -> Vec<Line> {
     let mut lines = Vec::new();
@@ -85,9 +73,9 @@ fn field_lines(field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
 }
 
 fn palette_line() -> Line {
-    PALETTE
+    COLOR_PALETTE
         .into_iter()
-        .map(|color| Span::new("   ", Style::Background(DynColors::Ansi(color))))
+        .map(|color| Span::new("   ", Style::Background(color)))
         .collect::<Vec<_>>()
         .into()
 }

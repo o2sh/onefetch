@@ -1,5 +1,17 @@
 use crate::render::colors::TextColors;
-use owo_colors::{DynColors, OwoColorize, Style as AnsiStyle};
+use owo_colors::{AnsiColors, DynColors, OwoColorize, Style as AnsiStyle};
+
+/// The 8 standard terminal colors.
+pub const COLOR_PALETTE: [DynColors; 8] = [
+    DynColors::Ansi(AnsiColors::Black),
+    DynColors::Ansi(AnsiColors::Red),
+    DynColors::Ansi(AnsiColors::Green),
+    DynColors::Ansi(AnsiColors::Yellow),
+    DynColors::Ansi(AnsiColors::Blue),
+    DynColors::Ansi(AnsiColors::Magenta),
+    DynColors::Ansi(AnsiColors::Cyan),
+    DynColors::Ansi(AnsiColors::White),
+];
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Style {
@@ -112,7 +124,6 @@ fn sanitize(text: &str) -> String {
 #[cfg(test)]
 mod test {
     use super::*;
-    use owo_colors::AnsiColors;
 
     fn render_with_white(lines: &[Line], no_bold: bool) -> String {
         let text_colors = TextColors::new(&[], DynColors::Rgb(0xFF, 0xFF, 0xFF));
