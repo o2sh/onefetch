@@ -2,9 +2,10 @@
 //! collect from the repository (`InfoOptions`) and how to print it
 //! (`RenderOptions`). Neither `data` nor `render` depends on `cli`.
 
-use crate::cli::Cli;
+use crate::cli::{Cli, When};
 use crate::data::InfoOptions;
 use crate::render::RenderOptions;
+use std::env;
 
 impl From<&Cli> for InfoOptions {
     fn from(cli: &Cli) -> Self {
@@ -43,17 +44,30 @@ impl From<&Cli> for RenderOptions {
             no_bold: cli.text_formatting.no_bold,
             number_separator: cli.text_formatting.number_separator,
             iso_time: cli.text_formatting.iso_time,
-            true_color: cli.true_color(),
+            true_color: true_color(&cli.ascii.true_color),
             nerd_fonts: cli.visuals.nerd_fonts,
             no_color_palette: cli.visuals.no_color_palette,
         }
     }
 }
 
+fn true_color(when: &When) -> bool {
+    match when {
+        When::Always => true,
+        When::Never => false,
+        When::Auto => is_truecolor_terminal(),
+    }
+}
+
+fn is_truecolor_terminal() -> bool {
+    env::var("COLORTERM")
+        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
+        .unwrap_or(false)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cli::When;
 
     #[test]
     fn default_render_options_match_cli_defaults() {

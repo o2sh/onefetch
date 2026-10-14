@@ -7,8 +7,10 @@ pub mod bots;
 mod churn;
 pub(crate) mod identity;
 pub(crate) mod metrics;
+mod remote;
 mod traversal;
 
+pub(crate) use remote::get_repo_url;
 pub(crate) use traversal::traverse_commit_graph;
 
 pub(crate) fn uses_reftables(repo: &Repository) -> bool {
@@ -22,20 +24,4 @@ pub fn get_work_dir(repo: &Repository) -> Result<PathBuf> {
         .workdir()
         .context("please run onefetch inside of a non-bare git repository")?
         .to_owned())
-}
-
-pub(crate) fn get_git_username(repo: &Repository) -> String {
-    repo.committer()
-        .and_then(Result::ok)
-        .map(|c| c.name.to_string())
-        .unwrap_or_default()
-}
-
-pub(crate) fn get_git_version() -> String {
-    let version = std::process::Command::new("git").arg("--version").output();
-
-    match version {
-        Ok(v) => String::from_utf8_lossy(&v.stdout).replace('\n', ""),
-        Err(_) => String::new(),
-    }
 }
