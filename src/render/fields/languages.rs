@@ -2,7 +2,8 @@ use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
-use crate::render::style::{COLOR_PALETTE, Line, Span, Style};
+use crate::render::colors::COLOR_PALETTE;
+use crate::render::style::{Line, Span, Style};
 use owo_colors::{AnsiColors, DynColors};
 
 const LANGUAGES_BAR_LENGTH: usize = 26;

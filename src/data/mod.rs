@@ -1,13 +1,12 @@
 use self::builder::InfoBuilder;
-use self::fields::url::get_repo_url;
 use self::git::bots::BotRegex;
-use self::git::{get_work_dir, traverse_commit_graph, uses_reftables};
-use self::manifest::Manifest;
+use self::git::{get_repo_url, get_work_dir, traverse_commit_graph, uses_reftables};
+use self::manifest::get_manifest;
 use self::title::Title;
 use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
 use serde::Serialize;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 mod builder;
 pub(crate) mod dates;
@@ -115,14 +114,4 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .size(&repo)
         .license(&repo_path, manifest.as_ref())?
         .build(dominant_language))
-}
-
-fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
-    let manifests = manifest::get_manifests(repo_path)?;
-
-    if manifests.is_empty() {
-        Ok(None)
-    } else {
-        Ok(manifests.first().cloned())
-    }
 }

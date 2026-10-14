@@ -11,7 +11,6 @@ use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};
 use clap_complete::Shell;
-use std::env;
 use std::path::PathBuf;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
@@ -302,22 +301,6 @@ impl Default for ImageArgs {
             image: Option::default(),
             image_protocol: Option::default(),
             color_resolution: DEFAULT_COLOR_RESOLUTION,
-        }
-    }
-}
-
-fn is_truecolor_terminal() -> bool {
-    env::var("COLORTERM")
-        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
-        .unwrap_or(false)
-}
-
-impl Cli {
-    pub fn true_color(&self) -> bool {
-        match self.ascii.true_color {
-            When::Always => true,
-            When::Never => false,
-            When::Auto => is_truecolor_terminal(),
         }
     }
 }

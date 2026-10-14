@@ -44,6 +44,16 @@ pub fn get_manifests<P: AsRef<Path>>(path: P) -> Result<Vec<Manifest>> {
     Ok(manifests)
 }
 
+pub(crate) fn get_manifest(repo_path: &Path) -> Result<Option<Manifest>> {
+    let manifests = get_manifests(repo_path)?;
+
+    if manifests.is_empty() {
+        Ok(None)
+    } else {
+        Ok(manifests.first().cloned())
+    }
+}
+
 fn parse_cargo_manifest(path: &Path) -> Result<Manifest> {
     let m = cargo_toml::Manifest::from_path(path)
         .with_context(|| format!("Failed to parse Cargo.toml at '{}'", path.display()))?;

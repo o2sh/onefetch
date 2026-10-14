@@ -1,6 +1,18 @@
 use crate::language::Language;
 use owo_colors::{AnsiColors, DynColors};
 
+/// The 8 standard terminal colors.
+pub const COLOR_PALETTE: [DynColors; 8] = [
+    DynColors::Ansi(AnsiColors::Black),
+    DynColors::Ansi(AnsiColors::Red),
+    DynColors::Ansi(AnsiColors::Green),
+    DynColors::Ansi(AnsiColors::Yellow),
+    DynColors::Ansi(AnsiColors::Blue),
+    DynColors::Ansi(AnsiColors::Magenta),
+    DynColors::Ansi(AnsiColors::Cyan),
+    DynColors::Ansi(AnsiColors::White),
+];
+
 pub fn get_ascii_colors(
     language_opt: Option<&Language>,
     override_language_opt: Option<&Language>,
