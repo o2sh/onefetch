@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::data::fields::authors::Authors;
 use crate::render::RenderOptions;
-use crate::render::style::Line;
+use crate::render::text::Line;
 
 impl FieldView for Authors {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {

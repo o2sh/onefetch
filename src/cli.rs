@@ -5,7 +5,7 @@ use crate::data::{
 };
 use crate::language::{Language, LanguageType};
 use crate::render::format::NumberSeparator;
-use crate::render::image::ImageProtocol;
+use crate::render::terminal::image::ImageProtocol;
 use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};

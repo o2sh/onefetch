@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::data::fields::size::Size;
 use crate::render::RenderOptions;
-use crate::render::style::Line;
+use crate::render::text::Line;
 use byte_unit::{Byte, UnitType};
 
 impl FieldView for Size {

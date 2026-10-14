@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::data::fields::version::Version;
 use crate::render::RenderOptions;
-use crate::render::style::Line;
+use crate::render::text::Line;
 
 impl FieldView for Version {
     fn value(&self, _options: &RenderOptions) -> Vec<Line> {

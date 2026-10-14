@@ -5,7 +5,7 @@
 use crate::cli::{Cli, When};
 use crate::data::InfoOptions;
 use crate::render::RenderOptions;
-use std::env;
+use crate::render::terminal;
 
 impl From<&Cli> for InfoOptions {
     fn from(cli: &Cli) -> Self {
@@ -55,14 +55,8 @@ fn true_color(when: &When) -> bool {
     match when {
         When::Always => true,
         When::Never => false,
-        When::Auto => is_truecolor_terminal(),
+        When::Auto => terminal::supports_true_color(),
     }
-}
-
-fn is_truecolor_terminal() -> bool {
-    env::var("COLORTERM")
-        .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
-        .unwrap_or(false)
 }
 
 #[cfg(test)]

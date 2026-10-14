@@ -1,16 +1,16 @@
 use self::format::NumberSeparator;
-use self::image::ImageProtocol;
+use self::terminal::image::ImageProtocol;
 use crate::language::Language;
 use std::path::PathBuf;
 
-mod colors;
 mod fields;
 pub mod format;
-pub mod image;
 pub mod lines;
 pub mod logo;
 mod printer;
-pub mod style;
+pub mod terminal;
+pub mod text;
+mod theme;
 
 pub use printer::Printer;
 

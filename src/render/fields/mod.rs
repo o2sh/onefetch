@@ -3,7 +3,7 @@
 
 use crate::data::Field;
 use crate::render::RenderOptions;
-use crate::render::style::Line;
+use crate::render::text::Line;
 
 mod authors;
 mod churn;

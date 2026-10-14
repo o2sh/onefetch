@@ -1,9 +1,11 @@
 //! The ascii logo.
 //!
-//! Renders an ascii template, colored with `{0}`..`{n}` tokens, to the terminal.
+//! Turns an ascii template, colored with `{0}`..`{n}` tokens, into styled
+//! text: each part is a `Span` styled `Style::Logo` with its color.
 //!
 //! ```rust,no_run
 //! use onefetch::render::logo::AsciiArt;
+//! use onefetch::render::text::Line;
 //! use owo_colors::{DynColors, AnsiColors};
 //!
 //! const ASCII: &str = r#"
@@ -35,27 +37,25 @@
 //!     DynColors::Ansi(AnsiColors::BrightBlue)
 //! ];
 //!
-//! let art = AsciiArt::new(ASCII, colors.as_slice(), true);
-//!
-//! for line in art {
-//!     println!("{line}")
-//! }
+//! let art = AsciiArt::new(ASCII, colors.as_slice());
+//! let lines: Vec<Line> = art.collect();
 //! ```
 //!
 
-use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
-use std::fmt::Write;
+use super::text::{Line, Span, Style};
+use owo_colors::{AnsiColors, DynColors};
+
+const DEFAULT_COLOR: DynColors = DynColors::Ansi(AnsiColors::Default);
 
 /// Renders an ascii template with the given colors truncated to the correct width.
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
     colors: &'a [DynColors],
-    bold: bool,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str, colors: &'a [DynColors], bold: bool) -> AsciiArt<'a> {
+    pub fn new(input: &'a str, colors: &'a [DynColors]) -> AsciiArt<'a> {
         let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
@@ -70,7 +70,6 @@ impl<'a> AsciiArt<'a> {
         AsciiArt {
             content: Box::new(lines.into_iter()),
             colors,
-            bold,
             start,
             end,
         }
@@ -98,11 +97,11 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
 /// Produces a series of lines which have been automatically truncated to the
 /// correct width
 impl Iterator for AsciiArt<'_> {
-    type Item = String;
-    fn next(&mut self) -> Option<String> {
+    type Item = Line;
+    fn next(&mut self) -> Option<Line> {
         self.content
             .next()
-            .map(|line| Tokens(line).render(self.colors, self.start, self.end, self.bold))
+            .map(|line| Tokens(line).render(self.colors, self.start, self.end))
     }
 }
 
@@ -198,12 +197,12 @@ impl<'a> Tokens<'a> {
         })
     }
     /// render a truncated line of tokens.
-    fn render(self, colors: &[DynColors], start: usize, end: usize, bold: bool) -> String {
+    fn render(self, colors: &[DynColors], start: usize, end: usize) -> Line {
         assert!(start <= end);
         let mut width = end - start;
         let mut colored_segment = String::new();
-        let mut whole_string = String::new();
-        let mut color = &DynColors::Ansi(AnsiColors::Default);
+        let mut spans = Vec::new();
+        let mut color = DEFAULT_COLOR;
 
         self.truncate(start, end).for_each(|token| match token {
             Token::Char(chr) => {
@@ -211,11 +210,11 @@ impl<'a> Tokens<'a> {
                 colored_segment.push(chr);
             }
             Token::Color(col) => {
-                add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
-                colored_segment = String::new();
-                color = colors
-                    .get(col as usize)
-                    .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
+                spans.push(Span::new(
+                    std::mem::take(&mut colored_segment),
+                    Style::Logo(color),
+                ));
+                color = colors.get(col as usize).copied().unwrap_or(DEFAULT_COLOR);
             }
             Token::Space => {
                 width = width.saturating_sub(1);
@@ -223,9 +222,11 @@ impl<'a> Tokens<'a> {
             }
         });
 
-        add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
-        (0..width).for_each(|_| whole_string.push(' '));
-        whole_string
+        spans.push(Span::new(colored_segment, Style::Logo(color)));
+        if width > 0 {
+            spans.push(Span::plain(" ".repeat(width)));
+        }
+        Line::from(spans)
     }
 }
 
@@ -235,15 +236,6 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     |input| {
         if predicate(input) { Some(()) } else { None }
     }
-}
-
-fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: bool) {
-    let mut style = Style::new().color(color);
-    if bold {
-        style = style.bold();
-    }
-    let formatted_segment = segment.style(style);
-    let _ = write!(base, "{formatted_segment}");
 }
 
 // Basic combinators
@@ -315,64 +307,80 @@ mod test {
         assert_eq!(Tokens("  {1} {5}  {9} a").leading_spaces(), 6);
     }
 
+    fn logo(text: &str) -> Span {
+        Span::new(text, Style::Logo(DEFAULT_COLOR))
+    }
+
     #[test]
     fn render() {
         let colors_shim = Vec::new();
 
         assert_eq!(
-            Tokens("").render(&colors_shim, 0, 0, true),
-            "\u{1b}[39;1m\u{1b}[0m"
+            Tokens("").render(&colors_shim, 0, 0),
+            Line::from(vec![logo("")])
         );
 
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, true),
-            "\u{1b}[39;1m\u{1b}[0m"
+            Tokens("     ").render(&colors_shim, 0, 0),
+            Line::from(vec![logo("")])
         );
 
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, true),
-            "\u{1b}[39;1m     \u{1b}[0m"
+            Tokens("     ").render(&colors_shim, 0, 5),
+            Line::from(vec![logo("     ")])
         );
 
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 1, 5, true),
-            "\u{1b}[39;1m    \u{1b}[0m"
+            Tokens("     ").render(&colors_shim, 1, 5),
+            Line::from(vec![logo("    ")])
         );
 
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 3, 5, true),
-            "\u{1b}[39;1m  \u{1b}[0m"
+            Tokens("     ").render(&colors_shim, 3, 5),
+            Line::from(vec![logo("  ")])
         );
 
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 4, true),
-            "\u{1b}[39;1m    \u{1b}[0m"
+            Tokens("     ").render(&colors_shim, 0, 4),
+            Line::from(vec![logo("    ")])
         );
 
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 3, true),
-            "\u{1b}[39;1m   \u{1b}[0m"
+            Tokens("     ").render(&colors_shim, 0, 3),
+            Line::from(vec![logo("   ")])
         );
 
         // https://github.com/o2sh/onefetch/issues/935
         assert_eq!(
-            Tokens("███").render(Vec::new().as_slice(), 0, 3, true),
-            "\u{1b}[39;1m███\u{1b}[0m"
+            Tokens("███").render(Vec::new().as_slice(), 0, 3),
+            Line::from(vec![logo("███")])
         );
 
         assert_eq!(
-            Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
-            "\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m \u{1b}[0m\u{1b}[39;1m a\u{1b}[0m   "
+            Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10),
+            Line::from(vec![
+                logo(""),
+                logo(""),
+                logo(" "),
+                logo(" a"),
+                Span::plain("   ")
+            ])
         );
+    }
 
-        // Tests for bold disabled
+    #[test]
+    fn render_with_colors() {
+        let red = DynColors::Ansi(AnsiColors::Red);
+        let blue = DynColors::Ansi(AnsiColors::Blue);
+
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, false),
-            "\u{1b}[39m\u{1b}[0m"
-        );
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, false),
-            "\u{1b}[39m     \u{1b}[0m"
+            Tokens("{0}ab{1}cd{7}ef").render(&[red, blue], 0, 6),
+            Line::from(vec![
+                logo(""),
+                Span::new("ab", Style::Logo(red)),
+                Span::new("cd", Style::Logo(blue)),
+                logo("ef"),
+            ])
         );
     }
 

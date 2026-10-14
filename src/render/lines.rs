@@ -1,9 +1,9 @@
 use crate::data::Info;
 use crate::data::title::Title;
 use crate::render::RenderOptions;
-use crate::render::colors::COLOR_PALETTE;
 use crate::render::fields::{FieldView, view};
-use crate::render::style::{Line, Span, Style};
+use crate::render::text::{Line, Span, Style};
+use crate::render::theme::COLOR_PALETTE;
 
 pub fn info_lines(info: &Info, options: &RenderOptions) -> Vec<Line> {
     let mut lines = Vec::new();

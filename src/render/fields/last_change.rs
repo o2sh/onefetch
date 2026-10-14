@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::data::fields::last_change::LastChange;
 use crate::render::RenderOptions;
-use crate::render::style::Line;
+use crate::render::text::Line;
 
 impl FieldView for LastChange {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
