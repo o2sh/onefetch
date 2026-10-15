@@ -242,7 +242,7 @@ impl std::fmt::Debug for PrinterKind {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::render::style::{Chip, Style};
+    use crate::render::style::{LanguageColor, Style};
 
     #[test]
     fn test_create_json_printer() {
@@ -319,7 +319,7 @@ mod tests {
     fn test_ascii_beside_info() {
         let ascii = AsciiArt::new("{0}ab\n{0}cd\n{0}ef");
         let info = vec![Line::from("one"), Line::from("two")];
-        let art = |text| Segment::new(text, Style::Ascii(Some(0)));
+        let art = |text| Segment::new(text, Style::AsciiLogo(Some(0)));
         let pad = || Segment::plain("   ");
 
         assert_eq!(
@@ -385,13 +385,13 @@ mod tests {
     #[test]
     fn test_paint_chips_and_palette() {
         // Without true colors, the first chip is red, like palette color 1.
-        let go = Chip {
+        let go = LanguageColor {
             language: Some(Language::Go),
             rank: 0,
         };
         let line = Line::from(vec![
-            Segment::new("  ", Style::ChipBar(go)),
-            Segment::new("●", Style::Chip(go)),
+            Segment::new("  ", Style::LanguageBar(go)),
+            Segment::new("●", Style::LanguageChip(go)),
             Segment::new("   ", Style::Palette(1)),
         ]);
         assert_eq!(
@@ -402,7 +402,7 @@ mod tests {
 
     #[test]
     fn test_paint_ascii() {
-        let line = Line::from(vec![Segment::new("██", Style::Ascii(Some(0)))]);
+        let line = Line::from(vec![Segment::new("██", Style::AsciiLogo(Some(0)))]);
         assert_eq!(
             paint_with_white(&[line], false),
             "\u{1b}[37;1m██\u{1b}[0m\n"

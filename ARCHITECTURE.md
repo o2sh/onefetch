@@ -80,9 +80,10 @@ render/
 
 `Style` names everything that can be colored, as the command line names it:
 the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
-`Separator`, `Value`), the `{n}` parts of the ascii art (`Ascii(n)`, for
-`--ascii-colors`), the language chips and the languages bar (`Chip`,
-`ChipBar`), and the palette row (`Palette(n)`). It holds no colors.
+`Separator`, `Value`), the `{n}` parts of the ascii art (`AsciiLogo(n)`, for
+`--ascii-colors`), the language chips and the languages bar
+(`LanguageChip`, `LanguageBar`), and the palette row (`Palette(n)`). It holds
+no colors.
 
 - Only `colors.rs` decides how each `Style` looks: its color, from the
   language, `--ascii-language`, `--ascii-colors`, `--text-colors` and

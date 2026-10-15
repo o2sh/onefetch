@@ -2,7 +2,7 @@ use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
-use crate::render::style::{Chip, Line, Segment, Style};
+use crate::render::style::{LanguageColor, Line, Segment, Style};
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
 
@@ -12,7 +12,7 @@ const LANGUAGES_PER_LINE: usize = 2;
 struct LanguageDisplayData {
     language: String,
     percentage: f64,
-    chip: Chip,
+    chip: LanguageColor,
     chip_icon: char,
 }
 
@@ -37,7 +37,7 @@ fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<Lang
             )| LanguageDisplayData {
                 language: language.to_string(),
                 percentage,
-                chip: Chip {
+                chip: LanguageColor {
                     language: Some(language),
                     rank,
                 },
@@ -49,7 +49,7 @@ fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<Lang
         display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
             percentage,
-            chip: Chip {
+            chip: LanguageColor {
                 language: None,
                 rank: display_data.len(),
             },
@@ -76,7 +76,7 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
         .iter()
         .map(|language| {
             let width = (language.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize;
-            Segment::new(" ".repeat(width.max(1)), Style::ChipBar(language.chip))
+            Segment::new(" ".repeat(width.max(1)), Style::LanguageBar(language.chip))
         })
         .collect::<Vec<_>>()
         .into()
@@ -88,7 +88,10 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
         if !segments.is_empty() {
             segments.push(Segment::plain(" "));
         }
-        segments.push(Segment::new(language.chip_icon, Style::Chip(language.chip)));
+        segments.push(Segment::new(
+            language.chip_icon,
+            Style::LanguageChip(language.chip),
+        ));
         segments.push(Segment::plain(" "));
         segments.push(Segment::value(language.label()));
     }
@@ -127,8 +130,8 @@ mod test {
         }
     }
 
-    fn chip(language: Option<Language>, rank: usize) -> Chip {
-        Chip { language, rank }
+    fn chip(language: Option<Language>, rank: usize) -> LanguageColor {
+        LanguageColor { language, rank }
     }
 
     #[test]
@@ -143,10 +146,10 @@ mod test {
             vec![
                 Line::from(vec![Segment::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),
-                    Style::ChipBar(go),
+                    Style::LanguageBar(go),
                 )]),
                 Line::from(vec![
-                    Segment::new(DEFAULT_CHIP_ICON, Style::Chip(go)),
+                    Segment::new(DEFAULT_CHIP_ICON, Style::LanguageChip(go)),
                     Segment::plain(" "),
                     Segment::value("Go (100.0 %)"),
                 ]),
@@ -178,8 +181,8 @@ mod test {
         let python_bar_width = (0.4 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
 
         let expected_result = Line::from(vec![
-            Segment::new(" ".repeat(rust_bar_width), Style::ChipBar(rust)),
-            Segment::new(" ".repeat(python_bar_width), Style::ChipBar(python)),
+            Segment::new(" ".repeat(rust_bar_width), Style::LanguageBar(rust)),
+            Segment::new(" ".repeat(python_bar_width), Style::LanguageBar(python)),
         ]);
 
         assert_eq!(result, expected_result);
