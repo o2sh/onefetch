@@ -1,4 +1,4 @@
-//! Every color onefetch prints, and what each `Style` looks like.
+//! What each `Style` looks like: its color, and whether it is bold.
 
 use super::RenderOptions;
 use super::style::{Chip, Style};

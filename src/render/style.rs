@@ -14,7 +14,8 @@ pub enum Style {
     Separator,
     Value,
     /// The ascii art after a `{n}` token, which `--ascii-colors` colors.
-    /// `None` before the first token of a line.
+    /// `None` before the first token of a line. `None`, and an `n` past the
+    /// last color, take the terminal's default color.
     Ascii(Option<usize>),
     /// A language's chip in the languages field.
     Chip(Chip),

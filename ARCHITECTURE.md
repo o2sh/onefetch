@@ -75,7 +75,7 @@ render/
   ascii.rs     ascii art template -> lines
   image/       sixel, kitty, iterm
   style.rs     Line, Segment, Style
-  colors.rs    Colors: what each Style looks like
+  colors.rs    Colors: what each Style looks like (color and bold)
 ```
 
 `Style` names everything that can be colored, as the command line names it:
@@ -84,9 +84,10 @@ the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
 `--ascii-colors`), the language chips and the languages bar (`Chip`,
 `ChipBar`), and the palette row (`Palette(n)`). It holds no colors.
 
-- Only `colors.rs` picks colors, from the language, `--ascii-language`,
-  `--ascii-colors`, `--text-colors`, `--true-color` and `--no-bold`. The rest
-  of `render` only says which `Style` a piece of text has.
+- Only `colors.rs` decides how each `Style` looks: its color, from the
+  language, `--ascii-language`, `--ascii-colors`, `--text-colors` and
+  `--true-color`, and whether it is bold (`--no-bold`). The rest of `render`
+  only says which `Style` a piece of text has.
 - Only `printer.rs` writes escape codes (apart from the image protocols). It is
   where everything printed leaves onefetch, so it runs `sanitize` on all of it:
   text from the repository can contain control characters.

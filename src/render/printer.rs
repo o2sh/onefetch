@@ -1,5 +1,5 @@
-//! Picks the output, puts the logo beside the info, and writes it. The only
-//! code that writes escape codes, apart from the image protocols.
+//! Picks the output, puts the ascii art or image beside the info, and writes
+//! it. The only code that writes escape codes, apart from the image protocols.
 
 use super::ascii::AsciiArt;
 use super::colors::Colors;
@@ -86,11 +86,17 @@ impl Printer {
                 backend,
                 resolution,
             } => {
-                let center_pad = " ".repeat(CENTER_PAD_LENGTH);
-                let info = info_lines(&self.info, &self.options);
+                let info: Vec<Line> = info_lines(&self.info, &self.options)
+                    .into_iter()
+                    .map(|line| {
+                        let mut segments = vec![center_pad()];
+                        segments.extend(line.0);
+                        Line::from(segments)
+                    })
+                    .collect();
                 let info = paint(&info, &self.colors)
                     .lines()
-                    .map(|s| format!("{center_pad}{s}"))
+                    .map(String::from)
                     .collect();
 
                 let rendered = backend
@@ -108,9 +114,13 @@ impl Printer {
     }
 }
 
+/// The space between the ascii art or image and the info.
+fn center_pad() -> Segment {
+    Segment::plain(" ".repeat(CENTER_PAD_LENGTH))
+}
+
 /// Puts the ascii art on the left of the info lines.
 fn ascii_beside_info(mut ascii: AsciiArt, info: Vec<Line>) -> Vec<Line> {
-    let center_pad = || Segment::plain(" ".repeat(CENTER_PAD_LENGTH));
     let mut info = info.into_iter();
     let mut lines = Vec::new();
 
