@@ -1,10 +1,11 @@
-//! The ascii logo.
+//! The ascii art.
 //!
-//! Renders an ascii template, colored with `{0}`..`{n}` tokens, to the terminal.
+//! Turns an ascii template into lines: the text after a `{n}` token is styled
+//! `Style::Ascii(Some(n))`, which `--ascii-colors` colors.
 //!
 //! ```rust,no_run
-//! use onefetch::render::logo::AsciiArt;
-//! use owo_colors::{DynColors, AnsiColors};
+//! use onefetch::render::ascii::AsciiArt;
+//! use onefetch::render::style::Line;
 //!
 //! const ASCII: &str = r#"
 //! {2}            .:--::////::--.`
@@ -29,33 +30,20 @@
 //! {0}            ``.---::::---..`
 //! "#;
 //!
-//! let colors = vec![
-//!     DynColors::Ansi(AnsiColors::Blue),
-//!     DynColors::Ansi(AnsiColors::Default),
-//!     DynColors::Ansi(AnsiColors::BrightBlue)
-//! ];
-//!
-//! let art = AsciiArt::new(ASCII, colors.as_slice(), true);
-//!
-//! for line in art {
-//!     println!("{line}")
-//! }
+//! let lines: Vec<Line> = AsciiArt::new(ASCII).collect();
 //! ```
 //!
 
-use owo_colors::{AnsiColors, DynColors, OwoColorize, Style};
-use std::fmt::Write;
+use super::style::{Line, Span, Style};
 
-/// Renders an ascii template with the given colors truncated to the correct width.
+/// The lines of an ascii template, truncated to the correct width.
 pub struct AsciiArt<'a> {
     content: Box<dyn 'a + Iterator<Item = &'a str>>,
-    colors: &'a [DynColors],
-    bold: bool,
     start: usize,
     end: usize,
 }
 impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str, colors: &'a [DynColors], bold: bool) -> AsciiArt<'a> {
+    pub fn new(input: &'a str) -> AsciiArt<'a> {
         let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
         while let Some(line) = lines.last() {
             if Tokens(line).is_empty() {
@@ -69,8 +57,6 @@ impl<'a> AsciiArt<'a> {
 
         AsciiArt {
             content: Box::new(lines.into_iter()),
-            colors,
-            bold,
             start,
             end,
         }
@@ -98,11 +84,11 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
 /// Produces a series of lines which have been automatically truncated to the
 /// correct width
 impl Iterator for AsciiArt<'_> {
-    type Item = String;
-    fn next(&mut self) -> Option<String> {
+    type Item = Line;
+    fn next(&mut self) -> Option<Line> {
         self.content
             .next()
-            .map(|line| Tokens(line).render(self.colors, self.start, self.end, self.bold))
+            .map(|line| Tokens(line).render(self.start, self.end))
     }
 }
 
@@ -198,34 +184,41 @@ impl<'a> Tokens<'a> {
         })
     }
     /// render a truncated line of tokens.
-    fn render(self, colors: &[DynColors], start: usize, end: usize, bold: bool) -> String {
+    fn render(self, start: usize, end: usize) -> Line {
         assert!(start <= end);
         let mut width = end - start;
-        let mut colored_segment = String::new();
-        let mut whole_string = String::new();
-        let mut color = &DynColors::Ansi(AnsiColors::Default);
+        let mut segment = String::new();
+        let mut spans = Vec::new();
+        let mut color = None;
 
-        self.truncate(start, end).for_each(|token| match token {
-            Token::Char(chr) => {
-                width = width.saturating_sub(1);
-                colored_segment.push(chr);
+        let mut push_segment = |segment: &mut String, color| {
+            if !segment.is_empty() {
+                spans.push(Span::new(std::mem::take(segment), Style::Ascii(color)));
             }
-            Token::Color(col) => {
-                add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
-                colored_segment = String::new();
-                color = colors
-                    .get(col as usize)
-                    .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            }
-            Token::Space => {
-                width = width.saturating_sub(1);
-                colored_segment.push(' ');
-            }
-        });
+        };
 
-        add_styled_segment(&mut whole_string, &colored_segment, *color, bold);
-        (0..width).for_each(|_| whole_string.push(' '));
-        whole_string
+        for token in self.truncate(start, end) {
+            match token {
+                Token::Char(chr) => {
+                    width = width.saturating_sub(1);
+                    segment.push(chr);
+                }
+                Token::Color(col) => {
+                    push_segment(&mut segment, color);
+                    color = Some(col as usize);
+                }
+                Token::Space => {
+                    width = width.saturating_sub(1);
+                    segment.push(' ');
+                }
+            }
+        }
+
+        push_segment(&mut segment, color);
+        if width > 0 {
+            spans.push(Span::plain(" ".repeat(width)));
+        }
+        Line::from(spans)
     }
 }
 
@@ -235,15 +228,6 @@ fn succeed_when<I>(predicate: impl FnOnce(I) -> bool) -> impl FnOnce(I) -> Optio
     |input| {
         if predicate(input) { Some(()) } else { None }
     }
-}
-
-fn add_styled_segment(base: &mut String, segment: &str, color: DynColors, bold: bool) {
-    let mut style = Style::new().color(color);
-    if bold {
-        style = style.bold();
-    }
-    let formatted_segment = segment.style(style);
-    let _ = write!(base, "{formatted_segment}");
 }
 
 // Basic combinators
@@ -315,64 +299,56 @@ mod test {
         assert_eq!(Tokens("  {1} {5}  {9} a").leading_spaces(), 6);
     }
 
+    fn ascii(text: &str, color: Option<usize>) -> Span {
+        Span::new(text, Style::Ascii(color))
+    }
+
     #[test]
     fn render() {
-        let colors_shim = Vec::new();
-
+        assert_eq!(Tokens("").render(0, 0), Line::default());
+        assert_eq!(Tokens("     ").render(0, 0), Line::default());
         assert_eq!(
-            Tokens("").render(&colors_shim, 0, 0, true),
-            "\u{1b}[39;1m\u{1b}[0m"
+            Tokens("     ").render(0, 5),
+            Line::from(vec![ascii("     ", None)])
         );
-
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, true),
-            "\u{1b}[39;1m\u{1b}[0m"
+            Tokens("     ").render(1, 5),
+            Line::from(vec![ascii("    ", None)])
         );
-
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, true),
-            "\u{1b}[39;1m     \u{1b}[0m"
+            Tokens("     ").render(3, 5),
+            Line::from(vec![ascii("  ", None)])
         );
-
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 1, 5, true),
-            "\u{1b}[39;1m    \u{1b}[0m"
+            Tokens("     ").render(0, 4),
+            Line::from(vec![ascii("    ", None)])
         );
-
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 3, 5, true),
-            "\u{1b}[39;1m  \u{1b}[0m"
-        );
-
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 4, true),
-            "\u{1b}[39;1m    \u{1b}[0m"
-        );
-
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 3, true),
-            "\u{1b}[39;1m   \u{1b}[0m"
+            Tokens("     ").render(0, 3),
+            Line::from(vec![ascii("   ", None)])
         );
 
         // https://github.com/o2sh/onefetch/issues/935
         assert_eq!(
-            Tokens("███").render(Vec::new().as_slice(), 0, 3, true),
-            "\u{1b}[39;1m███\u{1b}[0m"
+            Tokens("███").render(0, 3),
+            Line::from(vec![ascii("███", None)])
         );
 
         assert_eq!(
-            Tokens("  {1} {5}  {9} a").render(&colors_shim, 4, 10, true),
-            "\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m\u{1b}[0m\u{1b}[39;1m \u{1b}[0m\u{1b}[39;1m a\u{1b}[0m   "
+            Tokens("  {1} {5}  {9} a").render(4, 10),
+            Line::from(vec![
+                ascii(" ", Some(5)),
+                ascii(" a", Some(9)),
+                Span::plain("   "),
+            ])
         );
+    }
 
-        // Tests for bold disabled
+    #[test]
+    fn render_colors() {
         assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 0, false),
-            "\u{1b}[39m\u{1b}[0m"
-        );
-        assert_eq!(
-            Tokens("     ").render(&colors_shim, 0, 5, false),
-            "\u{1b}[39m     \u{1b}[0m"
+            Tokens("{0}ab{1}cd").render(0, 4),
+            Line::from(vec![ascii("ab", Some(0)), ascii("cd", Some(1))])
         );
     }
 

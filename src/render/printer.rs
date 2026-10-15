@@ -1,15 +1,17 @@
-use super::colors::{TextColors, get_ascii_colors};
+//! Picks the output, puts the logo beside the info, and writes it. The only
+//! code that writes escape codes, apart from the image protocols.
+
+use super::ascii::AsciiArt;
+use super::colors::Colors;
 use super::image::{self, ImageBackend};
-use super::lines::info_lines;
-use super::logo::AsciiArt;
-use super::style;
+use super::info::info_lines;
+use super::style::{Line, Span};
 use super::{RenderOptions, SerializationFormat};
 use crate::data::Info;
 use crate::language::Language;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
-use owo_colors::{AnsiColors, DynColors};
-use std::fmt::Write as _;
+use owo_colors::OwoColorize;
 
 const CENTER_PAD_LENGTH: usize = 3;
 
@@ -17,8 +19,7 @@ pub struct Printer {
     info: Info,
     kind: PrinterKind,
     options: RenderOptions,
-    text_colors: TextColors,
-    ascii_colors: Vec<DynColors>,
+    colors: Colors,
 }
 
 enum PrinterKind {
@@ -54,17 +55,7 @@ impl Printer {
             None
         };
 
-        let ascii_colors = get_ascii_colors(
-            info.dominant_language.as_ref(),
-            options.ascii_language.as_ref(),
-            &options.ascii_colors,
-            options.true_color,
-        );
-        let primary_color = ascii_colors
-            .first()
-            .copied()
-            .unwrap_or(DynColors::Ansi(AnsiColors::Default));
-        let text_colors = TextColors::new(&options.text_colors, primary_color);
+        let colors = Colors::new(options, info.dominant_language);
 
         let kind = PrinterKind::new(options, info.dominant_language, image, image_backend)?;
 
@@ -72,8 +63,7 @@ impl Printer {
             info,
             kind,
             options: options.clone(),
-            text_colors,
-            ascii_colors,
+            colors,
         })
     }
 
@@ -88,8 +78,8 @@ impl Printer {
                 Ok(())
             }
             PrinterKind::Plain => {
-                write_with_line_wrapping(writer, &self.info_text())?;
-                Ok(())
+                let info = info_lines(&self.info, &self.options);
+                write_unwrapped(writer, &paint(&info, &self.colors))
             }
             PrinterKind::Image {
                 image,
@@ -97,53 +87,78 @@ impl Printer {
                 resolution,
             } => {
                 let center_pad = " ".repeat(CENTER_PAD_LENGTH);
-                let info_text = self.info_text();
-                let info_lines = info_text
+                let info = info_lines(&self.info, &self.options);
+                let info = paint(&info, &self.colors)
                     .lines()
                     .map(|s| format!("{center_pad}{s}"))
                     .collect();
 
                 let rendered = backend
-                    .add_image(info_lines, image, *resolution)
+                    .add_image(info, image, *resolution)
                     .context("Failed to render image")?;
 
-                write_with_line_wrapping(writer, &rendered)?;
-                Ok(())
+                write_unwrapped(writer, &rendered)
             }
             PrinterKind::Ascii { art } => {
-                let mut buf = String::new();
-                let center_pad = " ".repeat(CENTER_PAD_LENGTH);
-                let info_text = self.info_text();
-                let mut info_lines = info_text.lines();
-                let mut logo_lines = AsciiArt::new(art, &self.ascii_colors, !self.options.no_bold);
-
-                loop {
-                    match (logo_lines.next(), info_lines.next()) {
-                        (Some(logo), Some(info)) => writeln!(buf, "{logo}{center_pad}{info:^}")?,
-                        (Some(logo), None) => writeln!(buf, "{logo}")?,
-                        (None, Some(info)) => writeln!(
-                            buf,
-                            "{:<width$}{center_pad}{info:^}",
-                            "",
-                            width = logo_lines.width()
-                        )?,
-                        (None, None) => break,
-                    }
-                }
-
-                write_with_line_wrapping(writer, &buf)?;
-                Ok(())
+                let info = info_lines(&self.info, &self.options);
+                let lines = ascii_beside_info(AsciiArt::new(art), info);
+                write_unwrapped(writer, &paint(&lines, &self.colors))
             }
         }
     }
+}
 
-    fn info_text(&self) -> String {
-        style::render(
-            &info_lines(&self.info, &self.options),
-            &self.text_colors,
-            self.options.no_bold,
-        )
+/// Puts the ascii art on the left of the info lines.
+fn ascii_beside_info(mut ascii: AsciiArt, info: Vec<Line>) -> Vec<Line> {
+    let center_pad = || Span::plain(" ".repeat(CENTER_PAD_LENGTH));
+    let mut info = info.into_iter();
+    let mut lines = Vec::new();
+
+    loop {
+        let spans = match (ascii.next(), info.next()) {
+            (Some(art), Some(info)) => {
+                let mut spans = art.0;
+                spans.push(center_pad());
+                spans.extend(info.0);
+                spans
+            }
+            (Some(art), None) => art.0,
+            (None, Some(info)) => {
+                let mut spans = vec![Span::plain(" ".repeat(ascii.width())), center_pad()];
+                spans.extend(info.0);
+                spans
+            }
+            (None, None) => break,
+        };
+        lines.push(Line::from(spans));
     }
+
+    lines
+}
+
+/// Writes the lines with the escape codes of their colors.
+fn paint(lines: &[Line], colors: &Colors) -> String {
+    let mut output = String::new();
+    for line in lines {
+        for span in &line.0 {
+            let style = colors.style(span.style);
+            output.push_str(&sanitize(&span.text).style(style).to_string());
+        }
+        output.push('\n');
+    }
+    output
+}
+
+/// Replaces control characters, so that repository data can't inject escape
+/// sequences. Everything onefetch prints goes through it.
+fn sanitize(text: &str) -> String {
+    text.replace(char::is_control, "\u{FFFD}")
+}
+
+fn write_unwrapped(writer: &mut dyn std::io::Write, content: &str) -> Result<()> {
+    // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
+    write!(writer, "\x1B[?7l{content}\x1B[?7h")?;
+    Ok(())
 }
 
 impl PrinterKind {
@@ -188,12 +203,6 @@ impl PrinterKind {
     }
 }
 
-fn write_with_line_wrapping(writer: &mut dyn std::io::Write, content: &str) -> Result<()> {
-    // \x1B[?7l turns off line wrapping and \x1B[?7h turns it on
-    write!(writer, "\x1B[?7l{content}\x1B[?7h")?;
-    Ok(())
-}
-
 impl PartialEq for PrinterKind {
     fn eq(&self, other: &Self) -> bool {
         matches!(
@@ -223,6 +232,8 @@ impl std::fmt::Debug for PrinterKind {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::render::style::Style;
+    use owo_colors::{AnsiColors, DynColors};
 
     #[test]
     fn test_create_json_printer() {
@@ -296,19 +307,117 @@ mod tests {
     }
 
     #[test]
-    fn test_ascii_colors_follow_dominant_language() {
-        let info = Info {
-            dominant_language: Some(Language::Rust),
-            ..Default::default()
-        };
-        // The default `RenderOptions` have true colors off.
-        let printer = Printer::new(info, &RenderOptions::default()).unwrap();
+    fn test_ascii_beside_info() {
+        let ascii = AsciiArt::new("{0}ab\n{0}cd\n{0}ef");
+        let info = vec![Line::from("one"), Line::from("two")];
+        let art = |text| Span::new(text, Style::Ascii(Some(0)));
+        let pad = || Span::plain("   ");
 
         assert_eq!(
-            printer.ascii_colors,
-            Language::Rust.colors(false),
-            "ascii colors should come from the dominant language"
+            ascii_beside_info(ascii, info),
+            vec![
+                Line::from(vec![art("ab"), pad(), Span::value("one")]),
+                Line::from(vec![art("cd"), pad(), Span::value("two")]),
+                Line::from(vec![art("ef")]),
+            ]
         );
+    }
+
+    #[test]
+    fn test_info_longer_than_ascii() {
+        let ascii = AsciiArt::new("{0}ab");
+        let info = vec![Line::from("one"), Line::from("two")];
+
+        let lines = ascii_beside_info(ascii, info);
+
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[1],
+            Line::from(vec![
+                Span::plain("  "),
+                Span::plain("   "),
+                Span::value("two")
+            ])
+        );
+    }
+
+    fn paint_with_white(lines: &[Line], no_bold: bool) -> String {
+        let options = RenderOptions {
+            no_bold,
+            ..Default::default()
+        };
+        // Without a language, the ascii art and the keys are white.
+        paint(lines, &Colors::new(&options, None))
+    }
+
+    #[test]
+    fn test_paint() {
+        let line = Line::from(vec![
+            Span::new("title", Style::Key),
+            Span::new(":", Style::Separator),
+            Span::plain(" "),
+            Span::value("test"),
+        ]);
+        assert_eq!(
+            paint_with_white(&[line], false),
+            "\u{1b}[37;1mtitle\u{1b}[0m\u{1b}[39;1m:\u{1b}[0m \u{1b}[39mtest\u{1b}[0m\n"
+        );
+    }
+
+    #[test]
+    fn test_paint_no_bold() {
+        let line = Line::from(vec![Span::new("title", Style::Key)]);
+        assert_eq!(
+            paint_with_white(&[line], true),
+            "\u{1b}[37mtitle\u{1b}[0m\n"
+        );
+    }
+
+    #[test]
+    fn test_paint_fixed_colors() {
+        let red = DynColors::Ansi(AnsiColors::Red);
+        let line = Line::from(vec![
+            Span::new("  ", Style::Background(red)),
+            Span::new("●", Style::Color(red)),
+        ]);
+        assert_eq!(
+            paint_with_white(&[line], false),
+            "\u{1b}[41m  \u{1b}[0m\u{1b}[31m●\u{1b}[0m\n"
+        );
+    }
+
+    #[test]
+    fn test_paint_ascii() {
+        let line = Line::from(vec![Span::new("██", Style::Ascii(Some(0)))]);
+        assert_eq!(
+            paint_with_white(&[line], false),
+            "\u{1b}[37;1m██\u{1b}[0m\n"
+        );
+    }
+
+    #[test]
+    fn test_paint_empty_line() {
+        assert_eq!(paint_with_white(&[Line::default()], false), "\n");
+    }
+
+    #[test]
+    fn test_paint_sanitizes_text() {
+        // OSC set-title sequence
+        let painted = paint_with_white(&[Line::from("1.0.0\u{1b}]0;PWNED\u{07}")], false);
+        assert!(painted.contains("1.0.0\u{FFFD}]0;PWNED\u{FFFD}"));
+        assert!(!painted.contains('\u{07}'));
+    }
+
+    #[test]
+    fn test_sanitize_keeps_printable_text() {
+        assert_eq!(sanitize("Rust (100.0 %) ●"), "Rust (100.0 %) ●");
+    }
+
+    #[test]
+    fn test_write_unwrapped() {
+        let mut output = Vec::new();
+        write_unwrapped(&mut output, "text").unwrap();
+        assert_eq!(output, b"\x1B[?7ltext\x1B[?7h");
     }
 
     struct DummyBackend;

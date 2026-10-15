@@ -2,9 +2,9 @@ use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
-use crate::render::colors::COLOR_PALETTE;
+use crate::render::colors::chip_color;
 use crate::render::style::{Line, Span, Style};
-use owo_colors::{AnsiColors, DynColors};
+use owo_colors::DynColors;
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
 
@@ -24,37 +24,23 @@ impl LanguageDisplayData {
     }
 }
 
-fn prepare_languages(
-    languages: &Languages,
-    options: &RenderOptions,
-    color_palette: &[DynColors],
-) -> Vec<LanguageDisplayData> {
+fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<LanguageDisplayData> {
     let mut display_data: Vec<_> = languages
         .languages_with_percentage
         .iter()
         .enumerate()
         .map(
             |(
-                i,
+                rank,
                 &LanguageWithPercentage {
                     language,
                     percentage,
                 },
-            )| {
-                let chip_color = if options.true_color {
-                    language.chip_color()
-                } else {
-                    color_palette[i % color_palette.len()]
-                };
-
-                let chip_icon = language.chip_icon(options.nerd_fonts);
-
-                LanguageDisplayData {
-                    language: language.to_string(),
-                    percentage,
-                    chip_color,
-                    chip_icon,
-                }
+            )| LanguageDisplayData {
+                language: language.to_string(),
+                percentage,
+                chip_color: chip_color(Some(language), rank, options.true_color),
+                chip_icon: language.chip_icon(options.nerd_fonts),
             },
         )
         .collect();
@@ -62,7 +48,7 @@ fn prepare_languages(
         display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
             percentage,
-            chip_color: DynColors::Ansi(AnsiColors::White),
+            chip_color: chip_color(None, display_data.len(), options.true_color),
             chip_icon: DEFAULT_CHIP_ICON,
         });
     }
@@ -113,7 +99,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
 
 impl FieldView for Languages {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
-        let languages = prepare_languages(self, options, &COLOR_PALETTE[1..7]);
+        let languages = prepare_languages(self, options);
 
         let mut lines = vec![build_language_bar(&languages)];
         lines.extend(languages.chunks(LANGUAGES_PER_LINE).map(build_legend_line));
@@ -135,6 +121,7 @@ impl FieldView for Languages {
 mod test {
     use super::*;
     use crate::language::Language;
+    use owo_colors::AnsiColors;
 
     fn language(language: Language, percentage: f64) -> LanguageWithPercentage {
         LanguageWithPercentage {
@@ -210,12 +197,7 @@ mod test {
             ],
         };
 
-        let color_palette = [
-            DynColors::Ansi(AnsiColors::Red),
-            DynColors::Ansi(AnsiColors::Green),
-        ];
-
-        let result = prepare_languages(&languages, &RenderOptions::default(), &color_palette);
+        let result = prepare_languages(&languages, &RenderOptions::default());
 
         let expected_result = vec![
             LanguageDisplayData {
