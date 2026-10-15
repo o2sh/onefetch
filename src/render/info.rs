@@ -1,7 +1,6 @@
 use crate::data::Info;
 use crate::data::title::Title;
 use crate::render::RenderOptions;
-use crate::render::colors::COLOR_PALETTE;
 use crate::render::fields::{FieldView, view};
 use crate::render::style::{Line, Segment, Style};
 
@@ -73,10 +72,10 @@ fn field_lines(field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
         .collect()
 }
 
+/// The 8 standard terminal colors.
 fn palette_line() -> Line {
-    COLOR_PALETTE
-        .into_iter()
-        .map(|color| Segment::new("   ", Style::Background(color)))
+    (0..8)
+        .map(|index| Segment::new("   ", Style::Palette(index)))
         .collect::<Vec<_>>()
         .into()
 }

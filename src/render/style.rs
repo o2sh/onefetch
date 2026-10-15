@@ -1,7 +1,7 @@
 //! The lines onefetch prints, made of segments that each say which part of the
 //! output they are (`Style`). `colors.rs` decides what each `Style` looks like.
 
-use owo_colors::DynColors;
+use crate::language::Language;
 
 /// Everything that can be colored.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -16,11 +16,23 @@ pub enum Style {
     /// The ascii art after a `{n}` token, which `--ascii-colors` colors.
     /// `None` before the first token of a line.
     Ascii(Option<usize>),
-    /// A fixed color: the language chips.
-    Color(DynColors),
-    /// A fixed background color: the language bar and the palette row.
-    Background(DynColors),
+    /// A language's chip in the languages field.
+    Chip(Chip),
+    /// A language's part of the languages bar.
+    ChipBar(Chip),
+    /// The palette row: the n-th of the 8 standard terminal colors.
+    Palette(usize),
     Plain,
+}
+
+/// A language of the languages field, which its chip and its part of the bar
+/// are colored after.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Chip {
+    /// `None` for "Other", the languages left out by `--number-of-languages`.
+    pub language: Option<Language>,
+    /// Its place in the languages field, from 0.
+    pub rank: usize,
 }
 
 #[derive(Clone, Debug, PartialEq)]

@@ -81,13 +81,12 @@ render/
 `Style` names everything that can be colored, as the command line names it:
 the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
 `Separator`, `Value`), the `{n}` parts of the ascii art (`Ascii(n)`, for
-`--ascii-colors`), and the fixed colors of the language chips and the palette
-row (`Color`, `Background`).
+`--ascii-colors`), the language chips and the languages bar (`Chip`,
+`ChipBar`), and the palette row (`Palette(n)`). It holds no colors.
 
 - Only `colors.rs` picks colors, from the language, `--ascii-language`,
-  `--ascii-colors`, `--text-colors`, `--true-color` and `--no-bold`, and
-  including the language chips (`chip_color`) and the palette (`COLOR_PALETTE`).
-  The rest of `render` only says which `Style` a piece of text has.
+  `--ascii-colors`, `--text-colors`, `--true-color` and `--no-bold`. The rest
+  of `render` only says which `Style` a piece of text has.
 - Only `printer.rs` writes escape codes (apart from the image protocols). It is
   where everything printed leaves onefetch, so it runs `sanitize` on all of it:
   text from the repository can contain control characters.

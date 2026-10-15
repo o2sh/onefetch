@@ -232,8 +232,7 @@ impl std::fmt::Debug for PrinterKind {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::render::style::Style;
-    use owo_colors::{AnsiColors, DynColors};
+    use crate::render::style::{Chip, Style};
 
     #[test]
     fn test_create_json_printer() {
@@ -374,15 +373,20 @@ mod tests {
     }
 
     #[test]
-    fn test_paint_fixed_colors() {
-        let red = DynColors::Ansi(AnsiColors::Red);
+    fn test_paint_chips_and_palette() {
+        // Without true colors, the first chip is red, like palette color 1.
+        let go = Chip {
+            language: Some(Language::Go),
+            rank: 0,
+        };
         let line = Line::from(vec![
-            Segment::new("  ", Style::Background(red)),
-            Segment::new("●", Style::Color(red)),
+            Segment::new("  ", Style::ChipBar(go)),
+            Segment::new("●", Style::Chip(go)),
+            Segment::new("   ", Style::Palette(1)),
         ]);
         assert_eq!(
             paint_with_white(&[line], false),
-            "\u{1b}[41m  \u{1b}[0m\u{1b}[31m●\u{1b}[0m\n"
+            "\u{1b}[41m  \u{1b}[0m\u{1b}[31m●\u{1b}[0m\u{1b}[41m   \u{1b}[0m\n"
         );
     }
 
