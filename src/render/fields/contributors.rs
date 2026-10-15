@@ -1,6 +1,6 @@
 use super::FieldView;
 use crate::data::fields::contributors::Contributors;
-use crate::options::RenderOptions;
+use crate::render::RenderOptions;
 use crate::render::style::Line;
 
 impl FieldView for Contributors {

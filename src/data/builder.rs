@@ -1,4 +1,3 @@
-use super::Info;
 use super::fields::authors::Authors;
 use super::fields::churn::Churn;
 use super::fields::commits::Commits;
@@ -19,9 +18,9 @@ use super::fields::version::Version;
 use super::fields::{Field, FieldKind};
 use super::manifest::Manifest;
 use super::title::Title;
+use super::{Info, InfoOptions};
 use crate::data::git::metrics::GitMetrics;
 use crate::language::Language;
-use crate::options::InfoOptions;
 use anyhow::Result;
 use gix::Repository;
 use std::path::Path;

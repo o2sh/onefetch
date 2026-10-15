@@ -2,7 +2,7 @@
 //! One file per field, mirroring `data/fields/`.
 
 use crate::data::Field;
-use crate::options::RenderOptions;
+use crate::render::RenderOptions;
 use crate::render::style::Line;
 
 mod authors;

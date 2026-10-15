@@ -1,8 +1,8 @@
 //! Every color onefetch prints, and what each `Style` looks like.
 
+use super::RenderOptions;
 use super::style::Style;
 use crate::language::Language;
-use crate::options::RenderOptions;
 use owo_colors::{AnsiColors, DynColors, Style as AnsiStyle};
 
 /// The 8 standard terminal colors.

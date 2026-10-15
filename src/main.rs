@@ -5,11 +5,10 @@ use clap::{CommandFactory, Parser};
 use clap_complete::{Generator, generate};
 use human_panic::setup_panic;
 use onefetch::cli::Cli;
-use onefetch::data::build_info;
 use onefetch::data::manifest::ManifestType;
+use onefetch::data::{InfoOptions, build_info};
 use onefetch::language::Language;
-use onefetch::options::{InfoOptions, RenderOptions};
-use onefetch::render::Printer;
+use onefetch::render::{Printer, RenderOptions};
 use std::io;
 use strum::IntoEnumIterator;
 

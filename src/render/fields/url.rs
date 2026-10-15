@@ -1,6 +1,6 @@
 use super::FieldView;
 use crate::data::fields::url::Url;
-use crate::options::RenderOptions;
+use crate::render::RenderOptions;
 use crate::render::style::Line;
 
 impl FieldView for Url {

@@ -1,15 +1,14 @@
 //! Picks the output, puts the logo beside the info, and writes it. The only
 //! code that writes escape codes, apart from the image protocols.
 
-use super::SerializationFormat;
 use super::ascii::AsciiArt;
 use super::colors::Colors;
 use super::image::{self, ImageBackend};
 use super::info::info_lines;
 use super::style::{Line, Segment};
+use super::{RenderOptions, SerializationFormat};
 use crate::data::Info;
 use crate::language::Language;
-use crate::options::RenderOptions;
 use ::image::DynamicImage;
 use anyhow::{Context, Result};
 use owo_colors::OwoColorize;
