@@ -16,11 +16,11 @@ pub enum Style {
     /// The ascii art after a `{n}` token, which `--ascii-colors` colors.
     /// `None` before the first token of a line. `None`, and an `n` past the
     /// last color, take the terminal's default color.
-    AsciiLogo(Option<usize>),
+    AsciiArt(Option<usize>),
     /// A language's chip in the languages field.
-    LanguageChip(LanguageColor),
+    LanguageChip(LanguageEntry),
     /// A language's part of the languages bar.
-    LanguageBar(LanguageColor),
+    LanguageBar(LanguageEntry),
     /// The palette row: the n-th of the 8 standard terminal colors.
     Palette(usize),
     Plain,
@@ -29,7 +29,7 @@ pub enum Style {
 /// A language of the languages field, which its chip and its part of the bar
 /// are colored after.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct LanguageColor {
+pub struct LanguageEntry {
     /// `None` for "Other", the languages left out by `--number-of-languages`.
     pub language: Option<Language>,
     /// Its place in the languages field, from 0.

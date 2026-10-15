@@ -2,7 +2,7 @@ use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
-use crate::render::style::{LanguageColor, Line, Segment, Style};
+use crate::render::style::{LanguageEntry, Line, Segment, Style};
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
 
@@ -12,7 +12,7 @@ const LANGUAGES_PER_LINE: usize = 2;
 struct LanguageDisplayData {
     language: String,
     percentage: f64,
-    chip: LanguageColor,
+    chip: LanguageEntry,
     chip_icon: char,
 }
 
@@ -37,7 +37,7 @@ fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<Lang
             )| LanguageDisplayData {
                 language: language.to_string(),
                 percentage,
-                chip: LanguageColor {
+                chip: LanguageEntry {
                     language: Some(language),
                     rank,
                 },
@@ -49,7 +49,7 @@ fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<Lang
         display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
             percentage,
-            chip: LanguageColor {
+            chip: LanguageEntry {
                 language: None,
                 rank: display_data.len(),
             },
@@ -130,8 +130,8 @@ mod test {
         }
     }
 
-    fn chip(language: Option<Language>, rank: usize) -> LanguageColor {
-        LanguageColor { language, rank }
+    fn chip(language: Option<Language>, rank: usize) -> LanguageEntry {
+        LanguageEntry { language, rank }
     }
 
     #[test]

@@ -1,7 +1,7 @@
 //! What each `Style` looks like: its color, and whether it is bold.
 
 use super::RenderOptions;
-use super::style::{LanguageColor, Style};
+use super::style::{LanguageEntry, Style};
 use crate::language::Language;
 use owo_colors::{AnsiColors, DynColors, Style as AnsiStyle};
 
@@ -55,7 +55,7 @@ impl Colors {
             Style::Key => colored(self.text.key, self.bold),
             Style::Separator => colored(self.text.separator, self.bold),
             Style::Value => colored(self.text.value, false),
-            Style::AsciiLogo(index) => {
+            Style::AsciiArt(index) => {
                 let color = index
                     .and_then(|i| self.ascii.get(i))
                     .copied()
@@ -77,7 +77,7 @@ impl Colors {
 
     /// A language's own color with true colors, otherwise the palette's colors
     /// in turn. "Other" is white.
-    fn chip_color(&self, chip: LanguageColor) -> DynColors {
+    fn chip_color(&self, chip: LanguageEntry) -> DynColors {
         let chip_palette = &COLOR_PALETTE[1..7];
         match chip.language {
             Some(language) if self.true_color => language.chip_color(),
@@ -293,16 +293,16 @@ mod test {
         assert_eq!(colors.style(Style::Key), AnsiStyle::new().color(red).bold());
         assert_eq!(colors.style(Style::Value), AnsiStyle::new().color(default));
         assert_eq!(
-            colors.style(Style::AsciiLogo(Some(0))),
+            colors.style(Style::AsciiArt(Some(0))),
             AnsiStyle::new().color(red).bold()
         );
         // Before the first `{n}` token, or past the last color.
         assert_eq!(
-            colors.style(Style::AsciiLogo(None)),
+            colors.style(Style::AsciiArt(None)),
             AnsiStyle::new().color(default).bold()
         );
         assert_eq!(
-            colors.style(Style::AsciiLogo(Some(9))),
+            colors.style(Style::AsciiArt(Some(9))),
             AnsiStyle::new().color(default).bold()
         );
     }
@@ -318,13 +318,13 @@ mod test {
 
         assert_eq!(colors.style(Style::Key), AnsiStyle::new().color(red));
         assert_eq!(
-            colors.style(Style::AsciiLogo(Some(0))),
+            colors.style(Style::AsciiArt(Some(0))),
             AnsiStyle::new().color(red)
         );
     }
 
-    fn chip(language: Option<Language>, rank: usize) -> LanguageColor {
-        LanguageColor { language, rank }
+    fn chip(language: Option<Language>, rank: usize) -> LanguageEntry {
+        LanguageEntry { language, rank }
     }
 
     #[test]

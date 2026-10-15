@@ -1,7 +1,7 @@
 //! The ascii art.
 //!
 //! Turns an ascii template into lines: the text after a `{n}` token is styled
-//! `Style::AsciiLogo(Some(n))`, which `--ascii-colors` colors.
+//! `Style::AsciiArt(Some(n))`, which `--ascii-colors` colors.
 //!
 //! ```rust,no_run
 //! use onefetch::render::ascii::AsciiArt;
@@ -193,7 +193,7 @@ impl<'a> Tokens<'a> {
 
         let mut push_segment = |text: &mut String, color| {
             if !text.is_empty() {
-                segments.push(Segment::new(std::mem::take(text), Style::AsciiLogo(color)));
+                segments.push(Segment::new(std::mem::take(text), Style::AsciiArt(color)));
             }
         };
 
@@ -300,7 +300,7 @@ mod test {
     }
 
     fn ascii(text: &str, color: Option<usize>) -> Segment {
-        Segment::new(text, Style::AsciiLogo(color))
+        Segment::new(text, Style::AsciiArt(color))
     }
 
     #[test]
