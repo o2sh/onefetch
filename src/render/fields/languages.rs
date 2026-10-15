@@ -12,7 +12,7 @@ const LANGUAGES_PER_LINE: usize = 2;
 struct LanguageDisplayData {
     language: String,
     percentage: f64,
-    chip: LanguageEntry,
+    entry: LanguageEntry,
     chip_icon: char,
 }
 
@@ -37,7 +37,7 @@ fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<Lang
             )| LanguageDisplayData {
                 language: language.to_string(),
                 percentage,
-                chip: LanguageEntry {
+                entry: LanguageEntry {
                     language: Some(language),
                     rank,
                 },
@@ -49,7 +49,7 @@ fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<Lang
         display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
             percentage,
-            chip: LanguageEntry {
+            entry: LanguageEntry {
                 language: None,
                 rank: display_data.len(),
             },
@@ -76,7 +76,7 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
         .iter()
         .map(|language| {
             let width = (language.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize;
-            Segment::new(" ".repeat(width.max(1)), Style::LanguageBar(language.chip))
+            Segment::new(" ".repeat(width.max(1)), Style::LanguageBar(language.entry))
         })
         .collect::<Vec<_>>()
         .into()
@@ -90,7 +90,7 @@ fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
         }
         segments.push(Segment::new(
             language.chip_icon,
-            Style::LanguageChip(language.chip),
+            Style::LanguageChip(language.entry),
         ));
         segments.push(Segment::plain(" "));
         segments.push(Segment::value(language.label()));
@@ -130,7 +130,7 @@ mod test {
         }
     }
 
-    fn chip(language: Option<Language>, rank: usize) -> LanguageEntry {
+    fn entry(language: Option<Language>, rank: usize) -> LanguageEntry {
         LanguageEntry { language, rank }
     }
 
@@ -139,7 +139,7 @@ mod test {
         let languages = Languages {
             languages_with_percentage: vec![language(Language::Go, 100_f64)],
         };
-        let go = chip(Some(Language::Go), 0);
+        let go = entry(Some(Language::Go), 0);
 
         assert_eq!(
             languages.value(&RenderOptions::default()),
@@ -159,19 +159,19 @@ mod test {
 
     #[test]
     fn test_build_language_bar_multiple_languages() {
-        let rust = chip(Some(Language::Rust), 0);
-        let python = chip(Some(Language::Python), 1);
+        let rust = entry(Some(Language::Rust), 0);
+        let python = entry(Some(Language::Python), 1);
         let languages: Vec<LanguageDisplayData> = vec![
             LanguageDisplayData {
                 language: "Rust".to_string(),
                 percentage: 60.0,
-                chip: rust,
+                entry: rust,
                 chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: "Python".to_string(),
                 percentage: 40.0,
-                chip: python,
+                entry: python,
                 chip_icon: DEFAULT_CHIP_ICON,
             },
         ];
@@ -203,19 +203,19 @@ mod test {
             LanguageDisplayData {
                 language: Language::Go.to_string(),
                 percentage: 40_f64,
-                chip: chip(Some(Language::Go), 0),
+                entry: entry(Some(Language::Go), 0),
                 chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: Language::Erlang.to_string(),
                 percentage: 30_f64,
-                chip: chip(Some(Language::Erlang), 1),
+                entry: entry(Some(Language::Erlang), 1),
                 chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: "Other".to_string(),
                 percentage: 30_f64,
-                chip: chip(None, 2),
+                entry: entry(None, 2),
                 chip_icon: DEFAULT_CHIP_ICON,
             },
         ];

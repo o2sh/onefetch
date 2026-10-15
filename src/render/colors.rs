@@ -62,8 +62,8 @@ impl Colors {
                     .unwrap_or(DynColors::Ansi(AnsiColors::Default));
                 colored(color, self.bold)
             }
-            Style::LanguageChip(chip) => AnsiStyle::new().color(self.chip_color(chip)),
-            Style::LanguageBar(chip) => AnsiStyle::new().on_color(self.chip_color(chip)),
+            Style::LanguageChip(entry) => AnsiStyle::new().color(self.language_color(entry)),
+            Style::LanguageBar(entry) => AnsiStyle::new().on_color(self.language_color(entry)),
             Style::Palette(index) => {
                 let color = COLOR_PALETTE
                     .get(index)
@@ -77,11 +77,11 @@ impl Colors {
 
     /// A language's own color with true colors, otherwise the palette's colors
     /// in turn. "Other" is white.
-    fn chip_color(&self, chip: LanguageEntry) -> DynColors {
-        let chip_palette = &COLOR_PALETTE[1..7];
-        match chip.language {
+    fn language_color(&self, entry: LanguageEntry) -> DynColors {
+        let palette = &COLOR_PALETTE[1..7];
+        match entry.language {
             Some(language) if self.true_color => language.chip_color(),
-            Some(_) => chip_palette[chip.rank % chip_palette.len()],
+            Some(_) => palette[entry.rank % palette.len()],
             None => DynColors::Ansi(AnsiColors::White),
         }
     }
@@ -323,48 +323,48 @@ mod test {
         );
     }
 
-    fn chip(language: Option<Language>, rank: usize) -> LanguageEntry {
+    fn entry(language: Option<Language>, rank: usize) -> LanguageEntry {
         LanguageEntry { language, rank }
     }
 
     #[test]
-    fn test_chip_color() {
+    fn test_language_color() {
         let colors = Colors::new(&RenderOptions::default(), None);
         let red = DynColors::Ansi(AnsiColors::Red);
-        assert_eq!(colors.chip_color(chip(Some(Language::Go), 0)), red);
-        assert_eq!(colors.chip_color(chip(Some(Language::Go), 6)), red);
+        assert_eq!(colors.language_color(entry(Some(Language::Go), 0)), red);
+        assert_eq!(colors.language_color(entry(Some(Language::Go), 6)), red);
         assert_eq!(
-            colors.chip_color(chip(Some(Language::Go), 1)),
+            colors.language_color(entry(Some(Language::Go), 1)),
             DynColors::Ansi(AnsiColors::Green)
         );
         assert_eq!(
-            colors.chip_color(chip(None, 0)),
+            colors.language_color(entry(None, 0)),
             DynColors::Ansi(AnsiColors::White)
         );
     }
 
     #[test]
-    fn test_chip_color_true_color() {
+    fn test_language_color_true_color() {
         let options = RenderOptions {
             true_color: true,
             ..Default::default()
         };
         let colors = Colors::new(&options, None);
         assert_eq!(
-            colors.chip_color(chip(Some(Language::Go), 0)),
+            colors.language_color(entry(Some(Language::Go), 0)),
             Language::Go.chip_color()
         );
         assert_eq!(
-            colors.chip_color(chip(None, 0)),
+            colors.language_color(entry(None, 0)),
             DynColors::Ansi(AnsiColors::White)
         );
     }
 
     #[test]
-    fn test_chip_styles() {
+    fn test_language_styles() {
         let colors = Colors::new(&RenderOptions::default(), None);
         let red = DynColors::Ansi(AnsiColors::Red);
-        let go = chip(Some(Language::Go), 0);
+        let go = entry(Some(Language::Go), 0);
         assert_eq!(
             colors.style(Style::LanguageChip(go)),
             AnsiStyle::new().color(red)
