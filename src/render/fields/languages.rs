@@ -3,7 +3,7 @@ use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::options::RenderOptions;
 use crate::render::colors::chip_color;
-use crate::render::style::{Line, Span, Style};
+use crate::render::style::{Line, Segment, Style};
 use owo_colors::DynColors;
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
@@ -72,7 +72,7 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
         .iter()
         .map(|language| {
             let width = (language.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize;
-            Span::new(
+            Segment::new(
                 " ".repeat(width.max(1)),
                 Style::Background(language.chip_color),
             )
@@ -82,19 +82,19 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
 }
 
 fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
-    let mut spans = Vec::new();
+    let mut segments = Vec::new();
     for language in languages {
-        if !spans.is_empty() {
-            spans.push(Span::plain(" "));
+        if !segments.is_empty() {
+            segments.push(Segment::plain(" "));
         }
-        spans.push(Span::new(
+        segments.push(Segment::new(
             language.chip_icon,
             Style::Color(language.chip_color),
         ));
-        spans.push(Span::plain(" "));
-        spans.push(Span::value(language.label()));
+        segments.push(Segment::plain(" "));
+        segments.push(Segment::value(language.label()));
     }
-    spans.into()
+    segments.into()
 }
 
 impl FieldView for Languages {
@@ -140,14 +140,14 @@ mod test {
         assert_eq!(
             languages.value(&RenderOptions::default()),
             vec![
-                Line::from(vec![Span::new(
+                Line::from(vec![Segment::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),
                     Style::Background(red),
                 )]),
                 Line::from(vec![
-                    Span::new(DEFAULT_CHIP_ICON, Style::Color(red)),
-                    Span::plain(" "),
-                    Span::value("Go (100.0 %)"),
+                    Segment::new(DEFAULT_CHIP_ICON, Style::Color(red)),
+                    Segment::plain(" "),
+                    Segment::value("Go (100.0 %)"),
                 ]),
             ]
         );
@@ -175,11 +175,11 @@ mod test {
         let python_bar_width = (0.4 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
 
         let expected_result = Line::from(vec![
-            Span::new(
+            Segment::new(
                 " ".repeat(rust_bar_width),
                 Style::Background(DynColors::Ansi(AnsiColors::Red)),
             ),
-            Span::new(
+            Segment::new(
                 " ".repeat(python_bar_width),
                 Style::Background(DynColors::Ansi(AnsiColors::Yellow)),
             ),

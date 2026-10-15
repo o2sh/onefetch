@@ -6,7 +6,7 @@ use super::ascii::AsciiArt;
 use super::colors::Colors;
 use super::image::{self, ImageBackend};
 use super::info::info_lines;
-use super::style::{Line, Span};
+use super::style::{Line, Segment};
 use crate::data::Info;
 use crate::language::Language;
 use crate::options::RenderOptions;
@@ -111,27 +111,27 @@ impl Printer {
 
 /// Puts the ascii art on the left of the info lines.
 fn ascii_beside_info(mut ascii: AsciiArt, info: Vec<Line>) -> Vec<Line> {
-    let center_pad = || Span::plain(" ".repeat(CENTER_PAD_LENGTH));
+    let center_pad = || Segment::plain(" ".repeat(CENTER_PAD_LENGTH));
     let mut info = info.into_iter();
     let mut lines = Vec::new();
 
     loop {
-        let spans = match (ascii.next(), info.next()) {
+        let segments = match (ascii.next(), info.next()) {
             (Some(art), Some(info)) => {
-                let mut spans = art.0;
-                spans.push(center_pad());
-                spans.extend(info.0);
-                spans
+                let mut segments = art.0;
+                segments.push(center_pad());
+                segments.extend(info.0);
+                segments
             }
             (Some(art), None) => art.0,
             (None, Some(info)) => {
-                let mut spans = vec![Span::plain(" ".repeat(ascii.width())), center_pad()];
-                spans.extend(info.0);
-                spans
+                let mut segments = vec![Segment::plain(" ".repeat(ascii.width())), center_pad()];
+                segments.extend(info.0);
+                segments
             }
             (None, None) => break,
         };
-        lines.push(Line::from(spans));
+        lines.push(Line::from(segments));
     }
 
     lines
@@ -141,9 +141,9 @@ fn ascii_beside_info(mut ascii: AsciiArt, info: Vec<Line>) -> Vec<Line> {
 fn paint(lines: &[Line], colors: &Colors) -> String {
     let mut output = String::new();
     for line in lines {
-        for span in &line.0 {
-            let style = colors.style(span.style);
-            output.push_str(&sanitize(&span.text).style(style).to_string());
+        for segment in &line.0 {
+            let style = colors.style(segment.style);
+            output.push_str(&sanitize(&segment.text).style(style).to_string());
         }
         output.push('\n');
     }
@@ -311,14 +311,14 @@ mod tests {
     fn test_ascii_beside_info() {
         let ascii = AsciiArt::new("{0}ab\n{0}cd\n{0}ef");
         let info = vec![Line::from("one"), Line::from("two")];
-        let art = |text| Span::new(text, Style::Ascii(Some(0)));
-        let pad = || Span::plain("   ");
+        let art = |text| Segment::new(text, Style::Ascii(Some(0)));
+        let pad = || Segment::plain("   ");
 
         assert_eq!(
             ascii_beside_info(ascii, info),
             vec![
-                Line::from(vec![art("ab"), pad(), Span::value("one")]),
-                Line::from(vec![art("cd"), pad(), Span::value("two")]),
+                Line::from(vec![art("ab"), pad(), Segment::value("one")]),
+                Line::from(vec![art("cd"), pad(), Segment::value("two")]),
                 Line::from(vec![art("ef")]),
             ]
         );
@@ -335,9 +335,9 @@ mod tests {
         assert_eq!(
             lines[1],
             Line::from(vec![
-                Span::plain("  "),
-                Span::plain("   "),
-                Span::value("two")
+                Segment::plain("  "),
+                Segment::plain("   "),
+                Segment::value("two")
             ])
         );
     }
@@ -354,10 +354,10 @@ mod tests {
     #[test]
     fn test_paint() {
         let line = Line::from(vec![
-            Span::new("title", Style::Key),
-            Span::new(":", Style::Separator),
-            Span::plain(" "),
-            Span::value("test"),
+            Segment::new("title", Style::Key),
+            Segment::new(":", Style::Separator),
+            Segment::plain(" "),
+            Segment::value("test"),
         ]);
         assert_eq!(
             paint_with_white(&[line], false),
@@ -367,7 +367,7 @@ mod tests {
 
     #[test]
     fn test_paint_no_bold() {
-        let line = Line::from(vec![Span::new("title", Style::Key)]);
+        let line = Line::from(vec![Segment::new("title", Style::Key)]);
         assert_eq!(
             paint_with_white(&[line], true),
             "\u{1b}[37mtitle\u{1b}[0m\n"
@@ -378,8 +378,8 @@ mod tests {
     fn test_paint_fixed_colors() {
         let red = DynColors::Ansi(AnsiColors::Red);
         let line = Line::from(vec![
-            Span::new("  ", Style::Background(red)),
-            Span::new("●", Style::Color(red)),
+            Segment::new("  ", Style::Background(red)),
+            Segment::new("●", Style::Color(red)),
         ]);
         assert_eq!(
             paint_with_white(&[line], false),
@@ -389,7 +389,7 @@ mod tests {
 
     #[test]
     fn test_paint_ascii() {
-        let line = Line::from(vec![Span::new("██", Style::Ascii(Some(0)))]);
+        let line = Line::from(vec![Segment::new("██", Style::Ascii(Some(0)))]);
         assert_eq!(
             paint_with_white(&[line], false),
             "\u{1b}[37;1m██\u{1b}[0m\n"

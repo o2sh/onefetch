@@ -76,7 +76,7 @@ render/
   format.rs    numbers and dates (--number-separator, --iso-time)
   ascii.rs     ascii art template -> lines
   image/       sixel, kitty, iterm
-  style.rs     Line, Span, Style
+  style.rs     Line, Segment, Style
   colors.rs    Colors: what each Style looks like
 ```
 

@@ -34,7 +34,7 @@
 //! ```
 //!
 
-use super::style::{Line, Span, Style};
+use super::style::{Line, Segment, Style};
 
 /// The lines of an ascii template, truncated to the correct width.
 pub struct AsciiArt<'a> {
@@ -187,13 +187,13 @@ impl<'a> Tokens<'a> {
     fn render(self, start: usize, end: usize) -> Line {
         assert!(start <= end);
         let mut width = end - start;
-        let mut segment = String::new();
-        let mut spans = Vec::new();
+        let mut text = String::new();
+        let mut segments = Vec::new();
         let mut color = None;
 
-        let mut push_segment = |segment: &mut String, color| {
-            if !segment.is_empty() {
-                spans.push(Span::new(std::mem::take(segment), Style::Ascii(color)));
+        let mut push_segment = |text: &mut String, color| {
+            if !text.is_empty() {
+                segments.push(Segment::new(std::mem::take(text), Style::Ascii(color)));
             }
         };
 
@@ -201,24 +201,24 @@ impl<'a> Tokens<'a> {
             match token {
                 Token::Char(chr) => {
                     width = width.saturating_sub(1);
-                    segment.push(chr);
+                    text.push(chr);
                 }
                 Token::Color(col) => {
-                    push_segment(&mut segment, color);
+                    push_segment(&mut text, color);
                     color = Some(col as usize);
                 }
                 Token::Space => {
                     width = width.saturating_sub(1);
-                    segment.push(' ');
+                    text.push(' ');
                 }
             }
         }
 
-        push_segment(&mut segment, color);
+        push_segment(&mut text, color);
         if width > 0 {
-            spans.push(Span::plain(" ".repeat(width)));
+            segments.push(Segment::plain(" ".repeat(width)));
         }
-        Line::from(spans)
+        Line::from(segments)
     }
 }
 
@@ -299,8 +299,8 @@ mod test {
         assert_eq!(Tokens("  {1} {5}  {9} a").leading_spaces(), 6);
     }
 
-    fn ascii(text: &str, color: Option<usize>) -> Span {
-        Span::new(text, Style::Ascii(color))
+    fn ascii(text: &str, color: Option<usize>) -> Segment {
+        Segment::new(text, Style::Ascii(color))
     }
 
     #[test]
@@ -339,7 +339,7 @@ mod test {
             Line::from(vec![
                 ascii(" ", Some(5)),
                 ascii(" a", Some(9)),
-                Span::plain("   "),
+                Segment::plain("   "),
             ])
         );
     }

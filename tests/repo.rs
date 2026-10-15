@@ -131,7 +131,12 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
         };
         info_lines(&info, &options)
             .into_iter()
-            .map(|line| line.0.into_iter().map(|span| span.text).collect::<String>())
+            .map(|line| {
+                line.0
+                    .into_iter()
+                    .map(|segment| segment.text)
+                    .collect::<String>()
+            })
             .find(|line| line.starts_with("Created:"))
     };
     assert_eq!(
