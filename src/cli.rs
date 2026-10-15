@@ -1,12 +1,13 @@
+use crate::data::FieldKind;
 use crate::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
-use crate::data::{
-    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, DEFAULT_NUMBER_OF_LANGUAGES,
-    FieldKind,
-};
 use crate::language::{Language, LanguageType};
+use crate::options::{
+    DEFAULT_COLOR_RESOLUTION, DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS,
+    DEFAULT_NUMBER_OF_LANGUAGES,
+};
+use crate::render::SerializationFormat;
 use crate::render::format::NumberSeparator;
 use crate::render::image::ImageProtocol;
-use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};

@@ -1,12 +1,11 @@
 use self::builder::InfoBuilder;
-use self::git::bots::BotRegex;
 use self::git::{get_repo_url, get_work_dir, traverse_commit_graph, uses_reftables};
 use self::manifest::get_manifest;
 use self::title::Title;
-use crate::language::{Language, LanguageType};
+use crate::language::Language;
+use crate::options::InfoOptions;
 use anyhow::{Context, Result, bail};
 use serde::Serialize;
-use std::path::PathBuf;
 
 mod builder;
 pub(crate) mod dates;
@@ -26,30 +25,6 @@ pub struct Info {
     pub(crate) info_fields: Vec<Field>,
     #[serde(skip_serializing)]
     pub dominant_language: Option<Language>,
-}
-
-pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
-pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
-pub const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
-
-/// What to collect from the repository and which fields to show.
-#[derive(Clone, Debug)]
-pub struct InfoOptions {
-    pub input: PathBuf,
-    pub disabled_fields: Vec<FieldKind>,
-    pub no_title: bool,
-    pub number_of_authors: usize,
-    pub number_of_languages: usize,
-    pub number_of_file_churns: usize,
-    pub churn_pool_size: Option<usize>,
-    pub exclude: Vec<String>,
-    pub no_bots: Option<BotRegex>,
-    pub no_merges: bool,
-    pub email: bool,
-    pub http_url: bool,
-    pub hide_token: bool,
-    pub include_hidden: bool,
-    pub language_types: Vec<LanguageType>,
 }
 
 pub fn build_info(options: &InfoOptions) -> Result<Info> {

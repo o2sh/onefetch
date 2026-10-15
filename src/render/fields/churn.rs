@@ -1,6 +1,6 @@
 use super::FieldView;
 use crate::data::fields::churn::Churn;
-use crate::render::RenderOptions;
+use crate::options::RenderOptions;
 use crate::render::style::Line;
 
 impl FieldView for Churn {

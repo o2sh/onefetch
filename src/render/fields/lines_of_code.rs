@@ -1,6 +1,6 @@
 use super::FieldView;
 use crate::data::fields::lines_of_code::LinesOfCode;
-use crate::render::RenderOptions;
+use crate::options::RenderOptions;
 use crate::render::style::Line;
 
 impl FieldView for LinesOfCode {

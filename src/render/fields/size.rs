@@ -1,6 +1,6 @@
 use super::FieldView;
 use crate::data::fields::size::Size;
-use crate::render::RenderOptions;
+use crate::options::RenderOptions;
 use crate::render::style::Line;
 use byte_unit::{Byte, UnitType};
 

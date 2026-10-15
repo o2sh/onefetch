@@ -1,6 +1,6 @@
 use crate::data::Info;
 use crate::data::title::Title;
-use crate::render::RenderOptions;
+use crate::options::RenderOptions;
 use crate::render::colors::COLOR_PALETTE;
 use crate::render::fields::{FieldView, view};
 use crate::render::style::{Line, Span, Style};

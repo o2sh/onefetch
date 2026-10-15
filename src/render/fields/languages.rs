@@ -1,7 +1,7 @@
 use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
-use crate::render::RenderOptions;
+use crate::options::RenderOptions;
 use crate::render::colors::chip_color;
 use crate::render::style::{Line, Span, Style};
 use owo_colors::DynColors;
