@@ -83,9 +83,9 @@ harness = false
 
 [build-dependencies]
 regex = "1.13.1"
-serde_json = "1.0.151"
+serde_json = { version = "1.0.151", features = ["preserve_order"] }
 serde_yaml = "0.9.34"
-tera = { version = "2.4.0", default-features = false }
+tera = { version = "2.4.0", default-features = false, features = ["preserve_order"] }
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1.12"
