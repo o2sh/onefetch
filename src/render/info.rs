@@ -1,9 +1,8 @@
 use crate::data::Info;
 use crate::data::title::Title;
 use crate::render::RenderOptions;
-use crate::render::colors::COLOR_PALETTE;
 use crate::render::fields::{FieldView, view};
-use crate::render::style::{Line, Span, Style};
+use crate::render::style::{Line, Segment, Style};
 
 pub fn info_lines(info: &Info, options: &RenderOptions) -> Vec<Line> {
     let mut lines = Vec::new();
@@ -25,24 +24,24 @@ fn title_lines(title: &Title) -> Vec<Line> {
     if title.is_empty() {
         return Vec::new();
     }
-    let underline = Span::new("-".repeat(title.width()), Style::Underline);
+    let underline = Segment::new("-".repeat(title.width()), Style::Underline);
     vec![title, Line::from(vec![underline])]
 }
 
 fn title_line(title: &Title) -> Line {
-    let mut spans = Vec::new();
+    let mut segments = Vec::new();
     for part in [&title.git_username, &title.git_version] {
         if part.is_empty() {
             continue;
         }
-        if !spans.is_empty() {
-            spans.push(Span::plain(" "));
-            spans.push(Span::new("~", Style::Tilde));
-            spans.push(Span::plain(" "));
+        if !segments.is_empty() {
+            segments.push(Segment::plain(" "));
+            segments.push(Segment::new("~", Style::Tilde));
+            segments.push(Segment::plain(" "));
         }
-        spans.push(Span::new(part, Style::Title));
+        segments.push(Segment::new(part, Style::Title));
     }
-    Line::from(spans)
+    Line::from(segments)
 }
 
 fn field_lines(field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
@@ -58,25 +57,25 @@ fn field_lines(field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
         .into_iter()
         .enumerate()
         .map(|(i, line)| {
-            let mut spans = if i == 0 {
+            let mut segments = if i == 0 {
                 vec![
-                    Span::new(key.clone(), Style::Key),
-                    Span::new(":", Style::Separator),
-                    Span::plain(" "),
+                    Segment::new(key.clone(), Style::Key),
+                    Segment::new(":", Style::Separator),
+                    Segment::plain(" "),
                 ]
             } else {
-                vec![Span::plain(indent.clone())]
+                vec![Segment::plain(indent.clone())]
             };
-            spans.extend(line.0);
-            Line::from(spans)
+            segments.extend(line.0);
+            Line::from(segments)
         })
         .collect()
 }
 
+/// The 8 standard terminal colors.
 fn palette_line() -> Line {
-    COLOR_PALETTE
-        .into_iter()
-        .map(|color| Span::new("   ", Style::Background(color)))
+    (0..8)
+        .map(|index| Segment::new("   ", Style::Palette(index)))
         .collect::<Vec<_>>()
         .into()
 }
@@ -115,12 +114,12 @@ mod test {
             field_lines(&field, &RenderOptions::default()),
             vec![
                 Line::from(vec![
-                    Span::new("key", Style::Key),
-                    Span::new(":", Style::Separator),
-                    Span::plain(" "),
-                    Span::value("one"),
+                    Segment::new("key", Style::Key),
+                    Segment::new(":", Style::Separator),
+                    Segment::plain(" "),
+                    Segment::value("one"),
                 ]),
-                Line::from(vec![Span::plain("     "), Span::value("two")]),
+                Line::from(vec![Segment::plain("     "), Segment::value("two")]),
             ]
         );
     }
@@ -142,11 +141,11 @@ mod test {
         assert_eq!(
             title_line(&title),
             Line::from(vec![
-                Span::new("onefetch-committer-name", Style::Title),
-                Span::plain(" "),
-                Span::new("~", Style::Tilde),
-                Span::plain(" "),
-                Span::new("git version 2.37.2", Style::Title),
+                Segment::new("onefetch-committer-name", Style::Title),
+                Segment::plain(" "),
+                Segment::new("~", Style::Tilde),
+                Segment::plain(" "),
+                Segment::new("git version 2.37.2", Style::Title),
             ])
         );
     }
@@ -156,7 +155,7 @@ mod test {
         let title = title("onefetch-committer-name", "");
         assert_eq!(
             title_line(&title),
-            Line::from(vec![Span::new("onefetch-committer-name", Style::Title)])
+            Line::from(vec![Segment::new("onefetch-committer-name", Style::Title)])
         );
     }
 
@@ -170,8 +169,8 @@ mod test {
         assert_eq!(
             title_lines(&title("user", "")),
             vec![
-                Line::from(vec![Span::new("user", Style::Title)]),
-                Line::from(vec![Span::new("----", Style::Underline)]),
+                Line::from(vec![Segment::new("user", Style::Title)]),
+                Line::from(vec![Segment::new("----", Style::Underline)]),
             ]
         );
     }

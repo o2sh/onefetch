@@ -2,9 +2,7 @@ use super::FieldView;
 use crate::data::fields::languages::{LanguageWithPercentage, Languages};
 use crate::language::DEFAULT_CHIP_ICON;
 use crate::render::RenderOptions;
-use crate::render::colors::COLOR_PALETTE;
-use crate::render::style::{Line, Span, Style};
-use owo_colors::{AnsiColors, DynColors};
+use crate::render::style::{LanguageEntry, Line, Segment, Style};
 
 const LANGUAGES_BAR_LENGTH: usize = 26;
 
@@ -14,7 +12,7 @@ const LANGUAGES_PER_LINE: usize = 2;
 struct LanguageDisplayData {
     language: String,
     percentage: f64,
-    chip_color: DynColors,
+    entry: LanguageEntry,
     chip_icon: char,
 }
 
@@ -24,37 +22,26 @@ impl LanguageDisplayData {
     }
 }
 
-fn prepare_languages(
-    languages: &Languages,
-    options: &RenderOptions,
-    color_palette: &[DynColors],
-) -> Vec<LanguageDisplayData> {
+fn prepare_languages(languages: &Languages, options: &RenderOptions) -> Vec<LanguageDisplayData> {
     let mut display_data: Vec<_> = languages
         .languages_with_percentage
         .iter()
         .enumerate()
         .map(
             |(
-                i,
+                rank,
                 &LanguageWithPercentage {
                     language,
                     percentage,
                 },
-            )| {
-                let chip_color = if options.true_color {
-                    language.chip_color()
-                } else {
-                    color_palette[i % color_palette.len()]
-                };
-
-                let chip_icon = language.chip_icon(options.nerd_fonts);
-
-                LanguageDisplayData {
-                    language: language.to_string(),
-                    percentage,
-                    chip_color,
-                    chip_icon,
-                }
+            )| LanguageDisplayData {
+                language: language.to_string(),
+                percentage,
+                entry: LanguageEntry {
+                    language: Some(language),
+                    rank,
+                },
+                chip_icon: language.chip_icon(options.nerd_fonts),
             },
         )
         .collect();
@@ -62,7 +49,10 @@ fn prepare_languages(
         display_data.push(LanguageDisplayData {
             language: "Other".to_string(),
             percentage,
-            chip_color: DynColors::Ansi(AnsiColors::White),
+            entry: LanguageEntry {
+                language: None,
+                rank: display_data.len(),
+            },
             chip_icon: DEFAULT_CHIP_ICON,
         });
     }
@@ -86,34 +76,31 @@ fn build_language_bar(languages: &[LanguageDisplayData]) -> Line {
         .iter()
         .map(|language| {
             let width = (language.percentage / 100. * LANGUAGES_BAR_LENGTH as f64).round() as usize;
-            Span::new(
-                " ".repeat(width.max(1)),
-                Style::Background(language.chip_color),
-            )
+            Segment::new(" ".repeat(width.max(1)), Style::LanguageBar(language.entry))
         })
         .collect::<Vec<_>>()
         .into()
 }
 
 fn build_legend_line(languages: &[LanguageDisplayData]) -> Line {
-    let mut spans = Vec::new();
+    let mut segments = Vec::new();
     for language in languages {
-        if !spans.is_empty() {
-            spans.push(Span::plain(" "));
+        if !segments.is_empty() {
+            segments.push(Segment::plain(" "));
         }
-        spans.push(Span::new(
+        segments.push(Segment::new(
             language.chip_icon,
-            Style::Color(language.chip_color),
+            Style::LanguageChip(language.entry),
         ));
-        spans.push(Span::plain(" "));
-        spans.push(Span::value(language.label()));
+        segments.push(Segment::plain(" "));
+        segments.push(Segment::value(language.label()));
     }
-    spans.into()
+    segments.into()
 }
 
 impl FieldView for Languages {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
-        let languages = prepare_languages(self, options, &COLOR_PALETTE[1..7]);
+        let languages = prepare_languages(self, options);
 
         let mut lines = vec![build_language_bar(&languages)];
         lines.extend(languages.chunks(LANGUAGES_PER_LINE).map(build_legend_line));
@@ -143,24 +130,28 @@ mod test {
         }
     }
 
+    fn entry(language: Option<Language>, rank: usize) -> LanguageEntry {
+        LanguageEntry { language, rank }
+    }
+
     #[test]
     fn test_display_languages() {
         let languages = Languages {
             languages_with_percentage: vec![language(Language::Go, 100_f64)],
         };
-        let red = DynColors::Ansi(AnsiColors::Red);
+        let go = entry(Some(Language::Go), 0);
 
         assert_eq!(
             languages.value(&RenderOptions::default()),
             vec![
-                Line::from(vec![Span::new(
+                Line::from(vec![Segment::new(
                     " ".repeat(LANGUAGES_BAR_LENGTH),
-                    Style::Background(red),
+                    Style::LanguageBar(go),
                 )]),
                 Line::from(vec![
-                    Span::new(DEFAULT_CHIP_ICON, Style::Color(red)),
-                    Span::plain(" "),
-                    Span::value("Go (100.0 %)"),
+                    Segment::new(DEFAULT_CHIP_ICON, Style::LanguageChip(go)),
+                    Segment::plain(" "),
+                    Segment::value("Go (100.0 %)"),
                 ]),
             ]
         );
@@ -168,17 +159,19 @@ mod test {
 
     #[test]
     fn test_build_language_bar_multiple_languages() {
+        let rust = entry(Some(Language::Rust), 0);
+        let python = entry(Some(Language::Python), 1);
         let languages: Vec<LanguageDisplayData> = vec![
             LanguageDisplayData {
                 language: "Rust".to_string(),
                 percentage: 60.0,
-                chip_color: DynColors::Ansi(AnsiColors::Red),
+                entry: rust,
                 chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: "Python".to_string(),
                 percentage: 40.0,
-                chip_color: DynColors::Ansi(AnsiColors::Yellow),
+                entry: python,
                 chip_icon: DEFAULT_CHIP_ICON,
             },
         ];
@@ -188,14 +181,8 @@ mod test {
         let python_bar_width = (0.4 * LANGUAGES_BAR_LENGTH as f64).round() as usize;
 
         let expected_result = Line::from(vec![
-            Span::new(
-                " ".repeat(rust_bar_width),
-                Style::Background(DynColors::Ansi(AnsiColors::Red)),
-            ),
-            Span::new(
-                " ".repeat(python_bar_width),
-                Style::Background(DynColors::Ansi(AnsiColors::Yellow)),
-            ),
+            Segment::new(" ".repeat(rust_bar_width), Style::LanguageBar(rust)),
+            Segment::new(" ".repeat(python_bar_width), Style::LanguageBar(python)),
         ]);
 
         assert_eq!(result, expected_result);
@@ -210,30 +197,25 @@ mod test {
             ],
         };
 
-        let color_palette = [
-            DynColors::Ansi(AnsiColors::Red),
-            DynColors::Ansi(AnsiColors::Green),
-        ];
-
-        let result = prepare_languages(&languages, &RenderOptions::default(), &color_palette);
+        let result = prepare_languages(&languages, &RenderOptions::default());
 
         let expected_result = vec![
             LanguageDisplayData {
                 language: Language::Go.to_string(),
                 percentage: 40_f64,
-                chip_color: DynColors::Ansi(AnsiColors::Red),
+                entry: entry(Some(Language::Go), 0),
                 chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: Language::Erlang.to_string(),
                 percentage: 30_f64,
-                chip_color: DynColors::Ansi(AnsiColors::Green),
+                entry: entry(Some(Language::Erlang), 1),
                 chip_icon: DEFAULT_CHIP_ICON,
             },
             LanguageDisplayData {
                 language: "Other".to_string(),
                 percentage: 30_f64,
-                chip_color: DynColors::Ansi(AnsiColors::White),
+                entry: entry(None, 2),
                 chip_icon: DEFAULT_CHIP_ICON,
             },
         ];

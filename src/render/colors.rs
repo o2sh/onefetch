@@ -1,8 +1,12 @@
+//! What each `Style` looks like: its color, and whether it is bold.
+
+use super::RenderOptions;
+use super::style::{LanguageEntry, Style};
 use crate::language::Language;
-use owo_colors::{AnsiColors, DynColors};
+use owo_colors::{AnsiColors, DynColors, Style as AnsiStyle};
 
 /// The 8 standard terminal colors.
-pub const COLOR_PALETTE: [DynColors; 8] = [
+const COLOR_PALETTE: [DynColors; 8] = [
     DynColors::Ansi(AnsiColors::Black),
     DynColors::Ansi(AnsiColors::Red),
     DynColors::Ansi(AnsiColors::Green),
@@ -12,6 +16,81 @@ pub const COLOR_PALETTE: [DynColors; 8] = [
     DynColors::Ansi(AnsiColors::Cyan),
     DynColors::Ansi(AnsiColors::White),
 ];
+
+pub struct Colors {
+    ascii: Vec<DynColors>,
+    text: TextColors,
+    bold: bool,
+    true_color: bool,
+}
+
+impl Colors {
+    /// The ascii art takes the colors of `--ascii-language`, or else of the
+    /// dominant language, overridden by `--ascii-colors`. The title and the
+    /// keys take the art's first color, unless `--text-colors` says otherwise.
+    pub fn new(options: &RenderOptions, dominant_language: Option<Language>) -> Self {
+        let ascii = get_ascii_colors(
+            dominant_language.as_ref(),
+            options.ascii_language.as_ref(),
+            &options.ascii_colors,
+            options.true_color,
+        );
+        let primary_color = ascii
+            .first()
+            .copied()
+            .unwrap_or(DynColors::Ansi(AnsiColors::Default));
+        Self {
+            text: TextColors::new(&options.text_colors, primary_color),
+            ascii,
+            bold: !options.no_bold,
+            true_color: options.true_color,
+        }
+    }
+
+    pub fn style(&self, style: Style) -> AnsiStyle {
+        match style {
+            Style::Title => colored(self.text.title, self.bold),
+            Style::Tilde => colored(self.text.tilde, self.bold),
+            Style::Underline => colored(self.text.underline, false),
+            Style::Key => colored(self.text.key, self.bold),
+            Style::Separator => colored(self.text.separator, self.bold),
+            Style::Value => colored(self.text.value, false),
+            Style::AsciiArt(index) => {
+                let color = index
+                    .and_then(|i| self.ascii.get(i))
+                    .copied()
+                    .unwrap_or(DynColors::Ansi(AnsiColors::Default));
+                colored(color, self.bold)
+            }
+            Style::LanguageChip(entry) => AnsiStyle::new().color(self.language_color(entry)),
+            Style::LanguageBar(entry) => AnsiStyle::new().on_color(self.language_color(entry)),
+            Style::Palette(index) => {
+                let color = COLOR_PALETTE
+                    .get(index)
+                    .copied()
+                    .unwrap_or(DynColors::Ansi(AnsiColors::Default));
+                AnsiStyle::new().on_color(color)
+            }
+            Style::Plain => AnsiStyle::new(),
+        }
+    }
+
+    /// A language's own color with true colors, otherwise the palette's colors
+    /// in turn. "Other" is white.
+    fn language_color(&self, entry: LanguageEntry) -> DynColors {
+        let palette = &COLOR_PALETTE[1..7];
+        match entry.language {
+            Some(language) if self.true_color => language.chip_color(),
+            Some(_) => palette[entry.rank % palette.len()],
+            None => DynColors::Ansi(AnsiColors::White),
+        }
+    }
+}
+
+fn colored(color: DynColors, bold: bool) -> AnsiStyle {
+    let style = AnsiStyle::new().color(color);
+    if bold { style.bold() } else { style }
+}
 
 pub fn get_ascii_colors(
     language_opt: Option<&Language>,
@@ -195,6 +274,117 @@ mod test {
                 DynColors::Ansi(AnsiColors::Default),
                 DynColors::Ansi(AnsiColors::Yellow)
             ]
+        );
+    }
+
+    #[test]
+    fn ascii_colors_follow_dominant_language() {
+        // The default `RenderOptions` have true colors off.
+        let colors = Colors::new(&RenderOptions::default(), Some(Language::Rust));
+        assert_eq!(colors.ascii, Language::Rust.colors(false));
+    }
+
+    #[test]
+    fn test_style() {
+        let colors = Colors::new(&RenderOptions::default(), Some(Language::Rust));
+        let red = DynColors::Ansi(AnsiColors::Red);
+        let default = DynColors::Ansi(AnsiColors::Default);
+
+        assert_eq!(colors.style(Style::Key), AnsiStyle::new().color(red).bold());
+        assert_eq!(colors.style(Style::Value), AnsiStyle::new().color(default));
+        assert_eq!(
+            colors.style(Style::AsciiArt(Some(0))),
+            AnsiStyle::new().color(red).bold()
+        );
+        // Before the first `{n}` token, or past the last color.
+        assert_eq!(
+            colors.style(Style::AsciiArt(None)),
+            AnsiStyle::new().color(default).bold()
+        );
+        assert_eq!(
+            colors.style(Style::AsciiArt(Some(9))),
+            AnsiStyle::new().color(default).bold()
+        );
+    }
+
+    #[test]
+    fn test_style_no_bold() {
+        let options = RenderOptions {
+            no_bold: true,
+            ..Default::default()
+        };
+        let colors = Colors::new(&options, Some(Language::Rust));
+        let red = DynColors::Ansi(AnsiColors::Red);
+
+        assert_eq!(colors.style(Style::Key), AnsiStyle::new().color(red));
+        assert_eq!(
+            colors.style(Style::AsciiArt(Some(0))),
+            AnsiStyle::new().color(red)
+        );
+    }
+
+    fn entry(language: Option<Language>, rank: usize) -> LanguageEntry {
+        LanguageEntry { language, rank }
+    }
+
+    #[test]
+    fn test_language_color() {
+        let colors = Colors::new(&RenderOptions::default(), None);
+        let red = DynColors::Ansi(AnsiColors::Red);
+        assert_eq!(colors.language_color(entry(Some(Language::Go), 0)), red);
+        assert_eq!(colors.language_color(entry(Some(Language::Go), 6)), red);
+        assert_eq!(
+            colors.language_color(entry(Some(Language::Go), 1)),
+            DynColors::Ansi(AnsiColors::Green)
+        );
+        assert_eq!(
+            colors.language_color(entry(None, 0)),
+            DynColors::Ansi(AnsiColors::White)
+        );
+    }
+
+    #[test]
+    fn test_language_color_true_color() {
+        let options = RenderOptions {
+            true_color: true,
+            ..Default::default()
+        };
+        let colors = Colors::new(&options, None);
+        assert_eq!(
+            colors.language_color(entry(Some(Language::Go), 0)),
+            Language::Go.chip_color()
+        );
+        assert_eq!(
+            colors.language_color(entry(None, 0)),
+            DynColors::Ansi(AnsiColors::White)
+        );
+    }
+
+    #[test]
+    fn test_language_styles() {
+        let colors = Colors::new(&RenderOptions::default(), None);
+        let red = DynColors::Ansi(AnsiColors::Red);
+        let go = entry(Some(Language::Go), 0);
+        assert_eq!(
+            colors.style(Style::LanguageChip(go)),
+            AnsiStyle::new().color(red)
+        );
+        assert_eq!(
+            colors.style(Style::LanguageBar(go)),
+            AnsiStyle::new().on_color(red)
+        );
+    }
+
+    #[test]
+    fn test_palette_style() {
+        let colors = Colors::new(&RenderOptions::default(), None);
+        assert_eq!(
+            colors.style(Style::Palette(1)),
+            AnsiStyle::new().on_color(DynColors::Ansi(AnsiColors::Red))
+        );
+        assert_eq!(
+            colors.style(Style::Palette(8)),
+            AnsiStyle::new().on_color(DynColors::Ansi(AnsiColors::Default))
         );
     }
 

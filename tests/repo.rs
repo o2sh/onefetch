@@ -4,7 +4,7 @@ use onefetch::cli::{Cli, InfoArgs};
 use onefetch::data::git::get_work_dir;
 use onefetch::data::{InfoOptions, build_info};
 use onefetch::render::RenderOptions;
-use onefetch::render::lines::info_lines;
+use onefetch::render::info::info_lines;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
@@ -131,7 +131,12 @@ fn test_repo_with_pre_epoch_dates() -> Result<()> {
         };
         info_lines(&info, &options)
             .into_iter()
-            .map(|line| line.0.into_iter().map(|span| span.text).collect::<String>())
+            .map(|line| {
+                line.0
+                    .into_iter()
+                    .map(|segment| segment.text)
+                    .collect::<String>()
+            })
             .find(|line| line.starts_with("Created:"))
     };
     assert_eq!(

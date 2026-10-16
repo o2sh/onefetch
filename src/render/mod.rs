@@ -3,12 +3,12 @@ use self::image::ImageProtocol;
 use crate::language::Language;
 use std::path::PathBuf;
 
+pub mod ascii;
 mod colors;
 mod fields;
 pub mod format;
 pub mod image;
-pub mod lines;
-pub mod logo;
+pub mod info;
 mod printer;
 pub mod style;
 
