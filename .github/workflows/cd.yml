@@ -50,7 +50,6 @@ jobs:
           files: |
             ./release/*.tar.gz
             ./release/*.deb
-            ./release/*.zip
             ./onefetch-setup.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,4 +77,4 @@ jobs:
       - name: Publish to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish
+        run: cargo publish --locked
