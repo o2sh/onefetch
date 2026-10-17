@@ -219,11 +219,11 @@ impl InfoBuilder {
         self
     }
 
-    pub fn build(self, dominant_language: Option<Language>) -> Info {
+    pub fn build(self, main_language: Option<Language>) -> Info {
         Info {
             title: self.title,
             info_fields: self.info_fields,
-            dominant_language,
+            main_language,
         }
     }
 }
