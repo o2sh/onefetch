@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
-
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use clap_complete::{Generator, generate};

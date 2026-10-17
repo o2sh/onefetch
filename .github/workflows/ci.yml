@@ -28,9 +28,11 @@ jobs:
 
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v2
+        with:
+          rustflags: "-D deprecated"
 
       - name: Build
-        run: cargo build --features=fail-on-deprecated
+        run: cargo build --locked
 
       - name: Run tests
         run: cargo test

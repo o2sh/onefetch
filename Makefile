@@ -1,8 +1,10 @@
+.PHONY: install build uninstall clean release-mac release-win release-linux release-deb
+
 install:
-	cargo install --path "." --features=fail-on-deprecated
+	cargo install --path . --locked
 
 build:
-	cargo build --release --features=fail-on-deprecated
+	cargo build --release --locked
 
 uninstall:
 	cargo uninstall onefetch
@@ -11,7 +13,6 @@ clean:
 	cargo clean
 
 release-mac:
-	strip target/release/onefetch
 	mkdir -p release
 	tar -C ./target/release/ -czvf ./release/onefetch-mac.tar.gz ./onefetch
 
@@ -22,7 +23,6 @@ release-win:
 	iscc.exe -DMyAppVersion=${TAG_NAME} ./.github/workflows/windows-installer.iss
 
 release-linux:
-	strip target/release/onefetch
 	mkdir -p release
 	tar -C ./target/release/ -czvf ./release/onefetch-linux.tar.gz ./onefetch
 
