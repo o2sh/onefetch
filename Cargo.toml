@@ -88,7 +88,7 @@ serde_yaml = "0.9.34"
 tera = { version = "2.4.0", default-features = false, features = ["preserve_order"] }
 
 [target.'cfg(windows)'.build-dependencies]
-winresource = "0.1.34"
+winres = "0.1.12"
 
 [target.'cfg(windows)'.dependencies]
 enable-ansi-support = "0.3.1"
