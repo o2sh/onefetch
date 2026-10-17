@@ -55,7 +55,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to WinGet
-        uses: vedantmgoyal9/winget-releaser@b7370d4d152efdce803a26cc6ca9eee58cb2ad54 # v2
+        uses: vedantmgoyal9/winget-releaser@main
         if: matrix.os == 'windows-latest'
         with:
           identifier: o2sh.onefetch
