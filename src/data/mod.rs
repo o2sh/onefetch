@@ -104,7 +104,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .last_change(&git_metrics)
         .contributors(&git_metrics, options.number_of_authors)
         .url(&repo_url)
-        .commits(&git_metrics, repo.is_shallow())
+        .commits(&git_metrics, repo.is_shallow()?)
         .churn(
             &git_metrics,
             options.number_of_file_churns,
