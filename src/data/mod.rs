@@ -25,7 +25,7 @@ pub struct Info {
     pub(crate) title: Option<Title>,
     pub(crate) info_fields: Vec<Field>,
     #[serde(skip_serializing)]
-    pub dominant_language: Option<Language>,
+    pub main_language: Option<Language>,
 }
 
 pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
@@ -88,7 +88,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .join()
         .ok()
         .context("BUG: panic in language statistics thread")?;
-    let dominant_language = loc_by_language.as_ref().map(|v| loc::get_main_language(v));
+    let main_language = loc_by_language.as_ref().map(|v| loc::get_main_language(v));
 
     Ok(InfoBuilder::new(options)
         .title(&repo)
@@ -113,5 +113,5 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .lines_of_code(loc_by_language.as_ref())
         .size(&repo)
         .license(&repo_path, manifest.as_ref())?
-        .build(dominant_language))
+        .build(main_language))
 }

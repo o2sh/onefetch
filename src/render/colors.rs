@@ -26,11 +26,11 @@ pub struct Colors {
 
 impl Colors {
     /// The ascii art takes the colors of `--ascii-language`, or else of the
-    /// dominant language, overridden by `--ascii-colors`. The title and the
+    /// main language, overridden by `--ascii-colors`. The title and the
     /// keys take the art's first color, unless `--text-colors` says otherwise.
-    pub fn new(options: &RenderOptions, dominant_language: Option<Language>) -> Self {
+    pub fn new(options: &RenderOptions, main_language: Option<Language>) -> Self {
         let ascii = get_ascii_colors(
-            dominant_language.as_ref(),
+            main_language.as_ref(),
             options.ascii_language.as_ref(),
             &options.ascii_colors,
             options.true_color,
@@ -278,7 +278,7 @@ mod test {
     }
 
     #[test]
-    fn ascii_colors_follow_dominant_language() {
+    fn ascii_colors_follow_main_language() {
         // The default `RenderOptions` have true colors off.
         let colors = Colors::new(&RenderOptions::default(), Some(Language::Rust));
         assert_eq!(colors.ascii, Language::Rust.colors(false));

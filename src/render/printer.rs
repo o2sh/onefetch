@@ -55,9 +55,9 @@ impl Printer {
             None
         };
 
-        let colors = Colors::new(options, info.dominant_language);
+        let colors = Colors::new(options, info.main_language);
 
-        let kind = PrinterKind::new(options, info.dominant_language, image, image_backend)?;
+        let kind = PrinterKind::new(options, info.main_language, image, image_backend)?;
 
         Ok(Self {
             info,
@@ -174,7 +174,7 @@ fn write_unwrapped(writer: &mut dyn std::io::Write, content: &str) -> Result<()>
 impl PrinterKind {
     fn new(
         options: &RenderOptions,
-        dominant_language: Option<Language>,
+        main_language: Option<Language>,
         image: Option<DynamicImage>,
         image_backend: Option<Box<dyn ImageBackend>>,
     ) -> Result<Self> {
@@ -198,9 +198,7 @@ impl PrinterKind {
                                 .ascii_language
                                 .map(|language| language.ascii_art().to_string())
                         })
-                        .or_else(|| {
-                            dominant_language.map(|language| language.ascii_art().to_string())
-                        });
+                        .or_else(|| main_language.map(|language| language.ascii_art().to_string()));
 
                     match ascii_art {
                         Some(art) => Self::Ascii { art },
@@ -271,7 +269,7 @@ mod tests {
     #[test]
     fn test_create_plain_printer_when_no_art() {
         let info = Info {
-            dominant_language: Some(Language::Rust),
+            main_language: Some(Language::Rust),
             ..Default::default()
         };
         let options = RenderOptions {
@@ -285,16 +283,16 @@ mod tests {
     }
 
     #[test]
-    fn test_create_plain_printer_when_no_dominant_language_no_ascii_input() {
+    fn test_create_plain_printer_when_no_main_language_no_ascii_input() {
         let printer = Printer::new(Info::default(), &RenderOptions::default()).unwrap();
 
         assert_eq!(printer.kind, PrinterKind::Plain);
     }
 
     #[test]
-    fn test_create_ascii_printer_when_dominant_language() {
+    fn test_create_ascii_printer_when_main_language() {
         let info = Info {
-            dominant_language: Some(Language::Rust),
+            main_language: Some(Language::Rust),
             ..Default::default()
         };
 
@@ -304,7 +302,7 @@ mod tests {
     }
 
     #[test]
-    fn test_create_ascii_printer_when_ascii_language_without_dominant_language() {
+    fn test_create_ascii_printer_when_ascii_language_without_main_language() {
         let options = RenderOptions {
             ascii_language: Some(Language::Rust),
             ..Default::default()
