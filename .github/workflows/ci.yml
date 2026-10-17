@@ -30,9 +30,18 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v2
         with:
           rustflags: "-D deprecated"
+          components: rustfmt, clippy
+
+      # Only on Linux: .rustfmt.toml enforces Unix newlines and Windows checks out with CRLF.
+      - name: Check formatting
+        if: matrix.os == 'ubuntu-latest'
+        run: cargo fmt --check
+
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
 
       - name: Build
         run: cargo build --locked
 
       - name: Run tests
-        run: cargo test
+        run: cargo test --locked
