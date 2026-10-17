@@ -6,15 +6,27 @@ version = "3.0.0"
 repository = "https://github.com/o2sh/onefetch"
 categories = ["command-line-utilities"]
 description = "Command-line Git information tool"
-include = [
-    "/src",
-    "/build.rs",
-    "/languages.yaml",
-    "/resources/license.cache.zstd",
-    "/assets/onefetch.ico",
-    "/benches",
-    "/README.md",
-    "/LICENSE.md",
+exclude = [
+    "/site",
+    "/docs",
+    "/tests",
+    "/scripts",
+    "/snap",
+    "/.github",
+    "/.vscode",
+    "/assets/*.png",
+    "/assets/*.svg",
+    "/.editorconfig",
+    "/.gitattributes",
+    "/.gitignore",
+    "/.mailmap",
+    "/.rustfmt.toml",
+    "/.tokeignore",
+    "/ARCHITECTURE.md",
+    "/CHANGELOG.md",
+    "/CONTRIBUTING.md",
+    "/Makefile",
+    "/renovate.json",
 ]
 keywords = ["git", "cli", "terminal"]
 name = "onefetch"
