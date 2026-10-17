@@ -4,7 +4,7 @@
 //! `Style::AsciiArt(Some(n))`, which `--ascii-colors` colors.
 //!
 //! ```rust,no_run
-//! use onefetch::render::ascii::AsciiArt;
+//! use onefetch::render::ascii::ascii_lines;
 //! use onefetch::render::style::Line;
 //!
 //! const ASCII: &str = r#"
@@ -30,66 +30,31 @@
 //! {0}            ``.---::::---..`
 //! "#;
 //!
-//! let lines: Vec<Line> = AsciiArt::new(ASCII).collect();
+//! let lines: Vec<Line> = ascii_lines(ASCII);
 //! ```
 //!
 
 use super::style::{Line, Segment, Style};
 
-/// The lines of an ascii template, truncated to the correct width.
-pub struct AsciiArt<'a> {
-    content: Box<dyn 'a + Iterator<Item = &'a str>>,
-    start: usize,
-    end: usize,
-}
-impl<'a> AsciiArt<'a> {
-    pub fn new(input: &'a str) -> AsciiArt<'a> {
-        let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
-        while let Some(line) = lines.last() {
-            if Tokens(line).is_empty() {
-                lines.pop();
-            } else {
-                break;
-            }
-        }
-
-        let (start, end) = get_min_start_max_end(&lines);
-
-        AsciiArt {
-            content: Box::new(lines.into_iter()),
-            start,
-            end,
-        }
+/// The lines of an ascii template, without the common indentation and all
+/// padded to the same width.
+pub fn ascii_lines(input: &str) -> Vec<Line> {
+    let mut lines: Vec<_> = input.lines().skip_while(|line| line.is_empty()).collect();
+    while lines.last().is_some_and(|line| Tokens(line).is_empty()) {
+        lines.pop();
     }
-
-    pub fn width(&self) -> usize {
-        assert!(self.end >= self.start);
-        self.end - self.start
-    }
-}
-
-fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
+    let Some(start) = lines.iter().map(|line| Tokens(line).leading_spaces()).min() else {
+        return Vec::new();
+    };
+    let end = lines
+        .iter()
+        .map(|line| Tokens(line).true_length())
+        .max()
+        .unwrap_or(start);
     lines
         .iter()
-        .map(|line| {
-            let line_start = Tokens(line).leading_spaces();
-            let line_end = Tokens(line).true_length();
-            (line_start, line_end)
-        })
-        .fold((usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
-            (acc_s.min(line_s), acc_e.max(line_e))
-        })
-}
-
-/// Produces a series of lines which have been automatically truncated to the
-/// correct width
-impl Iterator for AsciiArt<'_> {
-    type Item = Line;
-    fn next(&mut self) -> Option<Line> {
-        self.content
-            .next()
-            .map(|line| Tokens(line).render(self.start, self.end))
-    }
+        .map(|line| Tokens(line).render(start, end))
+        .collect()
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -266,15 +231,25 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_get_min_start_max_end() {
-        let lines = [
+    fn ascii_lines_removes_common_indentation() {
+        let input = [
             "                     xxx",
             "   xxx",
             "         oo",
             "     o",
             "                           xx",
-        ];
-        assert_eq!(get_min_start_max_end(&lines), (3, 29));
+        ]
+        .join("\n");
+        let lines = ascii_lines(&input);
+        assert_eq!(lines.len(), 5);
+        assert!(lines.iter().all(|line| line.width() == 26));
+    }
+
+    #[test]
+    fn ascii_lines_without_visible_characters_is_empty() {
+        for input in ["", "   ", "\n\n", "{0}"] {
+            assert_eq!(ascii_lines(input), Vec::new());
+        }
     }
 
     #[test]

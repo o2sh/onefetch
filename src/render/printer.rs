@@ -1,7 +1,7 @@
 //! Picks the output, puts the ascii art or image beside the info, and writes
 //! it. The only code that writes escape codes, apart from the image protocols.
 
-use super::ascii::AsciiArt;
+use super::ascii::ascii_lines;
 use super::colors::Colors;
 use super::image::{self, ImageBackend};
 use super::info::info_lines;
@@ -107,7 +107,7 @@ impl Printer {
             }
             PrinterKind::Ascii { art } => {
                 let info = info_lines(&self.info, &self.options);
-                let lines = ascii_beside_info(AsciiArt::new(art), info);
+                let lines = ascii_beside_info(ascii_lines(art), info);
                 write_unwrapped(writer, &paint(&lines, &self.colors))
             }
         }
@@ -120,7 +120,9 @@ fn center_pad() -> Segment {
 }
 
 /// Puts the ascii art on the left of the info lines.
-fn ascii_beside_info(mut ascii: AsciiArt, info: Vec<Line>) -> Vec<Line> {
+fn ascii_beside_info(ascii: Vec<Line>, info: Vec<Line>) -> Vec<Line> {
+    let width = ascii.first().map_or(0, Line::width);
+    let mut ascii = ascii.into_iter();
     let mut info = info.into_iter();
     let mut lines = Vec::new();
 
@@ -134,7 +136,7 @@ fn ascii_beside_info(mut ascii: AsciiArt, info: Vec<Line>) -> Vec<Line> {
             }
             (Some(art), None) => art.0,
             (None, Some(info)) => {
-                let mut segments = vec![Segment::plain(" ".repeat(ascii.width())), center_pad()];
+                let mut segments = vec![Segment::plain(" ".repeat(width)), center_pad()];
                 segments.extend(info.0);
                 segments
             }
@@ -315,7 +317,7 @@ mod tests {
 
     #[test]
     fn test_ascii_beside_info() {
-        let ascii = AsciiArt::new("{0}ab\n{0}cd\n{0}ef");
+        let ascii = ascii_lines("{0}ab\n{0}cd\n{0}ef");
         let info = vec![Line::from("one"), Line::from("two")];
         let art = |text| Segment::new(text, Style::AsciiArt(Some(0)));
         let pad = || Segment::plain("   ");
@@ -332,7 +334,7 @@ mod tests {
 
     #[test]
     fn test_info_longer_than_ascii() {
-        let ascii = AsciiArt::new("{0}ab");
+        let ascii = ascii_lines("{0}ab");
         let info = vec![Line::from("one"), Line::from("two")];
 
         let lines = ascii_beside_info(ascii, info);
