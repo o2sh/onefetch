@@ -73,7 +73,7 @@ toml = "1.1.6"
 
 [dev-dependencies]
 criterion = "0.8.2"
-gix-testtools = "0.21.0"
+gix-testtools = { version = "0.21.0", features = ["sha1"] }
 insta = { version = "1.49.0", features = ["json", "redactions"] }
 rstest = "0.27.0"
 

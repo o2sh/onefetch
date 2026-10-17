@@ -1479,6 +1479,7 @@ dependencies = [
  "faster-hex",
  "gix-error 0.4.0",
  "gix-features",
+ "sha1dc",
 ]
 
 [[package]]
