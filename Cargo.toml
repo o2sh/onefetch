@@ -42,7 +42,7 @@ byte-unit = "5.2.6"
 cargo_toml = "1.0.1"
 clap = { version = "4.6.7", features = ["derive"] }
 clap_complete = "4.6.11"
-gix = { version = "0.88.0", default-features = false, features = [
+gix = { version = "0.89.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
