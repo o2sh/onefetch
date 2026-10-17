@@ -65,7 +65,6 @@ jobs:
 
   crates:
     name: Publish to crates.io
-    needs: deploy
     runs-on: ubuntu-latest
 
     steps:
