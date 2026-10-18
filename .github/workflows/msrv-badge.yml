@@ -1,36 +1,18 @@
-name: MSRV Badge
+name: MSRV
 on:
-  schedule:
-    # Once a week at midnight UTC
-    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 jobs:
-  make-badge:
+  msrv:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: taiki-e/install-action@v2
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.BADGE_TOKEN }}
+          tool: cargo-msrv
 
-      - name: Get Minimum Supported Rust Version
-        uses: spenserblack/actions-msrv@v0.4
-        id: get-msrv
-        timeout-minutes: 60
-
-      - name: Create Badge
-        run: curl https://img.shields.io/badge/rustc-${{ steps.get-msrv.outputs.msrv }}%2B-blue > ./assets/msrv-badge.svg
-
-      - name: Commit Badge
-        continue-on-error: true
-        run: |
-          git status
-          git pull --ff-only
-          git add ./assets/msrv-badge.svg
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update msrv badge [Skip CI]"
-          git push
+      - name: Find MSRV
+        run: cargo msrv find --min 1.85
