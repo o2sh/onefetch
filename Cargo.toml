@@ -2,7 +2,7 @@
 authors = ["o2sh <hjajiossama@gmail.com>"]
 edition = "2024"
 license = "MIT"
-version = "3.0.0"
+version = "3.1.0"
 repository = "https://github.com/o2sh/onefetch"
 categories = ["command-line-utilities"]
 description = "Command-line Git information tool"
@@ -85,7 +85,9 @@ harness = false
 regex = "1.13.1"
 serde_json = { version = "1.0.151", features = ["preserve_order"] }
 serde_yaml = "0.9.34"
-tera = { version = "2.4.0", default-features = false, features = ["preserve_order"] }
+tera = { version = "2.4.0", default-features = false, features = [
+    "preserve_order",
+] }
 
 [target.'cfg(windows)'.build-dependencies]
 winresource = "0.1.34"
