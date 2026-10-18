@@ -76,9 +76,8 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
             let line_end = Tokens(line).true_length();
             (line_start, line_end)
         })
-        .fold((usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
-            (acc_s.min(line_s), acc_e.max(line_e))
-        })
+        .reduce(|(acc_s, acc_e), (line_s, line_e)| (acc_s.min(line_s), acc_e.max(line_e)))
+        .unwrap_or((0, 0))
 }
 
 /// Produces a series of lines which have been automatically truncated to the
@@ -275,6 +274,16 @@ mod test {
             "                           xx",
         ];
         assert_eq!(get_min_start_max_end(&lines), (3, 29));
+        assert_eq!(get_min_start_max_end(&[]), (0, 0));
+    }
+
+    #[test]
+    fn blank_art_has_no_lines_and_zero_width() {
+        for input in ["", "   ", "{0}", "\n\n", "  \n{1}  \n"] {
+            let mut art = AsciiArt::new(input);
+            assert_eq!(art.width(), 0, "input: {input:?}");
+            assert!(art.next().is_none(), "input: {input:?}");
+        }
     }
 
     #[test]
