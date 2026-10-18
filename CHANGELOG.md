@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.0 (2026-10-18)
+
+### Bug Fixes
+
+- Fix a crash when `--ascii-input` is empty or only whitespace by @o2sh in https://github.com/o2sh/onefetch/pull/1898
+- Fix `--languages` and `--ascii-language` listing languages in random order, a regression since 2.28.0 by @o2sh in https://github.com/o2sh/onefetch/pull/1890
+- `--number-of-languages` now also applies to `-o json` and `-o yaml` by @o2sh in https://github.com/o2sh/onefetch/pull/1884
+
+### CI/CD
+
+- `onefetch-ascii`, `onefetch-image` and `onefetch-manifest` are merged into `onefetch` and no longer published (last version: 3.0.0) by @o2sh in https://github.com/o2sh/onefetch/pull/1884
+- Release binaries are built with LTO and stripped on all platforms by @o2sh in https://github.com/o2sh/onefetch/pull/1891
+
+### Chores
+
+- Replace unmaintained `winres` with `winresource` by @o2sh in https://github.com/o2sh/onefetch/pull/1896
+
 ## 3.0.0 (2026-10-6)
 
 ### Breaking Changes
