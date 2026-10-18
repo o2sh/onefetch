@@ -26,12 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v2
-        with:
-          rustflags: "-D deprecated"
-          components: rustfmt, clippy
-
       # Only on Linux: .rustfmt.toml enforces Unix newlines and Windows checks out with CRLF.
       - name: Check formatting
         if: matrix.os == 'ubuntu-latest'
