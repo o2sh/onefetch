@@ -6,7 +6,7 @@
 
 [![Crates.io Version](https://img.shields.io/crates/v/onefetch)](https://crates.io/crates/onefetch)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/o2sh/onefetch/ci.yml)](https://github.com/o2sh/onefetch/actions/workflows/ci.yml)
-![MSRV](assets/msrv-badge.svg)
+![MSRV](https://img.shields.io/crates/msrv/onefetch)
 
 <h3>
 <a href="https://onefetch.dev/">Homepage</a> |
