@@ -69,6 +69,9 @@ impl<'a> AsciiArt<'a> {
 }
 
 fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
+    if lines.is_empty() {
+        return (0, 0);
+    }
     lines
         .iter()
         .map(|line| {
@@ -275,6 +278,16 @@ mod test {
             "                           xx",
         ];
         assert_eq!(get_min_start_max_end(&lines), (3, 29));
+        assert_eq!(get_min_start_max_end(&[]), (0, 0));
+    }
+
+    #[test]
+    fn blank_art_has_no_lines_and_zero_width() {
+        for input in ["", "   ", "{0}", "\n\n", "  \n{1}  \n"] {
+            let mut art = AsciiArt::new(input);
+            assert_eq!(art.width(), 0, "input: {input:?}");
+            assert!(art.next().is_none(), "input: {input:?}");
+        }
     }
 
     #[test]
