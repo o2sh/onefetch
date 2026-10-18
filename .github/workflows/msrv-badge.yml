@@ -8,11 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-msrv
+      - name: Install cargo-msrv
+        run: cargo install cargo-msrv --locked
 
       - name: Find MSRV
         run: cargo msrv find --min 1.85
