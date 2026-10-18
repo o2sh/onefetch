@@ -35,94 +35,91 @@
 //!
 
 use super::style::{Line, Segment, Style};
-use regex::regex;
+
+/// One column of the art: a character and its `{n}` color.
+type Cell = (char, Option<usize>);
 
 /// The lines of an ascii template, without the common indentation and all
 /// padded to the same width.
 pub fn ascii_lines(input: &str) -> Vec<Line> {
-    let lines = parse_lines(input);
-    let Some(start) = lines.iter().map(leading_spaces).min() else {
-        return Vec::new();
-    };
-    let end = lines.iter().map(visible_width).max().unwrap_or(start);
-    lines.iter().map(|line| crop(line, start, end)).collect()
+    let rows = trim_blank_rows(input.lines().map(parse_row).collect());
+    let left = rows
+        .iter()
+        .map(|row| leading_spaces(row))
+        .min()
+        .unwrap_or(0);
+    let right = rows.iter().map(|row| visible_width(row)).max().unwrap_or(0);
+    rows.into_iter()
+        .map(|mut row| {
+            row.resize(row.len().max(right), (' ', None));
+            to_line(&row[left..right])
+        })
+        .collect()
 }
 
-/// Parses the template, without the empty lines at the top and the blank
-/// lines at the bottom.
-fn parse_lines(input: &str) -> Vec<Line> {
-    let mut lines: Vec<Line> = input
-        .lines()
-        .skip_while(|line| line.is_empty())
-        .map(parse_line)
-        .collect();
-    while lines.last().is_some_and(is_blank) {
-        lines.pop();
-    }
-    lines
-}
-
-/// Splits a template line at its `{n}` markers. The text before the first
-/// marker has no color.
-fn parse_line(line: &str) -> Line {
-    let mut segments = Vec::new();
+/// The cells of a template line: each character with the color of the last
+/// `{n}` marker before it.
+fn parse_row(line: &str) -> Vec<Cell> {
+    let mut cells = Vec::new();
     let mut color = None;
-    let mut text_start = 0;
-    for marker in regex!(r"\{([0-9])\}").captures_iter(line) {
-        let range = marker.get(0).expect("group 0 is the whole match").range();
-        push_text(&mut segments, &line[text_start..range.start], color);
-        color = marker[1].parse().ok();
-        text_start = range.end;
+    let mut rest = line;
+    while let Some(c) = rest.chars().next() {
+        if let Some(n) = color_marker(rest) {
+            color = Some(n);
+            rest = &rest[3..];
+        } else {
+            cells.push((c, color));
+            rest = &rest[c.len_utf8()..];
+        }
     }
-    push_text(&mut segments, &line[text_start..], color);
-    Line::from(segments)
+    cells
 }
 
-fn push_text(segments: &mut Vec<Segment>, text: &str, color: Option<usize>) {
-    if !text.is_empty() {
-        segments.push(Segment::new(text, Style::AsciiArt(color)));
+/// The `n` of a `{n}` marker at the start of `s`.
+fn color_marker(s: &str) -> Option<usize> {
+    let mut chars = s.chars();
+    match (chars.next(), chars.next(), chars.next()) {
+        (Some('{'), Some(digit), Some('}')) => digit.to_digit(10).map(|n| n as usize),
+        _ => None,
     }
 }
 
-/// The characters of a line, across its segments.
-fn chars(line: &Line) -> impl Iterator<Item = char> + '_ {
-    line.0.iter().flat_map(|segment| segment.text.chars())
+/// Drops the blank rows at the top and at the bottom.
+fn trim_blank_rows(mut rows: Vec<Vec<Cell>>) -> Vec<Vec<Cell>> {
+    while rows.last().is_some_and(|row| is_blank(row)) {
+        rows.pop();
+    }
+    let top = rows.iter().take_while(|row| is_blank(row)).count();
+    rows.split_off(top)
 }
 
-/// Whether the line has no visible character.
-fn is_blank(line: &Line) -> bool {
-    chars(line).all(|c| c == ' ')
+fn is_space(cell: &Cell) -> bool {
+    cell.0 == ' '
 }
 
-/// The number of spaces before the first visible character.
-fn leading_spaces(line: &Line) -> usize {
-    chars(line).take_while(|&c| c == ' ').count()
+fn is_blank(row: &[Cell]) -> bool {
+    row.iter().all(is_space)
+}
+
+fn leading_spaces(row: &[Cell]) -> usize {
+    row.iter().take_while(|cell| is_space(cell)).count()
 }
 
 /// The width up to the last visible character.
-fn visible_width(line: &Line) -> usize {
-    chars(line)
-        .enumerate()
-        .filter(|&(_, c)| c != ' ')
-        .last()
-        .map_or(0, |(i, _)| i + 1)
+fn visible_width(row: &[Cell]) -> usize {
+    row.iter()
+        .rposition(|cell| !is_space(cell))
+        .map_or(0, |i| i + 1)
 }
 
-/// Keeps the columns from `start` to `end`, padded with spaces to that width.
-fn crop(line: &Line, start: usize, end: usize) -> Line {
-    let mut skip = start;
-    let mut width = end - start;
-    let mut segments = Vec::new();
-    for segment in &line.0 {
-        let text: String = segment.text.chars().skip(skip).take(width).collect();
-        skip = skip.saturating_sub(segment.text.chars().count());
-        width -= text.chars().count();
-        if !text.is_empty() {
-            segments.push(Segment::new(text, segment.style));
+/// Joins neighboring cells of the same color into segments.
+fn to_line(cells: &[Cell]) -> Line {
+    let mut segments: Vec<Segment> = Vec::new();
+    for &(c, color) in cells {
+        match segments.last_mut() {
+            Some(last) if last.style == Style::AsciiArt(color) => last.text.push(c),
+            _ => segments.push(Segment::new(c, Style::AsciiArt(color))),
         }
-    }
-    if width > 0 {
-        segments.push(Segment::plain(" ".repeat(width)));
     }
     Line::from(segments)
 }
@@ -148,6 +145,18 @@ mod test {
         let lines = ascii_lines(&input);
         assert_eq!(lines.len(), 5);
         assert!(lines.iter().all(|line| line.width() == 26));
+        assert_eq!(
+            lines[1],
+            Line::from(vec![ascii(&format!("xxx{}", " ".repeat(23)), None)])
+        );
+    }
+
+    #[test]
+    fn ascii_lines_keeps_colors() {
+        assert_eq!(
+            ascii_lines("{0}ab{1}cd"),
+            vec![Line::from(vec![ascii("ab", Some(0)), ascii("cd", Some(1))])]
+        );
     }
 
     #[test]
@@ -157,101 +166,69 @@ mod test {
         }
     }
 
+    // https://github.com/o2sh/onefetch/issues/935
     #[test]
-    fn parse_lines_trims_top_and_bottom() {
-        let lines = parse_lines("\n\n{0}a\n\n{0}b\n  \n{1}\n");
+    fn ascii_lines_counts_columns_not_bytes() {
         assert_eq!(
-            lines,
-            vec![
-                Line::from(vec![ascii("a", Some(0))]),
-                Line::default(),
-                Line::from(vec![ascii("b", Some(0))]),
-            ]
+            ascii_lines("███"),
+            vec![Line::from(vec![ascii("███", None)])]
         );
     }
 
     #[test]
-    fn parse_line_splits_at_markers() {
+    fn parse_row_gives_each_character_its_color() {
         assert_eq!(
-            parse_line("{0}ab{1}cd"),
-            Line::from(vec![ascii("ab", Some(0)), ascii("cd", Some(1))])
-        );
-        assert_eq!(
-            parse_line("ab{1}{2}cd"),
-            Line::from(vec![ascii("ab", None), ascii("cd", Some(2))])
+            parse_row("a{1}b{2}{3}c"),
+            vec![('a', None), ('b', Some(1)), ('c', Some(3))]
         );
     }
 
     #[test]
-    fn parse_line_keeps_other_braces_as_text() {
+    fn parse_row_keeps_other_braces_as_text() {
+        let cells: String = parse_row("{x}{12}{}").iter().map(|cell| cell.0).collect();
+        assert_eq!(cells, "{x}{12}{}");
+    }
+
+    #[test]
+    fn color_marker_reads_one_digit() {
+        assert_eq!(color_marker("{3}abc"), Some(3));
+        assert_eq!(color_marker("{x}"), None);
+        assert_eq!(color_marker("{12}"), None);
+        assert_eq!(color_marker("{3"), None);
+    }
+
+    #[test]
+    fn trim_blank_rows_drops_top_and_bottom() {
+        let rows: Vec<_> = ["{0}", "   ", "a", "", "b", "  ", ""]
+            .into_iter()
+            .map(parse_row)
+            .collect();
         assert_eq!(
-            parse_line("{x}{12}{}"),
-            Line::from(vec![ascii("{x}{12}{}", None)])
+            trim_blank_rows(rows),
+            vec![parse_row("a"), parse_row(""), parse_row("b")]
         );
     }
 
     #[test]
-    fn is_blank_ignores_markers_and_spaces() {
-        assert!(is_blank(&parse_line("")));
-        assert!(is_blank(&parse_line("  {1} ")));
-        assert!(!is_blank(&parse_line("  {1}a")));
+    fn measures_ignore_colors() {
+        let row = parse_row("  {1} {5}  {9} a {2} ");
+        assert!(!is_blank(&row));
+        assert_eq!(leading_spaces(&row), 6);
+        assert_eq!(visible_width(&row), 7);
+        assert!(is_blank(&parse_row("  {1} ")));
+        assert_eq!(visible_width(&parse_row("   ")), 0);
     }
 
     #[test]
-    fn leading_spaces_counts_correctly() {
-        assert_eq!(leading_spaces(&parse_line("")), 0);
-        assert_eq!(leading_spaces(&parse_line("     ")), 5);
-        assert_eq!(leading_spaces(&parse_line("     a;lksjf;a")), 5);
-        assert_eq!(leading_spaces(&parse_line("  {1} {5}  {9} a")), 6);
-    }
-
-    #[test]
-    fn visible_width_ignores_trailing_spaces() {
-        assert_eq!(visible_width(&parse_line("")), 0);
-        assert_eq!(visible_width(&parse_line("     ")), 0);
-        assert_eq!(visible_width(&parse_line("  ab  ")), 4);
-        assert_eq!(visible_width(&parse_line("{0}a{1} b{2}  ")), 3);
-    }
-
-    #[test]
-    fn crop_keeps_the_columns_and_pads() {
-        let cropped = |text, start, end| crop(&parse_line(text), start, end);
-
-        assert_eq!(cropped("", 0, 0), Line::default());
-        assert_eq!(cropped("     ", 0, 0), Line::default());
+    fn to_line_joins_cells_of_the_same_color() {
+        let cells = [('a', Some(0)), ('b', Some(0)), (' ', None), ('c', Some(1))];
         assert_eq!(
-            cropped("     ", 0, 5),
-            Line::from(vec![ascii("     ", None)])
-        );
-        assert_eq!(
-            cropped("     ", 1, 5),
-            Line::from(vec![ascii("    ", None)])
-        );
-        assert_eq!(cropped("     ", 3, 5), Line::from(vec![ascii("  ", None)]));
-        assert_eq!(
-            cropped("     ", 0, 4),
-            Line::from(vec![ascii("    ", None)])
-        );
-        assert_eq!(cropped("     ", 0, 3), Line::from(vec![ascii("   ", None)]));
-
-        // https://github.com/o2sh/onefetch/issues/935
-        assert_eq!(cropped("███", 0, 3), Line::from(vec![ascii("███", None)]));
-
-        assert_eq!(
-            cropped("  {1} {5}  {9} a", 4, 10),
+            to_line(&cells),
             Line::from(vec![
-                ascii(" ", Some(5)),
-                ascii(" a", Some(9)),
-                Segment::plain("   "),
+                ascii("ab", Some(0)),
+                ascii(" ", None),
+                ascii("c", Some(1))
             ])
-        );
-    }
-
-    #[test]
-    fn crop_keeps_colors() {
-        assert_eq!(
-            crop(&parse_line("{0}ab{1}cd"), 0, 4),
-            Line::from(vec![ascii("ab", Some(0)), ascii("cd", Some(1))])
         );
     }
 }
