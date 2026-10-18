@@ -201,8 +201,9 @@ impl PrinterKind {
                         .or_else(|| main_language.map(|language| language.ascii_art().to_string()));
 
                     match ascii_art {
-                        Some(art) => Self::Ascii { art },
-                        None => Self::Plain,
+                        // Blank art, like `--ascii-input ""`, has nothing to put beside the info.
+                        Some(art) if AsciiArt::new(&art).next().is_some() => Self::Ascii { art },
+                        _ => Self::Plain,
                     }
                 }
             }
@@ -287,6 +288,24 @@ mod tests {
         let printer = Printer::new(Info::default(), &RenderOptions::default()).unwrap();
 
         assert_eq!(printer.kind, PrinterKind::Plain);
+    }
+
+    #[test]
+    fn test_create_plain_printer_when_ascii_input_is_blank() {
+        for ascii_input in ["", "   ", "{0}"] {
+            let info = Info {
+                main_language: Some(Language::Rust),
+                ..Default::default()
+            };
+            let options = RenderOptions {
+                ascii_input: Some(ascii_input.to_string()),
+                ..Default::default()
+            };
+
+            let printer = Printer::new(info, &options).unwrap();
+
+            assert_eq!(printer.kind, PrinterKind::Plain, "input: {ascii_input:?}");
+        }
     }
 
     #[test]

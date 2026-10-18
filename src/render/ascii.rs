@@ -69,6 +69,9 @@ impl<'a> AsciiArt<'a> {
 }
 
 fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
+    if lines.is_empty() {
+        return (0, 0);
+    }
     lines
         .iter()
         .map(|line| {
@@ -76,8 +79,9 @@ fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
             let line_end = Tokens(line).true_length();
             (line_start, line_end)
         })
-        .reduce(|(acc_s, acc_e), (line_s, line_e)| (acc_s.min(line_s), acc_e.max(line_e)))
-        .unwrap_or((0, 0))
+        .fold((usize::MAX, 0), |(acc_s, acc_e), (line_s, line_e)| {
+            (acc_s.min(line_s), acc_e.max(line_e))
+        })
 }
 
 /// Produces a series of lines which have been automatically truncated to the
