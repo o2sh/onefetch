@@ -75,7 +75,7 @@ toml = "1.1.8"
 criterion = "0.8.2"
 gix-testtools = { version = "0.21.0", features = ["sha1"] }
 insta = { version = "1.49.0", features = ["json", "redactions"] }
-rstest = "0.27.0"
+rstest = "0.28.0"
 
 [[bench]]
 name = "repo"
