@@ -100,6 +100,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .created(&git_metrics)
         .languages(loc_by_language.as_ref(), options.number_of_languages)
         .dependencies(manifest.as_ref())
+        .tooling(&repo_path)
         .authors(&git_metrics, options.number_of_authors, options.email)
         .last_change(&git_metrics)
         .contributors(&git_metrics, options.number_of_authors)

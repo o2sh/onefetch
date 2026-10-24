@@ -13,6 +13,7 @@ use super::fields::lines_of_code::LinesOfCode;
 use super::fields::pending::Pending;
 use super::fields::project::Project;
 use super::fields::size::Size;
+use super::fields::tooling::Tooling;
 use super::fields::url::Url;
 use super::fields::version::Version;
 use super::fields::{Field, FieldKind};
@@ -144,6 +145,15 @@ impl InfoBuilder {
         if !self.disabled_fields.contains(&FieldKind::Dependencies) {
             let dependencies = Dependencies::new(manifest);
             self.info_fields.push(Field::Dependencies(dependencies));
+        }
+        self
+    }
+
+    pub fn tooling(mut self, repo_path: &Path) -> Self {
+        if !self.disabled_fields.contains(&FieldKind::Tooling)
+            && let Some(tooling) = Tooling::new(repo_path)
+        {
+            self.info_fields.push(Field::Tooling(tooling));
         }
         self
     }
