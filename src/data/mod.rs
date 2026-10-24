@@ -97,6 +97,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .head(&repo)?
         .pending(&repo)?
         .version(&repo, manifest.as_ref())?
+        .unreleased(&repo)?
         .created(&git_metrics)
         .languages(loc_by_language.as_ref(), options.number_of_languages)
         .dependencies(manifest.as_ref())

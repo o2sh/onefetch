@@ -13,6 +13,7 @@ use super::fields::lines_of_code::LinesOfCode;
 use super::fields::pending::Pending;
 use super::fields::project::Project;
 use super::fields::size::Size;
+use super::fields::unreleased::Unreleased;
 use super::fields::url::Url;
 use super::fields::version::Version;
 use super::fields::{Field, FieldKind};
@@ -98,6 +99,15 @@ impl InfoBuilder {
         if !self.disabled_fields.contains(&FieldKind::Version) {
             let version = Version::new(repo, manifest)?;
             self.info_fields.push(Field::Version(version));
+        }
+        Ok(self)
+    }
+
+    pub fn unreleased(mut self, repo: &Repository) -> Result<Self> {
+        if !self.disabled_fields.contains(&FieldKind::Unreleased)
+            && let Some(unreleased) = Unreleased::new(repo)?
+        {
+            self.info_fields.push(Field::Unreleased(unreleased));
         }
         Ok(self)
     }
