@@ -9,7 +9,6 @@ use serde::Serialize;
 use std::path::PathBuf;
 
 mod builder;
-pub(crate) mod dates;
 pub(crate) mod fields;
 pub mod git;
 pub(crate) mod loc;

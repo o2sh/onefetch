@@ -1,6 +1,7 @@
 //! Date helpers shared by `data` and `render`.
 
 use gix::date::{SecondsSinceUnixEpoch, Time};
+use serde::Serializer;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 
 /// The current time in seconds since the Unix epoch, or 0 if the clock is set
@@ -18,4 +19,31 @@ pub fn to_rfc3339(time: Time) -> Option<String> {
         .ok()?
         .format(&Rfc3339)
         .ok()
+}
+
+/// Serializes a time as RFC 3339, whatever `--iso-time` is set to, or as
+/// seconds since the epoch when RFC 3339 can't represent it.
+pub fn serialize_time<S: Serializer>(time: &Time, serializer: S) -> Result<S::Ok, S::Error> {
+    match to_rfc3339(*time) {
+        Some(rfc3339) => serializer.serialize_str(&rfc3339),
+        None => serializer.serialize_i64(time.seconds),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case(SecondsSinceUnixEpoch::MIN)]
+    #[case(SecondsSinceUnixEpoch::MAX)]
+    #[case(253_402_300_800)] // 10000-01-01
+    fn serialize_out_of_range_time_as_seconds(#[case] seconds: SecondsSinceUnixEpoch) {
+        #[derive(serde::Serialize)]
+        struct Date(#[serde(serialize_with = "serialize_time")] Time);
+
+        let json = serde_json::to_value(Date(Time::new(seconds, 0))).unwrap();
+        assert_eq!(json, seconds);
+    }
 }
