@@ -26,9 +26,10 @@ Dependencies only go one way:
 - `data` must not depend on `cli`, `options`, `render`, or colors.
 - `render` must not depend on `cli` or `options`. (`cli` uses a few `render`
   types as flag values, such as `SerializationFormat` and `ImageProtocol`.)
-- `dates` is shared by `data` and `render`, and depends on neither.
-- `language` is shared by `data` and `render`: its enum carries both data
-  (tokei mapping, language type) and display information (logo, colors, chip).
+- `dates` and `language` are shared by `data` and `render`, and depend on
+  neither. (`Language`
+  carries both data, such as its tokei mapping, and display information, such
+  as its logo and colors.)
 
 Everything is one crate, so the compiler doesn't enforce these rules; keep
 them in mind when reviewing imports in these modules.
@@ -39,10 +40,10 @@ The parsed command line (`Cli`) is only read by `options.rs` (and by `main` for
 `--languages`, `--package-managers` and `--generate`). It is split into two
 structs, one per stage:
 
-| Struct          | Defined in      | Read by                    | Holds                                                                 |
-| --------------- | --------------- | -------------------------- | --------------------------------------------------------------------- |
-| `InfoOptions`   | `data/mod.rs`   | `data::build_info`         | What to collect: input path, disabled fields, how many authors, languages and file churns to keep, excluded globs, bot/merge filters, URL format, language types. |
-| `RenderOptions` | `render/mod.rs` | everything in `render`     | How to print it: JSON/YAML or terminal, ascii art or image (and its protocol and color resolution), logo and text colors, bold, and how values look in the info lines (number separator, ISO dates, true colors and Nerd Font icons for language chips, color palette row). |
+| Struct          | Defined in      | Read by                | Holds            |
+| --------------- | --------------- | ---------------------- | ---------------- |
+| `InfoOptions`   | `data/mod.rs`   | `data::build_info`     | What to collect. |
+| `RenderOptions` | `render/mod.rs` | everything in `render` | How to print it. |
 
 When adding a flag: if it changes what is collected, and therefore the
 JSON/YAML output, it belongs in `InfoOptions` (like `--number-of-authors`);
@@ -80,13 +81,7 @@ render/
   colors.rs    Colors: what each Style looks like (color and bold)
 ```
 
-`Style` names everything that can be colored, as the command line names it:
-the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
-`Separator`, `Value`), the `{n}` parts of the ascii art (`AsciiArt(n)`, for
-`--ascii-colors`), the language chips and the languages bar
-(`LanguageChip`, `LanguageBar`), the bars of the activity field (`Sparkline`),
-and the palette row (`Palette(n)`). It holds
-no colors.
+`Style` (`style.rs`) names everything that can be colored. It holds no colors.
 
 - Only `colors.rs` decides how each `Style` looks: its color, from the
   language, `--ascii-language`, `--ascii-colors`, `--text-colors` and
