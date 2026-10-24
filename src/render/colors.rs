@@ -64,6 +64,8 @@ impl Colors {
             }
             Style::LanguageChip(entry) => AnsiStyle::new().color(self.language_color(entry)),
             Style::LanguageBar(entry) => AnsiStyle::new().on_color(self.language_color(entry)),
+            // Same color as the keys, so the bars stand out from the values.
+            Style::Sparkline => colored(self.text.key, false),
             Style::Palette(index) => {
                 let color = COLOR_PALETTE
                     .get(index)

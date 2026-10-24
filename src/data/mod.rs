@@ -102,6 +102,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .dependencies(manifest.as_ref())
         .authors(&git_metrics, options.number_of_authors, options.email)
         .last_change(&git_metrics)
+        .activity(&git_metrics)
         .contributors(&git_metrics, options.number_of_authors)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow()?)

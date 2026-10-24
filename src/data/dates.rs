@@ -2,6 +2,16 @@ use gix::date::Time;
 use serde::Serializer;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 
+/// The current time in seconds since the Unix epoch, or 0 if the clock is set
+/// before it.
+pub fn now() -> gix::date::SecondsSinceUnixEpoch {
+    std::time::SystemTime::now()
+        .duration_since(std::time::SystemTime::UNIX_EPOCH)
+        .map_or(0, |duration| {
+            duration.as_secs() as gix::date::SecondsSinceUnixEpoch
+        })
+}
+
 /// Serializes a time as RFC 3339, whatever `--iso-time` is set to, or as
 /// seconds since the epoch when RFC 3339 can't represent it.
 pub fn serialize_time<S: Serializer>(time: &Time, serializer: S) -> Result<S::Ok, S::Error> {

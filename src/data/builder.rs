@@ -1,3 +1,5 @@
+use super::dates;
+use super::fields::activity::Activity;
 use super::fields::authors::Authors;
 use super::fields::churn::Churn;
 use super::fields::commits::Commits;
@@ -170,6 +172,14 @@ impl InfoBuilder {
         if !self.disabled_fields.contains(&FieldKind::LastChange) {
             let last_change = LastChange::new(git_metrics);
             self.info_fields.push(Field::LastChange(last_change));
+        }
+        self
+    }
+
+    pub fn activity(mut self, git_metrics: &GitMetrics) -> Self {
+        if !self.disabled_fields.contains(&FieldKind::Activity) {
+            let activity = Activity::new(&git_metrics.commit_times, dates::now());
+            self.info_fields.push(Field::Activity(activity));
         }
         self
     }

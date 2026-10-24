@@ -82,7 +82,8 @@ render/
 the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
 `Separator`, `Value`), the `{n}` parts of the ascii art (`AsciiArt(n)`, for
 `--ascii-colors`), the language chips and the languages bar
-(`LanguageChip`, `LanguageBar`), and the palette row (`Palette(n)`). It holds
+(`LanguageChip`, `LanguageBar`), the bars of the activity field (`Sparkline`),
+and the palette row (`Palette(n)`). It holds
 no colors.
 
 - Only `colors.rs` decides how each `Style` looks: its color, from the

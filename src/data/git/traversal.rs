@@ -18,6 +18,7 @@ pub fn traverse_commit_graph(
     let mut time_of_most_recent_commit = None;
     let mut time_of_first_commit = None;
     let mut number_of_commits_by_identity: HashMap<Identity, usize> = HashMap::new();
+    let mut commit_times = Vec::new();
     let mailmap = repo.open_mailmap();
     let is_traversal_complete = Arc::new(AtomicBool::default());
     let total_number_of_commits = Arc::new(AtomicUsize::default());
@@ -53,7 +54,7 @@ pub fn traverse_commit_graph(
                 continue;
             }
 
-            update_identity_counts(
+            let is_counted = update_identity_counts(
                 &commit.object()?,
                 &mailmap,
                 no_bots.as_ref(),
@@ -68,6 +69,9 @@ pub fn traverse_commit_graph(
                     .expect("sorting by time yields this field as part of traversal"),
                 0,
             );
+            if is_counted {
+                commit_times.push(commit_time.seconds);
+            }
             time_of_most_recent_commit.get_or_insert(commit_time);
             time_of_first_commit = commit_time.into();
 
@@ -87,6 +91,7 @@ pub fn traverse_commit_graph(
         number_of_commits_by_identity,
         number_of_commits_by_file_path,
         churn_pool_size,
+        commit_times,
         time_of_first_commit,
         time_of_most_recent_commit,
     );
@@ -94,15 +99,18 @@ pub fn traverse_commit_graph(
     Ok(git_metrics)
 }
 
+/// Returns whether the commit was counted, which it isn't when its author is a
+/// bot that `--no-bots` leaves out.
 fn update_identity_counts(
     commit: &gix::Commit,
     mailmap: &gix::mailmap::Snapshot,
     bot_regex: Option<&BotRegex>,
     number_of_commits_by_identity: &mut HashMap<Identity, usize>,
-) -> Result<()> {
+) -> Result<bool> {
     let sig = mailmap.resolve(commit.author()?);
-    if !is_bot(&sig.name, bot_regex) {
-        *number_of_commits_by_identity.entry(sig.into()).or_insert(0) += 1;
+    if is_bot(&sig.name, bot_regex) {
+        return Ok(false);
     }
-    Ok(())
+    *number_of_commits_by_identity.entry(sig.into()).or_insert(0) += 1;
+    Ok(true)
 }
