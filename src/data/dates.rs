@@ -1,16 +1,6 @@
+use crate::dates::to_rfc3339;
 use gix::date::Time;
 use serde::Serializer;
-use time::{OffsetDateTime, format_description::well_known::Rfc3339};
-
-/// The current time in seconds since the Unix epoch, or 0 if the clock is set
-/// before it.
-pub fn now() -> gix::date::SecondsSinceUnixEpoch {
-    std::time::SystemTime::now()
-        .duration_since(std::time::SystemTime::UNIX_EPOCH)
-        .map_or(0, |duration| {
-            duration.as_secs() as gix::date::SecondsSinceUnixEpoch
-        })
-}
 
 /// Serializes a time as RFC 3339, whatever `--iso-time` is set to, or as
 /// seconds since the epoch when RFC 3339 can't represent it.
@@ -19,15 +9,6 @@ pub fn serialize_time<S: Serializer>(time: &Time, serializer: S) -> Result<S::Ok
         Some(rfc3339) => serializer.serialize_str(&rfc3339),
         None => serializer.serialize_i64(time.seconds),
     }
-}
-
-/// `None` for dates outside the years 0 to 9999. Commit dates come from the
-/// repository, so they can be anything.
-pub fn to_rfc3339(time: Time) -> Option<String> {
-    OffsetDateTime::from_unix_timestamp(time.seconds)
-        .ok()?
-        .format(&Rfc3339)
-        .ok()
 }
 
 #[cfg(test)]

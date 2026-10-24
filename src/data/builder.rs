@@ -1,4 +1,3 @@
-use super::dates;
 use super::fields::activity::Activity;
 use super::fields::authors::Authors;
 use super::fields::churn::Churn;
@@ -22,6 +21,7 @@ use super::manifest::Manifest;
 use super::title::Title;
 use super::{Info, InfoOptions};
 use crate::data::git::metrics::GitMetrics;
+use crate::dates;
 use crate::language::Language;
 use anyhow::Result;
 use gix::Repository;
