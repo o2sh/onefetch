@@ -54,8 +54,9 @@ pub fn traverse_commit_graph(
                 continue;
             }
 
-            let is_counted = update_identity_counts(
-                &commit.object()?,
+            let commit_object = commit.object()?;
+            update_identity_counts(
+                &commit_object,
                 &mailmap,
                 no_bots.as_ref(),
                 &mut number_of_commits_by_identity,
@@ -69,9 +70,13 @@ pub fn traverse_commit_graph(
                     .expect("sorting by time yields this field as part of traversal"),
                 0,
             );
-            if is_counted {
-                commit_times.push(commit_time.seconds);
-            }
+            update_commit_times(
+                &commit_object,
+                commit_time.seconds,
+                &mailmap,
+                no_bots.as_ref(),
+                &mut commit_times,
+            )?;
             time_of_most_recent_commit.get_or_insert(commit_time);
             time_of_first_commit = commit_time.into();
 
@@ -99,18 +104,31 @@ pub fn traverse_commit_graph(
     Ok(git_metrics)
 }
 
-/// Returns whether the commit was counted, which it isn't when its author is a
-/// bot that `--no-bots` leaves out.
 fn update_identity_counts(
     commit: &gix::Commit,
     mailmap: &gix::mailmap::Snapshot,
     bot_regex: Option<&BotRegex>,
     number_of_commits_by_identity: &mut HashMap<Identity, usize>,
-) -> Result<bool> {
+) -> Result<()> {
     let sig = mailmap.resolve(commit.author()?);
-    if is_bot(&sig.name, bot_regex) {
-        return Ok(false);
+    if !is_bot(&sig.name, bot_regex) {
+        *number_of_commits_by_identity.entry(sig.into()).or_insert(0) += 1;
     }
-    *number_of_commits_by_identity.entry(sig.into()).or_insert(0) += 1;
-    Ok(true)
+    Ok(())
+}
+
+/// Records the commit's time, unless its author is a bot that `--no-bots`
+/// leaves out.
+fn update_commit_times(
+    commit: &gix::Commit,
+    commit_time: gix::date::SecondsSinceUnixEpoch,
+    mailmap: &gix::mailmap::Snapshot,
+    bot_regex: Option<&BotRegex>,
+    commit_times: &mut Vec<gix::date::SecondsSinceUnixEpoch>,
+) -> Result<()> {
+    let sig = mailmap.resolve(commit.author()?);
+    if !is_bot(&sig.name, bot_regex) {
+        commit_times.push(commit_time);
+    }
+    Ok(())
 }
