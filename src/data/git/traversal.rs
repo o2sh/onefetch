@@ -39,8 +39,6 @@ pub fn traverse_commit_graph(
     // it stops once traversal is done and churn_pool_size is reached (if provided).
     let (churn_thread, churn_tx) = get_churn_channel(
         repo,
-        &mailmap,
-        no_bots.clone(),
         &is_traversal_complete,
         &total_number_of_commits,
         churn_pool_size,
@@ -54,29 +52,20 @@ pub fn traverse_commit_graph(
                 continue;
             }
 
-            let commit_object = commit.object()?;
-            update_identity_counts(
-                &commit_object,
-                &mailmap,
-                no_bots.as_ref(),
-                &mut number_of_commits_by_identity,
-            )?;
-
-            churn_tx.send(commit.id)?;
-
             let commit_time = gix::date::Time::new(
                 commit
                     .commit_time
                     .expect("sorting by time yields this field as part of traversal"),
                 0,
             );
-            update_commit_times(
-                &commit_object,
-                commit_time.seconds,
-                &mailmap,
-                no_bots.as_ref(),
-                &mut commit_times,
-            )?;
+            // Bots left out by `--no-bots` count neither as authors, nor in
+            // the activity, nor in the churn.
+            let author = mailmap.resolve(commit.object()?.author()?);
+            if !is_bot(&author.name, no_bots.as_ref()) {
+                update_identity_counts(author, &mut number_of_commits_by_identity);
+                update_commit_times(commit_time.seconds, &mut commit_times);
+                churn_tx.send(commit.id)?;
+            }
             time_of_most_recent_commit.get_or_insert(commit_time);
             time_of_first_commit = commit_time.into();
 
@@ -105,30 +94,17 @@ pub fn traverse_commit_graph(
 }
 
 fn update_identity_counts(
-    commit: &gix::Commit,
-    mailmap: &gix::mailmap::Snapshot,
-    bot_regex: Option<&BotRegex>,
+    author: gix::actor::Signature,
     number_of_commits_by_identity: &mut HashMap<Identity, usize>,
-) -> Result<()> {
-    let sig = mailmap.resolve(commit.author()?);
-    if !is_bot(&sig.name, bot_regex) {
-        *number_of_commits_by_identity.entry(sig.into()).or_insert(0) += 1;
-    }
-    Ok(())
+) {
+    *number_of_commits_by_identity
+        .entry(author.into())
+        .or_insert(0) += 1;
 }
 
-/// Records the commit's time, unless its author is a bot that `--no-bots`
-/// leaves out.
 fn update_commit_times(
-    commit: &gix::Commit,
     commit_time: gix::date::SecondsSinceUnixEpoch,
-    mailmap: &gix::mailmap::Snapshot,
-    bot_regex: Option<&BotRegex>,
     commit_times: &mut Vec<gix::date::SecondsSinceUnixEpoch>,
-) -> Result<()> {
-    let sig = mailmap.resolve(commit.author()?);
-    if !is_bot(&sig.name, bot_regex) {
-        commit_times.push(commit_time);
-    }
-    Ok(())
+) {
+    commit_times.push(commit_time);
 }
