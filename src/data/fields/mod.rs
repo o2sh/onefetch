@@ -13,6 +13,7 @@ pub mod lines_of_code;
 pub mod pending;
 pub mod project;
 pub mod size;
+pub mod tooling;
 pub mod url;
 pub mod version;
 
@@ -31,6 +32,7 @@ use self::lines_of_code::LinesOfCode;
 use self::pending::Pending;
 use self::project::Project;
 use self::size::Size;
+use self::tooling::Tooling;
 use self::url::Url;
 use self::version::Version;
 use serde::ser::{Serialize, SerializeMap, Serializer};
@@ -46,6 +48,7 @@ pub enum FieldKind {
     Created,
     Languages,
     Dependencies,
+    Tooling,
     Authors,
     LastChange,
     Contributors,
@@ -67,6 +70,7 @@ pub enum Field {
     Created(Created),
     Languages(Languages),
     Dependencies(Dependencies),
+    Tooling(Tooling),
     Authors(Authors),
     LastChange(LastChange),
     Contributors(Contributors),
@@ -93,6 +97,7 @@ impl Serialize for Field {
             Self::Created(f) => map.serialize_entry("CreatedInfo", f)?,
             Self::Languages(f) => map.serialize_entry("LanguagesInfo", f)?,
             Self::Dependencies(f) => map.serialize_entry("DependenciesInfo", f)?,
+            Self::Tooling(f) => map.serialize_entry("ToolingInfo", f)?,
             Self::Authors(f) => map.serialize_entry("AuthorsInfo", f)?,
             Self::LastChange(f) => map.serialize_entry("LastChangeInfo", f)?,
             Self::Contributors(f) => map.serialize_entry("ContributorsInfo", f)?,
