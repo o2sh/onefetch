@@ -7,11 +7,9 @@ const BARS: [char; 8] = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█']
 
 impl FieldView for Activity {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
-        let total = self.total();
-        let summary = match total {
-            0 => "no commits in the last 12 months".to_string(),
-            1 => "1 commit in the last 12 months".to_string(),
-            n => format!("{} commits in the last 12 months", options.number(&n)),
+        let summary = match self.total() {
+            1 => "1 commit (1 year)".to_string(),
+            n => format!("{} commits (1 year)", options.number(&n)),
         };
         vec![Line::from(vec![
             Segment::new(sparkline(&self.commits_by_month), Style::Sparkline),
@@ -57,9 +55,9 @@ mod test {
     }
 
     #[rstest]
-    #[case(vec![0; 12], "▁▁▁▁▁▁▁▁▁▁▁▁", " no commits in the last 12 months")]
-    #[case(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "▁▁▁▁▁▁▁▁▁▁▁█", " 1 commit in the last 12 months")]
-    #[case(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2], "▁▁▁▁▁▁▁▁▁▁▅█", " 3 commits in the last 12 months")]
+    #[case(vec![0; 12], "▁▁▁▁▁▁▁▁▁▁▁▁", " 0 commits (1 year)")]
+    #[case(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "▁▁▁▁▁▁▁▁▁▁▁█", " 1 commit (1 year)")]
+    #[case(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2], "▁▁▁▁▁▁▁▁▁▁▅█", " 3 commits (1 year)")]
     fn test_display_activity(
         #[case] commits_by_month: Vec<usize>,
         #[case] bars: &str,
