@@ -1,8 +1,7 @@
 use super::RenderOptions;
-use crate::data::dates::to_rfc3339;
+use crate::dates::{now, to_rfc3339};
 use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
-use std::time::SystemTime;
 use time_humanize::HumanTime;
 
 #[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Copy, Default)]
@@ -51,14 +50,9 @@ impl RenderOptions {
 }
 
 fn to_human_time(time: Time) -> String {
-    let since_epoch_duration = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .expect("System time is before the Unix epoch");
     // Calculate the distance from the current time. This handles
     // future dates gracefully and will simply return something like `in 5 minutes`
-    let delta_in_seconds = time
-        .seconds
-        .saturating_sub(since_epoch_duration.as_secs() as i64);
+    let delta_in_seconds = time.seconds.saturating_sub(now());
     let ht = HumanTime::from(delta_in_seconds);
     ht.to_string()
 }

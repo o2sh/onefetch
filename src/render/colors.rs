@@ -64,6 +64,8 @@ impl Colors {
             }
             Style::LanguageChip(entry) => AnsiStyle::new().color(self.language_color(entry)),
             Style::LanguageBar(entry) => AnsiStyle::new().on_color(self.language_color(entry)),
+            // Green, like a contribution graph, whatever the language.
+            Style::Sparkline => AnsiStyle::new().color(DynColors::Ansi(AnsiColors::Green)),
             Style::Palette(index) => {
                 let color = COLOR_PALETTE
                     .get(index)
