@@ -100,6 +100,24 @@ expression: info
       }
     },
     {
+      "ActivityInfo": {
+        "commitsByMonth": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
       "ContributorsInfo": {
         "totalNumberOfAuthors": 4
       }

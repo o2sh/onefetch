@@ -1,4 +1,3 @@
-use super::bots::{BotRegex, is_bot};
 use anyhow::Result;
 use gix::bstr::BString;
 use gix::diff::Options;
@@ -16,8 +15,6 @@ type ChurnPair = (NumberOfCommitsByFilepath, usize);
 
 pub(super) fn get_churn_channel(
     repo: &gix::Repository,
-    mailmap: &gix::mailmap::Snapshot,
-    bot_regex: Option<BotRegex>,
     is_traversal_complete: &Arc<AtomicBool>,
     total_number_of_commits: &Arc<AtomicUsize>,
     churn_pool_size: Option<usize>,
@@ -25,7 +22,6 @@ pub(super) fn get_churn_channel(
     let (tx, rx) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
-        let mailmap = mailmap.clone();
         let is_traversal_complete = is_traversal_complete.clone();
         let total_number_of_commits = total_number_of_commits.clone();
         move || -> Result<_> {
@@ -33,9 +29,6 @@ pub(super) fn get_churn_channel(
             let mut diffs_computed = 0;
             while let Ok(commit_id) = rx.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
-                if is_bot_commit(&commit, &mailmap, bot_regex.as_ref())? {
-                    continue;
-                }
                 if compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)? {
                     diffs_computed += 1;
                 }
@@ -109,19 +102,6 @@ fn compute_diff_with_parent(
     }
 
     Ok(true)
-}
-
-fn is_bot_commit(
-    commit: &Commit,
-    mailmap: &gix::mailmap::Snapshot,
-    bot_regex: Option<&BotRegex>,
-) -> Result<bool> {
-    if bot_regex.is_some() {
-        let sig = mailmap.resolve(commit.author()?);
-        Ok(is_bot(&sig.name, bot_regex))
-    } else {
-        Ok(false)
-    }
 }
 
 #[cfg(test)]

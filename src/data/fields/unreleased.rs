@@ -1,5 +1,5 @@
 use super::version::LatestTag;
-use crate::data::dates::serialize_time;
+use crate::dates::serialize_time;
 use anyhow::Result;
 use gix::Repository;
 use gix::date::Time;

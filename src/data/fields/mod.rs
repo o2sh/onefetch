@@ -1,3 +1,4 @@
+pub mod activity;
 pub mod authors;
 pub mod churn;
 pub mod commits;
@@ -17,6 +18,7 @@ pub mod unreleased;
 pub mod url;
 pub mod version;
 
+use self::activity::Activity;
 use self::authors::Authors;
 use self::churn::Churn;
 use self::commits::Commits;
@@ -51,6 +53,7 @@ pub enum FieldKind {
     Dependencies,
     Authors,
     LastChange,
+    Activity,
     Contributors,
     Url,
     Commits,
@@ -73,6 +76,7 @@ pub enum Field {
     Dependencies(Dependencies),
     Authors(Authors),
     LastChange(LastChange),
+    Activity(Activity),
     Contributors(Contributors),
     Url(Url),
     Commits(Commits),
@@ -100,6 +104,7 @@ impl Serialize for Field {
             Self::Dependencies(f) => map.serialize_entry("DependenciesInfo", f)?,
             Self::Authors(f) => map.serialize_entry("AuthorsInfo", f)?,
             Self::LastChange(f) => map.serialize_entry("LastChangeInfo", f)?,
+            Self::Activity(f) => map.serialize_entry("ActivityInfo", f)?,
             Self::Contributors(f) => map.serialize_entry("ContributorsInfo", f)?,
             Self::Url(f) => map.serialize_entry("UrlInfo", f)?,
             Self::Commits(f) => map.serialize_entry("CommitsInfo", f)?,

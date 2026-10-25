@@ -21,6 +21,8 @@ pub enum Style {
     LanguageChip(LanguageEntry),
     /// A language's part of the languages bar.
     LanguageBar(LanguageEntry),
+    /// The bars of the activity field.
+    Sparkline,
     /// The palette row: the n-th of the 8 standard terminal colors.
     Palette(usize),
     Plain,

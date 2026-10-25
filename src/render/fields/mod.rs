@@ -5,6 +5,7 @@ use crate::data::Field;
 use crate::render::RenderOptions;
 use crate::render::style::Line;
 
+mod activity;
 mod authors;
 mod churn;
 mod commits;
@@ -42,6 +43,7 @@ pub(crate) fn view(field: &Field) -> &dyn FieldView {
         Field::Dependencies(f) => f,
         Field::Authors(f) => f,
         Field::LastChange(f) => f,
+        Field::Activity(f) => f,
         Field::Contributors(f) => f,
         Field::Url(f) => f,
         Field::Commits(f) => f,
