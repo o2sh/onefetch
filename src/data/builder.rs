@@ -15,7 +15,7 @@ use super::fields::project::Project;
 use super::fields::size::Size;
 use super::fields::unreleased::Unreleased;
 use super::fields::url::Url;
-use super::fields::version::Version;
+use super::fields::version::{LatestTag, Version};
 use super::fields::{Field, FieldKind};
 use super::manifest::Manifest;
 use super::title::Title;
@@ -95,17 +95,18 @@ impl InfoBuilder {
         Ok(self)
     }
 
-    pub fn version(mut self, repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
+    pub fn version(mut self, latest_tag: Option<&LatestTag>, manifest: Option<&Manifest>) -> Self {
         if !self.disabled_fields.contains(&FieldKind::Version) {
-            let version = Version::new(repo, manifest)?;
+            let version = Version::new(latest_tag, manifest);
             self.info_fields.push(Field::Version(version));
         }
-        Ok(self)
+        self
     }
 
-    pub fn unreleased(mut self, repo: &Repository) -> Result<Self> {
+    pub fn unreleased(mut self, repo: &Repository, latest_tag: Option<&LatestTag>) -> Result<Self> {
         if !self.disabled_fields.contains(&FieldKind::Unreleased)
-            && let Some(unreleased) = Unreleased::new(repo)?
+            && let Some(latest_tag) = latest_tag
+            && let Some(unreleased) = Unreleased::new(repo, latest_tag)?
         {
             self.info_fields.push(Field::Unreleased(unreleased));
         }

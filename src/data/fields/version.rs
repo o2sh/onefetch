@@ -1,6 +1,7 @@
 use crate::data::manifest::Manifest;
 use anyhow::Result;
-use gix::Repository;
+use gix::date::Time;
+use gix::{ObjectId, Repository};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -9,30 +10,39 @@ pub struct Version {
 }
 
 impl Version {
-    pub fn new(repo: &Repository, manifest: Option<&Manifest>) -> Result<Self> {
-        let version = get_version(repo, manifest)?;
-        Ok(Self { version })
+    pub fn new(latest_tag: Option<&LatestTag>, manifest: Option<&Manifest>) -> Self {
+        let version = match latest_tag {
+            Some(tag) => tag.name.clone(),
+            None => manifest.and_then(|m| m.version.clone()).unwrap_or_default(),
+        };
+        Self { version }
     }
 }
 
-fn get_version(repo: &Repository, manifest: Option<&Manifest>) -> Result<String> {
-    let mut version = String::new();
+/// The tag on the most recent commit, taken as the latest release.
+pub struct LatestTag {
+    pub name: String,
+    pub commit_id: ObjectId,
+    pub commit_time: Time,
+}
+
+pub fn get_latest_tag(repo: &Repository) -> Result<Option<LatestTag>> {
+    let mut latest: Option<LatestTag> = None;
     let mut most_recent = 0;
 
     for tag in repo.references()?.tags()?.peeled()?.filter_map(Result::ok) {
         if let Ok(commit) = tag.id().object()?.try_into_commit() {
-            let current_time = commit.time()?.seconds;
-            if current_time > most_recent {
-                most_recent = current_time;
-                version = tag.name().shorten().to_string();
+            let commit_time = commit.time()?;
+            if commit_time.seconds > most_recent {
+                most_recent = commit_time.seconds;
+                latest = Some(LatestTag {
+                    name: tag.name().shorten().to_string(),
+                    commit_id: commit.id,
+                    commit_time,
+                });
             }
         }
     }
 
-    if version.is_empty() {
-        let version_from_manifest = manifest.and_then(|m| m.version.clone()).unwrap_or_default();
-        Ok(version_from_manifest)
-    } else {
-        Ok(version)
-    }
+    Ok(latest)
 }

@@ -1,4 +1,5 @@
 use self::builder::InfoBuilder;
+use self::fields::version::get_latest_tag;
 use self::git::bots::BotRegex;
 use self::git::{get_repo_url, get_work_dir, traverse_commit_graph, uses_reftables};
 use self::manifest::get_manifest;
@@ -89,6 +90,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .ok()
         .context("BUG: panic in language statistics thread")?;
     let main_language = loc_by_language.as_ref().map(|v| loc::get_main_language(v));
+    let latest_tag = get_latest_tag(&repo)?;
 
     Ok(InfoBuilder::new(options)
         .title(&repo)
@@ -96,8 +98,8 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .description(manifest.as_ref())
         .head(&repo)?
         .pending(&repo)?
-        .version(&repo, manifest.as_ref())?
-        .unreleased(&repo)?
+        .version(latest_tag.as_ref(), manifest.as_ref())
+        .unreleased(&repo, latest_tag.as_ref())?
         .created(&git_metrics)
         .languages(loc_by_language.as_ref(), options.number_of_languages)
         .dependencies(manifest.as_ref())

@@ -1,12 +1,11 @@
+use super::version::LatestTag;
 use crate::data::dates::serialize_time;
 use anyhow::Result;
 use gix::Repository;
-use gix::commit::describe::SelectRef;
 use gix::date::Time;
 use serde::Serialize;
 
-/// The commits since the latest release: the closest tag that HEAD descends
-/// from, as `git describe --tags` finds it.
+/// The commits since the latest release: the tag the Version field shows.
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Unreleased {
@@ -18,29 +17,25 @@ pub struct Unreleased {
 }
 
 impl Unreleased {
-    /// `None` when HEAD doesn't descend from any tag.
-    pub fn new(repo: &Repository) -> Result<Option<Self>> {
-        let head = repo.head_commit()?;
-        let Some(resolution) = head.describe().names(SelectRef::AllTags).try_resolve()? else {
+    /// `None` when HEAD isn't built on the latest tag.
+    pub fn new(repo: &Repository, latest_tag: &LatestTag) -> Result<Option<Self>> {
+        let head_id = repo.head_id()?.detach();
+        let merge_base = repo.merge_base(head_id, latest_tag.commit_id)?;
+        if merge_base.map(|id| id.detach()) != Some(latest_tag.commit_id) {
             return Ok(None);
-        };
-        let outcome = resolution.outcome;
-        let Some(tag) = outcome.name else {
-            return Ok(None);
-        };
-        let Some(tagged_commit) = outcome
-            .name_by_oid
-            .iter()
-            .find_map(|(id, name)| (*name == tag).then_some(*id))
-        else {
-            return Ok(None);
-        };
-        let tag_date = repo.find_commit(tagged_commit)?.time()?;
+        }
+
+        // Same as `git rev-list --count <tag>..HEAD`.
+        let commits_since_tag = repo
+            .rev_walk([head_id])
+            .with_hidden([latest_tag.commit_id])
+            .all()?
+            .try_fold(0, |count, info| info.map(|_| count + 1))?;
 
         Ok(Some(Self {
-            tag: tag.to_string(),
-            commits_since_tag: outcome.depth as usize,
-            tag_date,
+            tag: latest_tag.name.clone(),
+            commits_since_tag,
+            tag_date: latest_tag.commit_time,
         }))
     }
 }
