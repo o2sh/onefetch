@@ -1,7 +1,7 @@
 use crate::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
 use crate::data::{
-    DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS, DEFAULT_NUMBER_OF_LANGUAGES,
-    FieldKind,
+    DEFAULT_ACTIVITY_MONTHS, DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS,
+    DEFAULT_NUMBER_OF_LANGUAGES, FieldKind,
 };
 use crate::language::{Language, LanguageType};
 use crate::render::format::NumberSeparator;
@@ -14,6 +14,8 @@ use clap_complete::Shell;
 use std::path::PathBuf;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
+
+const ACTIVITY_MONTHS: [&str; 3] = ["3", "6", "12"];
 
 const STYLES: Styles = Styles::styled()
     .header(AnsiColor::Yellow.on_default())
@@ -75,6 +77,15 @@ pub struct InfoArgs {
     /// and will be shown in the field label as "Churn (NUM)"
     #[arg(long, value_name = "NUM")]
     pub churn_pool_size: Option<usize>,
+    /// NUM of months shown in the activity field
+    #[arg(
+        long,
+        value_name = "NUM",
+        default_value_t = DEFAULT_ACTIVITY_MONTHS,
+        value_parser = PossibleValuesParser::new(ACTIVITY_MONTHS)
+            .map(|s| s.parse::<usize>().unwrap())
+    )]
+    pub activity_months: usize,
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1..)]
     pub exclude: Vec<String>,
@@ -260,6 +271,7 @@ impl Default for InfoArgs {
             number_of_languages: DEFAULT_NUMBER_OF_LANGUAGES,
             number_of_file_churns: DEFAULT_NUMBER_OF_FILE_CHURNS,
             churn_pool_size: Option::default(),
+            activity_months: DEFAULT_ACTIVITY_MONTHS,
             exclude: Vec::default(),
             no_bots: Option::default(),
             no_merges: Default::default(),
@@ -373,6 +385,17 @@ mod test {
     #[test]
     fn test_config_with_color_resolution_but_no_image() {
         assert!(Cli::try_parse_from(["onefetch", "--color-resolution", "32"]).is_err())
+    }
+
+    #[test]
+    fn test_config_with_activity_months() {
+        let config = Cli::parse_from(["onefetch", "--activity-months", "6"]);
+        assert_eq!(config.info.activity_months, 6);
+    }
+
+    #[test]
+    fn test_config_with_activity_months_not_allowed() {
+        assert!(Cli::try_parse_from(["onefetch", "--activity-months", "5"]).is_err())
     }
 
     #[test]
