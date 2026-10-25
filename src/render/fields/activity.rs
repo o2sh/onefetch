@@ -34,7 +34,7 @@ fn sparkline(counts: &[usize]) -> String {
                 return BARS[0];
             }
             let steps = BARS.len() - 1;
-            let level = (count * steps).div_ceil(max).clamp(1, steps);
+            let level = (count * steps).div_ceil(max);
             BARS[level]
         })
         .collect()
