@@ -14,7 +14,9 @@ pub fn traverse_commit_graph(
     no_bots: Option<BotRegex>,
     churn_pool_size: Option<usize>,
     no_merges: bool,
+    no_co_authors: bool,
 ) -> Result<GitMetrics> {
+    let mut number_of_counted_commits = 0;
     let mut time_of_most_recent_commit = None;
     let mut time_of_first_commit = None;
     let mut number_of_commits_by_identity: HashMap<Identity, usize> = HashMap::new();
@@ -58,13 +60,21 @@ pub fn traverse_commit_graph(
                     .expect("sorting by time yields this field as part of traversal"),
                 0,
             );
-            // Bots left out by `--no-bots` count neither as authors, nor in
-            // the activity, nor in the churn.
-            let author = mailmap.resolve(commit.object()?.author()?);
-            if !is_bot(&author.name, no_bots.as_ref()) {
-                update_identity_counts(author, &mut number_of_commits_by_identity);
+            // Commits that credit nobody (e.g. bots left out by `--no-bots`)
+            // count neither as commits, nor in the activity, nor in the churn.
+            let object = commit.object()?;
+            let identities = credited_identities(
+                object.author()?,
+                object.message_raw()?,
+                &mailmap,
+                no_bots.as_ref(),
+                no_co_authors,
+            );
+            if !identities.is_empty() {
+                update_identity_counts(identities, &mut number_of_commits_by_identity);
                 update_commit_times(commit_time.seconds, &mut commit_times);
                 churn_tx.send(commit.id)?;
+                number_of_counted_commits += 1;
             }
             time_of_most_recent_commit.get_or_insert(commit_time);
             time_of_first_commit = commit_time.into();
@@ -83,6 +93,7 @@ pub fn traverse_commit_graph(
 
     let git_metrics = GitMetrics::new(
         number_of_commits_by_identity,
+        number_of_counted_commits,
         number_of_commits_by_file_path,
         churn_pool_size,
         commit_times,
@@ -94,12 +105,12 @@ pub fn traverse_commit_graph(
 }
 
 fn update_identity_counts(
-    author: gix::actor::Signature,
+    identities: Vec<Identity>,
     number_of_commits_by_identity: &mut HashMap<Identity, usize>,
 ) {
-    *number_of_commits_by_identity
-        .entry(author.into())
-        .or_insert(0) += 1;
+    for identity in identities {
+        *number_of_commits_by_identity.entry(identity).or_insert(0) += 1;
+    }
 }
 
 fn update_commit_times(
@@ -107,4 +118,209 @@ fn update_commit_times(
     commit_times: &mut Vec<gix::date::SecondsSinceUnixEpoch>,
 ) {
     commit_times.push(commit_time);
+}
+
+/// The identities a commit counts for: its author and, unless `no_co_authors`,
+/// everyone in its `Co-authored-by` trailers, each resolved through the mailmap
+/// and credited once. Bots left out by `--no-bots` are dropped.
+fn credited_identities(
+    author: gix::actor::SignatureRef<'_>,
+    message: &gix::bstr::BStr,
+    mailmap: &gix::mailmap::Snapshot,
+    no_bots: Option<&BotRegex>,
+    no_co_authors: bool,
+) -> Vec<Identity> {
+    let co_authors = gix::objs::commit::MessageRef::from_bytes(message)
+        .body()
+        .filter(|_| !no_co_authors)
+        .into_iter()
+        .flat_map(|body| body.trailers().co_authored_by())
+        .filter_map(|trailer| {
+            let co_author = gix::actor::IdentityRef::from_bytes(&trailer.value)
+                .ok()?
+                .trim();
+            Some(mailmap.resolve(gix::actor::SignatureRef {
+                name: co_author.name,
+                email: co_author.email,
+                time: "",
+            }))
+        });
+
+    let mut identities: Vec<Identity> = Vec::new();
+    for signature in std::iter::once(mailmap.resolve(author)).chain(co_authors) {
+        let identity = Identity::from(signature);
+        if !is_bot(&identity.name, no_bots) && !identities.contains(&identity) {
+            identities.push(identity);
+        }
+    }
+    identities
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::data::git::bots::NO_BOTS_DEFAULT_REGEX_PATTERN;
+    use gix::bstr::ByteSlice;
+    use rstest::rstest;
+    use std::str::FromStr;
+
+    fn signature(name: &'static str, email: &'static str) -> gix::actor::SignatureRef<'static> {
+        gix::actor::SignatureRef {
+            name: name.as_bytes().as_bstr(),
+            email: email.as_bytes().as_bstr(),
+            time: "",
+        }
+    }
+
+    fn identity(name: &str, email: &str) -> Identity {
+        Identity {
+            name: name.into(),
+            email: email.into(),
+        }
+    }
+
+    fn credited(message: &str, mailmap: &str, no_bots: bool, no_co_authors: bool) -> Vec<Identity> {
+        let no_bots = no_bots.then(|| BotRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN).unwrap());
+        credited_identities(
+            signature("Author", "author@example.org"),
+            message.as_bytes().as_bstr(),
+            &gix::mailmap::Snapshot::from_bytes(mailmap.as_bytes()),
+            no_bots.as_ref(),
+            no_co_authors,
+        )
+    }
+
+    #[test]
+    fn test_credited_identities_without_trailers() {
+        assert_eq!(
+            credited("subject\n\nbody\n", "", false, false),
+            vec![identity("Author", "author@example.org")]
+        );
+    }
+
+    #[rstest]
+    #[case("Co-authored-by")]
+    #[case("co-authored-by")]
+    #[case("CO-AUTHORED-BY")]
+    #[case("Co-Authored-By")]
+    fn test_credited_identities_with_co_authors(#[case] token: &str) {
+        let message =
+            format!("subject\n\n{token}: One <one@example.org>\n{token}: Two <two@example.org>\n");
+        assert_eq!(
+            credited(&message, "", false, false),
+            vec![
+                identity("Author", "author@example.org"),
+                identity("One", "one@example.org"),
+                identity("Two", "two@example.org"),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_with_no_co_authors() {
+        assert_eq!(
+            credited(
+                "subject\n\nCo-authored-by: One <one@example.org>\n",
+                "",
+                false,
+                true
+            ),
+            vec![identity("Author", "author@example.org")]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_ignores_other_trailers() {
+        assert_eq!(
+            credited(
+                "subject\n\nSigned-off-by: One <one@example.org>\nReviewed-by: Two <two@example.org>\n",
+                "",
+                false,
+                false
+            ),
+            vec![identity("Author", "author@example.org")]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_credits_each_identity_once() {
+        assert_eq!(
+            credited(
+                "subject\n\nCo-authored-by: Author <author@example.org>\nCo-authored-by: One <one@example.org>\nCo-authored-by: One <one@example.org>\n",
+                "",
+                false,
+                false
+            ),
+            vec![
+                identity("Author", "author@example.org"),
+                identity("One", "one@example.org"),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_resolves_co_authors_through_mailmap() {
+        assert_eq!(
+            credited(
+                "subject\n\nCo-authored-by: Old Name <old@example.org>\nCo-authored-by: Alias <author-alias@example.org>\n",
+                "One <one@example.org> <old@example.org>\nAuthor <author@example.org> <author-alias@example.org>\n",
+                false,
+                false
+            ),
+            vec![
+                identity("Author", "author@example.org"),
+                identity("One", "one@example.org"),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_skips_malformed_co_authors() {
+        assert_eq!(
+            credited(
+                "subject\n\nCo-authored-by: just a name\nCo-authored-by: One <one@example.org>\n",
+                "",
+                false,
+                false
+            ),
+            vec![
+                identity("Author", "author@example.org"),
+                identity("One", "one@example.org"),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_with_no_bots_drops_bot_co_authors() {
+        assert_eq!(
+            credited(
+                "subject\n\nCo-authored-by: dependabot[bot] <bot@example.org>\nCo-authored-by: One <one@example.org>\n",
+                "",
+                true,
+                false
+            ),
+            vec![
+                identity("Author", "author@example.org"),
+                identity("One", "one@example.org"),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_credited_identities_with_no_bots_keeps_human_co_authors_of_bot_commits() {
+        let no_bots = BotRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN).unwrap();
+        let mailmap = gix::mailmap::Snapshot::default();
+        let message = "subject\n\nCo-authored-by: One <one@example.org>\n";
+        let credit = |no_co_authors| {
+            credited_identities(
+                signature("Copilot[bot]", "copilot@example.org"),
+                message.as_bytes().as_bstr(),
+                &mailmap,
+                Some(&no_bots),
+                no_co_authors,
+            )
+        };
+        assert_eq!(credit(false), vec![identity("One", "one@example.org")]);
+        assert_eq!(credit(true), vec![]);
+    }
 }
