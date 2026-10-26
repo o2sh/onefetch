@@ -42,7 +42,7 @@ byte-unit = "5.2.6"
 cargo_toml = "1.0.1"
 clap = { version = "4.6.7", features = ["derive"] }
 clap_complete = "4.6.11"
-gix = { version = "0.89.0", default-features = false, features = [
+gix = { version = "0.90.0", default-features = false, features = [
     "max-performance-safe",
     "blob-diff",
     "mailmap",
@@ -73,7 +73,7 @@ toml = "1.1.8"
 
 [dev-dependencies]
 criterion = "0.8.2"
-gix-testtools = { version = "0.21.0", features = ["sha1"] }
+gix-testtools = { version = "0.22.0", features = ["sha1"] }
 insta = { version = "1.49.0", features = ["json", "redactions"] }
 rstest = "0.27.0"
 
