@@ -44,7 +44,7 @@ pub struct InfoOptions {
     pub exclude: Vec<String>,
     pub no_bots: Option<BotRegex>,
     pub no_merges: bool,
-    pub no_co_authors: bool,
+    pub co_authors: bool,
     pub email: bool,
     pub http_url: bool,
     pub hide_token: bool,
@@ -79,7 +79,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         options.no_bots.clone(),
         options.churn_pool_size,
         options.no_merges,
-        options.no_co_authors,
+        options.co_authors,
     )
     .context("Failed to traverse Git commit history")?;
     let manifest = get_manifest(&repo_path)?;

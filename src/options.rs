@@ -20,7 +20,7 @@ impl From<&Cli> for InfoOptions {
             exclude: cli.info.exclude.clone(),
             no_bots: cli.info.no_bots.clone(),
             no_merges: cli.info.no_merges,
-            no_co_authors: cli.info.no_co_authors,
+            co_authors: cli.info.co_authors,
             email: cli.info.email,
             http_url: cli.info.http_url,
             hide_token: cli.info.hide_token,

@@ -170,13 +170,13 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
 }
 
 #[rstest]
-#[case::default(None, false, 3, &[("Author One", 2, 67), ("Author Two", 2, 67), ("Author Three", 1, 33)])]
-#[case::no_co_authors(None, true, 3, &[("Author One", 1, 33), ("Author Two", 1, 33), ("renovate[bot]", 1, 33)])]
-#[case::no_bots(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), false, 3, &[("Author One", 2, 67), ("Author Two", 2, 67), ("Author Three", 1, 33)])]
-#[case::no_bots_no_co_authors(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), true, 2, &[("Author One", 1, 50), ("Author Two", 1, 50)])]
+#[case::default(None, false, 3, &[("Author One", 1, 33), ("Author Two", 1, 33), ("renovate[bot]", 1, 33)])]
+#[case::co_authors(None, true, 3, &[("Author One", 2, 67), ("Author Two", 2, 67), ("Author Three", 1, 33)])]
+#[case::no_bots(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), false, 2, &[("Author One", 1, 50), ("Author Two", 1, 50)])]
+#[case::no_bots_co_authors(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), true, 3, &[("Author One", 2, 67), ("Author Two", 2, 67), ("Author Three", 1, 33)])]
 fn test_repo_with_co_authors(
     #[case] no_bots: Option<&str>,
-    #[case] no_co_authors: bool,
+    #[case] co_authors: bool,
     #[case] expected_number_of_commits: u64,
     #[case] expected_authors: &[(&str, u64, u64)],
 ) -> Result<()> {
@@ -185,7 +185,7 @@ fn test_repo_with_co_authors(
         input: repo.path().to_path_buf(),
         info: InfoArgs {
             no_bots: no_bots.map(BotRegex::from_str).transpose()?,
-            no_co_authors,
+            co_authors,
             ..Default::default()
         },
         ..Default::default()
