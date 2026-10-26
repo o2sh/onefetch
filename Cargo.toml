@@ -43,7 +43,7 @@ cargo_toml = "1.0.1"
 clap = { version = "4.6.7", features = ["derive"] }
 clap_complete = "4.6.11"
 gix = { version = "0.90.0", default-features = false, features = [
-    "max-performance-safe",
+    "max-performance",
     "blob-diff",
     "mailmap",
     "index",
