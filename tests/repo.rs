@@ -170,10 +170,10 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
 }
 
 #[rstest]
-#[case::default(None, false, 3, &[("Author One", 1, 33), ("Author Two", 1, 33), ("renovate[bot]", 1, 33)])]
-#[case::co_authors(None, true, 3, &[("Author One", 2, 67), ("Author Two", 2, 67), ("Author Three", 1, 33)])]
-#[case::no_bots(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), false, 2, &[("Author One", 1, 50), ("Author Two", 1, 50)])]
-#[case::no_bots_co_authors(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), true, 3, &[("Author One", 2, 67), ("Author Two", 2, 67), ("Author Three", 1, 33)])]
+#[case::default(None, false, 5, &[("Author One", 2, 40), ("Author Three", 1, 20), ("Author Two", 1, 20), ("renovate[bot]", 1, 20)])]
+#[case::co_authors(None, true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60), ("renovate[bot]", 1, 20)])]
+#[case::no_bots(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), false, 4, &[("Author One", 2, 50), ("Author Three", 1, 25), ("Author Two", 1, 25)])]
+#[case::no_bots_co_authors(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60)])]
 fn test_repo_with_co_authors(
     #[case] no_bots: Option<&str>,
     #[case] co_authors: bool,
@@ -184,6 +184,7 @@ fn test_repo_with_co_authors(
     let config = Cli {
         input: repo.path().to_path_buf(),
         info: InfoArgs {
+            number_of_authors: 4,
             no_bots: no_bots.map(BotRegex::from_str).transpose()?,
             co_authors,
             ..Default::default()

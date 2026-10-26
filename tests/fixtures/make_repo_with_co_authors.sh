@@ -16,3 +16,11 @@ git commit -q -am c2 -m "co-authored-by: Author Three <author3@example.org>" \
 echo world >> code.rs
 git commit -q -am c3 -m "Co-authored-by: Author One <author1@example.org>" \
   --author="renovate[bot] <bot@example.org>"
+echo again >> code.rs
+git commit -q -am c4 -m "Co-authored-by: Author One <author1@example.org>
+Co-authored-by: Author One <author1@example.org>" \
+  --author="Author Three <author3@example.org>"
+echo more >> code.rs
+git commit -q -am c5 -m "Co-authored-by: Author Two <author2@example.org>
+Co-authored-by: Author Three <author3@example.org>" \
+  --author="Author One <author1@example.org>"
