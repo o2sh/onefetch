@@ -176,9 +176,9 @@ impl InfoBuilder {
         self
     }
 
-    pub fn activity(mut self, git_metrics: &GitMetrics) -> Self {
+    pub fn activity(mut self, git_metrics: &GitMetrics, months: usize) -> Self {
         if !self.disabled_fields.contains(&FieldKind::Activity) {
-            let activity = Activity::new(&git_metrics.commit_times, dates::now());
+            let activity = Activity::new(&git_metrics.commit_times, dates::now(), months);
             self.info_fields.push(Field::Activity(activity));
         }
         self

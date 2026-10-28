@@ -17,6 +17,7 @@ impl From<&Cli> for InfoOptions {
             number_of_languages: cli.info.number_of_languages,
             number_of_file_churns: cli.info.number_of_file_churns,
             churn_pool_size: cli.info.churn_pool_size,
+            activity_months: cli.info.activity_months,
             exclude: cli.info.exclude.clone(),
             no_bots: cli.info.no_bots.clone(),
             no_merges: cli.info.no_merges,

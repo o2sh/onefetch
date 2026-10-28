@@ -30,6 +30,7 @@ pub struct Info {
 pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
 pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
 pub const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
+pub const DEFAULT_ACTIVITY_MONTHS: usize = 12;
 
 /// What to collect from the repository and which fields to show.
 #[derive(Clone, Debug)]
@@ -41,6 +42,7 @@ pub struct InfoOptions {
     pub number_of_languages: usize,
     pub number_of_file_churns: usize,
     pub churn_pool_size: Option<usize>,
+    pub activity_months: usize,
     pub exclude: Vec<String>,
     pub no_bots: Option<BotRegex>,
     pub no_merges: bool,
@@ -101,7 +103,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .dependencies(manifest.as_ref())
         .authors(&git_metrics, options.number_of_authors, options.email)
         .last_change(&git_metrics)
-        .activity(&git_metrics)
+        .activity(&git_metrics, options.activity_months)
         .contributors(&git_metrics, options.number_of_authors)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow()?)
