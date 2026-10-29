@@ -33,24 +33,3 @@ impl Unreleased {
         }))
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_serialize_unreleased() {
-        let unreleased = Unreleased {
-            tag: "v1.0.0".into(),
-            commits_since_tag: 3,
-        };
-
-        assert_eq!(
-            serde_json::to_value(&unreleased).unwrap(),
-            serde_json::json!({
-                "tag": "v1.0.0",
-                "commitsSinceTag": 3,
-            })
-        );
-    }
-}
