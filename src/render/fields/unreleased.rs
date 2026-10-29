@@ -5,12 +5,7 @@ use crate::render::style::Line;
 
 impl FieldView for Unreleased {
     fn value(&self, options: &RenderOptions) -> Vec<Line> {
-        let commits = match self.commits_since_tag {
-            0 => "nothing".to_string(),
-            1 => "1 commit".to_string(),
-            n => format!("{} commits", options.number(&n)),
-        };
-        vec![Line::from(format!("{commits} since {}", self.tag))]
+        vec![Line::from(options.number(&self.commits_since_tag))]
     }
 
     fn key(&self) -> String {
@@ -25,9 +20,8 @@ mod test {
     use rstest::rstest;
 
     #[rstest]
-    #[case(0, "nothing since v2.0.0")]
-    #[case(1, "1 commit since v2.0.0")]
-    #[case(1234, "1,234 commits since v2.0.0")]
+    #[case(0, "0")]
+    #[case(1234, "1,234")]
     fn test_display_unreleased(#[case] commits_since_tag: usize, #[case] expected: &str) {
         let unreleased = Unreleased {
             tag: "v2.0.0".into(),
