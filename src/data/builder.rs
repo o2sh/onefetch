@@ -109,8 +109,8 @@ impl InfoBuilder {
     pub fn unreleased(mut self, repo: &Repository, latest_tag: Option<&LatestTag>) -> Result<Self> {
         if !self.disabled_fields.contains(&FieldKind::Unreleased)
             && let Some(latest_tag) = latest_tag
-            && let Some(unreleased) = Unreleased::new(repo, latest_tag)?
         {
+            let unreleased = Unreleased::new(repo, latest_tag)?;
             self.info_fields.push(Field::Unreleased(unreleased));
         }
         Ok(self)
