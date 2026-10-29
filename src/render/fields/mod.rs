@@ -21,6 +21,7 @@ mod lines_of_code;
 mod pending;
 mod project;
 mod size;
+mod unreleased;
 mod url;
 mod version;
 
@@ -36,6 +37,7 @@ pub(crate) fn view(field: &Field) -> &dyn FieldView {
         Field::Head(f) => f,
         Field::Pending(f) => f,
         Field::Version(f) => f,
+        Field::Unreleased(f) => f,
         Field::Created(f) => f,
         Field::Languages(f) => f,
         Field::Dependencies(f) => f,

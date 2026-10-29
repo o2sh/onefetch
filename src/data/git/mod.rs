@@ -8,9 +8,11 @@ mod churn;
 pub(crate) mod identity;
 pub(crate) mod metrics;
 mod remote;
+mod tags;
 mod traversal;
 
 pub(crate) use remote::get_repo_url;
+pub(crate) use tags::{LatestTag, get_latest_tag};
 pub(crate) use traversal::traverse_commit_graph;
 
 pub(crate) fn uses_reftables(repo: &Repository) -> bool {
