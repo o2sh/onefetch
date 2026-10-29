@@ -1,8 +1,6 @@
 use super::version::LatestTag;
-use crate::dates::serialize_time;
 use anyhow::Result;
 use gix::Repository;
-use gix::date::Time;
 use serde::Serialize;
 
 /// The commits since the latest release: the tag the Version field shows.
@@ -11,9 +9,6 @@ use serde::Serialize;
 pub struct Unreleased {
     pub tag: String,
     pub commits_since_tag: usize,
-    /// The commit time of the tagged commit.
-    #[serde(serialize_with = "serialize_time")]
-    pub tag_date: Time,
 }
 
 impl Unreleased {
@@ -35,7 +30,6 @@ impl Unreleased {
         Ok(Some(Self {
             tag: latest_tag.name.clone(),
             commits_since_tag,
-            tag_date: latest_tag.commit_time,
         }))
     }
 }
@@ -49,7 +43,6 @@ mod test {
         let unreleased = Unreleased {
             tag: "v1.0.0".into(),
             commits_since_tag: 3,
-            tag_date: Time::new(946_771_200, 0),
         };
 
         assert_eq!(
@@ -57,7 +50,6 @@ mod test {
             serde_json::json!({
                 "tag": "v1.0.0",
                 "commitsSinceTag": 3,
-                "tagDate": "2000-01-02T00:00:00Z",
             })
         );
     }

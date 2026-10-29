@@ -1,6 +1,5 @@
 use crate::data::manifest::Manifest;
 use anyhow::Result;
-use gix::date::Time;
 use gix::{ObjectId, Repository};
 use serde::Serialize;
 
@@ -23,7 +22,6 @@ impl Version {
 pub struct LatestTag {
     pub name: String,
     pub commit_id: ObjectId,
-    pub commit_time: Time,
 }
 
 pub fn get_latest_tag(repo: &Repository) -> Result<Option<LatestTag>> {
@@ -32,13 +30,12 @@ pub fn get_latest_tag(repo: &Repository) -> Result<Option<LatestTag>> {
 
     for tag in repo.references()?.tags()?.peeled()?.filter_map(Result::ok) {
         if let Ok(commit) = tag.id().object()?.try_into_commit() {
-            let commit_time = commit.time()?;
-            if commit_time.seconds > most_recent {
-                most_recent = commit_time.seconds;
+            let current_time = commit.time()?.seconds;
+            if current_time > most_recent {
+                most_recent = current_time;
                 latest = Some(LatestTag {
                     name: tag.name().shorten().to_string(),
                     commit_id: commit.id,
-                    commit_time,
                 });
             }
         }

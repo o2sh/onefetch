@@ -45,8 +45,7 @@ expression: info
     {
       "UnreleasedInfo": {
         "tag": "tag1",
-        "commitsSinceTag": 3,
-        "tagDate": "2000-01-02T00:00:00Z"
+        "commitsSinceTag": 3
       }
     },
     {
