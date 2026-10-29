@@ -62,14 +62,8 @@ pub fn traverse_commit_graph(
             );
             // Commits that credit nobody (e.g. bots left out by `--no-bots`)
             // count neither as commits, nor in the activity, nor in the churn.
-            let object = commit.object()?;
-            let identities = credited_identities(
-                object.author()?,
-                object.message_raw()?,
-                &mailmap,
-                no_bots.as_ref(),
-                co_authors,
-            );
+            let identities =
+                credited_identities(&commit.object()?, &mailmap, no_bots.as_ref(), co_authors)?;
             if !identities.is_empty() {
                 update_identity_counts(identities, &mut number_of_commits_by_identity);
                 update_commit_times(commit_time.seconds, &mut commit_times);
@@ -124,18 +118,16 @@ fn update_commit_times(
 /// everyone in its `Co-authored-by` trailers, each resolved through the mailmap
 /// and credited once. Bots left out by `--no-bots` are dropped.
 fn credited_identities(
-    author: gix::actor::SignatureRef<'_>,
-    message: &gix::bstr::BStr,
+    commit: &gix::Commit<'_>,
     mailmap: &gix::mailmap::Snapshot,
     no_bots: Option<&BotRegex>,
     co_authors: bool,
-) -> Vec<Identity> {
-    let co_authors = gix::objs::commit::MessageRef::from_bytes(message)
-        .body()
-        .filter(|_| co_authors)
-        .into_iter()
-        .flat_map(|body| body.trailers().co_authored_by())
-        .filter_map(|trailer| {
+) -> Result<Vec<Identity>> {
+    let mut signatures = vec![mailmap.resolve(commit.author()?)];
+    if co_authors
+        && let Some(body) = gix::objs::commit::MessageRef::from_bytes(commit.message_raw()?).body()
+    {
+        signatures.extend(body.trailers().co_authored_by().filter_map(|trailer| {
             let co_author = gix::actor::IdentityRef::from_bytes(&trailer.value)
                 .ok()?
                 .trim();
@@ -144,33 +136,25 @@ fn credited_identities(
                 email: co_author.email,
                 time: "",
             }))
-        });
+        }));
+    }
 
     let mut identities: Vec<Identity> = Vec::new();
-    for signature in std::iter::once(mailmap.resolve(author)).chain(co_authors) {
+    for signature in signatures {
         let identity = Identity::from(signature);
         if !is_bot(&identity.name, no_bots) && !identities.contains(&identity) {
             identities.push(identity);
         }
     }
-    identities
+    Ok(identities)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::data::git::bots::NO_BOTS_DEFAULT_REGEX_PATTERN;
-    use gix::bstr::ByteSlice;
     use rstest::rstest;
     use std::str::FromStr;
-
-    fn signature(name: &'static str, email: &'static str) -> gix::actor::SignatureRef<'static> {
-        gix::actor::SignatureRef {
-            name: name.as_bytes().as_bstr(),
-            email: email.as_bytes().as_bstr(),
-            time: "",
-        }
-    }
 
     fn identity(name: &str, email: &str) -> Identity {
         Identity {
@@ -179,12 +163,47 @@ mod tests {
         }
     }
 
+    /// Credit a commit by `author` with `message`, written to a throwaway repository.
+    fn credit(
+        author: (&str, &str),
+        message: &str,
+        mailmap: &str,
+        no_bots: Option<&BotRegex>,
+        co_authors: bool,
+    ) -> Vec<Identity> {
+        let dir = gix_testtools::tempfile::tempdir().unwrap();
+        let repo = gix::init_bare(dir.path()).unwrap();
+        let signature = gix::actor::Signature {
+            name: author.0.into(),
+            email: author.1.into(),
+            time: gix::date::Time::default(),
+        };
+        let id = repo
+            .write_object(gix::objs::Commit {
+                tree: repo.empty_tree().id,
+                parents: Default::default(),
+                author: signature.clone(),
+                committer: signature,
+                encoding: None,
+                message: message.into(),
+                extra_headers: Vec::new(),
+            })
+            .unwrap();
+        credited_identities(
+            &repo.find_commit(id).unwrap(),
+            &gix::mailmap::Snapshot::from_bytes(mailmap.as_bytes()),
+            no_bots,
+            co_authors,
+        )
+        .unwrap()
+    }
+
     fn credited(message: &str, mailmap: &str, no_bots: bool, co_authors: bool) -> Vec<Identity> {
         let no_bots = no_bots.then(|| BotRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN).unwrap());
-        credited_identities(
-            signature("Author", "author@example.org"),
-            message.as_bytes().as_bstr(),
-            &gix::mailmap::Snapshot::from_bytes(mailmap.as_bytes()),
+        credit(
+            ("Author", "author@example.org"),
+            message,
+            mailmap,
             no_bots.as_ref(),
             co_authors,
         )
@@ -309,13 +328,11 @@ mod tests {
     #[test]
     fn test_credited_identities_with_no_bots_keeps_human_co_authors_of_bot_commits() {
         let no_bots = BotRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN).unwrap();
-        let mailmap = gix::mailmap::Snapshot::default();
-        let message = "subject\n\nCo-authored-by: One <one@example.org>\n";
         let credit = |co_authors| {
-            credited_identities(
-                signature("Copilot[bot]", "copilot@example.org"),
-                message.as_bytes().as_bstr(),
-                &mailmap,
+            credit(
+                ("Copilot[bot]", "copilot@example.org"),
+                "subject\n\nCo-authored-by: One <one@example.org>\n",
+                "",
                 Some(&no_bots),
                 co_authors,
             )
