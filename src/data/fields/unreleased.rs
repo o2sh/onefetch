@@ -1,4 +1,4 @@
-use super::version::LatestTag;
+use crate::data::git::LatestTag;
 use anyhow::Result;
 use gix::Repository;
 use serde::Serialize;

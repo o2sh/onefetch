@@ -1,7 +1,8 @@
 use self::builder::InfoBuilder;
-use self::fields::version::get_latest_tag;
 use self::git::bots::BotRegex;
-use self::git::{get_repo_url, get_work_dir, traverse_commit_graph, uses_reftables};
+use self::git::{
+    get_latest_tag, get_repo_url, get_work_dir, traverse_commit_graph, uses_reftables,
+};
 use self::manifest::get_manifest;
 use self::title::Title;
 use crate::language::{Language, LanguageType};
