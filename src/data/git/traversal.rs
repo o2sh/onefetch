@@ -124,31 +124,40 @@ fn credited_identities(
     co_authors: bool,
 ) -> Result<Vec<Identity>> {
     let mut identities: Vec<Identity> = Vec::new();
-    let mut credit = |signature: gix::actor::Signature| {
-        let identity = Identity::from(signature);
+    let mut credit = |signature: gix::actor::SignatureRef<'_>| {
+        let resolved = mailmap.try_resolve_ref(signature);
+        let identity = Identity {
+            name: resolved
+                .as_ref()
+                .and_then(|resolved| resolved.name)
+                .unwrap_or(signature.name)
+                .to_owned(),
+            email: resolved
+                .as_ref()
+                .and_then(|resolved| resolved.email)
+                .unwrap_or(signature.email)
+                .to_owned(),
+        };
         if !is_bot(&identity.name, no_bots) && !identities.contains(&identity) {
             identities.push(identity);
         }
     };
 
-    credit(mailmap.resolve(commit.author()?));
+    credit(commit.author()?);
     if co_authors
         && let Some(body) =
             gix::objs::commit::MessageRef::from_bytes(commit.message_raw_sloppy()).body()
     {
-        body.trailers()
-            .co_authored_by()
-            .filter_map(|trailer| {
-                let co_author = gix::actor::IdentityRef::from_bytes(&trailer.value)
-                    .ok()?
-                    .trim();
-                Some(mailmap.resolve(gix::actor::SignatureRef {
+        for trailer in body.trailers().co_authored_by() {
+            if let Ok(co_author) = gix::actor::IdentityRef::from_bytes(&trailer.value) {
+                let co_author = co_author.trim();
+                credit(gix::actor::SignatureRef {
                     name: co_author.name,
                     email: co_author.email,
                     time: "",
-                }))
-            })
-            .for_each(&mut credit);
+                });
+            }
+        }
     }
     Ok(identities)
 }
