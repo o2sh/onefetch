@@ -123,29 +123,32 @@ fn credited_identities(
     no_bots: Option<&BotRegex>,
     co_authors: bool,
 ) -> Result<Vec<Identity>> {
-    let mut signatures = vec![mailmap.resolve(commit.author()?)];
-    if co_authors
-        && let Some(body) =
-            gix::objs::commit::MessageRef::from_bytes(commit.message_raw_sloppy()).body()
-    {
-        signatures.extend(body.trailers().co_authored_by().filter_map(|trailer| {
-            let co_author = gix::actor::IdentityRef::from_bytes(&trailer.value)
-                .ok()?
-                .trim();
-            Some(mailmap.resolve(gix::actor::SignatureRef {
-                name: co_author.name,
-                email: co_author.email,
-                time: "",
-            }))
-        }));
-    }
-
     let mut identities: Vec<Identity> = Vec::new();
-    for signature in signatures {
+    let mut credit = |signature: gix::actor::Signature| {
         let identity = Identity::from(signature);
         if !is_bot(&identity.name, no_bots) && !identities.contains(&identity) {
             identities.push(identity);
         }
+    };
+
+    credit(mailmap.resolve(commit.author()?));
+    if co_authors
+        && let Some(body) =
+            gix::objs::commit::MessageRef::from_bytes(commit.message_raw_sloppy()).body()
+    {
+        body.trailers()
+            .co_authored_by()
+            .filter_map(|trailer| {
+                let co_author = gix::actor::IdentityRef::from_bytes(&trailer.value)
+                    .ok()?
+                    .trim();
+                Some(mailmap.resolve(gix::actor::SignatureRef {
+                    name: co_author.name,
+                    email: co_author.email,
+                    time: "",
+                }))
+            })
+            .for_each(&mut credit);
     }
     Ok(identities)
 }
