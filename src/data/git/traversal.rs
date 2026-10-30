@@ -125,7 +125,8 @@ fn credited_identities(
 ) -> Result<Vec<Identity>> {
     let mut signatures = vec![mailmap.resolve(commit.author()?)];
     if co_authors
-        && let Some(body) = gix::objs::commit::MessageRef::from_bytes(commit.message_raw()?).body()
+        && let Some(body) =
+            gix::objs::commit::MessageRef::from_bytes(commit.message_raw_sloppy()).body()
     {
         signatures.extend(body.trailers().co_authored_by().filter_map(|trailer| {
             let co_author = gix::actor::IdentityRef::from_bytes(&trailer.value)
@@ -164,6 +165,8 @@ mod tests {
     }
 
     /// Credit a commit by `author` with `message`, written to a throwaway repository.
+    /// The commit is signed, with a blank line inside its signature header,
+    /// so the message must be told apart from the headers correctly.
     fn credit(
         author: (&str, &str),
         message: &str,
@@ -186,7 +189,11 @@ mod tests {
                 committer: signature,
                 encoding: None,
                 message: message.into(),
-                extra_headers: Vec::new(),
+                extra_headers: vec![(
+                    "gpgsig".into(),
+                    "-----BEGIN PGP SIGNATURE-----\n\nsignature\n-----END PGP SIGNATURE-----\n"
+                        .into(),
+                )],
             })
             .unwrap();
         credited_identities(
