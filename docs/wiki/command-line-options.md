@@ -37,8 +37,13 @@ INFO:
       --churn-pool-size <NUM>
           Minimum NUM of commits from HEAD used to compute the churn summary
 
-          By default, the actual value is non-deterministic due to time-based computation and will be shown in the field label as
-          "Churn (NUM)"
+          By default, the actual value is non-deterministic due to time-based computation and will be shown in the field label as "Churn (NUM)"
+
+      --activity-months <NUM>
+          NUM of months shown in the activity field
+
+          [default: 12]
+          [possible values: 3, 6, 12]
 
   -e, --exclude <EXCLUDE>...
           Ignore all files & directories matching EXCLUDE
