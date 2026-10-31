@@ -2,7 +2,7 @@
 authors = ["o2sh <hjajiossama@gmail.com>"]
 edition = "2024"
 license = "MIT"
-version = "3.1.0"
+version = "3.2.0"
 repository = "https://github.com/o2sh/onefetch"
 categories = ["command-line-utilities"]
 description = "Command-line Git information tool"

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.2.0 (2026-10-31)
+
+### New Features
+
+- Add an Activity field with a commits-per-month sparkline by @o2sh in https://github.com/o2sh/onefetch/pull/1902
+- Add `--activity-months` CLI argument to set the activity window by @o2sh in https://github.com/o2sh/onefetch/pull/1905
+- Add an Unreleased field with the commits since the last release by @o2sh in https://github.com/o2sh/onefetch/pull/1903
+
+### Chores
+
+- [onefetch.dev] upgrade to SvelteKit 3 by @o2sh in https://github.com/o2sh/onefetch/pull/1912
+
 ## 3.1.0 (2026-10-18)
 
 ### Bug Fixes
