@@ -19,13 +19,13 @@ pub struct GitMetrics {
 impl GitMetrics {
     pub fn new(
         number_of_commits_by_identity: HashMap<Identity, usize>,
+        total_number_of_commits: usize,
         number_of_commits_by_file_path: HashMap<BString, usize>,
         churn_pool_size: usize,
         commit_times: Vec<gix::date::SecondsSinceUnixEpoch>,
         time_of_first_commit: Option<Time>,
         time_of_most_recent_commit: Option<Time>,
     ) -> Self {
-        let total_number_of_commits = number_of_commits_by_identity.values().sum();
         let total_number_of_authors = number_of_commits_by_identity.len();
 
         // This could happen if a branch pointed to non-commit object, so no traversal actually happens.

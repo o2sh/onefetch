@@ -49,6 +49,9 @@ INFO:
       --no-merges
           Ignores merge commits
 
+      --co-authors
+          Also credit authors listed in Co-authored-by trailers
+
   -E, --email
           Show the email address of each author
 
