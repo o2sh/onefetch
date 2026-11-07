@@ -1,5 +1,6 @@
 use self::format::NumberSeparator;
 use self::image::ImageProtocol;
+use crate::data::FieldKind;
 use crate::language::Language;
 use std::path::PathBuf;
 
@@ -15,6 +16,55 @@ pub mod style;
 pub use printer::Printer;
 
 pub const DEFAULT_COLOR_RESOLUTION: usize = 64;
+
+/// A slot in `ascii_colors` or `text_colors` that keeps its default color.
+/// The config file can set e.g. the key color alone; the command line cannot
+/// produce this value since it only accepts colors 0 to 15.
+pub const UNSET_COLOR: u8 = u8::MAX;
+
+pub const DEFAULT_SEPARATOR: &str = ": ";
+
+/// How the key of each info line is laid out. Only the config file sets it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct KeyLayout {
+    /// Printed between a key and its value.
+    pub separator: String,
+    /// Pads the left padding, key and separator to this many columns, so that
+    /// the values line up. 0 adds no padding.
+    pub width: usize,
+    /// Spaces before each key.
+    pub padding_left: usize,
+    /// The key and colors set for single fields.
+    pub fields: Vec<(FieldKind, FieldStyle)>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct FieldStyle {
+    /// Replaces the field's key.
+    pub key: Option<String>,
+    pub key_color: Option<u8>,
+    pub output_color: Option<u8>,
+}
+
+impl KeyLayout {
+    pub fn field_style(&self, kind: FieldKind) -> Option<&FieldStyle> {
+        self.fields
+            .iter()
+            .find(|(field, _)| *field == kind)
+            .map(|(_, style)| style)
+    }
+}
+
+impl Default for KeyLayout {
+    fn default() -> Self {
+        Self {
+            separator: DEFAULT_SEPARATOR.into(),
+            width: 0,
+            padding_left: 0,
+            fields: Vec::new(),
+        }
+    }
+}
 
 #[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
@@ -41,6 +91,7 @@ pub struct RenderOptions {
     pub true_color: bool,
     pub nerd_fonts: bool,
     pub no_color_palette: bool,
+    pub key_layout: KeyLayout,
 }
 
 /// The CLI defaults, except that true colors are off since `--true-color auto`
@@ -63,6 +114,7 @@ impl Default for RenderOptions {
             true_color: false,
             nerd_fonts: false,
             no_color_palette: false,
+            key_layout: KeyLayout::default(),
         }
     }
 }

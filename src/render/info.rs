@@ -1,5 +1,5 @@
-use crate::data::Info;
 use crate::data::title::Title;
+use crate::data::{FieldKind, Info};
 use crate::render::RenderOptions;
 use crate::render::fields::{FieldView, view};
 use crate::render::style::{Line, Segment, Style};
@@ -10,7 +10,7 @@ pub fn info_lines(info: &Info, options: &RenderOptions) -> Vec<Line> {
         lines.extend(title_lines(title));
     }
     for field in &info.info_fields {
-        lines.extend(field_lines(view(field), options));
+        lines.extend(field_lines(field.kind(), view(field), options));
     }
     if !options.no_color_palette {
         lines.push(Line::default());
@@ -44,29 +44,61 @@ fn title_line(title: &Title) -> Line {
     Line::from(segments)
 }
 
-fn field_lines(field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
+fn field_lines(kind: FieldKind, field: &dyn FieldView, options: &RenderOptions) -> Vec<Line> {
     let value = field.value(options);
     if value.iter().all(Line::is_empty) {
         return Vec::new();
     }
 
-    let key = field.key();
-    let indent = " ".repeat(key.chars().count() + 2);
+    let layout = &options.key_layout;
+    let field_style = layout.field_style(kind);
+    let key = field_style
+        .and_then(|style| style.key.clone())
+        .unwrap_or_else(|| field.key());
+    let key_style = field_style
+        .and_then(|style| style.key_color)
+        .map_or(Style::Key, Style::KeyColor);
+    let value_style = field_style
+        .and_then(|style| style.output_color)
+        .map_or(Style::Value, Style::ValueColor);
+
+    let mut prefix = Vec::new();
+    if layout.padding_left > 0 {
+        prefix.push(Segment::plain(" ".repeat(layout.padding_left)));
+    }
+    if !key.is_empty() {
+        prefix.push(Segment::new(key, key_style));
+    }
+    // Only the visible part of the separator takes its color.
+    let separator = layout.separator.trim_end();
+    let spacing = &layout.separator[separator.len()..];
+    if !separator.is_empty() {
+        prefix.push(Segment::new(separator, Style::Separator));
+    }
+    if !spacing.is_empty() {
+        prefix.push(Segment::plain(spacing));
+    }
+    let width = Line::from(prefix.clone()).width();
+    if layout.width > width {
+        prefix.push(Segment::plain(" ".repeat(layout.width - width)));
+    }
+    let indent = " ".repeat(width.max(layout.width));
 
     value
         .into_iter()
         .enumerate()
         .map(|(i, line)| {
             let mut segments = if i == 0 {
-                vec![
-                    Segment::new(key.clone(), Style::Key),
-                    Segment::new(":", Style::Separator),
-                    Segment::plain(" "),
-                ]
+                prefix.clone()
             } else {
                 vec![Segment::plain(indent.clone())]
             };
-            segments.extend(line.0);
+            segments.extend(line.0.into_iter().map(|mut segment| {
+                if segment.style == Style::Value {
+                    segment.style = value_style;
+                }
+                segment
+            }));
             Line::from(segments)
         })
         .collect()
@@ -83,6 +115,7 @@ fn palette_line() -> Line {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::render::{FieldStyle, KeyLayout};
 
     struct TestField {
         value: Vec<Line>,
@@ -111,7 +144,7 @@ mod test {
             value: vec![Line::from("one"), Line::from("two")],
         };
         assert_eq!(
-            field_lines(&field, &RenderOptions::default()),
+            field_lines(FieldKind::Head, &field, &RenderOptions::default()),
             vec![
                 Line::from(vec![
                     Segment::new("key", Style::Key),
@@ -127,12 +160,57 @@ mod test {
     #[test]
     fn test_field_lines_no_value() {
         let field = TestField { value: vec![] };
-        assert!(field_lines(&field, &RenderOptions::default()).is_empty());
+        assert!(field_lines(FieldKind::Head, &field, &RenderOptions::default()).is_empty());
 
         let field = TestField {
             value: vec![Line::from("")],
         };
-        assert!(field_lines(&field, &RenderOptions::default()).is_empty());
+        assert!(field_lines(FieldKind::Head, &field, &RenderOptions::default()).is_empty());
+    }
+
+    #[test]
+    fn test_field_lines_key_layout() {
+        let field = TestField {
+            value: vec![Line::from("one"), Line::from("two")],
+        };
+        let options = RenderOptions {
+            key_layout: KeyLayout {
+                separator: " -> ".into(),
+                width: 12,
+                padding_left: 2,
+                fields: vec![(
+                    FieldKind::Head,
+                    FieldStyle {
+                        key: Some("Tip".into()),
+                        key_color: Some(9),
+                        output_color: Some(3),
+                    },
+                )],
+            },
+            ..RenderOptions::default()
+        };
+        assert_eq!(
+            field_lines(FieldKind::Head, &field, &options),
+            vec![
+                Line::from(vec![
+                    Segment::plain("  "),
+                    Segment::new("Tip", Style::KeyColor(9)),
+                    Segment::new(" ->", Style::Separator),
+                    Segment::plain(" "),
+                    Segment::plain("   "),
+                    Segment::new("one", Style::ValueColor(3)),
+                ]),
+                Line::from(vec![
+                    Segment::plain(" ".repeat(12)),
+                    Segment::new("two", Style::ValueColor(3)),
+                ]),
+            ]
+        );
+        // Other fields keep their key and colors.
+        assert_eq!(
+            field_lines(FieldKind::Url, &field, &options)[0].0[1],
+            Segment::new("key", Style::Key)
+        );
     }
 
     #[test]

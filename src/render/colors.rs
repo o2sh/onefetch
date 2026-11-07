@@ -1,7 +1,7 @@
 //! What each `Style` looks like: its color, and whether it is bold.
 
-use super::RenderOptions;
 use super::style::{LanguageEntry, Style};
+use super::{RenderOptions, UNSET_COLOR};
 use crate::language::Language;
 use owo_colors::{AnsiColors, DynColors, Style as AnsiStyle};
 
@@ -55,6 +55,8 @@ impl Colors {
             Style::Key => colored(self.text.key, self.bold),
             Style::Separator => colored(self.text.separator, self.bold),
             Style::Value => colored(self.text.value, false),
+            Style::KeyColor(num) => colored(num_to_color(num), self.bold),
+            Style::ValueColor(num) => colored(num_to_color(num), false),
             Style::AsciiArt(index) => {
                 let color = index
                     .and_then(|i| self.ascii.get(i))
@@ -108,13 +110,25 @@ pub fn get_ascii_colors(
         return language_colors;
     }
 
-    let mut colors: Vec<DynColors> = ascii_colors.iter().copied().map(num_to_color).collect();
+    (0..ascii_colors.len().max(language_colors.len()))
+        .map(|i| match custom_color(ascii_colors, i) {
+            Some(color) => color,
+            None => language_colors
+                .get(i)
+                .copied()
+                .unwrap_or(DynColors::Ansi(AnsiColors::Default)),
+        })
+        .collect()
+}
 
-    if language_colors.len() > colors.len() {
-        colors.extend(language_colors.into_iter().skip(colors.len()));
-    }
-
+/// The color at `index` of a user-provided list, unless it is missing or
+/// `UNSET_COLOR`.
+fn custom_color(colors: &[u8], index: usize) -> Option<DynColors> {
     colors
+        .get(index)
+        .copied()
+        .filter(|&num| num != UNSET_COLOR)
+        .map(num_to_color)
 }
 
 fn num_to_color(num: u8) -> DynColors {
@@ -151,38 +165,15 @@ pub struct TextColors {
 
 impl TextColors {
     pub fn new(colors: &[u8], primary_color: DynColors) -> Self {
-        let mut text_colors = Self {
-            title: primary_color,
-            tilde: DynColors::Ansi(AnsiColors::Default),
-            underline: DynColors::Ansi(AnsiColors::Default),
-            key: primary_color,
-            separator: DynColors::Ansi(AnsiColors::Default),
-            value: DynColors::Ansi(AnsiColors::Default),
-        };
-
-        if !colors.is_empty() {
-            let custom_color = colors
-                .iter()
-                .copied()
-                .map(num_to_color)
-                .collect::<Vec<DynColors>>();
-
-            text_colors.title = *custom_color.first().unwrap_or(&primary_color);
-            text_colors.tilde = *custom_color
-                .get(1)
-                .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            text_colors.underline = *custom_color
-                .get(2)
-                .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            text_colors.key = *custom_color.get(3).unwrap_or(&primary_color);
-            text_colors.separator = *custom_color
-                .get(4)
-                .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
-            text_colors.value = *custom_color
-                .get(5)
-                .unwrap_or(&DynColors::Ansi(AnsiColors::Default));
+        let default = DynColors::Ansi(AnsiColors::Default);
+        Self {
+            title: custom_color(colors, 0).unwrap_or(primary_color),
+            tilde: custom_color(colors, 1).unwrap_or(default),
+            underline: custom_color(colors, 2).unwrap_or(default),
+            key: custom_color(colors, 3).unwrap_or(primary_color),
+            separator: custom_color(colors, 4).unwrap_or(default),
+            value: custom_color(colors, 5).unwrap_or(default),
         }
-        text_colors
     }
 }
 
