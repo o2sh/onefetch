@@ -59,6 +59,7 @@ image = { version = "0.25.10", default-features = false, features = [
     "png",
     "webp",
 ] }
+json-strip-comments = "3.1.2"
 num-format = "0.4.4"
 owo-colors = "4.4.0"
 regex = "1.13.1"

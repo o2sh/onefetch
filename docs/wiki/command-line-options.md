@@ -151,6 +151,31 @@ DEVELOPER:
 
           [possible values: bash, elvish, fish, powershell, zsh]
 
+CONFIG:
+      --config <CONFIG>
+          Load the config file or preset CONFIG
+
+          CONFIG is a path, or a file name searched in the paths shown by --list-config-paths. Use
+          "-" to read the config from stdin, or "none" to load no config file
+
+      --gen-config [<PATH>]
+          Generate a minimal config file at PATH
+
+          Defaults to "~/.config/onefetch/config.jsonc". Prints the config if PATH is "-"
+
+      --gen-config-full [<PATH>]
+          Generate a full config file with all settings at PATH
+
+          Defaults to "~/.config/onefetch/config.jsonc". Prints the config if PATH is "-"
+
+      --gen-config-force [<PATH>]
+          Generate a config file at PATH, overwriting any existing file
+
+          Defaults to "~/.config/onefetch/config.jsonc"
+
+      --list-config-paths
+          List search paths for config files
+
 OTHER:
   -l, --languages
           Prints out supported languages
@@ -158,3 +183,5 @@ OTHER:
   -p, --package-managers
           Prints out supported package managers
 ```
+
+These options can also be set in a [config file](https://github.com/o2sh/onefetch/wiki/configuration).

@@ -7,6 +7,7 @@ use self::manifest::get_manifest;
 use self::title::Title;
 use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
+use clap::ValueEnum as _;
 use serde::Serialize;
 use std::path::PathBuf;
 
@@ -39,6 +40,8 @@ pub const DEFAULT_ACTIVITY_MONTHS: usize = 12;
 pub struct InfoOptions {
     pub input: PathBuf,
     pub disabled_fields: Vec<FieldKind>,
+    /// The fields to show, in order; `None` shows every field in the default order.
+    pub fields: Option<Vec<FieldKind>>,
     pub no_title: bool,
     pub number_of_authors: usize,
     pub number_of_languages: usize,
@@ -53,6 +56,20 @@ pub struct InfoOptions {
     pub hide_token: bool,
     pub include_hidden: bool,
     pub language_types: Vec<LanguageType>,
+}
+
+impl InfoOptions {
+    /// The fields to show, in display order, without the disabled ones.
+    pub fn enabled_fields(&self) -> Vec<FieldKind> {
+        let fields = match &self.fields {
+            Some(fields) => fields.clone(),
+            None => FieldKind::value_variants().to_vec(),
+        };
+        fields
+            .into_iter()
+            .filter(|kind| !self.disabled_fields.contains(kind))
+            .collect()
+    }
 }
 
 pub fn build_info(options: &InfoOptions) -> Result<Info> {

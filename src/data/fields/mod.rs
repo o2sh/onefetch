@@ -39,7 +39,7 @@ use self::url::Url;
 use self::version::Version;
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
-/// The fields `--disabled-fields` can turn off.
+/// The fields `--disabled-fields` can turn off, in their default order.
 #[derive(Clone, Copy, clap::ValueEnum, Debug, Eq, PartialEq)]
 pub enum FieldKind {
     Project,
@@ -84,6 +84,32 @@ pub enum Field {
     LinesOfCode(LinesOfCode),
     Size(Size),
     License(License),
+}
+
+impl Field {
+    pub fn kind(&self) -> FieldKind {
+        match self {
+            Self::Project(_) => FieldKind::Project,
+            Self::Description(_) => FieldKind::Description,
+            Self::Head(_) => FieldKind::Head,
+            Self::Pending(_) => FieldKind::Pending,
+            Self::Version(_) => FieldKind::Version,
+            Self::Unreleased(_) => FieldKind::Unreleased,
+            Self::Created(_) => FieldKind::Created,
+            Self::Languages(_) => FieldKind::Languages,
+            Self::Dependencies(_) => FieldKind::Dependencies,
+            Self::Authors(_) => FieldKind::Authors,
+            Self::LastChange(_) => FieldKind::LastChange,
+            Self::Activity(_) => FieldKind::Activity,
+            Self::Contributors(_) => FieldKind::Contributors,
+            Self::Url(_) => FieldKind::Url,
+            Self::Commits(_) => FieldKind::Commits,
+            Self::Churn(_) => FieldKind::Churn,
+            Self::LinesOfCode(_) => FieldKind::LinesOfCode,
+            Self::Size(_) => FieldKind::Size,
+            Self::License(_) => FieldKind::License,
+        }
+    }
 }
 
 /// Serializes as a single-entry map, e.g. `{"HeadInfo": {...}}`, which is the

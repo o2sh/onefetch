@@ -43,6 +43,8 @@ pub struct Cli {
     #[command(flatten)]
     pub developer: DeveloperArgs,
     #[command(flatten)]
+    pub config: ConfigArgs,
+    #[command(flatten)]
     pub other: OtherArgs,
 }
 
@@ -59,6 +61,9 @@ pub struct InfoArgs {
         value_name = "FIELD"
     )]
     pub disabled_fields: Vec<FieldKind>,
+    /// The fields to show, in order. Set by the `modules` list of the config file
+    #[arg(skip)]
+    pub fields: Option<Vec<FieldKind>>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -239,6 +244,47 @@ pub struct DeveloperArgs {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
+#[command(next_help_heading = "CONFIG")]
+pub struct ConfigArgs {
+    /// Load the config file or preset CONFIG
+    ///
+    /// CONFIG is a path, or a file name searched in the paths shown by --list-config-paths.
+    /// Use "-" to read the config from stdin, or "none" to load no config file
+    #[arg(long, value_name = "CONFIG", value_hint = ValueHint::FilePath)]
+    pub config: Option<String>,
+    /// Generate a minimal config file at PATH
+    ///
+    /// Defaults to "~/.config/onefetch/config.jsonc". Prints the config if PATH is "-"
+    #[arg(
+        long,
+        num_args = 0..=1,
+        value_name = "PATH",
+        value_hint = ValueHint::FilePath,
+        conflicts_with_all = ["gen_config_full", "gen_config_force"]
+    )]
+    pub gen_config: Option<Option<PathBuf>>,
+    /// Generate a full config file with all settings at PATH
+    ///
+    /// Defaults to "~/.config/onefetch/config.jsonc". Prints the config if PATH is "-"
+    #[arg(
+        long,
+        num_args = 0..=1,
+        value_name = "PATH",
+        value_hint = ValueHint::FilePath,
+        conflicts_with = "gen_config_force"
+    )]
+    pub gen_config_full: Option<Option<PathBuf>>,
+    /// Generate a config file at PATH, overwriting any existing file
+    ///
+    /// Defaults to "~/.config/onefetch/config.jsonc"
+    #[arg(long, num_args = 0..=1, value_name = "PATH", value_hint = ValueHint::FilePath)]
+    pub gen_config_force: Option<Option<PathBuf>>,
+    /// List search paths for config files
+    #[arg(long)]
+    pub list_config_paths: bool,
+}
+
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "OTHER")]
 pub struct OtherArgs {
     /// Prints out supported languages
@@ -259,6 +305,7 @@ impl Default for Cli {
             ascii: AsciiArgs::default(),
             image: ImageArgs::default(),
             developer: DeveloperArgs::default(),
+            config: ConfigArgs::default(),
             other: OtherArgs::default(),
         }
     }
@@ -281,6 +328,7 @@ impl Default for InfoArgs {
             include_hidden: Default::default(),
             language_types: vec![LanguageType::Programming, LanguageType::Markup],
             disabled_fields: Vec::default(),
+            fields: None,
             no_title: Default::default(),
         }
     }

@@ -16,6 +16,11 @@ pub use printer::Printer;
 
 pub const DEFAULT_COLOR_RESOLUTION: usize = 64;
 
+/// A slot in `ascii_colors` or `text_colors` that keeps its default color.
+/// The config file can set e.g. the key color alone; the command line cannot
+/// produce this value since it only accepts colors 0 to 15.
+pub const UNSET_COLOR: u8 = u8::MAX;
+
 #[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
 pub enum SerializationFormat {
     Json,

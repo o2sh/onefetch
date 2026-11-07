@@ -12,6 +12,7 @@ impl From<&Cli> for InfoOptions {
         Self {
             input: cli.input.clone(),
             disabled_fields: cli.info.disabled_fields.clone(),
+            fields: cli.info.fields.clone(),
             no_title: cli.info.no_title,
             number_of_authors: cli.info.number_of_authors,
             number_of_languages: cli.info.number_of_languages,

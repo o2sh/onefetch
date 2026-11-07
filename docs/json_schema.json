@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/o2sh/onefetch/raw/main/docs/json_schema.json",
+  "title": "onefetch config",
+  "description": "Config file of onefetch (~/.config/onefetch/config.jsonc). Options given on the command line override the file.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "logo": {
+      "description": "The logo shown next to the info. null hides it; a string sets the source.",
+      "oneOf": [
+        {
+          "type": "null",
+          "description": "Hide the logo, like --no-art"
+        },
+        {
+          "type": "string",
+          "description": "Name of a language whose ascii art to show, or path to an image"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "description": "auto: the main language's art, or source as a language name or image path. builtin: source is a language name. data: source is the ascii art. file: source is a text file with the ascii art. kitty, sixel, iterm: source is an image shown with that protocol. none: no logo.",
+              "enum": ["auto", "builtin", "data", "file", "kitty", "sixel", "iterm", "none"],
+              "default": "auto"
+            },
+            "source": {
+              "description": "Language name, ascii art, or path, depending on type",
+              "type": ["string", "null"]
+            },
+            "color": {
+              "description": "Colors of the ascii art (0-15), like --ascii-colors",
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[1-9]$": {
+                  "$ref": "#/$defs/color"
+                }
+              }
+            },
+            "colorResolution": {
+              "description": "Color resolution of the sixel protocol, like --color-resolution",
+              "enum": [16, 32, 64, 128, 256],
+              "default": 64
+            }
+          }
+        }
+      ]
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "Text colors (0-15), like --text-colors. Unset colors keep their default.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": { "$ref": "#/$defs/nullableColor" },
+            "tilde": { "$ref": "#/$defs/nullableColor" },
+            "underline": { "$ref": "#/$defs/nullableColor" },
+            "keys": { "$ref": "#/$defs/nullableColor" },
+            "separator": { "$ref": "#/$defs/nullableColor" },
+            "output": { "$ref": "#/$defs/nullableColor" }
+          }
+        },
+        "bold": {
+          "description": "Use bold formatting; false is like --no-bold",
+          "type": "boolean",
+          "default": true
+        },
+        "numberSeparator": {
+          "description": "Thousands separator, like --number-separator",
+          "enum": ["plain", "comma", "space", "underscore"],
+          "default": "plain"
+        },
+        "isoTime": {
+          "description": "Use ISO 8601 formatted timestamps, like --iso-time",
+          "type": "boolean",
+          "default": false
+        },
+        "trueColor": {
+          "description": "When to use true color, like --true-color",
+          "enum": ["auto", "never", "always"],
+          "default": "auto"
+        },
+        "nerdFonts": {
+          "description": "Use Nerd Font icons, like --nerd-fonts",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "general": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "Ignore files and directories matching these globs, like --exclude",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "noBots": {
+          "description": "Exclude [bot] commits, like --no-bots. A string is a custom regex.",
+          "type": ["boolean", "string"],
+          "default": false
+        },
+        "noMerges": {
+          "description": "Ignore merge commits, like --no-merges",
+          "type": "boolean",
+          "default": false
+        },
+        "includeHidden": {
+          "description": "Count hidden files and directories, like --include-hidden",
+          "type": "boolean",
+          "default": false
+        },
+        "languageTypes": {
+          "description": "Language types to count, like --type",
+          "type": "array",
+          "items": { "enum": ["programming", "markup", "prose", "data"] },
+          "default": ["programming", "markup"]
+        }
+      }
+    },
+    "modules": {
+      "description": "The info to show, in order. \"title\" is always first and \"colors\" (the color palette) always last; leaving one out hides it.",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/moduleName" },
+          {
+            "type": "object",
+            "required": ["type"],
+            "oneOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": { "const": "authors" },
+                  "number": {
+                    "description": "Maximum number of authors, like --number-of-authors",
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 3
+                  },
+                  "email": {
+                    "description": "Show the email address of each author, like --email",
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": { "const": "languages" },
+                  "number": {
+                    "description": "Maximum number of languages, like --number-of-languages",
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 6
+                  }
+                }
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": { "const": "churn" },
+                  "number": {
+                    "description": "Maximum number of file churns, like --number-of-file-churns",
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 3
+                  },
+                  "poolSize": {
+                    "description": "Minimum number of commits used to compute the churn, like --churn-pool-size",
+                    "type": ["integer", "null"],
+                    "minimum": 0
+                  }
+                }
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": { "const": "activity" },
+                  "months": {
+                    "description": "Number of months shown, like --activity-months",
+                    "enum": [3, 6, 12],
+                    "default": 12
+                  }
+                }
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": { "const": "url" },
+                  "http": {
+                    "description": "Display the URL as HTTP, like --http-url",
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "hideToken": {
+                    "description": "Hide the token in the URL, like --hide-token",
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "$ref": "#/$defs/moduleName",
+                    "not": { "enum": ["authors", "languages", "churn", "activity", "url"] }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "color": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 15
+    },
+    "nullableColor": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 15
+    },
+    "moduleName": {
+      "enum": [
+        "title",
+        "project",
+        "description",
+        "head",
+        "pending",
+        "version",
+        "unreleased",
+        "created",
+        "languages",
+        "dependencies",
+        "authors",
+        "lastchange",
+        "activity",
+        "contributors",
+        "url",
+        "commits",
+        "churn",
+        "linesofcode",
+        "size",
+        "license",
+        "colors"
+      ]
+    }
+  }
+}
