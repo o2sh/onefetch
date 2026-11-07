@@ -13,6 +13,10 @@ pub enum Style {
     Key,
     Separator,
     Value,
+    /// The key of a field whose color the config sets, from 0 to 15.
+    KeyColor(u8),
+    /// The value of a field whose color the config sets, from 0 to 15.
+    ValueColor(u8),
     /// The ascii art after a `{n}` token, which `--ascii-colors` colors.
     /// `None` before the first token of a line. `None`, and an `n` past the
     /// last color, take the terminal's default color.

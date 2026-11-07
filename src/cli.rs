@@ -6,7 +6,7 @@ use crate::data::{
 use crate::language::{Language, LanguageType};
 use crate::render::format::NumberSeparator;
 use crate::render::image::ImageProtocol;
-use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
+use crate::render::{DEFAULT_COLOR_RESOLUTION, KeyLayout, SerializationFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};
@@ -215,6 +215,9 @@ pub struct TextFormattingArgs {
     /// Turns off bold formatting
     #[arg(long)]
     pub no_bold: bool,
+    /// Separator, key width and per-field keys and colors. Set by the config file
+    #[arg(skip)]
+    pub key_layout: KeyLayout,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "VISUALS")]
@@ -341,6 +344,7 @@ impl Default for TextFormattingArgs {
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
             no_bold: Default::default(),
+            key_layout: KeyLayout::default(),
         }
     }
 }

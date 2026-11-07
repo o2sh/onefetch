@@ -7,9 +7,9 @@ use crate::cli::{Cli, When};
 use crate::data::FieldKind;
 use crate::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
 use crate::language::{Language, LanguageType};
-use crate::render::UNSET_COLOR;
 use crate::render::format::NumberSeparator;
 use crate::render::image::ImageProtocol;
+use crate::render::{FieldStyle, UNSET_COLOR};
 use anyhow::{Context, Result, bail};
 use clap::parser::ValueSource;
 use clap::{ArgMatches, ValueEnum};
@@ -96,6 +96,21 @@ pub struct Display {
     pub true_color: Option<Named<When>>,
     #[serde(default)]
     pub nerd_fonts: Option<bool>,
+    /// Printed between a key and its value.
+    #[serde(default)]
+    pub separator: Option<String>,
+    #[serde(default)]
+    pub key: Option<DisplayKey>,
+}
+
+#[derive(Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
+pub struct DisplayKey {
+    /// Pads the left padding, key and separator to this many columns.
+    #[serde(default)]
+    pub width: Option<usize>,
+    #[serde(default)]
+    pub padding_left: Option<usize>,
 }
 
 /// The text colors, in the order of `--text-colors`.
@@ -176,6 +191,13 @@ pub enum ModuleKind {
 #[derive(Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct ModuleOptions {
+    /// Replaces the field's key.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub key: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub key_color: Option<u8>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output_color: Option<u8>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub number: Option<usize>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -226,12 +248,13 @@ impl ModuleKind {
     /// The options this module accepts, as written in the config.
     fn options(self) -> &'static [&'static str] {
         match self {
-            Self::Authors => &["number", "email"],
-            Self::Languages => &["number"],
-            Self::Churn => &["number", "poolSize"],
-            Self::Activity => &["months"],
-            Self::Url => &["http", "hideToken"],
-            _ => &[],
+            Self::Title | Self::Colors => &[],
+            Self::Authors => &["key", "keyColor", "outputColor", "number", "email"],
+            Self::Languages => &["key", "keyColor", "outputColor", "number"],
+            Self::Churn => &["key", "keyColor", "outputColor", "number", "poolSize"],
+            Self::Activity => &["key", "keyColor", "outputColor", "months"],
+            Self::Url => &["key", "keyColor", "outputColor", "http", "hideToken"],
+            _ => &["key", "keyColor", "outputColor"],
         }
     }
 }
@@ -525,6 +548,18 @@ impl Config {
             {
                 cli.visuals.nerd_fonts = nerd_fonts;
             }
+            let layout = &mut cli.text_formatting.key_layout;
+            if let Some(separator) = display.separator {
+                layout.separator = separator;
+            }
+            if let Some(key) = display.key {
+                if let Some(width) = key.width {
+                    layout.width = width;
+                }
+                if let Some(padding_left) = key.padding_left {
+                    layout.padding_left = padding_left;
+                }
+            }
         }
 
         if let Some(general) = self.general {
@@ -599,6 +634,11 @@ impl Config {
             iso_time: Some(cli.text_formatting.iso_time),
             true_color: Some(Named(cli.ascii.true_color.clone())),
             nerd_fonts: Some(cli.visuals.nerd_fonts),
+            separator: Some(cli.text_formatting.key_layout.separator.clone()),
+            key: Some(DisplayKey {
+                width: Some(cli.text_formatting.key_layout.width),
+                padding_left: Some(cli.text_formatting.key_layout.padding_left),
+            }),
         });
 
         config.general = Some(General {
@@ -722,6 +762,27 @@ fn apply_modules(modules: Vec<Module>, cli: &mut Cli, unset: &impl Fn(&str) -> b
             None => has_colors = true,
         }
         let options = module.options;
+        if let Some(field) = module.kind.field() {
+            let style = FieldStyle {
+                key: options.key,
+                key_color: options.key_color,
+                output_color: options.output_color,
+            };
+            for (name, color) in [
+                ("keyColor", style.key_color),
+                ("outputColor", style.output_color),
+            ] {
+                if let Some(color) = color.filter(|&c| c > 15) {
+                    bail!(
+                        "Invalid `{name}` {color} for module `{}`, expected 0 to 15",
+                        Named(module.kind)
+                    );
+                }
+            }
+            if style != FieldStyle::default() {
+                cli.text_formatting.key_layout.fields.push((field, style));
+            }
+        }
         let number_id = match module.kind {
             ModuleKind::Authors => "number_of_authors",
             ModuleKind::Languages => "number_of_languages",
@@ -844,7 +905,7 @@ fn modules_from_cli(cli: &Cli, full: bool) -> Vec<Module> {
             continue;
         }
         let kind = ModuleKind::from_field(field);
-        let options = if full {
+        let mut options = if full {
             match kind {
                 ModuleKind::Authors => ModuleOptions {
                     number: Some(info.number_of_authors),
@@ -874,6 +935,11 @@ fn modules_from_cli(cli: &Cli, full: bool) -> Vec<Module> {
         } else {
             ModuleOptions::default()
         };
+        if full && let Some(style) = cli.text_formatting.key_layout.field_style(field) {
+            options.key = style.key.clone();
+            options.key_color = style.key_color;
+            options.output_color = style.output_color;
+        }
         modules.push(Module { kind, options });
     }
     if !cli.visuals.no_color_palette {
@@ -1041,6 +1107,38 @@ mod tests {
         // Only the config sets the field order.
         cli.info.fields = None;
         assert_eq!(cli, expected);
+        Ok(())
+    }
+
+    #[test]
+    fn key_layout_from_config() -> Result<()> {
+        let config = r#"{
+            "display": {"separator": " -> ", "key": {"width": 14, "paddingLeft": 2}},
+            "modules": [{"type": "head", "key": "Tip", "keyColor": 9, "outputColor": 3}, "url"]
+        }"#;
+        let cli = cli_with(config, &[])?;
+        let layout = &cli.text_formatting.key_layout;
+        assert_eq!(layout.separator, " -> ");
+        assert_eq!(layout.width, 14);
+        assert_eq!(layout.padding_left, 2);
+        assert_eq!(
+            layout.fields,
+            vec![(
+                FieldKind::Head,
+                FieldStyle {
+                    key: Some("Tip".into()),
+                    key_color: Some(9),
+                    output_color: Some(3),
+                }
+            )]
+        );
+
+        // It survives a full config.
+        let text = serde_json::to_string(&Config::from_cli(&cli, true))?;
+        assert_eq!(cli_with(&text, &[])?, cli);
+
+        assert!(cli_with(r#"{"modules": [{"type": "head", "keyColor": 16}]}"#, &[]).is_err());
+        assert!(cli_with(r#"{"modules": [{"type": "title", "key": "x"}]}"#, &[]).is_err());
         Ok(())
     }
 

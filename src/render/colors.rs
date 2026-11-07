@@ -55,6 +55,8 @@ impl Colors {
             Style::Key => colored(self.text.key, self.bold),
             Style::Separator => colored(self.text.separator, self.bold),
             Style::Value => colored(self.text.value, false),
+            Style::KeyColor(num) => colored(num_to_color(num), self.bold),
+            Style::ValueColor(num) => colored(num_to_color(num), false),
             Style::AsciiArt(index) => {
                 let color = index
                     .and_then(|i| self.ascii.get(i))

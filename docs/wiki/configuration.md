@@ -37,7 +37,9 @@ Onefetch loads the first `config.jsonc` found in these directories, listed by `o
   "display": {
     "color": { "keys": 12 },
     "numberSeparator": "comma",
-    "nerdFonts": true
+    "nerdFonts": true,
+    "separator": " → ",
+    "key": { "width": 16 }
   },
   "general": {
     "noBots": true,
@@ -47,8 +49,8 @@ Onefetch loads the first `config.jsonc` found in these directories, listed by `o
     "title",
     "project",
     "version",
-    "languages",
-    { "type": "authors", "number": 5, "email": true },
+    { "type": "languages", "key": "Stack" },
+    { "type": "authors", "number": 5, "email": true, "keyColor": 9 },
     "lastchange",
     { "type": "activity", "months": 6 },
     "linesofcode",
@@ -81,6 +83,9 @@ Onefetch loads the first `config.jsonc` found in these directories, listed by `o
 | `isoTime` | `--iso-time` | ISO 8601 timestamps |
 | `trueColor` | `--true-color` | `auto`, `never` or `always` |
 | `nerdFonts` | `--nerd-fonts` | Nerd Font icons |
+| `separator` | | Printed between each key and its value, `": "` by default |
+| `key.width` | | Pads the left padding, key and separator to this many columns, so that the values line up. `0` (default) adds no padding. |
+| `key.paddingLeft` | | Spaces before each key |
 
 ### `general`
 
@@ -98,7 +103,15 @@ The info lines to show, in order: `project`, `description`, `head`, `pending`, `
 
 `title` and `colors` (the color palette) show or hide the title and the palette. The title is always printed first and the palette last, wherever they are in the list.
 
-A module is a name, or an object with a `type` and options:
+A module is a name, or an object with a `type` and options. Every module except `title` and `colors` accepts:
+
+| Option | Description |
+| --- | --- |
+| `key` | Replaces the key, e.g. `{"type": "head", "key": "Tip"}` |
+| `keyColor` | Color of the key, from 0 to 15 |
+| `outputColor` | Color of the value, from 0 to 15 |
+
+Some modules have more options:
 
 | Module | Option | Command line |
 | --- | --- | --- |

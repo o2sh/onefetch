@@ -49,6 +49,7 @@ impl From<&Cli> for RenderOptions {
             true_color: true_color(&cli.ascii.true_color),
             nerd_fonts: cli.visuals.nerd_fonts,
             no_color_palette: cli.visuals.no_color_palette,
+            key_layout: cli.text_formatting.key_layout.clone(),
         }
     }
 }
