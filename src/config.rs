@@ -1,7 +1,7 @@
-//! The config file, laid out like fastfetch's: a JSONC file with `logo`,
-//! `display`, `general` and `modules` sections, found in the paths shown by
-//! `--list-config-paths`. It sets defaults for the command line: an option
-//! given on the command line wins over the same option in the file.
+//! The config file: a JSONC file with `logo`, `display`, `general` and
+//! `modules` sections, found in the paths shown by `--list-config-paths`. It
+//! sets defaults for the command line: an option given on the command line
+//! wins over the same option in the file.
 
 use crate::cli::{Cli, When};
 use crate::data::FieldKind;

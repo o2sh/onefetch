@@ -1,4 +1,4 @@
-Onefetch reads its settings from a JSONC file (JSON with comments and trailing commas), laid out like [fastfetch](https://github.com/fastfetch-cli/fastfetch)'s. Options given on the command line override the file.
+Onefetch reads its settings from a JSONC file (JSON with comments and trailing commas). Options given on the command line override the file.
 
 ## Getting started
 

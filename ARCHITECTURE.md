@@ -15,7 +15,7 @@ command line ──► cli ──► config ──► options ──┬── In
 | Module      | Role                                                                                       |
 | ----------- | ------------------------------------------------------------------------------------------ |
 | `cli`       | The clap definition of the command line.                                                   |
-| `config`    | The config file (`config.jsonc`, laid out like fastfetch's): finds and parses it, fills in the `Cli` options not given on the command line, and writes `--gen-config` files. |
+| `config`    | The config file (`config.jsonc`): finds and parses it, fills in the `Cli` options not given on the command line, and writes `--gen-config` files. |
 | `options`   | Turns `Cli` into `data::InfoOptions` (what to collect) and `render::RenderOptions` (how to print it). The only module that reads `Cli`, apart from `main` and `config`. |
 | `data`      | Collects data. `build_info` returns an `Info`: a title and a list of `Field`s. `data::git` holds the repository queries shared by the fields, notably the single commit-graph traversal. |
 | `dates`     | Date helpers shared by `data` and `render`: the current time, RFC 3339 formatting, and how dates are written in JSON/YAML. |
