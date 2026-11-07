@@ -58,7 +58,7 @@ pub struct Logo {
     pub source: Option<String>,
     /// Colors of the ascii art, keyed "1" to "9".
     #[serde(default)]
-    pub color: Option<BTreeMap<String, u8>>,
+    pub color: Option<BTreeMap<String, Color>>,
     /// Color resolution of the sixel protocol.
     #[serde(default)]
     pub color_resolution: Option<usize>,
@@ -118,17 +118,17 @@ pub struct DisplayKey {
 #[serde(deny_unknown_fields)]
 pub struct DisplayColor {
     #[serde(default)]
-    pub title: Option<u8>,
+    pub title: Option<Color>,
     #[serde(default)]
-    pub tilde: Option<u8>,
+    pub tilde: Option<Color>,
     #[serde(default)]
-    pub underline: Option<u8>,
+    pub underline: Option<Color>,
     #[serde(default)]
-    pub keys: Option<u8>,
+    pub keys: Option<Color>,
     #[serde(default)]
-    pub separator: Option<u8>,
+    pub separator: Option<Color>,
     #[serde(default)]
-    pub output: Option<u8>,
+    pub output: Option<Color>,
 }
 
 #[derive(Debug, Default, PartialEq, Serialize, Deserialize)]
@@ -195,9 +195,9 @@ pub struct ModuleOptions {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub key_color: Option<u8>,
+    pub key_color: Option<Color>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub output_color: Option<u8>,
+    pub output_color: Option<Color>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub number: Option<usize>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -307,6 +307,44 @@ impl Serialize for Module {
             object.extend(options);
         }
         object.serialize(serializer)
+    }
+}
+
+/// A color from 0 to 15, written as a number or a name like "cyan" or
+/// "light_red". Generated configs write numbers.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+pub struct Color(pub u8);
+
+const COLOR_NAMES: [&str; 8] = [
+    "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
+];
+
+impl<'de> Deserialize<'de> for Color {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let invalid = |value: &dyn std::fmt::Display| {
+            D::Error::custom(format!(
+                "invalid color `{value}`, expected 0 to 15 or a name like `cyan` or `light_red`"
+            ))
+        };
+        match Value::deserialize(deserializer)? {
+            Value::Number(number) => match number.as_u64() {
+                Some(n @ 0..=15) => Ok(Self(n as u8)),
+                _ => Err(invalid(&number)),
+            },
+            Value::String(name) => {
+                let lower = name.to_ascii_lowercase();
+                let (base, offset) = match lower.strip_prefix("light_") {
+                    Some(base) => (base, 8),
+                    None => (lower.as_str(), 0),
+                };
+                COLOR_NAMES
+                    .iter()
+                    .position(|&n| n == base)
+                    .map(|i| Self(i as u8 + offset))
+                    .ok_or_else(|| invalid(&name))
+            }
+            other => Err(invalid(&other)),
+        }
     }
 }
 
@@ -520,7 +558,8 @@ impl Config {
                     color.keys,
                     color.separator,
                     color.output,
-                ];
+                ]
+                .map(|color| color.map(|Color(c)| c));
                 cli.text_formatting.text_colors = colors_to_slots(&slots, "display.color")?;
             }
             if let Some(bold) = display.bold
@@ -619,7 +658,13 @@ impl Config {
         config.logo = Some(Some(logo_from_cli(cli)));
 
         let text_colors = &cli.text_formatting.text_colors;
-        let slot = |i: usize| text_colors.get(i).copied().filter(|&c| c != UNSET_COLOR);
+        let slot = |i: usize| {
+            text_colors
+                .get(i)
+                .copied()
+                .filter(|&c| c != UNSET_COLOR)
+                .map(Color)
+        };
         config.display = Some(Display {
             color: Some(DisplayColor {
                 title: slot(0),
@@ -730,7 +775,7 @@ fn apply_logo(logo: Option<Logo>, cli: &mut Cli, unset: &impl Fn(&str) -> bool) 
                 .ok()
                 .filter(|i| (1..=9).contains(i))
                 .with_context(|| format!("Invalid `logo.color` key `{key}`, expected 1 to 9"))?;
-            slots[index - 1] = Some(color);
+            slots[index - 1] = Some(color.0);
         }
         cli.ascii.ascii_colors = colors_to_slots(&slots, "logo.color")?;
     }
@@ -765,20 +810,9 @@ fn apply_modules(modules: Vec<Module>, cli: &mut Cli, unset: &impl Fn(&str) -> b
         if let Some(field) = module.kind.field() {
             let style = FieldStyle {
                 key: options.key,
-                key_color: options.key_color,
-                output_color: options.output_color,
+                key_color: options.key_color.map(|Color(c)| c),
+                output_color: options.output_color.map(|Color(c)| c),
             };
-            for (name, color) in [
-                ("keyColor", style.key_color),
-                ("outputColor", style.output_color),
-            ] {
-                if let Some(color) = color.filter(|&c| c > 15) {
-                    bail!(
-                        "Invalid `{name}` {color} for module `{}`, expected 0 to 15",
-                        Named(module.kind)
-                    );
-                }
-            }
             if style != FieldStyle::default() {
                 cli.text_formatting.key_layout.fields.push((field, style));
             }
@@ -875,7 +909,7 @@ fn logo_from_cli(cli: &Cli) -> Logo {
         .iter()
         .enumerate()
         .filter(|&(_, &c)| c != UNSET_COLOR)
-        .map(|(i, &c)| ((i + 1).to_string(), c))
+        .map(|(i, &c)| ((i + 1).to_string(), Color(c)))
         .collect();
     Logo {
         kind: Some(Named(kind)),
@@ -937,8 +971,8 @@ fn modules_from_cli(cli: &Cli, full: bool) -> Vec<Module> {
         };
         if full && let Some(style) = cli.text_formatting.key_layout.field_style(field) {
             options.key = style.key.clone();
-            options.key_color = style.key_color;
-            options.output_color = style.output_color;
+            options.key_color = style.key_color.map(Color);
+            options.output_color = style.output_color.map(Color);
         }
         modules.push(Module { kind, options });
     }
@@ -1063,6 +1097,30 @@ mod tests {
             vec![UNSET_COLOR, UNSET_COLOR, UNSET_COLOR, 9]
         );
         assert!(cli_with(r#"{"display": {"color": {"keys": 16}}}"#, &[]).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn color_names() -> Result<()> {
+        let cli = cli_with(
+            r#"{
+                "logo": {"color": {"1": "Light_Red"}},
+                "display": {"color": {"keys": "cyan", "output": "white"}},
+                "modules": [{"type": "head", "keyColor": "light_black"}]
+            }"#,
+            &[],
+        )?;
+        assert_eq!(cli.ascii.ascii_colors, vec![9]);
+        assert_eq!(
+            cli.text_formatting.text_colors,
+            vec![UNSET_COLOR, UNSET_COLOR, UNSET_COLOR, 6, UNSET_COLOR, 7]
+        );
+        assert_eq!(
+            cli.text_formatting.key_layout.fields[0].1.key_color,
+            Some(8)
+        );
+        assert!(parse(r#"{"display": {"color": {"keys": "teal"}}}"#).is_err());
+        assert!(parse(r#"{"display": {"color": {"keys": 16}}}"#).is_err());
         Ok(())
     }
 

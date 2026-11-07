@@ -62,6 +62,8 @@ Onefetch loads the first `config.jsonc` found in these directories, listed by `o
 
 ## Reference
 
+Colors are numbers from 0 to 15 or their names: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, and `light_black` to `light_white` for 8 to 15. Names ignore case.
+
 ### `logo`
 
 `"logo": null` hides the logo, and `"logo": "go"` is short for `{"source": "go"}`.
@@ -70,14 +72,14 @@ Onefetch loads the first `config.jsonc` found in these directories, listed by `o
 | --- | --- | --- |
 | `type` | | `auto` (default): the art of the main language, or of `source` if it is a language name; any other `source` is an image path. `builtin`: `source` is a language name. `data`: `source` is the ascii art. `file`: `source` is a text file with the ascii art. `kitty`, `sixel`, `iterm`: `source` is an image shown with that protocol. `none`: no logo. |
 | `source` | `--ascii-language`, `--ascii-input`, `--image` | Language name, ascii art, or path, depending on `type` |
-| `color` | `--ascii-colors` | Colors of the art, keyed `"1"` to `"9"`, from 0 to 15. Colors not set keep the language's. |
+| `color` | `--ascii-colors` | Colors of the art, keyed `"1"` to `"9"`. Colors not set keep the language's. |
 | `colorResolution` | `--color-resolution` | Sixel color resolution: 16, 32, 64, 128 or 256 |
 
 ### `display`
 
 | Key | Command line | Description |
 | --- | --- | --- |
-| `color` | `--text-colors` | Object with `title`, `tilde`, `underline`, `keys`, `separator` and `output` colors, from 0 to 15. Colors not set keep their default. |
+| `color` | `--text-colors` | Object with `title`, `tilde`, `underline`, `keys`, `separator` and `output` colors. Colors not set keep their default. |
 | `bold` | `--no-bold` | `false` turns off bold text |
 | `numberSeparator` | `--number-separator` | `plain`, `comma`, `space` or `underscore` |
 | `isoTime` | `--iso-time` | ISO 8601 timestamps |
@@ -108,8 +110,8 @@ A module is a name, or an object with a `type` and options. Every module except 
 | Option | Description |
 | --- | --- |
 | `key` | Replaces the key, e.g. `{"type": "head", "key": "Tip"}` |
-| `keyColor` | Color of the key, from 0 to 15 |
-| `outputColor` | Color of the value, from 0 to 15 |
+| `keyColor` | Color of the key |
+| `outputColor` | Color of the value |
 
 Some modules have more options:
 

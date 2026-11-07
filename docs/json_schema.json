@@ -46,7 +46,7 @@
               ]
             },
             "color": {
-              "description": "Colors of the ascii art (0-15), like --ascii-colors",
+              "description": "Colors of the ascii art (0-15 or a name), like --ascii-colors",
               "type": "object",
               "additionalProperties": false,
               "patternProperties": {
@@ -75,7 +75,7 @@
       "additionalProperties": false,
       "properties": {
         "color": {
-          "description": "Text colors (0-15), like --text-colors. Unset colors keep their default.",
+          "description": "Text colors (0-15 or a name), like --text-colors. Unset colors keep their default.",
           "type": "object",
           "additionalProperties": false,
           "properties": {
@@ -230,11 +230,11 @@
                     "type": "string"
                   },
                   "keyColor": {
-                    "description": "Color of the key (0-15)",
+                    "description": "Color of the key (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "outputColor": {
-                    "description": "Color of the value (0-15)",
+                    "description": "Color of the value (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "number": {
@@ -261,11 +261,11 @@
                     "type": "string"
                   },
                   "keyColor": {
-                    "description": "Color of the key (0-15)",
+                    "description": "Color of the key (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "outputColor": {
-                    "description": "Color of the value (0-15)",
+                    "description": "Color of the value (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "number": {
@@ -287,11 +287,11 @@
                     "type": "string"
                   },
                   "keyColor": {
-                    "description": "Color of the key (0-15)",
+                    "description": "Color of the key (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "outputColor": {
-                    "description": "Color of the value (0-15)",
+                    "description": "Color of the value (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "number": {
@@ -321,11 +321,11 @@
                     "type": "string"
                   },
                   "keyColor": {
-                    "description": "Color of the key (0-15)",
+                    "description": "Color of the key (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "outputColor": {
-                    "description": "Color of the value (0-15)",
+                    "description": "Color of the value (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "months": {
@@ -350,11 +350,11 @@
                     "type": "string"
                   },
                   "keyColor": {
-                    "description": "Color of the key (0-15)",
+                    "description": "Color of the key (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "outputColor": {
-                    "description": "Color of the value (0-15)",
+                    "description": "Color of the value (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "http": {
@@ -391,11 +391,11 @@
                     "type": "string"
                   },
                   "keyColor": {
-                    "description": "Color of the key (0-15)",
+                    "description": "Color of the key (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   },
                   "outputColor": {
-                    "description": "Color of the value (0-15)",
+                    "description": "Color of the value (0-15 or a name)",
                     "$ref": "#/$defs/color"
                   }
                 }
@@ -419,17 +419,44 @@
   },
   "$defs": {
     "color": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 15
+      "description": "A color from 0 to 15, or its name",
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        {
+          "enum": [
+            "black",
+            "red",
+            "green",
+            "yellow",
+            "blue",
+            "magenta",
+            "cyan",
+            "white",
+            "light_black",
+            "light_red",
+            "light_green",
+            "light_yellow",
+            "light_blue",
+            "light_magenta",
+            "light_cyan",
+            "light_white"
+          ]
+        }
+      ]
     },
     "nullableColor": {
-      "type": [
-        "integer",
-        "null"
-      ],
-      "minimum": 0,
-      "maximum": 15
+      "oneOf": [
+        {
+          "$ref": "#/$defs/color"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "moduleName": {
       "enum": [
