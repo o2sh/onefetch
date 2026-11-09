@@ -12,7 +12,7 @@ pub struct Colors {
 
 pub const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
-#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, clap::ValueEnum, EnumIter)]
 pub enum LanguageType {
     Programming,
     Markup,
