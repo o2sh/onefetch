@@ -48,8 +48,8 @@ INFO:
   -e, --exclude <EXCLUDE>...
           Ignore all files & directories matching EXCLUDE
 
-      --no-bots[=<REGEX>]
-          Exclude [bot] commits. Use <REGEX> to override the default pattern
+      --ignore-author <REGEX>
+          Ignore commits from authors whose name matches REGEX
 
       --no-merges
           Ignores merge commits

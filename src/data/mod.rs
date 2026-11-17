@@ -1,5 +1,4 @@
 use self::builder::InfoBuilder;
-use self::git::bots::BotRegex;
 use self::git::{
     get_latest_tag, get_repo_url, get_work_dir, traverse_commit_graph, uses_reftables,
 };
@@ -7,6 +6,7 @@ use self::manifest::get_manifest;
 use self::title::Title;
 use crate::language::{Language, LanguageType};
 use anyhow::{Context, Result, bail};
+use regex::Regex;
 use serde::Serialize;
 use std::path::PathBuf;
 
@@ -46,7 +46,7 @@ pub struct InfoOptions {
     pub churn_pool_size: Option<usize>,
     pub activity_months: usize,
     pub exclude: Vec<String>,
-    pub no_bots: Option<BotRegex>,
+    pub ignore_author: Option<Regex>,
     pub no_merges: bool,
     pub co_authors: bool,
     pub email: bool,
@@ -80,7 +80,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
     });
     let git_metrics = traverse_commit_graph(
         &repo,
-        options.no_bots.clone(),
+        options.ignore_author.as_ref(),
         options.churn_pool_size,
         options.no_merges,
         options.co_authors,
