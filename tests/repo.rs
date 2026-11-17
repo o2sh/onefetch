@@ -1,10 +1,13 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{Cli, InfoArgs};
+use onefetch::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
 use onefetch::data::git::get_work_dir;
 use onefetch::data::{InfoOptions, build_info};
 use onefetch::render::RenderOptions;
 use onefetch::render::info::info_lines;
+use rstest::rstest;
+use std::str::FromStr;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
@@ -163,6 +166,61 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
         error.to_string(),
         "reftable repositories are not yet supported"
     );
+    Ok(())
+}
+
+#[rstest]
+#[case::default(None, false, 5, &[("Author One", 2, 40), ("Author Three", 1, 20), ("Author Two", 1, 20), ("renovate[bot]", 1, 20)])]
+#[case::co_authors(None, true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60), ("renovate[bot]", 1, 20)])]
+#[case::no_bots(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), false, 4, &[("Author One", 2, 50), ("Author Three", 1, 25), ("Author Two", 1, 25)])]
+#[case::no_bots_co_authors(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60)])]
+fn test_repo_with_co_authors(
+    #[case] no_bots: Option<&str>,
+    #[case] co_authors: bool,
+    #[case] expected_number_of_commits: u64,
+    #[case] expected_authors: &[(&str, u64, u64)],
+) -> Result<()> {
+    let repo = named_repo("make_repo_with_co_authors.sh", "repo_with_co_authors")?;
+    let config = Cli {
+        input: repo.path().to_path_buf(),
+        info: InfoArgs {
+            number_of_authors: 4,
+            no_bots: no_bots.map(BotRegex::from_str).transpose()?,
+            co_authors,
+            ..Default::default()
+        },
+        ..Default::default()
+    };
+    let info = serde_json::to_value(build_info(&InfoOptions::from(&config))?)?;
+    let field = |name: &str| {
+        info["infoFields"]
+            .as_array()
+            .and_then(|fields| fields.iter().find_map(|field| field.get(name)))
+            .cloned()
+            .unwrap_or_default()
+    };
+
+    assert_eq!(
+        field("CommitsInfo")["numberOfCommits"].as_u64(),
+        Some(expected_number_of_commits)
+    );
+    let authors: Vec<(String, u64, u64)> = field("AuthorsInfo")["authors"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|author| {
+            (
+                author["name"].as_str().unwrap_or_default().to_owned(),
+                author["nbrOfCommits"].as_u64().unwrap_or_default(),
+                author["contribution"].as_u64().unwrap_or_default(),
+            )
+        })
+        .collect();
+    let expected_authors: Vec<(String, u64, u64)> = expected_authors
+        .iter()
+        .map(|&(name, commits, contribution)| (name.to_owned(), commits, contribution))
+        .collect();
+    assert_eq!(authors, expected_authors);
     Ok(())
 }
 
