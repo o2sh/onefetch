@@ -1,4 +1,3 @@
-use crate::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
 use crate::data::{
     DEFAULT_ACTIVITY_MONTHS, DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS,
     DEFAULT_NUMBER_OF_LANGUAGES, FieldKind,
@@ -11,6 +10,7 @@ use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};
 use clap_complete::Shell;
+use regex::Regex;
 use std::path::PathBuf;
 
 const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
@@ -23,7 +23,7 @@ const STYLES: Styles = Styles::styled()
     .literal(AnsiColor::Green.on_default())
     .placeholder(AnsiColor::Green.on_default());
 
-#[derive(Clone, Debug, Parser, PartialEq, Eq)]
+#[derive(Clone, Debug, Parser)]
 #[command(version, about)]
 #[command(styles = STYLES)]
 pub struct Cli {
@@ -46,7 +46,7 @@ pub struct Cli {
     pub other: OtherArgs,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args)]
 #[command(next_help_heading = "INFO")]
 pub struct InfoArgs {
     /// Allows you to disable FIELD(s) from appearing in the output
@@ -89,15 +89,9 @@ pub struct InfoArgs {
     /// Ignore all files & directories matching EXCLUDE
     #[arg(long, short, num_args = 1..)]
     pub exclude: Vec<String>,
-    /// Exclude [bot] commits. Use <REGEX> to override the default pattern
-    #[arg(
-        long,
-        num_args = 0..=1,
-        require_equals = true,
-        default_missing_value = NO_BOTS_DEFAULT_REGEX_PATTERN,
-        value_name = "REGEX"
-    )]
-    pub no_bots: Option<BotRegex>,
+    /// Ignore commits from authors whose name matches REGEX
+    #[arg(long, value_name = "REGEX")]
+    pub ignore_author: Option<Regex>,
     /// Ignores merge commits
     #[arg(long)]
     pub no_merges: bool,
@@ -276,7 +270,7 @@ impl Default for InfoArgs {
             churn_pool_size: Option::default(),
             activity_months: DEFAULT_ACTIVITY_MONTHS,
             exclude: Vec::default(),
-            no_bots: Option::default(),
+            ignore_author: Option::default(),
             no_merges: Default::default(),
             co_authors: Default::default(),
             email: Default::default(),
@@ -332,10 +326,16 @@ pub enum When {
 mod test {
     use super::*;
 
+    /// `Cli` isn't `PartialEq` (`Regex` isn't), so compare the `Debug` output,
+    /// which includes each regex's pattern.
+    fn assert_same_config(left: &Cli, right: &Cli) {
+        assert_eq!(format!("{left:?}"), format!("{right:?}"));
+    }
+
     #[test]
     fn test_default_config() {
         let config: Cli = Cli::default();
-        assert_eq!(config, Cli::parse_from(["onefetch"]));
+        assert_same_config(&config, &Cli::parse_from(["onefetch"]));
     }
 
     #[test]
@@ -360,9 +360,9 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(
-            config,
-            Cli::parse_from([
+        assert_same_config(
+            &config,
+            &Cli::parse_from([
                 "onefetch",
                 "/tmp/folder",
                 "--number-of-authors",
@@ -376,8 +376,8 @@ mod test {
                 "url",
                 "--no-art",
                 "--ascii-language",
-                "lisp"
-            ])
+                "lisp",
+            ]),
         );
     }
 

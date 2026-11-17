@@ -9,8 +9,8 @@ pub struct GitMetrics {
     pub total_number_of_authors: usize,
     pub total_number_of_commits: usize,
     pub churn_pool_size: usize,
-    /// The commit time of each counted commit (bots left out by `--no-bots`
-    /// aren't), newest first, in seconds since the Unix epoch.
+    /// The commit time of each counted commit (authors left out by
+    /// `--ignore-author` aren't), newest first, in seconds since the Unix epoch.
     pub commit_times: Vec<gix::date::SecondsSinceUnixEpoch>,
     pub time_of_most_recent_commit: gix::date::Time,
     pub time_of_first_commit: gix::date::Time,

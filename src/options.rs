@@ -19,7 +19,7 @@ impl From<&Cli> for InfoOptions {
             churn_pool_size: cli.info.churn_pool_size,
             activity_months: cli.info.activity_months,
             exclude: cli.info.exclude.clone(),
-            no_bots: cli.info.no_bots.clone(),
+            ignore_author: cli.info.ignore_author.clone(),
             no_merges: cli.info.no_merges,
             co_authors: cli.info.co_authors,
             email: cli.info.email,

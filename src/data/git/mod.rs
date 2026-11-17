@@ -3,7 +3,6 @@ use gix::Repository;
 use gix::bstr::ByteSlice;
 use std::path::PathBuf;
 
-pub mod bots;
 mod churn;
 pub(crate) mod identity;
 pub(crate) mod metrics;

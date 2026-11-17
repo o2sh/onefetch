@@ -1,17 +1,17 @@
-use super::bots::{BotRegex, is_bot};
 use super::churn::get_churn_channel;
 use super::identity::Identity;
 use super::metrics::GitMetrics;
 use anyhow::Result;
 use gix::revision::walk::Sorting;
 use gix::traverse::commit::simple::CommitTimeOrder;
+use regex::Regex;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
 pub fn traverse_commit_graph(
     repo: &gix::Repository,
-    no_bots: Option<BotRegex>,
+    ignore_author: Option<&Regex>,
     churn_pool_size: Option<usize>,
     no_merges: bool,
     co_authors: bool,
@@ -60,10 +60,10 @@ pub fn traverse_commit_graph(
                     .expect("sorting by time yields this field as part of traversal"),
                 0,
             );
-            // Commits that credit nobody (e.g. bots left out by `--no-bots`)
+            // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
             // count neither as commits, nor in the activity, nor in the churn.
             let identities =
-                credited_identities(&commit.object()?, &mailmap, no_bots.as_ref(), co_authors)?;
+                credited_identities(&commit.object()?, &mailmap, ignore_author, co_authors)?;
             if !identities.is_empty() {
                 update_identity_counts(identities, &mut number_of_commits_by_identity);
                 update_commit_times(commit_time.seconds, &mut commit_times);
@@ -116,11 +116,11 @@ fn update_commit_times(
 
 /// The identities a commit counts for: its author and, if `co_authors`,
 /// everyone in its `Co-authored-by` trailers, each resolved through the mailmap
-/// and credited once. Bots left out by `--no-bots` are dropped.
+/// and credited once. Authors left out by `--ignore-author` are dropped.
 fn credited_identities(
     commit: &gix::Commit<'_>,
     mailmap: &gix::mailmap::Snapshot,
-    no_bots: Option<&BotRegex>,
+    ignore_author: Option<&Regex>,
     co_authors: bool,
 ) -> Result<Vec<Identity>> {
     let mut identities: Vec<Identity> = Vec::new();
@@ -138,7 +138,7 @@ fn credited_identities(
                 .unwrap_or(signature.email)
                 .to_owned(),
         };
-        if !is_bot(&identity.name, no_bots) && !identities.contains(&identity) {
+        if !identity.is_ignored(ignore_author) && !identities.contains(&identity) {
             identities.push(identity);
         }
     };
@@ -165,9 +165,9 @@ fn credited_identities(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::git::bots::NO_BOTS_DEFAULT_REGEX_PATTERN;
     use rstest::rstest;
-    use std::str::FromStr;
+
+    const BOTS: &str = r"\[bot\]";
 
     fn identity(name: &str, email: &str) -> Identity {
         Identity {
@@ -183,7 +183,7 @@ mod tests {
         author: (&str, &str),
         message: &str,
         mailmap: &str,
-        no_bots: Option<&BotRegex>,
+        ignore_author: Option<&Regex>,
         co_authors: bool,
     ) -> Vec<Identity> {
         let dir = gix_testtools::tempfile::tempdir().unwrap();
@@ -211,19 +211,24 @@ mod tests {
         credited_identities(
             &repo.find_commit(id).unwrap(),
             &gix::mailmap::Snapshot::from_bytes(mailmap.as_bytes()),
-            no_bots,
+            ignore_author,
             co_authors,
         )
         .unwrap()
     }
 
-    fn credited(message: &str, mailmap: &str, no_bots: bool, co_authors: bool) -> Vec<Identity> {
-        let no_bots = no_bots.then(|| BotRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN).unwrap());
+    fn credited(
+        message: &str,
+        mailmap: &str,
+        ignore_author: Option<&str>,
+        co_authors: bool,
+    ) -> Vec<Identity> {
+        let ignore_author = ignore_author.map(|pattern| Regex::new(pattern).unwrap());
         credit(
             ("Author", "author@example.org"),
             message,
             mailmap,
-            no_bots.as_ref(),
+            ignore_author.as_ref(),
             co_authors,
         )
     }
@@ -231,7 +236,7 @@ mod tests {
     #[test]
     fn test_credited_identities_without_trailers() {
         assert_eq!(
-            credited("subject\n\nbody\n", "", false, true),
+            credited("subject\n\nbody\n", "", None, true),
             vec![identity("Author", "author@example.org")]
         );
     }
@@ -245,7 +250,7 @@ mod tests {
         let message =
             format!("subject\n\n{token}: One <one@example.org>\n{token}: Two <two@example.org>\n");
         assert_eq!(
-            credited(&message, "", false, true),
+            credited(&message, "", None, true),
             vec![
                 identity("Author", "author@example.org"),
                 identity("One", "one@example.org"),
@@ -260,7 +265,7 @@ mod tests {
             credited(
                 "subject\n\nCo-authored-by: One <one@example.org>\n",
                 "",
-                false,
+                None,
                 false
             ),
             vec![identity("Author", "author@example.org")]
@@ -273,7 +278,7 @@ mod tests {
             credited(
                 "subject\n\nSigned-off-by: One <one@example.org>\nReviewed-by: Two <two@example.org>\n",
                 "",
-                false,
+                None,
                 true
             ),
             vec![identity("Author", "author@example.org")]
@@ -286,7 +291,7 @@ mod tests {
             credited(
                 "subject\n\nCo-authored-by: Author <author@example.org>\nCo-authored-by: One <one@example.org>\nCo-authored-by: One <one@example.org>\n",
                 "",
-                false,
+                None,
                 true
             ),
             vec![
@@ -302,7 +307,7 @@ mod tests {
             credited(
                 "subject\n\nCo-authored-by: Old Name <old@example.org>\nCo-authored-by: Alias <author-alias@example.org>\n",
                 "One <one@example.org> <old@example.org>\nAuthor <author@example.org> <author-alias@example.org>\n",
-                false,
+                None,
                 true
             ),
             vec![
@@ -318,7 +323,7 @@ mod tests {
             credited(
                 "subject\n\nCo-authored-by: just a name\nCo-authored-by: One <one@example.org>\n",
                 "",
-                false,
+                None,
                 true
             ),
             vec![
@@ -329,12 +334,12 @@ mod tests {
     }
 
     #[test]
-    fn test_credited_identities_with_no_bots_drops_bot_co_authors() {
+    fn test_credited_identities_with_ignore_author_drops_bot_co_authors() {
         assert_eq!(
             credited(
                 "subject\n\nCo-authored-by: dependabot[bot] <bot@example.org>\nCo-authored-by: One <one@example.org>\n",
                 "",
-                true,
+                Some(BOTS),
                 true
             ),
             vec![
@@ -345,18 +350,36 @@ mod tests {
     }
 
     #[test]
-    fn test_credited_identities_with_no_bots_keeps_human_co_authors_of_bot_commits() {
-        let no_bots = BotRegex::from_str(NO_BOTS_DEFAULT_REGEX_PATTERN).unwrap();
+    fn test_credited_identities_with_ignore_author_keeps_human_co_authors_of_bot_commits() {
+        let ignore_author = Regex::new(BOTS).unwrap();
         let credit = |co_authors| {
             credit(
                 ("Copilot[bot]", "copilot@example.org"),
                 "subject\n\nCo-authored-by: One <one@example.org>\n",
                 "",
-                Some(&no_bots),
+                Some(&ignore_author),
                 co_authors,
             )
         };
         assert_eq!(credit(true), vec![identity("One", "one@example.org")]);
         assert_eq!(credit(false), vec![]);
+    }
+
+    #[test]
+    fn test_credited_identities_with_ignore_author_matches_resolved_name() {
+        let ignore_author = Regex::new("^One$").unwrap();
+        assert_eq!(
+            credit(
+                ("Author", "author@example.org"),
+                "subject\n\nCo-authored-by: Old Name <old@example.org>\nCo-authored-by: Two <two@example.org>\n",
+                "One <one@example.org> <old@example.org>\n",
+                Some(&ignore_author),
+                true,
+            ),
+            vec![
+                identity("Author", "author@example.org"),
+                identity("Two", "two@example.org"),
+            ]
+        );
     }
 }

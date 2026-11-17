@@ -1,13 +1,12 @@
 use anyhow::Result;
 use gix::{Repository, ThreadSafeRepository, open};
 use onefetch::cli::{Cli, InfoArgs};
-use onefetch::data::git::bots::{BotRegex, NO_BOTS_DEFAULT_REGEX_PATTERN};
 use onefetch::data::git::get_work_dir;
 use onefetch::data::{InfoOptions, build_info};
 use onefetch::render::RenderOptions;
 use onefetch::render::info::info_lines;
+use regex::Regex;
 use rstest::rstest;
-use std::str::FromStr;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
@@ -172,10 +171,10 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
 #[rstest]
 #[case::default(None, false, 5, &[("Author One", 2, 40), ("Author Three", 1, 20), ("Author Two", 1, 20), ("renovate[bot]", 1, 20)])]
 #[case::co_authors(None, true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60), ("renovate[bot]", 1, 20)])]
-#[case::no_bots(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), false, 4, &[("Author One", 2, 50), ("Author Three", 1, 25), ("Author Two", 1, 25)])]
-#[case::no_bots_co_authors(Some(NO_BOTS_DEFAULT_REGEX_PATTERN), true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60)])]
+#[case::ignore_author(Some(r"\[bot\]"), false, 4, &[("Author One", 2, 50), ("Author Three", 1, 25), ("Author Two", 1, 25)])]
+#[case::ignore_author_co_authors(Some(r"\[bot\]"), true, 5, &[("Author One", 4, 80), ("Author Three", 3, 60), ("Author Two", 3, 60)])]
 fn test_repo_with_co_authors(
-    #[case] no_bots: Option<&str>,
+    #[case] ignore_author: Option<&str>,
     #[case] co_authors: bool,
     #[case] expected_number_of_commits: u64,
     #[case] expected_authors: &[(&str, u64, u64)],
@@ -185,7 +184,7 @@ fn test_repo_with_co_authors(
         input: repo.path().to_path_buf(),
         info: InfoArgs {
             number_of_authors: 4,
-            no_bots: no_bots.map(BotRegex::from_str).transpose()?,
+            ignore_author: ignore_author.map(Regex::new).transpose()?,
             co_authors,
             ..Default::default()
         },
