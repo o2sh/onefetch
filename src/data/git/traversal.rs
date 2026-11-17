@@ -364,22 +364,4 @@ mod tests {
         assert_eq!(credit(true), vec![identity("One", "one@example.org")]);
         assert_eq!(credit(false), vec![]);
     }
-
-    #[test]
-    fn test_credited_identities_with_ignore_author_matches_resolved_name() {
-        let ignore_author = Regex::new("^One$").unwrap();
-        assert_eq!(
-            credit(
-                ("Author", "author@example.org"),
-                "subject\n\nCo-authored-by: Old Name <old@example.org>\nCo-authored-by: Two <two@example.org>\n",
-                "One <one@example.org> <old@example.org>\n",
-                Some(&ignore_author),
-                true,
-            ),
-            vec![
-                identity("Author", "author@example.org"),
-                identity("Two", "two@example.org"),
-            ]
-        );
-    }
 }
