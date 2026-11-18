@@ -19,7 +19,16 @@ pub fn get_loc_by_language_sorted(
 ) -> Option<Vec<(Language, usize)>> {
     let locs = get_locs(dir, globs_to_exclude, language_types, include_hidden);
     let loc_by_language_opt = get_loc_by_language(&locs);
-    loc_by_language_opt.map(sort_by_loc)
+
+    if let Some(loc_by_language) = loc_by_language_opt {
+        Some(sort_by_loc(loc_by_language))
+    } else if !LanguageType::iter().all(|t| language_types.contains(&t)) {
+        let all_types: Vec<LanguageType> = LanguageType::iter().collect();
+        let fallback_locs = get_locs(dir, globs_to_exclude, &all_types, include_hidden);
+        get_loc_by_language(&fallback_locs).map(sort_by_loc)
+    } else {
+        None
+    }
 }
 
 fn sort_by_loc(map: HashMap<Language, usize>) -> Vec<(Language, usize)> {
@@ -206,5 +215,65 @@ mod test {
         let actual_order: Vec<_> = sorted_map.into_iter().collect();
 
         assert_eq!(expected_order, actual_order);
+    }
+
+    #[test]
+    fn test_get_loc_by_language_sorted_fallback() {
+        struct TempDir(std::path::PathBuf);
+        impl Drop for TempDir {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+
+        let temp_path = std::env::temp_dir().join(format!(
+            "onefetch_loc_fallback_test_{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&temp_path).unwrap();
+        let _guard = TempDir(temp_path.clone());
+
+        // 1. Empty directory should return None
+        let empty_res = get_loc_by_language_sorted(
+            &temp_path,
+            &[],
+            &[LanguageType::Programming, LanguageType::Markup],
+            false,
+        );
+        assert!(empty_res.is_none());
+
+        // 2. Directory containing only YAML (Data type):
+        // Default [Programming, Markup] yields no matches, so it falls back to all types.
+        let yaml_file = temp_path.join("compose.yaml");
+        std::fs::write(&yaml_file, "services:\n  app:\n    image: nginx\n").unwrap();
+
+        let fallback_res = get_loc_by_language_sorted(
+            &temp_path,
+            &[],
+            &[LanguageType::Programming, LanguageType::Markup],
+            false,
+        );
+        assert!(fallback_res.is_some());
+        let locs = fallback_res.unwrap();
+        assert_eq!(locs[0].0, Language::Yaml);
+
+        // 3. When a programming language is present alongside data,
+        // no fallback occurs and only the requested types are returned.
+        let rust_file = temp_path.join("main.rs");
+        std::fs::write(&rust_file, "fn main() {\n    println!(\"hello\");\n}\n").unwrap();
+
+        let prog_res = get_loc_by_language_sorted(
+            &temp_path,
+            &[],
+            &[LanguageType::Programming, LanguageType::Markup],
+            false,
+        );
+        assert!(prog_res.is_some());
+        let prog_locs = prog_res.unwrap();
+        assert_eq!(prog_locs.len(), 1);
+        assert_eq!(prog_locs[0].0, Language::Rust);
     }
 }
