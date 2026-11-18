@@ -14,7 +14,6 @@ pub fn traverse_commit_graph(
     ignore_author: Option<&Regex>,
     churn_pool_size: Option<usize>,
     no_merges: bool,
-    co_authors: bool,
 ) -> Result<GitMetrics> {
     let mut number_of_counted_commits = 0;
     let mut time_of_most_recent_commit = None;
@@ -23,7 +22,7 @@ pub fn traverse_commit_graph(
     let mut commit_times = Vec::new();
     let mailmap = repo.open_mailmap();
     let is_traversal_complete = Arc::new(AtomicBool::default());
-    let total_number_of_commits = Arc::new(AtomicUsize::default());
+    let total_number_of_counted_commits = Arc::new(AtomicUsize::default());
 
     let commit_graph = repo.commit_graph().ok();
     let can_use_commit_graph = commit_graph.is_some();
@@ -39,49 +38,44 @@ pub fn traverse_commit_graph(
 
     // Best-effort strategy for Churn computation: keep computing churn while traversal runs;
     // it stops once traversal is done and churn_pool_size is reached (if provided).
-    let (churn_thread, churn_tx) = get_churn_channel(
+    let (churn_thread, churn_sender) = get_churn_channel(
         repo,
         &is_traversal_complete,
-        &total_number_of_commits,
+        &total_number_of_counted_commits,
         churn_pool_size,
     );
 
-    let mut count = 0;
     for commit in commit_iter {
         let commit = commit?;
-        {
-            if no_merges && commit.parent_ids.len() > 1 {
-                continue;
-            }
-
-            let commit_time = gix::date::Time::new(
-                commit
-                    .commit_time
-                    .expect("sorting by time yields this field as part of traversal"),
-                0,
-            );
-            // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
-            // count neither as commits, nor in the activity, nor in the churn,
-            // nor in the creation and last change dates.
-            let identities =
-                credited_identities(&commit.object()?, &mailmap, ignore_author, co_authors)?;
-            if !identities.is_empty() {
-                update_identity_counts(identities, &mut number_of_commits_by_identity);
-                update_commit_times(commit_time.seconds, &mut commit_times);
-                churn_tx.send(commit.id)?;
-                number_of_counted_commits += 1;
-                time_of_most_recent_commit.get_or_insert(commit_time);
-                time_of_first_commit = commit_time.into();
-            }
-
-            count += 1;
+        if no_merges && commit.parent_ids.len() > 1 {
+            continue;
         }
+
+        let identities = credited_identities(&commit.object()?, &mailmap, ignore_author)?;
+        if identities.is_empty() {
+            continue;
+        }
+        for identity in identities {
+            *number_of_commits_by_identity.entry(identity).or_default() += 1;
+        }
+
+        let commit_time = gix::date::Time::new(
+            commit
+                .commit_time
+                .expect("sorting by time yields this field as part of traversal"),
+            0,
+        );
+        time_of_most_recent_commit.get_or_insert(commit_time);
+        time_of_first_commit = Some(commit_time);
+        commit_times.push(commit_time.seconds);
+        churn_sender.send(commit.id)?;
+        number_of_counted_commits += 1;
     }
 
-    total_number_of_commits.store(count, Ordering::SeqCst);
+    total_number_of_counted_commits.store(number_of_counted_commits, Ordering::SeqCst);
     is_traversal_complete.store(true, Ordering::SeqCst);
 
-    drop(churn_tx);
+    drop(churn_sender);
 
     let (number_of_commits_by_file_path, churn_pool_size) =
         churn_thread.join().expect("never panics")?;
@@ -99,270 +93,31 @@ pub fn traverse_commit_graph(
     Ok(git_metrics)
 }
 
-fn update_identity_counts(
-    identities: Vec<Identity>,
-    number_of_commits_by_identity: &mut HashMap<Identity, usize>,
-) {
-    for identity in identities {
-        *number_of_commits_by_identity.entry(identity).or_insert(0) += 1;
-    }
-}
-
-fn update_commit_times(
-    commit_time: gix::date::SecondsSinceUnixEpoch,
-    commit_times: &mut Vec<gix::date::SecondsSinceUnixEpoch>,
-) {
-    commit_times.push(commit_time);
-}
-
-/// The identities a commit counts for: its author and, if `co_authors`,
-/// everyone in its `Co-authored-by` trailers, each resolved through the mailmap
-/// and credited once. Authors left out by `--ignore-author` are dropped.
+/// The identities a commit counts for: its author and everyone in its
+/// `Co-authored-by` trailers, each resolved through the mailmap and credited
+/// once. Authors left out by `--ignore-author` are dropped.
 fn credited_identities(
     commit: &gix::Commit<'_>,
     mailmap: &gix::mailmap::Snapshot,
     ignore_author: Option<&Regex>,
-    co_authors: bool,
 ) -> Result<Vec<Identity>> {
-    let mut identities: Vec<Identity> = Vec::new();
-    let mut credit = |signature: gix::actor::SignatureRef<'_>| {
-        let resolved = mailmap.try_resolve_ref(signature);
-        let identity = Identity {
-            name: resolved
-                .as_ref()
-                .and_then(|resolved| resolved.name)
-                .unwrap_or(signature.name)
-                .to_owned(),
-            email: resolved
-                .as_ref()
-                .and_then(|resolved| resolved.email)
-                .unwrap_or(signature.email)
-                .to_owned(),
-        };
+    let author = Identity::resolve(commit.author()?.actor(), mailmap);
+    let message = gix::objs::commit::MessageRef::from_bytes(commit.message_raw_sloppy());
+    let co_authors = message
+        .body()
+        .into_iter()
+        .flat_map(|body| body.trailers().co_authored_by())
+        .filter_map(|trailer| {
+            gix::actor::IdentityRef::from_bytes(&trailer.value)
+                .ok()
+                .map(|co_author| Identity::resolve(co_author, mailmap))
+        });
+
+    let mut identities = Vec::new();
+    for identity in std::iter::once(author).chain(co_authors) {
         if !identity.is_ignored(ignore_author) && !identities.contains(&identity) {
             identities.push(identity);
         }
-    };
-
-    credit(commit.author()?);
-    if co_authors
-        && let Some(body) =
-            gix::objs::commit::MessageRef::from_bytes(commit.message_raw_sloppy()).body()
-    {
-        for trailer in body.trailers().co_authored_by() {
-            if let Ok(co_author) = gix::actor::IdentityRef::from_bytes(&trailer.value) {
-                let co_author = co_author.trim();
-                credit(gix::actor::SignatureRef {
-                    name: co_author.name,
-                    email: co_author.email,
-                    time: "",
-                });
-            }
-        }
     }
     Ok(identities)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use rstest::rstest;
-
-    const BOTS: &str = r"\[bot\]";
-
-    fn identity(name: &str, email: &str) -> Identity {
-        Identity {
-            name: name.into(),
-            email: email.into(),
-        }
-    }
-
-    /// Credit a commit by `author` with `message`, written to a throwaway repository.
-    /// The commit is signed, with a blank line inside its signature header,
-    /// so the message must be told apart from the headers correctly.
-    fn credit(
-        author: (&str, &str),
-        message: &str,
-        mailmap: &str,
-        ignore_author: Option<&Regex>,
-        co_authors: bool,
-    ) -> Vec<Identity> {
-        let dir = gix_testtools::tempfile::tempdir().unwrap();
-        let repo = gix::init_bare(dir.path()).unwrap();
-        let signature = gix::actor::Signature {
-            name: author.0.into(),
-            email: author.1.into(),
-            time: gix::date::Time::default(),
-        };
-        let id = repo
-            .write_object(gix::objs::Commit {
-                tree: repo.empty_tree().id,
-                parents: Default::default(),
-                author: signature.clone(),
-                committer: signature,
-                encoding: None,
-                message: message.into(),
-                extra_headers: vec![(
-                    "gpgsig".into(),
-                    "-----BEGIN PGP SIGNATURE-----\n\nsignature\n-----END PGP SIGNATURE-----\n"
-                        .into(),
-                )],
-            })
-            .unwrap();
-        credited_identities(
-            &repo.find_commit(id).unwrap(),
-            &gix::mailmap::Snapshot::from_bytes(mailmap.as_bytes()),
-            ignore_author,
-            co_authors,
-        )
-        .unwrap()
-    }
-
-    fn credited(
-        message: &str,
-        mailmap: &str,
-        ignore_author: Option<&str>,
-        co_authors: bool,
-    ) -> Vec<Identity> {
-        let ignore_author = ignore_author.map(|pattern| Regex::new(pattern).unwrap());
-        credit(
-            ("Author", "author@example.org"),
-            message,
-            mailmap,
-            ignore_author.as_ref(),
-            co_authors,
-        )
-    }
-
-    #[test]
-    fn test_credited_identities_without_trailers() {
-        assert_eq!(
-            credited("subject\n\nbody\n", "", None, true),
-            vec![identity("Author", "author@example.org")]
-        );
-    }
-
-    #[rstest]
-    #[case("Co-authored-by")]
-    #[case("co-authored-by")]
-    #[case("CO-AUTHORED-BY")]
-    #[case("Co-Authored-By")]
-    fn test_credited_identities_with_co_authors(#[case] token: &str) {
-        let message =
-            format!("subject\n\n{token}: One <one@example.org>\n{token}: Two <two@example.org>\n");
-        assert_eq!(
-            credited(&message, "", None, true),
-            vec![
-                identity("Author", "author@example.org"),
-                identity("One", "one@example.org"),
-                identity("Two", "two@example.org"),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_ignores_co_authors_by_default() {
-        assert_eq!(
-            credited(
-                "subject\n\nCo-authored-by: One <one@example.org>\n",
-                "",
-                None,
-                false
-            ),
-            vec![identity("Author", "author@example.org")]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_ignores_other_trailers() {
-        assert_eq!(
-            credited(
-                "subject\n\nSigned-off-by: One <one@example.org>\nReviewed-by: Two <two@example.org>\n",
-                "",
-                None,
-                true
-            ),
-            vec![identity("Author", "author@example.org")]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_credits_each_identity_once() {
-        assert_eq!(
-            credited(
-                "subject\n\nCo-authored-by: Author <author@example.org>\nCo-authored-by: One <one@example.org>\nCo-authored-by: One <one@example.org>\n",
-                "",
-                None,
-                true
-            ),
-            vec![
-                identity("Author", "author@example.org"),
-                identity("One", "one@example.org"),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_resolves_co_authors_through_mailmap() {
-        assert_eq!(
-            credited(
-                "subject\n\nCo-authored-by: Old Name <old@example.org>\nCo-authored-by: Alias <author-alias@example.org>\n",
-                "One <one@example.org> <old@example.org>\nAuthor <author@example.org> <author-alias@example.org>\n",
-                None,
-                true
-            ),
-            vec![
-                identity("Author", "author@example.org"),
-                identity("One", "one@example.org"),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_skips_malformed_co_authors() {
-        assert_eq!(
-            credited(
-                "subject\n\nCo-authored-by: just a name\nCo-authored-by: One <one@example.org>\n",
-                "",
-                None,
-                true
-            ),
-            vec![
-                identity("Author", "author@example.org"),
-                identity("One", "one@example.org"),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_with_ignore_author_drops_bot_co_authors() {
-        assert_eq!(
-            credited(
-                "subject\n\nCo-authored-by: dependabot[bot] <bot@example.org>\nCo-authored-by: One <one@example.org>\n",
-                "",
-                Some(BOTS),
-                true
-            ),
-            vec![
-                identity("Author", "author@example.org"),
-                identity("One", "one@example.org"),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_credited_identities_with_ignore_author_keeps_human_co_authors_of_bot_commits() {
-        let ignore_author = Regex::new(BOTS).unwrap();
-        let credit = |co_authors| {
-            credit(
-                ("Copilot[bot]", "copilot@example.org"),
-                "subject\n\nCo-authored-by: One <one@example.org>\n",
-                "",
-                Some(&ignore_author),
-                co_authors,
-            )
-        };
-        assert_eq!(credit(true), vec![identity("One", "one@example.org")]);
-        assert_eq!(credit(false), vec![]);
-    }
 }

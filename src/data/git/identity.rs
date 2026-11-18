@@ -9,6 +9,23 @@ pub struct Identity {
 }
 
 impl Identity {
+    /// `actor` as mapped by the mailmap, keeping whatever it doesn't remap.
+    pub fn resolve(actor: gix::actor::IdentityRef<'_>, mailmap: &gix::mailmap::Snapshot) -> Self {
+        let actor = actor.trim();
+        let resolved = mailmap.try_resolve_ref(gix::actor::SignatureRef {
+            name: actor.name,
+            email: actor.email,
+            // The mailmap matches on name and email only.
+            time: "",
+        });
+        let (name, email) =
+            resolved.map_or((None, None), |resolved| (resolved.name, resolved.email));
+        Self {
+            name: name.unwrap_or(actor.name).to_owned(),
+            email: email.unwrap_or(actor.email).to_owned(),
+        }
+    }
+
     /// Whether this identity's name matches the `--ignore-author` pattern.
     pub fn is_ignored(&self, pattern: Option<&Regex>) -> bool {
         pattern.is_some_and(|pattern| pattern.is_match(self.name.to_str_lossy().as_ref()))

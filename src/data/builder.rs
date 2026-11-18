@@ -171,7 +171,6 @@ impl InfoBuilder {
         if !self.disabled_fields.contains(&FieldKind::Authors) {
             let authors = Authors::new(
                 &git_metrics.number_of_commits_by_identity,
-                git_metrics.total_number_of_commits,
                 number_of_authors_to_display,
                 show_email,
             );

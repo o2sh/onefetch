@@ -95,9 +95,6 @@ pub struct InfoArgs {
     /// Ignores merge commits
     #[arg(long)]
     pub no_merges: bool,
-    /// Also credit authors listed in Co-authored-by trailers
-    #[arg(long)]
-    pub co_authors: bool,
     /// Show the email address of each author
     #[arg(long, short = 'E')]
     pub email: bool,
@@ -272,7 +269,6 @@ impl Default for InfoArgs {
             exclude: Vec::default(),
             ignore_author: Option::default(),
             no_merges: Default::default(),
-            co_authors: Default::default(),
             email: Default::default(),
             http_url: Default::default(),
             hide_token: Default::default(),
