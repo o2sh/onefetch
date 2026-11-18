@@ -22,7 +22,7 @@ pub fn traverse_commit_graph(
     let mut commit_times = Vec::new();
     let mailmap = repo.open_mailmap();
     let is_traversal_complete = Arc::new(AtomicBool::default());
-    let total_number_of_commits = Arc::new(AtomicUsize::default());
+    let total_number_of_counted_commits = Arc::new(AtomicUsize::default());
 
     let commit_graph = repo.commit_graph().ok();
     let can_use_commit_graph = commit_graph.is_some();
@@ -41,7 +41,7 @@ pub fn traverse_commit_graph(
     let (churn_thread, churn_sender) = get_churn_channel(
         repo,
         &is_traversal_complete,
-        &total_number_of_commits,
+        &total_number_of_counted_commits,
         churn_pool_size,
     );
 
@@ -75,7 +75,7 @@ pub fn traverse_commit_graph(
         number_of_counted_commits += 1;
     }
 
-    total_number_of_commits.store(number_of_counted_commits, Ordering::SeqCst);
+    total_number_of_counted_commits.store(number_of_counted_commits, Ordering::SeqCst);
     is_traversal_complete.store(true, Ordering::SeqCst);
 
     drop(churn_sender);

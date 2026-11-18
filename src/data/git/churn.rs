@@ -16,14 +16,14 @@ type ChurnPair = (NumberOfCommitsByFilepath, usize);
 pub(super) fn get_churn_channel(
     repo: &gix::Repository,
     is_traversal_complete: &Arc<AtomicBool>,
-    total_number_of_commits: &Arc<AtomicUsize>,
+    total_number_of_counted_commits: &Arc<AtomicUsize>,
     churn_pool_size: Option<usize>,
 ) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
     let (sender, receiver) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
         let is_traversal_complete = is_traversal_complete.clone();
-        let total_number_of_commits = total_number_of_commits.clone();
+        let total_number_of_counted_commits = total_number_of_counted_commits.clone();
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
             let mut diffs_computed = 0;
@@ -34,7 +34,7 @@ pub(super) fn get_churn_channel(
                 }
                 if should_break(
                     is_traversal_complete.load(Ordering::Relaxed),
-                    total_number_of_commits.load(Ordering::Relaxed),
+                    total_number_of_counted_commits.load(Ordering::Relaxed),
                     churn_pool_size,
                     diffs_computed,
                 ) {
@@ -51,7 +51,7 @@ pub(super) fn get_churn_channel(
 
 fn should_break(
     is_traversal_complete: bool,
-    total_number_of_commits: usize,
+    total_number_of_counted_commits: usize,
     churn_pool_size_opt: Option<usize>,
     diffs_computed: usize,
 ) -> bool {
@@ -60,7 +60,7 @@ fn should_break(
     }
 
     churn_pool_size_opt.is_none_or(|churn_pool_size| {
-        diffs_computed >= churn_pool_size.min(total_number_of_commits)
+        diffs_computed >= churn_pool_size.min(total_number_of_counted_commits)
     })
 }
 
@@ -117,14 +117,14 @@ mod tests {
     #[case(true, 10, None, 5, true)]
     fn test_should_break(
         #[case] has_commit_graph_traversal_ended: bool,
-        #[case] total_number_of_commits: usize,
+        #[case] total_number_of_counted_commits: usize,
         #[case] churn_pool_size_opt: Option<usize>,
         #[case] number_of_diffs_computed: usize,
         #[case] expected: bool,
     ) {
         let result = should_break(
             has_commit_graph_traversal_ended,
-            total_number_of_commits,
+            total_number_of_counted_commits,
             churn_pool_size_opt,
             number_of_diffs_computed,
         );
