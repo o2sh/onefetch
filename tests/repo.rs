@@ -169,8 +169,8 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
 }
 
 #[rstest]
-#[case::default(None, 5, &[("Author One", 4, 36), ("Author Three", 3, 27), ("Author Two", 3, 27), ("renovate[bot]", 1, 9)])]
-#[case::ignore_author(Some(r"\[bot\]"), 5, &[("Author One", 4, 40), ("Author Three", 3, 30), ("Author Two", 3, 30)])]
+#[case::default(None, 12, &[("Author One", 9, 38), ("Author Two", 7, 29), ("Author Three", 6, 25), ("dependabot[bot]", 1, 4), ("renovate[bot]", 1, 4)])]
+#[case::ignore_author(Some(r"\[bot\]"), 12, &[("Author One", 9, 41), ("Author Two", 7, 32), ("Author Three", 6, 27)])]
 fn test_repo_with_co_authors(
     #[case] ignore_author: Option<&str>,
     #[case] expected_number_of_commits: u64,
@@ -180,7 +180,7 @@ fn test_repo_with_co_authors(
     let config = Cli {
         input: repo.path().to_path_buf(),
         info: InfoArgs {
-            number_of_authors: 4,
+            number_of_authors: 5,
             ignore_author: ignore_author.map(Regex::new).transpose()?,
             ..Default::default()
         },
