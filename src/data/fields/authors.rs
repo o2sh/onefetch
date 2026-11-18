@@ -37,13 +37,11 @@ pub struct Authors {
 impl Authors {
     pub fn new(
         number_of_commits_by_identity: &HashMap<Identity, usize>,
-        total_number_of_commits: usize,
         number_of_authors_to_display: usize,
         show_email: bool,
     ) -> Self {
         let authors = compute_authors(
             number_of_commits_by_identity,
-            total_number_of_commits,
             number_of_authors_to_display,
             show_email,
         );
@@ -53,10 +51,12 @@ impl Authors {
 
 fn compute_authors(
     number_of_commits_by_identity: &HashMap<Identity, usize>,
-    total_number_of_commits: usize,
     number_of_authors_to_display: usize,
     show_email: bool,
 ) -> Vec<Author> {
+    // A co-authored commit is credited to each of its authors, so contributions
+    // are shares of all credits, not of commits, to add up to 100%.
+    let total_number_of_credits = number_of_commits_by_identity.values().sum();
     let mut identities_sorted_by_number_of_commits: Vec<(&Identity, &usize)> =
         Vec::from_iter(number_of_commits_by_identity);
 
@@ -75,7 +75,7 @@ fn compute_authors(
                     None
                 },
                 *author_nbr_of_commits,
-                total_number_of_commits,
+                total_number_of_credits,
             )
         })
         .take(number_of_authors_to_display)
@@ -111,13 +111,11 @@ mod test {
             },
             50,
         );
-        let total_number_of_commits = 100;
         let number_of_authors_to_display = 2;
         let show_email = false;
 
         let actual = compute_authors(
             &number_of_commits_by_identity,
-            total_number_of_commits,
             number_of_authors_to_display,
             show_email,
         );

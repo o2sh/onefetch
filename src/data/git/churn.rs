@@ -19,7 +19,7 @@ pub(super) fn get_churn_channel(
     total_number_of_commits: &Arc<AtomicUsize>,
     churn_pool_size: Option<usize>,
 ) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
-    let (tx, rx) = channel::<gix::hash::ObjectId>();
+    let (sender, receiver) = channel::<gix::hash::ObjectId>();
     let thread = std::thread::spawn({
         let repo = repo.clone();
         let is_traversal_complete = is_traversal_complete.clone();
@@ -27,7 +27,7 @@ pub(super) fn get_churn_channel(
         move || -> Result<_> {
             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
             let mut diffs_computed = 0;
-            while let Ok(commit_id) = rx.recv() {
+            while let Ok(commit_id) = receiver.recv() {
                 let commit = repo.find_object(commit_id)?.into_commit();
                 if compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)? {
                     diffs_computed += 1;
@@ -46,7 +46,7 @@ pub(super) fn get_churn_channel(
         }
     });
 
-    (thread, tx)
+    (thread, sender)
 }
 
 fn should_break(
