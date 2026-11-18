@@ -51,9 +51,6 @@ pub fn traverse_commit_graph(
             continue;
         }
 
-        // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
-        // count neither as commits, nor in the activity, nor in the churn,
-        // nor in the creation and last change dates.
         let identities = credited_identities(&commit.object()?, &mailmap, ignore_author)?;
         if identities.is_empty() {
             continue;
