@@ -61,7 +61,8 @@ pub fn traverse_commit_graph(
                 0,
             );
             // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
-            // count neither as commits, nor in the activity, nor in the churn.
+            // count neither as commits, nor in the activity, nor in the churn,
+            // nor in the creation and last change dates.
             let identities =
                 credited_identities(&commit.object()?, &mailmap, ignore_author, co_authors)?;
             if !identities.is_empty() {
@@ -69,9 +70,9 @@ pub fn traverse_commit_graph(
                 update_commit_times(commit_time.seconds, &mut commit_times);
                 churn_tx.send(commit.id)?;
                 number_of_counted_commits += 1;
+                time_of_most_recent_commit.get_or_insert(commit_time);
+                time_of_first_commit = commit_time.into();
             }
-            time_of_most_recent_commit.get_or_insert(commit_time);
-            time_of_first_commit = commit_time.into();
 
             count += 1;
         }
