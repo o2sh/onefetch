@@ -51,7 +51,7 @@ gix = { version = "0.90.0", default-features = false, features = [
     "sha1",
     "anyhow",
 ] }
-globset = "0.4.20"
+globset = "0.4.21"
 human-panic = "2.0.8"
 image = { version = "0.25.10", default-features = false, features = [
     "color_quant",
