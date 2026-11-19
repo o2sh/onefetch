@@ -70,20 +70,24 @@
       <a href="https://github.com/o2sh/onefetch/wiki">wiki</a>
       | built with ❤ by
       <a href="https://github.com/spenserblack">@spenserblack</a> and
-      <a href="https://github.com/o2sh">@o2sh</a></small>
+      <a href="https://github.com/o2sh">@o2sh</a>
+    </small>
   </p>
 </header>
 <main>
   <p>
     This page displays an ASCII preview for all the programming languages
     supported by onefetch. Like the binary, the data is sourced from the <a
-      href="https://raw.githubusercontent.com/o2sh/onefetch/main/languages.yaml"
-      ><code>Languages.yaml</code></a> file, and the layout aims to replicate how
-    the logo would appear inside a terminal.
+      href="https://raw.githubusercontent.com/o2sh/onefetch/main/languages.yaml">
+      <code>Languages.yaml</code>
+    </a> file, and the layout aims to replicate how the logo would appear inside a
+    terminal.
   </p>
   <p>
     Suggestions and PRs are welcome at <a
-      href="https://github.com/o2sh/onefetch">github.com/o2sh/onefetch</a>
+      href="https://github.com/o2sh/onefetch">
+      github.com/o2sh/onefetch
+    </a>
   </p>
   <div class="title">
     <h3>Languages <small>({$filteredLanguages.length})</small></h3>
@@ -103,11 +107,13 @@
         </label>
       {/each}
     </div>
-    <small
-      >Note: By default, onefetch will only recognize <strong
-        >programming</strong>
+    <small>
+      Note: By default, onefetch will only recognize <strong>
+        programming
+      </strong>
       and <strong>markup</strong> types. Use the
-      <code>--type</code> flag to configure.</small>
+      <code>--type</code> flag to configure.
+    </small>
   </div>
 
   {#each $filteredLanguages as language (language.name)}
