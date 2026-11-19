@@ -21,9 +21,10 @@
       "groupName": "gix"
     },
     {
+      "description": "image 0.25 implements ColorMap only for color_quant 1.x NeuQuant; lift once image moves to color_quant 2",
       "matchManagers": ["cargo"],
-      "matchPackageNames": ["image", "color_quant"],
-      "groupName": "image"
+      "matchPackageNames": ["color_quant"],
+      "allowedVersions": "<2"
     },
     {
       "matchManagers": ["github-actions"],
@@ -37,6 +38,7 @@
       "rangeStrategy": "bump"
     },
     {
+      "description": "SvelteKit's peer range is typescript ^6 and TS 7 lacks the JS compiler API it needs (sveltejs/kit#17539); lift once SvelteKit supports TS 7",
       "matchManagers": ["npm"],
       "matchFileNames": ["site/**"],
       "matchPackageNames": ["typescript"],
