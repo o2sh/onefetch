@@ -46,7 +46,7 @@ INFO:
           [possible values: 3, 6, 12]
 
   -e, --exclude <EXCLUDE>...
-          Exclude files & directories matching EXCLUDE from language stats
+          Exclude files & directories matching EXCLUDE from language stats and lines of code
 
       --ignore-author <REGEX>
           Ignore commits from authors whose name matches REGEX

@@ -86,7 +86,7 @@ pub struct InfoArgs {
             .map(|s| s.parse::<usize>().unwrap())
     )]
     pub activity_months: usize,
-    /// Exclude files & directories matching EXCLUDE from language stats
+    /// Exclude files & directories matching EXCLUDE from language stats and lines of code
     #[arg(long, short, num_args = 1..)]
     pub exclude: Vec<String>,
     /// Ignore commits from authors whose name matches REGEX
