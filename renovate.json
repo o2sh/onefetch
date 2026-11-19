@@ -35,6 +35,12 @@
       "schedule": ["before 4am on the first day of the month"],
       "groupName": "site",
       "rangeStrategy": "bump"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchFileNames": ["site/**"],
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
     }
   ]
 }
