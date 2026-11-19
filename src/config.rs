@@ -11,31 +11,43 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 use std::{env, fs};
 
-/// Options that only make sense on the command line.
-const NOT_IN_CONFIG: [&str; 3] = ["config", "help", "version"];
+/// Options that only make sense on the command line: the ones that pick the
+/// config, and the ones that print something else and exit.
+const NOT_IN_CONFIG: [&str; 6] = [
+    "config",
+    "help",
+    "version",
+    "languages",
+    "package-managers",
+    "generate",
+];
 
 /// Parses the command line, adding the options of the config file.
 pub fn parse_args(args: Vec<OsString>) -> Result<Cli> {
     let matches = Cli::command().get_matches_from(&args);
-    let explicit = matches.get_one::<PathBuf>("config").cloned();
-    let Some(path) = explicit.clone().or_else(default_path) else {
+    let default = default_path(env::var_os("XDG_CONFIG_HOME"), env::home_dir());
+    let Some(path) = config_path(matches.get_one::<PathBuf>("config").cloned(), default) else {
         return Ok(Cli::from_arg_matches(&matches)?);
     };
-    if explicit.is_none() && !path.is_file() {
-        return Ok(Cli::from_arg_matches(&matches)?);
-    }
     let text = fs::read_to_string(&path)
         .with_context(|| format!("Failed to read the config file `{}`", path.display()))?;
     with_config(args, &matches, &text)
         .with_context(|| format!("Invalid config file `{}`", path.display()))
 }
 
+/// The file given with `--config`, which must exist, or else the default file
+/// if it exists.
+fn config_path(explicit: Option<PathBuf>, default: Option<PathBuf>) -> Option<PathBuf> {
+    explicit.or_else(|| default.filter(|path| path.is_file()))
+}
+
 /// `$XDG_CONFIG_HOME/onefetch/config.jsonc`, or `~/.config/onefetch/config.jsonc`.
-fn default_path() -> Option<PathBuf> {
-    let dir = env::var_os("XDG_CONFIG_HOME")
-        .filter(|dir| !dir.is_empty())
+/// A relative `XDG_CONFIG_HOME` is ignored, as the XDG spec says.
+fn default_path(xdg_config_home: Option<OsString>, home: Option<PathBuf>) -> Option<PathBuf> {
+    let dir = xdg_config_home
         .map(PathBuf::from)
-        .or_else(|| env::home_dir().map(|home| home.join(".config")))?;
+        .filter(|dir| dir.is_absolute())
+        .or_else(|| home.map(|home| home.join(".config")))?;
     Some(dir.join("onefetch").join("config.jsonc"))
 }
 
@@ -65,35 +77,43 @@ fn to_args(config: &Map<String, Value>, matches: &ArgMatches) -> Result<Vec<Stri
     let command = Cli::command();
     let mut args = Vec::new();
     for (key, value) in config {
+        // Such as `$schema`, which editors use.
+        if key.starts_with('$') {
+            continue;
+        }
+        if NOT_IN_CONFIG.contains(&key.as_str()) {
+            bail!("`{key}` only works on the command line");
+        }
         let arg = command
             .get_arguments()
             .find(|arg| arg.get_long() == Some(key.as_str()))
-            .filter(|_| !NOT_IN_CONFIG.contains(&key.as_str()))
             .with_context(|| format!("Unknown option `{key}`"))?;
         if matches.value_source(arg.get_id().as_str()) == Some(ValueSource::CommandLine) {
             continue;
         }
         let flag = format!("--{key}");
-        match value {
-            Value::Bool(true) => args.push(flag),
-            Value::Bool(false) => {}
-            Value::Array(values) if values.is_empty() => {}
+        match (value, arg.get_action()) {
+            (Value::Bool(true), ArgAction::SetTrue) => args.push(flag),
+            (Value::Bool(false), ArgAction::SetTrue) => {}
+            // `--key=value` keeps a value that starts with `-` a value.
+            (Value::Array(values), ArgAction::Append) => {
+                for value in values {
+                    args.push(format!("{flag}={}", to_string(key, value)?));
+                }
+            }
             // A list for an option with one value is a list of lines, such
             // as the lines of `ascii-input`.
-            Value::Array(lines) if matches!(arg.get_action(), ArgAction::Set) => {
+            (Value::Array(lines), ArgAction::Set) => {
                 let lines = lines
                     .iter()
                     .map(|line| to_string(key, line))
                     .collect::<Result<Vec<_>>>()?;
                 args.push(format!("{flag}={}", lines.join("\n")));
             }
-            Value::Array(values) => {
-                args.push(flag);
-                for value in values {
-                    args.push(to_string(key, value)?);
-                }
+            (Value::Bool(_) | Value::Array(_), _) => {
+                bail!("Invalid value `{value}` for `{key}`")
             }
-            value => args.push(format!("{flag}={}", to_string(key, value)?)),
+            (value, _) => args.push(format!("{flag}={}", to_string(key, value)?)),
         }
     }
     Ok(args)
@@ -198,6 +218,73 @@ mod tests {
         assert!(cli_with(r#"{"number-of-authors": "many"}"#, &[]).is_err());
         assert!(cli_with(r#"{"no-merges": null}"#, &[]).is_err());
         assert!(cli_with("[]", &[]).is_err());
+        assert!(cli_with(r#"{"languages": true}"#, &[]).is_err());
+        assert!(cli_with(r#"{"package-managers": true}"#, &[]).is_err());
+        assert!(cli_with(r#"{"generate": "bash"}"#, &[]).is_err());
+    }
+
+    #[test]
+    fn values_follow_the_kind_of_option() -> Result<()> {
+        let cli = cli_with(r#"{"exclude": ["-x.lock", "vendor/"]}"#, &[])?;
+        assert_eq!(cli.info.exclude, ["-x.lock", "vendor/"]);
+        // A list for a flag must not become the input path.
+        assert!(cli_with(r#"{"no-merges": ["repo"]}"#, &[]).is_err());
+        assert!(cli_with(r#"{"number-of-authors": false}"#, &[]).is_err());
+        assert!(cli_with(r#"{"exclude": true}"#, &[]).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn ignores_dollar_keys() -> Result<()> {
+        let cli = cli_with(
+            r#"{"$schema": "https://example.com/schema.json", "no-merges": true}"#,
+            &[],
+        )?;
+        assert!(cli.info.no_merges);
+        Ok(())
+    }
+
+    #[test]
+    fn finds_the_config_file() {
+        let missing = env::temp_dir().join("onefetch-missing-config.jsonc");
+        let existing = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("presets/cowsay.jsonc");
+        // `--config` is used even if it doesn't exist, so that reading it fails.
+        assert_eq!(
+            config_path(Some(missing.clone()), None),
+            Some(missing.clone())
+        );
+        assert_eq!(config_path(None, Some(missing)), None);
+        assert_eq!(config_path(None, Some(existing.clone())), Some(existing));
+    }
+
+    #[test]
+    fn default_path_ignores_a_relative_xdg_config_home() {
+        let home = env::temp_dir();
+        let in_home = home.join(".config/onefetch/config.jsonc");
+        let xdg = home.join("xdg");
+        assert_eq!(
+            default_path(Some("cfg".into()), Some(home.clone())),
+            Some(in_home.clone())
+        );
+        assert_eq!(
+            default_path(Some("".into()), Some(home.clone())),
+            Some(in_home)
+        );
+        assert_eq!(
+            default_path(Some(xdg.clone().into_os_string()), Some(home)),
+            Some(xdg.join("onefetch/config.jsonc"))
+        );
+        assert_eq!(default_path(None, None), None);
+    }
+
+    #[test]
+    fn parse_args_reads_the_given_file() -> Result<()> {
+        let preset = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("presets/cowsay.jsonc");
+        let args = |path: PathBuf| vec!["onefetch".into(), "--config".into(), path.into()];
+        assert!(parse_args(args(preset))?.info.no_merges);
+        let missing = env::temp_dir().join("onefetch-missing-config.jsonc");
+        assert!(parse_args(args(missing)).is_err());
+        Ok(())
     }
 
     #[test]

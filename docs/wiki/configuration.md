@@ -42,6 +42,8 @@ An option with one value also takes a list of strings, which are joined into lin
 ]
 ```
 
+Keys that start with `$`, such as `$schema`, are ignored. `config`, `languages`, `package-managers`, `generate`, `help` and `version` only work on the command line.
+
 ## Example
 
 [`presets/cowsay.jsonc`](https://github.com/o2sh/onefetch/blob/main/presets/cowsay.jsonc) uses every option, with a cowsay cow as the logo. Try it with `onefetch --config presets/cowsay.jsonc`, or copy it to `~/.config/onefetch/config.jsonc` and keep the options you want.
