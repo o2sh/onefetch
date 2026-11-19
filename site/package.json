@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "5.0.1",
-    "@sveltejs/adapter-auto": "8.0.1",
+    "@sveltejs/adapter-auto": "9.0.0",
     "@sveltejs/kit": "3.4.0",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
     "@types/eslint": "9.6.1",
