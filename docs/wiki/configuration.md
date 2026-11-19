@@ -32,24 +32,12 @@ Values work like on the command line:
 | An option with one value, like `--number-of-authors <NUM>` | a number or a string | `"number-of-authors": 5` |
 | An option with several values, like `--exclude <EXCLUDE>...` | a list | `"exclude": ["*.lock"]` |
 
-An option with one value also takes a list of strings, which are joined into lines. This keeps a custom logo readable:
-
-```jsonc
-"ascii-input": [
-  "{0} /\\_/\\",
-  "{0}( o.o )",
-  "{0} > ^ <"
-]
-```
-
-Keys that start with `$`, such as `$schema`, are ignored. `config`, `languages`, `package-managers`, `generate`, `help` and `version` only work on the command line.
-
 ## Example
 
 [`presets/cowsay.jsonc`](https://github.com/o2sh/onefetch/blob/main/presets/cowsay.jsonc) uses every option, with a cowsay cow as the logo. Try it with `onefetch --config presets/cowsay.jsonc`, or copy it to `~/.config/onefetch/config.jsonc` and keep the options you want.
 
 ## The command line wins
 
-An option given on the command line replaces the same option in the file. With `"number-of-authors": 5` in the config, `onefetch --number-of-authors 2` shows 2 authors.
+An option given on the command line replaces the same option in the file. With `"number-of-authors": 5` in the config, `onefetch --number-of-authors 2` shows 2 authors. Options with several values add up instead: `onefetch -e "*.md"` excludes `*.md` and the globs of the config.
 
 A flag turned on in the file can't be turned off from the command line. To run onefetch without the config, point `--config` at an empty file that contains `{}`.

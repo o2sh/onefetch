@@ -24,17 +24,8 @@
     "no-bold": false,
 
     // ASCII
-    // One string per line. {0} to {6} pick the ascii color of the line.
-    "ascii-input": [
-        "{0} __________",
-        "{1}< onefetch >",
-        "{0} ----------",
-        "{2}        \\   ^__^",
-        "{3}         \\  (oo)\\_______",
-        "{4}            (__)\\       )\\/\\",
-        "{5}                ||----w |",
-        "{6}                ||     ||"
-    ],
+    // \n starts a new line, and {0} to {6} pick the ascii color of the line.
+    "ascii-input": "{0} __________\n{1}< onefetch >\n{0} ----------\n{2}        \\   ^__^\n{3}         \\  (oo)\\_______\n{4}            (__)\\       )\\/\\\n{5}                ||----w |\n{6}                ||     ||",
     // bubble, text, then a rainbow from the ears to the legs
     "ascii-colors": [15, 14, 9, 11, 10, 12, 13],
     // "ascii-language": "rust", // a language's logo instead of the cow

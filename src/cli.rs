@@ -25,6 +25,8 @@ const STYLES: Styles = Styles::styled()
 
 #[derive(Clone, Debug, Parser)]
 #[command(version, about)]
+// The last occurrence of an option wins, so the command line overrides the config.
+#[command(args_override_self = true)]
 #[command(styles = STYLES)]
 pub struct Cli {
     /// Run as if onefetch was started in <input> instead of the current working directory
