@@ -61,7 +61,7 @@ image = { version = "0.25.10", default-features = false, features = [
 ] }
 num-format = "0.4.4"
 owo-colors = "4.4.0"
-regex = "1.13.1"
+regex = "1.13.2"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 serde_yaml = "0.9.34"
@@ -82,7 +82,7 @@ name = "repo"
 harness = false
 
 [build-dependencies]
-regex = "1.13.1"
+regex = "1.13.2"
 serde_json = { version = "1.0.151", features = ["preserve_order"] }
 serde_yaml = "0.9.34"
 tera = { version = "2.4.0", default-features = false, features = [
