@@ -5,7 +5,7 @@
 use crate::cli::Cli;
 use anyhow::{Context, Result, bail};
 use clap::parser::ValueSource;
-use clap::{ArgMatches, CommandFactory, FromArgMatches};
+use clap::{ArgAction, ArgMatches, CommandFactory, FromArgMatches};
 use serde_json::{Map, Value};
 use std::ffi::OsString;
 use std::path::PathBuf;
@@ -78,6 +78,15 @@ fn to_args(config: &Map<String, Value>, matches: &ArgMatches) -> Result<Vec<Stri
             Value::Bool(true) => args.push(flag),
             Value::Bool(false) => {}
             Value::Array(values) if values.is_empty() => {}
+            // A list for an option with one value is a list of lines, such
+            // as the lines of `ascii-input`.
+            Value::Array(lines) if matches!(arg.get_action(), ArgAction::Set) => {
+                let lines = lines
+                    .iter()
+                    .map(|line| to_string(key, line))
+                    .collect::<Result<Vec<_>>>()?;
+                args.push(format!("{flag}={}", lines.join("\n")));
+            }
             Value::Array(values) => {
                 args.push(flag);
                 for value in values {
@@ -176,11 +185,34 @@ mod tests {
     }
 
     #[test]
+    fn joins_lines_of_single_values() -> Result<()> {
+        let cli = cli_with(r#"{"ascii-input": ["{0} /\\", "/  \\"]}"#, &[])?;
+        assert_eq!(cli.ascii.ascii_input.as_deref(), Some("{0} /\\\n/  \\"));
+        Ok(())
+    }
+
+    #[test]
     fn rejects_bad_options() {
         assert!(cli_with(r#"{"nope": 1}"#, &[]).is_err());
         assert!(cli_with(r#"{"config": "a.jsonc"}"#, &[]).is_err());
         assert!(cli_with(r#"{"number-of-authors": "many"}"#, &[]).is_err());
         assert!(cli_with(r#"{"no-merges": null}"#, &[]).is_err());
         assert!(cli_with("[]", &[]).is_err());
+    }
+
+    #[test]
+    fn presets_are_valid() -> Result<()> {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("presets");
+        let mut count = 0;
+        for entry in fs::read_dir(dir)? {
+            let path = entry?.path();
+            if path.extension().is_some_and(|ext| ext == "jsonc") {
+                cli_with(&fs::read_to_string(&path)?, &[])
+                    .with_context(|| format!("Invalid preset `{}`", path.display()))?;
+                count += 1;
+            }
+        }
+        assert!(count > 0);
+        Ok(())
     }
 }

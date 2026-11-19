@@ -20,7 +20,7 @@ The file is a JSON object whose keys are the [command-line options](https://gith
   "disabled-fields": ["churn", "url"],
   "text-colors": [9, 10, 11, 12, 13, 14],
   "number-separator": "comma",
-  "nerd-fonts": true,
+  "nerd-fonts": true
 }
 ```
 
@@ -31,6 +31,20 @@ Values work like on the command line:
 | A flag, like `--no-merges` | `true` turns it on, `false` does nothing | `"no-merges": true` |
 | An option with one value, like `--number-of-authors <NUM>` | a number or a string | `"number-of-authors": 5` |
 | An option with several values, like `--exclude <EXCLUDE>...` | a list | `"exclude": ["*.lock"]` |
+
+An option with one value also takes a list of strings, which are joined into lines. This keeps a custom logo readable:
+
+```jsonc
+"ascii-input": [
+  "{0} /\\_/\\",
+  "{0}( o.o )",
+  "{0} > ^ <"
+]
+```
+
+## Example
+
+[`presets/cowsay.jsonc`](https://github.com/o2sh/onefetch/blob/main/presets/cowsay.jsonc) uses every option, with a cowsay cow as the logo. Try it with `onefetch --config presets/cowsay.jsonc`, or copy it to `~/.config/onefetch/config.jsonc` and keep the options you want.
 
 ## The command line wins
 
