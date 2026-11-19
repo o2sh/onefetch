@@ -2444,7 +2444,6 @@ dependencies = [
  "enable-ansi-support",
  "gix",
  "gix-testtools",
- "globset",
  "human-panic",
  "image",
  "insta",
