@@ -40,7 +40,9 @@ them in mind when reviewing imports in these modules.
 
 ## Options
 
-The parsed command line (`Cli`) is only read by `options.rs` (and by `main` for
+`config::parse_args` builds `Cli`: it adds the options of the config file in
+front of the command line, then parses both, so `Cli` holds the options from
+either. `Cli` is then only read by `options.rs` (and by `main` for
 `--languages`, `--package-managers` and `--generate`). It is split into two
 structs, one per stage:
 
@@ -52,7 +54,8 @@ structs, one per stage:
 When adding a flag: if it changes what is collected, and therefore the
 JSON/YAML output, it belongs in `InfoOptions` (like `--number-of-authors`);
 if it only changes how things are printed, in `RenderOptions` (like
-`--iso-time` or `--no-art`).
+`--iso-time` or `--no-art`). The config file accepts every new flag with no
+extra code.
 
 ## Collecting data (`data`)
 
