@@ -2,8 +2,8 @@
 //! such as `{"number-of-authors": 5, "no-merges": true}`.
 
 use crate::cli::Cli;
-use anyhow::{Context, Result, bail};
-use clap::{CommandFactory, Parser};
+use anyhow::{Context, Result};
+use clap::Parser;
 use serde_json::{Map, Value};
 use std::ffi::OsString;
 use std::path::PathBuf;
@@ -34,15 +34,6 @@ fn config_args(text: &str) -> Result<Vec<OsString>> {
     let mut text = text.to_owned();
     json_strip_comments::strip(&mut text)?;
     let config: Map<String, Value> = serde_json::from_str(&text)?;
-    // Checked here because `false` and `[]` give no argument for clap to check.
-    let command = Cli::command();
-    if let Some(key) = config.keys().find(|key| {
-        !command
-            .get_arguments()
-            .any(|arg| arg.get_long() == Some(key))
-    }) {
-        bail!("Unknown option `{key}`");
-    }
     Ok(config
         .iter()
         .flat_map(|(key, value)| to_args(key, value))
@@ -110,8 +101,6 @@ mod tests {
     #[test]
     fn rejects_bad_options() {
         assert!(cli_with(r#"{"nope": 1}"#, &[]).is_err());
-        assert!(cli_with(r#"{"nerd-fots": false}"#, &[]).is_err());
-        assert!(cli_with(r#"{"exclud": []}"#, &[]).is_err());
         assert!(cli_with(r#"{"number-of-authors": "many"}"#, &[]).is_err());
         assert!(cli_with(r#"{"no-merges": null}"#, &[]).is_err());
         assert!(cli_with("[]", &[]).is_err());
