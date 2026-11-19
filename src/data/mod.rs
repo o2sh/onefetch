@@ -111,11 +111,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
         .contributors(&git_metrics, options.number_of_authors)
         .url(&repo_url)
         .commits(&git_metrics, repo.is_shallow()?)
-        .churn(
-            &git_metrics,
-            options.number_of_file_churns,
-            &options.exclude,
-        )?
+        .churn(&git_metrics, options.number_of_file_churns)
         .lines_of_code(loc_by_language.as_ref())
         .size(&repo)
         .license(&repo_path, manifest.as_ref())?
