@@ -77,7 +77,7 @@ onefetch
 
 Onefetch can be customized via [command-line arguments](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
 
-To keep your settings, put them in a [config file](https://github.com/o2sh/onefetch/wiki/configuration): run `onefetch --gen-config` to create `~/.config/onefetch/config.jsonc`.
+To keep your favorite options, put them in a [config file](https://github.com/o2sh/onefetch/wiki/configuration) at `~/.config/onefetch/config.jsonc`.
 
 ## Frequently Asked Questions
 

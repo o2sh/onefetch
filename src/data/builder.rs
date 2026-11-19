@@ -32,8 +32,7 @@ use std::path::Path;
 pub struct InfoBuilder {
     title: Option<Title>,
     info_fields: Vec<Field>,
-    /// The fields to show, in display order.
-    fields: Vec<FieldKind>,
+    disabled_fields: Vec<FieldKind>,
     no_title: bool,
 }
 
@@ -42,7 +41,7 @@ impl InfoBuilder {
         Self {
             title: None,
             info_fields: Vec::new(),
-            fields: options.enabled_fields(),
+            disabled_fields: options.disabled_fields.clone(),
             no_title: options.no_title,
         }
     }
@@ -55,7 +54,7 @@ impl InfoBuilder {
     }
 
     pub fn description(mut self, manifest: Option<&Manifest>) -> Self {
-        if self.is_enabled(FieldKind::Description) {
+        if !self.disabled_fields.contains(&FieldKind::Description) {
             let description = Description::new(manifest);
             self.info_fields.push(Field::Description(description));
         }
@@ -63,7 +62,7 @@ impl InfoBuilder {
     }
 
     pub fn pending(mut self, repo: &Repository) -> Result<Self> {
-        if self.is_enabled(FieldKind::Pending) {
+        if !self.disabled_fields.contains(&FieldKind::Pending) {
             let pending = Pending::new(repo)?;
             self.info_fields.push(Field::Pending(pending));
         }
@@ -71,7 +70,7 @@ impl InfoBuilder {
     }
 
     pub fn url(mut self, repo_url: &str) -> Self {
-        if self.is_enabled(FieldKind::Url) {
+        if !self.disabled_fields.contains(&FieldKind::Url) {
             let repo_url = Url::new(repo_url);
             self.info_fields.push(Field::Url(repo_url));
         }
@@ -84,7 +83,7 @@ impl InfoBuilder {
         repo_url: &str,
         manifest: Option<&Manifest>,
     ) -> Result<Self> {
-        if self.is_enabled(FieldKind::Project) {
+        if !self.disabled_fields.contains(&FieldKind::Project) {
             let project = Project::new(repo, repo_url, manifest)?;
             self.info_fields.push(Field::Project(project));
         }
@@ -92,7 +91,7 @@ impl InfoBuilder {
     }
 
     pub fn head(mut self, repo: &Repository) -> Result<Self> {
-        if self.is_enabled(FieldKind::Head) {
+        if !self.disabled_fields.contains(&FieldKind::Head) {
             let head = Head::new(repo)?;
             self.info_fields.push(Field::Head(head));
         }
@@ -100,7 +99,7 @@ impl InfoBuilder {
     }
 
     pub fn version(mut self, latest_tag: Option<&LatestTag>, manifest: Option<&Manifest>) -> Self {
-        if self.is_enabled(FieldKind::Version) {
+        if !self.disabled_fields.contains(&FieldKind::Version) {
             let version = Version::new(latest_tag, manifest);
             self.info_fields.push(Field::Version(version));
         }
@@ -108,7 +107,7 @@ impl InfoBuilder {
     }
 
     pub fn unreleased(mut self, repo: &Repository, latest_tag: Option<&LatestTag>) -> Result<Self> {
-        if self.is_enabled(FieldKind::Unreleased)
+        if !self.disabled_fields.contains(&FieldKind::Unreleased)
             && let Some(latest_tag) = latest_tag
         {
             let unreleased = Unreleased::new(repo, latest_tag)?;
@@ -118,7 +117,7 @@ impl InfoBuilder {
     }
 
     pub fn size(mut self, repo: &Repository) -> Self {
-        if self.is_enabled(FieldKind::Size) {
+        if !self.disabled_fields.contains(&FieldKind::Size) {
             let size = Size::new(repo);
             self.info_fields.push(Field::Size(size));
         }
@@ -126,7 +125,7 @@ impl InfoBuilder {
     }
 
     pub fn license(mut self, repo_path: &Path, manifest: Option<&Manifest>) -> Result<Self> {
-        if self.is_enabled(FieldKind::License) {
+        if !self.disabled_fields.contains(&FieldKind::License) {
             let license = License::new(repo_path, manifest)?;
             self.info_fields.push(Field::License(license));
         }
@@ -134,7 +133,7 @@ impl InfoBuilder {
     }
 
     pub fn created(mut self, git_metrics: &GitMetrics) -> Self {
-        if self.is_enabled(FieldKind::Created) {
+        if !self.disabled_fields.contains(&FieldKind::Created) {
             let created = Created::new(git_metrics);
             self.info_fields.push(Field::Created(created));
         }
@@ -146,7 +145,7 @@ impl InfoBuilder {
         loc_by_language_opt: Option<&Vec<(Language, usize)>>,
         number_of_languages: usize,
     ) -> Self {
-        if self.is_enabled(FieldKind::Languages)
+        if !self.disabled_fields.contains(&FieldKind::Languages)
             && let Some(loc_by_language) = loc_by_language_opt
         {
             let languages = Languages::new(loc_by_language, number_of_languages);
@@ -156,7 +155,7 @@ impl InfoBuilder {
     }
 
     pub fn dependencies(mut self, manifest: Option<&Manifest>) -> Self {
-        if self.is_enabled(FieldKind::Dependencies) {
+        if !self.disabled_fields.contains(&FieldKind::Dependencies) {
             let dependencies = Dependencies::new(manifest);
             self.info_fields.push(Field::Dependencies(dependencies));
         }
@@ -169,7 +168,7 @@ impl InfoBuilder {
         number_of_authors_to_display: usize,
         show_email: bool,
     ) -> Self {
-        if self.is_enabled(FieldKind::Authors) {
+        if !self.disabled_fields.contains(&FieldKind::Authors) {
             let authors = Authors::new(
                 &git_metrics.number_of_commits_by_identity,
                 git_metrics.total_number_of_commits,
@@ -182,7 +181,7 @@ impl InfoBuilder {
     }
 
     pub fn last_change(mut self, git_metrics: &GitMetrics) -> Self {
-        if self.is_enabled(FieldKind::LastChange) {
+        if !self.disabled_fields.contains(&FieldKind::LastChange) {
             let last_change = LastChange::new(git_metrics);
             self.info_fields.push(Field::LastChange(last_change));
         }
@@ -190,7 +189,7 @@ impl InfoBuilder {
     }
 
     pub fn activity(mut self, git_metrics: &GitMetrics, months: usize) -> Self {
-        if self.is_enabled(FieldKind::Activity) {
+        if !self.disabled_fields.contains(&FieldKind::Activity) {
             let activity = Activity::new(&git_metrics.commit_times, dates::now(), months);
             self.info_fields.push(Field::Activity(activity));
         }
@@ -198,7 +197,7 @@ impl InfoBuilder {
     }
 
     pub fn contributors(mut self, git_metrics: &GitMetrics, number_of_authors: usize) -> Self {
-        if self.is_enabled(FieldKind::Contributors) {
+        if !self.disabled_fields.contains(&FieldKind::Contributors) {
             let contributors =
                 Contributors::new(git_metrics.total_number_of_authors, number_of_authors);
             self.info_fields.push(Field::Contributors(contributors));
@@ -207,7 +206,7 @@ impl InfoBuilder {
     }
 
     pub fn commits(mut self, git_metrics: &GitMetrics, is_shallow: bool) -> Self {
-        if self.is_enabled(FieldKind::Commits) {
+        if !self.disabled_fields.contains(&FieldKind::Commits) {
             let commits = Commits::new(git_metrics, is_shallow);
             self.info_fields.push(Field::Commits(commits));
         }
@@ -220,7 +219,7 @@ impl InfoBuilder {
         number_of_file_churns_to_display: usize,
         globs_to_exclude: &[String],
     ) -> Result<Self> {
-        if self.is_enabled(FieldKind::Churn) {
+        if !self.disabled_fields.contains(&FieldKind::Churn) {
             let churn = Churn::new(
                 &git_metrics.number_of_commits_by_file_path,
                 git_metrics.churn_pool_size,
@@ -233,7 +232,7 @@ impl InfoBuilder {
     }
 
     pub fn lines_of_code(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
-        if self.is_enabled(FieldKind::LinesOfCode)
+        if !self.disabled_fields.contains(&FieldKind::LinesOfCode)
             && let Some(loc_by_language) = loc_by_language_opt
         {
             let lines_of_code = LinesOfCode::new(loc_by_language);
@@ -242,15 +241,7 @@ impl InfoBuilder {
         self
     }
 
-    fn is_enabled(&self, kind: FieldKind) -> bool {
-        self.fields.contains(&kind)
-    }
-
-    pub fn build(mut self, main_language: Option<Language>) -> Info {
-        let fields = self.fields;
-        // Fields are added in a fixed order; show them in the configured one.
-        self.info_fields
-            .sort_by_key(|field| fields.iter().position(|&kind| kind == field.kind()));
+    pub fn build(self, main_language: Option<Language>) -> Info {
         Info {
             title: self.title,
             info_fields: self.info_fields,

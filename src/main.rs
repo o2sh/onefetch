@@ -1,5 +1,5 @@
 use anyhow::Result;
-use clap::{CommandFactory, FromArgMatches};
+use clap::CommandFactory;
 use clap_complete::{Generator, generate};
 use human_panic::setup_panic;
 use onefetch::cli::Cli;
@@ -8,7 +8,7 @@ use onefetch::data::manifest::ManifestType;
 use onefetch::data::{InfoOptions, build_info};
 use onefetch::language::Language;
 use onefetch::render::{Printer, RenderOptions};
-use std::io;
+use std::{env, io};
 use strum::IntoEnumIterator;
 
 fn main() -> Result<()> {
@@ -17,8 +17,7 @@ fn main() -> Result<()> {
     #[cfg(windows)]
     enable_ansi_support::enable_ansi_support()?;
 
-    let matches = Cli::command().get_matches();
-    let mut cli = Cli::from_arg_matches(&matches).unwrap_or_else(|e| e.exit());
+    let cli = config::parse_args(env::args_os().collect())?;
 
     if cli.other.languages {
         print_supported_languages();
@@ -32,21 +31,6 @@ fn main() -> Result<()> {
 
     if let Some(generator) = cli.developer.completion {
         print_completions(generator);
-        return Ok(());
-    }
-
-    if cli.config.list_config_paths {
-        for dir in config::search_dirs() {
-            println!("{}", dir.display());
-        }
-        return Ok(());
-    }
-
-    if let Some(config) = config::load(cli.config.config.as_deref())? {
-        config.apply(&mut cli, &matches)?;
-    }
-
-    if config::generate_if_requested(&cli)? {
         return Ok(());
     }
 

@@ -6,7 +6,7 @@ use crate::data::{
 use crate::language::{Language, LanguageType};
 use crate::render::format::NumberSeparator;
 use crate::render::image::ImageProtocol;
-use crate::render::{DEFAULT_COLOR_RESOLUTION, KeyLayout, SerializationFormat};
+use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};
@@ -43,8 +43,6 @@ pub struct Cli {
     #[command(flatten)]
     pub developer: DeveloperArgs,
     #[command(flatten)]
-    pub config: ConfigArgs,
-    #[command(flatten)]
     pub other: OtherArgs,
 }
 
@@ -61,9 +59,6 @@ pub struct InfoArgs {
         value_name = "FIELD"
     )]
     pub disabled_fields: Vec<FieldKind>,
-    /// The fields to show, in order. Set by the `modules` list of the config file
-    #[arg(skip)]
-    pub fields: Option<Vec<FieldKind>>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
@@ -215,9 +210,6 @@ pub struct TextFormattingArgs {
     /// Turns off bold formatting
     #[arg(long)]
     pub no_bold: bool,
-    /// Separator, key width and per-field keys and colors. Set by the config file
-    #[arg(skip)]
-    pub key_layout: KeyLayout,
 }
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "VISUALS")]
@@ -247,49 +239,11 @@ pub struct DeveloperArgs {
 }
 
 #[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
-#[command(next_help_heading = "CONFIG")]
-pub struct ConfigArgs {
-    /// Load the config file or preset CONFIG
-    ///
-    /// CONFIG is a path, or a file name searched in the paths shown by --list-config-paths.
-    /// Use "-" to read the config from stdin, or "none" to load no config file
-    #[arg(long, value_name = "CONFIG", value_hint = ValueHint::FilePath)]
-    pub config: Option<String>,
-    /// Generate a minimal config file at PATH
-    ///
-    /// Defaults to "~/.config/onefetch/config.jsonc". Prints the config if PATH is "-"
-    #[arg(
-        long,
-        num_args = 0..=1,
-        value_name = "PATH",
-        value_hint = ValueHint::FilePath,
-        conflicts_with_all = ["gen_config_full", "gen_config_force"]
-    )]
-    pub gen_config: Option<Option<PathBuf>>,
-    /// Generate a full config file with all settings at PATH
-    ///
-    /// Defaults to "~/.config/onefetch/config.jsonc". Prints the config if PATH is "-"
-    #[arg(
-        long,
-        num_args = 0..=1,
-        value_name = "PATH",
-        value_hint = ValueHint::FilePath,
-        conflicts_with = "gen_config_force"
-    )]
-    pub gen_config_full: Option<Option<PathBuf>>,
-    /// Generate a config file at PATH, overwriting any existing file
-    ///
-    /// Defaults to "~/.config/onefetch/config.jsonc"
-    #[arg(long, num_args = 0..=1, value_name = "PATH", value_hint = ValueHint::FilePath)]
-    pub gen_config_force: Option<Option<PathBuf>>,
-    /// List search paths for config files
-    #[arg(long)]
-    pub list_config_paths: bool,
-}
-
-#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "OTHER")]
 pub struct OtherArgs {
+    /// Read options from CONFIG instead of ~/.config/onefetch/config.jsonc
+    #[arg(long, value_name = "CONFIG", value_hint = ValueHint::FilePath)]
+    pub config: Option<PathBuf>,
     /// Prints out supported languages
     #[arg(long, short)]
     pub languages: bool,
@@ -308,7 +262,6 @@ impl Default for Cli {
             ascii: AsciiArgs::default(),
             image: ImageArgs::default(),
             developer: DeveloperArgs::default(),
-            config: ConfigArgs::default(),
             other: OtherArgs::default(),
         }
     }
@@ -331,7 +284,6 @@ impl Default for InfoArgs {
             include_hidden: Default::default(),
             language_types: vec![LanguageType::Programming, LanguageType::Markup],
             disabled_fields: Vec::default(),
-            fields: None,
             no_title: Default::default(),
         }
     }
@@ -344,7 +296,6 @@ impl Default for TextFormattingArgs {
             iso_time: Default::default(),
             number_separator: NumberSeparator::Plain,
             no_bold: Default::default(),
-            key_layout: KeyLayout::default(),
         }
     }
 }
