@@ -5,6 +5,8 @@ use onefetch::data::git::get_work_dir;
 use onefetch::data::{InfoOptions, build_info};
 use onefetch::render::RenderOptions;
 use onefetch::render::info::info_lines;
+use regex::Regex;
+use rstest::rstest;
 
 pub fn named_repo(fixture_name: &str, name: &str) -> Result<Repository> {
     let repo_path = gix_testtools::scripted_fixture_read_only(fixture_name)
@@ -163,6 +165,57 @@ fn test_reftable_repo_is_rejected() -> Result<()> {
         error.to_string(),
         "reftable repositories are not yet supported"
     );
+    Ok(())
+}
+
+#[rstest]
+#[case::default(None, 12, &[("Author One", 9, 38), ("Author Two", 7, 29), ("Author Three", 6, 25), ("dependabot[bot]", 1, 4), ("renovate[bot]", 1, 4)])]
+#[case::ignore_author(Some(r"\[bot\]"), 12, &[("Author One", 9, 41), ("Author Two", 7, 32), ("Author Three", 6, 27)])]
+fn test_repo_with_co_authors(
+    #[case] ignore_author: Option<&str>,
+    #[case] expected_number_of_commits: u64,
+    #[case] expected_authors: &[(&str, u64, u64)],
+) -> Result<()> {
+    let repo = named_repo("make_repo_with_co_authors.sh", "repo_with_co_authors")?;
+    let config = Cli {
+        input: repo.path().to_path_buf(),
+        info: InfoArgs {
+            number_of_authors: 5,
+            ignore_author: ignore_author.map(Regex::new).transpose()?,
+            ..Default::default()
+        },
+        ..Default::default()
+    };
+    let info = serde_json::to_value(build_info(&InfoOptions::from(&config))?)?;
+    let field = |name: &str| {
+        info["infoFields"]
+            .as_array()
+            .and_then(|fields| fields.iter().find_map(|field| field.get(name)))
+            .cloned()
+            .unwrap_or_default()
+    };
+
+    assert_eq!(
+        field("CommitsInfo")["numberOfCommits"].as_u64(),
+        Some(expected_number_of_commits)
+    );
+    let authors: Vec<(String, u64, u64)> = field("AuthorsInfo")["authors"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|author| {
+            (
+                author["name"].as_str().unwrap_or_default().to_owned(),
+                author["nbrOfCommits"].as_u64().unwrap_or_default(),
+                author["contribution"].as_u64().unwrap_or_default(),
+            )
+        })
+        .collect();
+    let expected_authors: Vec<(String, u64, u64)> = expected_authors
+        .iter()
+        .map(|&(name, commits, contribution)| (name.to_owned(), commits, contribution))
+        .collect();
+    assert_eq!(authors, expected_authors);
     Ok(())
 }
 

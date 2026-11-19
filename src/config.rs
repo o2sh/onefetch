@@ -1,5 +1,5 @@
 //! The config file: a JSONC object whose keys are long command-line options,
-//! such as `{"number-of-authors": 5, "no-bots": true}`. An option given on the
+//! such as `{"number-of-authors": 5, "no-merges": true}`. An option given on the
 //! command line wins over the same option in the file.
 
 use crate::cli::Cli;
@@ -115,7 +115,11 @@ mod tests {
 
     #[test]
     fn empty_config_changes_nothing() -> Result<()> {
-        assert_eq!(cli_with("{}", &[])?, Cli::default());
+        // `Cli` isn't `PartialEq` (`Regex` isn't), so compare the `Debug` output.
+        assert_eq!(
+            format!("{:?}", cli_with("{}", &[])?),
+            format!("{:?}", Cli::default())
+        );
         Ok(())
     }
 
@@ -131,7 +135,7 @@ mod tests {
                 "disabled-fields": ["churn", "url"],
                 "ascii-language": "rust",
                 "text-colors": [1, 2],
-                "no-bots": "^bors$",
+                "ignore-author": "^bors$",
             }"#,
             &[],
         )?;
@@ -143,7 +147,9 @@ mod tests {
         assert_eq!(cli.ascii.ascii_language, Some(Language::Rust));
         assert_eq!(cli.text_formatting.text_colors, [1, 2]);
         assert_eq!(
-            cli.info.no_bots.map(|regex| regex.0.as_str().to_owned()),
+            cli.info
+                .ignore_author
+                .map(|regex| regex.as_str().to_owned()),
             Some("^bors$".into())
         );
         Ok(())

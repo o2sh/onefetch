@@ -14,7 +14,7 @@ The file is a JSON object whose keys are the [command-line options](https://gith
 {
   // Show 5 authors instead of 3
   "number-of-authors": 5,
-  "no-bots": true,
+  "ignore-author": "^bors$",
   "no-merges": true,
   "exclude": ["*.lock", "vendor/"],
   "disabled-fields": ["churn", "url"],
@@ -31,8 +31,6 @@ Values work like on the command line:
 | A flag, like `--no-merges` | `true` turns it on, `false` does nothing | `"no-merges": true` |
 | An option with one value, like `--number-of-authors <NUM>` | a number or a string | `"number-of-authors": 5` |
 | An option with several values, like `--exclude <EXCLUDE>...` | a list | `"exclude": ["*.lock"]` |
-
-`"no-bots"` takes `true` for the default pattern, or a string with your own regex, like `"no-bots": "^bors$"`.
 
 ## The command line wins
 

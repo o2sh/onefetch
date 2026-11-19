@@ -171,7 +171,6 @@ impl InfoBuilder {
         if !self.disabled_fields.contains(&FieldKind::Authors) {
             let authors = Authors::new(
                 &git_metrics.number_of_commits_by_identity,
-                git_metrics.total_number_of_commits,
                 number_of_authors_to_display,
                 show_email,
             );
@@ -217,18 +216,16 @@ impl InfoBuilder {
         mut self,
         git_metrics: &GitMetrics,
         number_of_file_churns_to_display: usize,
-        globs_to_exclude: &[String],
-    ) -> Result<Self> {
+    ) -> Self {
         if !self.disabled_fields.contains(&FieldKind::Churn) {
             let churn = Churn::new(
                 &git_metrics.number_of_commits_by_file_path,
                 git_metrics.churn_pool_size,
                 number_of_file_churns_to_display,
-                globs_to_exclude,
-            )?;
+            );
             self.info_fields.push(Field::Churn(churn));
         }
-        Ok(self)
+        self
     }
 
     pub fn lines_of_code(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {

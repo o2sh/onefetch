@@ -2,7 +2,7 @@
 authors = ["o2sh <hjajiossama@gmail.com>"]
 edition = "2024"
 license = "MIT"
-version = "3.1.0"
+version = "3.2.0"
 repository = "https://github.com/o2sh/onefetch"
 categories = ["command-line-utilities"]
 description = "Command-line Git information tool"
@@ -51,7 +51,6 @@ gix = { version = "0.90.0", default-features = false, features = [
     "sha1",
     "anyhow",
 ] }
-globset = "0.4.20"
 human-panic = "2.0.8"
 image = { version = "0.25.10", default-features = false, features = [
     "color_quant",
@@ -70,7 +69,7 @@ strum = { version = "0.28.0", features = ["derive"] }
 time = { version = "0.3.55", features = ["formatting"] }
 time-humanize = { version = "0.1.3", features = ["time"] }
 tokei = "15.0.0"
-toml = "1.1.8"
+toml = "1.2.1"
 
 [dev-dependencies]
 criterion = "0.8.2"

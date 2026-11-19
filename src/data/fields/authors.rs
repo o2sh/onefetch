@@ -16,10 +16,10 @@ impl Author {
         name: String,
         email: Option<String>,
         nbr_of_commits: usize,
-        total_nbr_of_commits: usize,
+        total_nbr_of_credits: usize,
     ) -> Self {
         let contribution =
-            (nbr_of_commits as f32 * 100. / total_nbr_of_commits as f32).round() as usize;
+            (nbr_of_commits as f32 * 100. / total_nbr_of_credits as f32).round() as usize;
         Self {
             name,
             email,
@@ -37,13 +37,11 @@ pub struct Authors {
 impl Authors {
     pub fn new(
         number_of_commits_by_identity: &HashMap<Identity, usize>,
-        total_number_of_commits: usize,
         number_of_authors_to_display: usize,
         show_email: bool,
     ) -> Self {
         let authors = compute_authors(
             number_of_commits_by_identity,
-            total_number_of_commits,
             number_of_authors_to_display,
             show_email,
         );
@@ -53,10 +51,12 @@ impl Authors {
 
 fn compute_authors(
     number_of_commits_by_identity: &HashMap<Identity, usize>,
-    total_number_of_commits: usize,
     number_of_authors_to_display: usize,
     show_email: bool,
 ) -> Vec<Author> {
+    // A co-authored commit is credited to each of its authors, so contributions
+    // are shares of all credits, not of commits, to add up to 100%.
+    let total_number_of_credits = number_of_commits_by_identity.values().sum();
     let mut identities_sorted_by_number_of_commits: Vec<(&Identity, &usize)> =
         Vec::from_iter(number_of_commits_by_identity);
 
@@ -75,7 +75,7 @@ fn compute_authors(
                     None
                 },
                 *author_nbr_of_commits,
-                total_number_of_commits,
+                total_number_of_credits,
             )
         })
         .take(number_of_authors_to_display)
@@ -95,36 +95,46 @@ mod test {
                 name: "John Doe".into(),
                 email: "johndoe@example.com".into(),
             },
-            30,
+            6,
         );
         number_of_commits_by_identity.insert(
             Identity {
                 name: "Jane Doe".into(),
                 email: "janedoe@example.com".into(),
             },
-            20,
+            4,
         );
         number_of_commits_by_identity.insert(
             Identity {
                 name: "Ellen Smith".into(),
                 email: "ellensmith@example.com".into(),
             },
-            50,
+            10,
         );
-        let total_number_of_commits = 100;
         let number_of_authors_to_display = 2;
         let show_email = false;
 
         let actual = compute_authors(
             &number_of_commits_by_identity,
-            total_number_of_commits,
             number_of_authors_to_display,
             show_email,
         );
 
+        // Contributions are shares of all 20 credits, including those of
+        // authors left out of the display.
         let expected = vec![
-            Author::new(String::from("Ellen Smith"), None, 50, 100),
-            Author::new(String::from("John Doe"), None, 30, 100),
+            Author {
+                name: String::from("Ellen Smith"),
+                email: None,
+                nbr_of_commits: 10,
+                contribution: 50,
+            },
+            Author {
+                name: String::from("John Doe"),
+                email: None,
+                nbr_of_commits: 6,
+                contribution: 30,
+            },
         ];
         assert_eq!(actual, expected);
     }
