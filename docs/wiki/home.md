@@ -6,6 +6,7 @@ Welcome to the onefetch's wiki!
   - [Getting started](https://github.com/o2sh/onefetch/wiki/getting-started)
 - **Options**
   - [Command-line options](https://github.com/o2sh/onefetch/wiki/command-line-options)
+  - [Configuration](https://github.com/o2sh/onefetch/wiki/configuration)
 - **Images**
   - [Images in the terminal](https://github.com/o2sh/onefetch/wiki/images-in-the-terminal)
 - **Ascii**
