@@ -14,12 +14,23 @@ pub mod style;
 
 pub use printer::Printer;
 
-pub const DEFAULT_COLOR_RESOLUTION: usize = 64;
+/// The values `--color-resolution` accepts.
+pub const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
 
-#[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug)]
+#[derive(Clone, clap::ValueEnum, PartialEq, Eq, Debug, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum SerializationFormat {
     Json,
     Yaml,
+}
+
+/// When to use true colors.
+#[derive(clap::ValueEnum, Clone, Copy, PartialEq, Eq, Debug, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum When {
+    Auto,
+    Never,
+    Always,
 }
 
 /// How to print an `Info`: output format, art, colors, and how values look in
@@ -52,7 +63,7 @@ impl Default for RenderOptions {
             no_art: false,
             image: None,
             image_protocol: None,
-            color_resolution: DEFAULT_COLOR_RESOLUTION,
+            color_resolution: 64,
             ascii_input: None,
             ascii_language: None,
             ascii_colors: Vec::new(),

@@ -1,21 +1,14 @@
-use crate::data::{
-    DEFAULT_ACTIVITY_MONTHS, DEFAULT_NUMBER_OF_AUTHORS, DEFAULT_NUMBER_OF_FILE_CHURNS,
-    DEFAULT_NUMBER_OF_LANGUAGES, FieldKind,
-};
+use crate::data::{ACTIVITY_MONTHS, FieldKind};
 use crate::language::{Language, LanguageType};
 use crate::render::format::NumberSeparator;
 use crate::render::image::ImageProtocol;
-use crate::render::{DEFAULT_COLOR_RESOLUTION, SerializationFormat};
+use crate::render::{COLOR_RESOLUTIONS, SerializationFormat, When};
 use clap::builder::styling::AnsiColor;
 use clap::builder::{PossibleValuesParser, Styles, TypedValueParser as _};
 use clap::{Args, Parser, ValueHint, value_parser};
 use clap_complete::Shell;
 use regex::Regex;
 use std::path::PathBuf;
-
-const COLOR_RESOLUTIONS: [&str; 5] = ["16", "32", "64", "128", "256"];
-
-const ACTIVITY_MONTHS: [&str; 3] = ["3", "6", "12"];
 
 const STYLES: Styles = Styles::styled()
     .header(AnsiColor::Yellow.on_default())
@@ -25,8 +18,6 @@ const STYLES: Styles = Styles::styled()
 
 #[derive(Clone, Debug, Parser)]
 #[command(version, about)]
-// The last occurrence of an option wins, so the command line overrides the config.
-#[command(args_override_self = true)]
 #[command(styles = STYLES)]
 pub struct Cli {
     /// Run as if onefetch was started in <input> instead of the current working directory
@@ -48,7 +39,7 @@ pub struct Cli {
     pub other: OtherArgs,
 }
 
-#[derive(Clone, Debug, Args)]
+#[derive(Clone, Debug, Args, Default)]
 #[command(next_help_heading = "INFO")]
 pub struct InfoArgs {
     /// Allows you to disable FIELD(s) from appearing in the output
@@ -60,37 +51,36 @@ pub struct InfoArgs {
         value_enum,
         value_name = "FIELD"
     )]
-    pub disabled_fields: Vec<FieldKind>,
+    pub disabled_fields: Option<Vec<FieldKind>>,
     /// Hides the title
     #[arg(long)]
     pub no_title: bool,
-    /// Maximum NUM of authors to be shown
-    #[arg(long, default_value_t = DEFAULT_NUMBER_OF_AUTHORS, value_name = "NUM")]
-    pub number_of_authors: usize,
-    /// Maximum NUM of languages to be shown
-    #[arg(long, default_value_t = DEFAULT_NUMBER_OF_LANGUAGES, value_name = "NUM")]
-    pub number_of_languages: usize,
-    /// Maximum NUM of file churns to be shown
-    #[arg(long, default_value_t = DEFAULT_NUMBER_OF_FILE_CHURNS, value_name = "NUM")]
-    pub number_of_file_churns: usize,
+    /// Maximum NUM of authors to be shown [default: 3]
+    #[arg(long, value_name = "NUM")]
+    pub number_of_authors: Option<usize>,
+    /// Maximum NUM of languages to be shown [default: 6]
+    #[arg(long, value_name = "NUM")]
+    pub number_of_languages: Option<usize>,
+    /// Maximum NUM of file churns to be shown [default: 3]
+    #[arg(long, value_name = "NUM")]
+    pub number_of_file_churns: Option<usize>,
     /// Minimum NUM of commits from HEAD used to compute the churn summary
     ///
     /// By default, the actual value is non-deterministic due to time-based computation
     /// and will be shown in the field label as "Churn (NUM)"
     #[arg(long, value_name = "NUM")]
     pub churn_pool_size: Option<usize>,
-    /// NUM of months shown in the activity field
+    /// NUM of months shown in the activity field [default: 12]
     #[arg(
         long,
         value_name = "NUM",
-        default_value_t = DEFAULT_ACTIVITY_MONTHS,
         value_parser = PossibleValuesParser::new(ACTIVITY_MONTHS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
-    pub activity_months: usize,
+    pub activity_months: Option<usize>,
     /// Exclude files & directories matching EXCLUDE from language stats and lines of code
     #[arg(long, short, num_args = 1..)]
-    pub exclude: Vec<String>,
+    pub exclude: Option<Vec<String>>,
     /// Ignore commits from authors whose name matches REGEX
     #[arg(long, value_name = "REGEX")]
     pub ignore_author: Option<Regex>,
@@ -109,19 +99,18 @@ pub struct InfoArgs {
     /// Count hidden files and directories
     #[arg(long)]
     pub include_hidden: bool,
-    /// Filters output by language type
+    /// Filters output by language type [default: programming markup]
     #[arg(
-        long = "type",
+        long,
         num_args = 1..,
-        default_values = &["programming", "markup"],
         short = 'T',
         value_enum,
         value_name = "TYPE",
     )]
-    pub language_types: Vec<LanguageType>,
+    pub language_types: Option<Vec<LanguageType>>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "ASCII")]
 pub struct AsciiArgs {
     /// Takes a non-empty STRING as input to replace the ASCII logo
@@ -141,7 +130,7 @@ pub struct AsciiArgs {
         short = 'c',
         value_parser = value_parser!(u8).range(..16),
     )]
-    pub ascii_colors: Vec<u8>,
+    pub ascii_colors: Option<Vec<u8>>,
     /// Which LANGUAGE's ascii art to print
     #[arg(
         long,
@@ -151,35 +140,33 @@ pub struct AsciiArgs {
         hide_possible_values = true
     )]
     pub ascii_language: Option<Language>,
-    /// Specify when to use true color
+    /// Specify when to use true color [default: auto]
     ///
     /// If set to auto: true color will be enabled if supported by the terminal
-    #[arg(long, default_value = "auto", value_name = "WHEN", value_enum)]
-    pub true_color: When,
+    #[arg(long, value_name = "WHEN", value_enum)]
+    pub true_color: Option<When>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "IMAGE")]
 pub struct ImageArgs {
     /// Path to the IMAGE file
     #[arg(long, short, value_hint = ValueHint::FilePath)]
     pub image: Option<PathBuf>,
     /// Which image PROTOCOL to use
-    #[arg(long, value_enum, requires = "image", value_name = "PROTOCOL")]
+    #[arg(long, value_enum, value_name = "PROTOCOL")]
     pub image_protocol: Option<ImageProtocol>,
-    /// VALUE of color resolution to use with SIXEL backend
+    /// VALUE of color resolution to use with SIXEL backend [default: 64]
     #[arg(
         long,
         value_name = "VALUE",
-        requires = "image",
-        default_value_t = DEFAULT_COLOR_RESOLUTION,
         value_parser = PossibleValuesParser::new(COLOR_RESOLUTIONS)
             .map(|s| s.parse::<usize>().unwrap())
     )]
-    pub color_resolution: usize,
+    pub color_resolution: Option<usize>,
 }
 
-#[derive(Clone, Debug, Args, PartialEq, Eq)]
+#[derive(Clone, Debug, Args, PartialEq, Eq, Default)]
 #[command(next_help_heading = "TEXT FORMATTING")]
 pub struct TextFormattingArgs {
     /// Changes the text colors (X X X...)
@@ -196,13 +183,13 @@ pub struct TextFormattingArgs {
         value_parser = value_parser!(u8).range(..16),
         num_args = 1..=6
     )]
-    pub text_colors: Vec<u8>,
+    pub text_colors: Option<Vec<u8>>,
     /// Use ISO 8601 formatted timestamps
     #[arg(long, short = 'z')]
     pub iso_time: bool,
-    /// Which thousands SEPARATOR to use
-    #[arg(long, value_name = "SEPARATOR", default_value = "plain", value_enum)]
-    pub number_separator: NumberSeparator,
+    /// Which thousands SEPARATOR to use [default: plain]
+    #[arg(long, value_name = "SEPARATOR", value_enum)]
+    pub number_separator: Option<NumberSeparator>,
     /// Turns off bold formatting
     #[arg(long)]
     pub no_bold: bool,
@@ -263,66 +250,6 @@ impl Default for Cli {
     }
 }
 
-impl Default for InfoArgs {
-    fn default() -> Self {
-        InfoArgs {
-            number_of_authors: DEFAULT_NUMBER_OF_AUTHORS,
-            number_of_languages: DEFAULT_NUMBER_OF_LANGUAGES,
-            number_of_file_churns: DEFAULT_NUMBER_OF_FILE_CHURNS,
-            churn_pool_size: Option::default(),
-            activity_months: DEFAULT_ACTIVITY_MONTHS,
-            exclude: Vec::default(),
-            ignore_author: Option::default(),
-            no_merges: Default::default(),
-            email: Default::default(),
-            http_url: Default::default(),
-            hide_token: Default::default(),
-            include_hidden: Default::default(),
-            language_types: vec![LanguageType::Programming, LanguageType::Markup],
-            disabled_fields: Vec::default(),
-            no_title: Default::default(),
-        }
-    }
-}
-
-impl Default for TextFormattingArgs {
-    fn default() -> Self {
-        TextFormattingArgs {
-            text_colors: Vec::default(),
-            iso_time: Default::default(),
-            number_separator: NumberSeparator::Plain,
-            no_bold: Default::default(),
-        }
-    }
-}
-
-impl Default for AsciiArgs {
-    fn default() -> Self {
-        AsciiArgs {
-            ascii_input: Option::default(),
-            ascii_colors: Vec::default(),
-            ascii_language: Option::default(),
-            true_color: When::Auto,
-        }
-    }
-}
-impl Default for ImageArgs {
-    fn default() -> Self {
-        ImageArgs {
-            image: Option::default(),
-            image_protocol: Option::default(),
-            color_resolution: DEFAULT_COLOR_RESOLUTION,
-        }
-    }
-}
-
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
-pub enum When {
-    Auto,
-    Never,
-    Always,
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -344,13 +271,13 @@ mod test {
         let config: Cli = Cli {
             input: PathBuf::from("/tmp/folder"),
             info: InfoArgs {
-                number_of_authors: 4,
+                number_of_authors: Some(4),
                 no_merges: true,
-                disabled_fields: vec![FieldKind::Version, FieldKind::Url],
+                disabled_fields: Some(vec![FieldKind::Version, FieldKind::Url]),
                 ..Default::default()
             },
             ascii: AsciiArgs {
-                ascii_colors: vec![5, 0],
+                ascii_colors: Some(vec![5, 0]),
                 ascii_language: Some(Language::Lisp),
                 ..Default::default()
             },
@@ -383,19 +310,9 @@ mod test {
     }
 
     #[test]
-    fn test_config_with_image_protocol_but_no_image() {
-        assert!(Cli::try_parse_from(["onefetch", "--image-protocol", "sixel"]).is_err())
-    }
-
-    #[test]
-    fn test_config_with_color_resolution_but_no_image() {
-        assert!(Cli::try_parse_from(["onefetch", "--color-resolution", "32"]).is_err())
-    }
-
-    #[test]
     fn test_config_with_activity_months() {
         let config = Cli::parse_from(["onefetch", "--activity-months", "6"]);
-        assert_eq!(config.info.activity_months, 6);
+        assert_eq!(config.info.activity_months, Some(6));
     }
 
     #[test]

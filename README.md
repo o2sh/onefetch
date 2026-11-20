@@ -83,10 +83,10 @@ To keep your favorite options, put them in a [config file](https://github.com/o2
 
 ### Why isn't my language detected?
 
-By default, onefetch only displays `programming` and `markup` languages. Languages classified as `prose` (like Org mode, Markdown, or Text) or `data` (like JSON, YAML, or TOML) are hidden unless you include them with `--type`.
+By default, onefetch only displays `programming` and `markup` languages. Languages classified as `prose` (like Org mode, Markdown, or Text) or `data` (like JSON, YAML, or TOML) are hidden unless you include them with `--language-types`.
 
 ```
-onefetch --type programming markup prose data
+onefetch --language-types programming markup prose data
 ```
 
 ### Why do duplicate authors appear?

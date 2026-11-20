@@ -14,7 +14,7 @@
     "http-url": true,
     "hide-token": true,
     "include-hidden": false,
-    "type": ["programming", "markup"],
+    "language-types": ["programming", "markup"],
 
     // TEXT FORMATTING
     // title, ~, underline, keys, separator, values
@@ -28,7 +28,7 @@
     "ascii-input": "{0} __________\n{1}< onefetch >\n{0} ----------\n{2}        \\   ^__^\n{3}         \\  (oo)\\_______\n{4}            (__)\\       )\\/\\\n{5}                ||----w |\n{6}                ||     ||",
     // bubble, text, then a rainbow from the ears to the legs
     "ascii-colors": [15, 14, 9, 11, 10, 12, 13],
-    // "ascii-language": "rust", // a language's logo instead of the cow
+    // "ascii-language": "rust", // a language's logo instead of the cow, without "ascii-input"
     "true-color": "auto",
 
     // IMAGE (an image instead of the cow)

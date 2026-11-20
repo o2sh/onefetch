@@ -28,9 +28,11 @@ Values work like on the command line:
 
 | Option | Value | Example |
 | --- | --- | --- |
-| A flag, like `--no-merges` | `true` turns it on, `false` does nothing | `"no-merges": true` |
+| A flag, like `--no-merges` | `true` or `false` | `"no-merges": true` |
 | An option with one value, like `--number-of-authors <NUM>` | a number or a string | `"number-of-authors": 5` |
 | An option with several values, like `--exclude <EXCLUDE>...` | a list | `"exclude": ["*.lock"]` |
+
+The input directory, `--config`, `--languages`, `--package-managers` and `--generate` can only be given on the command line.
 
 ## Example
 
@@ -38,6 +40,6 @@ Values work like on the command line:
 
 ## The command line wins
 
-An option given on the command line replaces the same option in the file. With `"number-of-authors": 5` in the config, `onefetch --number-of-authors 2` shows 2 authors. Options with several values add up instead: `onefetch -e "*.md"` excludes `*.md` and the globs of the config.
+An option given on the command line replaces the same option in the file. With `"number-of-authors": 5` in the config, `onefetch --number-of-authors 2` shows 2 authors. This holds for lists too: with `"exclude": ["*.lock"]` in the config, `onefetch -e "*.md"` excludes only `*.md`.
 
-A flag turned on in the file can't be turned off from the command line. To run onefetch without the config, point `--config` at an empty file that contains `{}`.
+A flag turned on in the file can't be turned off from the command line, and a value set in the file, like `"output"` or `"image"`, can't be removed. To run onefetch without the config, point `--config` at an empty file.

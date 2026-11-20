@@ -1,63 +1,84 @@
-//! Turns the parsed command line into the options of each stage: what to
-//! collect from the repository (`InfoOptions`) and how to print it
-//! (`RenderOptions`). Neither `data` nor `render` depends on `cli`.
+//! Turns the two inputs, the command line (`Cli`) and the config file
+//! (`Config`), into the options of each stage: what to collect from the
+//! repository (`InfoOptions`) and how to print it (`RenderOptions`). Neither
+//! `data` nor `render` depends on `cli` or `config`.
+//!
+//! Each option comes from the command line, else the config, whose
+//! `Default` holds the defaults.
 
-use crate::cli::{Cli, When};
+use crate::cli::Cli;
+use crate::config::Config;
 use crate::data::InfoOptions;
-use crate::render::RenderOptions;
+use crate::render::{RenderOptions, When};
+use anyhow::{Context, Result};
+use regex::Regex;
 use std::env;
 
-impl From<&Cli> for InfoOptions {
-    fn from(cli: &Cli) -> Self {
-        Self {
-            input: cli.input.clone(),
-            disabled_fields: cli.info.disabled_fields.clone(),
-            no_title: cli.info.no_title,
-            number_of_authors: cli.info.number_of_authors,
-            number_of_languages: cli.info.number_of_languages,
-            number_of_file_churns: cli.info.number_of_file_churns,
-            churn_pool_size: cli.info.churn_pool_size,
-            activity_months: cli.info.activity_months,
-            exclude: cli.info.exclude.clone(),
-            ignore_author: cli.info.ignore_author.clone(),
-            no_merges: cli.info.no_merges,
-            email: cli.info.email,
-            http_url: cli.info.http_url,
-            hide_token: cli.info.hide_token,
-            include_hidden: cli.info.include_hidden,
-            language_types: cli.info.language_types.clone(),
-        }
-    }
-}
-
-impl From<&Cli> for RenderOptions {
-    fn from(cli: &Cli) -> Self {
-        Self {
-            output: cli.developer.output.clone(),
-            no_art: cli.visuals.no_art,
-            image: cli.image.image.clone(),
-            image_protocol: cli.image.image_protocol.clone(),
-            color_resolution: cli.image.color_resolution,
-            ascii_input: cli.ascii.ascii_input.clone(),
-            ascii_language: cli.ascii.ascii_language,
-            ascii_colors: cli.ascii.ascii_colors.clone(),
-            text_colors: cli.text_formatting.text_colors.clone(),
-            no_bold: cli.text_formatting.no_bold,
-            number_separator: cli.text_formatting.number_separator,
-            iso_time: cli.text_formatting.iso_time,
-            true_color: true_color(&cli.ascii.true_color),
-            nerd_fonts: cli.visuals.nerd_fonts,
-            no_color_palette: cli.visuals.no_color_palette,
-        }
-    }
-}
-
-fn true_color(when: &When) -> bool {
-    match when {
-        When::Always => true,
-        When::Never => false,
-        When::Auto => is_truecolor_terminal(),
-    }
+/// Fails if the config's `ignore-author` isn't a valid regex.
+pub fn new(cli: Cli, config: Config) -> Result<(InfoOptions, RenderOptions)> {
+    let Cli {
+        input,
+        info,
+        text_formatting: text,
+        ascii,
+        image,
+        visuals,
+        developer,
+        ..
+    } = cli;
+    let ignore_author = match info.ignore_author {
+        Some(regex) => Some(regex),
+        None => config
+            .ignore_author
+            .as_deref()
+            .map(Regex::new)
+            .transpose()
+            .context("Invalid `ignore-author` in the config file")?,
+    };
+    let info_options = InfoOptions {
+        input,
+        disabled_fields: info.disabled_fields.unwrap_or(config.disabled_fields),
+        no_title: info.no_title || config.no_title,
+        number_of_authors: info.number_of_authors.unwrap_or(config.number_of_authors),
+        number_of_languages: info
+            .number_of_languages
+            .unwrap_or(config.number_of_languages),
+        number_of_file_churns: info
+            .number_of_file_churns
+            .unwrap_or(config.number_of_file_churns),
+        churn_pool_size: info.churn_pool_size.or(config.churn_pool_size),
+        activity_months: info.activity_months.unwrap_or(config.activity_months),
+        exclude: info.exclude.unwrap_or(config.exclude),
+        ignore_author,
+        no_merges: info.no_merges || config.no_merges,
+        email: info.email || config.email,
+        http_url: info.http_url || config.http_url,
+        hide_token: info.hide_token || config.hide_token,
+        include_hidden: info.include_hidden || config.include_hidden,
+        language_types: info.language_types.unwrap_or(config.language_types),
+    };
+    let render_options = RenderOptions {
+        output: developer.output.or(config.output),
+        no_art: visuals.no_art || config.no_art,
+        image: image.image.or(config.image),
+        image_protocol: image.image_protocol.or(config.image_protocol),
+        color_resolution: image.color_resolution.unwrap_or(config.color_resolution),
+        ascii_input: ascii.ascii_input.or(config.ascii_input),
+        ascii_language: ascii.ascii_language.or(config.ascii_language),
+        ascii_colors: ascii.ascii_colors.unwrap_or(config.ascii_colors),
+        text_colors: text.text_colors.unwrap_or(config.text_colors),
+        no_bold: text.no_bold || config.no_bold,
+        number_separator: text.number_separator.unwrap_or(config.number_separator),
+        iso_time: text.iso_time || config.iso_time,
+        true_color: match ascii.true_color.unwrap_or(config.true_color) {
+            When::Always => true,
+            When::Never => false,
+            When::Auto => is_truecolor_terminal(),
+        },
+        nerd_fonts: visuals.nerd_fonts || config.nerd_fonts,
+        no_color_palette: visuals.no_color_palette || config.no_color_palette,
+    };
+    Ok((info_options, render_options))
 }
 
 fn is_truecolor_terminal() -> bool {
@@ -69,11 +90,67 @@ fn is_truecolor_terminal() -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::language::{Language, LanguageType};
+    use clap::Parser;
+
+    fn options(config: &str, args: &[&str]) -> Result<(InfoOptions, RenderOptions)> {
+        let cli = Cli::try_parse_from(["onefetch"].iter().chain(args))?;
+        new(cli, serde_json::from_str(config)?)
+    }
 
     #[test]
-    fn default_render_options_match_cli_defaults() {
-        let mut cli = Cli::default();
-        cli.ascii.true_color = When::Never;
-        assert_eq!(RenderOptions::from(&cli), RenderOptions::default());
+    fn default_render_options_match_config_defaults() -> Result<()> {
+        let (_, render) = options("{}", &["--true-color", "never"])?;
+        assert_eq!(render, RenderOptions::default());
+        Ok(())
+    }
+
+    #[test]
+    fn config_replaces_the_defaults() -> Result<()> {
+        let (info, render) = options(
+            r#"{"number-of-authors": 5, "language-types": ["prose"], "ascii-language": "c++", "no-merges": true, "exclude": ["a"], "text-colors": [1, 2]}"#,
+            &["--email"],
+        )?;
+        assert_eq!(info.number_of_authors, 5);
+        assert_eq!(info.language_types, [LanguageType::Prose]);
+        assert!(info.no_merges);
+        assert!(info.email);
+        assert_eq!(info.exclude, ["a"]);
+        assert_eq!(render.text_colors, [1, 2]);
+        assert_eq!(render.ascii_language, Some(Language::Cpp));
+        Ok(())
+    }
+
+    #[test]
+    fn command_line_wins() -> Result<()> {
+        let (info, render) = options(
+            r#"{"number-of-authors": 5, "exclude": ["a"], "text-colors": [1, 2], "true-color": "always"}"#,
+            &[
+                "--number-of-authors",
+                "3",
+                "-e",
+                "b",
+                "-t",
+                "3",
+                "--true-color",
+                "never",
+            ],
+        )?;
+        assert_eq!(info.number_of_authors, 3);
+        assert_eq!(info.exclude, ["b"]);
+        assert_eq!(render.text_colors, [3]);
+        assert!(!render.true_color);
+        Ok(())
+    }
+
+    #[test]
+    fn rejects_invalid_values_in_the_config() {
+        for config in [
+            r#"{"ignore-author": "("}"#,
+            r#"{"number-separator": "dot"}"#,
+            r#"{"language-types": ["prose", "nope"]}"#,
+        ] {
+            assert!(options(config, &[]).is_err(), "accepted {config}");
+        }
     }
 }

@@ -40,7 +40,8 @@ use self::version::Version;
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
 /// The fields `--disabled-fields` can turn off.
-#[derive(Clone, Copy, clap::ValueEnum, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, clap::ValueEnum, Debug, Eq, PartialEq, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum FieldKind {
     Project,
     Description,

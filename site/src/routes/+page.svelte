@@ -112,7 +112,7 @@
         programming
       </strong>
       and <strong>markup</strong> types. Use the
-      <code>--type</code> flag to configure.
+      <code>--language-types</code> flag to configure.
     </small>
   </div>
 
