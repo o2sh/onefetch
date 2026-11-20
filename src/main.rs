@@ -3,10 +3,12 @@ use clap::{CommandFactory, Parser};
 use clap_complete::{Generator, generate};
 use human_panic::setup_panic;
 use onefetch::cli::Cli;
+use onefetch::config::Config;
+use onefetch::data::build_info;
 use onefetch::data::manifest::ManifestType;
-use onefetch::data::{InfoOptions, build_info};
 use onefetch::language::Language;
-use onefetch::render::{Printer, RenderOptions};
+use onefetch::options;
+use onefetch::render::Printer;
 use std::io;
 use strum::IntoEnumIterator;
 
@@ -33,9 +35,13 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let info = build_info(&InfoOptions::from(&cli))?;
+    let config = Config::load(cli.other.config.as_deref())?;
 
-    let printer = Printer::new(info, &RenderOptions::from(&cli))?;
+    let (info_options, render_options) = options::new(cli, config)?;
+
+    let info = build_info(&info_options)?;
+
+    let printer = Printer::new(info, &render_options)?;
 
     let mut writer = io::BufWriter::new(io::stdout());
 

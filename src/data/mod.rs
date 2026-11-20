@@ -29,10 +29,8 @@ pub struct Info {
     pub main_language: Option<Language>,
 }
 
-pub const DEFAULT_NUMBER_OF_AUTHORS: usize = 3;
-pub const DEFAULT_NUMBER_OF_LANGUAGES: usize = 6;
-pub const DEFAULT_NUMBER_OF_FILE_CHURNS: usize = 3;
-pub const DEFAULT_ACTIVITY_MONTHS: usize = 12;
+/// The values `--activity-months` accepts.
+pub const ACTIVITY_MONTHS: [&str; 3] = ["3", "6", "12"];
 
 /// What to collect from the repository and which fields to show.
 #[derive(Clone, Debug)]

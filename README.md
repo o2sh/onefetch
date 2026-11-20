@@ -77,14 +77,16 @@ onefetch
 
 Onefetch can be customized via [command-line arguments](https://github.com/o2sh/onefetch/wiki/command-line-options) to display exactly what you want, the way you want it: adjust the text styling, disable info lines, ignore files and directories, output in multiple formats (JSON, YAML), etc.
 
+To keep your favorite options, put them in a [config file](https://github.com/o2sh/onefetch/wiki/configuration) at `~/.config/onefetch/config.jsonc`.
+
 ## Frequently Asked Questions
 
 ### Why isn't my language detected?
 
-By default, onefetch only displays `programming` and `markup` languages. Languages classified as `prose` (like Org mode, Markdown, or Text) or `data` (like JSON, YAML, or TOML) are hidden unless you include them with `--type`.
+By default, onefetch only displays `programming` and `markup` languages. Languages classified as `prose` (like Org mode, Markdown, or Text) or `data` (like JSON, YAML, or TOML) are hidden unless you include them with `--language-types`.
 
 ```
-onefetch --type programming markup prose data
+onefetch --language-types programming markup prose data
 ```
 
 ### Why do duplicate authors appear?

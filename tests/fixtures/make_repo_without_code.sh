@@ -13,7 +13,7 @@ git remote add origin https://github.com/user/repo.git
 
 git checkout -b main
 
-# Markdown is exclude by default because it's a prose language (cf. --type option)
+# Markdown is exclude by default because it's a prose language (cf. --language-types option)
 touch README.md
 git add README.md
 git commit -q -m c1

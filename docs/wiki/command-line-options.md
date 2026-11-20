@@ -20,19 +20,13 @@ INFO:
           Hides the title
 
       --number-of-authors <NUM>
-          Maximum NUM of authors to be shown
-
-          [default: 3]
+          Maximum NUM of authors to be shown [default: 3]
 
       --number-of-languages <NUM>
-          Maximum NUM of languages to be shown
-
-          [default: 6]
+          Maximum NUM of languages to be shown [default: 6]
 
       --number-of-file-churns <NUM>
-          Maximum NUM of file churns to be shown
-
-          [default: 3]
+          Maximum NUM of file churns to be shown [default: 3]
 
       --churn-pool-size <NUM>
           Minimum NUM of commits from HEAD used to compute the churn summary
@@ -40,9 +34,8 @@ INFO:
           By default, the actual value is non-deterministic due to time-based computation and will be shown in the field label as "Churn (NUM)"
 
       --activity-months <NUM>
-          NUM of months shown in the activity field
+          NUM of months shown in the activity field [default: 12]
 
-          [default: 12]
           [possible values: 3, 6, 12]
 
   -e, --exclude <EXCLUDE>...
@@ -66,10 +59,9 @@ INFO:
       --include-hidden
           Count hidden files and directories
 
-  -T, --type <TYPE>...
-          Filters output by language type
+  -T, --language-types <TYPE>...
+          Filters output by language type [default: programming markup]
 
-          [default: programming markup]
           [possible values: programming, markup, prose, data]
 
 TEXT FORMATTING:
@@ -86,9 +78,8 @@ TEXT FORMATTING:
           Use ISO 8601 formatted timestamps
 
       --number-separator <SEPARATOR>
-          Which thousands SEPARATOR to use
+          Which thousands SEPARATOR to use [default: plain]
 
-          [default: plain]
           [possible values: plain, comma, space, underscore]
 
       --no-bold
@@ -111,11 +102,10 @@ ASCII:
           Which LANGUAGE's ascii art to print
 
       --true-color <WHEN>
-          Specify when to use true color
+          Specify when to use true color [default: auto]
 
           If set to auto: true color will be enabled if supported by the terminal
 
-          [default: auto]
           [possible values: auto, never, always]
 
 IMAGE:
@@ -128,9 +118,8 @@ IMAGE:
           [possible values: kitty, sixel, iterm]
 
       --color-resolution <VALUE>
-          VALUE of color resolution to use with SIXEL backend
+          VALUE of color resolution to use with SIXEL backend [default: 64]
 
-          [default: 64]
           [possible values: 16, 32, 64, 128, 256]
 
 VISUALS:
@@ -157,6 +146,9 @@ DEVELOPER:
           [possible values: bash, elvish, fish, powershell, zsh]
 
 OTHER:
+      --config <CONFIG>
+          Read options from CONFIG instead of ~/.config/onefetch/config.jsonc
+
   -l, --languages
           Prints out supported languages
 

@@ -1,0 +1,46 @@
+{
+    // INFO
+    "disabled-fields": ["pending", "dependencies"],
+    "no-title": false,
+    "number-of-authors": 4,
+    "number-of-languages": 5,
+    "number-of-file-churns": 4,
+    "churn-pool-size": 1000,
+    "activity-months": 6,
+    "exclude": ["vendor/", "*.lock"],
+    "ignore-author": "\\[bot\\]$",
+    "no-merges": true,
+    "email": false,
+    "http-url": true,
+    "hide-token": true,
+    "include-hidden": false,
+    "language-types": ["programming", "markup"],
+
+    // TEXT FORMATTING
+    // title, ~, underline, keys, separator, values
+    "text-colors": [13, 11, 14, 10, 8, 15],
+    "iso-time": false,
+    "number-separator": "comma",
+    "no-bold": false,
+
+    // ASCII
+    // \n starts a new line, and {0} to {6} pick the ascii color of the line.
+    "ascii-input": "{0} __________\n{1}< onefetch >\n{0} ----------\n{2}        \\   ^__^\n{3}         \\  (oo)\\_______\n{4}            (__)\\       )\\/\\\n{5}                ||----w |\n{6}                ||     ||",
+    // bubble, text, then a rainbow from the ears to the legs
+    "ascii-colors": [15, 14, 9, 11, 10, 12, 13],
+    // "ascii-language": "rust", // a language's logo instead of the cow, without "ascii-input"
+    "true-color": "auto",
+
+    // IMAGE (an image instead of the cow)
+    // "image": "logo.png",
+    // "image-protocol": "kitty",
+    // "color-resolution": 64,
+
+    // VISUALS
+    "no-color-palette": false,
+    "no-art": false,
+    "nerd-fonts": false
+
+    // OUTPUT (JSON or YAML instead of the normal output)
+    // "output": "json"
+}

@@ -4,7 +4,8 @@ use gix::date::Time;
 use num_format::{CustomFormat, ToFormattedString};
 use time_humanize::HumanTime;
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Copy, Default)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, Copy, Default, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum NumberSeparator {
     #[default]
     Plain,

@@ -12,7 +12,8 @@ pub struct Colors {
 
 pub const DEFAULT_CHIP_ICON: char = '\u{25CF}';
 
-#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum)]
+#[derive(Clone, PartialEq, Eq, Debug, clap::ValueEnum, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum LanguageType {
     Programming,
     Markup,
@@ -20,12 +21,13 @@ pub enum LanguageType {
     Data,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, EnumIter, clap::ValueEnum, Debug, Serialize, serde::Deserialize)]
 #[allow(clippy::upper_case_acronyms)]
 #[clap(rename_all = "lowercase")]
+#[serde(rename_all(deserialize = "lowercase"))]
 pub enum Language {
     {% for language, attrs in languages -%}
-        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]{% endif -%}
+        {% if attrs.serialization %}#[clap(name="{{ attrs.serialization }}")]#[serde(rename(deserialize = "{{ attrs.serialization }}"))]{% endif -%}
         {{ language }},
     {% endfor %}
 }

@@ -1,7 +1,8 @@
 use anyhow::Result;
 use image::DynamicImage;
 
-#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug)]
+#[derive(clap::ValueEnum, Clone, PartialEq, Eq, Debug, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum ImageProtocol {
     Kitty,
     Sixel,
