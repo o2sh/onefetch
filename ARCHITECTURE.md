@@ -3,6 +3,16 @@
 Onefetch reads a Git repository, collects information about it, and prints that
 information next to the logo of the repository's main language (or as JSON/YAML).
 
+At build time, `build.rs` generates the `Language` enum:
+
+```
+languages.yaml ──────────────┐
+                             ├──► build.rs ──► $OUT_DIR/language.rs ──► language::Language
+src/language/language.tera ──┘    (tera)       (included by language)   (used by data and render)
+```
+
+At run time:
+
 ```
 command line ──► cli ─────┐
                           ├──► options ──┬── InfoOptions ───► data::build_info ──► Info ──┐
