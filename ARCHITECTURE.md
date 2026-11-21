@@ -39,8 +39,8 @@ them in mind when reviewing imports in these modules.
 
 Options come from two inputs: the command line (`Cli`) and the config file
 (`Config`). `options::new` takes each option from the arguments, else the
-config, whose `Default` holds the defaults. `Cli` has no clap defaults, so an
-option the user didn't type is `None` (or `false` for a flag).
+config, else a default const in `options.rs`. Neither `Cli` nor `Config` holds
+defaults, so an option the user didn't set is `None` (or `false` for a flag).
 
 `Cli` and `Config` are only read by `options.rs` (and `Cli` by `main` for
 `--languages`, `--package-managers`, `--generate` and `--config`). The merged
