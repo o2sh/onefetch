@@ -24,20 +24,23 @@ cargo test --locked
 ## 2. Update CHANGELOG.md (don't commit)
 
 - Last release: `git describe --abbrev=0 --tags`.
-- Gather what changed since then: `git log <tag>..HEAD --oneline` and merged PRs, e.g.
-  `gh pr list --state merged --base main --search "merged:>=<tag date>" --limit 100 --json number,title,author,url`.
-- Add a new section at the top, below the header, matching the existing format exactly:
+- Go through **every commit** since then, not just PRs: `git log <tag>..HEAD --no-merges --format='%H %s'`. Look at the diff (`git show --stat <sha>`) when the subject doesn't say enough.
+  - Squash-merged PRs end in `(#NNNN)`: link the PR. Don't go by the title alone: read the PR description (`gh pr view NNNN` or the `body` from `curl -s https://api.github.com/repos/o2sh/onefetch/pulls/NNNN`) and its diff, and include every user-visible change, especially breaking ones (renamed or removed flags, changed defaults or behavior).
+  - Commits pushed straight to main: link the full commit hash instead, e.g. `- Update the license cache in <full sha>`. Group related commits into one entry with several hashes.
+- Add a new section at the top, below the header, matching the existing format, without authors:
 
   ```markdown
   ## X.Y.Z (YYYY-MM-DD)
 
   ### New Features
 
-  - Short description by @author in https://github.com/o2sh/onefetch/pull/NNNN
+  - Short description in https://github.com/o2sh/onefetch/pull/NNNN
+  - Short description in <full commit sha>
   ```
 
   Use today's date. Reuse the section headings already used in the file (`Breaking Changes`, `New Features`, `Bug Fixes`, `CI/CD`, `Chores`, …), include only those that have entries, and rewrite PR titles into readable sentences like past entries.
-- Leave out dependency-bot updates (renovate/dependabot `chore(deps)` PRs) unless they're user-facing (e.g. an MSRV bump).
+- Write for the people who use onefetch: one short line per change, saying what changed for them in plain words. For a breaking change, say what to use instead. Leave out changes users never see (CI, docs, refactors, repo tooling).
+- Leave out dependency-bot updates (renovate/dependabot `chore(deps)` PRs) unless they're user-facing (e.g. an MSRV bump), and commits that change nothing meaningful (e.g. a comment-only `fix`).
 
 ## 3. Bump version
 

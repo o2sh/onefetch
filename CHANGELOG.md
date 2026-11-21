@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.3.0 (2026-11-21)
+
+### Breaking Changes
+
+- `--no-bots` is replaced by `--ignore-author <REGEX>`. To ignore bots like before, use `--ignore-author '\[bot\]'` in https://github.com/o2sh/onefetch/pull/1920
+- `--type` is renamed to `--language-types` (`-T` still works) in https://github.com/o2sh/onefetch/pull/1917
+- `--exclude` no longer hides files from Churn in https://github.com/o2sh/onefetch/pull/1927
+
+### New Features
+
+- Save your options in a config file at `~/.config/onefetch/config.jsonc` in https://github.com/o2sh/onefetch/pull/1917
+- Co-authors from `Co-authored-by` trailers now count in Authors and Contributors in https://github.com/o2sh/onefetch/pull/1907
+- Add Twig language support in https://github.com/o2sh/onefetch/pull/1928
+
+### Bug Fixes
+
+- Ignored authors no longer affect the Created and Last change dates in https://github.com/o2sh/onefetch/pull/1922
+
 ## 3.2.0 (2026-10-31)
 
 ### New Features
