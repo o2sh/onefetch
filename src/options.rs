@@ -1,20 +1,22 @@
-//! Turns the two inputs, the command line (`Cli`) and the config file
-//! (`Config`), into the options of each stage: what to collect from the
-//! repository (`InfoOptions`) and how to print it (`RenderOptions`). Neither
-//! `data` nor `render` depends on `cli` or `config`.
-//!
-//! Each option comes from the command line, else the config, whose
-//! `Default` holds the defaults.
-
 use crate::cli::Cli;
 use crate::config::Config;
 use crate::data::InfoOptions;
+use crate::language::LanguageType;
+use crate::render::format::NumberSeparator;
 use crate::render::{RenderOptions, When};
 use anyhow::{Context, Result};
 use regex::Regex;
 use std::env;
 
-/// Fails if the config's `ignore-author` isn't a valid regex.
+const NUMBER_OF_AUTHORS: usize = 3;
+const NUMBER_OF_LANGUAGES: usize = 6;
+const NUMBER_OF_FILE_CHURNS: usize = 3;
+const ACTIVITY_MONTHS: usize = 12;
+const LANGUAGE_TYPES: &[LanguageType] = &[LanguageType::Programming, LanguageType::Markup];
+const COLOR_RESOLUTION: usize = 64;
+const NUMBER_SEPARATOR: NumberSeparator = NumberSeparator::Plain;
+const TRUE_COLOR: When = When::Auto;
+
 pub fn new(cli: Cli, config: Config) -> Result<(InfoOptions, RenderOptions)> {
     let Cli {
         input,
@@ -39,15 +41,23 @@ pub fn new(cli: Cli, config: Config) -> Result<(InfoOptions, RenderOptions)> {
         input,
         disabled_fields: info.disabled_fields.unwrap_or(config.disabled_fields),
         no_title: info.no_title || config.no_title,
-        number_of_authors: info.number_of_authors.unwrap_or(config.number_of_authors),
+        number_of_authors: info
+            .number_of_authors
+            .or(config.number_of_authors)
+            .unwrap_or(NUMBER_OF_AUTHORS),
         number_of_languages: info
             .number_of_languages
-            .unwrap_or(config.number_of_languages),
+            .or(config.number_of_languages)
+            .unwrap_or(NUMBER_OF_LANGUAGES),
         number_of_file_churns: info
             .number_of_file_churns
-            .unwrap_or(config.number_of_file_churns),
+            .or(config.number_of_file_churns)
+            .unwrap_or(NUMBER_OF_FILE_CHURNS),
         churn_pool_size: info.churn_pool_size.or(config.churn_pool_size),
-        activity_months: info.activity_months.unwrap_or(config.activity_months),
+        activity_months: info
+            .activity_months
+            .or(config.activity_months)
+            .unwrap_or(ACTIVITY_MONTHS),
         exclude: info.exclude.unwrap_or(config.exclude),
         ignore_author,
         no_merges: info.no_merges || config.no_merges,
@@ -55,22 +65,31 @@ pub fn new(cli: Cli, config: Config) -> Result<(InfoOptions, RenderOptions)> {
         http_url: info.http_url || config.http_url,
         hide_token: info.hide_token || config.hide_token,
         include_hidden: info.include_hidden || config.include_hidden,
-        language_types: info.language_types.unwrap_or(config.language_types),
+        language_types: info
+            .language_types
+            .or(config.language_types)
+            .unwrap_or_else(|| LANGUAGE_TYPES.to_vec()),
     };
     let render_options = RenderOptions {
         output: developer.output.or(config.output),
         no_art: visuals.no_art || config.no_art,
         image: image.image.or(config.image),
         image_protocol: image.image_protocol.or(config.image_protocol),
-        color_resolution: image.color_resolution.unwrap_or(config.color_resolution),
+        color_resolution: image
+            .color_resolution
+            .or(config.color_resolution)
+            .unwrap_or(COLOR_RESOLUTION),
         ascii_input: ascii.ascii_input.or(config.ascii_input),
         ascii_language: ascii.ascii_language.or(config.ascii_language),
         ascii_colors: ascii.ascii_colors.unwrap_or(config.ascii_colors),
         text_colors: text.text_colors.unwrap_or(config.text_colors),
         no_bold: text.no_bold || config.no_bold,
-        number_separator: text.number_separator.unwrap_or(config.number_separator),
+        number_separator: text
+            .number_separator
+            .or(config.number_separator)
+            .unwrap_or(NUMBER_SEPARATOR),
         iso_time: text.iso_time || config.iso_time,
-        true_color: match ascii.true_color.unwrap_or(config.true_color) {
+        true_color: match ascii.true_color.or(config.true_color).unwrap_or(TRUE_COLOR) {
             When::Always => true,
             When::Never => false,
             When::Auto => is_truecolor_terminal(),
@@ -90,7 +109,7 @@ fn is_truecolor_terminal() -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::language::{Language, LanguageType};
+    use crate::language::Language;
     use clap::Parser;
 
     fn options(config: &str, args: &[&str]) -> Result<(InfoOptions, RenderOptions)> {

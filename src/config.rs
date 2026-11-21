@@ -1,9 +1,3 @@
-//! The config file: a JSONC object whose keys are long command-line options,
-//! such as `{"number-of-authors": 5, "no-merges": true}`.
-//!
-//! The config is read on its own, apart from the command line; `options`
-//! merges the two.
-
 use crate::data::{ACTIVITY_MONTHS, FieldKind};
 use crate::language::{Language, LanguageType};
 use crate::render::format::NumberSeparator;
@@ -14,19 +8,17 @@ use serde::Deserialize;
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 
-/// The options of the config file. A missing key takes its value from
-/// `Config::default()`, which holds the defaults of the command line.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "kebab-case", default, deny_unknown_fields)]
 pub struct Config {
     // INFO
     pub disabled_fields: Vec<FieldKind>,
     pub no_title: bool,
-    pub number_of_authors: usize,
-    pub number_of_languages: usize,
-    pub number_of_file_churns: usize,
+    pub number_of_authors: Option<usize>,
+    pub number_of_languages: Option<usize>,
+    pub number_of_file_churns: Option<usize>,
     pub churn_pool_size: Option<usize>,
-    pub activity_months: usize,
+    pub activity_months: Option<usize>,
     pub exclude: Vec<String>,
     pub ignore_author: Option<String>,
     pub no_merges: bool,
@@ -34,64 +26,27 @@ pub struct Config {
     pub http_url: bool,
     pub hide_token: bool,
     pub include_hidden: bool,
-    pub language_types: Vec<LanguageType>,
+    pub language_types: Option<Vec<LanguageType>>,
     // TEXT FORMATTING
     pub text_colors: Vec<u8>,
     pub iso_time: bool,
-    pub number_separator: NumberSeparator,
+    pub number_separator: Option<NumberSeparator>,
     pub no_bold: bool,
     // ASCII
     pub ascii_input: Option<String>,
     pub ascii_colors: Vec<u8>,
     pub ascii_language: Option<Language>,
-    pub true_color: When,
+    pub true_color: Option<When>,
     // IMAGE
     pub image: Option<PathBuf>,
     pub image_protocol: Option<ImageProtocol>,
-    pub color_resolution: usize,
+    pub color_resolution: Option<usize>,
     // VISUALS
     pub no_color_palette: bool,
     pub no_art: bool,
     pub nerd_fonts: bool,
     // DEVELOPER
     pub output: Option<SerializationFormat>,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            disabled_fields: Vec::new(),
-            no_title: false,
-            number_of_authors: 3,
-            number_of_languages: 6,
-            number_of_file_churns: 3,
-            churn_pool_size: None,
-            activity_months: 12,
-            exclude: Vec::new(),
-            ignore_author: None,
-            no_merges: false,
-            email: false,
-            http_url: false,
-            hide_token: false,
-            include_hidden: false,
-            language_types: vec![LanguageType::Programming, LanguageType::Markup],
-            text_colors: Vec::new(),
-            iso_time: false,
-            number_separator: NumberSeparator::Plain,
-            no_bold: false,
-            ascii_input: None,
-            ascii_colors: Vec::new(),
-            ascii_language: None,
-            true_color: When::Auto,
-            image: None,
-            image_protocol: None,
-            color_resolution: 64,
-            no_color_palette: false,
-            no_art: false,
-            nerd_fonts: false,
-            output: None,
-        }
-    }
 }
 
 impl Config {
@@ -126,16 +81,18 @@ impl Config {
     /// The checks clap runs on the same values on the command line.
     fn validate(&self) -> Result<()> {
         ensure!(
-            ACTIVITY_MONTHS
-                .iter()
-                .any(|months| months.parse() == Ok(self.activity_months)),
+            self.activity_months
+                .is_none_or(|activity_months| ACTIVITY_MONTHS
+                    .iter()
+                    .any(|months| months.parse() == Ok(activity_months))),
             "`activity-months` must be one of {}",
             ACTIVITY_MONTHS.join(", ")
         );
         ensure!(
-            COLOR_RESOLUTIONS
-                .iter()
-                .any(|resolution| resolution.parse() == Ok(self.color_resolution)),
+            self.color_resolution
+                .is_none_or(|color_resolution| COLOR_RESOLUTIONS
+                    .iter()
+                    .any(|resolution| resolution.parse() == Ok(color_resolution))),
             "`color-resolution` must be one of {}",
             COLOR_RESOLUTIONS.join(", ")
         );
@@ -152,7 +109,9 @@ impl Config {
             "`text-colors` takes at most 6 colors"
         );
         ensure!(
-            !self.language_types.is_empty(),
+            self.language_types
+                .as_ref()
+                .is_none_or(|types| !types.is_empty()),
             "`language-types` takes at least one type"
         );
         Ok(())
@@ -186,7 +145,7 @@ mod tests {
                 "ascii-language": "c++",
             }"#,
         )?;
-        assert_eq!(config.number_of_authors, 5);
+        assert_eq!(config.number_of_authors, Some(5));
         assert!(!config.email);
         assert_eq!(config.image, None);
         assert_eq!(config.ignore_author.as_deref(), Some("^bors$"));
@@ -195,7 +154,7 @@ mod tests {
             [FieldKind::Churn, FieldKind::LastChange]
         );
         assert_eq!(config.ascii_language, Some(Language::Cpp));
-        assert_eq!(Config::parse("// nothing yet\n")?.number_of_authors, 3);
+        assert_eq!(Config::parse("// nothing yet\n")?.number_of_authors, None);
         Ok(())
     }
 
