@@ -187,9 +187,6 @@ AutoHotKey:
     ansi:
       - white
       - green
-    hex:
-      - "#FFFFFF"
-      - "#119810"
     chip: "#6594B9"
 Bash:
   type: programming
