@@ -47,7 +47,6 @@ pub struct InfoArgs {
         long,
         short,
         num_args = 1..,
-        hide_possible_values = true,
         value_enum,
         value_name = "FIELD"
     )]
@@ -328,5 +327,27 @@ mod test {
     #[test]
     fn test_config_with_text_colors_but_out_of_bounds() {
         assert!(Cli::try_parse_from(["onefetch", "--text-colors", "17"]).is_err())
+    }
+
+    #[test]
+    fn test_help_lists_disabled_fields_possible_values() {
+        use clap::{CommandFactory, ValueEnum};
+
+        let long_help = Cli::command().render_long_help().to_string();
+        let short_help = Cli::command().render_help().to_string();
+        for help in [&long_help, &short_help] {
+            assert!(help.contains("--disabled-fields <FIELD>..."));
+            assert!(help.contains("[possible values:"));
+            for variant in FieldKind::value_variants() {
+                let value = variant
+                    .to_possible_value()
+                    .expect("FieldKind variant should expose a possible value");
+                assert!(
+                    help.contains(value.get_name()),
+                    "help should list possible value '{}'",
+                    value.get_name()
+                );
+            }
+        }
     }
 }
