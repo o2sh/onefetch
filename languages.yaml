@@ -475,6 +475,9 @@ Cpp:
     chip: "#F34B7D"
   icon: '\u{E61D}'
   serialization: c++
+  tokei_aliases:
+    - CppHeader
+    - CppModule
 Crystal:
   type: programming
   ascii: |

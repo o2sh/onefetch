@@ -45,8 +45,11 @@ impl fmt::Display for Language {
 impl From<tokei::LanguageType> for Language {
     fn from(language: tokei::LanguageType) -> Self {
         match language {
-            {% for language, _ in languages -%}
+            {% for language, attrs in languages -%}
                 tokei::LanguageType::{{ language }} => Self::{{ language }},
+                {% for alias in attrs.tokei_aliases | default(value=[]) -%}
+                    tokei::LanguageType::{{ alias }} => Self::{{ language }},
+                {% endfor -%}
             {% endfor %}
             _ => unimplemented!("Language {:?}", language),
         }
@@ -64,6 +67,21 @@ impl From<Language> for tokei::LanguageType {
 }
 
 impl Language {
+    /// Every tokei language type counted as this language: its own type,
+    /// followed by the `tokei_aliases` listed in `languages.yaml`.
+    pub fn tokei_types(&self) -> &'static [tokei::LanguageType] {
+        match self {
+            {% for language, attrs in languages -%}
+                Language::{{ language }} => &[
+                    tokei::LanguageType::{{ language }},
+                    {% for alias in attrs.tokei_aliases | default(value=[]) -%}
+                        tokei::LanguageType::{{ alias }},
+                    {% endfor -%}
+                ],
+            {% endfor %}
+        }
+    }
+
     pub fn ascii_art(&self) -> &'static str {
         match self {
             {% for language, attrs in languages -%}

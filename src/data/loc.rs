@@ -35,7 +35,9 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
         let loc = count_loc(language_name, language);
 
         if loc > 0 {
-            loc_by_language.insert(Language::from(*language_name), loc);
+            *loc_by_language
+                .entry(Language::from(*language_name))
+                .or_insert(0) += loc;
         }
     }
 
@@ -88,7 +90,7 @@ fn get_locs(
 fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
     Language::iter()
         .filter(|language| types.contains(&language.language_type()))
-        .map(std::convert::Into::into)
+        .flat_map(|language| language.tokei_types().iter().copied())
         .collect()
 }
 
@@ -206,5 +208,45 @@ mod test {
         let actual_order: Vec<_> = sorted_map.into_iter().collect();
 
         assert_eq!(expected_order, actual_order);
+    }
+
+    #[test]
+    fn cpp_headers_and_modules_are_counted_as_cpp() {
+        let mut languages = tokei::Languages::new();
+        for (language_type, code) in [
+            (tokei::LanguageType::Cpp, 100),
+            (tokei::LanguageType::CppHeader, 40),
+            (tokei::LanguageType::CppModule, 25),
+        ] {
+            languages.insert(
+                language_type,
+                tokei::Language {
+                    code,
+                    ..Default::default()
+                },
+            );
+        }
+
+        let loc_by_language = get_loc_by_language(&languages).unwrap();
+
+        assert_eq!(loc_by_language.len(), 1);
+        assert_eq!(loc_by_language[&Language::Cpp], 165);
+    }
+
+    #[test]
+    fn programming_filter_includes_cpp_aliases() {
+        let tokei_types = filter_languages_on_type(&[LanguageType::Programming]);
+
+        assert!(tokei_types.contains(&tokei::LanguageType::Cpp));
+        assert!(tokei_types.contains(&tokei::LanguageType::CppHeader));
+        assert!(tokei_types.contains(&tokei::LanguageType::CppModule));
+    }
+
+    #[test]
+    fn cpp_aliases_are_not_scanned_when_cpp_is_filtered_out() {
+        let tokei_types = filter_languages_on_type(&[LanguageType::Markup]);
+
+        assert!(!tokei_types.contains(&tokei::LanguageType::CppHeader));
+        assert!(!tokei_types.contains(&tokei::LanguageType::CppModule));
     }
 }

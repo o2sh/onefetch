@@ -67,6 +67,8 @@ CSharp: # required, this will be the name of the enum variant for the language a
     chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist [2].
   icon: '\u{E648}' # optional, the UTF-16 code point of the nerd font icon if supported [3]
   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
+  tokei_aliases: # optional, other tokei languages to count as this one, e.g. `Cpp` lists `CppHeader` and `CppModule`
+    - SomeTokeiVariant
 ```
 
 - [1] https://github.com/XAMPPRocky/tokei#supported-languages
