@@ -56,16 +56,6 @@ impl From<tokei::LanguageType> for Language {
     }
 }
 
-impl From<Language> for tokei::LanguageType {
-    fn from(language: Language) -> Self {
-        match language {
-            {% for language, _ in languages -%}
-                Language::{{ language }} => tokei::LanguageType::{{ language }},
-            {% endfor %}
-        }
-    }
-}
-
 impl Language {
     /// Every tokei language type counted as this language: its own type,
     /// followed by the `tokei_aliases` listed in `languages.yaml`.
